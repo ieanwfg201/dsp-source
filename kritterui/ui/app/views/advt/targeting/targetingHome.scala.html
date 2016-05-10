@@ -1,0 +1,10 @@
+@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String)
+
+@main2("Targeting Home") {@navs.navadvt(tp.getAccountGuid())}{@navs.breadcrumbs(tp.getBreadCrumbPaths())}{
+
+    @components.containers.panel("Targeting Summary-"+ tp.getName()){
+        <div>
+            @advt.targeting.targetingHomeContent(tp,retargeting_flow_enabled)
+       </div>
+    }
+}

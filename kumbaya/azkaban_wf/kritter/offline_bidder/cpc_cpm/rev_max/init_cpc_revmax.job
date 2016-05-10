@@ -1,0 +1,4 @@
+# init_cpc_revmax.job
+
+type=command
+command=sh init_cpc_revmax.sh

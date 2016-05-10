@@ -1,0 +1,39 @@
+@(field:play.data.Form.Field, label:String,  args: (Symbol,Any)* )(implicit lang: play.api.i18n.Lang) 
+
+@import play.api.i18n._
+@import views.html.helper._
+
+@elements = @{ new FieldElements(field.id, field, null, args.toMap, lang) }
+
+<div class="form-group row">
+	<div class="col-sm-3">
+		<label for="@field" class="control-label">@label</label>
+	</div>
+
+	<div class="col-sm-9">
+		<div class="input-group "> 
+				<span class="input-group-addon">
+						<i class="fa fa-calendar"></i> 
+				</span>  
+			
+			   @if( elements.args.get('_stringRep)){
+			   		<input   class="hidden form-control" name="@field.name()"
+					 				ng-model="@field.name()" ng-init="@field.name()='@field.value()'" >
+					 <quick-datepicker   disabled="true" ng-init='initDate("@{field.name()}", "@field.value()")' 
+					 				date-format="MM/dd/yyyy" time-format="h:mm a"  ng-model='@{field.name()+"_dateobj"}' required></quick-datepicker>
+				
+			   }else{
+			   		<input type="number" class="hidden form-control" name="@field.name()"
+					 				ng-model="@field.name()" ng-init="@field.name()=@field.value()" >
+					<quick-datepicker   disabled="true" ng-init='initDate("@{field.name()}", @field.value())' 
+					 				date-format="MM/dd/yyyy" time-format="h:mm a"  ng-model='@{field.name()+"_dateobj"}' required></quick-datepicker>
+			   }
+				
+				
+				 <span class="help-inline">@elements.errors(elements.lang).mkString(", ")</span>
+      	  		 <span class="help-block hidden showonhover">@elements.infos(elements.lang).mkString(", ")</span>  
+		</div>
+	</div>
+
+</div>
+

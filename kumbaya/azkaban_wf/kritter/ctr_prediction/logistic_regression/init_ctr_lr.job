@@ -1,0 +1,4 @@
+# init_ctr_lr.job
+
+type=command
+command=sh init_ctr_lr.sh

@@ -1,0 +1,74 @@
+@(title:String ="")
+@main("Ad Approval Queue"){
+	@components.containers.panel(" Ad Approval Queue"){
+	<div ng-controller="adApprovalController">
+	<div class="btn-group pull-right">
+                     <button class="btn btn-success  active" ng-click="updateMultipleAds('APPROVE')">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true">Approve Multiple Ads
+                     </button>
+                     <button class="btn btn-danger  active" ng-click="updateMultipleAds('REJECT')">
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"> Reject Multiple Ads
+                     </button>  
+        </div> 
+	<div infinite-scroll='nextPage()' infinite-scroll-disabled='adListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="adListData.filteredData"   
+			 					selected-items="adListData.selections" 
+			 					fields="['select', 'name',  'accountName',  'campaign',  'status', 'landingurl', 'createdOn',  'action']" 
+			 					selection-mode="MultiRow"
+			 					enable-filtering="adListData.enableFilter"
+			 					enable-sorting="adListData.enableSorting" 
+			 					order-by="adListData.orderBy"
+			 					order-by-reverse="adListData.orderByReverse" 
+			 					page-items="adListData.itemsPerPage"  
+			 					total-items="adListData.totalItems"
+			 					current-page="adListData.currentPage" 
+			 					on-data-required="adListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+                        <th field-name="select" display-align="center" cell-width="2em">
+                                    <div class="tr-ng-title">&nbsp;</div>
+                        </th>
+			            <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="accountName" display-name="Advertiser" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="campaign" display-name="Campaign" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="status" display-name="Status" enable-sorting="true"  enable-filtering="true">  </th>
+			            <th field-name="landingurl" display-name="Landing Url" enable-sorting="true"  enable-filtering="false">  </th> 
+			            <th field-name="createdOn" display-name="Created" enable-sorting="true"  enable-filtering="false">  </th>
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr>
+		    		    <td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="adListData.isItemChecked(gridItem)" ></td>
+		    		    <td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td> 
+		    			<td field-name="accountName"  >  <a href="{{gridItem.accountUrl}}" >{{gridItem.accountName}}</a></td> 
+		    			<td field-name="campaign"  >  <a href="{{gridItem.accountUrl}}" >{{gridItem.campaign}}</a></td> 
+		    			<td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td>
+		    			<td field-name="landingurl"  >  <a href="{{gridItem.landingUrl}}" >{{gridItem.name}}</a></td> 
+			            <td field-name="action" > 
+                            <a href="{{gridItem.statUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Stats">
+                                <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                            </a>
+			                <a href="{{gridItem.editUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Edit Ad">
+			                	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							</a> 
+		                     <button class="btn btn-default" ng-click="updateAd(gridItem.id  , 'Approve')" 
+		                     					data-toggle="tooltip" data-placement="top" title="Approve Ad">
+		                     		<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+		                     </button>
+				 			 <button class="btn btn-default" ng-click="updateAd(gridItem.id,'Reject')" 
+				 			 													data-toggle="tooltip" data-placement="top" title="Reject Ad">
+				 			 	<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+				 			 </button>
+				 			 <a class="btn btn-default" href="{{gridItem.viewUrl}}" >View</a> 
+			            </td>
+			           
+			        </tr>
+			    </tbody>
+			</table> 
+		</div>
+	</div> 
+	}
+<script src="@routes.Assets.at("javascripts/apps/adApprovalController.js")" type="text/javascript"></script>
+}

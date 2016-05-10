@@ -1,0 +1,25 @@
+@(field:play.data.Form.Field, args: (Symbol,Any)*)(implicit lang: play.api.i18n.Lang) 
+
+@import play.api.i18n._
+@import views.html.helper._
+
+@elements = @{ new FieldElements(field.id, field, null, args.toMap, lang) }
+
+<div class="form-group row">
+	<div class="col-sm-3">
+		<label for="@field.name()" class="control-label">@elements.args.get('_label)</label>
+	</div>
+
+	<div class="col-sm-9">
+		<div class="input-group"> 
+            <input id="@{field.name()+"_selector"}" type="file"  accept="@elements.args.get('_fileFilter)" title="Choose File" 
+            												ng-file-select="@elements.args.get('_uploadHandler)"  > 
+            <input type="text" class="hidden form-control" name="@field.name()" value="@field.value()" > 
+			<a class="link" ng-show="@{field.name()+"_preview"}" ng-href="{{@{field.name()+"_preview_url"}}}">{{@{field.name()+"_preview_label"}}}</a> 
+			<div>{{@{field.name()+"_message"}}}</div> 
+			
+			<span class="help-inline">@elements.errors(elements.lang).mkString(", ")</span>
+      		<span class="help-block hidden showonhover">@elements.infos(elements.lang).mkString(", ")</span>
+		</div>
+	</div>
+</div> 

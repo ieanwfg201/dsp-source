@@ -1,0 +1,158 @@
+@(creativeForm:Form[ models.entities.CreativeContainerEntity], creativeDisplay:models.advertiser.CreativeDisplay)
+@main2("Creative Form"){@navs.navadvt(creativeDisplay.getAccountGuid())} {@navs.breadcrumbs(creativeDisplay.getBreadCrumbPaths())}{  
+
+<form id="creativeForm" action="/advertiser/creatives/save"
+	method="POST"   ng-controller="creativeController">
+	<div class="page">
+		<section class="panel panel-default">
+			<div class="panel-heading">
+				<strong><span class="glyphicon glyphicon-th"></span>
+					Creative Form</strong>
+			</div>
+			<div class="panel-body">
+				<fieldset>
+					<legend>Basic Information</legend>
+					@components.formElements.hiddenfield(creativeForm("destination")) 
+					@components.formElements.hiddenfield(creativeForm("id"))
+					@components.formElements.hiddenfield(creativeForm("guid"))
+					@components.formElements.hiddenfield(creativeForm("account_guid")) 
+					@components.formElements.textinput(creativeForm("label"), '_label ->"Label *")
+					
+					@components.formElements.selectlist2(creativeForm("format_id"), "Creative Type *",
+											services.MetadataAPI.creativeTypes(), '_ngSync ->true, '_ngChange ->"updateCreativeType()", '_numeric->true)
+				 
+					
+					@components.formElements.multiselectlist3(creativeForm("creative_attr"), '_label ->"Creative Attributes *" , '_row->true)	
+				
+				</fieldset>
+
+				<fieldset ng-show="showTextForm">
+					<legend>Creative Text</legend>
+					@components.formElements.textarea(creativeForm("text"),"Text")
+				</fieldset>
+				
+				<fieldset ng-show="showHtmlForm">
+					<legend>Ad Code</legend>
+					<code ng-non-bindable>
+					@components.formElements.textarea(creativeForm("html_content"),"HTML Content")
+					</code>
+					@components.formElements.textarea(creativeForm("ext_resource_url"),"External Creative URL (E.g: http://www.myimage.com/myimage.jpg)")
+					@components.formElements.multiselectlist3(creativeForm("creative_macro"), '_label ->"MACROS (for replacement)" , '_row->true)
+					@components.formElements.selectlist2(creativeForm("creative_macro_quote"), "Macros (Quoted) ",services.MetadataAPI.creativeMacroQuote() )
+				</fieldset>
+
+				<fieldset ng-show="showBannerForm">
+						@components.formElements.hiddenfield(creativeForm("resource_uri_ids"), "resource_uri_ids", true) 
+						<button type="button" class="btn btn-success" ng-click="openBannerForm()">
+                            <i class="fa fa-upload">Upload Banners</i>
+                        </button>
+						<table class="table table-bordered">
+	                        <thead>
+	                            <tr>
+	                                <th width="30%">Thumbnail</th>
+	                                <th width="30%">Slot</th> 
+	                                <th>Remove</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <tr ng-repeat="banner in banners">
+	                                <td><div><img ng-src="{{banner.bannerThumbUrl}}" class="img-thumbnail"></img></div></td>
+	                                <td><span tooltip-placement="top" tooltip="{{banner.slotDescription}}" tooltip-append-to-body="true"><b>{{banner.slotName}}</b></span></select></td>
+	                                <td nowrap>
+	                                    <button type="button" class="btn btn-danger btn-xs" ng-click="removeBanner(banner)">
+	                                        <span class="glyphicon glyphicon-trash"></span>
+	                                    </button>
+	                                </td >
+	                            </tr>
+	                        </tbody>
+	                    </table> 
+				</fieldset>
+
+                <fieldset ng-show="showNativeForm">
+                        @components.formElements.textinput(creativeForm("native_title"), '_label ->"Title (< 30 chars) *")
+                        @components.formElements.textinput(creativeForm("native_desc"), '_label ->"Description (< 100 chars) *")
+                        @components.formElements.selectlist2(creativeForm("native_rating"), "Rating",services.MetadataAPI.noYesOptions() )
+                        @components.formElements.textinput(creativeForm("native_cta"), '_label ->"Call To Action (< 30 chars)")
+                        @components.formElements.textinput(creativeForm("native_download_count"), '_label ->"Download Count (Integer)")
+                        @components.formElements.textinput(creativeForm("native_active_players"), '_label ->"Active Player Count (Integer)")
+                        @components.formElements.hiddenfield(creativeForm("native_icons"), "native_icons", true)
+                        @components.formElements.hiddenfield(creativeForm("native_screenshots"), "native_screenshots", true)
+                         
+                        <button type="button" class="btn btn-success" ng-click="openNativeiconForm()">
+                            <i class="fa fa-upload">Upload Icons</i>
+                        </button>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th width="30%">Thumbnail</th>
+                                    <th width="30%">Slot</th> 
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="nativeicon in nativeicons">
+                                    <td><div><img ng-src="{{nativeicon.bannerThumbUrl}}" class="img-thumbnail"></img></div></td>
+                                    <td><span tooltip-placement="top" tooltip="{{nativeicon.slotDescription}}" tooltip-append-to-body="true"><b>{{nativeicon.slotName}}</b></span></select></td>
+                                    <td nowrap>
+                                        <button type="button" class="btn btn-danger btn-xs" ng-click="removeNativeicons(nativeicon)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td >
+                                </tr>
+                            </tbody>
+                        </table> 
+                        <button type="button" class="btn btn-success" ng-click="openNativescreenshotForm()">
+                            <i class="fa fa-upload">Upload Screenshots</i>
+                        </button>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th width="30%">Thumbnail</th>
+                                    <th width="30%">Slot</th> 
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="nativescreenshot in nativescreenshots">
+                                    <td><div><img ng-src="{{nativescreenshot.bannerThumbUrl}}" class="img-thumbnail"></img></div></td>
+                                    <td><span tooltip-placement="top" tooltip="{{nativescreenshot.slotDescription}}" tooltip-append-to-body="true"><b>{{nativescreenshot.slotName}}</b></span></select></td>
+                                    <td nowrap>
+                                        <button type="button" class="btn btn-danger btn-xs" ng-click="removeNativescreenshots(nativescreenshot)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td >
+                                </tr>
+                            </tbody>
+                        </table> 
+                </fieldset>
+                <fieldset ng-show="showVideoForm">
+                        @components.formElements.selectlist2(creativeForm("videoDemandType"), "VideoDemandType",services.MetadataAPI.videoDemandType() )
+                        @components.formElements.textinput(creativeForm("vastTagUrl"), '_label ->"Vast Tag Url")
+                        @components.formElements.selectlist2(creativeForm("mime"), "Mime",services.MetadataAPI.mime() )
+                        @components.formElements.selectlist2(creativeForm("protocol"), "Protocol (2.0->2.0 Wrapper) ",services.MetadataAPI.protocol() )
+                        @components.formElements.textinput(creativeForm("duration"), '_label ->"Duration (-1 means Unknown)")
+                        @components.formElements.textinput(creativeForm("startdelay"), '_label ->"StartDelay (-11 means Unknown)")
+                        @components.formElements.textinput(creativeForm("width"), '_label ->"Width (-1 means Unknown)")
+                        @components.formElements.textinput(creativeForm("height"), '_label ->"Height (-1 means Unknown)")
+                        @components.formElements.selectlist2(creativeForm("linearity"), "Linearity",services.MetadataAPI.linearity() )
+                        @components.formElements.textinput(creativeForm("maxextended"), '_label ->"MaxExtended (0 means Unknown)")
+                        @components.formElements.textinput(creativeForm("bitrate"), '_label ->"BitRate (-1 means Unknown)")
+                        @components.formElements.selectlist2(creativeForm("boxingallowed"), "Boxing Allowed",services.MetadataAPI.boxingallowed() )
+                        @components.formElements.selectlist2(creativeForm("playbackmethod"), "Boxing Allowed",services.MetadataAPI.playbackmethod() )
+                        @components.formElements.selectlist2(creativeForm("delivery"), "Delivery",services.MetadataAPI.delivery() )
+                        @components.formElements.selectlist2(creativeForm("api"), "API",services.MetadataAPI.api() )
+                        @components.formElements.selectlist2(creativeForm("companiontype"), "CompanionType",services.MetadataAPI.companiontype() )
+                        @components.formElements.multiselectlist3(creativeForm("trackingStr"), '_label ->"Track Events" , '_row->true)
+                </fieldset>
+				
+				@components.formElements.submitbutton("save", "Save")
+				@components.formElements.submitbutton("cancel", "Cancel")
+
+			</div>
+		</section>
+	</div>
+</form>
+<script src="@routes.Assets.at("javascripts/external/misc/angular-file-upload.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model_without_all_none.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/creativeController.js")" type="text/javascript"></script>
+}

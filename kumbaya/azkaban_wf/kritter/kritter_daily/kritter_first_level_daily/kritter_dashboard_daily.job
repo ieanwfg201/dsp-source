@@ -1,0 +1,5 @@
+# kritter_dashboard_daily.job
+
+type=command
+dependencies=supply_forecasting_daily
+command=sh kritter_dashboard_daily.sh '${kritter_first_level_code_path}' '${pig_home}' "${OUTPUT}"/"${process_time_dir}" '${dashboard_output}'/'${process_time_dir}' '${process_time}' '${process_time_dir}'

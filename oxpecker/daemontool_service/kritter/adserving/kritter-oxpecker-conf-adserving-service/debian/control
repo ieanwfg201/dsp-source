@@ -1,0 +1,13 @@
+Source: kritter-oxpecker-conf-adserving-service
+Maintainer: KRITTER <contact@kritter.in>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8)
+
+Package: kritter-oxpecker-conf-adserving-service
+Architecture: any
+Depends: ${misc:Depends},
+Description: kritters oxpecker adserving conf service
+ a adserving service for adserving conf of 
+ oxpecker - a file or dir deletion tool by kritter

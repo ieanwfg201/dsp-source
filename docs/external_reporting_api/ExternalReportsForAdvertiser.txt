@@ -1,0 +1,259 @@
+1) URL
+
+http://localhost:9000/reportingapi/advertisers   
+
+2) Account Manager should be contacted to obtain the API KEY and ADVERTISER ID
+
+3) All request are made on the specified URL with post data in the form of JSON
+
+4) All request will be authenticated, Hence api_key and advertiserId should always be present in each request
+
+5) 'type' as a field should always be present as it determines the api getting used 
+
+Following are the API's available
+
+(For the purpose of explanation let api_key=17cb8c90ef0bc96d9f1f3aa581a152199f3cac31 and advertiserId=0122000b-0409-0d01-4757-91f92b000007  )
+
+a) Get Stats for a day for the account - Latency is should be expected to 30 Hours
+
+curl --header "Content-type: application/json" --request POST --data '{ "advertiserId": "0122000b-0409-0d01-4757-91f92b000007", "api_key": "17cb8c90ef0bc96d9f1f3aa581a152199f3cac31", "type" : "account_stat", "start_date": "2014-01-18 00:00:00", "end_date": "2014-09-10 23:59:59"}' http://localhost:9000/reportingapi/advertisers 
+
+######################################### INPUT #########################################
+{
+    "advertiserId": "0122000b-0409-0d01-4757-91f92b000007",
+    "api_key": "17cb8c90ef0bc96d9f1f3aa581a152199f3cac31",
+    "type": "account_stat",
+    "start_date": "2014-01-18 00:00:00",
+    "end_date": "2014-09-10 23:59:59"
+}
+######################################### OUTPUT #########################################
+{
+    "data": [
+        {
+            "adv_name": "testadv21jul",
+            "total_impression_name": 21393,
+            "total_click_name": 67,
+            "conversion_name": 67,
+            "demandCharges_name": 0.8040000000000005,
+            "ctr_name": 0.3132,
+            "ecpm_name": 0.03758238676202498,
+            "eCPC_name": 0.012000000000000007,
+            "clicksr_name": 100
+        }
+    ],
+    "column": [
+        {
+            "title": "Advertiser",
+            "field": "adv_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL IMPRESSION",
+            "field": "total_impression_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL CLICK",
+            "field": "total_click_name",
+            "visible": true
+        },
+        {
+            "title": "Conversions",
+            "field": "conversion_name",
+            "visible": true
+        },
+        {
+            "title": "Revenue",
+            "field": "demandCharges_name",
+            "visible": true
+        },
+        {
+            "title": "CTR (%)",
+            "field": "ctr_name",
+            "visible": true
+        },
+        {
+            "title": "ECPM",
+            "field": "ecpm_name",
+            "visible": true
+        },
+        {
+            "title": "eCPC",
+            "field": "eCPC_name",
+            "visible": true
+        },
+        {
+            "title": "clicksr",
+            "field": "clicksr_name",
+            "visible": true
+        }
+    ],
+    "count": 1
+}
+
+b) Get Stats for a day for the account+campaign - Latency is should be expected to 30 Hours
+
+curl --header "Content-type: application/json" --request POST --data '{ "advertiserId": "0122000b-0409-0d01-4757-91f92b000007", "api_key": "17cb8c90ef0bc96d9f1f3aa581a152199f3cac31", "type" : "campaign_stat", "start_date": "2014-01-18 00:00:00", "end_date": "2014-09-10 23:59:59"}' http://localhost:9000/reportingapi/advertisers
+
+######################################### INPUT #########################################
+{
+    "advertiserId": "0122000b-0409-0d01-4757-91f92b000007",
+    "api_key": "17cb8c90ef0bc96d9f1f3aa581a152199f3cac31",
+    "type": "campaign_stat",
+    "start_date": "2014-01-18 00:00:00",
+    "end_date": "2014-09-10 23:59:59"
+}
+######################################### OUTPUT #########################################
+{
+    "data": [
+        {
+            "adv_name": "testadv21jul",
+            "campaign_name": "testcampaign1",
+            "total_impression_name": 21393,
+            "total_click_name": 67,
+            "conversion_name": 67,
+            "demandCharges_name": 0.8040000000000005,
+            "ctr_name": 0.3132,
+            "ecpm_name": 0.03758238676202498,
+            "eCPC_name": 0.012000000000000007,
+            "clicksr_name": 100
+        }
+    ],
+    "column": [
+        {
+            "title": "Advertiser",
+            "field": "adv_name",
+            "visible": true
+        },
+        {
+            "title": "CAMPAIGN NAME",
+            "field": "campaign_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL IMPRESSION",
+            "field": "total_impression_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL CLICK",
+            "field": "total_click_name",
+            "visible": true
+        },
+        {
+            "title": "Conversions",
+            "field": "conversion_name",
+            "visible": true
+        },
+        {
+            "title": "Revenue",
+            "field": "demandCharges_name",
+            "visible": true
+        },
+        {
+            "title": "CTR (%)",
+            "field": "ctr_name",
+            "visible": true
+        },
+        {
+            "title": "ECPM",
+            "field": "ecpm_name",
+            "visible": true
+        },
+        {
+            "title": "eCPC",
+            "field": "eCPC_name",
+            "visible": true
+        },
+        {
+            "title": "clicksr",
+            "field": "clicksr_name",
+            "visible": true
+        }
+    ],
+    "count": 1
+}
+
+c) Get Stats for a day for the account+ad - Latency is should be expected to 30 Hours
+
+curl --header "Content-type: application/json" --request POST --data '{ "advertiserId": "0122000b-0409-0d01-4757-91f92b000007", "api_key": "17cb8c90ef0bc96d9f1f3aa581a152199f3cac31", "type" : "ad_stat", "start_date": "2014-01-18 00:00:00", "end_date": "2014-09-10 23:59:59"}' http://localhost:9000/reportingapi/advertisers 
+
+######################################### INPUT #########################################
+{
+    "advertiserId": "0122000b-0409-0d01-4757-91f92b000007",
+    "api_key": "17cb8c90ef0bc96d9f1f3aa581a152199f3cac31",
+    "type": "ad_stat",
+    "start_date": "2014-01-18 00:00:00",
+    "end_date": "2014-09-10 23:59:59"
+}
+
+######################################### OUTPUT #########################################
+{
+    "data": [
+        {
+            "adv_name": "testadv21jul",
+            "ad_name": "testIndiaAd",
+            "total_impression_name": 21393,
+            "total_click_name": 67,
+            "conversion_name": 67,
+            "demandCharges_name": 0.8040000000000005,
+            "ctr_name": 0.3132,
+            "ecpm_name": 0.03758238676202498,
+            "eCPC_name": 0.012000000000000007,
+            "clicksr_name": 100
+        }
+    ],
+    "column": [
+        {
+            "title": "Advertiser",
+            "field": "adv_name",
+            "visible": true
+        },
+        {
+            "title": "AD NAME",
+            "field": "ad_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL IMPRESSION",
+            "field": "total_impression_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL CLICK",
+            "field": "total_click_name",
+            "visible": true
+        },
+        {
+            "title": "Conversions",
+            "field": "conversion_name",
+            "visible": true
+        },
+        {
+            "title": "Revenue",
+            "field": "demandCharges_name",
+            "visible": true
+        },
+        {
+            "title": "CTR (%)",
+            "field": "ctr_name",
+            "visible": true
+        },
+        {
+            "title": "ECPM",
+            "field": "ecpm_name",
+            "visible": true
+        },
+        {
+            "title": "eCPC",
+            "field": "eCPC_name",
+            "visible": true
+        },
+        {
+            "title": "clicksr",
+            "field": "clicksr_name",
+            "visible": true
+        }
+    ],
+    "count": 1
+}

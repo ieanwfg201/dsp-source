@@ -1,0 +1,1 @@
+timecampiagnIdadIdsupply_source_typeselectedSiteCategoryIdcountryIdcountryCarrierIdcountryRegionIddeviceManufacturerIddeviceOsIdexchangeIdtotal_requesttotal_impressiontotal_bidValuetotal_clicktotal_csctotal_wintotal_win_amount

@@ -1,0 +1,5 @@
+# kritter_fraud_daily.job
+
+type=command
+dependencies=kritter_dashboard_upload
+command=sh kritter_fraud_daily.sh '${kritter_first_level_code_path}' '${pig_home}' "${fraud_input}"/"${process_time_dir}" '${fraud_output}'/'${process_time_dir}' '${rolluptype}' '${process_time}' '${process_time_dir}'

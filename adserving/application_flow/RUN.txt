@@ -1,0 +1,11 @@
+use data_model/sql/consolidated first, then run handset_data_populator as described (takes 15 mins), the use data_model/sql/examples/sample_queries.sql file
+to load some test data.
+
+then use.
+
+wget "http://localhost:8080/adserving?ua=Apple-iPhone/501.347&site-id=test_site_guid" --header='KRITTER_INVENTORY_SRC:2' --header='REMOTE_ADDR: 117.97.87.6' -O 1
+
+For adx enricher and request response creator many caches are required, which would work by importing sql data from:
+
+  1. ex_int/adx/reader/resources/sql/*.sql
+  2. ex_int/adx/reader/resources/sql/meta_7-01-2014/*.sql

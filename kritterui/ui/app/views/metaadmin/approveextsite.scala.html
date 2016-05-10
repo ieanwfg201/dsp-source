@@ -1,0 +1,83 @@
+@(status:String, extSiteFormEntity: Form[models.entities.ext_site.ExtSiteFormEntity])
+@main("Ext Site Queue"){
+
+@components.containers.panel("Ext Site Queue"){
+<div ng-controller="extsiteApprovalController">
+     <form id="extSiteForm" action="/operations/extsite-approval-queue/@status" method="GET"">
+       @components.formElements.selectlist2(extSiteFormEntity("exchange"), "Exchange *", services.MetadataAPI.activeExchangeListWithId())
+       @components.formElements.selectlist2(extSiteFormEntity("osId"), "Os *", services.TPMetadataAPI.osSelectListOption())
+       @components.formElements.submitbutton("change", "Change Exchange/Os")
+    </form>
+    
+    <div class="btn-group pull-right">
+                     <button class="btn btn-success  active" ng-click="updateMultipleextSite('APPROVE')">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true">Approve Multiple Ext Site
+                     </button>
+                     <button class="btn btn-danger  active" ng-click="updateMultipleextSite('REJECT')">
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"> Reject Multiple Ext Site
+                     </button>  
+        </div>  
+    <div infinite-scroll='nextPage()' infinite-scroll-disabled='extsiteListData.isLoading' infinite-scroll-distance='1'>
+            <table tr-ng-grid="" class="table-condensed" items="extsiteListData.filteredData"   
+                                selected-items="extsiteListData.selections" 
+                                fields="['select', 'id', 'siteInc',  'req', 'extSupplyId',   'extSupplyName', 'extSupplyDomain', 'extSupplyUrl','osId', 'lastModified', 'action']" 
+                                selection-mode="MultiRow"
+                                enable-filtering="extsiteListData.enableFilter"
+                                enable-sorting="extsiteListData.enableSorting" 
+                                order-by="extsiteListData.orderBy"
+                                order-by-reverse="extsiteListData.orderByReverse" 
+                                page-items="extsiteListData.itemsPerPage"  
+                                total-items="extsiteListData.totalItems"
+                                current-page="extsiteListData.currentPage" 
+                                on-data-required="extsiteListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+         
+                <thead>
+                    <tr>
+                        <th field-name="select" display-align="center" cell-width="2em">
+                                    <div class="tr-ng-title">&nbsp;</div>
+                        </th>
+                        <th field-name="id" display-name="Internal Id" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="siteInc" display-name="Site Id" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="req" display-name="Requests" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="extSupplyId" display-name="Ext Id" enable-sorting="true"  enable-filtering="true">  </th> 
+                        <th field-name="extSupplyName" display-name="Ext Name" enable-sorting="true"  enable-filtering="true">  </th>
+                        <th field-name="extSupplyDomain" display-name="Ext Domain" enable-sorting="true"  enable-filtering="true">  </th>
+                        <th field-name="extSupplyUrl" display-name="Ext Url" enable-sorting="true"  enable-filtering="true">  </th>
+                        <th field-name="osId" display-name="Os Id" enable-sorting="true"  enable-filtering="true">  </th>
+                        <th field-name="lastModified" display-name="Date" enable-sorting="true"  enable-filtering="true" >  </th>
+                        <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+                    </tr>  
+                </thead> 
+                <tbody>
+                    <tr>
+                        <td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="extsiteListData.isItemChecked(gridItem)" ></td>
+                        <td field-name="siteInc"> <div class="trnggridcelltextselect">{{gridItem.siteInc}}</div></td>
+                        <td field-name="req"> <div class="trnggridcelltextselect">{{gridItem.req}}</div></td>
+                        <td field-name="extSupplyId"> <div class="trnggridcelltextselect">{{gridItem.extSupplyId}}</div></td>
+                        <td field-name="extSupplyName"> <div class="trnggridcelltextselect">{{gridItem.extSupplyName}}</div></td>
+                        <td field-name="extSupplyDomain"> <div class="trnggridcelltextselect">{{gridItem.extSupplyDomain}}</div></td>
+                        <td field-name="extSupplyUrl"> <div class="trnggridcelltextselect">{{gridItem.extSupplyUrl}}</div></td>
+                        <td field-name="osId"> <div class="trnggridcelltextselect">{{gridItem.osId}}</div></td>
+                        <td field-name="lastModified"> <div class="trnggridcelltextselect">{{gridItem.lastModified}}</div></td> 
+                        <td field-name="action" > 
+                             <button class="btn btn-default" ng-click="updateextSite( gridItem.id  , 'approve')" 
+                                                data-toggle="tooltip" data-placement="top" title="Approve Ext Site">
+                                    <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+                             </button>
+                             <button class="btn btn-default" ng-click="updateextSite(gridItem.id,'reject')" 
+                                                                                data-toggle="tooltip" data-placement="top" title="Reject Ext Site">
+                                <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+                             </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table> 
+        </div>
+</div>
+
+}
+
+
+
+<script src="@routes.Assets.at("javascripts/apps/metaadmin/extsiteApprovalController.js")" type="text/javascript"></script>
+}

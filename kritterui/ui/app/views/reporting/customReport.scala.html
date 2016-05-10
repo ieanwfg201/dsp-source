@@ -1,0 +1,24 @@
+@main("Kritter- Custom Reports") {
+<div class="page page-dashboard" data-ng-controller="reportController">
+
+	<div class="col-md-9">
+		@components.containers.panel("Custom Report"){
+		@components.formElements.radioButtonGroup("Demand","demand.options","demand.selections") 
+		@components.formElements.checkBoxGroup("Demand","demand.options","demand.selections")
+		@components.formElements.checkBoxGroup("Supply","supply.options","supply.selections")
+		@components.formElements.checkBoxGroup("Network Slicer","networkSlicer.options","networkSlicer.selections")
+		@components.formElements.checkBoxGroup("Metrics","metrics.options","metrics.selections")
+		@components.formElements.checkBoxGroup("Derived Values","derivedValues.options","derivedValues.selections")
+		<div class="row">
+		@components.formElements.submitbutton("submit", "Submit")
+		@components.formElements.submitbutton("submit_save", "Submit & Save") 
+		</div>
+		}
+		
+	</div>
+	<div class="col-md-3">
+	 
+	</div>
+</div>
+<script src="@routes.Assets.at("javascripts/apps/reportController.js")" type="text/javascript"></script>
+}

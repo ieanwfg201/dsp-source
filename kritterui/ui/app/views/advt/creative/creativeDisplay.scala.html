@@ -1,0 +1,63 @@
+@(creativeDisplay:models.advertiser.CreativeDisplayFull)
+ 
+ <div ng-controller="creativeDisplayController">
+@components.fielddisplays.textdisplay("Creative Name", creativeDisplay.getName())
+@components.fielddisplays.textdisplay("Creative Status", creativeDisplay.getStatus())
+@components.fielddisplays.textdisplay("Creative Format", creativeDisplay.getFormat())
+
+@components.fielddisplays.listdisplay("Creative Attributes", creativeDisplay.getCreativeAttrs())
+
+@if(creativeDisplay.isTextFormat()){
+	@components.fielddisplays.textdisplay("Creative Text", creativeDisplay.getText())
+}
+
+@if(creativeDisplay.isBannerFormat()){
+	@for(banner <- creativeDisplay.getBanners()){
+		@bannerDisplay(banner)
+	}	
+}
+
+@if(creativeDisplay.isRichMediaFormat()){
+        <code ng-non-bindable>  
+		@components.fielddisplays.textdisplay("Creative Text", creativeDisplay.getHtmlDisplay())
+		</code>
+		@components.fielddisplays.textdisplay("External Creative URL", creativeDisplay.getExtcreativeurl())
+}
+
+@if(creativeDisplay.isNativeFormat()){
+    @components.fielddisplays.textdisplay("Native Title", creativeDisplay.getNativeTitle())
+    @components.fielddisplays.textdisplay("Naive Description", creativeDisplay.getNativeDesc())
+    @components.fielddisplays.textdisplay("Native Rating", creativeDisplay.getNativeRating())
+    @components.fielddisplays.textdisplay("Native CTA", creativeDisplay.getNativeCta())
+    @components.fielddisplays.textdisplay("Native Download Count", creativeDisplay.getNativeDownloadcount())
+    @components.fielddisplays.textdisplay("Native Active Players", creativeDisplay.getNativeActivePlayer())
+    @components.fielddisplays.textdisplay("Native ", " *** ICONS *** ")
+    @for(nativeIcon <- creativeDisplay.getNativeIcons()){
+        @nativeIconDisplay(nativeIcon)
+    }   
+    @components.fielddisplays.textdisplay("Native ", " *** SCREENSHOTS *** ")
+    @for(nativeScreenshot <- creativeDisplay.getNativeScreenshots()){
+        @nativeScreenshotDisplay(nativeScreenshot)
+    }   
+}
+@if(creativeDisplay.isVideoFormat()){
+    @components.fielddisplays.textdisplay("Video DemandType", creativeDisplay.getVideoDemandType())
+    @components.fielddisplays.textdisplay("Video VastTagUrl", creativeDisplay.getVastTagUrl())
+    @components.fielddisplays.textdisplay("Video Mime", creativeDisplay.getMime())
+    @components.fielddisplays.intdisplay("Video Duration", creativeDisplay.getDuration())
+    @components.fielddisplays.textdisplay("Video Protocol", creativeDisplay.getProtocol())
+    @components.fielddisplays.intdisplay("Video StartDelay", creativeDisplay.getStartDelay())
+    @components.fielddisplays.intdisplay("Video Width", creativeDisplay.getWidth())
+    @components.fielddisplays.intdisplay("Video Height", creativeDisplay.getHeight())
+    @components.fielddisplays.textdisplay("Video Linearity ", creativeDisplay.getLinearity())
+    @components.fielddisplays.intdisplay("Video MaxExtended", creativeDisplay.getMaxExtended())
+    @components.fielddisplays.intdisplay("Video BitRate", creativeDisplay.getBitRate())
+    @components.fielddisplays.textdisplay("Video BoxingAllowed", creativeDisplay.getBoxingAllowed())
+    @components.fielddisplays.textdisplay("Video PlayBackMethod", creativeDisplay.getPlaybackmethod())
+    @components.fielddisplays.textdisplay("Video Delivery", creativeDisplay.getDelivery())
+    @components.fielddisplays.textdisplay("Video API", creativeDisplay.getAPI())
+    @components.fielddisplays.textdisplay("Video CompanionType", creativeDisplay.getCompanionType())
+    @components.fielddisplays.listdisplay("Video TrackingEvents", creativeDisplay.getTrackingEvents())
+}
+	 
+</div>	 

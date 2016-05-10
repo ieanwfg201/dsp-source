@@ -1,0 +1,111 @@
+@(siteForm:Form[models.entities.SiteEntity],  siteDisplay:models.publisher.SiteDisplay, show_opt_in_hygiene:String, allow_passback:String, is_native_supply:String)
+
+ 
+@main2("Add Inventory"){@navs.navpub(siteDisplay.getAccountGuid())} {@navs.breadcrumbs(siteDisplay.getBreadCrumbPaths())}{ 
+	@components.containers.panel("Add New Site"){
+		<form id="accountForm" action="/site/save" method="POST" ng-controller="siteController">	
+			@components.formElements.hiddenfield(siteForm("destination"))
+			@components.formElements.hiddenfield(siteForm("guid"), "guid", true)
+			@components.formElements.hiddenfield(siteForm("id"), "id", true)
+			
+			@components.formElements.textinput(siteForm("name"), '_label ->"Name *", '_help -> "*")
+			
+			@components.formElements.hiddenfield(siteForm("pub_guid"), "pub_guid", true)
+			@components.formElements.hiddenfield(siteForm("pub_id"), "pub_id", true)
+			
+			<fieldset>
+				<legend>Inventory Platform</legend>
+				@components.formElements.selectlist2(siteForm("site_platform_id"), "Site Platform *", 
+							services.MetadataAPI.sitePlatforms(), 
+							'_ngSync ->true, 
+							'_ngChange ->"updateSitePlatform()")
+				
+				<div ng-show="showWapForm" ng-if="showWapForm">
+				@components.formElements.textinput(siteForm("site_url"), '_label ->"Site Url")
+				</div>
+				
+				<div ng-show="showAppForm" ng-if="showAppForm">
+				@components.formElements.textinput(siteForm("app_id"), '_label ->"App Id")
+				@components.formElements.selectlist2(siteForm( "app_store_id"), "App Store Id", services.MetadataAPI.appStores())
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Inventory Attributes</legend>
+				  
+				@components.formElements.multiselectlist3(siteForm("categories_tier_1_list"), '_label ->"Inventory Tier 1 Categories *", '_row->true)
+				@components.formElements.multiselectlist3(siteForm("categories_tier_2_list"), '_label ->"Inventory Tier 2 Categories *", '_row->true)
+				
+               
+				<!--   @components.formElements.multiselectlist2(siteForm("hygiene_list"), "siteHygieneList", "hygieneOptions",  '_label ->"Inventory Hygiene *") -->
+				@components.formElements.selectlist2(siteForm("hygiene_list"), "Inventory Hygiene *", services.MetadataAPI.hygieneListOption())
+				
+				
+			</fieldset>
+			@if("true" == is_native_supply){
+                <fieldset>
+                    <legend>Native Attributes</legend>
+                    @components.formElements.selectlist2(siteForm("is_native"), "Is Native", services.MetadataAPI.noYesOptions(), '_ngSync->true)
+                    <div id="nativefieldid" ng-show="is_native=='true'" ng-if="is_native=='true'">
+                        @components.formElements.selectlist2(siteForm("native_layout"), "Is Native", services.MetadataAPI.native_layout())
+                        @components.formElements.textinput(siteForm("native_title_keyname"), '_label ->"Title Key Name" )
+                        @components.formElements.textinput(siteForm("native_title_maxchars"), '_label ->"Title Max Chars( < 30)" )
+                        @components.formElements.textinput(siteForm("native_screenshot_keyname"), '_label ->"ScreenShot Key Name" )
+                        @components.formElements.selectlist2(siteForm("native_screenshot_imagesize"), "ScreenShot Image size",services.MetadataAPI.native_screenshot_image_size() )
+                        @components.formElements.textinput(siteForm("native_landingurl_keyname"), '_label ->"Landing Url Key Name" )
+                        @components.formElements.textinput(siteForm("native_call_to_action_keyname"), '_label ->"Call To Action Key Name" )
+                        @components.formElements.textinput(siteForm("native_icon_keyname"), '_label ->"Icon Key Name" )
+                        @components.formElements.selectlist2(siteForm("native_icon_imagesize"), "Icon Image size",services.MetadataAPI.native_icon_image_size() )
+                        @components.formElements.textinput(siteForm("native_description_keyname"), '_label ->"Description Key Name" )
+                        @components.formElements.textinput(siteForm("native_description_maxchars"), '_label ->"Description Max Chars (< 100)" )
+                        @components.formElements.textinput(siteForm("native_rating_count_keyname"), '_label ->"Rating Count Key Name" )
+                    </div>
+                    
+                </fieldset>
+            }
+			<fieldset>
+			<legend>Ad Preferences</legend>
+			    @components.formElements.selectlist2(siteForm("is_richmedia_allowed"), "Allow RichMedia", services.MetadataAPI.yesNoOptions())
+				@components.formElements.selectlist2(siteForm("is_category_list_excluded"), "Category List Type", services.MetadataAPI.listTypeOptions())
+				@components.formElements.multiselectlist3(siteForm("category_list_inc_exc_tier_1"), '_label -> "Allowed Tier 1 Categories", '_row->true) 
+                @components.formElements.multiselectlist3(siteForm("category_list_inc_exc_tier_2"), '_label -> "Allowed Tier 2 Categories", '_row->true )
+				
+				
+			 	@if("true" == show_opt_in_hygiene){			
+				    @components.formElements.multiselectlist3(siteForm("opt_in_hygiene_list"), '_label -> "Opt In Hygiene", '_row->true) 
+				}
+				
+				@components.formElements.selectlist2(siteForm("is_creative_attr_exc"), "Creative Attribute List Type", services.MetadataAPI.listTypeOptions()) 
+				@components.formElements.multiselectlist3(siteForm("creative_attr_inc_exc"), '_label -> "Allowed Creative Attributes", '_row->true)
+				
+				@components.formElements.textarea(siteForm("url_exclusion_input"), "Advertiser URL Exclusion" , true)
+				@components.formElements.hiddenfield(siteForm("url_exclusion"),"url_exclusion", true)
+				
+				@components.formElements.selectlist2(siteForm("is_advertiser_excluded"), "Advertiser - Campaign Inc/Exc", services.MetadataAPI.listTypeOptions())
+                @components.formElements.multiselectlist3(siteForm("advertiser_json_array"), '_label ->"Advertiser Inc/Exc", '_row->true)
+                @components.formElements.multiselectlist3(siteForm("campaign_json_array"), '_label ->"Campaign Inc/Exc", '_row->true) 
+                     
+                
+				<!-- @components.formElements.selectlist2(siteForm("allow_house_ads"), "Allow House Ads", services.MetadataAPI.yesNoOptions())  -->
+			</fieldset>
+			
+            @if("true" == allow_passback){         
+            <fieldset>
+            <legend>PassBack</legend>
+                @components.formElements.selectlist2(siteForm("passback_type"), "Passback Type", services.MetadataAPI.passback_type())
+                @components.formElements.selectlist2(siteForm("passback_content_type"), "Passback Content Type", services.MetadataAPI.passback_content_type())
+                @components.formElements.textinput(siteForm("nofill_backup_content"), '_label ->"PassBack Content")
+            </fieldset>
+            }
+            @components.formElements.textinput(siteForm("billing_rules_json"), '_label ->"Payout Percentage")
+			@components.formElements.textinput(siteForm("floor"), '_label ->"ECPM Floor")
+		
+			
+			
+			@components.formElements.submitbutton("save", "Save")
+			@components.formElements.submitbutton("cancel", "Cancel")
+		</form>
+	} 
+	<script src="@routes.Assets.at("javascripts/apps/multi_select_model_without_all.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/apps/siteController.js")" type="text/javascript"></script>
+}

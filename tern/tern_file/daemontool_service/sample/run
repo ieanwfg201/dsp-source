@@ -1,0 +1,14 @@
+#!/bin/sh
+
+exec 2>&1
+
+DAEMON=/usr/share/kritter/tern_file/bin/tern_file.py
+CONF=/usr/share/kritter/tern_file/conf/sample/
+
+SLEEP=`perl -e "print int(rand(10))"`
+
+echo "Starting in $SLEEP seconds..."
+sleep $SLEEP
+
+
+python ${DAEMON} ${CONF}

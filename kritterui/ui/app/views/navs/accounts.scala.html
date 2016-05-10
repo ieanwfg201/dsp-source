@@ -1,0 +1,18 @@
+@import play.libs._
+@import com.kritter.constants.StatusIdEnum
+
+<li><a href="#accounts"><i class="fa fa-magic"><span
+			class="icon-bg bg-orange"></span></i><span data-i18n="Account"></span></a>
+	<ul>
+		<li><a href="@{routes.AccountsController.add("directadvertiser")}"><i
+				class="fa fa-caret-right"></i><span data-i18n="Add Advertiser"></span></a></li>
+		<li><a href="@{routes.AccountsController.accountListView("directadvertiser", Scala.Option(StatusIdEnum.Active.getName()))}"><i
+				class="fa fa-caret-right"></i><span data-i18n="Active Advertisers"></span></a></li>
+					
+		<li><a href="@{routes.AccountsController.add("directpublisher")}"><i
+				class="fa fa-caret-right"></i><span data-i18n="Add Publisher"></span></a></li>
+
+		<li><a href="@{routes.AccountsController.accountListView("directpublisher", Scala.Option(StatusIdEnum.Active.getName()))}"><i
+				class="fa fa-caret-right"></i><span data-i18n="Active Publishers"></span></a></li>
+	</ul>
+</li>

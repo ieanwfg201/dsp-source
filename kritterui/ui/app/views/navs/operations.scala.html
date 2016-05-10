@@ -1,0 +1,37 @@
+@import play.libs._
+@import com.kritter.constants.StatusIdEnum
+
+<li class="open"><a href="#operations"><i class="fa fa-pencil"><span
+			class="icon-bg bg-warning"></span></i><span data-i18n="Operations"></span></a>
+	<ul>
+		<li><a href="@{controllers.routes.OperationsController.siteApprovalQueue()}"><i
+				class="fa fa-caret-right"></i><span data-i18n="Site Approval Queue"></span></a></li>
+		<li><a href="@{controllers.routes.OperationsController.adApprovalQueue()}"><i
+				class="fa fa-caret-right"></i><span data-i18n="Ad Approval Queue"></span></a></li>
+        <li><a href="@{controllers.routes.OperationsController.creativeApprovalQueue()}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Creative Approval Queue"></span></a></li>
+		
+        <li><a href="@{routes.AccountsController.accountListView("directadvertiser", Scala.Option(StatusIdEnum.Pending.getName()))}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Pending Advertisers"></span></a></li>
+        <li><a href="@{routes.AccountsController.accountListView("directpublisher", Scala.Option(StatusIdEnum.Pending.getName()))}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Pending Publishers"></span></a></li>
+				
+		<li><a href="@{controllers.routes.OperationsController.rejectedSites()}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Rejected Sites"></span></a></li>               
+
+        <li><a href="@{controllers.routes.OperationsController.rejectedAds()}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Rejected Ads"></span></a></li>
+        <li><a href="@{controllers.routes.OperationsController.rejectedCreative()}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Rejected Creatives"></span></a></li>
+        <li><a href="@{routes.AccountsController.accountListView("directpublisher", Scala.Option(StatusIdEnum.Rejected.getName()))}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Rejected Publishers"></span></a></li>                
+        <li><a href="@{routes.AccountsController.accountListView("directadvertiser", Scala.Option(StatusIdEnum.Rejected.getName()))}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Rejected Advertisers"></span></a></li>               
+
+        <li><a href="@{controllers.routes.OperationsController.activeSites()}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Active Sites"></span></a></li>               
+        <li><a href="@{controllers.routes.OperationsController.pausedSites()}"><i
+                class="fa fa-caret-right"></i><span data-i18n="Paused Sites"></span></a></li>               
+       
+	</ul>
+</li>

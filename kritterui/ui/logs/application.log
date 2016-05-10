@@ -1,0 +1,105 @@
+2016-05-01 18:04:53,398 - [INFO] - from play in pool-4-thread-3 
+Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+2016-05-01 18:20:01,795 - [DEBUG] - from com.jolbox.bonecp.BoneCPDataSource in play-internal-execution-context-1 
+JDBC URL = jdbc:mysql://localhost/kritter?useUnicode=yes&characterEncoding=UTF-8&connectionCollation=utf8_general_ci, Username = root, partitions = 2, max (per partition) = 10, min (per partition) = 5, idle max age = 10 min, idle test period = 1 min, strategy = DEFAULT
+
+2016-05-01 18:20:03,010 - [INFO] - from play in play-internal-execution-context-1 
+database [default] connected at jdbc:mysql://localhost/kritter?useUnicode=yes&characterEncoding=UTF-8&connectionCollation=utf8_general_ci
+
+2016-05-01 18:20:03,078 - [DEBUG] - from net.sf.ehcache.config.ConfigurationFactory in play-internal-execution-context-1 
+Configuring ehcache from URL: jar:file:/home/rohan/externallibs/play/play-2.2.3/repository/local/com.typesafe.play/play-cache_2.10/2.2.3/jars/play-cache_2.10.jar!/ehcache-default.xml
+
+2016-05-01 18:20:03,078 - [DEBUG] - from net.sf.ehcache.config.ConfigurationFactory in play-internal-execution-context-1 
+Configuring ehcache from InputStream
+
+2016-05-01 18:20:03,089 - [DEBUG] - from net.sf.ehcache.config.BeanHandler in play-internal-execution-context-1 
+Ignoring ehcache attribute xmlns:xsi
+
+2016-05-01 18:20:03,089 - [DEBUG] - from net.sf.ehcache.config.BeanHandler in play-internal-execution-context-1 
+Ignoring ehcache attribute xsi:noNamespaceSchemaLocation
+
+2016-05-01 18:20:03,103 - [DEBUG] - from net.sf.ehcache.CacheManager in play-internal-execution-context-1 
+Creating new CacheManager with config URL: jar:file:/home/rohan/externallibs/play/play-2.2.3/repository/local/com.typesafe.play/play-cache_2.10/2.2.3/jars/play-cache_2.10.jar!/ehcache-default.xml
+
+2016-05-01 18:20:03,108 - [DEBUG] - from net.sf.ehcache.util.PropertyUtil in play-internal-execution-context-1 
+propertiesString is null.
+
+2016-05-01 18:20:03,117 - [DEBUG] - from net.sf.ehcache.config.ConfigurationHelper in play-internal-execution-context-1 
+No CacheManagerEventListenerFactory class specified. Skipping...
+
+2016-05-01 18:20:03,189 - [DEBUG] - from net.sf.ehcache.Cache in play-internal-execution-context-1 
+No BootstrapCacheLoaderFactory class specified. Skipping...
+
+2016-05-01 18:20:03,189 - [DEBUG] - from net.sf.ehcache.Cache in play-internal-execution-context-1 
+CacheWriter factory not configured. Skipping...
+
+2016-05-01 18:20:03,191 - [DEBUG] - from net.sf.ehcache.config.ConfigurationHelper in play-internal-execution-context-1 
+No CacheExceptionHandlerFactory class specified. Skipping...
+
+2016-05-01 18:20:03,215 - [DEBUG] - from net.sf.ehcache.store.MemoryStore in play-internal-execution-context-1 
+Initialized net.sf.ehcache.store.NotifyingMemoryStore for play
+
+2016-05-01 18:20:03,221 - [DEBUG] - from net.sf.ehcache.Cache in play-internal-execution-context-1 
+Initialised cache: play
+
+2016-05-01 18:20:03,221 - [DEBUG] - from net.sf.ehcache.config.ConfigurationHelper in play-internal-execution-context-1 
+CacheDecoratorFactory not configured for defaultCache. Skipping for 'play'.
+
+2016-05-01 18:20:03,246 - [INFO] - from application in play-internal-execution-context-1 
+[securesocial] loaded templates plugin: plugin.CustomTemplatesPlugin
+
+2016-05-01 18:20:03,614 - [INFO] - from play in play-internal-execution-context-1 
+Starting application default Akka system.
+
+2016-05-01 18:20:03,629 - [INFO] - from akka.event.slf4j.Slf4jLogger in play-akka.actor.default-dispatcher-3 
+Slf4jLogger started
+
+2016-05-01 18:20:03,635 - [DEBUG] - from application in play-akka.actor.default-dispatcher-2 
+[securesocial] calling deleteExpiredTokens()
+
+2016-05-01 18:20:03,636 - [INFO] - from application in play-internal-execution-context-1 
+[securesocial] loaded user service: class services.UserService
+
+2016-05-01 18:20:03,637 - [INFO] - from application in play-internal-execution-context-1 
+[securesocial] loaded password hasher bcrypt
+
+2016-05-01 18:20:03,639 - [INFO] - from application in play-internal-execution-context-1 
+[securesocial] loaded identity provider: userpass
+
+2016-05-01 18:20:03,645 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2016-05-01 18:20:03,906 - [DEBUG] - from application in play-akka.actor.default-dispatcher-5 
+[securesocial] anonymous user trying to access : /
+
+2016-05-01 18:20:03,926 - [DEBUG] - from application in play-akka.actor.default-dispatcher-5 
+[securesocial] bootstrap path = securesocial/bootstrap/css/bootstrap.min.css
+
+2016-05-01 18:20:03,937 - [DEBUG] - from application in play-akka.actor.default-dispatcher-5 
+[securesocial] assets controller = controllers.ReverseAssets
+
+2016-05-01 18:20:03,941 - [DEBUG] - from application in play-akka.actor.default-dispatcher-5 
+[securesocial] favicon path = securesocial/images/favicon.png
+
+2016-05-01 18:20:03,941 - [DEBUG] - from application in play-akka.actor.default-dispatcher-5 
+[securesocial] Jquery path = securesocial/javascripts/jquery-1.7.1.min.js
+
+2016-05-01 18:20:03,942 - [DEBUG] - from application in play-akka.actor.default-dispatcher-5 
+[securesocial] custom css path = None
+
+2016-05-01 18:20:11,596 - [DEBUG] - from application in play-akka.actor.default-dispatcher-4 
+[securesocial] user logged in : [SocialUser(IdentityId(testing,userpass),testing,,testing,Some(),null,AuthenticationMethod(userPassword),null,null,Some(PasswordInfo(bcrypt,$2a$10$EBR/i.8u3omtovn6G0WhX.sTtBxY6uoHLf5p7tQBP2vMxNs2GdgTG,Some($2a$10$d4UL9li69NW9bKTNpl6wru))))]
+
+2016-05-01 18:20:23,076 - [DEBUG] - from org.springframework.beans.CachedIntrospectionResults in play-akka.actor.default-dispatcher-7 
+Not strongly caching class [models.entities.reporting.ReportFormEntity] because it is not cache-safe
+
+2016-05-01 18:20:24,583 - [DEBUG] - from com.kritter.kritterui.api.reporting.ReportingCrud in play-akka.actor.default-dispatcher-7 
+select SQL_CALC_FOUND_ROWS SUM(a0.total_request) as total_request_name,SUM(a0.total_impression) as total_impression_name,100*(SUM(a0.total_impression)/SUM(a0.total_request)) as fr_name,SUM(a0.total_win) as total_win_name,(SUM(a0.total_win)/SUM(a0.total_impression))*100 as wtr_name,SUM(a0.total_bidValue) as total_bidValue_name,SUM(a0.total_win_bidValue) as total_win_bidValue_name,1000*(SUM(a0.exchangerevenue)/SUM(a0.total_win)) as eCPW_name,1000*(SUM(a0.exchangepayout)/SUM(a0.total_win)) as eIPW_name,SUM(a0.total_csc) as total_csc_name,SUM(a0.billedcsc) as billedcsc_name,(SUM(a0.total_csc)/SUM(a0.total_impression))*100 as rtr_name,SUM(a0.total_click) as total_click_name,SUM(a0.billedclicks) as billedclicks_name,(SUM(a0.total_click)/SUM(a0.total_impression))*100 as ctr_name,100*((SUM(a0.demandCharges)-SUM(a0.supplyCost))/SUM(a0.demandCharges)) as profitmargin_name,SUM(a0.conversion) as conversion_name,SUM(a0.demandCharges) as demandCharges_name,SUM(a0.networkrevenue) as networkrevenue_name,SUM(a0.exchangerevenue) as exchangerevenue_name,SUM(a0.cpa_goal) as cpagoal_name,SUM(a0.demandCharges)/SUM(a0.conversion) as eCPA_name,SUM(a0.supplyCost) as supplyCost_name,SUM(a0.networkpayout) as networkpayout_name,SUM(a0.exchangepayout) as exchangepayout_name,SUM(a0.supplyCost)/SUM(a0.total_click) as eIPC_name,1000*(SUM(a0.supplyCost)/SUM(a0.total_impression)) as eIPM_name,1000*(SUM(a0.supplyCost)/SUM(a0.billedcsc)) as billedEIPM_name,SUM(a0.supplyCost)/SUM(a0.conversion) as eIPA_name  from first_level_limited_daily as a0   where a0.impression_time>='2016-04-30 00:00:00' and a0.impression_time<='2016-04-30 23:59:00' limit 0,500
+
+2016-05-01 18:20:40,475 - [DEBUG] - from org.springframework.beans.CachedIntrospectionResults in play-akka.actor.default-dispatcher-3 
+Not strongly caching class [models.entities.reporting.ReportFormEntity] because it is not cache-safe
+
+2016-05-01 18:20:40,490 - [DEBUG] - from com.kritter.kritterui.api.reporting.ReportingCrud in play-akka.actor.default-dispatcher-3 
+select SQL_CALC_FOUND_ROWS a1.name as pubId_name,a2.name as advId_name,a3.name as site_name,SUM(a0.total_request) as total_request_name,SUM(a0.total_impression) as total_impression_name,100*(SUM(a0.total_impression)/SUM(a0.total_request)) as fr_name,SUM(a0.total_win) as total_win_name,(SUM(a0.total_win)/SUM(a0.total_impression))*100 as wtr_name,SUM(a0.total_bidValue) as total_bidValue_name,SUM(a0.total_win_bidValue) as total_win_bidValue_name,1000*(SUM(a0.exchangerevenue)/SUM(a0.total_win)) as eCPW_name,1000*(SUM(a0.exchangepayout)/SUM(a0.total_win)) as eIPW_name,SUM(a0.total_csc) as total_csc_name,SUM(a0.billedcsc) as billedcsc_name,(SUM(a0.total_csc)/SUM(a0.total_impression))*100 as rtr_name,SUM(a0.total_click) as total_click_name,SUM(a0.billedclicks) as billedclicks_name,(SUM(a0.total_click)/SUM(a0.total_impression))*100 as ctr_name,100*((SUM(a0.demandCharges)-SUM(a0.supplyCost))/SUM(a0.demandCharges)) as profitmargin_name,SUM(a0.conversion) as conversion_name,SUM(a0.demandCharges) as demandCharges_name,SUM(a0.networkrevenue) as networkrevenue_name,SUM(a0.exchangerevenue) as exchangerevenue_name,SUM(a0.cpa_goal) as cpagoal_name,SUM(a0.demandCharges)/SUM(a0.conversion) as eCPA_name,SUM(a0.supplyCost) as supplyCost_name,SUM(a0.networkpayout) as networkpayout_name,SUM(a0.exchangepayout) as exchangepayout_name,SUM(a0.supplyCost)/SUM(a0.total_click) as eIPC_name,1000*(SUM(a0.supplyCost)/SUM(a0.total_impression)) as eIPM_name,1000*(SUM(a0.supplyCost)/SUM(a0.billedcsc)) as billedEIPM_name,SUM(a0.supplyCost)/SUM(a0.conversion) as eIPA_name  from first_level_limited_daily as a0,account as a1, account as a2,site as a3  where a0.pubId IN (27) and a0.pubId = a1.id and a0.advId = a2.id and a0.siteId = a3.id  and a0.impression_time>='2016-04-30 00:00:00' and a0.impression_time<='2016-04-30 23:59:00' group by a0.pubId,a0.advId,a0.siteId limit 0,500
+

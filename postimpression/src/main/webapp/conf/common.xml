@@ -1,0 +1,431 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="db-manager" class="com.kritter.utils.databasemanager.DatabaseManager"> 
+        <constructor-arg index="0" value="jdbc/AdserverDatabase"/>
+    </bean>
+    
+    <bean id="server_config" class="com.kritter.utils.common.ServerConfig">
+        <constructor-arg index="0" value="/var/data/kritter/server.properties"/>
+    </bean>
+
+    <bean id="inhouse_click_url_reader" class="com.kritter.postimpression.urlreader.impl.ClickUrlReader">
+        <constructor-arg index="0" value="inhouse_click_url_reader"/>
+        <constructor-arg index="1"><ref bean="post_impression_utils"/></constructor-arg>
+    </bean>
+
+    <bean id="inhouse_macro_click_url_reader" class="com.kritter.postimpression.urlreader.impl.MacroClickUrlReader">
+        <constructor-arg index="0" value="inhouse_macro_click_url_reader"/>
+        <constructor-arg index="1"><ref bean="post_impression_utils"/></constructor-arg>
+    </bean>
+
+    <bean id="tracking_event_url_reader" class="com.kritter.postimpression.urlreader.impl.TrackingEventUrlReader">
+        <constructor-arg index="0" value="tracking_event_url_reader"/>
+        <constructor-arg index="1"><ref bean="post_impression_utils"/></constructor-arg>
+    </bean>
+
+    <bean id="conversion_url_reader" class="com.kritter.postimpression.urlreader.impl.ConversionUrlReader">
+        <constructor-arg index="0" value="conversion_url_reader"/>
+        <constructor-arg index="1" value="subid1"/>
+    </bean>
+
+    <bean id="cookie_based_conversion_url_reader" class="com.kritter.postimpression.urlreader.impl.CookieBasedConversionUrlReader">
+        <constructor-arg index="0" value="cookie_based_conversion_url_reader"/>
+        <constructor-arg index="1" value="k-cky-cnv"/>
+    </bean>
+
+    <bean id="csc_url_reader" class="com.kritter.postimpression.urlreader.impl.CSCUrlReader">
+        <constructor-arg index="0" value="csc_url_reader"/>
+        <constructor-arg index="1"><ref bean="post_impression_utils"/></constructor-arg>
+    </bean>
+
+    <bean id="win_notification_url_reader" class="com.kritter.postimpression.urlreader.impl.ExchangeWinNoticeUrlReader">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="win_notification_url_reader"/>
+        <constructor-arg index="2"><ref bean="post_impression_utils"/></constructor-arg>
+        <constructor-arg index="3" value="bp"/>
+        <constructor-arg index="4" value="p"/>
+        <constructor-arg index="5" value="aid"/>
+        <constructor-arg index="6" value="abid"/>
+        <constructor-arg index="7" value="aimpid"/>
+        <constructor-arg index="8">
+            <map>
+                <entry key="010a4137-6a5c-6201-4de1-e4b49d000002"><ref bean="adx_exchange_utils"/></entry> 
+                <entry key="010a4137-6a5c-6201-534f-d8218b000032"><ref bean="rubicon_exchange_utils"/></entry> 
+            </map>
+        </constructor-arg>
+        <constructor-arg index="9"><ref bean="site_cache"/></constructor-arg>
+    </bean>
+
+    <bean id="internal_exc_win_url_reader" class="com.kritter.postimpression.urlreader.impl.InternalExcWinUrlReader">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="internal_exc_win_url_reader"/>
+        <constructor-arg index="2"><ref bean="post_impression_utils"/></constructor-arg>
+        <constructor-arg index="3" value="wp"/>
+    </bean>
+
+    <bean id="billable_event_url_reader" class="com.kritter.postimpression.urlreader.impl.BillableEventUrlReader">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="billable_event_url_reader"/>
+        <constructor-arg index="2"><ref bean="post_impression_utils"/></constructor-arg>
+    </bean>
+
+    <bean id="post_impression_utils" class="com.kritter.postimpression.utils.PostImpressionUtils">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="/"/>
+        <constructor-arg index="2" value=":"/>
+        <constructor-arg index="3" value=".clk"/>
+        <constructor-arg index="4" value="event_url_not_supported"/>
+        <constructor-arg index="5" value="term"/>
+        <constructor-arg index="6" value="admin"/>
+        <constructor-arg index="7" value="kr!tt3r"/>
+        <constructor-arg index="8" value="true"/>
+    </bean>
+
+    <bean id="click_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.ClickEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="click_hash_enricher_fraud_check"/>
+                <ref bean="impression_enricher_fraud_check_for_click"/>
+                <ref bean="site_enricher_unfit_fraud_check"/>
+                <ref bean="ad_id_enricher_fraud_check"/>
+                <ref bean="handset_id_enricher_fraud_check"/>
+                <ref bean="location_id_enricher_fraud_check"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="macro_click_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.MacroClickEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="click_hash_enricher_fraud_check"/>
+                <ref bean="impression_enricher_fraud_check_for_click"/>
+                <ref bean="site_enricher_unfit_fraud_check"/>
+                <ref bean="ad_id_enricher_fraud_check"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="tracking_event_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.TrackingEventEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="click_hash_enricher_fraud_check"/>
+                <ref bean="impression_enricher_fraud_check_for_click"/>
+                <ref bean="site_enricher_unfit_fraud_check"/>
+                <ref bean="ad_id_enricher_fraud_check"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+
+    <bean id="conversion_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.ConversionEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1"><ref bean="tracking_manager"/></constructor-arg>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="site_cache"/></constructor-arg>
+        <constructor-arg index="5" value="true"/>
+        <constructor-arg index="6" value="3600000"/>
+        <constructor-arg index="7"><ref bean="conversion_event_id_storage"/></constructor-arg>
+    </bean>
+
+    <bean id="conversion_based_conversion_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.CookieBasedConversionEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1"><ref bean="tracking_manager"/></constructor-arg>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="site_cache"/></constructor-arg>
+        <constructor-arg index="5" value="true"/>
+        <constructor-arg index="6" value="3600000"/>
+        <constructor-arg index="7"><ref bean="cookie_based_conversion_event_id_storage"/></constructor-arg>
+    </bean>
+
+    <bean id="csc_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.CSCEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="click_hash_enricher_fraud_check"/>
+                <ref bean="impression_enricher_fraud_check_for_csc"/>
+                <ref bean="site_enricher_unfit_fraud_check"/>
+                <ref bean="ad_id_enricher_fraud_check"/>
+                <ref bean="handset_id_enricher_fraud_check"/>
+                <ref bean="location_id_enricher_fraud_check"/>
+            </list>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="billable_event_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.BillableEventEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="billable_event_enricher_fraud_check"/>
+                <ref bean="click_hash_enricher_fraud_check"/>
+                <ref bean="impression_enricher_fraud_check_for_csc"/>
+                <ref bean="site_enricher_unfit_fraud_check"/>
+                <ref bean="ad_id_enricher_fraud_check"/>
+                <ref bean="location_id_enricher_fraud_check"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="internal_exc_win_fraud_processor" class="com.kritter.postimpression.enricher_fraud.InternalExcWinEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="click_hash_enricher_fraud_check"/>
+                <ref bean="impression_enricher_fraud_check_for_win"/>
+                <ref bean="site_enricher_unfit_fraud_check"/>
+                <ref bean="ad_id_enricher_fraud_check"/>
+                <ref bean="handset_id_enricher_fraud_check"/>
+                <ref bean="location_id_enricher_fraud_check"/>
+            </list>
+        </constructor-arg>
+    </bean>
+    
+ 
+    <bean id="win_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.WinNotificationEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="click_hash_enricher_fraud_check"/>
+                <ref bean="impression_enricher_fraud_check_for_win"/>
+                <ref bean="site_enricher_unfit_fraud_check"/>
+                <ref bean="ad_id_enricher_fraud_check"/>
+                <ref bean="handset_id_enricher_fraud_check"/>
+                <ref bean="location_id_enricher_fraud_check"/>
+            </list>
+        </constructor-arg>
+    </bean>
+     
+    <bean id="win_api_enricher_fraud_processor" class="com.kritter.postimpression.enricher_fraud.WinApiNotificationEnricherAndFraudProcessor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="click_hash_enricher_fraud_check"/>
+                <ref bean="impression_enricher_fraud_check_for_win"/>
+                <ref bean="site_enricher_unfit_fraud_check"/>
+                <ref bean="ad_id_enricher_fraud_check"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="click_hash_enricher_fraud_check" class="com.kritter.postimpression.enricher_fraud.checker.URLParamEnricherAndFraudCheck">
+        <constructor-arg index="0" value="click_hash_enricher_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="CH-UMMA-TECH-IES-KR-I-TTER"/>
+    </bean>
+
+    <bean id="billable_event_enricher_fraud_check" class="com.kritter.postimpression.enricher_fraud.checker.BillableEventEnricherAndFraudCheck">
+        <constructor-arg index="0" value="billable_event_enricher_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+    </bean>
+
+    <bean id="site_enricher_unfit_fraud_check" class="com.kritter.postimpression.enricher_fraud.checker.SiteEnricherAndFraudCheck">
+        <constructor-arg index="0" value="site_enricher_unfit_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3"><ref bean="site_cache"/></constructor-arg>
+    </bean>
+
+    <bean id="impression_enricher_fraud_check_for_click" class="com.kritter.postimpression.enricher_fraud.checker.ImpressionIdEnricherAndFraudCheck">
+        <constructor-arg index="0" value="impression_enricher_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="10800000"/>
+        <constructor-arg index="4" value="true"/>
+        <constructor-arg index="5"><ref bean="click_event_id_storage"/></constructor-arg>
+    </bean>
+
+    <bean id="impression_enricher_fraud_check_for_csc" class="com.kritter.postimpression.enricher_fraud.checker.ImpressionIdEnricherAndFraudCheck">
+        <constructor-arg index="0" value="impression_enricher_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="10800000"/>
+        <constructor-arg index="4" value="true"/>
+        <constructor-arg index="5"><ref bean="csc_event_id_storage"/></constructor-arg>
+    </bean>
+
+    <bean id="impression_enricher_fraud_check_for_win" class="com.kritter.postimpression.enricher_fraud.checker.ImpressionIdEnricherAndFraudCheck">
+        <constructor-arg index="0" value="impression_enricher_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="10800000"/>
+        <constructor-arg index="4" value="true"/>
+        <constructor-arg index="5"><ref bean="win_event_id_storage"/></constructor-arg>
+    </bean>
+
+    <bean id="ad_id_enricher_fraud_check" class="com.kritter.postimpression.enricher_fraud.checker.AdIdEnricherAndFraudCheck">
+        <constructor-arg index="0" value="ad_id_enricher_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3"><ref bean="ad_entity_cache"/></constructor-arg>
+    </bean>
+
+    <bean id="handset_id_enricher_fraud_check" class="com.kritter.postimpression.enricher_fraud.checker.HandsetIdEnricherAndFraudCheck">
+        <constructor-arg index="0" value="handset_id_enricher_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="User-Agent"/>
+        <constructor-arg index="4"><ref bean="handset_detector"/></constructor-arg>
+        <constructor-arg index="5" value="opera mini"/>
+        <constructor-arg index="6">
+            <list>
+                 <value><![CDATA[x-operamini-phone-ua]]></value>
+                 <value><![CDATA[x-opera-mini-phone-us]]></value>
+                 <value><![CDATA[x-device-user-agent]]></value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="location_id_enricher_fraud_check" class="com.kritter.postimpression.enricher_fraud.checker.LocationEnricherAndFraudCheck">
+        <constructor-arg index="0" value="location_id_enricher_fraud_check"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="REMOTE_ADDR"/>
+        <constructor-arg index="4" value="X-Forwarded-For"/>
+        <constructor-arg index="5" value="User-Agent"/>
+        <constructor-arg index="6">
+            <list>
+                 <value><![CDATA[10.]]></value>
+                 <value><![CDATA[192.]]></value>
+                 <value><![CDATA[127.]]></value>
+                 <value><![CDATA[172.]]></value>
+                 <value><![CDATA[169.]]></value>
+                 <value><![CDATA[198.]]></value>
+                 <value><![CDATA[100.]]></value>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="7"><ref bean="country_detector"/></constructor-arg>
+        <constructor-arg index="8"><ref bean="isp_detector"/></constructor-arg>
+        <constructor-arg index="9"><ref bean="ui_country_id_cache"/></constructor-arg>
+        <constructor-arg index="10"><ref bean="ui_isp_id_cache"/></constructor-arg>
+    </bean>
+
+    <!-- Handset data populator , also required for the handset detector which is defined as a cache.-->
+    <bean id="handset_data_populator" class="com.kritter.device.populator.HandsetDataPopulator">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="500"/>
+        <constructor-arg index="2" value="/var/data/kritter/wurfl/"/>
+        <constructor-arg index="3" value="300000"/>
+        <constructor-arg index="4"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="5" value="postimpression-data-load-master-node"/>
+        <constructor-arg index="6"><ref bean="server_config"/></constructor-arg>
+    </bean>
+
+    <bean id="wurfl_files_manager" class="com.kritter.device.detector.WurflFilesManager">
+        <constructor-arg index="0" value="cache.logger"/>
+        <constructor-arg index="1" value="/var/data/kritter/wurfl/"/>
+        <constructor-arg index="2" value="900000"/>
+    </bean>
+
+    <!-- Country detector modelled as cache to reload data at configured frequency-->
+    <bean id="country_detector" class="com.kritter.geo.common.entity.reader.CountryDetectionCache">
+            <constructor-arg index="0" value="cache.logger"/>
+            <constructor-arg index="1">
+                <map>
+                    <entry key="maxmind" value="/var/data/kritter/location/country/maxmind_country.csv"/>
+                </map>
+            </constructor-arg>
+            <constructor-arg index="2">
+                <list>
+                    <value>maxmind</value>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="3" value="1800000"/>
+    </bean>
+
+    <!-- ISP detector modelled as cache to reload data at configured frequency-->
+    <bean id="isp_detector" class="com.kritter.geo.common.entity.reader.ISPDetectionCache">
+            <constructor-arg index="0" value="cache.logger"/>
+            <constructor-arg index="1">
+                <map>
+                    <entry key="maxmind" value="/var/data/kritter/location/country/maxmind_isp.csv"/>
+                </map>
+            </constructor-arg>
+            <constructor-arg index="2">
+                <list>
+                    <value>maxmind</value>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="3" value="1800000"/>
+    </bean>
+
+    <!-- data loader for geo data and specific third party data loaders-->
+    <bean id="geo_data_loader" class="com.kritter.geo.entity.populator.DataLoaderExecutor">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1">
+            <list>
+                <ref bean="maxmind_country_data_loader"/>
+                <ref bean="maxmind_isp_data_loader"/>
+                <ref bean="openrtb_country_isp_data_loader"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="2" value="postimpression-data-load-master-node"/>
+        <constructor-arg index="3"><ref bean="server_config"/></constructor-arg>
+    </bean>
+
+    <bean id="maxmind_country_data_loader" class="com.kritter.maxmind.loader.MaxMindCountryDataLoader">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="maxmind"/>
+        <constructor-arg index="2" value="3600000"/>
+        <constructor-arg index="3" value="/var/data/kritter/location/country/maxmind_country_input.csv"/>
+        <constructor-arg index="4" value="/var/data/kritter/location/country/maxmind_country.csv"/>
+        <constructor-arg index="5" value="/var/data/kritter/location/country/maxmind_country_prep.csv"/>
+        <constructor-arg index="6"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="7" value="1000"/>
+    </bean>
+
+    <bean id="maxmind_isp_data_loader" class="com.kritter.maxmind.loader.MaxMindISPDataLoader">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="maxmind"/>
+        <constructor-arg index="2" value="3600000"/>
+        <constructor-arg index="3" value="/var/data/kritter/location/country/maxmind_isp_input.csv"/>
+        <constructor-arg index="4" value="/var/data/kritter/location/country/maxmind_isp.csv"/>
+        <constructor-arg index="5" value="/var/data/kritter/location/country/maxmind_isp_prep.csv"/>
+        <constructor-arg index="6">
+            <map>
+                <entry key="maxmind" value="/var/data/kritter/location/country/maxmind_country.csv"/>
+            </map>
+        </constructor-arg>
+        <constructor-arg index="7">
+            <list>
+                <value>maxmind</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="8" value="86400000"/>
+        <constructor-arg index="9"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="10" value="1000"/>
+    </bean>
+
+    <bean id="openrtb_country_isp_data_loader" class="com.kritter.openrtb.loader.OpenRTBCountryISPDataLoader">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="openrtb"/>
+        <constructor-arg index="2" value="3600000"/>
+        <constructor-arg index="3"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="4" value="500"/>
+    </bean>
+
+    <bean id="tracking_manager" class="com.kritter.tracking.common.ThirdPartyTrackingManager">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="subid1"/>
+    </bean>
+
+    <bean id="adx_exchange_utils" class="com.google.doubleclick.AdXExchangeUtils">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1"><value><![CDATA[QvcBJ/9WwfRqGJgMrQ69xbC1d9hfh5v6bgbadRF6U5I=]]></value></constructor-arg>
+        <constructor-arg index="2"><value><![CDATA[Ohv4G5cbKiIcNREjMcfJPURgZ2glVWPgmlCprHCxSi4=]]></value></constructor-arg>
+    </bean>    
+
+    <bean id="rubicon_exchange_utils" class="com.kritter.postimpression.utils.RubiconExchangeUtils">
+        <constructor-arg index="0" value="X1ADSYYXHWTHR38Q"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,3 @@
+#DEBHELPER#
+chown -R rohan:rohan /usr/share/kritter/tern_file
+chown -R rohan:rohan /var/log/kritter/tern_file

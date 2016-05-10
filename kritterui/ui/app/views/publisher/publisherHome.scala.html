@@ -1,0 +1,59 @@
+@(display:models.accounts.displays.PublisherDisplay)
+@main2("Publisher Home"){@navs.navpub(display.getAccountGuid())}{@navs.breadcrumbs(display.getBreadCrumbPaths())}{
+
+@components.containers.panel("Sites"){
+<div class="well" ng-controller="publisherController">
+
+	<div class="btn-group">
+		 <a href="@{ display.addSiteUrl()}" class="btn btn-primary   active" role="button">Create New Site</a> 	
+	</div>
+
+		<div infinite-scroll='nextPage()' infinite-scroll-disabled='siteListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="siteListData.filteredData"   
+			 					selected-items="siteListData.selections" 
+			 					fields="['name', 'status',  'createdOn',  'action']" 
+			 					selection-mode="SingleRow"
+			 					enable-filtering="siteListData.enableFilter"
+			 					enable-sorting="siteListData.enableSorting" 
+			 					order-by="siteListData.orderBy"
+			 					order-by-reverse="siteListData.orderByReverse" 
+			 					page-items="siteListData.itemsPerPage"  
+			 					total-items="siteListData.totalItems"
+			 					current-page="siteListData.currentPage" 
+			 					on-data-required="siteListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+			            <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="status" display-name="Status" enable-sorting="true"  enable-filtering="true">  </th> 
+			            <th field-name="created" display-name="Created" enable-sorting="true"  enable-filtering="false">  </th>
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr> 
+		    			<td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td> 
+			            <td field-name="action" > 
+                            <a href="{{gridItem.statUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Stats">
+                                <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                            </a>
+			                <a href="{{gridItem.editUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Edit Site">
+			                	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							</a>
+							<a href="{{gridItem.viewUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="View Site">
+			                	<i class="fa fa-eye"></i>
+							</a> 
+			            </td>
+			        </tr>
+			    </tbody>
+			</table> 
+		</div> 
+	
+ </div>
+
+}
+
+
+
+<script src="@routes.Assets.at("javascripts/apps/publisherController.js")" type="text/javascript"></script>
+}

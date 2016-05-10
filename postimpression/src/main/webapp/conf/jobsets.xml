@@ -1,0 +1,31 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="initJobset" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="postimpression-init-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="initTransitionRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="initJob"/>
+                <ref bean="eventUrlProcessorJob"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="finalJobset" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="postimpression-final-jobset"></constructor-arg>
+        <constructor-arg>
+            <null/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="thriftLoggerJob"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>

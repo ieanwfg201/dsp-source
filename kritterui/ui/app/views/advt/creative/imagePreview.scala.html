@@ -1,0 +1,14 @@
+@(id:String, thumbUri:String, imageUri:String, name:String )
+
+<a class="btn btn-primary btn-lg" ng-click="previewBanner('@{"#banner_"+id+".html"}')">
+  <img src="@thumbUri">
+</a>
+ 
+<script type="text/ng-template" id="@{"#banner_"+id+".html"}">
+        <div class="modal-header">
+            <h3 class="modal-title">I'm a modal!</h3>
+        </div>
+        <div class="modal-body">
+       		<img src="@imageUri">
+      	</div> 
+</script>

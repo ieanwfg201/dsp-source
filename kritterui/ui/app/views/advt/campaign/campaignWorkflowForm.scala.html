@@ -1,0 +1,18 @@
+@(campaignForm: Form[com.kritter.api.entity.campaign.Campaign], action:String)
+<div class="modal-header">
+	<h3 class="modal-title">@("Update Site")</h3>
+</div>
+<div class="modal-body">
+	<form id="campaignWorkflowForm" action="/campaign/update" method="POST"> 
+		@components.formElements.hiddenfield(campaignForm("formid"))
+		@if(action=="reject"){
+		 	@components.formElements.textarea(campaignForm("comment"), "Comment")
+		} 
+		@components.formElements.hiddenfield(campaignForm("action"))
+	</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button("Update", "ok()")
+	@components.formElements.button("Cancel", "cancel()")
+</div>
+

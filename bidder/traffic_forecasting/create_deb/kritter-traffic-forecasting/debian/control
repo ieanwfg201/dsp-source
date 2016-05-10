@@ -1,0 +1,12 @@
+Source: kritter-traffic-forecasting
+Maintainer: KRITTER <contact@kritter.in>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8)
+
+Package: kritter-traffic-forecasting
+Architecture: any
+Depends: ${misc:Depends}, python, python-dev
+Description: kritters traffic_forecasting
+ traffic_forecasting a traffic forecasting utility by kritter

@@ -1,0 +1,349 @@
+1) URL
+
+http://localhost:9000/reportingapi/publishers
+
+2) Account Manager should be contacted to obtain the API KEY and PUBLISHER ID
+
+3) All request are made on the specified URL with post data in the form of JSON
+
+4) All request will be authenticated, Hence api_key and publisherId should always be present in each request
+
+5) 'type' as a field should always be present as it determines the api getting used 
+
+Following are the API's available
+
+(For the purpose of explanation let api_key=ebcd0ef25027f95d73f3f051e8b42bb5d32b4b3b and publisherId=0122000b-0409-0d01-4757-901e0e000005  )
+
+a) Get Stats for a day for the account - Latency is should be expected to 30 Hours
+
+curl --header "Content-type: application/json" --request POST --data '{ "publisherId": "0122000b-0409-0d01-4757-901e0e000005", "api_key": "ebcd0ef25027f95d73f3f051e8b42bb5d32b4b3b", "type" : "account_stat", "start_date": "2014-01-18 00:00:00", "end_date": "2014-09-10 23:59:59"}' http://localhost:9000/reportingapi/publishers
+
+######### INPUT #########
+{
+    "publisherId": "0122000b-0409-0d01-4757-901e0e000005",
+    "api_key": "ebcd0ef25027f95d73f3f051e8b42bb5d32b4b3b",
+    "type": "account_stat",
+    "start_date": "2014-01-18 00:00:00",
+    "end_date": "2014-09-10 23:59:59"
+}
+######### OUTPUT #########
+{
+    "data": [
+        {
+            "pub_name": "testpub21jul",
+            "total_request_name": 21393,
+            "total_impression_name": 21393,
+            "total_click_name": 67,
+            "supplyCost_name": 0.06700000000000005,
+            "ctr_name": 0.3132,
+            "eIPM_name": 0.0031318655635020824,
+            "fr_name": 1,
+            "eIPC_name": 0.0010000000000000007
+        }
+    ],
+    "column": [
+        {
+            "title": "Publisher",
+            "field": "pub_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL REQUEST",
+            "field": "total_request_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL IMPRESSION",
+            "field": "total_impression_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL CLICK",
+            "field": "total_click_name",
+            "visible": true
+        },
+        {
+            "title": "PubIncome",
+            "field": "supplyCost_name",
+            "visible": true
+        },
+        {
+            "title": "CTR (%)",
+            "field": "ctr_name",
+            "visible": true
+        },
+        {
+            "title": "EIPM",
+            "field": "eIPM_name",
+            "visible": true
+        },
+        {
+            "title": "FR",
+            "field": "fr_name",
+            "visible": true
+        },
+        {
+            "title": "eIPC",
+            "field": "eIPC_name",
+            "visible": true
+        }
+    ],
+    "count": 1
+}
+
+b) Get Stats for a day for the account+site - Latency should be expected to be 30 Hours
+
+curl --header "Content-type: application/json" --request POST --data '{ "publisherId": "0122000b-0409-0d01-4757-901e0e000005", "api_key": "ebcd0ef25027f95d73f3f051e8b42bb5d32b4b3b", "type" : "site_stat", "start_date": "2014-01-18 00:00:00", "end_date": "2014-09-10 23:59:59"}' http://localhost:9000/reportingapi/publishers
+
+######### INPUT #########
+{
+    "publisherId": "0122000b-0409-0d01-4757-901e0e000005",
+    "api_key": "ebcd0ef25027f95d73f3f051e8b42bb5d32b4b3b",
+    "type": "site_stat",
+    "start_date": "2014-01-18 00:00:00",
+    "end_date": "2014-09-10 23:59:59"
+}
+
+######### OUTPUT #########
+{
+    "column": [
+        {
+            "title": "Publisher",
+            "field": "pub_name",
+            "visible": true
+        },
+        {
+            "title": "SITE NAME",
+            "field": "site_name",
+            "visible": true
+        },
+        {
+            "title": "GUID of SITE NAME",
+            "field": "site_guid",
+            "visible": true
+        },
+        {
+            "title": "TOTAL REQUEST",
+            "field": "total_request_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL IMPRESSION",
+            "field": "total_impression_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL CLICK",
+            "field": "total_click_name",
+            "visible": true
+        },
+        {
+            "title": "PubIncome",
+            "field": "supplyCost_name",
+            "visible": true
+        },
+        {
+            "title": "CTR (%)",
+            "field": "ctr_name",
+            "visible": true
+        },
+        {
+            "title": "EIPM",
+            "field": "eIPM_name",
+            "visible": true
+        },
+        {
+            "title": "FR (%)",
+            "field": "fr_name",
+            "visible": true
+        },
+        {
+            "title": "eIPC",
+            "field": "eIPC_name",
+            "visible": true
+        }
+    ],
+    "data": [
+        {
+            "pub_name": "testpub21jul",
+            "site_name": "testsite21jul",
+            "site_guid": "0122000b-0409-0d01-4757-912134000006",
+            "total_request_name": 21393,
+            "total_impression_name": 21393,
+            "total_click_name": 67,
+            "supplyCost_name": "0.067",
+            "ctr_name": "0.313",
+            "eIPM_name": "0.003",
+            "fr_name": "100.000",
+            "eIPC_name": "0.001"
+        }
+    ],
+    "count": 1
+}
+
+c) Get Stats for a day for the account+site_country - Latency should be expected to be 30 Hours
+
+curl --header "Content-type: application/json" --request POST --data '{ "publisherId": "0122000b-0409-0d01-4757-901e0e000005", "api_key": "ebcd0ef25027f95d73f3f051e8b42bb5d32b4b3b", "type" : "site_country_stat", "start_date": "2014-01-18 00:00:00", "end_date": "2014-09-10 23:59:59"}' http://localhost:9000/reportingapi/publishers
+
+######### INPUT #########
+{   
+    "publisherId": "0122000b-0409-0d01-4757-901e0e000005",
+    "api_key": "ebcd0ef25027f95d73f3f051e8b42bb5d32b4b3b",
+    "type": "site_country_stat",
+    "start_date": "2014-01-18 00:00:00",
+    "end_date": "2014-09-10 23:59:59"
+}
+
+######### OUTPUT #########
+
+{
+    "column": [
+        {
+            "title": "Publisher",
+            "field": "pub_name",
+            "visible": true
+        },
+        {
+            "title": "SITE NAME",
+            "field": "site_name",
+            "visible": true
+        },
+        {
+            "title": "GUID of SITE NAME",
+            "field": "site_guid",
+            "visible": true
+        },
+        {
+            "title": "COUNTRY NAME",
+            "field": "country_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL REQUEST",
+            "field": "total_request_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL IMPRESSION",
+            "field": "total_impression_name",
+            "visible": true
+        },
+        {
+            "title": "TOTAL CLICK",
+            "field": "total_click_name",
+            "visible": true
+        },
+        {
+            "title": "PubIncome",
+            "field": "supplyCost_name",
+            "visible": true
+        },
+        {
+            "title": "CTR (%)",
+            "field": "ctr_name",
+            "visible": true
+        },
+        {
+            "title": "EIPM",
+            "field": "eIPM_name",
+            "visible": true
+        },
+        {
+            "title": "FR (%)",
+            "field": "fr_name",
+            "visible": true
+        },
+        {
+            "title": "eIPC",
+            "field": "eIPC_name",
+            "visible": true
+        }
+    ],
+    "data": [
+        {
+            "pub_name": "testpub21jul",
+            "site_name": "testsite21jul",
+            "site_guid": "0122000b-0409-0d01-4757-912134000006",
+            "country_name": "India",
+            "total_request_name": 21341,
+            "total_impression_name": 21341,
+            "total_click_name": 35,
+            "supplyCost_name": "0.035",
+            "ctr_name": "0.164",
+            "eIPM_name": "0.002",
+            "fr_name": "100.000",
+            "eIPC_name": "0.001"
+        },
+        {
+            "pub_name": "testpub21jul",
+            "site_name": "testsite21jul",
+            "site_guid": "0122000b-0409-0d01-4757-912134000006",
+            "country_name": "United States",
+            "total_request_name": 46,
+            "total_impression_name": 46,
+            "total_click_name": 3,
+            "supplyCost_name": "0.003",
+            "ctr_name": "6.522",
+            "eIPM_name": "0.065",
+            "fr_name": "100.000",
+            "eIPC_name": "0.001"
+        },
+        {
+            "pub_name": "testpub21jul",
+            "site_name": "testsite21jul",
+            "site_guid": "0122000b-0409-0d01-4757-912134000006",
+            "country_name": "China",
+            "total_request_name": 4,
+            "total_impression_name": 4,
+            "total_click_name": 1,
+            "supplyCost_name": "0.001",
+            "ctr_name": "25.000",
+            "eIPM_name": "0.250",
+            "fr_name": "100.000",
+            "eIPC_name": "0.001"
+        },
+        {
+            "pub_name": "testpub21jul",
+            "site_name": "testsite21jul",
+            "site_guid": "0122000b-0409-0d01-4757-912134000006",
+            "country_name": "South Africa",
+            "total_request_name": 1,
+            "total_impression_name": 1,
+            "total_click_name": 1,
+            "supplyCost_name": "0.001",
+            "ctr_name": "100.000",
+            "eIPM_name": "1.000",
+            "fr_name": "100.000",
+            "eIPC_name": "0.001"
+        },
+        {
+            "pub_name": "testpub21jul",
+            "site_name": "testsite21jul",
+            "site_guid": "0122000b-0409-0d01-4757-912134000006",
+            "country_name": "None",
+            "total_request_name": 1,
+            "total_impression_name": 1,
+            "total_click_name": 1,
+            "supplyCost_name": "0.001",
+            "ctr_name": "100.000",
+            "eIPM_name": "1.000",
+            "fr_name": "100.000",
+            "eIPC_name": "0.001"
+        },
+        {
+            "pub_name": "testpub21jul",
+            "site_name": "testsite21jul",
+            "site_guid": "0122000b-0409-0d01-4757-912134000006",
+            "country_name": "Angola",
+            "total_request_name": 0,
+            "total_impression_name": 0,
+            "total_click_name": 26,
+            "supplyCost_name": "0.026",
+            "ctr_name": "0.000",
+            "eIPM_name": "0.000",
+            "fr_name": "0.000",
+            "eIPC_name": "0.001"
+        }
+    ],
+    "count": 6
+}

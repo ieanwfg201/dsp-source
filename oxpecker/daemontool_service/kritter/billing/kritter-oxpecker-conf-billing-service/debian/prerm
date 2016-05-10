@@ -1,0 +1,7 @@
+#!/bin/sh -x
+#DEBHELPER#
+set -e
+if [ -e /etc/kritter-oxpecker-conf-billing-service/run ]; then
+        update-service --remove /etc/kritter-oxpecker-conf-billing-service
+fi
+

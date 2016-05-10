@@ -1,0 +1,259 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="init_job" class="com.kritter.adserving.flow.job.InitJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="init_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3"><ref bean="adserving_request_processor"/></constructor-arg>
+        <constructor-arg index="4" value="KRITTER-DEBUG-SYSTEM"/>
+        <constructor-arg index="5" value="KRITTER_INVENTORY_SRC"/>
+        <constructor-arg index="6"><null /> </constructor-arg>
+    </bean>
+
+     <bean id="ad_targeting_matcher_job" class="com.kritter.adserving.shortlisting.job.AdTargetingMatcher">
+        <constructor-arg index="0" value="ad_targeting_job"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="shortlisted-ads"/>
+        <constructor-arg index="4" value="selected-site-category"/>
+        <constructor-arg index="5" value="handset-master-data"/>
+        <constructor-arg index="6"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="7"><ref bean="ui_country_id_cache"/></constructor-arg>
+        <constructor-arg index="8"><ref bean="ui_isp_id_cache"/></constructor-arg>
+        <constructor-arg index="9">
+            <list>
+                <ref bean="campaign_flight_shortlisting"/>
+                <ref bean="device_type_targeting"/>
+                <ref bean="campaign_inc_exc_targeting"/>
+                <ref bean="inventory_source_targeting"/>
+                <ref bean="inventory_source_type_targeting"/>
+                <ref bean="supply_inc_exc_targeting"/>
+                <ref bean="site_category_targeting"/>
+                <ref bean="ad_category_targeting"/>
+                <ref bean="hygiene_targeting"/>
+                <ref bean="os_targeting"/>
+                <ref bean="handset_browser_targeting"/>
+                <ref bean="site_domains_exclusion_targeting"/>
+                <ref bean="custom_ip_targeting"/>
+                <ref bean="zip_code_targeting"/>
+                <ref bean="hour_of_day_targeting"/>
+                <ref bean="lat_long_targeting"/>
+                <ref bean="connection_type_targeting"/>
+                <ref bean="demand_preference_filter"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="supply_demand_matcher_job" class="com.kritter.adserving.flow.job.SupplyDemandMatcherJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="supply_demand_matcher_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4" value="shortlisted-ads"/>
+        <constructor-arg index="5" value="selected-site-category"/>
+        <constructor-arg index="6"><ref bean="creative_cache"/></constructor-arg>
+        <constructor-arg index="7"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="8"><ref bean="campaign_cache"/></constructor-arg>
+    </bean>
+
+    <bean id="creative_bidfloor_matching_job" class="com.kritter.adserving.flow.job.CreativeAndFloorPriceMatchingJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="creative_bidfloor_matching_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4"><ref bean="creative_targeting_matcher"/></constructor-arg>
+        <!--This map contains open rtb version as key from OpenRTBVersion constant file and corresponding implementation.-->
+        <constructor-arg index="5">
+            <map>
+                <entry key="0" value-ref="creative_floor_matching_rtb_exchange_two_dot_zero"/>
+                <entry key="1" value-ref="creative_floor_matching_rtb_exchange_two_dot_one"/>
+                <entry key="2" value-ref="creative_floor_matching_rtb_exchange_two_dot_two"/>
+                <entry key="3" value-ref="creative_floor_matching_rtb_exchange_two_dot_three"/>
+            </map>    
+        </constructor-arg>
+    </bean>
+
+    <bean id="ctr_calculator_using_logistic_cache" class="com.kritter.adserving.flow.job.CTRCalculator">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="ctr_calculator_using_logistic_cache"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4">
+            <list>
+                 <value><![CDATA[invsrc]]></value>
+                 <value><![CDATA[siteid]]></value>
+                 <value><![CDATA[deviceid]]></value>
+                 <value><![CDATA[manufacturerid]]></value>
+                 <value><![CDATA[modelid]]></value>
+                 <value><![CDATA[osid]]></value>
+                 <value><![CDATA[country]]></value>
+                 <value><![CDATA[carrier]]></value>
+                 <value><![CDATA[scatid]]></value>
+                 <value><![CDATA[time]]></value>
+                 <value><![CDATA[isweekend]]></value>
+                 <value><![CDATA[adid]]></value>
+                 <value><![CDATA[campaignid]]></value>
+                 <value><![CDATA[creativeid]]></value>
+                 <value><![CDATA[creativetype]]></value>
+            </list>
+        </constructor-arg>        
+        <constructor-arg index="5"><ref bean="lr_ctr_data_cache"/></constructor-arg>
+        <constructor-arg index="6" value="1"/>
+        <constructor-arg index="7" value="0.003"/>
+        <constructor-arg index="8" value="0.05"/>
+    </bean>
+
+    <bean id="csr_calculator_using_logistic_cache" class="com.kritter.adserving.flow.job.CSRCalculator">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="csr_calculator_using_logistic_cache"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4">
+            <list>
+                 <value><![CDATA[invsrc]]></value>
+                 <value><![CDATA[siteid]]></value>
+                 <value><![CDATA[deviceid]]></value>
+                 <value><![CDATA[manufacturerid]]></value>
+                 <value><![CDATA[modelid]]></value>
+                 <value><![CDATA[osid]]></value>
+                 <value><![CDATA[country]]></value>
+                 <value><![CDATA[carrier]]></value>
+                 <value><![CDATA[scatid]]></value>
+                 <value><![CDATA[time]]></value>
+                 <value><![CDATA[isweekend]]></value>
+                 <value><![CDATA[adid]]></value>
+                 <value><![CDATA[campaignid]]></value>
+                 <value><![CDATA[creativeid]]></value>
+                 <value><![CDATA[creativetype]]></value>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="5"><ref bean="lr_csr_data_cache"/></constructor-arg>
+        <constructor-arg index="6" value="1"/>
+        <constructor-arg index="7" value="0.1"/>
+    </bean>
+
+    <bean id="ecpm_bid_calc_no_bidder" class="com.kritter.adserving.flow.job.EcpmBidCalculatorNotUsingBidder">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="ecpm_bid_calc_no_bidder"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+    </bean>
+
+    <!--This job can have multiple instances for using multiple online bidder impls in future by using jobsets-->
+    <bean id="ecpm_bid_calc_use_bidder" class="com.kritter.adserving.flow.job.EcpmBidCalculatorUsingBidder">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="ecpm_bid_calc_use_bidder"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4"><ref bean="basic_real_time_bidder"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="ad_entity_cache"/></constructor-arg>
+    </bean>
+
+    <bean id="ad_ranking_selection_job_top_ecpm" class="com.kritter.adserving.flow.job.AdRankingSelectionJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="ad_ranking_selection_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4"><ref bean="top_ecpm_ranker"/></constructor-arg>
+    </bean>
+
+    <bean id="ad_ranking_selection_job_wrs_ecpm" class="com.kritter.adserving.flow.job.AdRankingSelectionJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="ad_ranking_selection_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4"><ref bean="wrs_ecpm_ranker"/></constructor-arg>
+    </bean>
+
+    <bean id="ad_ranking_selection_job_random_ecpm" class="com.kritter.adserving.flow.job.AdRankingSelectionJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="ad_ranking_selection_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4"><ref bean="random_ecpm_ranker"/></constructor-arg>
+    </bean>
+    <bean id="traffic_assigner_ecpm_calc" class="com.kritter.adserving.flow.job.TrafficAssignerToEcpmBidCalculator">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="traffic_assigner_ecpm_calc"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="ecpm_calc_traffic_var"/>
+    </bean>
+ 
+    <bean id="traffic_assigner_rank_calc" class="com.kritter.adserving.flow.job.TrafficAssignerToRankingJobs">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="traffic_assigner_rank_calc"/>
+        <constructor-arg index="2" value="rank_calc_traffic_var"/>
+    </bean>
+
+    <bean id="response_formatting_job" class="com.kritter.adserving.flow.job.ResponseFormattingJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="response_formatting_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value=""/>
+        <constructor-arg index="4"><ref bean="creative_xhtml_formatter"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="creative_xml_formatter"/></constructor-arg>
+        <constructor-arg index="6"><ref bean="creative_json_formatter"/></constructor-arg>
+        <constructor-arg index="7" value="res-object"/>
+        <constructor-arg index="8">
+            <map>
+                <entry key="mopub-pub-guid" value-ref="mopub_response_creator"/>
+            </map>
+        </constructor-arg>
+        <constructor-arg index="9" value="KRITTER_INVENTORY_SRC"/>
+        <constructor-arg index="10"><ref bean="site_meta_data_cache"/></constructor-arg>
+    </bean>
+
+    <bean id="thrift_logger" class="com.kritter.adserving.flow.job.ThriftLogger">
+        <constructor-arg index="0" value="adserving_thrift_logger_job"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2" value="adserving.thriftlog"/>
+        <constructor-arg index="3" value="req-object"/>
+        <constructor-arg index="4" value="res-object"/>
+        <constructor-arg index="5"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="6"><ref bean="campaign_cache"/></constructor-arg>
+        <constructor-arg index="7" value="User-Agent"/>
+        <constructor-arg index="8" value="X-Forwarded-For"/>
+        <constructor-arg index="9" value="REMOTE_ADDR"/>
+    </bean>    
+
+    <bean id="ssp_job" class="com.kritter.adserving.flow.job.SspOrInHouse">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="ssp_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4" value="dpa_workflow_to_kritter"/>
+        <constructor-arg index="5">
+            <map>
+                <entry key="0122000b-3d8b-bd01-4f45-9e78bb000186" value-ref="dpa_vserv"/>
+            </map>
+        </constructor-arg>
+        <constructor-arg index="6"><ref bean="ssp_global_rules_cache"/></constructor-arg>
+        <constructor-arg index="7"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="8"><ref bean="creative_cache"/></constructor-arg>
+        <constructor-arg index="9"><ref bean="account_cache"/></constructor-arg>
+    </bean>
+    
+    <bean id="exchange_job" class="com.kritter.exchange.job.ExchangeJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="exchange_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4" value="1"/>
+        <constructor-arg index="5" value="100"/>
+        <constructor-arg index="6" value="100"/>
+        <constructor-arg index="7" value="NING"/>
+        <constructor-arg index="8" value="SECONDPRICE"/>
+        <constructor-arg index="9" value="1"/>
+        <constructor-arg index="10" value=""/>
+        <constructor-arg index="11" value="CH-UMMA-TECH-IES-KR-I-TTER"/>
+        <constructor-arg index="12"><ref bean="account_cache"/></constructor-arg>
+        <constructor-arg index="13"><ref bean="iab_categories_cache"/></constructor-arg>
+        <constructor-arg index="14"><ref bean="server_config"/></constructor-arg>
+        <constructor-arg index="15" value="exchange_rule_var"/>
+    </bean>
+
+    
+</beans>

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+exec 2>&1
+
+DAEMON=/usr/share/kritter/oxpecker/bin/oxpecker.py
+CONF=/usr/share/kritter/oxpecker/conf/sample/
+
+SLEEP=3600
+
+echo "Starting in $SLEEP seconds..."
+sleep $SLEEP
+
+
+python ${DAEMON} ${CONF}

@@ -1,0 +1,32 @@
+@(display:models.advertiser.RetargetingSegmentDisplay)
+    
+@main2("Retargeting Segments"){@navs.navadvt(display.getAccountGuid())}{@navs.breadcrumbs(display.getBreadCrumbPaths())}{
+
+        <div class="well" ng-controller="retargetingSegmentListController"> 
+            <div infinite-scroll='nextPage()' infinite-scroll-disabled='retargetingSegmentListData.isLoading' infinite-scroll-distance='1'>
+                    <table tr-ng-grid=""   items="retargetingSegmentListData.filteredData"   
+                                        selected-items="retargetingSegmentListData.selections" 
+                                        fields="['id', 'name','createdOn', 'tag' ]" 
+                                        selection-mode="SingleRow"
+                                        enable-filtering="retargetingSegmentListData.enableFilter"
+                                        enable-sorting="retargetingSegmentListData.enableSorting" 
+                                        order-by="retargetingSegmentListData.orderBy"
+                                        order-by-reverse="retargetingSegmentListData.orderByReverse" 
+                                        page-items="retargetingSegmentListData.itemsPerPage"  
+                                        total-items="retargetingSegmentListData.totalItems"
+                                        current-page="retargetingSegmentListData.currentPage" 
+                                        on-data-required="retargetingSegmentListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+                 
+                        <thead>
+                            <tr>
+                                <th field-name="id" display-name="ID" enable-sorting="true" enable-filtering="true" >  </th>
+                                <th field-name="name" display-name="Name" enable-sorting="true"  enable-filtering="true">  </th>
+                                <th field-name="created" display-name="Created" enable-sorting="true"  enable-filtering="true">  </th>
+                                <th field-name="tag" display-name="Tag" enable-sorting="true"  enable-filtering="true">  </th>
+                            </tr>  
+                        </thead> 
+                    </table> 
+                </div> 
+                </div>
+            <script src="@routes.Assets.at("javascripts/apps/retargeting_segment/retargetingSegmentListController.js")" type="text/javascript"></script>
+}

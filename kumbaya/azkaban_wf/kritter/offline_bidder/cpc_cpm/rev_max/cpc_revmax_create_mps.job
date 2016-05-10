@@ -1,0 +1,6 @@
+# cpc_revmax_create_mps.job
+
+type=command
+dependencies=init_cpc_revmax
+env.PYTHONPATH=${python_path}
+command = sh cpc_revmax_create_mps.sh '${code_prefix_path}'/'${create_mps_bin}' '${py_job_config}' '${py_job_logger}' '${supply_forecast_file}' '${mps_output_dir}'/'${mps_output_prefix}-${process_time_cur}' '${ctr_lr_output_file}' '${process_time}' '${process_time_dir}' '${process_time_cur}' 

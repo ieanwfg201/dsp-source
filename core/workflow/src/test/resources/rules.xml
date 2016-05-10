@@ -1,0 +1,91 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="traffic1" class="com.kritter.core.expressiontree.Variable">
+        <constructor-arg value="x"></constructor-arg>
+        <constructor-arg value="integer"></constructor-arg>
+    </bean>
+
+    <bean id="siteId" class="com.kritter.core.expressiontree.Variable">
+        <constructor-arg value="siteId"></constructor-arg>
+        <constructor-arg value="string"></constructor-arg>
+    </bean>
+
+    <bean id="gender" class="com.kritter.core.expressiontree.Variable">
+        <constructor-arg value="gender"></constructor-arg>
+        <constructor-arg value="integer"></constructor-arg>
+    </bean>
+
+    <bean id="trafficRule" class="com.kritter.core.workflow.TransitionRule">
+      <constructor-arg value="x < 80"></constructor-arg>
+        <constructor-arg>
+            <ref bean="dummyJobset"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ej1" class="com.kritter.core.workflow.TransitionRule">
+        <constructor-arg value="(siteId ~ whatever) | (gender = 100)"></constructor-arg>
+        <constructor-arg>
+            <ref bean="dummyJobset"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ej2" class="com.kritter.core.workflow.TransitionRule">
+        <constructor-arg value="gender = 100"></constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobset"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="trafficTransitionRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list>
+                <ref bean="traffic1"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobset"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="trafficRule"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="initTransitionRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list>
+                <ref bean="siteId"/>
+                <ref bean="gender"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobset"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="ej1"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="middleTransitionRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list>
+                <ref bean="gender"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobset"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="ej2"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>

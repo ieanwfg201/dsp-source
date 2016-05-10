@@ -1,0 +1,5 @@
+# input_for_ctr_pig.job
+
+type=command
+dependencies=input_for_ctr_movetoinprocess
+command=sh input_for_ctr_pig.sh '${input_for_ctr_code_path}' '${pig_home}' "${postimp_readytoprocess_path}"/"${process_time_dir}" '${OUTPUT}'/'${process_time_dir}' '${thrift_jar_path}' '${process_time}' '${process_time_dir}'

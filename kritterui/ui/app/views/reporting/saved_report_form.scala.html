@@ -1,0 +1,22 @@
+@(reportQueryEntity:Form[models.entities.reporting.SavedQueryFormEntity])
+
+ 
+ 
+ <div class="modal-header">
+	<h3 class="modal-title">@("Saved Query Form")</h3>
+</div>
+<div class="modal-body">
+	<form id="savedReportForm" class="navbar-form navbar-left" action="/reporting/save-report" method="POST">
+	@components.formElements.textinput(reportQueryEntity("name"),'_label-> "Name *")  
+	@components.formElements.hiddenfield(reportQueryEntity("id"))			
+	@components.formElements.hiddenfield(reportQueryEntity("query"))
+	 
+	@components.formElements.hiddenfield(reportQueryEntity("account_guid"))
+	@components.formElements.hiddenfield(reportQueryEntity("reportType")) 
+ 			 
+ </form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button("save", "ok()")
+	@components.formElements.button("cancel", "cancel()")
+</div>

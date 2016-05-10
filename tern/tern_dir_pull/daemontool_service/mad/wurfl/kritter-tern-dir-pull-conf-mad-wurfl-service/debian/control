@@ -1,0 +1,13 @@
+Source: kritter-tern-dir-pull-conf-btm-wurfl-service
+Maintainer: KRITTER <contact@kritter.in>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8)
+
+Package: kritter-tern-dir-pull-conf-btm-wurfl-service
+Architecture: any
+Depends: ${misc:Depends},
+Description: kritters tern_dir_pull wurfl conf service
+ a wurfl service for btm wurfl conf of 
+ tern_dir_pull - a log pull transportation package by kritter

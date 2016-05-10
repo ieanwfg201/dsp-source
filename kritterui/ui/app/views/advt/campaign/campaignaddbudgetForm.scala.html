@@ -1,0 +1,47 @@
+@(campaignForm: Form[models.entities.CampaignEntity], 
+		campaignBudgetForm: Form[models.entities.CampaignBudgetEntity], campaignDisplay:models.advertiser.CampaignDisplay)
+
+@main2("Campaign Add Budget"){@navs.navadvt(campaignDisplay.getAccountGuid())} {@navs.breadcrumbs(campaignDisplay.getBreadCrumbPaths())}{ 
+<form id="campaignForm" action="/advertiser/campaigns/saveadbudget" method="POST" ng-controller="campaignController">
+	<div class="page">
+		<section class="panel panel-default">
+			<div class="panel-heading">
+				<strong><span class="glyphicon glyphicon-th"></span>Campaign Form</strong>
+			</div>
+			<div class="panel-body">
+				<div id="campaignWizard" class="vertical">
+				<fieldset>
+					<legend>Basic Information</legend>
+					<div>
+						@components.formElements.hiddenfield(campaignForm("id"))
+						@components.formElements.hiddenfield(campaignForm("guid"))
+						@components.formElements.hiddenfield(campaignForm("status_id"))
+						@components.formElements.textinputdisabled(campaignForm("name"),'_label ->"Name *")
+						@components.formElements.hiddenfield(campaignForm("account_guid"))
+						@components.formElements.dateinput(campaignForm("start_date"),"Start Date *" )
+						@components.formElements.dateinput(campaignForm("end_date"),"End Date *" )
+					</div>
+				</fieldset>
+				<fieldset>
+					<legend>Campaign Budget</legend>
+					
+					<div>
+						@components.formElements.hiddenfield(campaignBudgetForm("id") )
+						@components.formElements.hiddenfield(campaignBudgetForm("campaign_id"), "campaign_id" )
+						@components.formElements.hiddenfield(campaignBudgetForm("campaign_guid"), "campaign_guid" )
+                        @components.formElements.currencyinput(campaignBudgetForm("add_to_total_budget"), "Add To Total Budget *" )
+                        @components.formElements.textinputdisabled(campaignBudgetForm("adv_total_budget"), '_label ->"Advertiser Total Budget *", '_disabled->true )
+                        @components.formElements.textinputdisabled(campaignBudgetForm("internal_total_budget"), '_label ->"Internal Total Budget *", '_disabled->true )
+                        @components.formElements.currencyinput(campaignBudgetForm("add_to_daily_budget"), "Add To Daily Budget *" )
+                        @components.formElements.textinputdisabled(campaignBudgetForm("adv_daily_budget"), '_label ->"Advertiser Daily Budget ", '_disabled->true)
+						@components.formElements.textinputdisabled(campaignBudgetForm("internal_daily_budget"), '_label ->"Internal Daily Budget", '_disabled->true )
+					</div>
+				</fieldset>
+				</div>
+				@components.formElements.submitbutton("save", "Add Budget")
+			</div>
+		</section>
+	</div>
+</form>
+<script src="@routes.Assets.at("javascripts/apps/campaignController.js")" type="text/javascript"></script>
+}

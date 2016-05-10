@@ -1,0 +1,42 @@
+@(display:models.accounts.displays.PublisherDisplay)
+@main2("Publisher Home"){@navs.navpub(display.getAccountGuid())}{@navs.breadcrumbs(display.getBreadCrumbPaths())}{
+
+@components.containers.panel("Account Info"){
+<div> 
+        @components.fielddisplays.textdisplay("Display Name", display.getAccount().getName())
+        @components.fielddisplays.textdisplay("User Id", display.getAccount().getUserid())
+        @components.fielddisplays.textdisplay("Inventory Source", display.getInvSrc())
+        @components.fielddisplays.textdisplay("Id", display.getAccount().getGuid())
+        @components.fielddisplays.textdisplay("IM", display.getAccount().getIm())
+        @components.fielddisplays.textdisplay("Email", display.getAccount().getEmail())
+        @components.fielddisplays.textdisplay("Contact Number", display.getAccount().getPhone())
+        @components.fielddisplays.textdisplay("Company Name", display.getAccount().getCompany_name())
+        @components.fielddisplays.textdisplay("Company Address", display.getAccount().getAddress())
+        @components.fielddisplays.textdisplay("City", display.getAccount().getCity())
+        @components.fielddisplays.textdisplay("Country", display.getAccount().getCountry())
+        @components.fielddisplays.textdisplay("Api Key", display.getAccount().getApi_key())
+        @components.fielddisplays.textdisplay("Demand Preference", display.getDemandpreference())
+        @if("DIRECTthenMediation" == display.getDemandpreference()){
+            @components.fielddisplays.intdisplay("QPS", display.getAccount().getTimeout())
+        }
+        @components.fielddisplays.textdisplay("Payment Type", display.getAccount().getPayment_type().getName())
+        @components.fielddisplays.textdisplay("Paypal Id", display.getAccount().getPaypal_id())
+        @components.fielddisplays.textdisplay("Bank Transfer-Beneficiary Name", display.getAccount().getBank_transfer_beneficiary_name())
+        @components.fielddisplays.textdisplay("Bank Transfer-Account Number", display.getAccount().getBank_transfer_account_number())
+        @components.fielddisplays.textdisplay("Bank Transfer-Bank Name", display.getAccount().getBank_transfer_bank_name())
+        @components.fielddisplays.textdisplay("Bank Transfer-Bank Address", display.getAccount().getBank_transfer_bank_add())
+        @components.fielddisplays.textdisplay("Bank Transfer-Branch Number", display.getAccount().getBank_transfer_branch_number())
+        @components.fielddisplays.textdisplay("Bank Transfer-Vat Number", display.getAccount().getBank_transfer_vat_number())
+        @components.fielddisplays.textdisplay("Wire Transfer-Beneficiary Name", display.getAccount().getWire_beneficiary_name())
+        @components.fielddisplays.textdisplay("Wire Transfer-Account Number", display.getAccount().getWire_account_number())
+        @components.fielddisplays.textdisplay("Wire Transfer-Bank Name", display.getAccount().getWire_bank_name())
+        @components.fielddisplays.textdisplay("Wire Transfer-Bank Address", display.getAccount().getWire_transfer_bank_add())
+        @components.fielddisplays.textdisplay("Wire Transfer-Swift Code", display.getAccount().getWire_swift_code())
+        @components.fielddisplays.textdisplay("Wire Transfer-IBAN", display.getAccount().getWire_iban())
+        
+        
+        
+        </div>
+}
+<script src="@routes.Assets.at("javascripts/apps/publisherController.js")" type="text/javascript"></script>
+}

@@ -1,0 +1,23 @@
+@(tableDataSource:String)
+
+
+<table ng-table="@{tableDataSource+ ".params"}" show-filter="true" class="table">
+	<thead>
+		<tr>
+			<th ng-repeat="column in @{tableDataSource +".column"}" ng-show="column.visible"
+				class="text-center sortable"
+				ng-class="{
+                    'sort-asc': @{ tableDataSource + ".column.isSortBy(column.field, 'asc')"},
+                    'sort-desc': @{ tableDataSource + ".column.isSortBy(column.field, 'desc')"}
+                  }"
+				ng-click="@{ tableDataSource + ".column.sorting(column.field"}, @{ tableDataSource +".column.isSortBy(column.field, 'asc') ? 'desc' : 'asc')"}">
+				{{column.title}}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="record in @{tableDataSource +".data"}">
+			<td ng-repeat="column in @{tableDataSource +".column"} " ng-show="column.visible"
+				sortable="column.field">{{record[column.field]}}</td>
+		</tr>
+	</tbody>
+</table>

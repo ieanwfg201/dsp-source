@@ -1,0 +1,12 @@
+Source: kritter-traffic-forecasting-conf-sample
+Maintainer: KRITTER <contact@kritter.in>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8)
+
+Package: kritter-traffic-forecasting-conf-sample
+Architecture: any
+Depends: ${misc:Depends}, kritter-traffic-forecasting
+Description: kritters traffic forecasting sample conf
+ a sample conf of traffic forecasting - a traffic forecasting utility by kritter

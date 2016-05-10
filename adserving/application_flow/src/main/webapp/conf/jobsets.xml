@@ -1,0 +1,134 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="initJobset" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-init-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="ecpmCalcTrafficRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="init_job"/>
+                <ref bean="ad_targeting_matcher_job"/>
+                <ref bean="supply_demand_matcher_job"/>
+                <ref bean="ctr_calculator_using_logistic_cache"/>
+                <ref bean="csr_calculator_using_logistic_cache"/>
+                <ref bean="traffic_assigner_ecpm_calc"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ecpmCalcNoBidderJobSet" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-ecpm-calc-no-bidder-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="defaultToKritterDSPWorkflowRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="ecpm_bid_calc_no_bidder"/>
+                <ref bean="creative_bidfloor_matching_job"/>
+                <ref bean="ssp_job"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="defaultToKritterDSPJobset" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-default-to-kritter-dsp-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="rankCalcTrafficRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="traffic_assigner_rank_calc"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ecpmCalcBidderJobSet" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-ecpm-calc-use-bidder-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="responseCreationRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="ecpm_bid_calc_use_bidder"/>
+                <ref bean="creative_bidfloor_matching_job"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="adRankingTopEcpmJobSet" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-ad-rank-top-ecpm-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="responseCreationRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="ad_ranking_selection_job_top_ecpm"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="adRankingWRSEcpmJobSet" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-ad-rank-wrs-ecpm-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="responseCreationRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="ad_ranking_selection_job_wrs_ecpm"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="adRankingRandomEcpmJobSet" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-ad-rank-random-ecpm-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="responseCreationRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="ad_ranking_selection_job_random_ecpm"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="formattingJobSet" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-formatting-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="formattingJobSetRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="response_formatting_job"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="finalJobSet" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-final-jobset"></constructor-arg>
+        <constructor-arg>
+            <null/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="thrift_logger"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="exchangeJobSet" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="adserving-exchange-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="exchangeJobSetRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="exchange_job"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>

@@ -1,0 +1,17 @@
+@(ispMappingWFForm:Form[models.formbinders.IspMappingWorkFlowEntity], action:String)
+<div class="modal-header">
+    <h3 class="modal-title">@("Isp Mapping Form")</h3>
+</div>
+<div class="modal-body">
+    <form id="ispMappingWorkflowForm" action="/ispMapping/insertmap" method="POST"> 
+        
+        @components.formElements.textarea(ispMappingWFForm("isp_ui_name"), "Enter Isp Ui Name")
+        @components.formElements.hiddenfield(ispMappingWFForm("isp_name"))
+        @components.formElements.hiddenfield(ispMappingWFForm("country_name"))
+        @components.formElements.hiddenfield(ispMappingWFForm("action"))
+    </form>
+</div>
+<div class="modal-footer">
+    @components.formElements.button(action, "ok()")
+    @components.formElements.button("cancel", "cancel()")
+</div>

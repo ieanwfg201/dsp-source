@@ -1,0 +1,9 @@
+<Context path="" reloadable="true" crossContext="true" docBase="/var/app/kritter/postimpression/postimpression.war">
+
+        <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="20" maxIdle="5" maxWait="1000"
+
+                    name="jdbc/AdserverDatabase" password="madpassword" type="javax.sql.DataSource" url="jdbc:mysql://database.mad.com/kritter?useUnicode=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" username="maduser"/>
+
+
+
+</Context>

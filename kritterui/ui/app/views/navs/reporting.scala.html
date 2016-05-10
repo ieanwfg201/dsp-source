@@ -1,0 +1,41 @@
+@import play.Play;
+
+<li><a href="#reporting"><i class="fa fa-dashboard"><span
+			class="icon-bg bg-orange"></span></i><span data-i18n="Reporting"></span></a>
+	<ul>
+		<li><a href="/reporting/dashboard"><i
+				class="fa fa-caret-right"></i><span data-i18n="Dashboard"></span></a></li>
+        <li><a href="/reporting/limited"><i
+                class="fa fa-caret-right"></i><span data-i18n="Limited Dimension"></span></a></li>
+		<li><a href="/reporting/demand"><i
+				class="fa fa-caret-right"></i><span data-i18n="Demand"></span></a></li>
+		<li><a href="/reporting/supply"><i
+				class="fa fa-caret-right"></i><span data-i18n="Supply"></span></a></li> 
+		<li><a href="/reporting/network"><i
+				class="fa fa-caret-right"></i><span data-i18n="Network"></span></a></li>
+         @if("true" == Play.application().configuration().getString("ext_site_report_seperate") )  {
+            <li><a href="/extsiterepoting/default"><i
+                class="fa fa-caret-right"></i><span data-i18n="ExtSiteAppReport"></span></a></li>
+         }
+        <li><a href="/fraudreport/default"><i
+                class="fa fa-caret-right"></i><span data-i18n="FraudReport"></span></a></li>
+        <li><a href="/trackingEvent/default"><i
+                class="fa fa-caret-right"></i><span data-i18n="TrackingEvent"></span></a></li>
+	     @if("true" == Play.application().configuration().getString("show_fixed_hierarchy_report") )  {
+        
+        <li><a href="/reporting/hierarchical/global"><i
+                class="fa fa-caret-right"></i><span data-i18n="Global Stats"></span></a></li>
+        <li><a href="/reports/hierarchical/geo"><i
+                class="fa fa-caret-right"></i><span data-i18n="By Geo"></span></a></li>
+        <li><a href="/reports/hierarchical/adv"><i
+                class="fa fa-caret-right"></i><span data-i18n="By Advertiser"></span></a></li>
+        <li><a href="/reports/hierarchical/pub"><i
+                class="fa fa-caret-right"></i><span data-i18n="By Publisher"></span></a></li>
+        <li><a href="/reports/hierarchical/os"><i
+                class="fa fa-caret-right"></i><span data-i18n="By Os"></span></a></li>
+        }
+		<li><a href="/reporting/saved-reports"><i
+				class="fa fa-caret-right"></i><span data-i18n="Saved Queries"></span></a></li>
+		 
+	</ul>
+</li>

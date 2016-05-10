@@ -1,0 +1,15 @@
+@( label:String, items:List[String])
+
+ 
+<div class="form-group row field-display">
+	<div class="col-sm-2 fieldlabel">
+		<label>@label</label>
+	</div>
+	<div class="col-sm-6 fieldvalue">
+		<ul class="list-display">
+			@for(item <-items ){
+				<li class="floating-item">@item</li> 
+			}
+		</ul>
+	</div>
+</div>

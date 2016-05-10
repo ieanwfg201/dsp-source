@@ -1,0 +1,14 @@
+# Include following in html thank you page inside the 'body' tag or anywhere else where trigger for conversion is to be sent.
+
+#Replace macro ${POST_IMPRESSION_EVENT_SERVER_SAME_DOMAIN_AS_CLICK_URL_DOMAIN} with appopriate click url domain value as per the client.
+--------------------------------------------------------------------------------------------------------------------
+<script type="text/javascript" src="http://${POST_IMPRESSION_EVENT_SERVER_SAME_DOMAIN_AS_CLICK_URL_DOMAIN}/cnv_cky">
+</script>
+--------------------------------------------------------------------------------------------------------------------
+
+
+Example would be 
+-------------------------------------------------------------------------
+<script type="text/javascript" src="http://post.tapsomnia.com/cnv_cky">
+</script>                               
+-------------------------------------------------------------------------

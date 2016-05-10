@@ -1,0 +1,19 @@
+@(id:String, label:String,  options:List[models.formelements.SelectOption], changeHandler:String="", defaultvalue:String="")
+<div class="form-group row">
+
+<div class="col-sm-3">
+		<label for="@id" class="control-label">@label</label>
+	</div>
+	<div class="col-sm-9">
+		<select type="text" class="form-control" id="@id" name="@id" ng-model="@id" ng-change="@changeHandler">
+		@for(option <- options){
+		  @if(option != null && option.getValue() != null && option.getLabel()  != ""){
+                <option @if( option.getValue()==defaultvalue ){ selected } value="@option.getValue()" selected>@option.getLabel()</option>
+		  }
+		}
+		</select>
+	</div>
+	
+	
+	
+</div> 

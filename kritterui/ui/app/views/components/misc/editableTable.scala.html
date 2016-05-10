@@ -1,0 +1,29 @@
+@(tableDataSource:String)
+
+
+<table ng-table="@{tableDataSource+ ".params"}" show-filter="true" class="table">
+	<thead>
+		<tr>
+			<th ng-repeat="column in @{tableDataSource +".columns"}" ng-show="column.visible"
+				class="text-center sortable"
+				ng-class="{
+                    'sort-asc': @{ tableDataSource + ".columns.isSortBy(column.field, 'asc')"},
+                    'sort-desc': @{ tableDataSource + ".columns.isSortBy(column.field, 'desc')"}
+                  }">
+				{{column.title}}</th>
+		</tr>
+	</thead>
+	<tbody ng-repeat="record in @{tableDataSource +".data"}">
+		<tr>
+			<td ng-repeat="column in @{tableDataSource +".column"} " ng-show="column.visible"
+				sortable="column.field">{{record[column.field]}}</td>
+				<td class="rowTd" ><input type=button id="editRowBtn{{record.name}}" value="edit"
+                                      ng-click="setEditId(record.name)"></td>
+		</tr>
+		<tr ng-show="editId===record.name" ng-if="editId===record.name">
+            <td colspan="7">
+            <ng-include src="'/editRow'"></ng-include>
+            </td>
+        </tr>
+	</tbody>
+</table>

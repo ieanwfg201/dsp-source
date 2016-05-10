@@ -1,0 +1,50 @@
+@(ispMappingFormEntity: Form[models.entities.isp_mapping.IspMappingFormEntity])
+@main("Isp Mapping Queue"){
+	@components.containers.panel("Isp Mapping Queue"){
+	<div ng-controller="ispMappingController">
+	<form id="ispMappingForm" action="/ispMapping/isp-mapping-queue" method="GET"">
+	   @components.formElements.selectlist2(ispMappingFormEntity("country"), "Country *", services.TPMetadataAPI.countrySelectOptionsWithId())
+       @components.formElements.submitbutton("change", "Change Country")
+	</form>
+	<div infinite-scroll='nextPage()' infinite-scroll-disabled='ispMappingListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="ispMappingListData.filteredData"   
+			 					selected-items="ispMappingListData.selections" 
+			 					fields="[ 'dataSourceName', 'countryName', 'ispName', 'action', 'ispUiName', 'modifiedOn']" 
+			 					selection-mode="MultiRow"
+			 					enable-filtering="ispMappingListData.enableFilter"
+			 					enable-sorting="ispMappingListData.enableSorting" 
+			 					order-by="ispMappingListData.orderBy"
+			 					order-by-reverse="ispMappingListData.orderByReverse" 
+			 					page-items="ispMappingListData.itemsPerPage"  
+			 					total-items="ispMappingListData.totalItems"
+			 					current-page="ispMappingListData.currentPage" 
+			 					on-data-required="ispMappingListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+                        <th field-name="select" display-align="center" cell-width="2em">
+                                    <div class="tr-ng-title">&nbsp;</div>
+                        </th>
+                        <th field-name="dataSourceName" display-name="Data Source" enable-sorting="true"  enable-filtering="false">  </th> 
+                        <th field-name="countryName" display-name="Country" enable-sorting="true"  enable-filtering="false">  </th>
+                        <th field-name="ispName" display-name="Isp Name" enable-sorting="true"  enable-filtering="true">  </th>
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+                        <th field-name="ispUiName" display-name="Mapping" enable-filtering="true" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr>
+                                <td field-name="action" >
+                                    <button ng-show="gridItem.enableinsert" class="btn btn-default" ng-click="updateIspMapping(gridItem.countryName, gridItem.ispName)" 
+                                                data-toggle="tooltip" data-placement="top" title="Insert Mapping">
+                                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+                                    </button>    
+                                </td> 
+			        </tr>
+			    </tbody>
+			</table> 
+		</div>
+	</div> 
+	}
+<script src="@routes.Assets.at("javascripts/apps/ispMappingController.js")" type="text/javascript"></script>
+}

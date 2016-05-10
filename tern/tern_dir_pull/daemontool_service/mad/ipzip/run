@@ -1,0 +1,14 @@
+#!/bin/sh
+
+exec 2>&1
+
+DAEMON=/usr/share/kritter/tern/tern_dir_pull/bin/tern_dir_pull.py
+CONF=/usr/share/kritter/tern/tern_dir_pull/conf/btm/ipzip/
+
+SLEEP=`perl -e "print int(rand(500))"`
+
+echo "Starting in $SLEEP seconds..."
+sleep $SLEEP
+
+
+exec setuidgid kritter python ${DAEMON} ${CONF}

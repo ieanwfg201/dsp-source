@@ -1,0 +1,18 @@
+@(campaign:models.advertiser.CampaignDisplay)
+
+ 
+		@components.fielddisplays.textdisplay("Name", campaign.getName())
+		@components.fielddisplays.textdisplay("Guid", campaign.getGuid())
+		@components.fielddisplays.textdisplay("Start Date", campaign.getStartDate())
+		@components.fielddisplays.textdisplay("End Date", campaign.getEndDate())
+ 
+        @components.fielddisplays.textdisplay("Advertiser Total Budget", campaign.getBudget().getAdv_total_budget()+"")
+        @components.fielddisplays.textdisplay("Advertiser Total Burn", campaign.getBudget().getAdv_total_burn()+"")
+		@components.fielddisplays.textdisplay("Internal Total Budget", campaign.getBudget().getInternal_total_budget()+"")
+		@components.fielddisplays.textdisplay("Internal Total Burn", campaign.getBudget().getInternal_total_burn()+"")
+        @components.fielddisplays.textdisplay("Advertiser Daily Budget", campaign.getBudget().getAdv_daily_budget()+"")
+        @components.fielddisplays.textdisplay("Advertiser Daily Burn", campaign.getBudget().getAdv_daily_burn()+"")
+		@components.fielddisplays.textdisplay("Internal Daily Budget", campaign.getBudget().getInternal_daily_budget()+"")
+		@components.fielddisplays.textdisplay("Internal Daily Burn", campaign.getBudget().getInternal_daily_burn()+"")
+ 
+		

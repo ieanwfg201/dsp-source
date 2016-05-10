@@ -1,0 +1,30 @@
+@(creativeBannerForm:Form[models.entities.CreativeBannerEntity] )
+<div class="modal-header">
+	<h3 class="modal-title">@("Upload Banner")</h3>
+</div>
+<div class="modal-body">
+	<form id="bannerForm" enctype='multipart/form-data'
+				action="/advertiser/creatives/banner/save" method="POST"> 
+			
+		@components.formElements.hiddenfield(creativeBannerForm("account_guid"))	
+		@components.formElements.selectlist2(creativeBannerForm("slot_id"),"Slot",
+													services.MetadataAPI.creativeSlots(), '_ngSync -> true, '_ngChange -> "slotIdChanged()")
+		
+	 
+		<div ng-show="showFileSelect">											
+			@components.formElements.fileinput(creativeBannerForm("resource_uri"), 
+												'_label->"Banner", 
+												'_uploadHandler -> "onFileSelect($files)" ,
+												'_fileFilter -> "image/*") 
+			<div class="{{uploadStatusClass}}" >{{uploadStatusMessage}}</div>
+			<img ng-src="{{thumburi}}" class="img-thumbnail">
+			
+		</div>
+ 
+		
+	</form>
+</div>
+<div class="modal-footer"> 
+	@components.formElements.button("Save", "ok()", "saveButton", true)
+	@components.formElements.button("Cancel", "cancel()", "cancelButton")
+</div>

@@ -1,0 +1,15 @@
+@(label:String, incExcList:models.uiutils.IncExcList )
+
+<div class="form-group row field-display">
+	<div class="col-sm-2 fieldlabel">
+		 <label>@if(incExcList.isIncList()){Included @label  }else{ Excluded @label } </label>
+	</div>
+	<div class="col-sm-6 fieldvalue">
+		<ul class="list-display">
+			@for(item <- incExcList.getValues()){
+			<li class="floating-item">@item</li> }
+		</ul>
+	</div>
+</div>
+
+

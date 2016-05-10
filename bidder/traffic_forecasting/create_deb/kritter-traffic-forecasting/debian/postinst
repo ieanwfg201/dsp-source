@@ -1,0 +1,4 @@
+#DEBHELPER#
+chown -R kshitij:kshitij /usr/share/kritter/utils
+chown -R kshitij:kshitij /usr/share/kritter/bidder/
+chown -R kshitij:kshitij /var/log/kritter/bidder/

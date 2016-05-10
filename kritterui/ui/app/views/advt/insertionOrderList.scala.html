@@ -1,0 +1,45 @@
+@(status:String, insertionOrders:List[com.kritter.api.entity.insertion_order.Insertion_Order])
+
+
+@main("IO List") {
+
+<table class="table table-bordered table-striped table-responsive" ng-controller="ioController">
+	<thead>
+		<tr>
+			<th><div class="th">
+					Order Number <span class="glyphicon glyphicon-chevron-up"></span>
+				</div></th>
+			<th><div class="th">
+					Advertiser <span class="glyphicon"></span>
+				</div></th>
+			<th><div class="th">
+					Name <span class="glyphicon"></span>
+				</div></th>
+			<th><div class="th">
+					Total Value <span class="glyphicon"></span>
+				</div></th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@for(io <- insertionOrders) {
+		<tr>
+			<td>@io.getOrder_number()</td>
+			<td>@io.getAccount_guid()</td>
+			<td>@io.getName()</td>
+			<td>@io.getTotal_value()</td>
+			@if(status=="REJECTED"){
+				<td>@io.getComment()</td>
+			}
+			
+			@if(status=="NEW"){
+			<td><span>@components.formElements.submitbutton("approve","Approve", "open('small','"+io.getOrder_number()+"','"+io.getAccount_guid()+ "', 'approve')")</span>
+				<span>@components.formElements.submitbutton("reject","Reject", "open('small','"+io.getOrder_number()+"','"+io.getAccount_guid()+ "', 'reject')")</span>
+			</td>
+			}
+		</tr>
+		}
+	</tbody>
+</table>
+
+}

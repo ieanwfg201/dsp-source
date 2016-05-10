@@ -1,0 +1,50 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="eventUrlProcessorJob" class="com.kritter.postimpression.workflow.jobs.EventURLProcessorJob">
+        <constructor-arg index="0" value="postimpression-event-url-processor-job"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="processed-uri"/>
+        <constructor-arg index="4"><ref bean="inhouse_click_url_reader"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="csc_url_reader"/></constructor-arg>
+        <constructor-arg index="6"><ref bean="win_notification_url_reader"/></constructor-arg>
+        <constructor-arg index="7"><ref bean="conversion_url_reader"/></constructor-arg>
+        <constructor-arg index="8"><ref bean="post_impression_utils"/></constructor-arg>
+        <constructor-arg index="9"><ref bean="click_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="10"><ref bean="csc_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="11"><ref bean="conversion_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="12"><ref bean="win_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="13"><ref bean="win_api_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="14">
+            <map>
+            </map>
+        </constructor-arg>
+        <constructor-arg index="15"><value><![CDATA[http://www.mad.com]]></value></constructor-arg>
+        <constructor-arg index="16" value="k-adv-ida"/>
+        <constructor-arg index="17" value="315360000"/>
+        <constructor-arg index="18">
+            <map>
+            </map>
+        </constructor-arg>
+        <constructor-arg index="19" value="eid"/>
+        <constructor-arg index="20" value="User-Agent"/>
+        <constructor-arg index="21" value="X-Forwarded-For"/>
+        <constructor-arg index="22" value="REMOTE_ADDR"/>
+        <constructor-arg index="23"><ref bean="internal_exc_win_url_reader"/></constructor-arg>
+        <constructor-arg index="24"><ref bean="internal_exc_win_fraud_processor"/></constructor-arg>
+        <constructor-arg index="25"><ref bean="cookie_based_conversion_url_reader"/></constructor-arg>
+        <constructor-arg index="26"><ref bean="conversion_based_conversion_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="27" value="k-cky-cnv"/>
+        <constructor-arg index="28" value="2592000"/>
+        <constructor-arg index="29"><ref bean="inhouse_macro_click_url_reader"/></constructor-arg>
+        <constructor-arg index="30"><ref bean="macro_click_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="31"><ref bean="tracking_event_url_reader"/></constructor-arg>
+        <constructor-arg index="32"><ref bean="tracking_event_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="33"><null /></constructor-arg>
+        <constructor-arg index="34"><ref bean="billable_event_url_reader"/></constructor-arg>
+        <constructor-arg index="35"><ref bean="billable_event_enricher_fraud_processor"/></constructor-arg>
+    </bean>
+</beans>

@@ -1,0 +1,46 @@
+-- Schema for no-sql store and sql database required for the user targeting and eventually for CPA on exchange or network inventory.
+
+-- For CPA parameters/attributes included for a user would serve as universal set of what attributes would be need for network inventory.
+
+1. NoSQL 
+   a. table name -> exch_dsp_uid_mapping
+       * key   = exchange id (eid)
+       * value = kritter dsp user id  (kuid)
+          -- The kuid is always generated whenever there is a user id available from exchange,if user id not available
+             from exchange bid request then do not bother to generate this id. Workflow must have following capabilities for kuid:
+              a.1 : Bid Request is from APP,WAP or PC, inside the adserving workflow upon receipt of the bidrequest
+                    generate a UUID and store the mapping in this table.
+              a.2 : Bid Request is from WAP or PC ,then append eid in the CSC url, upon receipt of CSC url , fetch kuid
+                    from nosql store(this table) and set cookie as value of kuid. Also perform user sync call with the exchange in
+                    question. If kuid not available from the nosql store, then log a message and do not bother to set cookie or 
+                    perform user synch. As its responsibility of adserving to perform above step, also might be possible that user
+                    hygiene process cleared such a mapping.
+
+   b. table name -> kuid_user_info
+          * key   = kuid
+          * value = user_info_json 
+              -- user_info_json contains information about interactions of the user and attributes that can be associated with the user.
+                  b.1 : an interaction could be an event user performed from the mysql table kuid_third_party_events defined below.
+                        Format as {"event_id":{"count":4,"last_active":timestamp}}.
+                  b.2 : attributes could be {"ad_id_array_converted":[1,2,3],"os_id":4,"ext_supply_id_array":[11,12,14] ... so on}
+                        This for example could be used to show this user other ads of same targeting profile, or show CPA ads targeted to os id
+                        mentioned in the os_id, same usage with ext_supply_id_array.
+                        Or define an additional array of objects for frequency capping such as:
+                        [{"adid":1,"last_shown":timestamp,"count_shown":4}]
+
+2. SQL
+
+   -- this table is also used for retargeting on web
+   CREATE TABLE kuid_third_party_events
+   (
+     id INTEGER AUTO INCREMENT PRIMARY KEY,
+     event_name VARCHAR(100) NOT NULL,
+     event_description VARCHAR(100) NOT NULL,
+     event_image_source VARCHAR(1024) ,
+     -- below json could be a mapping of parent category,sub categories of content user browsed on third party website, example product categories
+     event_info_json TEXT
+   );
+
+   Upon the receipt of a third party event for a user, we can store that in table kuid_user_info as an interaction as described in step b.1
+
+

@@ -1,0 +1,21 @@
+@import play.libs._
+
+<li><a href="#onlyadmin"><i class="fa fa-magic"><span
+			class="icon-bg bg-orange"></span></i><span data-i18n="MetaAdmin"></span></a>
+    <ul>
+        <li><a href='@{controllers.isp_mapping.routes.IspMappingController.ispMappingQueue(Scala.Option(""))}'><i
+                class="fa fa-caret-right"></i><span data-i18n="Create Isp Mapping"></span></a></li>
+        <li><a href='@{controllers.isp_mapping.routes.IspMappingController.deleteMapping(Scala.Option(""))}'><i
+                class="fa fa-caret-right"></i><span data-i18n="Active Isp Mapping"></span></a></li>
+        <li><a href='@{controllers.isp_mapping.routes.IspMappingController.rejectedMapping(Scala.Option(""))}'><i
+                class="fa fa-caret-right"></i><span data-i18n="Rejected Isp Mapping"></span></a></li>
+        <li><a href='@{controllers.routes.OperationsController.extsiteApprovalQueue("Pending",Scala.Option(""),Scala.Option(""))}'><i
+                class="fa fa-caret-right"></i><span data-i18n="ExtSite Approval Queue"></span></a></li>
+        <li><a href='@{controllers.routes.OperationsController.extsiteApprovalQueue("Active",Scala.Option(""),Scala.Option(""))}'><i
+                class="fa fa-caret-right"></i><span data-i18n="ExtSite Active Queue"></span></a></li>
+        <li><a href='@{controllers.routes.OperationsController.extsiteApprovalQueue("Rejected",Scala.Option(""),Scala.Option(""))}'><i
+                class="fa fa-caret-right"></i><span data-i18n="ExtSite Rejected Queue"></span></a></li>
+        <li><a href='@{controllers.iddefinition.routes.IddefinitionController.iddefinition()}'><i
+                class="fa fa-caret-right"></i><span data-i18n="Get ID Definition"></span></a></li>
+    </ul>			
+</li>

@@ -1,0 +1,23 @@
+@(multiCampaignForm: Form[models.formbinders.MultiCampaignForm])
+<div class="modal-header">
+	<h3 class="modal-title">@("Update Campaign")</h3>
+</div>
+<div class="modal-body">
+	<form id="campaignWorkflowForm" action="/advertiser/campaigns/update" method="POST"> 
+		@components.formElements.hiddenfield(multiCampaignForm("accountGuid"))
+		@components.formElements.hiddenfield(multiCampaignForm("action"))
+		@components.formElements.hiddenfield(multiCampaignForm("ids"))
+		<span> The following campaign will change its state.</span>
+		<ul>
+			<li ng-repeat="campaign in campaigns">{{campaign.name}}</li>
+		</ul>
+		
+		<span>Do you want to proceed?</span>
+		
+	</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button("Update", "ok()")
+	@components.formElements.button("Cancel", "cancel()")
+</div>
+

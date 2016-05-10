@@ -1,0 +1,57 @@
+    1. Following response formats are supported for an ad request.
+
+        	a. xhtml
+	        b. xml
+
+    a.1 : When request is for "xhtml" response format, the example responses are as follows:
+
+                                                                       Text
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<a href="http://localhost/clk/1/1/011c3e84-ecd5-d501-471f-de4382000022:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/d4172e06e1dd2356bb55123d024636d">This is test text ad,comes default with installation of the DSP, part of test advertiser account.</a><img src="http://localhost/csc/1/1/011c3e84-ecd5-d501-471f-de4382000022:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/d4172e06e1dd2356bb55123d024636d"/><br>
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                        Banner
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<a href="http://localhost/clk/1/1/011c3e84-ecd5-d501-471f-db87b800000f:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/cd972190e4a29d6d72cfae7ca13b618"><img src="http://localhost/test_banner.png"/></a><img src="http://localhost/csc/1/1/011c3e84-ecd5-d501-471f-db87b800000f:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/cd972190e4a29d6d72cfae7ca13b618" alt="This is test banner ad,comes default with installation of the DSP, part of test advertiser account."/><br>
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    b.1 : When request is for "xml" response format, the example responses are as follows:
+
+									Text
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<ad><type>Banner</type><text><![CDATA[This is test text ad,comes default with installation of the DSP, part of test advertiser account.]]></text><curl><![CDATA[http://dsp.com/clk/1/1/011c3e84-ecd5-d501-4710-fca947000001:1/3816/10/15/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/51a920e96e43f98b8fbb7fbabbc9e7ad]]></curl><csc><![CDATA[http://dsp.com/csc/1/1/011c3e84-ecd5-d501-4710-fca947000001:1/3816/10/15/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/51a920e96e43f98b8fbb7fbabbc9e7ad]]></csc></ad>
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                        Banner
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<ad><type>Banner</type><img><![CDATA[http://banner_cdn.com/test_banner.png]]></img><w>320</w><h>50</h><alt><![CDATA[This is test banner ad,comes default with installation of the DSP, part of test advertiser account.]]></alt><curl><![CDATA[http://dsp.com/clk/1/1/011c3e84-ecd5-d501-471a-17215f000001:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/77b1a56a7b966390b03addd232f6b4a]]></curl><csc><![CDATA[http://dsp.com/csc/1/1/011c3e84-ecd5-d501-471a-17215f000001:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/77b1a56a7b966390b03addd232f6b4a]]></csc></ad>
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Important Note: There are no new lines sent by adserver in above examples , new lines are added for understanding purpose of the different xml tags.
+
+Tags:
+     For Text ad, returned as response, tags are:
+
+     a. ad => The parent tag to identify start of an ad response.
+     b. type => Possible values are Text,Banner,Rich Media,Video.
+     c. text => Text to be displayed on browser/app for the ad returned.
+     d. curl => Click url of the adunit which would take user to advertiser's page.
+     e. csc => Client side counting url for counting of impression being served to the end user, 
+               the csc url has to be served to end user as img tag. Example if csc url is 
+	http://dsp.com/csc/1/1/011c3e84-ecd5-d501-471a-17215f000001:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/77b1a56a7b966390b03addd232f6b4a 
+               then the final response to user must include an img tag as:
+        <img src="http://dsp.com/csc/1/1/011c3e84-ecd5-d501-471a-17215f000001:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/77b1a56a7b966390b03addd232f6b4a"/>
+     
+     For Banner ad, returned as response, tags are:
+     a. ad => The parent tag to identify start of an ad response.
+     b. type => Possible values are Text,Banner,Rich Media,Video.
+     c. img => The banner ad image file path url.
+     d. w => width of the banner ad image file.
+     e. h => height of the banner ad image file.
+     f. alt => alt text for banner ad image.
+     g. curl => Click url of the adunit which would take user to advertiser's page.
+     h. csc => Client side counting url for counting of impression being served to the end user, 
+               the csc url has to be served to end user as img tag. Example if csc url is 
+        http://dsp.com/csc/1/1/011c3e84-ecd5-d501-471a-17215f000001:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/77b1a56a7b966390b03addd232f6b4a 
+               then the final response to user must include an img tag as:
+        <img src="http://dsp.com/csc/1/1/011c3e84-ecd5-d501-471a-17215f000001:1/11327/22/307/1/20/6863/aT0wLjEsZT0wLjI=/-1/-1/77b1a56a7b966390b03addd232f6b4a"/>

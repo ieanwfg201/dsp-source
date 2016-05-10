@@ -1,0 +1,6 @@
+Separator would be 
+
+time30, campaignId, adId, supply_source_type, selectedSiteCategoryId, countryId, countryCarrierId, countryRegionId, deviceManufacturerId, deviceOsId, exchangeId, total_csc, total_click, total_win;
+
+
+

@@ -1,0 +1,37 @@
+@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String)
+@components.fielddisplays.textdisplay("TP-Name", tp.getName()) 
+@components.fielddisplays.textdisplay("TP-Guid", tp.getGuid())
+@components.fielddisplays.textdisplay("TP-Status", tp.getStatusIdName())
+@components.fielddisplays.textdisplay("TP-Hour of Day", tp.getHourList())
+@components.fielddisplays.textdisplay("TP-Geo Targeting Type", tp.getGeo_targeting_type_name())
+@components.fielddisplays.listdisplay("TP-Connection Type", tp.getConnectionType())
+@components.fielddisplays.listdisplay("TP-Country", tp.getCountryValues())
+@components.fielddisplays.listdisplay("TP-Carrier", tp.getCarrierValues())
+@if("" != tp.getCustomIpSetString()){
+    @components.fielddisplays.htmldisplay("TP-IP") { <a href="@tp.getCustomIpSetString">download</a> }
+}
+@if("" != tp.getCustomZipCodeSetString()){
+    @components.fielddisplays.htmldisplay("TP-ZIPCODE") { <a href="@tp.getCustomZipCodeSetString()">download</a> }
+}
+@components.fielddisplays.listdisplay("TP-LatLongRadius", tp.getLatLong())
+@components.fielddisplays.listdisplay("TP-Browser", tp.getBrowserValues())
+@components.fielddisplays.textdisplay("TP-TabletOnly", tp.getTablet_targeting())
+@components.fielddisplays.listdisplay("TP-DeviceType", tp.getDeviceType())
+@components.fielddisplays.listdisplay("TP-Os", tp.getOsValues())
+@components.fielddisplays.listdisplay("TP-Brand", tp.getBrandValues())
+@components.fielddisplays.listdisplay("TP-Model", tp.getModelValues())
+@components.fielddisplays.textdisplay("TP-Sites List Type", tp.getSite_list_excluded())
+@components.fielddisplays.listdisplay("TP-DirectPub", tp.getPubValues())
+@components.fielddisplays.listdisplay("TP-DirectSites", tp.getSiteValues())
+@components.fielddisplays.listdisplay("TP-Exchanges", tp.getExchangeValues())
+@components.fielddisplays.listdisplay("TP-Ext-Sites", tp.getExtSiteValues())
+@components.fielddisplays.textdisplay("TP-Category List Type", tp.getCategory_list_excluded())
+@components.fielddisplays.listdisplay("TP-Tier 1 Category", tp.getCategories_tier_1_list())
+@components.fielddisplays.listdisplay("TP-Tier 2 Category", tp.getCategories_tier_2_list())
+@components.fielddisplays.textdisplay("TP-Supply Source Type", tp.getSupply_source_type_name())
+@components.fielddisplays.textdisplay("TP-Supply Source", tp.getSupply_source_name())
+@if("true" == retargeting_flow_enabled){
+    @components.fielddisplays.listdisplay("TP-RetargetingSegment", tp.getRetargetingSegment())
+}
+@components.fielddisplays.listdisplay("TP-PMP-Exchange", tp.getPmpExchangeValues())
+@components.fielddisplays.textdisplay("TP-PMP-DealIds", tp.getPmpDeal())

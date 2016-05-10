@@ -1,0 +1,7 @@
+@(label:String, optionsGroup:String, selectedValueRef:String)
+<fieldset>
+	<legend>@label</legend>
+	<label class="ui-radio" ng-repeat="option in @optionsGroup"> <input type="radio"
+		checklist-model="@selectedValueRef" checklist-value="option.value"> <span>{{option.label}}</span>
+	</label>
+</fieldset>

@@ -1,0 +1,13 @@
+Source: kritter-oxpecker-conf-datapipeline-service
+Maintainer: KRITTER <contact@kritter.in>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8)
+
+Package: kritter-oxpecker-conf-datapipeline-service
+Architecture: any
+Depends: ${misc:Depends},
+Description: kritters oxpecker datapipeline conf service
+ a datapipeline service for datapipeline conf of 
+ oxpecker - a file or dir deletion tool by kritter

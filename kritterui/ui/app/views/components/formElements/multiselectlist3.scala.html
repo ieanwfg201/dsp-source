@@ -1,0 +1,26 @@
+@(field:play.data.Form.Field, args: (Symbol,Any)*)(implicit lang: play.api.i18n.Lang) 
+ 
+@import play.api.i18n._
+@import views.html.helper._
+
+@elements = @{ new FieldElements(field.id, field, null, args.toMap, lang) }
+
+<div class="form-group  form-filter @if(elements.hasErrors) {error} @if(elements.args.get('_row) ){ row}">
+	<input type="text" class="hidden form-control" name="@field.name()" id="@field.name()" value="@field.value()" 
+					 ng-model="@{field.name()+"_msmodel.value"}"> 
+	<div class="@if(elements.args.get('_row) ){ col-md-3 }">
+		<label  class="control-label">@elements.args.get('_label)</label>
+	</div> 
+	
+	<div class="@if(elements.args.get('_row) ){ col-md-9 large}">
+		<div id="@{field.name()+"_selector"}" multi-select input-model="@{field.name()+"_msmodel.options"}"
+				ng-init='@{field.name()+"_msmodel.setInitialValue("+field.value()+")"}'
+				output-model="@{field.name()+"_msmodel.selections"}" button-label="label" item-label="label"
+				tick-property="selected" orientation="horizontal"
+				selection-mode="multiple" max-labels="2" is-disabled="false" 
+				helper-elements="all,reset,filter,close"
+				on-open="@{field.name()+"_msmodel.onOpen()"}"
+				on-item-click ="@{field.name()+"_msmodel.onItemClick(data)"}"
+				on-close="@{field.name()+"_msmodel.onClose()"}"></div>		
+ 	</div>
+</div>

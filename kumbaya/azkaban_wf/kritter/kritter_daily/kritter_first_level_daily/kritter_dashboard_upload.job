@@ -1,0 +1,13 @@
+#kritter_dashboard_upload.job
+type=command
+dependencies=kritter_dashboard_daily
+command=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_total_metric} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_total_metric'
+command.1=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_country} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_yes_country'
+command.2=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_manufacturer} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_yes_manufacturer'
+command.3=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_os} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_yes_os'
+command.4=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_browser} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_yes_browser'
+command.5=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_site} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_yes_site'
+command.6=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_campaign} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_yes_campaign'
+command.7=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_site_v1} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_yes_campaign'
+command.8=sh kritter_dashboard_upload.sh ${loader_code_path} ${dashboard_output}/'${process_time_dir}' ${dashboard_campaign_v1} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 'dashboard_yes_campaign'
+

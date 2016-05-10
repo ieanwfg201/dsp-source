@@ -1,0 +1,101 @@
+@(accountForm: Form[models.entities.AccountEntity], display:models.accounts.displays.AccountDisplay)
+
+ 
+@main2("New Account Form"){@nav()}{@navs.breadcrumbs(display.getBreadCrumbPaths())} {
+
+ 
+ 
+@components.containers.panel("Account Form"){
+<form id="accountForm" action="/accounts" method="POST" data-ng-controller="accountController">
+ 
+				@components.formElements.hiddenfield(accountForm("type_id"))
+				@components.formElements.hiddenfield(accountForm("id"))
+				@components.formElements.hiddenfield(accountForm("status"))
+				@components.formElements.hiddenfield(accountForm("created_on"))
+				@components.formElements.hiddenfield(accountForm("api_key"))
+				<fieldset>
+					<legend>Account Information</legend>
+					@components.formElements.textinput(accountForm("name"), '_label ->"Display Name *" ) 
+					@components.formElements.textinput(accountForm("userid"), '_label ->"User Id *" )
+					@components.formElements.passwordinput(accountForm("password"), '_label ->"Password *" , '_passwodStrength ->true)
+					
+					@components.formElements.passwordinput(accountForm("verifyPassword"), '_label ->"Verify Password *")
+				</fieldset>
+                <fieldset ng-show="showPaymentOptions" ng-if="showPaymentOptions">
+                    <legend>Inventory Source</legend>
+                    @components.formElements.selectlist2(accountForm("inventory_source"), "Inventory Source", services.MetadataAPI.getInvSource()  )
+                </fieldset>
+                <fieldset ng-show="showAdvOptions" ng-if="showAdvOptions">
+                    @components.formElements.selectlist2(accountForm("demandtype"), "Demand Type", services.MetadataAPI.getDemandType(), '_ngSync->true)
+                    <div id="dspid" ng-show="demandtype==2" ng-if="demandtype==2">
+                        @components.formElements.textinput(accountForm("qps"), '_label ->"QPS" )
+                        @components.formElements.textinput(accountForm("demand_url"), '_label ->"Dsp Url" )
+                    </div>
+                </fieldset>
+                <fieldset ng-show="showPaymentOptions" ng-if="showPaymentOptions">
+                    <legend>Demand Preference</legend>
+                    @components.formElements.selectlist2(accountForm("demandpreference"), "Demand Preference", 
+                    services.MetadataAPI.getDemandPreference(), '_ngSync->true)
+                    <div id="timeoutid" ng-show="demandpreference==1 || demandpreference==2 || demandpreference==3 || demandpreference==4" ng-if="demandpreference==1 || demandpreference==2 || demandpreference==3 || demandpreference==4">
+                        @components.formElements.textinput(accountForm("timeout"), '_label ->"TimeOut (in ms)" )
+                    </div>
+                </fieldset>
+				<fieldset>
+					<legend>Contact Information</legend>
+					@components.formElements.textinput(accountForm("im"), '_label ->"IM" )
+					@components.formElements.textinput(accountForm("email"), '_label ->"Email *" )
+					@components.formElements.textinput(accountForm("phone"), '_label ->"Contact Number *" )
+				</fieldset>
+				<fieldset>
+					<legend>Company Information</legend>
+					@components.formElements.textinput(accountForm("company_name"), '_label ->"Company Name *" )
+					
+					@components.formElements.textarea(accountForm("address"), "Company Address" ) 
+					@components.formElements.textinput(accountForm("city"), '_label ->"City *" )
+					@components.formElements.selectlist2(accountForm("country"), "Country *", services.TPMetadataAPI.countrySelectOptions()  )
+					
+					
+										
+				</fieldset>
+				<fieldset ng-show="showPaymentOptions" ng-if="showPaymentOptions">
+                    @components.formElements.textinput(accountForm("billing_rules_json"), '_label ->"Payout Percentage")
+					<legend>Payment Information</legend> 	 
+					 
+					@components.formElements.selectlist2(accountForm("payment_type"), 
+										"Payment Type", models.StaticUtils.getPaymentOptions() , '_ngSync->true, 'ngChange -> "setPaymentMode()")
+
+					<div id="paypalFields" ng-show="payment_type=='Paypal'" ng-if="payment_type=='Paypal'">
+							<legend>Paypal Information</legend>
+							@components.formElements.textinput(accountForm("paypal_id"), '_label ->"Paypal Id") 
+					</div>
+
+					<div id="wireTransferFields" ng-show="payment_type=='WireTransfer'" ng-if="payment_type=='WireTransfer'">
+							<legend>Wire Transfer Information</legend>
+							@components.formElements.textinput(accountForm("wire_beneficiary_name"), '_label ->"Beneficiary Name")
+						    @components.formElements.textinput(accountForm("wire_account_number"), '_label ->"Account Number" )
+						    @components.formElements.textinput(accountForm("wire_bank_name"), '_label ->"Bank Name")
+						    @components.formElements.textinput(accountForm("wire_transfer_bank_add"), '_label ->"Bank Address"  )
+			                @components.formElements.textinput(accountForm("wire_swift_code"), '_label ->"Swift Code" )
+			                @components.formElements.textinput(accountForm("wire_iban"), '_label ->"IBAN" )
+					</div>
+
+				  <div id="bankTransferFields" ng-show="payment_type=='BankTransfer'" ng-if="payment_type=='BankTransfer'">
+							<legend>Bank Transfer Information</legend>
+							@components.formElements.textinput(accountForm("bank_transfer_beneficiary_name"), '_label ->"Beneficiary Name")
+						    @components.formElements.textinput(accountForm("bank_transfer_account_number"), '_label ->"Account Number")
+						    @components.formElements.textinput(accountForm("bank_transfer_bank_name"), '_label ->"Bank Name")
+						    @components.formElements.textinput(accountForm("bank_transfer_bank_add"), '_label ->"Bank Address" )
+			                @components.formElements.textinput(accountForm("bank_transfer_branch_number"), '_label ->"Branch Number")
+			                @components.formElements.textinput(accountForm("bank_transfer_vat_number"), '_label ->"Vat Number" )
+					</div>	
+				</fieldset>					
+ 
+				
+				@components.formElements.hiddenfield(accountForm("action"))
+				@components.formElements.submitbutton("save", "Save")
+</form>
+<script src="@routes.Assets.at("javascripts/apps/accountController.js")" type="text/javascript"></script>
+
+}
+
+}

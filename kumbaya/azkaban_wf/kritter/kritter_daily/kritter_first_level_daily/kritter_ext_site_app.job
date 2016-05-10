@@ -1,0 +1,6 @@
+#kritter_ext_site_app.job
+type=command
+dependencies=kritter_first_level_report_delete
+
+command=sh kritter_ext_site_app.sh ${ext_site_app_code_path} ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} ${dashboard_total_metric}
+

@@ -1,0 +1,13 @@
+Source: kritter-tern-file-pull-conf-adserving-cpm-cpm-rev-max-service
+Maintainer: KRITTER <contact@kritter.in>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8)
+
+Package: kritter-tern-file-pull-conf-adserving-cpm-cpm-rev-max-service
+Architecture: any
+Depends: ${misc:Depends},
+Description: kritters tern_file_pull adserving-cpm-cpm-rev-max conf service
+ a adserving-cpm-cpm-rev-max service for adserving-cpm-cpm-rev-max conf of 
+ tern_file_pull - a log pull transportation package by kritter

@@ -1,0 +1,42 @@
+@(ad:models.advertiser.AdDisplayFull,retargeting_flow_enabled:String)
+@main2("Ad Home- @ad.getName()"){@navs.navadvt(ad.getAccountGuid())}{@navs.breadcrumbs(ad.getBreadCrumbPaths())}{
+
+	@components.containers.panel("Ad Summary-"+ ad.getName()){
+		<div> 
+		@components.fielddisplays.textdisplay("AD-AdId", ad.getGuid())
+		
+		@components.fielddisplays.htmldisplay("AD-Landing Url") { <a href="@ad.getLanding_url()">@ad.getLanding_url()</a> }
+		
+		@components.fielddisplays.textdisplay("AD-Adv Domain", ad.getAdvDomain()) 
+		
+		@components.fielddisplays.textdisplay("AD-Market Place", ad.getMarketplace())
+		
+		@components.fielddisplays.textdisplay("AD-Tracking Partner", ad.getTracking_partner())
+		
+		@components.fielddisplays.textdisplay("AD-BidType", ad.Bidtype())
+		
+		@components.fielddisplays.textdisplay("AD-Internal Max Bid", ad.getInternalMaxBid()+"")
+		
+		@components.fielddisplays.textdisplay("AD-Advertiser Bid", ad.getAdvertiserBid()+"") 
+		
+        @components.fielddisplays.textdisplay("AD-CPA Goal", ad.getCpaGoal()+"") 
+
+		@components.fielddisplays.listdisplay("AD-Tier 1 Category", ad.getTier1Categories())
+		
+		@components.fielddisplays.listdisplay("AD-Tier 2 Category", ad.getTier2Categories()) 
+		
+		@components.fielddisplays.listdisplay("AD-Hygiene", ad.getHygieneList())
+		
+		@if("True" == ad.isFreqCap()){
+            @components.fielddisplays.intdisplay("AD-Freq Cap per User", ad.getFreqCap())
+            @components.fielddisplays.intdisplay("AD-Time Window of Freq Cap", ad.getTimeWindow())
+        }
+		 
+		@advt.creative.creativeDisplay(ad.getCreativeDisplay())
+		
+		@advt.targeting.targetingHomeContent(ad.getTargetingFull(),retargeting_flow_enabled)
+		 
+		</div>
+	}
+
+}

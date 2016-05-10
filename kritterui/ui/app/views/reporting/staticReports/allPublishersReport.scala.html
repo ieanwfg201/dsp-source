@@ -1,0 +1,56 @@
+@(tableDataSource:String)
+@main("Supply Reporting") {
+<div class="page page-dashboard" data-ng-controller="publisherReportController">
+
+ 
+	<button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">Toggle Filter Display</button>
+	<button class="btn btn-default btn-primary" ng-click="refershData()">Refresh Data</button>
+	  
+    <div collapse="isCollapsed">
+		<div class="well well-lg"> 
+      <form id="supplyReportConfigForm" class="navbar-form navbar-left" action="/reporting/data" method="POST">
+        
+      </form>    
+     <button class="btn btn-default btn-primary" ng-click="refershData()">Refresh Data</button>
+  		</div> 
+	</div>
+  	
+  	
+	<div>
+		@components.containers.panel("Report"){
+			<table ng-table="@{ tableDataSource+ ".params"}" show-filter="true" class="table" >
+				<thead>
+					<tr>
+						<th ng-repeat="column in @{tableDataSource +".column"}" ng-show="column.visible"
+							class="text-center sortable"
+							ng-class="{
+			                    'sort-asc': @{ tableDataSource + ".column.isSortBy(column.field, 'asc')"},
+			                    'sort-desc': @{ tableDataSource + ".column.isSortBy(column.field, 'desc')"}
+			                  }"
+							ng-click="@{ tableDataSource + ".column.sorting(column.field"}, @{ tableDataSource +".column.isSortBy(column.field, 'asc') ? 'desc' : 'asc')"}">
+							{{column.title}}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="record in @{tableDataSource +".data"}">
+						<td ng-repeat="column in @{tableDataSource +".column"}">
+						<span ng-if="column.drilldown" >
+							<a href="#" ng-click="drillDown( column.field, record[column.idfield])">{{record[column.field]}}</a>
+						</span>
+						
+						<span ng-if="!column.drilldown" >
+							 {{record[column.field]}}
+						</span>
+									
+						 
+							      
+					    </td>
+					</tr>
+				</tbody>
+			</table>
+		} 	
+		 
+	</div>
+</div> 
+<script src="@routes.Assets.at("javascripts/apps/reporting/publisherReportController.js")" type="text/javascript"></script>
+}

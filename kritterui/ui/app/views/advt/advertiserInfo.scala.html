@@ -1,0 +1,25 @@
+@(display:models.accounts.displays.AdvertiserDisplay)
+@main2("Advertiser Home"){@navs.navadvt(display.getAccountGuid())}{@navs.breadcrumbs(display.getBreadCrumbPaths())}{
+
+@components.containers.panel("Account Info"){
+<div> 
+        @components.fielddisplays.textdisplay("Full Name", display.getAccount().getName())
+        @components.fielddisplays.textdisplay("User Id", display.getAccount().getUserid())
+        @components.fielddisplays.textdisplay("ID", display.getAccount().getGuid())
+        @components.fielddisplays.textdisplay("IM", display.getAccount().getIm())
+        @components.fielddisplays.textdisplay("Email", display.getAccount().getEmail())
+        @components.fielddisplays.textdisplay("Contact Number", display.getAccount().getPhone())
+        @components.fielddisplays.textdisplay("Company Name", display.getAccount().getCompany_name())
+        @components.fielddisplays.textdisplay("Company Address", display.getAccount().getAddress())
+        @components.fielddisplays.textdisplay("City", display.getAccount().getCity())
+        @components.fielddisplays.textdisplay("Country", display.getAccount().getCountry())
+        @components.fielddisplays.textdisplay("Api Key", display.getAccount().getApi_key())
+        @components.fielddisplays.textdisplay("Demand Type", display.getDemandtype())
+        @if("API" == display.getDemandtype()){
+            @components.fielddisplays.intdisplay("QPS", display.getAccount().getQps()))
+        }
+        </div>
+}
+
+<script src="@routes.Assets.at("javascripts/apps/advertiserController.js")" type="text/javascript"></script>
+}

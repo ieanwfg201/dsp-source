@@ -1,0 +1,12 @@
+@(targetings: List[models.formelements.SelectOption])
+
+<dl class="dl-vertical">
+<dt>Select Targeting</dt>
+@for(targeting <- targetings) {
+  <dd> 
+  <label class="ui-radio"><input name="radio1" type="radio" value="@targeting.getValue()" >
+  			<span>@targeting.getLabel()</span></label></dd>
+} 
+</dl>
+
+

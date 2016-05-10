@@ -1,0 +1,64 @@
+@(logPagesFormEntity:Form[models.entities.logpages.LogPagesFormEntity])
+@main("Logs") {
+<div class="page page-dashboard" data-ng-controller="logPagesController">
+
+    @components.containers.panel("Logs"){
+            <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">
+                <span ng-show="isCollapsed">Show Filters</span>
+                <span ng-show="!isCollapsed">Hide Filters</span>
+            </button>
+            <button class="btn btn-default btn-primary" ng-click="refershData()">Reload Report</button>
+              
+            <div collapse="isCollapsed"> 
+              <form id="logPagesConfigForm" class="navbar-form navbar-left" action="/logpages/data" method="POST" ng-init='init()'>
+               <fieldset>
+                <legend>Time and Frequency</legend>
+                @components.formElements.hiddenfield(logPagesFormEntity("pagesize"))
+                @components.formElements.hiddenfield(logPagesFormEntity("startindex"))
+                 @components.formElements.dateinput(logPagesFormEntity("start_date"),"Start Date", '_stringRep->true)
+                 @components.formElements.dateinput(logPagesFormEntity("end_date"),"End Date", '_stringRep->true)
+                @components.formElements.selectlist2(logPagesFormEntity("event"), 
+                                    "Event", services.MetadataAPI.logeventOptions(), '_classes -> "small") 
+               </fieldset>
+               <fieldset>
+                       @components.formElements.multiselectlist3(logPagesFormEntity("publishers"),'_label->"Pub (Child Required )")   
+                      <span ng-show="sites_msmodel.visible">     
+                        @components.formElements.multiselectlist3(logPagesFormEntity("sites"),'_label->"Sites")     
+                        @components.formElements.multiselectlist3(logPagesFormEntity("extsites"),'_label->"External Site")     
+                      </span>
+                      @components.formElements.multiselectlist3(logPagesFormEntity("advertisers"),'_label->"Advertisers (Child Required)")
+                      <span ng-show="campaigns_msmodel.visible">
+                      @components.formElements.multiselectlist3(logPagesFormEntity("campaigns"),'_label->"Campaigns")  
+                      </span>
+                      <span ng-show="ads_msmodel.visible">
+                      @components.formElements.multiselectlist3(logPagesFormEntity("ads"),'_label->"Ads")
+                      </span>
+                      @components.formElements.multiselectlist3(logPagesFormEntity("country"),'_label->"Country")
+                      <span ng-show="carrier_msmodel.visible">
+                        @components.formElements.multiselectlist3(logPagesFormEntity("carrier"),'_label->"Carrier")
+                      </span>
+                      @components.formElements.multiselectlist3(logPagesFormEntity("os"),'_label->"Os")
+                      @components.formElements.multiselectlist3(logPagesFormEntity("browser"),'_label->"Browser")
+                      <span ng-show="brand_msmodel.visible">
+                        @components.formElements.multiselectlist3(logPagesFormEntity("brand"),'_label->"Brand")
+                      </span>
+                      <span ng-show="model_msmodel.visible">
+                        @components.formElements.multiselectlist3(logPagesFormEntity("model"),'_label->"Model") 
+                      </span>
+                      
+                      
+               </fieldset>
+                 
+               <button type="button" class="btn btn-default btn-primary" ng-click="refershData()">Generate Report</button>
+               <button type="button" class="btn btn-default btn-primary" ng-click="refershCSVData()">Download as CSV</button>
+               
+               
+              </form>    
+            </div>
+    
+            @components.misc.table("tableData")
+        }        
+</div>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/logpages/logPagesController.js")" type="text/javascript"></script>
+}

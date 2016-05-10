@@ -1,0 +1,19 @@
+<div id="nav-wrapper">
+    <ul id="nav"
+        data-ng-controller="NavCtrl"
+        data-collapsenav2
+        data-slim-scroll
+        data-highlight-active>
+        <li><a href="/"><i class="fa fa-magic"><span
+			class="icon-bg bg-orange"></span></i><span data-i18n="Home"></span></a> 
+		</li>
+        @navs.accounts()
+        @navs.insertionorders() 
+        @navs.operations() 
+        @navs.reporting()
+        @navs.testpages()
+        @navs.logpages()
+        @navs.metaadminpages()
+        @navs.sspadmin()
+    </ul>
+</div>

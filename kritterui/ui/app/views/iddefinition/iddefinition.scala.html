@@ -1,0 +1,47 @@
+@(iddefinitionFormEntity: Form[models.iddefinition.IddefinitionFormEntity])
+@main("Id Definition"){
+
+@components.containers.panel("Iddefinition"){
+<div ng-controller="iddefinitionController">
+     <form id="iddefinitionForm" action="/iddefinition/getiddefinition" method="POST">
+       @components.formElements.textinput(iddefinitionFormEntity("ids"), '_label ->"ID/ GUID", '_help -> "*")
+       @components.formElements.selectlist2(iddefinitionFormEntity("id_guid"), "ID or GUID (Comma separated & without spaces)", services.MetadataAPI.idguidOption())
+       @components.formElements.selectlist2(iddefinitionFormEntity("get_type"), "Type", services.MetadataAPI.getdefinitionOption())
+       @components.formElements.submitbutton("change", "Get Definition")
+    </form>
+    
+    <div infinite-scroll='nextPage()' infinite-scroll-disabled='iddefinitionListData.isLoading' infinite-scroll-distance='1'>
+            <table tr-ng-grid="" class="table-condensed" items="iddefinitionListData.filteredData"   
+                                selected-items="iddefinitionListData.selections" 
+                                fields="['id', 'guid',  'name']" 
+                                selection-mode="MultiRow"
+                                enable-filtering="iddefinitionListData.enableFilter"
+                                enable-sorting="iddefinitionListData.enableSorting" 
+                                order-by="iddefinitionListData.orderBy"
+                                order-by-reverse="iddefinitionListData.orderByReverse" 
+                                page-items="iddefinitionListData.itemsPerPage"  
+                                total-items="iddefinitionListData.totalItems"
+                                current-page="iddefinitionListData.currentPage" 
+                                on-data-required="iddefinitionListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+         
+                <thead>
+                    <tr>
+                        <th field-name="id" display-name="ID" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="guid" display-name=GUID enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="name" display-name="NAME" enable-sorting="true"  enable-filtering="true">  </th> 
+                    </tr>  
+                </thead> 
+                <tbody>
+                    <tr>
+                        <td field-name="id"> <div class="trnggridcelltextselect">{{gridItem.id}}</div></td>
+                        <td field-name="guid"> <div class="trnggridcelltextselect">{{gridItem.guid}}</div></td>
+                        <td field-name="name"> <div class="trnggridcelltextselect">{{gridItem.name}}</div></td>
+                    </tr>
+                </tbody>
+            </table> 
+        </div>
+</div>
+
+}
+<script src="@routes.Assets.at("javascripts/apps/iddefinition/iddefinitionController.js")" type="text/javascript"></script>
+}

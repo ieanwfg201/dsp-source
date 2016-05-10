@@ -1,0 +1,121 @@
+@(reportType: String , filter:String, breadcrumbs:String, params:String)
+
+@main("Hierarchical Report") {
+<div class="page page-dashboard" data-ng-controller="hierarchicalReportController" ng-init="initReport('@reportType', '@filter', '@breadcrumbs', '@params')">
+
+
+	<div class="wellhierarchical">
+              @components.formElements.selectlistwithdefault("supplysourcetype", 
+                                    "Supply Source Type", services.MetadataAPI.supplySourceTypeOptions(), 
+                                      "","NONE")
+              @components.formElements.selectlistwithdefault("site_hygiene", 
+                                    "Site Hygiene", services.MetadataAPI.siteHygieneOptions(), 
+                                      "","NONE")                                      
+              @components.formElements.selectlistwithdefault("frequency", 
+                                    "Frequency", services.MetadataAPI.reportFrequencyOptions(), 
+                                      "changeDate()","YESTERDAY") 
+			<div class="btn-group">
+				<span>
+					<label>Start Date</label>
+				  <quick-datepicker  id="startDate" date-format="MM/dd/yyyy" time-format="h:mm a"  ng-model="startDate" ></quick-datepicker>
+					</span>
+				<span> 		
+				<label>End Date</label>		
+				  <quick-datepicker  id="endDate" date-format="MM/dd/yyyy" time-format="h:mm a"  ng-model='endDate' ></quick-datepicker>
+					 				
+				   </span>
+				   <span>
+					<button type="button" class="btn btn-primary"
+						ng-click="updateTableData(activeDimension)">Load Report</button>
+                    <button type="button" class="btn btn-primary" ng-click="updateTableDataCSV(activeDimension)">Download as CSV</button>
+					</span>
+			</div>
+	</div>
+	<ol class="breadcrumb">
+	   <li ng-repeat="bcrumb in breadcrumbs2 track by $index">
+	  		<a  class={{bcrumb.active}}  ng-click="navigateTo(bcrumb, false)" href="#" role="button">{{bcrumb.name}}</a>
+	  </li>
+	</ol>
+	 
+	<ul class="nav nav-pills" ng-show="showtabs">
+	  <li role="presentation" class="{{dimension.active}}" ng-repeat="dimension in dimensions">
+	  						<a disabled="{{dimension.disabled}}" ng-click="navigateTo(dimension, true)" href="#" role="button">{{dimension.name}}</a>
+	  </li>
+	</ul>
+	<div class="wellhierarchical">
+	   <table tr-ng-grid="" items="tableData.data"   
+	 					selected-items="tableData.selections" 
+	 					fields="tableData.fields" 
+	 					selection-mode="SingleRow"
+	 					enable-filtering="tableData.enableFilter" 
+	 					order-by="tableData.orderBy" 
+	 					order-by-reverse="tableData.orderByReverse" 
+	 					page-items="tableData.itemsPerPage"  
+	 					total-items="tableData.totalItems"
+	 					current-page="tableData.currentPage" 
+	 					on-data-required="updateTableData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+ 
+	    <thead>
+	        <tr>
+	            <th field-name="drilldown" display-name="Link" enable-sorting="false" >  </th>
+	            <th field-name="time" display-name="Time" enable-sorting="false" >  </th>
+	            <th field-name="supply_source_type_name" display-name="APP/WAP" enable-sorting="false" >  </th>
+	            <th field-name="country_name" display-name="Country" enable-sorting="false" >  </th>
+	            <th field-name="adv_name" display-name="Advertiser" enable-sorting="false" >  </th>
+	            <th field-name="campaign_name" display-name="Campaign" enable-sorting="false" >  </th>
+	            <th field-name="ad_name" display-name="Ad" enable-sorting="false" >  </th>
+	            <th field-name="pub_name" display-name="Publisher" enable-sorting="false" >  </th>
+	            <th field-name="site_hygiene_name" display-name="Site Hygiene" enable-sorting="false" >  </th>
+	            <th field-name="site_name" display-name="Site" enable-sorting="false" >  </th>
+	            <th field-name="deviceOs_name" display-name="Os" enable-sorting="false" >  </th>
+	            <th field-name="browser_name" display-name="Browser" enable-sorting="false" >  </th>
+	            <th field-name="isp_name" display-name="Carrier" enable-sorting="false" >  </th>
+	            <th field-name="deviceManufacturer_name" display-name="Brand" enable-sorting="false" >  </th>
+	            <th field-name="total_request_name" display-name="Req" enable-sorting="true">  </th>  
+	            <th field-name="total_impression_name" display-name="Imp" enable-sorting="true">  </th> 
+                <th field-name="fr_name" display-name="FR" enable-sorting="true">  </th>
+                <th field-name="total_win_name" display-name="Win" enable-sorting="true">  </th>
+                <th field-name="wtr_name" display-name="WTR" enable-sorting="true">  </th>
+	            <th field-name="total_bidValue_name" display-name="Total Bid Value" enable-sorting="true">  </th>
+                <th field-name="total_win_bidValue_name" display-name="Win Bid Value" enable-sorting="true">  </th>
+                <th field-name="eCPW_name" display-name="ECPW" enable-sorting="true">  </th>
+                <th field-name="eIPW_name" display-name="EIPW" enable-sorting="true">  </th>
+                <th field-name="total_csc_name" display-name="CSC" enable-sorting="true">  </th>
+                <th field-name="billedcsc_name" display-name="Billed CSC" enable-sorting="true">  </th>
+                <th field-name="rtr_name" display-name="RTR" enable-sorting="true">  </th>
+	            <th field-name="total_click_name" display-name="Click" enable-sorting="true">  </th>
+	            <th field-name="billedclicks_name" display-name="Billed Clicks" enable-sorting="true">  </th>
+                <th field-name="ctr_name" display-name="CTR" enable-sorting="true">  </th>
+                <th field-name="profitmargin_name" display-name="Profit Margin" enable-sorting="true">  </th>
+	            <th field-name="conversion_name" display-name="Conversion" enable-sorting="true">  </th>
+                <th field-name="clicksr_name" display-name="Clicksr" enable-sorting="true">  </th>
+	            <th field-name="demandCharges_name" display-name="Revenue" enable-sorting="true">  </th>
+	            <th field-name="networkrevenue_name" display-name="Network Revenue" enable-sorting="true">  </th>
+	            <th field-name="exchangerevenue_name" display-name="Exchange Revenue" enable-sorting="true">  </th>
+	            <th field-name="cpagoal_name" display-name="CPA Revenue" enable-sorting="true">  </th>
+	            <th field-name="eCPC_name" display-name="ECPC" enable-sorting="true">  </th>
+	            <th field-name="billedECPC_name" display-name="BilledECPC" enable-sorting="true">  </th>
+                <th field-name="ecpm_name" display-name="ECPM" enable-sorting="true">  </th>
+                <th field-name="billedECPM_name" display-name="BilledECPM" enable-sorting="true">  </th>
+                <th field-name="eCPA_name" display-name="ECPA" enable-sorting="true">  </th>
+	            <th field-name="supplyCost_name" display-name="PubIncome" enable-sorting="true">  </th>
+	            <th field-name="networkpayout_name" display-name="Network Income" enable-sorting="true">  </th>
+	            <th field-name="exchangepayout_name" display-name="Exchange Income" enable-sorting="true">  </th>
+                <th field-name="eIPC_name" display-name="EIPC" enable-sorting="true">  </th>
+                <th field-name="eIPM_name" display-name="EIPM" enable-sorting="true">  </th>
+                <th field-name="billedEIPM_name" display-name="BilledEIPM" enable-sorting="true">  </th>
+                <th field-name="eIPA_name" display-name="EIPA" enable-sorting="true">  </th>
+	        </tr> 
+	    </thead> 
+        <tbody>
+                   <tr>
+                           <td field-name="drilldown">
+                                   <button class="btn btn-default"  ng-click="drillDown(gridItem)">New Tab</button>
+                           </td>
+                   </tr> 
+           </tbody>
+	</table>
+	</div>	 	 
+</div>
+<script src="@routes.Assets.at("javascripts/apps/reporting/hierarchical/hierarchicalReportController.js")" type="text/javascript"></script>
+}

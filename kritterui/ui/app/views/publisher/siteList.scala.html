@@ -1,0 +1,58 @@
+@(status:String, sites:List[com.kritter.api.entity.site.Site])
+
+
+@main("IO List") {
+
+<table class="table table-bordered table-striped table-responsive" ng-controller="siteListController">
+	<thead>
+		<tr>
+			<th><div class="th">
+					Name<span class="glyphicon"></span>
+				</div></th>
+			<th><div class="th">
+					Publisher <span class="glyphicon"></span>
+				</div></th>
+			<th><div class="th">
+					Name <span class="glyphicon"></span>
+				</div></th>
+			<th><div class="th">
+					Total Value <span class="glyphicon"></span>
+				</div></th>
+			<th><div class="th">
+					Operations <span class="glyphicon"></span>
+				</div></th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@for(site <- sites) {
+		<tr>
+			<td>@site.getName()</td> 
+			<td>@site.getSite_url()</td> 
+			@if(status=="Pending"){
+			<td> 
+				<span>@components.formElements.button("view","open('small','"+site.getId()+"', 'view')")</span> 
+				<span>@components.formElements.button("approve","open('small','"+site.getId()+"', 'approve')")</span>
+				<span>@components.formElements.button("reject","open('small','"+site.getId()+"',  'reject')")</span>
+			</td>
+			}
+		</tr>
+		}
+	</tbody>
+	 <footer class="table-footer">
+           
+                <div class="col-md-6 text-right pagination-container pull-right">
+                    <pagination class="pagination-sm"
+                                page="currentPage"
+                                total-items="filteredStores.length"
+                                max-size="4"
+                                on-select-page="select(page)"
+                                items-per-page="numPerPage"
+                                rotate="false"
+                                boundary-links="true"></pagination>
+                </div> 
+        </footer>
+</table>
+
+<script src="@routes.Assets.at("javascripts/apps/siteController.js")" type="text/javascript"></script>
+}

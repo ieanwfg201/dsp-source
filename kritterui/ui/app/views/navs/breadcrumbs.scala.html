@@ -1,0 +1,7 @@
+@(pathTrails:List[models.uiutils.Path])
+<ol class="breadcrumb">
+<li><a href="/">Home</a></li>
+@for( pathTrail <- pathTrails){
+<li><a href="@pathTrail.getPath()"><b>@pathTrail.getLabel()</b></a></li>
+}
+</ol>

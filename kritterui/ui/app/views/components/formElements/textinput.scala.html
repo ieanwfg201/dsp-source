@@ -1,0 +1,17 @@
+@(field:play.data.Form.Field , args: (Symbol,Any)*)(implicit lang: play.api.i18n.Lang) 
+
+@import play.api.i18n._
+@import views.html.helper._
+
+@elements = @{ new FieldElements(field.id, field, null, args.toMap, lang) }
+
+<div class="form-group row @if(elements.hasErrors) {error}">
+	<div class="col-sm-3">
+		<label for="@field.name()" class="control-label">@elements.args.get('_label)</label>
+	</div>
+	<div class="col-sm-9 input @if(elements.args.get('_classes) ){ @elements.args.get('_classes) }">
+		<input type="text" class="form-control" id="@field.name()" name="@field.name()" value="@field.value()">
+		<span class="help-inline">@elements.errors(elements.lang).mkString(", ")</span>
+      	<span class="help-block hidden showonhover">@elements.infos(elements.lang).mkString(", ")</span>  
+	</div>
+</div>

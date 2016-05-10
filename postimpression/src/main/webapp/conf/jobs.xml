@@ -1,0 +1,24 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="initJob" class="com.kritter.postimpression.workflow.jobs.InitJob">
+        <constructor-arg index="0" value="postimpression-init-job"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="processed-uri"/>
+        <constructor-arg index="3" value="req-object"/>
+        <constructor-arg index="4"><ref bean="post_impression_utils"/></constructor-arg>
+    </bean>
+
+     <bean id="thriftLoggerJob" class="com.kritter.postimpression.workflow.jobs.ThriftLogger">
+        <constructor-arg index="0" value="postimpression-thrift-logger-job"/>
+        <constructor-arg index="1" value="postimpression.application"/>
+        <constructor-arg index="2" value="postimpression.thriftlog"/>
+        <constructor-arg index="3" value="req-object"/>
+        <constructor-arg index="4" value="User-Agent"/>
+        <constructor-arg index="5" value="X-Forwarded-For"/>
+        <constructor-arg index="6" value="REMOTE_ADDR"/>
+    </bean>
+
+</beans>

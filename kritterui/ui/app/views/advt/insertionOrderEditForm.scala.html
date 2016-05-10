@@ -1,0 +1,19 @@
+@(ioForm: Form[models.formbinders.IOWorkFlowEntity], action:String)
+<div class="modal-header">
+	<h3 class="modal-title">@("IO Approval Form")</h3>
+</div>
+<div class="modal-body">
+	<form id="ioEditForm" action="/insertion-order/update" method="POST">
+		<label>@action insertion order with number:<b> @ioForm("ioNumber").value()</b></label>
+		<br/>
+		<br/>
+		@components.formElements.hiddenfield(ioForm("accountGuid"))
+		@components.formElements.hiddenfield(ioForm("ioNumber"))
+		@if(action=="reject"){ @components.formElements.textarea(ioForm("comment"),
+		"Comment") } @components.formElements.hiddenfield(ioForm("action"), action)</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button("Update", "ok()")
+	@components.formElements.button("cancel", "cancel()")
+</div>
+

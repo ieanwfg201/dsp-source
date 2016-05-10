@@ -1,0 +1,19 @@
+@(siteForm:Form[models.formbinders.SiteWorkFlowEntity], action:String)
+<div class="modal-header">
+	<h3 class="modal-title">@("Update Site")</h3>
+</div>
+<div class="modal-body">
+	<form id="siteWorkflowForm" action="/site/update" method="POST"> 
+	<label> @action site with id : <b>@siteForm("siteId").value()</b></label>
+		@components.formElements.hiddenfield(siteForm("siteId"))
+		@if(action=="reject"){
+		 	@components.formElements.selectlist2(siteForm("comment"), "Comment", services.MetadataAPI.siteRejection())
+		} 
+		@components.formElements.hiddenfield(siteForm("action"))
+	</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button(action, "ok()")
+	@components.formElements.button("cancel", "cancel()")
+</div>
+

@@ -1,0 +1,20 @@
+@(retargetingSegmentForm:Form[models.entities.retargeting_segment.RetargetingSegmentFormEntity],isNew:String,account_guid:String)
+
+ 
+@main2("Add Retargeting Segment"){@navs.navadvt(account_guid)}{_} { 
+    @components.containers.panel("Add New Retargeting Segment"){
+        <form id="accountForm" action="/advertiser/retargetingsegment/save" method="POST" ng-controller="retargetingSegmentFormController">    
+            @components.formElements.hiddenfield(retargetingSegmentForm("account_guid"))
+            @components.formElements.textinput(retargetingSegmentForm("name"), '_label ->"Name *", '_help -> "*")
+            @if("true" != isNew )  {
+                @components.formElements.textinputdisabled(retargetingSegmentForm("retargeting_segment_id"), '_label ->"Segment Id", '_help -> "*")
+                @components.formElements.textareadisabled(retargetingSegmentForm("tag"), "Tag", false)
+                @components.formElements.submitbutton("save", "Done")
+            }else{
+                @components.formElements.submitbutton("save", "Save")
+            }
+            @components.formElements.submitbutton("cancel", "Cancel")
+        </form>
+    } 
+    <script src="@routes.Assets.at("javascripts/apps/retargeting_segment/retargetingSegmentFormController.js")" type="text/javascript"></script>
+}

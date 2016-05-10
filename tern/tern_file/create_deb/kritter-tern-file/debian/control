@@ -1,0 +1,12 @@
+Source: kritter-tern-file
+Maintainer: KRITTER <contact@kritter.in>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8)
+
+Package: kritter-tern-file
+Architecture: any
+Depends: ${misc:Depends}, python, python-dev, sqlite3
+Description: kritters tern_file
+ tern_file a log transportation package by kritter

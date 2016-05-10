@@ -1,0 +1,8 @@
+# kritter_first_level_movetoinprocess.job
+
+type=command
+dependencies=kritter_first_level_init
+command=mkdir -p ${adserving_readytoprocess_path}/"${process_time_dir}"
+command.1=mkdir -p ${postimp_readytoprocess_path}/"${process_time_dir}"
+command.2=mkdir -p ${billing_readytoprocess_path}/"${process_time_dir}"
+command.3=sh kritter_first_level_movetoinprocess.sh ${adserving_input_path} ${adserving_readytoprocess_path}/"${process_time_dir}" ${postimp_input_path} ${postimp_readytoprocess_path}/"${process_time_dir}" ${billing_input_path} ${billing_readytoprocess_path}/"${process_time_dir}" "${process_time}" "${process_time_dir}" "${kritter_first_level_code_path}"

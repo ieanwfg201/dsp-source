@@ -1,0 +1,6 @@
+# input_for_ctr_movetoinprocess.job
+
+type=command
+dependencies=input_for_ctr_init
+command=mkdir -p ${postimp_readytoprocess_path}/"${process_time_dir}"
+command.1=sh input_for_ctr_movetoinprocess.sh ${postimp_input_path} ${postimp_readytoprocess_path}/"${process_time_dir}"  "${process_time}" "${process_time_dir}" "${input_for_ctr_code_path}"

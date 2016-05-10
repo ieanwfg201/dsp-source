@@ -1,0 +1,27 @@
+@(testExchangeForm:Form[models.entities.testpages.TestPagesFormEntity])
+@main("Test Exchange"){
+	@components.containers.panel("Test Exchange"){
+    <form id="testExchangeForm" action="/testpages/exchangeresponsedebug" method="POST" data-ng-controller="testExchangeController">
+    <div class="page">
+        <section class="panel panel-default">
+            <div class="panel-heading">
+                <strong><span class="glyphicon glyphicon-th"></span>Test/Debug Form</strong>
+            </div>
+            <div class="panel-body">
+            <div class="testpages">
+                @components.formElements.textinput(testExchangeForm("exchange_endpoint"),'_label -> "Exchange Endpoint")
+                @components.formElements.textarea(testExchangeForm("exchange_request"),"Exchange Request")
+                @components.formElements.hiddenfield(testExchangeForm("exchange_type"))
+                <button type="button" class="btn btn-default btn-primary" ng-click="exchangeresponsedebug('RESPONSE')">Get Exchange Response</button>
+                <button type="button" class="btn btn-default btn-primary" ng-click="exchangeresponsedebug('DEBUG')">Debug Exchange Request</button>
+            </div>
+            </div>
+        </section>
+    </div>
+    </form>
+    <div class="panel-body" id="advertDisplayWindow">
+    </div>
+	 <script src="@routes.Assets.at("javascripts/apps/testpages/testexchange.js")" type="text/javascript"></script>
+	 
+	}
+}

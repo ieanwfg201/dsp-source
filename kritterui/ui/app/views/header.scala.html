@@ -1,0 +1,32 @@
+@import securesocial.core.java.SecureSocial
+
+@user = { SecureSocial.currentUser().fullName() }
+
+<header class="clearfix"> 
+	<!-- Logo -->
+	<div class="logo">
+		<a href="@controllers.routes.Application.index()"> <span><img src="/assets/images/logo.jpg" width="180" height="60">
+		</span>
+		</a>
+	</div>
+ 	@if(StaticUtils.loggedinUserName() != ""){
+ 		<div class="top-nav">
+        <div id="utcclock" class="utcclock"></div>
+			<ul class="nav-right pull-right list-unstyled">
+				<li class="dropdown text-normal nav-profile"><button  
+					href="javascript:;" class="dropdown-toggle btn" data-toggle="dropdown"> 
+						<span class="hidden-xs"> <span data-i18n="@StaticUtils.loggedinUserName()"></span>
+					</span>
+					<span class="caret"></span>
+				</button>
+					<ul class="dropdown-menu with-arrow pull-right">
+						<li><a  href="/logout"> <i class="fa fa-sign-out"></i>
+								<span data-i18n="Log Out"></span>
+						</a></li>
+					</ul></li>
+	
+			</ul>
+		</div>
+ 	}
+	
+</header>

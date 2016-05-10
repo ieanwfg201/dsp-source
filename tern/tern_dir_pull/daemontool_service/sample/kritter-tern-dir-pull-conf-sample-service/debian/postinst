@@ -1,0 +1,12 @@
+#!/bin/sh -x
+#DEBHELPER#
+set -e
+if [ -d /etc/kritter-tern-dir-pull-conf-sample-service/log/main ]; then
+        chown -v nobody:nogroup /etc/kritter-tern-dir-pull-conf-sample-service/log
+        chown -v nobody:nogroup /etc/kritter-tern-dir-pull-conf-sample-service/log/main
+        chmod -v 1755 /etc/kritter-tern-dir-pull-conf-sample-service/log
+        chmod -v g+s /etc/kritter-tern-dir-pull-conf-sample-service/log
+fi
+if [ -e /etc/kritter-tern-dir-pull-conf-sample-service/run ]; then
+        update-service --add /etc/kritter-tern-dir-pull-conf-sample-service 
+fi

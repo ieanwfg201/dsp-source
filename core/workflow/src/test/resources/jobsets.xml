@@ -1,0 +1,42 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="initJobset" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="random-name"></constructor-arg>
+        <constructor-arg>
+            <ref bean="initTransitionRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="initJob"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="dummyJobset" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="random-name1"></constructor-arg>
+        <constructor-arg>
+            <ref bean="middleTransitionRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="dummyJob"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="finalJobset" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="random-value1"></constructor-arg>
+        <constructor-arg>
+            <null/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="finalJob"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>

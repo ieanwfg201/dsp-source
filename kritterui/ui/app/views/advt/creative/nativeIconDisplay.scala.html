@@ -1,0 +1,8 @@
+@(bannerDisplay:models.advertiser.NativeIconDisplay)
+  
+@components.fielddisplays.textdisplay("Slot Dimension", bannerDisplay.getSlotName())
+@components.fielddisplays.textdisplay("Slot Description", bannerDisplay.getSlotDescription()) 
+@imagePreview(bannerDisplay.getId()+"", bannerDisplay.getBannerUrl(), bannerDisplay.getBannerThumbUrl(),  bannerDisplay.getSlotName()+"-"+bannerDisplay.getSlotDescription()))
+	 
+ 	 
+ 

@@ -1,0 +1,3 @@
+{"ipAddressRange":"41.2.0.0/16","cc":"ZA","country":"South Africa","network":"Vodacom:IPRange","timeZone":"Africa/Johannesburg"}
+{"startIpAddress":"41.192.0.1","endIpAddress":"41.192.15.254","cc":"ZA","country":"South Africa","network":"Vodacom:IPRange","timeZone":"Africa/Johannesburg"}
+{"startIpAddress":"187.141.102.202","endIpAddress":"187.141.102.202","cc":"MX","country":"Mexico","network":"Carrier1","timeZone":"America/Chihuahua"}

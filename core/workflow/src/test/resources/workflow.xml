@@ -1,0 +1,25 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="jobs.xml"/>
+    <import resource="jobsets.xml"/>
+    <import resource="rules.xml"/>
+    <import resource="caches.xml"/>
+
+    <bean id="Workflow" class="com.kritter.core.workflow.Workflow">
+        <constructor-arg>
+            <ref bean="initJobset"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobset"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="cachePool"/>
+        </constructor-arg>
+        <constructor-arg value="true">
+    </bean>
+
+</beans>
+

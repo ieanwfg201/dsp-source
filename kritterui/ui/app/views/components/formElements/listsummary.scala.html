@@ -1,0 +1,10 @@
+@(label:String, list:String , labelField:String="label", withVersion:Boolean=false )
+<h3>@label</h3>
+ <ul>
+ @if(!withVersion){
+	 	<li ng-repeat="item in @list" class="item">{{item.@labelField}}</li>  
+	 	}else{
+	 		<li ng-repeat="item in @list" class="item">{{item.@labelField+":"+item.min+"-"+item.max}}</li>
+	 	}
+</ul>  
+ 

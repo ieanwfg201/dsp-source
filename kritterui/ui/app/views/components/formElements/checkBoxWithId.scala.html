@@ -1,0 +1,12 @@
+@(field:play.data.Form.Field , args: (Symbol,Any)*)(implicit lang: play.api.i18n.Lang) 
+
+@import play.api.i18n._
+@import views.html.helper._
+
+@elements = @{ new FieldElements(field.id, field, null, args.toMap, lang) } 
+
+<label class="ui-checkbox"> <input type="checkbox" id="@field.name()" 
+		  name="@field.name()" value="true" 
+		  @if( field.value() == "true"){ checked="checked"}  > 
+		  <span>@elements.args.get('_label)</span>
+</label>

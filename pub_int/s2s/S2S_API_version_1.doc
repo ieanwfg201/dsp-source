@@ -1,0 +1,41 @@
+This is the first version of server to server api call to get ads from the adserver.
+
+a. Prepare a http post request with following parameters and hit the adserver using the url mentioned in (c).
+
+b. Parameter Name || Required/Optional || Value Options || Description
+   ---------------||-------------------||---------------||-----------------------------------------------
+   ua             || Required          ||               || This parameter is used to send http user agent 
+                  ||                   ||               || of the end user's device to the adserver.
+   ---------------||-------------------||---------------||-----------------------------------------------
+   site-id        || Required          ||               || This parameter is used to send site id of the 
+                  ||                   ||               || requesting publisher to the adserver.
+   ---------------||-------------------||---------------||-----------------------------------------------
+   ip             || Required          ||               || This parameter is used to send ip address of 
+                  ||                   ||               || the end user's device to the adserver.
+   ---------------||-------------------||---------------||----------------------------------------------- 
+   fmt            || Optional          ||  xhtml, xml   || This parameter is used to specify the format 
+                  ||                   ||               || of the ad response.
+   ---------------||-------------------||---------------||-----------------------------------------------
+   ver            || Required          ||  s2s_1        || This parameter is used to send the api version
+                  ||                   ||               || of the server to server integration.
+   ---------------||-------------------||---------------||-----------------------------------------------
+   nads           || Optional          ||               || This parameter is used to send the number of
+                  ||                   ||               || ads required from the adserver.
+   ---------------||-------------------||---------------||-----------------------------------------------
+   plat           || Optional          || 2,3           || This parameter is used to send site platform 
+                  ||                   ||               || value. 2 is for mobile web sites and 3 is for
+                  ||                   ||               || mobile applications.
+   ---------------||-------------------||---------------||-----------------------------------------------
+   uid            || Optional          ||               || This parameter is used to send unique user id
+                  ||                   ||               || of the requesting user who will see the ads.
+   ---------------||-------------------||---------------||-----------------------------------------------
+   lat            || Optional          ||               || This parameter is used to send latitude value
+                  ||                   ||               || of the current location of the requesting user.
+   ---------------||-------------------||---------------||-----------------------------------------------
+   lon            || Optional          ||               || This parameter is used to send longitude value
+                  ||                   ||               || of the current location of the requesting user.
+   ---------------||-------------------||---------------||-----------------------------------------------
+
+c. http://adserver_domain.com/impag
+
+   example: http://ads.mad.com/impag

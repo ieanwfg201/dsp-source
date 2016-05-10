@@ -1,0 +1,56 @@
+@(site:models.publisher.SiteDisplayFull, show_opt_in_hygiene:String, allow_passback:String, show_adcode:String, is_native_supply:String)
+@main2("Publisher Home"){@navs.navpub(site.getAccountGuid())}{@navs.breadcrumbs(site.getBreadCrumbPaths())}{
+
+	@components.containers.panel("Site Summary-"+ site.getName()){
+		<div> 
+		@components.fielddisplays.textdisplay("Site URL", site.getSiteUrl())
+		@components.fielddisplays.textdisplay("Guid", site.getGuid())
+		@components.fielddisplays.textdisplay("Site Platform", site.getSitePlatform())
+		@components.fielddisplays.textdisplay("App Id", site.getAppId())
+		@components.fielddisplays.textdisplay("App Store", site.getAppStore())
+		
+		
+		@components.fielddisplays.listdisplay("Tier 1 Category", site.getCategories_tier_1_list())
+		@components.fielddisplays.listdisplay("Tier 2 Category", site.getCategories_tier_2_list())
+		@components.fielddisplays.listdisplay("Creative Attributes", site.getCreativeAttrs())
+		
+		@components.fielddisplays.textdisplay("Hygiene", site.getHygieneList())
+		@if("true" == show_opt_in_hygiene){       
+		  @components.fielddisplays.listdisplay("Opt in Hygiene", site.getOptInHygieneList())
+        }		
+		@components.fielddisplays.incExcListDisplay("Inc/Exc Tier 1 Categories", site.getTier1IncExcCategories())
+		@components.fielddisplays.incExcListDisplay("Inc/Exc Tier 2 Categories", site.getTier2IncExcCategories())
+		
+		@components.fielddisplays.textdisplay("Rich Media allowed", site.getRichMediaAllowed())
+        @components.fielddisplays.textdisplay("Advertiser URL Exclusion", site.getUrlExclusion())
+        @components.fielddisplays.incExcListDisplay("Advertiser Inc/Exc", site.getIncExcAdvertisers())
+        @components.fielddisplays.incExcListDisplay("Campaign Inc/Exc", site.getIncExcCampaign())
+        @if("true" == allow_passback){       
+          @components.fielddisplays.textdisplay("Passback Type", site.getPassbackType())
+          @components.fielddisplays.textdisplay("Passback Content Type", site.getPassbackContentType())
+          @components.fielddisplays.textdisplay("Passback Content ", site.getPassbackContent())
+        }       
+        @components.fielddisplays.textdisplay("Payout Percentage", site.getBilling_rules_json())
+		@components.fielddisplays.textdisplay("Comments", site.getComment())
+		@components.fielddisplays.textdisplay("ECPM Floor", site.getFloor())
+        @if("true" == show_adcode){       
+            @components.fielddisplays.textdisplay("AdCode", site.getAdCode())
+        }
+        @if("true" == is_native_supply){       
+            @components.fielddisplays.textdisplay("Native Layout", site.getNativeLayout())
+            @components.fielddisplays.textdisplay("Native Title KeyName", site.getNativeTitleKeyName())
+            @components.fielddisplays.textdisplay("Native Title Max Chars", site.getNativeTitleChars())
+            @components.fielddisplays.textdisplay("Native Screenshot KeyName", site.getNativeScreenShotKeyName())
+            @components.fielddisplays.textdisplay("Native Screenshot Image Size", site.getNativeScreenShotImagesize())
+            @components.fielddisplays.textdisplay("Native Landing Url KeyName", site.getNativeLandingUrlKeyName())
+            @components.fielddisplays.textdisplay("Native CTA KeyName", site.getNativeCallToActionKeyName())
+            @components.fielddisplays.textdisplay("Native Icon KeyName", site.getNativeIconKeyName())
+            @components.fielddisplays.textdisplay("Native Icon Image Size", site.getNativeIconImagesize())
+            @components.fielddisplays.textdisplay("Native Desc KeyName", site.getNativeDescriptionKeyName())
+            @components.fielddisplays.textdisplay("Native Desc Max Chars", site.getNativeDescriptionChars())
+            @components.fielddisplays.textdisplay("Native Rating Count", site.getNativeRatingCountKeyName())
+        }
+		</div>
+	}
+
+}

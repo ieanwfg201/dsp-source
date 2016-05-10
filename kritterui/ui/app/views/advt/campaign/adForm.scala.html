@@ -1,0 +1,89 @@
+@(adForm:Form[models.entities.AdEntity], adDisplay:models.advertiser.AdDisplay,isClone:String, allow_adomain:String, user_flow_enabled:String )
+
+@main2("Ad Creation Form"){@navs.navadvt(adDisplay.getAccountGuid())}{@navs.breadcrumbs(adDisplay.getBreadCrumbPaths())} {
+
+@if("true" == isClone) {
+
+<form id="adForm" action="/advertiser/campaigns/ad/saveadclone" method="POST">
+                          
+} else {
+
+<form id="adForm" action="/advertiser/campaigns/ad/save" method="POST">
+
+}
+	<div class="page">
+		<section class="panel panel-default">
+			<div class="panel-heading">
+				<strong><span class="glyphicon glyphicon-th"></span>Ad Form</strong>
+			</div>
+			<div class="panel-body">
+				<div id="adForm"  ng-controller="adController">
+					 	@components.formElements.hiddenfield(adForm("destination"))
+						@components.formElements.hiddenfield(adForm("id"))
+						@components.formElements.hiddenfield(adForm("guid"))
+						@components.formElements.hiddenfield(adForm("campaign_id"))
+						@if("true" == isClone) {
+                          @components.formElements.selectlist2(adForm("campaign_guid"),"Select Campaign *", services.DataAPI.getCampaignsIdGuidByAdvertisers(adDisplay.getAccountGuid()) )						  
+						} else {
+						  @components.formElements.hiddenfield(adForm("campaign_guid"))  
+						}
+						
+						@components.formElements.hiddenfield(adForm("account_guid"))
+						@components.formElements.textinput(adForm("name"),'_label -> "Name *")
+						@components.formElements.textinput(adForm("landing_url"),'_label ->"Landing Url *")
+						@if("true" == allow_adomain ){   						
+						  @components.formElements.textinput(adForm("adv_domain"),'_label ->"Advertiser Domain *")
+						}                       
+                        @components.formElements.selectlist2(adForm("marketplace_id"), "Market Place *", 
+                            services.MetadataAPI.marketPlaces(), 
+                            '_ngSync ->true, 
+                            '_ngChange ->"updateAdMarketPlace()")
+                        <div ng-show="showPartner" ng-if="showPartner">
+                            @components.formElements.selectlist2(adForm( "tracking_partner"), "Tracking Partner", services.MetadataAPI.trackingPartner())
+                        </div>
+						@components.formElements.selectlist2(adForm( "bidtype"), "BidType (Manual=manually entered bid per thousand impression will be honoured)", services.MetadataAPI.bidtype())
+                        @components.formElements.modelcurrencyinput(adForm("advertiser_bid"),"Advertiser Bid *")
+						@components.formElements.modelcurrencyinput(adForm("internal_max_bid"),"Internal Max Bid *") 
+						@components.formElements.currencyinput(adForm("cpa_goal"),"CPA Goal")
+						
+						<div class="row">
+							<div class="col-md-8">
+							 	@components.formElements.selectlist2(adForm("targeting_guid"),"Targeting Profile *", services.DataAPI.getTargetingOptions(adDisplay.getAccountGuid()) )
+							</div>
+							<div class="col-md-4">
+								 @components.formElements.submitbutton("new_targeting", "Add New Targeting")
+							</div> 		
+						</div>
+						<div class="row">
+							<div class="col-md-8">
+							 @components.formElements.selectlist2(adForm("creative"),"Creative *", services.DataAPI.getCreativeOptions(adDisplay.getAccountGuid())) 
+							 </div>
+							<div class="col-md-4">
+							 @components.formElements.submitbutton("new_creative", "Add New Creative" )
+							</div>
+						</div>
+					  
+					 @components.formElements.multiselectlist3(adForm("categories_tier_1_list"), '_label -> "Ad Tier 1 Category", '_row->true) 
+                     @components.formElements.multiselectlist3(adForm("categories_tier_2_list"), '_label -> "Ad Tier 2 Category", '_row->true )
+                
+					 @components.formElements.multiselectlist3(adForm("hygiene_list"),  '_label ->"Hygiene *", '_row->true)
+                     @if("true" == user_flow_enabled) {
+                        @components.formElements.selectlist2(adForm("is_frequency_capped"), "Frequency Cap Enabled", 
+                        services.MetadataAPI.freqCapOptions(), '_ngSync->true)
+                        <div id="userfreqcapid" ng-show="is_frequency_capped=='true'" ng-if="is_frequency_capped=='true'">
+                            @components.formElements.textinput(adForm("frequency_cap"), '_label ->"Ad Freq Cap per User" )
+                            @components.formElements.textinput(adForm("time_window"), '_label ->"Time Window (1-48)" )
+                        </div>
+                     }		
+				</div>
+				
+				@components.formElements.submitbutton("save", "Save")
+				@components.formElements.submitbutton("cancel", "Cancel")
+
+			</div>
+		</section>
+	</div>
+</form>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model_without_all.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/adController.js")" type="text/javascript"></script>
+}

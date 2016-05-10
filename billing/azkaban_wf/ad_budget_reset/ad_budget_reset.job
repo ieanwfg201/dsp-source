@@ -1,0 +1,3 @@
+#ad_budget_reset.job
+type=command
+command=sh ad_budget_reset.sh ${ad_budget_reset_code_path} ${eventtype} ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd}

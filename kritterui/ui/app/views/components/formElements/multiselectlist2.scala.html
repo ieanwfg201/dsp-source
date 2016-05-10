@@ -1,0 +1,28 @@
+@(field:play.data.Form.Field, outputModel:String, inputModel:String,  args: (Symbol,Any)*)(implicit lang: play.api.i18n.Lang) 
+ 
+@import play.api.i18n._
+@import views.html.helper._
+
+@elements = @{ new FieldElements(field.id, field, null, args.toMap, lang) }
+
+<div class="form-group row @if(elements.hasErrors) {error}">
+	<input type="text" class="hidden form-control" name="@field.name()" id="@field.name()" value="@field.value()" 
+					 ng-model="@field.name()"> 
+	<div class="col-sm-3">
+		<label  class="control-label">@elements.args.get('_label)</label>
+	</div>
+	<div class="col-sm-9">
+
+		<div id="@{field.name()+"_selector"}" multi-select input-model="@inputModel"
+			output-model="@outputModel" button-label="label" item-label="label"
+			tick-property="selected" orientation="vertical"
+			selection-mode="multiple" max-labels="2" is-disabled="false" 
+			helper-elements="all none reset filter"></div>
+	
+		<div>
+			<span class="help-inline">@elements.errors(elements.lang).mkString(", ")</span>
+	      	<span class="help-block hidden showonhover">@elements.infos(elements.lang).mkString(", ")</span>  
+		</div>
+		
+	</div>
+</div>

@@ -1,0 +1,87 @@
+@(display:models.advertiser.CampaignDisplay)
+	
+@main2("Advertiser Home"){@navs.navadvt(display.getAccountGuid())}{@navs.breadcrumbs(display.getBreadCrumbPaths())}{
+
+<tabset>
+		    <tab heading="Campaign Ads"> 
+		<div class="well" ng-controller="campaignViewController"> 
+			<nav>
+				<div class="btn-group">
+					 <a href="@{ display.adCreateUrl()}" class="btn btn-primary   active" role="button">
+					 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Create New Ad
+					 </a>
+				</div>
+				<div class="btn-group pull-right">
+					 <button class="btn btn-success  active" ng-click="updateMultipleAds('START')">
+					 		<span class="glyphicon glyphicon-play" aria-hidden="true">Start Multiple Ads
+					 </button>
+					 <button class="btn btn-danger  active" ng-click="updateMultipleAds('PAUSE')">
+					 		<span class="glyphicon glyphicon-pause" aria-hidden="true">Pause Multiple Ads
+					 </button> 	
+				</div> 
+			</nav>
+			<div infinite-scroll='nextPage()' infinite-scroll-disabled='adListData.isLoading' infinite-scroll-distance='1'>
+					<table tr-ng-grid=""   items="adListData.filteredData"   
+					 					selected-items="adListData.selections" 
+					 					fields="['select', 'name', 'tpname',  'status', 'createdOn',  'action']" 
+					 					selection-mode="MultiRow"
+					 					enable-filtering="adListData.enableFilter"
+					 					enable-sorting="adListData.enableSorting" 
+					 					order-by="adListData.orderBy"
+					 					order-by-reverse="adListData.orderByReverse" 
+					 					page-items="adListData.itemsPerPage"  
+					 					total-items="adListData.totalItems"
+					 					current-page="adListData.currentPage" 
+					 					on-data-required="adListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+				 
+					    <thead>
+					        <tr>
+					        	<th field-name="select" display-align="center" cell-width="2em">
+					                <div class="tr-ng-title">&nbsp;</div>
+					             </th>
+					            <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
+					            <th field-name="tpname" display-name="Targeting" enable-sorting="true"  enable-filtering="true">  </th>
+					            <th field-name="creative" display-name="Creative" enable-sorting="true"  enable-filtering="true">  </th>
+					            <th field-name="status" display-name="Status" enable-sorting="true"  enable-filtering="true">  </th> 
+					            <th field-name="created" display-name="Created" enable-sorting="true"  enable-filtering="true">  </th>
+					            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+					        </tr>  
+					    </thead> 
+					    <tbody>
+				    		<tr> 
+				    			<td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="adListData.isItemChecked(gridItem)" ></td>
+				    			<td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td>
+				    			<td field-name="tpname"  >  <a href="{{gridItem.targetingPreviewUrl}}" >{{gridItem.tpname}}</a></td>
+				    			<td field-name="creative"  >  <a href="{{gridItem.creativePreviewUrl}}" >{{gridItem.creative}}</a></td> 
+					            <td field-name="action" > 
+                                    <a href="{{gridItem.statUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Stats">
+                                        <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                                    </a>
+					                <a href="{{gridItem.editUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Edit Ad">
+					                	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+									</a>
+									<a href="{{gridItem.cloneUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Clone Ad">
+					                	<i class="fa fa-files-o"></i>
+									</a>
+									 
+					                <button ng-show="gridItem.paused" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="Start Ad" ng-click="updateAd(gridItem.id,'Start')">
+					                					<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+					                </button>
+				                    <button ng-show="gridItem.active" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Pause Ad" ng-click="updateAd(gridItem.id,'Pause')">
+				                    	<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+				                    </button>     
+					            </td>
+					           
+					        </tr>
+					    </tbody>
+					</table> 
+				</div> 
+				</div>
+		    </tab>
+		    <tab heading="Campaign Summary" >
+		    	@campaignSummary(display)
+		    </tab>
+		   
+		  </tabset>
+			<script src="@routes.Assets.at("javascripts/apps/campaignViewController.js")" type="text/javascript"></script>
+}

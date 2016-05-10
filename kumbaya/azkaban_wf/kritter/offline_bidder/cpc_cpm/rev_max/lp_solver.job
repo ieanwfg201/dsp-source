@@ -1,0 +1,5 @@
+# lp_solver.job
+
+type=command
+dependencies=cpc_revmax_create_mps
+command = sh lp_solver.sh '${code_prefix_path}'/'${lp_solver_bin}' '${lp_solver_config}' '${mps_output_dir}'/'${mps_output_prefix}'-'${process_time_cur}' '${lp_solver_output_dir}'/'${lp_solver_output_prefix}'-'${process_time_cur}' '${process_time}' '${process_time_dir}' '${process_time_cur}' 

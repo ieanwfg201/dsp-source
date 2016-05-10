@@ -1,0 +1,192 @@
+fieldset {
+	border :1px solid #e5e5e5;
+	margin-bottom: 10px;
+	padding: 20px;
+}
+
+fieldset legend{
+	width:auto;
+	border:none;
+	margin: 0px ; 
+} 
+.form-control, .input-group  .form-control{
+	width:auto;
+	min-width:360px; 
+}
+
+.small .form-control, .input-group  .form-control{
+	min-width:210px; 
+}
+
+table .form-control, .input-group  .form-control{
+	width:auto;
+	min-width:150px; 
+} 
+
+.tr-ng-column-filter .form-control{
+	min-width:100%; 
+}
+
+table.table {
+	font-size: 12px;
+}
+.modal-body .form-control,.modal-body .input-group  .form-control{
+	width:auto;
+	min-width:220px; 
+}
+.multiSelect .multiSelectButton{
+	min-width:450px;
+	text-aligh:left;
+}
+.multiSelect .checkboxLayer{
+	max-height:300px;
+	overflow-y:scroll;
+	min-width:450px;
+	border-radius:0px;
+}
+.multiSelect .caret{
+	position: absolute;
+	right:10px;
+}
+
+.multiSelect .buttonLabel{
+	text-align: left; 
+}
+.input-group-addon{
+	width:auto;
+}
+.floating-item{
+	list-style: none;
+	float: left;
+	margin-right:15px;
+}
+
+.list-display{
+	padding-left:0px;
+}
+.field-display{
+	margin-bottom: 1px;
+	padding: 8px;
+	background-color: #f6f6f6;	
+}
+
+.fieldlabel{ 
+	text-align:right;
+}
+
+.showonhover:hover{
+	display:block;
+}
+
+.form-filter .multiSelectButton{
+	min-width:210px;
+}
+
+.form-filter .large .multiSelectButton{
+	min-width:360px;
+}
+
+.top-header .logo{
+	text-align: left;;
+}
+.top-header .utcclock{
+    text-align: right;
+}
+
+#content {
+	top: 65px;
+	width: auto;
+	left: 230px;
+}
+
+ 
+.top-header {
+	height: 60px;
+	background-color: #ffffff;
+}
+
+#nav-container{
+	top:65px;
+	overflow: scroll;
+}
+
+.top-header .logo{
+	background-color: #ffffff;
+}
+
+/*.ng-table-pager{
+	display:none;
+}*/
+.ng-table-counts{
+	display:none;
+}
+.multiSelect .multiSelectItem{
+	min-width:260px;
+}
+
+.hidden{ 
+	display:none; 
+}
+
+.spinner{
+	position:fixed; 
+	z-index:10000; 
+	left:0;  
+	top:0; 
+	bottom:0;
+	right:0;   
+}
+
+.spinner-content{ 
+	position:fixed;
+	left:45%;  
+	top:45%;  
+	background-color:#ffffff; 	
+}
+
+#password_ps{
+	width:220px;
+}
+
+.well{
+	background-color: #ffffff;
+	margin-bottom:10px;
+	padding:10px;
+}
+.wellhierarchical{
+	width:2000px;
+    background-color: #ffffff;
+    margin-bottom:10px;
+    padding:10px;
+}
+
+.testpages .form-control{
+    width:800px;
+}
+
+.modal-content .form-control,.modal-body .input-group  .form-control{
+	width:100%;
+	min-width:360px; 
+}
+
+.modal-body .form-control,.modal-body .input-group  .form-control.small{
+	width:100%;
+	min-width:200px;  
+}
+
+.modal-dialog{
+	width:80%;
+}
+.large .modal-content{
+	width:80%;
+	margin:auto;
+}
+
+.trnggridcelltextselect {
+    -webkit-touch-callout: default !important;
+    -webkit-user-select: text !important;
+    -khtml-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}

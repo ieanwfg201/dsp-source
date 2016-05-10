@@ -1,0 +1,23 @@
+@(multiAdForm: Form[models.formbinders.MultiAdForm])
+<div class="modal-header">
+	<h3 class="modal-title">@("Update Ads")</h3>
+</div>
+<div class="modal-body">
+	<form id="campaignWorkflowForm" action="/advertiser/campaigns/ads/update" method="POST"> 
+		@components.formElements.hiddenfield(multiAdForm("accountGuid"))
+		@components.formElements.hiddenfield(multiAdForm("action"))
+		@components.formElements.hiddenfield(multiAdForm("ids"))
+		<span> The following Ad's will be @multiAdForm("action").name() .</span>
+		<ul>
+			<li ng-repeat="ad in ads">{{ad.name}}</li>
+		</ul>
+		
+		<span>Do you want to proceed?</span>
+		
+	</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button("Update", "ok()")
+	@components.formElements.button("Cancel", "cancel()")
+</div>
+

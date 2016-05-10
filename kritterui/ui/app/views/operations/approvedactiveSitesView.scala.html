@@ -1,0 +1,72 @@
+@(title:String ="")
+@main("Approved Sites"){
+
+@components.containers.panel("approvedSites"){
+<div ng-controller="siteApprovalController">
+    <div class="btn-group pull-right">
+                     <button class="btn btn-success  active" ng-click="updateMultipleSite('PAUSE')">
+                            <span class="glyphicon glyphicon-pause" aria-hidden="true">PAUSE Multiple Site
+                     </button>
+                     <button class="btn btn-danger  active" ng-click="updateMultipleSite('REJECT')">
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"> Reject Multiple Site
+                     </button>  
+        </div> 	
+	<div infinite-scroll='nextPage()' infinite-scroll-disabled='siteListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="siteListData.filteredData"   
+			 					selected-items="siteListData.selections" 
+			 					fields="['select', 'name',  'accountName',   'status', 'createdOn',  'action']" 
+			 					selection-mode="MultiRow"
+			 					enable-filtering="siteListData.enableFilter"
+			 					enable-sorting="siteListData.enableSorting" 
+			 					order-by="siteListData.orderBy"
+			 					order-by-reverse="siteListData.orderByReverse" 
+			 					page-items="siteListData.itemsPerPage"  
+			 					total-items="siteListData.totalItems"
+			 					current-page="siteListData.currentPage" 
+			 					on-data-required="siteListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+			            <th field-name="select" display-align="center" cell-width="2em">
+                                    <div class="tr-ng-title">&nbsp;</div>
+                        </th>
+                        <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="accountName" display-name="Publisher" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="status" display-name="Status" enable-sorting="true"  enable-filtering="true">  </th> 
+			            <th field-name="createdOn" display-name="Created" enable-sorting="true"  enable-filtering="false">  </th>
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr>
+		    		    <td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="siteListData.isItemChecked(gridItem)" ></td> 
+		    			<td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td> 
+		    			<td field-name="accountName"  >  <a href="{{gridItem.accountUrl}}" >{{gridItem.accountName}}</a></td> 
+		    			<td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td> 
+			            <td field-name="action" > 
+			                <a href="{{gridItem.editUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Edit Site">
+			                	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							</a> 
+		                     <button class="btn btn-default" ng-click="updateSite( gridItem.id  , 'pause')" 
+		                     					data-toggle="tooltip" data-placement="top" title="Pause Site">
+		                     		<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+		                     </button>
+				 			 <button class="btn btn-default" ng-click="updateSite(gridItem.id,'reject')" 
+				 			 													data-toggle="tooltip" data-placement="top" title="Reject Site">
+				 			 	<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+				 			 </button>
+				 			 <a class="btn btn-default" href="{{gridItem.viewUrl}}" >View</a> 
+			            </td>
+			           
+			        </tr>
+			    </tbody>
+			</table> 
+		</div>
+</div>
+
+}
+
+
+
+<script src="@routes.Assets.at("javascripts/apps/siteApprovalController.js")" type="text/javascript"></script>
+}

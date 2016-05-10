@@ -1,0 +1,183 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="ecpm_job_var" class="com.kritter.core.expressiontree.Variable">
+        <constructor-arg value="ecpm_calc_traffic_var"></constructor-arg>
+        <constructor-arg value="integer"></constructor-arg>
+    </bean>
+
+    <bean id="rank_job_var" class="com.kritter.core.expressiontree.Variable">
+        <constructor-arg value="rank_calc_traffic_var"></constructor-arg>
+        <constructor-arg value="integer"></constructor-arg>
+    </bean>
+
+    <bean id="dpa_workflow_to_kritter" class="com.kritter.core.expressiontree.Variable">
+        <constructor-arg value="dpa_workflow_to_kritter"></constructor-arg>
+        <constructor-arg value="integer"></constructor-arg>
+    </bean>
+    
+    <bean id="exchange_rule_variable" class="com.kritter.core.expressiontree.Variable">
+        <constructor-arg value="exchange_rule_var"></constructor-arg>
+        <constructor-arg value="integer"></constructor-arg>
+    </bean>
+
+    <bean id="ecpm_calc_no_bidder_traffic_rule" class="com.kritter.core.workflow.TransitionRule">
+      <constructor-arg><value><![CDATA[ecpm_calc_traffic_var != 2]]></value></constructor-arg>
+      <constructor-arg>
+            <ref bean="ecpmCalcNoBidderJobSet"/>
+      </constructor-arg>
+    </bean>
+
+    <bean id="ecpm_calc_use_bidder_traffic_rule" class="com.kritter.core.workflow.TransitionRule">
+      <constructor-arg><value><![CDATA[ecpm_calc_traffic_var = 2]]></value></constructor-arg>
+        <constructor-arg>
+            <ref bean="ecpmCalcBidderJobSet"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="default_to_kritter_workflow_rule" class="com.kritter.core.workflow.TransitionRule">
+        <constructor-arg><value><![CDATA[dpa_workflow_to_kritter = 3]]></value></constructor-arg>
+        <constructor-arg>
+            <ref bean="exchangeJobSet"/> 
+        </constructor-arg>
+    </bean>
+
+    <bean id="top_ecpm_rank_traffic_rule" class="com.kritter.core.workflow.TransitionRule">
+      <constructor-arg><value><![CDATA[rank_calc_traffic_var < 90]]></value></constructor-arg>
+        <constructor-arg>
+            <ref bean="adRankingTopEcpmJobSet"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="wrs_ecpm_rank_traffic_rule" class="com.kritter.core.workflow.TransitionRule">
+      <constructor-arg><value><![CDATA[rank_calc_traffic_var > 90]]></value></constructor-arg>
+        <constructor-arg>
+            <ref bean="adRankingWRSEcpmJobSet"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="random_ecpm_rank_traffic_rule" class="com.kritter.core.workflow.TransitionRule">
+      <constructor-arg><value><![CDATA[rank_calc_traffic_var > 90]]></value></constructor-arg>
+        <constructor-arg>
+            <ref bean="adRankingRandomEcpmJobSet"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="exchange_job_set_rule" class="com.kritter.core.workflow.TransitionRule">
+      <constructor-arg><value><![CDATA[exchange_rule_var = 1]]></value></constructor-arg>
+        <constructor-arg>
+            <ref bean="defaultToKritterDSPJobset"/>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="ecpmCalcTrafficRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list>
+                <ref bean="ecpm_job_var"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="ecpmCalcNoBidderJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="formattingJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="ecpm_calc_no_bidder_traffic_rule"/>
+                <ref bean="ecpm_calc_use_bidder_traffic_rule"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="defaultToKritterDSPWorkflowRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list>
+                <ref bean="dpa_workflow_to_kritter"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="defaultToKritterDSPJobset"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="formattingJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="default_to_kritter_workflow_rule"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="rankCalcTrafficRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list>
+                <ref bean="rank_job_var"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="adRankingTopEcpmJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="formattingJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="top_ecpm_rank_traffic_rule"/>
+                <ref bean="random_ecpm_rank_traffic_rule"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="responseCreationRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list></list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="formattingJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="formattingJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list></list>
+        </constructor-arg>
+    </bean>    
+
+    <bean id="formattingJobSetRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list></list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list></list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="exchangeJobSetRule" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list>
+                <ref bean="exchange_rule_variable"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobSet"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="exchange_job_set_rule"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>

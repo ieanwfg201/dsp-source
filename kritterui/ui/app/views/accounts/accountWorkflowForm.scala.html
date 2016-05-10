@@ -1,0 +1,19 @@
+@(accountWorkflowForm:Form[models.formbinders.AccountWorkflowEntity], action:String)
+<div class="modal-header">
+	<h3 class="modal-title">@("Update Account")</h3>
+</div>
+<div class="modal-body">
+	<form id="accountWorkflowForm" action="/accounts/updateStatus" method="POST"> 
+	<label> @action Account  : <b>@accountWorkflowForm("accountGuid").value()</b></label>
+		@components.formElements.hiddenfield(accountWorkflowForm("accountGuid"))
+		@if(action=="Deactivate"){
+		 	@components.formElements.selectlist2(accountWorkflowForm("comment"), "Comment", services.MetadataAPI.accountRejection())
+		} 
+		@components.formElements.hiddenfield(accountWorkflowForm("action"))
+	</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button(action, "ok()")
+	@components.formElements.button("cancel", "cancel()")
+</div>
+

@@ -1,0 +1,18 @@
+@(creativeWFForm:Form[models.formbinders.CreativeWorkFlowEntity], action:String)
+<div class="modal-header">
+	<h3 class="modal-title">@("Creative Approval Form")</h3>
+</div>
+<div class="modal-body">
+	<form id="creativeWorkflowForm" action="/advertiser/campaigns/creative/updateStatus" method="POST"> 
+		@components.formElements.hiddenfield(creativeWFForm("creativeId"))
+		@if(action=="Reject"){
+		 	@components.formElements.textarea(creativeWFForm("comment"), "Comment")
+		} 
+		@components.formElements.hiddenfield(creativeWFForm("action"))
+	</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button(action, "ok()")
+	@components.formElements.button("cancel", "cancel()")
+</div>
+

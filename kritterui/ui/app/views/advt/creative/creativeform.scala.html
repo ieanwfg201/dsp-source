@@ -1,0 +1,48 @@
+@(creativeForm:Form[ models.entities.CreativeContainerEntity], creativeDisplay:models.advertiser.CreativeDisplay)
+ 
+<form id="creativeForm" action="/advertiser/creatives/save"
+	method="POST"   ng-controller="creativeController">
+	<div class="page">
+		<section class="panel panel-default">
+			<div class="panel-heading">
+				<strong><span class="glyphicon glyphicon-th"></span>
+					Creative Form</strong>
+			</div>
+			<div class="panel-body">
+				<fieldset>
+					<legend>Basic Information</legend>
+					@components.formElements.hiddenfield(creativeForm("destination")) 
+					@components.formElements.hiddenfield(creativeForm("id"))
+					@components.formElements.hiddenfield(creativeForm("guid"))
+					@components.formElements.hiddenfield(creativeForm("account_guid")) 
+					@components.formElements.textinput(creativeForm("label"), '_label ->"Label *")
+					
+					@components.formElements.selectlist2(creativeForm("format_id"), "Creative Type *",
+											services.MetadataAPI.creativeTypes(), '_ngSync ->true, '_ngChange ->"updateCreativeType()", '_numeric->true)
+					@components.formElements.multiselectlist("creative_attr_selector", "Creative Attributes *", "creativeAttrList", "creativeAttrOptions", "")
+					@components.formElements.hiddenfield(creativeForm("creative_attr"), "creative_attr", true)
+				
+				</fieldset>
+				 
+
+
+				<fieldset ng-show="showTextForm">
+					<legend>Creative Text</legend>
+					@components.formElements.textarea(creativeForm("text"),"Text")
+				</fieldset>
+				
+				<fieldset ng-show="showHtmlForm">
+					<legend>Ad Code</legend>
+					@components.formElements.textarea(creativeForm("html_content"),"HTML Content")
+					@components.formElements.textarea(creativeForm("ext_resource_url"),"External Creative URL (E.g: http://www.myimage.com/myimage.jpg)")
+				</fieldset>
+
+				
+				
+				@components.formElements.submitbutton("submit", "Submit")
+
+			</div>
+		</section>
+	</div>
+</form>
+<script src="@routes.Assets.at("javascripts/apps/creativeController.js")" type="text/javascript"></script>

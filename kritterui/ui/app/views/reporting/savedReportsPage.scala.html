@@ -1,0 +1,31 @@
+@main("saved Report List"){
+	@components.containers.panel(" Saved Report List"){
+	<div ng-controller="savedReportController"> 
+		<table ng-table="savedReportList.params" show-filter="true" class="table table-bordered table-striped">
+		        <tr ng-repeat="report in savedReportList.data">
+			          
+		            <td data-title="'Name'">
+		            	<a ng-href="{{'/reporting/saved-report/'+report.id}}" >{{report.name}}</a> 
+		            </td>
+		            
+		            <td data-title="'Created'">
+		                 {{report.created_on| date:'dd-MM-yyyy'}}
+		            </td>
+		            
+		            <td data-title="'Type'">
+		                 {{report.reportingTypeEnum}}
+		            </td>
+		            
+		            <td data-title="'Actions'">
+		               <a class="btn btn-primary" ng-href="{{'/reporting/saved-report/'+report.id}}" >View</a>
+			 		   <a class="btn btn-primary" ng-href="{{'/reporting/saved-report/'+report.id+'/delete'}}" >Delete</a>
+		            </td>
+		            
+		             
+		           
+		        </tr>
+		</table> 
+	</div> 
+	}
+<script src="@routes.Assets.at("javascripts/apps/reporting/savedReportController.js")" type="text/javascript"></script>
+}

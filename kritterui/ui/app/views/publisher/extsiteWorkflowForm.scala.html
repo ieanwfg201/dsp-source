@@ -1,0 +1,16 @@
+@(extsiteForm:Form[models.formbinders.ExtSiteWorkFlowEntity], action:String)
+<div class="modal-header">
+	<h3 class="modal-title">@("Update Ext Site")</h3>
+</div>
+<div class="modal-body">
+	<form id="extsiteWorkflowForm" action="/extsite/update" method="POST"> 
+	<label> @action extsite with id : <b>@extsiteForm("id").value()</b></label>
+		@components.formElements.hiddenfield(extsiteForm("id"))
+		@components.formElements.hiddenfield(extsiteForm("action"))
+	</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button(action, "ok()")
+	@components.formElements.button("cancel", "cancel()")
+</div>
+

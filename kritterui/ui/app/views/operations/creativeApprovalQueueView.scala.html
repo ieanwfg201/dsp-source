@@ -1,0 +1,65 @@
+@(title:String ="")
+@main("Creative Approval Queue"){
+	@components.containers.panel(" Creative Approval Queue"){
+	<div ng-controller="creativeApprovalController">
+	<div class="btn-group pull-right">
+                     <button class="btn btn-success  active" ng-click="updateMultipleCreative('Approve')">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true">Approve Multiple Creatives
+                     </button>
+                     <button class="btn btn-danger  active" ng-click="updateMultipleCreative('Reject')">
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"> Reject Multiple Creatives
+                     </button>  
+        </div> 
+	<div infinite-scroll='nextPage()' infinite-scroll-disabled='creativeListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="creativeListData.filteredData"   
+			 					selected-items="creativeListData.selections" 
+			 					fields="['select', 'accountName', 'name',  'status', 'format',  'action']" 
+			 					selection-mode="MultiRow"
+			 					enable-filtering="creativeListData.enableFilter"
+			 					enable-sorting="creativeListData.enableSorting" 
+			 					order-by="creativeListData.orderBy"
+			 					order-by-reverse="creativeListData.orderByReverse" 
+			 					page-items="creativeListData.itemsPerPage"  
+			 					total-items="creativeListData.totalItems"
+			 					current-page="creativeListData.currentPage" 
+			 					on-data-required="creativeListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+                        <th field-name="select" display-align="center" cell-width="2em">
+                                    <div class="tr-ng-title">&nbsp;</div>
+                        </th>
+                        <th field-name="accountName" display-name="Advertiser" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="status" display-name="Status" enable-sorting="true"  enable-filtering="true">  </th>
+			            <th field-name="format" display-name="Format" enable-sorting="true"  enable-filtering="false">  </th> 
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr>
+		    		    <td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="creativeListData.isItemChecked(gridItem)" ></td>
+                        <td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td> 
+                        <td field-name="action" > 
+			                <a href="{{gridItem.editUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Edit Creative">
+			                	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							</a> 
+		                     <button class="btn btn-default" ng-click="updateCreative(gridItem.id  , 'Approve')" 
+		                     					data-toggle="tooltip" data-placement="top" title="Approve Creative">
+		                     		<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+		                     </button>
+				 			 <button class="btn btn-default" ng-click="updateCreative(gridItem.id,'Reject')" 
+				 			 													data-toggle="tooltip" data-placement="top" title="Reject Creative">
+				 			 	<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+				 			 </button>
+				 			 <a class="btn btn-default" href="{{gridItem.viewUrl}}" >View</a> 
+			            </td>
+			           
+			        </tr>
+			    </tbody>
+			</table> 
+		</div>
+	</div> 
+	}
+<script src="@routes.Assets.at("javascripts/apps/creativeApprovalController.js")" type="text/javascript"></script>
+}

@@ -1,0 +1,4 @@
+# init_clicksr_lr.job
+
+type=command
+command=sh init_clicksr_lr.sh

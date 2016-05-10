@@ -1,0 +1,13 @@
+@(ioForm: Form[models.entities.InsertionOrderEntity])
+@main("Create Insertion Order") { 
+	@components.containers.panel("Create Insertion Order"){
+		<form id="ioForm" action="/insertion-order/save" method="POST">	
+			@components.formElements.textinput(ioForm("order_number"), '_label ->"Order Number *") 
+			@components.formElements.selectlist2(ioForm("account_guid"), "Account *", services.MetadataAPI.activeAdvertiserList())
+			@components.formElements.textinput(ioForm("name"), '_label ->"IO Name *")
+			@components.formElements.currencyinput(ioForm("total_value"),  "Total Value *")
+			@components.formElements.selectlist2(ioForm("belongs_to"), "Belongs To *", services.MetadataAPI.activeAdminList())
+			@components.formElements.submitbutton("save", "Save")
+		</form>
+	} 
+}

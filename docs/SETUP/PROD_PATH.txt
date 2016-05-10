@@ -1,0 +1,48 @@
+All kritter project under /usr/share/kritter
+
+All logs under /var/logs/kritter
+
+All data under /var/data/kritter
+
+WURFL deta under /var/data/kritter/wurfl
+
+country.csv under /var/data/kritter/location/country/
+country_carrier.csv under /var/data/kritter/location/country_carrier/
+country_region.csv under /var/data/kritter/location/country_region/
+
+REPORTING PATHS
+/var/data/kritter/data_pipeline/kritter_first_level
+/var/data/kritter/data_pipeline/kritter_first_level_daily
+
+LOG READY TO PROCESS PATH
+/var/data/kritter/log_readytoprocess/billing
+/var/data/kritter/log_readytoprocess/postimpression
+/var/data/kritter/log_readytoprocess/adserving
+
+TERN PATHs
+1) Adserving
+LOGS : /var/log/kritter/tern_file/adserving
+DB : /var/data/kritter/tern_file/db/adserving
+DESTINATION TRANSPORT : /var/data/kritter/tern_file/destination/adserving
+
+2) PostImpression
+LOGS : /var/log/kritter/tern_file/postimpression
+DB : /var/data/kritter/tern_file/db/postimpression
+DESTINATION TRANSPORT : /var/data/kritter/tern_file/destination/postimpression
+
+3) Billing
+LOGS : /var/log/kritter/tern_file/billing
+DB : /var/data/kritter/tern_file/db/billing
+DESTINATION TRANSPORT : /var/data/kritter/tern_file/destination/billing
+
+TERN PULL PATHS
+
+0) SAMPLE
+LOGS: /var/log/kritter/tern_file_pull/sample
+
+1) ADSERVING
+/var/log/kritter/tern_file_pull/adserving_cpm_cpm_rev_max
+
+BIDDER PATHS
+
+/var/data/kritter/bidder/offline_bidder/cpm_cpm/rev_max

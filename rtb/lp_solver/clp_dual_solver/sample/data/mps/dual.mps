@@ -1,0 +1,15 @@
+NAME    MANUAL
+ROWS
+ N COST
+ L LIM1
+ L LIM2
+ L LIM3
+COLUMNS
+    XONE    COST    1  LIM1 1   LIM2    4   LIM3    -1
+    XTWO    COST    1  LIM1 2   LIM2    2   LIM3    1
+RHS
+    RHS    LIM1    4   LIM2    12  LIM3    1
+BOUNDS
+  LO BND   XONE    0
+  LO BND   XTWO    0
+ENDATA

@@ -1,0 +1,9 @@
+@(creativeDisplay:models.advertiser.CreativeDisplayFull)
+@main2("Creative Summary"){@navs.navadvt(creativeDisplay.getAccountGuid())}{@navs.breadcrumbs(creativeDisplay.getBreadCrumbPaths())}{
+
+	@components.containers.panel("Creative Summary-"+ creativeDisplay.getName()){ 
+		@advt.creative.creativeDisplay(creativeDisplay)
+	}
+
+	<script src="@routes.Assets.at("javascripts/apps/creativeController.js")" type="text/javascript"></script>
+}

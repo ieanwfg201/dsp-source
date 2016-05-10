@@ -1,0 +1,1 @@
+curl --header "Content-type: application/json" --request POST --data '{ "start_date": "2014-08-25 00:00:00", "end_date": "2014-09-10 23:59:59"}' http://localhost:9000/reportingapi/monitoring/overall

@@ -1,0 +1,15 @@
+#kritter_dashboard_delete.job
+type=command
+dependencies=kritter_fraud_upload
+
+command=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_total_metric} ${dashboard_retention}
+command.1=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_country} ${dashboard_retention}
+command.2=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_manufacturer} ${dashboard_retention}
+command.3=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_os} ${dashboard_retention}
+command.4=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_browser} ${dashboard_retention}
+command.5=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_site} ${dashboard_retention}
+command.6=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_campaign} ${dashboard_retention}
+command.7=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_site_v1} ${dashboard_retention}
+command.8=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${dashboard_campaign_v1} ${dashboard_retention}
+command.9=sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${fraud_daily_table} ${fraud_retention}
+

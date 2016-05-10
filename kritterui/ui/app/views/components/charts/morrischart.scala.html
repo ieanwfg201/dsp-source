@@ -1,0 +1,11 @@
+@(chartType:String, dataSource:String, xKey:String, yKeys:String, labels:String)
+
+<div morris-internal-chart 
+	data-data="@dataSource"
+	data-type="@chartType"
+	data-xkey="@xKey"
+	data-ykeys='@yKeys' 
+	data-labels='@labels'
+	data-line-colors='["#23AE89","#FFB61C","#2EC1CC"]'
+	data-line-width="2">
+	</div>

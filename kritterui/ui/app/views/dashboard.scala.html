@@ -1,0 +1,139 @@
+@(reportEntityForm:Form[models.entities.reporting.ReportFormEntity],show_carrier_ui:String)
+@main("Dashboard") {
+<div class="page page-dashboard" data-ng-controller="dashboardController">
+    <div collapse="isCollapsed">
+              <form id="dashboardForm"   action="/reporting/dashboard/data" method="POST"> 
+               </form>
+    </div> 
+	<div class="row">	 
+        <div class="col-md-6">
+        @components.containers.panel("Top Advertiser By Revenue (Yes)"){
+            @components.misc.table("topAdvertiserByRevenueYes")
+        }
+        </div>
+        <div class="col-md-6">
+        @components.containers.panel("Top Campaign By Revenue (Yes)"){
+            @components.misc.table("topCampaignByRevenueYes")
+        }
+        </div>
+	</div>
+	<div class="row">   
+        <div class="col-md-6">
+        @components.containers.panel("Top Publisher by Income (Yes)"){
+            @components.misc.table("topPublisherByIncomeYes")
+        }
+        </div>
+        <div class="col-md-6">
+        @components.containers.panel("Top Site by Income (Yes)"){
+            @components.misc.table("topSiteByIncomeYes")
+        }
+        </div>
+    </div>
+    <div class="row">   
+        <div class="col-md-6">
+        @components.containers.panel("Top Exchange by Income (Yes)"){
+            @components.misc.table("topExchangeByIncomeYes")
+        }
+        </div>
+    </div>
+    <div class="row">   
+        <div class="col-md-6">
+        @components.containers.panel("Top Gainer-Advertiser by Revenue (Yes Vs DayBefore)"){
+            @components.misc.table("topGainerAdvertiserByRevenueYesDayBefore")
+        }
+        </div>
+        <div class="col-md-6">
+        @components.containers.panel("Top Gainer-Campaign by Revenue (Yes Vs DayBefore)"){
+            @components.misc.table("topGainerCampaignByRevenueYesDayBefore")
+        }
+        </div>
+    </div>
+    <div class="row">   
+        <div class="col-md-6">
+        @components.containers.panel("Top Gainer-Publisher by PubIncome (Yes Vs DayBefore)"){
+            @components.misc.table("topGainerPublisherByPubIncomeYesDayBefore")
+        }
+        </div>
+        <div class="col-md-6">
+        @components.containers.panel("Top Gainer-Site by Income (Yes Vs DayBefore)"){
+            @components.misc.table("topGainerSiteByIncomeYesDayBefore")
+        }
+        </div>
+    </div>
+    <div class="row">   
+        <div class="col-md-6">
+        @components.containers.panel("Top Loser-Advertiser by Revenue (Yes Vs DayBefore)"){
+            @components.misc.table("topLooserAdvertiserByRevenueYesDayBefore")
+        }
+        </div>
+        <div class="col-md-6">
+        @components.containers.panel("Top Loser-Campaign by Revenue (Yes Vs DayBefore)"){
+            @components.misc.table("topLooserCampaignByRevenueYesDayBefore")
+        }
+        </div>
+    </div>
+    <div class="row">   
+        <div class="col-md-6">
+        @components.containers.panel("Top Loser-Publisher by Income (Yes Vs DayBefore)"){
+            @components.misc.table("topLooserPublisherByIncomeYesDayBefore")
+        }
+        </div>
+        <div class="col-md-6">
+        @components.containers.panel("Top Loser-Site by Income (Yes Vs DayBefore)"){
+            @components.misc.table("topLooserSiteByIncomeYesDayBefore")
+        }
+        </div>
+    </div>
+    <div class="row">   
+        <div class="col-md-6" ng-if="dataLoaded">
+        @components.containers.panel("Top Country by Request (Yes)"){
+            @components.charts.piechart("pie", "topCountryByRequestYes", "value")
+        }
+        </div>
+        <div class="col-md-6" ng-if="dataLoaded">
+        @components.containers.panel("Top OS By Request By Request (Yes)"){
+            @components.charts.piechart("pie", "topOsByRequestYes", "value")
+        }
+        </div>
+    </div>
+    <div class="row">	 
+        <div class="col-md-6" ng-if="dataLoaded">
+        @components.containers.panel("Top Manufacturer by Request (Yes)"){
+            @components.charts.piechart("pie", "topManufacturerByRequestYes", "value")
+        }
+        </div>
+        <div class="col-md-6" ng-if="dataLoaded">
+        @components.containers.panel("Top Browser By Request (Yes)"){
+            @components.charts.piechart("pie", "topBrowserByRequestYes", "value")
+        }
+        </div>
+	</div>
+        <div class="col-md-6" ng-if="dataLoaded" >
+        @components.containers.panel("Request Vs Impression Vs Render"){
+            @components.charts.morrischart("line", "RequestImpressionRender", "time", "[\"total_request_name\",\"total_impression_name\",\"total_csc_name\"]", "[\"Total Requests\", \"Total Impressions\", \"Total Render\"]")
+        }
+        </div>
+    <div class="row">    
+        <div class="col-md-6" ng-if="dataLoaded" >
+        @components.containers.panel("Exchange Impression Vs Win"){
+            @components.charts.morrischart("line", "ImpressionWin", "time", "[\"total_impression_name\",\"total_win_name\"]", "[\"Impression\", \"Win\"]")
+        }
+        </div>
+    </div>
+    <div class="row">    
+    <div class="row">    
+        <div class="col-md-6" ng-if="dataLoaded" >
+        @components.containers.panel("Revenue Vs PubIncome"){
+            @components.charts.morrischart("bar", "RevenuePubIncome", "time", "[\"demandCharges_name\",\"supplyCost_name\"]", "[\"Revenue\", \"PubIncome\"]")
+        }
+        </div>
+        <div class="col-md-6" ng-if="dataLoaded" >
+        @components.containers.panel("Click Vs Conversion"){
+            @components.charts.morrischart("bar", "ClickConversion", "time", "[\"total_click_name\",\"conversion_name\"]", "[\"Click\", \"Conversion\"]")
+        }
+        </div>
+    </div>
+</div>
+<script src="@routes.Assets.at("javascripts/apps/dashboardController.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/morrisInternal.js")" type="text/javascript"></script>
+}

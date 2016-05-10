@@ -1,0 +1,13 @@
+Source: kritter-tern-file-conf-postimpression-service
+Maintainer: KRITTER <contact@kritter.in>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 8)
+
+Package: kritter-tern-file-conf-postimpression-service
+Architecture: any
+Depends: ${misc:Depends},
+Description: kritters tern_file postimpression conf service
+ an postimpression service for postimpression conf of 
+ tern_file - a log transportation package by kritter

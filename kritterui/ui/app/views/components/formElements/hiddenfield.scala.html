@@ -1,0 +1,3 @@
+@(field:play.data.Form.Field , ngmodel:String="", ngsync:Boolean=false)
+<input type="text" class="hidden form-control" name="@field.name()" id="@field.name()" value="@field.value()" 
+					@if(ngsync){ng-model="@ngmodel" } > 

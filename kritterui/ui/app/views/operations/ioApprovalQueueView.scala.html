@@ -1,0 +1,56 @@
+@(title:String ="")
+@main("IO Approval Queue"){
+
+@components.containers.panel("IO Approval Queue"){
+<div ng-controller="ioApprovalController">	
+	<table ng-table="ioList.params" show-filter="true" class="table table-bordered table-striped">
+	        <tr ng-repeat="io in ioList.data">
+		         <td width="30" style="text-align: left" header="'ng-table/headers/checkbox.html'">
+	                <input type="checkbox" ng-model="checkboxes.items[io.id]" />
+	            </td> 
+	            <td  data-title="'Account'" >
+	           		<a href="{{io.accountUrl}}"> {{io.accountName}}   </a>             
+	            </td>
+	            <td data-title="'Name'" >
+	            	{{io.name}}                
+	            </td>
+	            
+	             <td  data-title="'Order Number'" >
+	            	{{io.orderNumber}}                
+	            </td>
+	             <td  data-title="'Order Value'" >
+	            	{{io.orderValue}}                
+	            </td>
+	            
+	            <td  data-title="'Created'" >
+	            		{{io.createdDate}}                
+	            </td>
+	            <td  data-title="'Last Modified'" >
+	            		{{io.lastModifiedDate}}                
+	            </td>
+	            <td  data-title="'Belongs To'" >
+                        {{io.belongsToName}}                
+                </td>
+                <td  data-title="'Created By'" >
+                        {{io.createdByName}}                
+                </td>
+	    
+	            <td data-title="'Action'"> 
+	                 <button class="btn btn-primary  active" ng-click="updateIO( io.accountGuid, io.orderNumber , 'approve')">Approve</button>
+		 			 <button class="btn btn-primary  active" ng-click="updateIO(io.accountGuid, io.orderNumber ,'reject')">Reject</button>
+	            </td>
+	     	           
+	        </tr>
+	</table> 
+</div>
+
+ <script type="text/ng-template" id="ng-table/headers/checkbox.html">
+        <input type="checkbox" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value="" />
+ </script> 
+
+}
+
+
+
+<script src="@routes.Assets.at("javascripts/apps/ioApprovalController.js")" type="text/javascript"></script>
+}

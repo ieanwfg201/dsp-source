@@ -1,0 +1,4 @@
+# input_for_ctr_init.job
+
+type=command
+command=sh input_for_ctr_init.sh

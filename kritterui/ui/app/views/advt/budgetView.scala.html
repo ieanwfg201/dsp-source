@@ -1,0 +1,55 @@
+@(display:models.advertiser.BudgetDisplay, accountGuid:String)
+
+@main2("Advertiser Home"){@navs.navadvt(accountGuid)}{@navs.breadcrumbs(display.getBreadCrumbPaths())}{
+	@components.containers.panel("Account Budget"){
+	@if(display != null){
+		<div>   
+			@components.fielddisplays.textdisplay("Internal Balance", display.getInternal_balance()+"")
+			@components.fielddisplays.textdisplay("Internal Burn", display.getInternal_burn()+"")
+			@components.fielddisplays.textdisplay("Advertiser Balance", display.getAdv_balance()+"")
+			@components.fielddisplays.textdisplay("Advertiser Burn", display.getAdv_burn()+"")		 
+		</div>	
+		}
+	}
+	
+	<div ng-controller="budgetController">
+		 <tabset>
+		    <tab heading="Approved IO" select="updateIOList('Approved')">
+			    
+		    </tab>
+		    <tab heading="Pending IO" select="updateIOList('NEW')">
+		    
+		    </tab>
+		    <tab heading="Rejected IO" select="updateIOList('REJECTED')">
+		    
+		    </tab>
+		  </tabset>
+		  
+		  <table ng-table="ioList.params" show-filter="true" class="table table-bordered table-striped">
+			        <tr ng-repeat="io in ioList.data">
+			            <td data-title="'Name'" >
+			            	{{io.name}}                
+			            </td>		            
+			             <td  data-title="'Order Number'" >
+			            	{{io.orderNumber}}                
+			            </td>
+			             <td  data-title="'Order Value'" >
+			            	{{io.orderValue}}                
+			            </td>
+			            
+			             <td  data-title="'Created'" >
+			            	{{io.createdDate}}                
+			            </td>
+                        <td  data-title="'Belongs To'" >
+                            {{io.belongsToName}}                
+                        </td>
+                        <td  data-title="'Created By'" >
+                            {{io.createdByName}}                
+                        </td>
+		          
+			        </tr>
+			</table>
+		 
+</div>
+<script src="@routes.Assets.at("javascripts/apps/budgetController.js")" type="text/javascript"></script>
+}

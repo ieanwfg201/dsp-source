@@ -1,0 +1,4 @@
+#DEBHELPER#
+chown -R rohan:rohan /usr/share/kritter/tern_file/conf
+chown -R rohan:rohan /usr/share/kritter/tern_file
+python /usr/share/kritter/tern_file/lib/journal/create_journal.py '/usr/share/kritter/tern_file/sql/setup.sql' '/usr/share/kritter/tern_file/db' 'tern_journal.db'

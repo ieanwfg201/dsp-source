@@ -1,0 +1,17 @@
+@(id:String, label:String, outputModel:String, inputModel:String, onblur:String="onblur()")
+
+<div class="form-group row">
+
+	<div class="col-sm-3">
+		<label for="@id" class="control-label">@label</label>
+	</div>
+	<div class="col-sm-9">
+
+		<div id="@id" multi-select input-model="@inputModel"
+			output-model="@outputModel" button-label="label" item-label="label"
+			tick-property="selected" orientation="vertical"
+			selection-mode="multiple" max-labels="2" is-disabled="false"
+			on-blur="@onblur"
+			helper-elements="reset filter"></div>
+	</div>
+</div>

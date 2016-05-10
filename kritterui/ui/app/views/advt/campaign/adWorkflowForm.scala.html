@@ -1,0 +1,18 @@
+@(adWFForm:Form[models.formbinders.AdWorkFlowEntity], action:String)
+<div class="modal-header">
+	<h3 class="modal-title">@("Ad Approval Form")</h3>
+</div>
+<div class="modal-body">
+	<form id="adWorkflowForm" action="/advertiser/campaigns/ads/updateStatus" method="POST"> 
+		@components.formElements.hiddenfield(adWFForm("adId"))
+		@if(action=="Reject"){
+		 	@components.formElements.textarea(adWFForm("comment"), "Comment")
+		} 
+		@components.formElements.hiddenfield(adWFForm("action"))
+	</form>
+</div>
+<div class="modal-footer">
+	@components.formElements.button(action, "ok()")
+	@components.formElements.button("cancel", "cancel()")
+</div>
+

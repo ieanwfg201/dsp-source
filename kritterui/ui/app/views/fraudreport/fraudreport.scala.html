@@ -1,0 +1,54 @@
+@(reportEntityForm:Form[models.entities.fraudreport.FraudReportFormEntity])
+@main("Fraud Reporting") {
+<div class="page page-dashboard" data-ng-controller="fraudreportController">
+
+ @components.formElements.hiddenfield(reportEntityForm("pagesize"))
+ 
+ @components.containers.panel("FraudReport"){
+            <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">Toggle Filter Display</button>
+            <button class="btn btn-default btn-primary" ng-click="refershData()">Refresh Data</button>
+              
+            <div collapse="isCollapsed"> 
+              <form id="fraudreportConfigForm" class="navbar-form navbar-left" action="/fraudreport/data" method="POST" ng-init='init()'>
+               <fieldset>
+                 @components.formElements.hiddenfield(reportEntityForm("pagesize"))
+                 @components.formElements.hiddenfield(reportEntityForm("startindex"))
+                 @components.formElements.selectlist2(reportEntityForm("frequency"),"Frequency", services.MetadataAPI.reportFrequencyOptions(),
+                        '_ngSync ->true,'_ngChange ->"changeDate()", '_classes -> "small")
+                 @components.formElements.dateinput(reportEntityForm("start_date"),"Start Date", '_stringRep->true)
+                 @components.formElements.dateinput(reportEntityForm("end_date"),"End Date", '_stringRep->true)
+
+                 @components.formElements.selectlist2(reportEntityForm("date_as_dimension"), 
+                                    "Show Time Distribution", services.MetadataAPI.noYesOptions(), '_classes -> "small")                     
+               </fieldset>
+               <fieldset>
+                  @components.formElements.multiselectlist3(reportEntityForm("publishers"),'_label->"Publishers+Exchanges (Internal Site Required)")   
+                  <span ng-show="sites_msmodel.visible">     
+                    @components.formElements.multiselectlist3(reportEntityForm("sites"),'_label->"Internal Site")
+                  </span>
+               </fieldset>
+               <fieldset>
+                   @components.formElements.multiselectlist3(reportEntityForm("advertisers"),'_label->"Advertisers (Ad Required)")
+                      <span ng-show="campaigns_msmodel.visible">
+                      @components.formElements.multiselectlist3(reportEntityForm("campaigns"),'_label->"Campaigns (Ad Required)")  
+                      </span>
+                      <span ng-show="ads_msmodel.visible">
+                      @components.formElements.multiselectlist3(reportEntityForm("ads"),'_label->"Ads") 
+               </fieldset>
+              
+               <fieldset> 
+                   <legend>Others</legend>
+                   @components.formElements.multiselectlist3(reportEntityForm("event"),'_label->"Event")
+                   @components.formElements.selectlist2(reportEntityForm("csvDelimiter"), 
+                                    "CSV Delimiter ", services.MetadataAPI.csvDelimiter())                        
+               </fieldset> 
+                <button type="button" class="btn btn-default btn-primary" ng-click="refershData()">Generate Report</button>
+                <button type="button" class="btn btn-default btn-primary" ng-click="refershCSVData()">Download as CSV</button>
+              </form>    
+            </div>
+            @components.misc.table("tableData")
+        }  
+</div>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/fraudreport/fraudreportController.js")" type="text/javascript"></script>
+}

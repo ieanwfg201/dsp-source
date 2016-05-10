@@ -1,0 +1,4 @@
+# kritter_first_level_init.job
+
+type=command
+command=sh kritter_first_level_init.sh

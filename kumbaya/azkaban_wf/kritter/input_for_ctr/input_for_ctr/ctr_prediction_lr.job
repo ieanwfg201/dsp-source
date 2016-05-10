@@ -1,0 +1,6 @@
+# ctr_prediction_lr.job
+
+type=command
+dependencies=input_for_ctr_pig
+env.PYTHONPATH=${python_path}
+command=sh ctr_prediction_lr.sh '${ctr_prediction_lr_bin}' '${ctr_prediction_lr_config}' '${ctr_prediction_lr_log_config}' "${input_path}" '${click_log_segments_path}' '${click_log_segments_prefix}' '${csv_file_path}' '${csv_file_prefix}' '${r_ctr_prediction_lr_bin}' '${output_file_path}' '${output_file_prefix}' '${ctr_lr_symlink_path}' '${process_time}' '${process_time_dir}'

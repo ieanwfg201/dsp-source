@@ -1,0 +1,21 @@
+@(field:play.data.Form.Field, label:String, minDate:String, maxDate:String)
+
+
+<div class="form-group row">
+	<div class="col-sm-3">
+		<label for="@field" class="control-label">@label</label>
+	</div>
+
+	<div class="col-sm-9">
+		<div class="input-group ui-datepicker">
+			<span class="input-group-addon">
+					<i class="fa fa-calendar" ng-click="toggle(@field.name())"></i> 
+			</span> <input type="text" class="form-control" id="@field.name()" name="@field.name()"
+				datepicker-popup="dd.MM.yyyy" value="@field.value()"
+				ng-model="@field.name()" is-open="opened.@field.name()" ng-click="toggle(@field.name())"/>
+				
+		</div>
+	</div>
+
+</div>
+

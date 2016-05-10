@@ -1,0 +1,62 @@
+@(display:models.accounts.displays.AdvertiserDisplay)
+@main2("Advertiser Home"){@navs.navadvt(display.getAccountGuid())}{@navs.breadcrumbs(display.getBreadCrumbPaths())}{
+
+@components.containers.panel("Campaigns"){
+<div ng-controller="advertiserController">
+	<div class="btn-group">
+		 <a href="@{ display.addCampaignUrl()}" class="btn btn-primary   active" role="button">Create New Campaign</a>  
+	</div>
+
+	 <div infinite-scroll='nextPage()' infinite-scroll-disabled='campaignListData.isLoading' infinite-scroll-distance='1'>
+		<table tr-ng-grid="" class="table-condensed" items="campaignListData.filteredData"   
+		 					selected-items="campaignListData.selections" 
+		 					fields="['name', 'status',  'startDate', 'endDate', 'action']" 
+		 					selection-mode="SingleRow"
+		 					enable-filtering="campaignListData.enableFilter"
+		 					enable-sorting="campaignListData.enableSorting" 
+		 					order-by="campaignListData.orderBy"
+		 					order-by-reverse="campaignListData.orderByReverse" 
+		 					page-items="campaignListData.itemsPerPage"  
+		 					total-items="campaignListData.totalItems"
+		 					current-page="campaignListData.currentPage" 
+		 					on-data-required="campaignListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+	 
+		    <thead>
+		        <tr>
+		            <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
+		            <th field-name="status" display-name="Status" enable-sorting="true"  enable-filtering="true">  </th> 
+		            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+		        </tr>  
+		    </thead> 
+		    <tbody>
+	    		<tr> 
+	    			<td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td> 
+		            <td field-name="action" > 
+                        <a href="{{gridItem.statUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Stats">
+                            <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                        </a>
+                        <a href="{{gridItem.addbudgetUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Add Budget">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a>
+		                <a href="{{gridItem.editUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Edit Campaign">
+		                	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+						</a>
+		                <button ng-show="gridItem.startEnabled" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="Start Campaign" ng-click="updateCampaign(gridItem.id,'Start')">
+		                					<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+		                </button>
+	                    <button ng-show="gridItem.pauseEnabled" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Pause Campaign" ng-click="updateCampaign(gridItem.id,'Pause')">
+	                    	<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+	                    </button>     
+		            </td>
+		           
+		        </tr>
+		    </tbody>
+		</table> 
+	</div>
+</div>
+
+
+}
+
+<script src="@routes.Assets.at("javascripts/apps/advertiserController.js")" type="text/javascript"></script>
+}

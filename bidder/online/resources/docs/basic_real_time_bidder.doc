@@ -1,0 +1,33 @@
+input = q_j = cpc of campaign j for a segmentid, g_j = impression delivery goal of campaign j,
+        p_i_j = ctr of impression i on j for a segmentid, v_i_j = eCPI of assignment of i to j (the bid given out to exchange.)
+        @_j = from lp solver output
+
+output = x_i_j = 0 or 1 whether impression i assigned to campaign j, beta_i = value of impression for bookeeping.
+
+//this function calculates for an impression request, the j, which tells which campaign gets the impression and beta_i_j = bid sent to exchange.
+
+segment id plays role in ctr,probably bid in future,other parameters to be incorporated in the online algo in future.
+
+G = empty
+
+for_each_impression_i from a stream:
+
+    fetch p_i_j = click_probability_for_this_segment(click|i,j), for all j(all j for which ad filtering passes)
+
+    v_i_j = p_i_j * q_j for all j.
+
+    j* = argmax_j_not_in_G (v_i_j - @_j)
+
+    if (v_i_j* - @_j*) > 0 then
+        x_i_j* = 1
+        x_i_j  = 0 for j != j*
+        beta_i = v_i_j* - @_j*
+
+        if sigma_i' x_i'_j* = g_j* then
+            G = G union j*
+        
+    @_j = updateAlpha(@_j) (update alpha is identity function as of now, later on it will be based on PID where errors are taken into account).
+
+
+
+
