@@ -2,6 +2,8 @@ package com.kritter.adserving.request.enricher;
 
 import com.kritter.adserving.adexchange.request.enricher.RTBExchangeRequestReader;
 import com.kritter.entity.reqres.entity.Request;
+import com.kritter.req_logging.ReqLoggingCache;
+import com.kritter.req_logging.ReqLoggingCacheEntity;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +21,18 @@ public class RTBExchangeRequestEnricher implements RequestEnricher
     //This map contains request uri identifiers and corresponding instances
     //to take care of the request enrichment for an exchange bid request.
     private Map<String,RTBExchangeRequestReader> rtbExchangeRequestReaderMap;
+    private Logger bidRequestLogger;
+    private ReqLoggingCache reqLoggingCache;
 
     public RTBExchangeRequestEnricher(String loggerName,
-                                      Map<String,RTBExchangeRequestReader> rtbExchangeRequestReaderMap)
+                                      Map<String,RTBExchangeRequestReader> rtbExchangeRequestReaderMap,
+                                      String bidRequestLoggerName,
+                                      ReqLoggingCache reqLoggingCache)
     {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.rtbExchangeRequestReaderMap = rtbExchangeRequestReaderMap;
+        this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
+        this.reqLoggingCache = reqLoggingCache;
     }
 
     @Override
@@ -34,12 +42,9 @@ public class RTBExchangeRequestEnricher implements RequestEnricher
     {
         this.logger.info("Inside validateAndEnrichRequest() of RTBExchangeRequestEnricher");
 
-        logger.debug("going to fetch request uri");
         String requestURI = httpServletRequest.getRequestURI();
 
-        logger.debug("request uri is null from request" + (null == requestURI));
-
-        logger.debug("Request URI inside RTBExchangeRequestEnricher is {} ", requestURI);
+        this.logger.debug("Request URI inside RTBExchangeRequestEnricher is: {} ", requestURI);
 
         String requestURIParts[] = requestURI.split(ApplicationGeneralUtils.URI_PATH_SEPARATOR);
 
@@ -60,6 +65,13 @@ public class RTBExchangeRequestEnricher implements RequestEnricher
             throw new Exception("No valid Request Enricher could be found for exchange identifier: " +
                                 adExchangeIdentifier);
 
-        return rtbExchangeRequestReader.validateAndEnrichRequest(requestId,httpServletRequest,logger);
+        /*Fetch whether bid request needs to be logged*/
+        ReqLoggingCacheEntity reqLoggingCacheEntity = reqLoggingCache.query(adExchangeIdentifier);
+        boolean logBidRequest = false;
+        if(null != reqLoggingCacheEntity)
+            logBidRequest = reqLoggingCacheEntity.isEnable();
+
+        return rtbExchangeRequestReader.validateAndEnrichRequest
+                                                   (requestId,httpServletRequest,logger,this.bidRequestLogger,logBidRequest,adExchangeIdentifier);
     }
 }

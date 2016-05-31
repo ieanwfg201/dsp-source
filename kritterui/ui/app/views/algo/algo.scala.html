@@ -1,0 +1,33 @@
+@(algoForm:Form[models.entities.algo.AlgoFormEntity])
+@main("Algo Info") {
+<div class="page page-dashboard" data-ng-controller="algoController">
+
+ 
+ @components.containers.panel("Algo Info"){
+            <button class="btn btn-default btn-primary" ng-click="refershData()">Refresh Data</button>
+              
+            <div collapse="isCollapsed"> 
+              <form id="algoConfigForm" class="navbar-form navbar-left" action="/algo/data" method="POST" ng-init='init()'>
+               <fieldset>
+                   @components.formElements.multiselectlist3(algoForm("advertisers"),'_label->"Advertisers (Ad Required)")
+                      <span ng-show="campaigns_msmodel.visible">
+                      @components.formElements.multiselectlist3(algoForm("campaigns"),'_label->"Campaigns (Ad Required)")  
+                      </span>
+                      <span ng-show="ads_msmodel.visible">
+                      @components.formElements.multiselectlist3(algoForm("ads"),'_label->"Ads") 
+               </fieldset>
+               <fieldset>
+                      @components.formElements.selectlist2(algoForm("algomodel"), 
+                                    "AlgoModel", services.MetadataAPI.algomodel(), '_classes -> "small") 
+                      @components.formElements.selectlist2(algoForm("algomodelType"), 
+                                    "AlgoModel", services.MetadataAPI.algomodelType(), '_classes -> "small") 
+               </fieldset>
+                <button type="button" class="btn btn-default btn-primary" ng-click="refershData()">Get Algo Info</button>
+              </form>    
+            </div>
+            @components.misc.table("tableData")
+        }  
+</div>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/algo/algoController.js")" type="text/javascript"></script>
+}

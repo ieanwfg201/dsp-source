@@ -88,6 +88,8 @@ public class EventURLProcessorJob implements Job
     private BillableEventUrlReader billableEventUrlReader;
     private BillableEventEnricherAndFraudProcessor billableEventFraudProcessor;
 
+    /*If this is set then certain characters can be replaced by other allowed ones.Case for CAKE*/
+    private boolean replaceCharactersInConversionId;
 
     public EventURLProcessorJob(
             String name,
@@ -125,7 +127,8 @@ public class EventURLProcessorJob implements Job
             TrackingEventEnricherAndFraudProcessor trackingEventFraudProcessor,
             RecentHistoryProvider recentHistoryProvider,
             BillableEventUrlReader billableEventUrlReader,
-            BillableEventEnricherAndFraudProcessor billableEventFraudProcessor
+            BillableEventEnricherAndFraudProcessor billableEventFraudProcessor,
+            boolean replaceCharactersInConversionId
             )
     {
         this.name = name;
@@ -165,6 +168,7 @@ public class EventURLProcessorJob implements Job
         this.recentHistoryProvider = recentHistoryProvider;
         this.billableEventUrlReader = billableEventUrlReader;
         this.billableEventFraudProcessor = billableEventFraudProcessor;
+        this.replaceCharactersInConversionId = replaceCharactersInConversionId;
     }
 
     @Override
@@ -179,7 +183,7 @@ public class EventURLProcessorJob implements Job
         logger.info("Inside execute() of EventURLProcessorJob.");
 
         if(context.isTerminated()){
-            logger.error("Error in PostImpression Workflow, request is terminated reason being : " +
+            logger.error("Error in PostImpression Workflow, request is terminated reason being : {} " ,
                     context.getValue(this.postImpressionUtils.getTerminationReasonKey()));
             return;
         }
@@ -211,6 +215,9 @@ public class EventURLProcessorJob implements Job
                 PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CLICK
                 .getUrlIdentifierPrefix()))
         {
+             /*Use property from instance to see if double underscores need to be replaced.*/
+            ApplicationGeneralUtils.getConversionEventIdUtils().setReplaceCharactersInConversionId(replaceCharactersInConversionId);
+
             String landingPageUrl = defaultLandingUrl;
             boolean isClickFraud = false;
 
@@ -252,7 +259,7 @@ public class EventURLProcessorJob implements Job
 
                 this.logger.debug("Modifying landing url if the adEntity requires conversion information...");
 
-                if(!isClickFraud && null != adEntity && !landingUrlFromClickUrl)
+                if(null != adEntity && !landingUrlFromClickUrl)
                 {
                     /**
                      * replace macros in landing page
@@ -347,6 +354,9 @@ public class EventURLProcessorJob implements Job
                 PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.MACRO_CLICK
                 .getUrlIdentifierPrefix()))
         {
+             /*Use property from instance to see if double underscores need to be replaced.*/
+            ApplicationGeneralUtils.getConversionEventIdUtils().setReplaceCharactersInConversionId(replaceCharactersInConversionId);
+
             String landingPageUrl = defaultLandingUrl;
             boolean ismacroClickFraud = false;
 
@@ -588,8 +598,7 @@ public class EventURLProcessorJob implements Job
                             (!isAdvertisingCookieSetAtEndUser && null != cookieSyncManager)
                             )
                     {
-                        logger.debug("The csc beacon comes from an ad-exchange end user," +
-                                "CookieSyncManager found for publisher id :{} ",publisherId);
+                        logger.debug("The csc beacon comes from an ad-exchange end user,CookieSyncManager found for publisher id :{} ",publisherId);
 
                         int expiryAgeInDays = ( cookieExpireAgeInSeconds / 86400 );
 
@@ -607,8 +616,7 @@ public class EventURLProcessorJob implements Job
                         //if synch result is true, that means match has happened on remote side of ad-exchange.
                         if(syncResult)
                         {
-                            logger.debug("Cookie Synchronization has completed, now making internal database " +
-                                    "entry using exchangeUserId:{} ,and dspUserId:{} ",
+                            logger.debug("Cookie Synchronization has completed, now making internal database entry using exchangeUserId:{} ,and dspUserId:{} ",
                                     adExchangeUserIdValue,advertisingCookie);
 
                             boolean result = cookieSyncManager.
@@ -624,9 +632,8 @@ public class EventURLProcessorJob implements Job
                     //simply write 1by1 pixel image to the end user.
                     else
                     {
-                        logger.debug("Cookie is already matched with exchange and internal database contains the " +
-                                " user ids internal and external, or may be cookie synch manager not available" +
-                                " for the publisher id: {} ", publisherId);
+                        logger.debug("Cookie is already matched with exchange and internal database contains the  user ids internal and external, or may be cookie synch manager not available for the publisher id: {} ",
+                                publisherId);
                         PostImpressionUtils.writeOneByOnePixelToResponse(
                                 (HttpServletResponse)context.getValue(Workflow.CONTEXT_RESPONSE_KEY));
                     }
@@ -649,6 +656,9 @@ public class EventURLProcessorJob implements Job
                 PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CONVERSION_FEEDBACK
                 .getUrlIdentifierPrefix()))
         {
+            /*Use property from instance to see if double underscores need to be replaced.*/
+            ApplicationGeneralUtils.getConversionEventIdUtils().setReplaceCharactersInConversionId(replaceCharactersInConversionId);
+
             try
             {
                 this.conversionUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
@@ -689,6 +699,9 @@ public class EventURLProcessorJob implements Job
                 PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.COOKIE_BASED_CONV_JS
                 .getUrlIdentifierPrefix()))
         {
+             /*Use property from instance to see if double underscores need to be replaced.*/
+            ApplicationGeneralUtils.getConversionEventIdUtils().setReplaceCharactersInConversionId(replaceCharactersInConversionId);
+
             try
             {
                 this.cookieBasedConversionUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);

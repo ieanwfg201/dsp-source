@@ -189,7 +189,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         }
         catch (NumberFormatException nfe)
         {
-            logger.error("Number of ads requested has invalid value : " + requestedAds);
+            logger.error("Number of ads requested has invalid value : {}" , requestedAds);
         }
 
         try
@@ -202,8 +202,8 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         }
         catch (NumberFormatException nfe)
         {
-            logger.error("requesting latitude or longitude has invalid value : lat: " +
-                    requestingLatitude + ", lon: " + requestingLongitude);
+            logger.error("requesting latitude or longitude has invalid value : lat:{} lon:{} " ,
+                    requestingLatitude , requestingLongitude);
         }
 
         ApplicationGeneralUtils.logDebug
@@ -222,8 +222,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         if( null==ip || null==invocationCodeVersion )
         {
             request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.REQUEST_MALFORMED);
-            this.logger.error("For requestId: " + requestId +
-                              " Request is malformed inside DirectPublisherRequestEnricher");
+            this.logger.error("For requestId: {} Request is malformed inside DirectPublisherRequestEnricher",requestId);
             return request;
         }
         else
@@ -263,15 +262,13 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
 
             if(null == handsetMasterData)
             {
-                this.logger.error("Device detection failed inside DirectPublisherRequestEnricher, " +
-                                  "can not proceed further");
+                this.logger.error("Device detection failed inside DirectPublisherRequestEnricher, cannot proceed further");
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_UNDETECTED);
                 return request;
             }
             if(handsetMasterData.isBot())
             {
-                this.logger.error("Device detected is BOT inside DirectPublisherRequestEnricher, " +
-                                  "can not proceed further");
+                this.logger.error("Device detected is BOT inside DirectPublisherRequestEnricher, cannot proceed further");
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
                 return request;
             }
@@ -300,8 +297,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
                 {
                     request.setCountry(country);
                     ApplicationGeneralUtils.logDebug(this.logger,
-                            " Country detected successfully inside " +
-                            " DirectPublisherRequestEnricher, id being: ",
+                            " Country detected successfully inside DirectPublisherRequestEnricher, id being: ",
                             String.valueOf(country.getCountryInternalId()));
                 }
                 else
@@ -321,8 +317,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
                   )
                 {
                     ApplicationGeneralUtils.logDebug(this.logger,
-                            " CountryCarrier detected successfully inside " +
-                              "DirectPublisherRequestEnricher, id being: ",
+                            " CountryCarrier detected successfully inside DirectPublisherRequestEnricher, id being: ",
                                String.valueOf(internetServiceProvider.getOperatorInternalId()));
 
                     request.setInternetServiceProvider(internetServiceProvider);

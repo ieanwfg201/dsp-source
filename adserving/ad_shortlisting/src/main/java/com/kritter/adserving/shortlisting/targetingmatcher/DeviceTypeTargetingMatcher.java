@@ -74,8 +74,7 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
             //no device type detected and ad does not target any device type.
             if(null == deviceType && adDoesNotTargetDeviceType)
             {
-                ReqLog.debugWithDebug(logger,request, "Ad:{} does not target any device type (desktop/mobile etc)...passing it and " +
-                             "no device type detected",adEntity.getAdGuid());
+                ReqLog.debugWithDebug(logger,request, "Ad:{} does not target any device type (desktop/mobile etc)...passing it and no device type detected",adEntity.getAdGuid());
 
                 shortlistedAdIdSet.add(adId);
                 continue;

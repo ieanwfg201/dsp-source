@@ -7,8 +7,11 @@ import com.kritter.bidrequest.entity.IBidResponse;
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.bidrequest.response_creator.IBidResponseCreator;
 import com.kritter.constants.ExternalUserIdType;
+import com.kritter.constants.VideoBidResponseProtocols;
 import com.kritter.entity.user.userid.ExternalUserId;
+import com.kritter.entity.video_props.VideoProps;
 import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
+import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
 import com.kritter.common.caches.iab.categories.IABCategoriesCache;
 import com.kritter.common.caches.iab.index.IABIDIndex;
 import com.kritter.constants.CreativeFormat;
@@ -23,6 +26,7 @@ import com.kritter.serving.demand.entity.Creative;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ServerConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +52,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
     private AdEntityCache adEntityCache;
     private IABCategoriesCache iabCategoriesCache;
     private String macroPostImpressionBaseClickUrl;
+    private String trackingEventUrl;
 
     //template for formatting.
     private static final String HTML_BANNER_TEMPLATE = prepareHTMLBannerTemplate();
@@ -78,6 +83,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         this.adEntityCache = adEntityCache;
         this.iabCategoriesCache = iabCategoriesCache;
         this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
+        this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
     }
 
 
@@ -175,6 +181,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
 
         try
         {
+            objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
             payLoad = objectMapper.writeValueAsString(bidResponseMopubDTO);
         }
         catch (IOException ioe)
@@ -241,6 +248,16 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                             creative.getCreative_macro()
                     )
             );
+        else if(creative.getCreativeFormat().equals(CreativeFormat.VIDEO))
+            bidResponseBidMopubDTO.setAdMarkup(
+                    prepareVideoAdMarkup(
+                            request,
+                            responseAdInfo,
+                            response,
+                            winNotificationURLBuffer
+                    )
+            );
+
 
         String advertiserDomain[] = null;
         if (null != adEntity.getAdvertiserDomains() && adEntity.getAdvertiserDomains().length > 0)
@@ -272,7 +289,6 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
 
         bidResponseBidMopubDTO.setCreativeAttributes(creativeAttributes);
         bidResponseBidMopubDTO.setCreativeId(creative.getCreativeGuid());
-
         String[] iabCategories = null;
         try
         {
@@ -320,6 +336,23 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         String impTrackers[] = new String[1];
         impTrackers[0] = fetchImpressionTrackerSameAsCSC(request,responseAdInfo,response);
         bidResponseBidExtMopubDTO.setImptrackers(impTrackers);
+        if(creative.getCreativeFormat() != null && CreativeFormat.VIDEO == creative.getCreativeFormat()){
+            VideoProps videoProps = creative.getVideoProps();
+            if(videoProps != null){
+                VideoBidResponseProtocols videoprotocol = VideoBidResponseProtocols.getEnum(videoProps.getProtocol());
+                if(videoprotocol != null){
+                    if(videoprotocol == VideoBidResponseProtocols.VAST_2_0_WRAPPER){
+                        bidResponseBidExtMopubDTO.setCrtype("VAST 2.0"); 
+                    }else if(videoprotocol == VideoBidResponseProtocols.VAST_3_0_WRAPPER){
+                        bidResponseBidExtMopubDTO.setCrtype("VAST 3.0"); 
+                    }
+                }
+            }
+            bidResponseBidExtMopubDTO.setDuration(videoProps.getDuration()+"");
+            Integer[] videoCreativeAttribute = new Integer[1];
+            videoCreativeAttribute[0]=6;
+            bidResponseBidMopubDTO.setCreativeAttributes(videoCreativeAttribute);
+        }
         bidResponseBidMopubDTO.setExtensionObject(bidResponseBidExtMopubDTO);
         /*******************************Done preparing bid response bid object.********************************/
 
@@ -468,6 +501,19 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                                                            );
 
         return htmlBannerResponse;
+    }
+    
+    private String prepareVideoAdMarkup(
+            Request request,
+            ResponseAdInfo responseAdInfo,
+            Response response,
+            StringBuffer winNotificationURLBuffer
+    ) throws BidResponseException
+    {
+        return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
+                logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
+                notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
+                cdnBaseImageUrl, trackingEventUrl, null, null);
     }
 
     private static String prepareHTMLBannerTemplate()

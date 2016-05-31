@@ -1,0 +1,5 @@
+# user_daily.job
+
+type=command
+dependencies=user_init_daily
+command=sh user_daily.sh '${uu_daily_code_path}' "${input_path}" "${process_time_dir}" '${OUTPUT}' '${delimiter}' "${process_time}"

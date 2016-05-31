@@ -1,0 +1,6 @@
+# click_impression_match.job
+
+type=command
+dependencies=init
+env.PYTHONPATH=${python_path}
+command=sh click_impression_match.sh '${click_impression_match_bin}' "${click_input_path}" '${impression_input_dir}' '${output_file_path}' '${process_time}' '${process_time_dir}' '${recepient}' '${cc}'

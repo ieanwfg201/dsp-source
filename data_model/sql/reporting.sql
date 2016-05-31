@@ -774,3 +774,16 @@ ALTER TABLE first_level_ext_site_monthly change column countryId countryId int(1
   KEY `tracking_monthly_deviceManufacturerId` (`deviceManufacturerId`),
   KEY `tracking_monthly_deviceOsId` (`deviceOsId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ CREATE TABLE IF NOT EXISTS `uu_daily` (
+  `processing_time` datetime DEFAULT NULL,
+  `advId` int(11) DEFAULT NULL,
+  `campaignId` int(11) DEFAULT NULL,
+  `adId` int(11) DEFAULT NULL,
+  `uu_count` int(11) DEFAULT '0',
+  KEY `uu_daily_processing_time` (`processing_time`),
+  KEY `uu_daily_advId` (`advId`),
+  KEY `uu_daily_campaignId` (`campaignId`),
+  KEY `uu_daily_adId` (`adId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

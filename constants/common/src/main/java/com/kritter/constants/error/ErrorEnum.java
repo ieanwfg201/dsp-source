@@ -134,7 +134,13 @@ public enum ErrorEnum {
     NATIVE_ICON_GUID_NULL(126,"NATIVE_ICON_GUID_NULL"),
     NATIVE_ICON_ID_LIST_NULL(127,"NATIVE_ICON_ID_LIST_NULL"),
     NATIVE_SCREENSHOT_GUID_NULL(128,"NATIVE_SCREENSHOT_GUID_NULL"),
-    NATIVE_SCREENSHOT_ID_LIST_NULL(129,"NATIVE_SCREENSHOT_ID_LIST_NULL");
+    NATIVE_SCREENSHOT_ID_LIST_NULL(129,"NATIVE_SCREENSHOT_ID_LIST_NULL"),
+    ReqLoggingList_NULL(130,"ReqLoggingList_NULL"),
+    ReqLoggingInput_NULL(131,"ReqLoggingInput_NULL"),
+    ReqLoggingEntity_NF(132,"ReqLoggingEntity_NF"),
+    ReqLoggingEntity_NULL(133,"ReqLoggingEntity_NULL"),
+    ReqLoggingEntity_NOT_UPDATED(134,"ReqLoggingEntity_NOT_UPDATED"),
+    ReqLoggingEntity_NOT_INSERTED(135,"ReqLoggingEntity_NOT_INSERTED");
 
 
     private int id;

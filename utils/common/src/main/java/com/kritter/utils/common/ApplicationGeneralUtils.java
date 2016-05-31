@@ -36,8 +36,11 @@ public class ApplicationGeneralUtils
         public static final String RICHMEDIA_PAYLOAD     = "$RICHMEDIA_PAYLOAD";
         public static final String CREATIVE_CSC_BEACON   = "$CREATIVE_CSC_BEACON";
         public static final String HTML_RICHMEDIA_TEMPLATE = prepareRichmediaBannerTemplate();
+        public static final String EXCHANGE_BID_REQUEST_DELIM = "|";
+
 
         /**********************Conversion event id utils size declarations ***************************************/
+        @Getter
         private static ConversionEventIdUtils conversionEventIdUtils;
         static
         {

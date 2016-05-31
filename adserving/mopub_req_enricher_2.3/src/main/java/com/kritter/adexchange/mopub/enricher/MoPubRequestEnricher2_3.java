@@ -22,6 +22,7 @@ import com.kritter.geo.common.entity.reader.ConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.geo.common.entity.reader.MncMccCountryISPDetectionCache;
+import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -101,7 +102,10 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
     @Override
     public Request validateAndEnrichRequest(String requestId,
                                             HttpServletRequest httpServletRequest,
-                                            Logger logger) throws Exception
+                                            Logger logger,
+                                            Logger bidRequestLogger,
+                                            boolean logBidRequest,
+                                            String publisherId) throws Exception
     {
         StringWriter stringWriter = new StringWriter();
 
@@ -125,13 +129,34 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
 
         if(StringUtils.isEmpty(bidRequestPayLoadReceived))
         {
-            logger.error("The bidrequest payload received from Mopub RTB Exchange is null inside " +
-                         "validateAndEnrichRequest of MoPubRequestEnricher,cannot enrich bid request...");
+            logger.error("The bidrequest payload received from Mopub RTB Exchange is null inside validateAndEnrichRequest of MoPubRequestEnricher,cannot enrich bid request...");
             return null;
         }
 
-        IBidRequest bidRequest = mopubBidRequestReader.
-                                            convertBidRequestPayloadToBusinessObject(bidRequestPayLoadReceived);
+        if(logBidRequest)
+        {
+            StringBuffer sb = new StringBuffer();
+            sb.append(publisherId);
+            sb.append(ApplicationGeneralUtils.EXCHANGE_BID_REQUEST_DELIM);
+            sb.append(requestId);
+            sb.append(ApplicationGeneralUtils.EXCHANGE_BID_REQUEST_DELIM);
+            sb.append(bidRequestPayLoadReceived);
+            bidRequestLogger.debug(sb.toString());
+        }
+
+        IBidRequest bidRequest = null;
+
+        try
+        {
+            bidRequest = mopubBidRequestReader.
+                    convertBidRequestPayloadToBusinessObject(bidRequestPayLoadReceived);
+        }
+        catch (Exception e)
+        {
+            logger.error("Exception in reading mopub bid request ", e);
+            logger.error("Exception reading bid request for request id: {} ",requestId);
+            return null;
+        }
 
         //if bid request is null throw exception
         if(null == bidRequest)
@@ -145,7 +170,7 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
         //if flow comes here this means everything is correct in the bid request.
         //now populate request object for internal working.
         /********************************DETECT SITE BY REQUEST SITEID****************************************/
-        Request request = new Request(bidRequest.getUniqueInternalRequestId(), INVENTORY_SOURCE.RTB_EXCHANGE);
+        Request request = new Request(requestId, INVENTORY_SOURCE.RTB_EXCHANGE);
         request.setBidRequest(bidRequest);
 
         String siteIdFromBidRequest = StringUtils.substringAfterLast(httpServletRequest.getRequestURI(), "/");
@@ -157,7 +182,7 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
         if(null==site || !(site.getStatus() == StatusIdEnum.Active.getCode()))
         {
             request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.SITE_NOT_FIT);
-            this.logger.error("Requesting site is not fit or is not found in cache . siteid: " + siteIdFromBidRequest);
+            this.logger.error("Requesting site is not fit or is not found in cache . siteid: {}" , siteIdFromBidRequest);
             return request;
         }
 
@@ -183,15 +208,13 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
 
         if(null == handsetMasterData)
         {
-            this.logger.error("Device detection failed inside MoPubRequestEnricher, " +
-                              "can not proceed further");
+            this.logger.error("Device detection failed inside MoPubRequestEnricher, can not proceed further");
             request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_UNDETECTED);
             return request;
         }
         if(handsetMasterData.isBot())
         {
-            this.logger.error("Device detected is BOT inside MoPubRequestEnricher, " +
-                              "can not proceed further");
+            this.logger.error("Device detected is BOT inside MoPubRequestEnricher, can not proceed further");
             request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
             return request;
         }
@@ -219,10 +242,8 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
         String ip = mopubBidRequestDeviceDTO.getIpV4AddressClosestToDevice();
         if(null == ip)
         {
-            logger.error("Country and InternetServiceProvider could not be detected inside " +
-                         "MoPubRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
-            throw new Exception("Country and InternetServiceProvider could not be detected inside " +
-                         "MoPubRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
+            logger.error("Country and InternetServiceProvider could not be detected inside MoPubRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
+            throw new Exception("Country and InternetServiceProvider could not be detected inside MoPubRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
         }
 
         request.setIpAddressUsedForDetection(ip);
@@ -315,8 +336,7 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
         }
         else
         {
-            logger.error("Site/App not found in request, site/app both not present..." +
-                         "inside MoPubRequestEnricher...aborting request....");
+            logger.error("Site/App not found in request, site/app both not present inside MoPubRequestEnricher...aborting request....");
             return null;
         }
         if(null != contentCategoriesSiteApp)

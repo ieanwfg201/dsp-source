@@ -114,8 +114,7 @@ public class SspOrInHouse implements Job
             demandPartnerApi.setReadTimeOut(timeoutInMilis);
             demandPartnerApi.setConnectTimeOut(timeoutInMilis);
             if(null != demandPartnerApi){
-                logger.debug("DemandPartnerApi found for accountId: {} ,calling external network to " +
-                        "fetch ads...", demandPartnerAccountId);
+                logger.debug("DemandPartnerApi found for accountId: {} ,calling external network to fetch ads...", demandPartnerAccountId);
                 DemandPartnerApiResponse demandPartnerApiResponse =
                         demandPartnerApi.fetchDemandPartnerApiResponse(request);
 
@@ -135,20 +134,17 @@ public class SspOrInHouse implements Job
                             }
                         }
                     }catch (UnSupportedOperationException unsoe){
-                        logger.error("UnSupportedOperationException inside " +
-                                "SspOrInHouse, skipping adId: {} ", adId);
+                        logger.error("UnSupportedOperationException inside SspOrInHouse, skipping adId: {} ", adId);
                     }
 
                     if(null == adEntity){
-                        logger.error("AdEntity with id: {} could not be found inside " +
-                                "SspOrInHouse",adId);
+                        logger.error("AdEntity with id: {} could not be found inside SspOrInHouse",adId);
                         continue;
                     }
 
                     Creative creative = this.creativeCache.query(adEntity.getCreativeId());
                     if(null == creative){
-                        logger.error("AdEntity with id: {} does not have any creative with id : {} " +
-                                        " associated to it inside SspOrInHouse",adId,
+                        logger.error("AdEntity with id: {} does not have any creative with id : {}  associated to it inside SspOrInHouse",adId,
                                 adEntity.getCreativeGuid());
                         continue;
                     }

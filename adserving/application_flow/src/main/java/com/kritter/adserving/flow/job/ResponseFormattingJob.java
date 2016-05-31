@@ -113,9 +113,7 @@ public class ResponseFormattingJob implements Job{
 
         if(null != errorName && null != request && !request.isWriteResponseInsideExchangeAdaptor())
         {
-            this.logger.error("There is error in request enrichment so skipping ResponseFormattingJob, " +
-                              "cannot continue.Skipping further workflow in this job." +
-                              "Writing error/empty response. Error: {} ", errorName);
+            this.logger.error("There is error in request enrichment so skipping ResponseFormattingJob, cannot continue.Skipping further workflow in this job.Writing error/empty response. Error: {} ", errorName);
 
             responseCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
             responseContent = this.errorOrEmptyResponse;
@@ -126,8 +124,7 @@ public class ResponseFormattingJob implements Job{
             //in case of exchange request write no content header, rest of cases handled at the end.
             if(inventorySource == INVENTORY_SOURCE.RTB_EXCHANGE.getCode())
             {
-                logger.debug("Inventory source is RTB Exchange, writing no bid to exchange, " +
-                             ", the enrichment error is : {} ",errorName);
+                logger.debug("Inventory source is RTB Exchange, writing no bid to exchange, the enrichment error is : {} ",errorName);
 
                 writeNoBidResponseToExchange(httpServletResponse);
             }
@@ -304,7 +301,7 @@ public class ResponseFormattingJob implements Job{
                     else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.JSON_FORMATTER_ID))
                         responseContent = this.creativesJSONFormatter.formatCreatives(request,response);
                     else
-                        logger.error("Unrecognized formatting option for ad units: " + request.getResponseFormat());
+                        logger.error("Unrecognized formatting option for ad units: {}" , request.getResponseFormat());
 
                     responseCode = HttpServletResponse.SC_OK;
                 }

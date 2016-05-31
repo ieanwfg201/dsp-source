@@ -7,4 +7,9 @@ public class BidResponseBidExtMopubDTO
 {
     @Getter @Setter
     private String[] imptrackers;
+    @Getter @Setter
+    private String crtype;
+    @Getter @Setter
+    private String duration;
+    
 }

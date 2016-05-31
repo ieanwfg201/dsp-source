@@ -1,13 +1,13 @@
-Source: kritter-tern-dir-pull-conf-btm-ipzip-service
+Source: kritter-tern-dir-pull-conf-mad-ipzip-service
 Maintainer: KRITTER <contact@kritter.in>
 Section: misc
 Priority: optional
 Standards-Version: 3.9.3
 Build-Depends: debhelper (>= 8)
 
-Package: kritter-tern-dir-pull-conf-btm-ipzip-service
+Package: kritter-tern-dir-pull-conf-mad-ipzip-service
 Architecture: any
 Depends: ${misc:Depends},
-Description: kritters tern_dir_pull btm ipzip conf service
- a ipzip service for btm ipzip conf of 
+Description: kritters tern_dir_pull mad ipzip conf service
+ a ipzip service for mad ipzip conf of 
  tern_dir_pull - a log pull transportation package by kritter

@@ -53,8 +53,8 @@ public class HygieneTargetingMatcher implements TargetingMatcher {
 
             if(null == site.getHygieneList() || null == adEntity.getHygieneArray())
             {
-                ReqLog.errorWithDebug(logger,request,"Site id: " + site.getSiteGuid() + " or adguid: " + adEntity.getAdGuid() +
-                        ", do not have hygiene lists defined, no connection can be made...skipping ad...");
+                ReqLog.errorWithDebug(logger,request,"Site id:{} or adguid: {} , do not have hygiene lists defined, no connection can be made...skipping ad..." , 
+                        site.getSiteGuid() , adEntity.getAdGuid() );
 
                 continue;
             }

@@ -1,0 +1,6 @@
+# mailer.job
+
+type=command
+dependencies=click_impression_match
+env.PYTHONPATH=${python_path}
+command=sh mailer.sh '${recepient}' '${cc}' '${output_file}' '${process_time_dir}'

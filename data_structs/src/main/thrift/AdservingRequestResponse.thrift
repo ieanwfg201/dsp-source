@@ -97,6 +97,16 @@ Video_PlayBack = 69,             /*Video supply and Playback mismatch*/
 Video_Delivery = 70,             /*Video supply and Delivery mismatch*/
 Video_CompanionType = 71,        /*Video supply and CompanionType mismatch*/
 Video_Exception = 72,            /*Video supply and Handled Exception*/
+CREATIVE_NOT_VIDEO = 73,         /*creative is not of video format*/
+DEAL_ID_MISMATCH = 74,           /*deal id mismatch, if ad targets deal id and not found*/
+VIDEO_PROPS_NULL = 75,           /*Video properties are missing in creative.*/
+NATIVE_REQ_NULL = 76,            /*Native req object null*/
+NATIVE_PROPS_NULL = 77,          /*Native Demand Props Null*/
+NATIVE_REQ_ASSET_NULL = 78,      /*Native Req Asset Null*/
+CREATIVE_NOT_NATIVE = 79,        /*Creative Not Native*/
+NATIVE_TITLE_LEN = 80,           /*Native Title Length Mismatch*/
+NATIVE_IMGSIZE = 81,             /*Native Image Size Mismatch*/
+NATIVE_DESC_LEN = 82,            /*Native DESC Length Mismatch*/
 }
 
 /**

@@ -169,9 +169,7 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
                     null == uiCountryIdDetected ||
                     uiCountryId.intValue() != uiCountryIdDetected.intValue() )
             {
-                logger.error(" Detected uiCountryId from location detection {} and countryCode from" +
-                                " zipcode detection via lat-long is: {} ," +
-                                " detected uiCountryID and zipcode country id doesnot match",
+                logger.error(" Detected uiCountryId from location detection {} and countryCode from  zipcode detection via lat-long is: {} , detected uiCountryID and zipcode country id doesnot match",
                         uiCountryIdDetected,uiCountryId);
                 continue;
             }

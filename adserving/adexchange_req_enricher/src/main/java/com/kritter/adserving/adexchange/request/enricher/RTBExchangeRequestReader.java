@@ -25,5 +25,8 @@ public interface RTBExchangeRequestReader
      */
     public Request validateAndEnrichRequest(String requestId,
                                             HttpServletRequest httpServletRequest,
-                                            Logger logger) throws Exception;
+                                            Logger logger,
+                                            Logger bidRequestLogger,
+                                            boolean logBidRequest,
+                                            String publisherId) throws Exception;
 }

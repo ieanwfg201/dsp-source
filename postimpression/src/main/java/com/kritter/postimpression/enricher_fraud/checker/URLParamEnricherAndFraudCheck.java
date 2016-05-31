@@ -46,13 +46,7 @@ public class URLParamEnricherAndFraudCheck implements OnlineEnricherAndFraudChec
         Request request = (Request)context.getValue(this.postImpressionRequestObjectKey);
 
         logger.debug(
-                     "Inside URLParamEnricherAndFraudCheck , data is : " +
-                     "url hash:{} , impressionid:{}, deviceid:{},manufacturerid:{}," +
-                     "modelid:{},osId:{},browserId:{},slotId:{},siteid:{},ui-countryid:{}," +
-                     "ui-countrycarrierid:{}," +
-                     "biddermodelid:{},urlversion:{},inventorysource:{}," +
-                     "selectedsitecategoryid:{}," +
-                     "supplySourceType: {},externalSupplyAttrInternalId: {},connectionType: {},deviceType:{}",
+                "Inside URLParamEnricherAndFraudCheck , data is : url hash:{} , impressionid:{}, deviceid:{},manufacturerid:{},modelid:{},osId:{},browserId:{},slotId:{},siteid:{},ui-countryid:{},ui-countrycarrierid:{},biddermodelid:{},urlversion:{},inventorysource:{},selectedsitecategoryid:{},supplySourceType: {},externalSupplyAttrInternalId: {},connectionType: {},deviceType:{}",
                      request.getUrlHash(),
                      request.getImpressionId(),
                      request.getDeviceId(),

@@ -112,6 +112,11 @@ public class MetadataController extends Controller{
             ArrayNode publisherOptions = MetadataAPI.activeExchangeArray(); 
             return ok(publisherOptions);
         }
+        @SecuredAction
+        public static Result guidExchanges(){
+            ArrayNode publisherOptions = MetadataAPI.activeGuidExchangeArray(); 
+            return ok(publisherOptions);
+        }
 
         @SecuredAction
         public static Result supply_source_type(){

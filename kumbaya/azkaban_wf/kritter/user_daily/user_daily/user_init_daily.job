@@ -1,0 +1,4 @@
+# user_init_daily.job
+
+type=command
+command=sh user_init_daily.sh

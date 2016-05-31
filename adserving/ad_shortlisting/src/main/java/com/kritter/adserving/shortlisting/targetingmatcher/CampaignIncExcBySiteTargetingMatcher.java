@@ -50,8 +50,8 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
         //if no advertiser specified for inc/exc then just pass all adids.
         if(null == campaignInclusionExclusionSchemaMap || campaignInclusionExclusionSchemaMap.size() == 0)
         {
-            ReqLog.debugWithDebug(logger,request, "CampaignInclusionExclusion does not matter for site {} {}",
-                    site.getSiteGuid(), " passing all adids..." );
+            ReqLog.debugWithDebug(logger,request, "CampaignInclusionExclusion does not matter for site {}   passing all adids...",
+                    site.getSiteGuid()  );
 
             return adIdSet;
         }
@@ -63,7 +63,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : " + adId);
+                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : {} " , adId);
                 continue;
             }
 

@@ -314,6 +314,8 @@
                 <entry key="mopub-pub-guid" value-ref="mopub_request_enricher_2_3"/>
             </map>
         </constructor-arg>
+        <constructor-arg index="2" value="bid.req.logger"/>
+        <constructor-arg index="3"><ref bean="req_logging_cache"/></constructor-arg>
     </bean>
 
     <!-- RequestEnrichers end. -->

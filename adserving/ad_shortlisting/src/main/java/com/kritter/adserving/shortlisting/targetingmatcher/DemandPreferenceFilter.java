@@ -61,7 +61,7 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
+                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
                 if( demandTypeCode == adEntity.getDemandtype()){
@@ -80,7 +80,7 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
+                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
                 if( demandTypeCode == adEntity.getDemandtype()){
@@ -100,7 +100,7 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
+                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
                 if( demandTypeCode == adEntity.getDemandtype()){
@@ -142,7 +142,7 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
+                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
                 if( demandTypeCode == adEntity.getDemandtype() || demandTypeCode1 == adEntity.getDemandtype()){

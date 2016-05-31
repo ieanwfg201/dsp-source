@@ -12,6 +12,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.kritter.ex_int</groupId>
+            <artifactId>ex_int_video_admarkup</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.ex_int.utils</groupId>
             <artifactId>ex_int_utils</artifactId>
             <version>1.0.0</version>

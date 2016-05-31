@@ -42,8 +42,7 @@ public class ValidateFloorPrice {
                                                            )
                 )
         {
-            ReqLog.debugWithDebug(logger, request, "Qualifying BannerId: {} with qualifying ecpm value: {} found for " +
-                    "impressionId: {} with bidFloor as: {} ",
+            ReqLog.debugWithDebug(logger, request, "Qualifying BannerId: {} with qualifying ecpm value: {} found for impressionId: {} with bidFloor as: {} ",
                     creativeBannerToUse.getId() , responseAdInfo.getEcpmValue(),
                     bidRequestImpressionDTO.getBidRequestImpressionId(),bidFloorForImpression);
             responseAdInfo.setCreativeBanner(creativeBannerToUse);
@@ -71,8 +70,7 @@ public class ValidateFloorPrice {
                         creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA)
                 )
         {
-            ReqLog.debugWithDebug(logger, request, "Qualifying richmedia ad with qualifying ecpm value: {} found for " +
-                    "impressionId: {} with bidFloor as: {} ",
+            ReqLog.debugWithDebug(logger, request, "Qualifying richmedia ad with qualifying ecpm value: {} found for impressionId: {} with bidFloor as: {} ",
                     responseAdInfo.getEcpmValue(),
                     bidRequestImpressionDTO.getBidRequestImpressionId(),bidFloorForImpression);
 

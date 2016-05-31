@@ -71,8 +71,7 @@ public class WRSBasedOnEcpmSelection implements AdRankingSelection
             if(null != responseAdInfo.getEcpmValue())
                 sumTotalRank += responseAdInfo.getEcpmValue();
             else
-                logger.error("Ecpm value is null inside randomlySelectAdIdsUsingWeightedRandomSelectionOnTotalRanks" +
-                             " of WRSBasedOnEcpmSelection for adunitid: " + responseAdInfo.getAdId());
+                logger.error("Ecpm null inside randomlySelectAdIdsUsingWeightedRandomSelectionOnTotalRankscof WRSBasedOnEcpmSelection for adunitid: {}", responseAdInfo.getAdId());
         }
 
         for(ResponseAdInfo responseAdInfo : shortListedAdUnits)

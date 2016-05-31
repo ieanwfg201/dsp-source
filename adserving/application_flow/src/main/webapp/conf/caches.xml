@@ -269,6 +269,7 @@
                 <ref bean="native_screenshot_cache"/>
                 <ref bean="mobile_app_categories_cache"/>
                 <ref bean="vertical_iab_cache"/>
+                <ref bean="req_logging_cache"/>
             </list>
         </constructor-arg>
     </bean>
@@ -515,6 +516,16 @@
         <constructor-arg index="3" value="country_code_cache"/>
     </bean>
 
+    <bean id="req_logging_cache" class="com.kritter.req_logging.ReqLoggingCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="req_logging_cache_properties"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="req_logging_cache"/>
+    </bean>
+
     <bean id="country_code_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -637,6 +648,15 @@
          <props>
            <prop key="refresh_interval">30000</prop>
            <prop key="query"><![CDATA[select id as id, guid as guid, last_modified as last_modified, demandtype as demandtype, demandpreference as demandpreference, qps as qps, timeout as timeout,currency as currency,demand_props as demand_props,supply_props as supply_props from account where last_modified >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+   <bean id="req_logging_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select * from req_logging where last_modified >= '$last_modified']]></prop>
          </props>
        </constructor-arg>
    </bean>

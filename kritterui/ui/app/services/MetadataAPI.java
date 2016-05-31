@@ -43,6 +43,8 @@ import com.kritter.constants.AccountAPIEnum;
 import com.kritter.constants.AccountRejection;
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.AdAPIEnum;
+import com.kritter.constants.AlgoModel;
+import com.kritter.constants.AlgoModelType;
 import com.kritter.constants.BidType;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.ConnectionType;
@@ -96,11 +98,26 @@ public class MetadataAPI {
 		return emptyOptions;
 	}
 
+    public static List<SelectOption> algomodel(){
+        List<SelectOption> options = emptyOptions();
+        AlgoModel[] types = AlgoModel.values();
+        for (AlgoModel type : types) {
+            options.add(new SelectOption(type.name(),  type.getCode()+""));
+        } 
+        return options;
+    }
+    public static List<SelectOption> algomodelType(){
+        List<SelectOption> options = emptyOptions();
+        AlgoModelType[] types = AlgoModelType.values();
+        for (AlgoModelType type : types) {
+            options.add(new SelectOption(type.name(),  type.getCode()+""));
+        } 
+        return options;
+    }
 	public static List<SelectOption> yesNoOptions(){
 		List<SelectOption> options = emptyOptions();
 		options.add(new SelectOption("Yes", "true"));
 		options.add(new SelectOption("No", "false"));
-
 		return options;
 	}
     public static List<SelectOption> noYesOptions(){
@@ -735,6 +752,14 @@ public class MetadataAPI {
         }
         return optionNodes;
     }
+    public static ArrayNode activeGuidExchangeArray(){
+        List<SelectOption> options  =  activeExchangeListWithGuid();
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        for (SelectOption option : options) {
+            optionNodes.add(option.toJson());
+        }
+        return optionNodes;
+    }
 
 	   public static ArrayNode supply_source_typeArray(){
 	        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
@@ -1151,7 +1176,6 @@ public class MetadataAPI {
 		return accountOptions;
 	}
     public static List<SelectOption> activeExchangeListWithId(){
-
         ListEntity lEntity = new ListEntity();
         Connection con = null;
         lEntity.setStatus(StatusIdEnum.Active);
@@ -1165,6 +1189,35 @@ public class MetadataAPI {
             List<Account> accounts = accList.getAccount_list();
             for (Account account : accounts) {
                     accountOptions.add(new SelectOption(account.getName(), account.getId()+""));
+            }
+        }catch(Exception e){
+            Logger.error("Error in fetching account list", e);
+        }finally{
+            try {
+                if(con != null){
+                    con.close();
+                }
+            } catch (SQLException e) { 
+                Logger.error("Error in closing DB connection",e);
+            }
+        }
+        return accountOptions;
+    }
+    public static List<SelectOption> activeExchangeListWithGuid(){
+        ListEntity lEntity = new ListEntity();
+        Connection con = null;
+        lEntity.setStatus(StatusIdEnum.Active);
+        lEntity.setPage_no(PageConstants.start_index);
+        lEntity.setPage_size(Integer.MAX_VALUE);
+        AccountList accList = null;
+        List<SelectOption> accountOptions = new ArrayList<SelectOption>();
+        accountOptions.add(new SelectOption("",""));
+        try{
+            con = DB.getConnection(true);
+            accList = ApiDef.listExchangesByStatus(con, lEntity);
+            List<Account> accounts = accList.getAccount_list();
+            for (Account account : accounts) {
+                    accountOptions.add(new SelectOption(account.getName(), account.getGuid()));
             }
         }catch(Exception e){
             Logger.error("Error in fetching account list", e);

@@ -54,6 +54,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/video_props</module>
     <module>entity/vast/wrapper/3.0</module>
     <module>entity/vast/wrapper/2.0</module>
+    <module>entity/userreports</module>
+    <module>entity/algomodel</module>
     <module>utils/common</module>
     <module>utils/state_manager</module>
     <module>utils/targeting</module>
@@ -89,6 +91,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/common</module>
     <module>entity/req_res_entity</module>
     <module>entity/user</module>
+    <module>entity/req_logging</module>
+    <module>entity/external_tracker</module>
     <module>ex_int/utils</module>
     <module>ex_int/openrtb/2.0</module>
     <module>ex_int/openrtb/2.1</module>
@@ -97,6 +101,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>ex_int/native_admarkup/2.3</module>
     <module>ex_int/video_admarkup</module>
     <module>ex_int/mopub/2.3</module>
+    <module>geo/utils</module>
     <module>geo/common</module>
     <module>geo/maxmind</module>
     <module>geo/openrtb</module>
@@ -117,6 +122,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>common_caches/retargeting_segment</module>
     <module>common_caches/native_icon_cache</module>
     <module>common_caches/native_screenshot_cache</module>
+    <module>common_caches/req_logging_cache</module>
     <module>adserving/mopub_req_enricher_2.3</module>
     <module>adserving/adexchange_req_enricher</module>
     <module>adserving/req_res_enricher</module>

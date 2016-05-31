@@ -23,12 +23,13 @@ public class ValidateVideo {
             ){
         boolean isNFR = true;
         if(bidRequestImpressionDTOs == null){
-                logger.error("bidRequestImpressionDTOs is null inside video of " +
-                             "AdShortlistingRTBExchangeTwoDotThree, cannot process " +
-                             "request for this impressionId: {} ");
+                logger.error("bidRequestImpressionDTOs is null inside video of AdShortlistingRTBExchangeTwoDotThree, cannot process request for this impressionId: {} ");
                 return;
         }
+
         Request.NO_FILL_REASON nfrReason = Request.NO_FILL_REASON.FILL;
+        Request.NO_FILL_REASON nfrReasonPriority = null;
+
         for(BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs){
             if(bidRequestImpressionDTO == null){
                 continue;
@@ -51,23 +52,27 @@ public class ValidateVideo {
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.VIDEO){
+                    nfrReason = Request.NO_FILL_REASON.CREATIVE_NOT_VIDEO;
                     logger.error("Creative Not Video,!!! for creative id: " + adEntity.getCreativeId());
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
+                    nfrReason = Request.NO_FILL_REASON.DEAL_ID_MISMATCH;
                     logger.error("DealID check not satisfied");
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidFloorPrice() != null &&  bidRequestImpressionDTO.getBidFloorPrice()>responseAdInfo.getEcpmValue()){
+                    nfrReason = Request.NO_FILL_REASON.BIDDER_FLOOR_UNMET;
                     logger.error("Floor price unmet");
                     continue;
                 }
                 VideoProps videoProps  = creative.getVideoProps();
                 if(videoProps == null){
+                    nfrReason = Request.NO_FILL_REASON.VIDEO_PROPS_NULL;
                     logger.error("Video Props Null,!!! for creative id: " + adEntity.getCreativeId());
                     continue;
                 }
-                nfrReason = ValidateVideoHelper.validate(logger, videoProps, videoObj);
+                nfrReasonPriority = ValidateVideoHelper.validate(logger, videoProps, videoObj);
                 if(nfrReason ==  Request.NO_FILL_REASON.FILL){
                     try {
                         responseAdInfo.setVideoProps(videoProps);
@@ -82,7 +87,12 @@ public class ValidateVideo {
                 }
             }
         }
-        if(isNFR){
+        if(isNFR)
+        {
+            /*In case priority nfr reason which is from ValidateVideoHelper.*/
+            if(null != nfrReasonPriority)
+                nfrReason = nfrReasonPriority;
+
             request.setNoFillReason(nfrReason);
             ReqLog.debugWithDebug(logger, request, "Validate Video NFR: {}", nfrReason);
         }
@@ -94,9 +104,7 @@ public class ValidateVideo {
             ){
         boolean isNFR = true;
         if(bidRequestImpressionDTOs == null){
-                logger.error("bidRequestImpressionDTOs is null inside video of " +
-                             "AdShortlistingRTBExchangeTwoDotThree, cannot process " +
-                             "request for this impressionId: {} ");
+                logger.error("bidRequestImpressionDTOs is null inside video of AdShortlistingRTBExchangeTwoDotThree, cannot process request for this impressionId: {} ");
                 return;
         }
         Request.NO_FILL_REASON nfrReason = Request.NO_FILL_REASON.FILL;

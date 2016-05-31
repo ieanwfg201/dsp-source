@@ -44,7 +44,7 @@ public class InventorySourceTypeTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : " + adId);
+                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 

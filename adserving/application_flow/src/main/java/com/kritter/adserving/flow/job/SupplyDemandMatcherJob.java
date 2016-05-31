@@ -88,8 +88,7 @@ public class SupplyDemandMatcherJob implements Job
 
             if(null == request)
             {
-                errorMessage.append("Request object is null inside SupplyDemandMatcherJob, cannot continue. " +
-                                    "Skipping further workflow in this job.");
+                errorMessage.append("Request object is null inside SupplyDemandMatcherJob, cannot continue. Skipping further workflow in this job.");
 
                 this.logger.error(errorMessage.toString());
             }
@@ -124,7 +123,7 @@ public class SupplyDemandMatcherJob implements Job
 
                     if(null == adEntity)
                     {
-                        logger.error("AdEntity not found in cache,FATAL error!!! for ad id: " + adId);
+                        logger.error("AdEntity not found in cache,FATAL error!!! for ad id: {}" , adId);
                         continue;
                     }
 
@@ -143,7 +142,7 @@ public class SupplyDemandMatcherJob implements Job
 
                     if(null == creative)
                     {
-                        logger.error("Creative null in cache,FATAL error!!! for creative id: " + adEntity.getCreativeId());
+                        logger.error("Creative null in cache,FATAL error!!! for creative id: {}" , adEntity.getCreativeId());
                         continue;
                     }
 

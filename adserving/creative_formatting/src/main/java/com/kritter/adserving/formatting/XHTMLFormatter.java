@@ -63,8 +63,7 @@ public class XHTMLFormatter implements CreativesFormatter
 
         if(null == response || null == response.getResponseAdInfo())
         {
-            logger.error("No Ads shortlisted for this request,nothing to format in " +
-                         "formatCreatives of XHTMLFormatter");
+            logger.error("No Ads shortlisted for this request,nothing to format in formatCreatives of XHTMLFormatter");
             return null;
         }
 
@@ -79,8 +78,7 @@ public class XHTMLFormatter implements CreativesFormatter
 
             if(null== adEntity)
             {
-                this.logger.error("The ad entity not found in cache inside formatCreatives() of " +
-                                  "XHTMLFormatter,id being: " + adEntity.getId());
+                this.logger.error("The ad entity not found in cache inside formatCreatives() of XHTMLFormatter,id being: {}" , adEntity.getId());
                 continue;
             }
 
@@ -91,8 +89,7 @@ public class XHTMLFormatter implements CreativesFormatter
 
             if(null == creative)
             {
-                this.logger.error("The creative entity not found in cache inside formatCreatives() " +
-                                  "XHTMLFormatter,id being:" + adEntity.getCreativeId());
+                this.logger.error("The creative entity not found in cache inside formatCreatives() XHTMLFormatter,id being:" + adEntity.getCreativeId());
                 continue;
             }
 

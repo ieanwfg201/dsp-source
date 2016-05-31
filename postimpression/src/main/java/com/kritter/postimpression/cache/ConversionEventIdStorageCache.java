@@ -64,8 +64,7 @@ public class ConversionEventIdStorageCache
             }
             catch (RefreshException re)
             {
-                cacheLogger.error("RefreshException while cleaning up event id data inside " +
-                                  "EventIdCleanUpTimerTask in the class EventIdStorageCache",re);
+                cacheLogger.error("RefreshException while cleaning up event id data inside EventIdCleanUpTimerTask in the class EventIdStorageCache",re);
             }
         }
     }

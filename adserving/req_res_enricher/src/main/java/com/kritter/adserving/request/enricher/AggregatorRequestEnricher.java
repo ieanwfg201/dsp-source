@@ -223,8 +223,8 @@ public class AggregatorRequestEnricher implements RequestEnricher
         }
         catch (NumberFormatException nfe)
         {
-            logger.error("Inside AggregatorRequestEnricher Number of ads : {} or richMedia parameter :{} " +
-                         "have invalid value : " ,requestedAds,richMediaParameterNameValue);
+            logger.error("Inside AggregatorRequestEnricher Number of ads : {} or richMedia parameter :{} have invalid value : " ,
+                    requestedAds,richMediaParameterNameValue);
         }
 
         try
@@ -234,7 +234,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
         }
         catch (NumberFormatException nfe)
         {
-            logger.error("appWapForSiteCode requested has invalid value : " + appWapForSiteCode);
+            logger.error("appWapForSiteCode requested has invalid value : {}" , appWapForSiteCode);
         }
 
         try
@@ -247,8 +247,8 @@ public class AggregatorRequestEnricher implements RequestEnricher
         }
         catch (NumberFormatException nfe)
         {
-            logger.error("requesting latitude or longitude has invalid value : lat: " +
-                         requestingLatitude + ", lon: " + requestingLongitude);
+            logger.error("requesting latitude or longitude has invalid value : lat:{} lon:{} " ,
+                         requestingLatitude , requestingLongitude);
         }
 
         ApplicationGeneralUtils.logDebug
@@ -294,8 +294,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
         if( null==ip || null==invocationCodeVersion )
         {
             request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.REQUEST_MALFORMED);
-            this.logger.error("For requestId: " + requestId +
-                              " Request is malformed inside AggregatorRequestEnricher");
+            this.logger.error("For requestId: {} Request is malformed inside AggregatorRequestEnricher",requestId );
             return request;
         }
         else
@@ -308,7 +307,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
             if(null==site || !(site.getStatus() == StatusIdEnum.Active.getCode()))
             {
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.SITE_NOT_FIT);
-                this.logger.error("Requesting site is not fit or is not found in cache . siteid: " + siteId );
+                this.logger.error("Requesting site is not fit or is not found in cache . siteid: {}" , siteId );
                 return request;
             }
 
@@ -330,15 +329,13 @@ public class AggregatorRequestEnricher implements RequestEnricher
 
             if(null == handsetMasterData)
             {
-                this.logger.error("Device detection failed inside AggregatorRequestEnricher, " +
-                        "can not proceed further");
+                this.logger.error("Device detection failed inside AggregatorRequestEnricher, cannot proceed further");
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_UNDETECTED);
                 return request;
             }
             if(handsetMasterData.isBot())
             {
-                this.logger.error("Device detected is BOT inside AggregatorRequestEnricher, " +
-                        "can not proceed further");
+                this.logger.error("Device detected is BOT inside AggregatorRequestEnricher, cannot proceed further");
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
                 return request;
             }
@@ -363,8 +360,8 @@ public class AggregatorRequestEnricher implements RequestEnricher
             }
             catch (NumberFormatException nfe)
             {
-                logger.error("Inside AggregatorRequestEnricher Requesting width,height has invalid value : width: " +
-                              width + ", height: " + height);
+                logger.error("Inside AggregatorRequestEnricher Requesting width,height has invalid value : width:{} height:{} " ,
+                              width , height);
             }
 
             if(!dimensionsForBannerAvailableFromRequest)
@@ -388,8 +385,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
                 {
                     request.setCountry(country);
                     ApplicationGeneralUtils.logDebug(this.logger,
-                            " Country detected successfully inside " +
-                                    " AggregatorRequestEnricher, id being: ",
+                            " Country detected successfully inside AggregatorRequestEnricher, id being: ",
                             String.valueOf(country.getCountryInternalId()));
                 }
                 else
@@ -409,8 +405,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
                         )
                 {
                     ApplicationGeneralUtils.logDebug(this.logger,
-                            " CountryCarrier detected successfully inside " +
-                                    "AggregatorRequestEnricher, id being: ",
+                            " CountryCarrier detected successfully inside AggregatorRequestEnricher, id being: ",
                             String.valueOf(internetServiceProvider.getOperatorInternalId()));
 
                     request.setInternetServiceProvider(internetServiceProvider);

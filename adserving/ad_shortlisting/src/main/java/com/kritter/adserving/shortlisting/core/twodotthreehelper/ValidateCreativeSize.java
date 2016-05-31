@@ -22,7 +22,7 @@ public class ValidateCreativeSize {
                 CreativeBanner creativeBanner = creativeBannerCache.query(bannerId);
                 if(null == creativeBanner)
                 {
-                    logger.error("Creative banner is null(not found in cache) for banner id: " + bannerId);
+                    logger.error("Creative banner is null(not found in cache) for banner id: {} " , bannerId);
                     break;
                 }
 

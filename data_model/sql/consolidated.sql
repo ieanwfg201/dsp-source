@@ -1838,3 +1838,15 @@ name varchar(32) not null
 insert into device_type(id,name) value(0,'UNKNOWN');
 insert into device_type(id,name) value(1,'DESKTOP');
 insert into device_type(id,name) value(2,'MOBILE');
+
+CREATE TABLE IF NOT EXISTS `req_logging` (
+  `pubId` VARCHAR(100) DEFAULT NULL,
+  `enable` boolean DEFAULT false,  
+  `time_period` int(11) DEFAULT 5,  
+  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `req_logging_pubId` (`pubId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- external tracker refer com.kritter.entity.external_tracker.ExtTracker
+alter table ad add column external_tracker TEXT after bidtype; 

@@ -62,7 +62,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : " + adId);
+                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -76,7 +76,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
             }
             catch (MalformedURLException mue)
             {
-                ReqLog.errorWithDebug(logger,request, "The landing url is not well formed,skipping ad unit " + adEntity.getAdGuid());
+                ReqLog.errorWithDebug(logger,request, "The landing url is not well formed,skipping ad unit {}" , adEntity.getAdGuid());
                 continue;
             }
 

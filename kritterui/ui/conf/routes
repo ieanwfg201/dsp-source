@@ -191,6 +191,13 @@ POST   /fraudreport/data/CSV                                     controllers.fra
 GET    /trackingEvent/default                                    controllers.tracking_event.TrackingEventController.trackingEventReport()
 POST   /trackingEvent/data                                       controllers.tracking_event.TrackingEventController.reportData()
 POST   /trackingEvent/data/CSV                                   controllers.tracking_event.TrackingEventController.reportDataCSV()
+GET    /userreport/default                                       controllers.userreport.UserReportController.userReport()
+POST   /userreport/data                                          controllers.userreport.UserReportController.reportData()
+POST   /userreport/data/CSV                                      controllers.userreport.UserReportController.reportDataCSV()
+GET    /algo/default                                             controllers.algo.AlgoController.getAlpha()
+POST   /algo/data                                                controllers.algo.AlgoController.reportData()
+GET    /reqLogging/default                                       controllers.req_logging.ReqLoggingController.getReqLogging()
+POST   /reqLogging/data                                          controllers.req_logging.ReqLoggingController.reportData()
 
 
 
@@ -279,6 +286,7 @@ GET     /metadata/options/directadvertiserforfiltering              controllers.
 GET     /metadata/options/publishers                           		controllers.MetadataController.publishers() 	
 GET     /metadata/options/directpublishers                          controllers.MetadataController.directpublishers()
 GET     /metadata/options/exchanges                                 controllers.MetadataController.exchanges()     
+GET     /metadata/options/guidexchanges                             controllers.MetadataController.guidExchanges()     
 GET     /metadata/options/sites/:pubList                           	controllers.MetadataController.sitesByPublishers(pubList:String)
 GET     /metadata/options/targeting_sites/:pubList                  controllers.MetadataController.targeting_sitesByPublishers(pubList:String)
 GET     /metadata/options/targeting_direct_sites/:pubList            controllers.MetadataController.targeting_directsitesByPublishers(pubList:String)

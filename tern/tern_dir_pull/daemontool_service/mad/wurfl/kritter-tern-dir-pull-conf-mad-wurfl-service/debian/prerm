@@ -1,7 +1,7 @@
 #!/bin/sh -x
 #DEBHELPER#
 set -e
-if [ -e /etc/kritter-tern-dir-pull-conf-btm-wurfl-service/run ]; then
-        update-service --remove /etc/kritter-tern-dir-pull-conf-btm-wurfl-service
+if [ -e /etc/kritter-tern-dir-pull-conf-mad-wurfl-service/run ]; then
+        update-service --remove /etc/kritter-tern-dir-pull-conf-mad-wurfl-service
 fi
 

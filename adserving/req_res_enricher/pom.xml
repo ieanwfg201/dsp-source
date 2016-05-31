@@ -96,6 +96,11 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>req_logging</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <organization>
         <name>Kritter</name>

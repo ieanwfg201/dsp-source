@@ -72,10 +72,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>isp_mapping</module>
     <module>iddefinition</module>
     <module>fraud</module>
+    <module>userreport</module>
     <module>tracking_event</module>
     <module>ssp</module>
     <module>parent_account</module>
     <module>retargeting_segment</module>
+    <module>algo_models</module>
+    <module>req_logging</module>
   	<module>def</module>
     <module>manual</module>
   </modules>

@@ -50,6 +50,8 @@ import com.kritter.api.entity.native_icon.NativeIconListEntity;
 import com.kritter.api.entity.native_screenshot.NativeScreenshotList;
 import com.kritter.api.entity.native_screenshot.NativeScreenshotListEntity;
 import com.kritter.api.entity.reporting.ReportingEntity;
+import com.kritter.api.entity.req_logging.ReqLoggingInput;
+import com.kritter.api.entity.req_logging.ReqLoggingList;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.api.entity.saved_query.SavedQueryEntity;
 import com.kritter.api.entity.saved_query.SavedQueryList;
@@ -63,12 +65,16 @@ import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.api.entity.tracking_event.TrackingEvent;
 import com.kritter.constants.MetadataType;
+import com.kritter.entity.algomodel.AlgoModelEntity;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
+import com.kritter.entity.req_logging.ReqLoggingEntity;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
+import com.kritter.entity.userreports.UserReport;
 import com.kritter.kritterui.api.account.AccountCrud;
 import com.kritter.kritterui.api.account_budget.Account_Budget_Crud;
 import com.kritter.kritterui.api.ad.AdCrud;
+import com.kritter.kritterui.api.algo_models.AlgoModelCrud;
 import com.kritter.kritterui.api.campaign.CampaignCrud;
 import com.kritter.kritterui.api.campaign_budget.CampaignBudgetCrud;
 import com.kritter.kritterui.api.creative_banner.CreativeBannerCrud;
@@ -86,12 +92,14 @@ import com.kritter.kritterui.api.native_icon.NativeIconCrud;
 import com.kritter.kritterui.api.native_screenshot.NativeScreenshotCrud;
 import com.kritter.kritterui.api.reporting.DashBoardCrud;
 import com.kritter.kritterui.api.reporting.ReportingCrud;
+import com.kritter.kritterui.api.req_logging.ReqLoggingCrud;
 import com.kritter.kritterui.api.retargeting_segment.RetargetingSegmentCrud;
 import com.kritter.kritterui.api.saved_query.SavedQueryCrud;
 import com.kritter.kritterui.api.site.SiteCrud;
 import com.kritter.kritterui.api.ssp.SSPCrud;
 import com.kritter.kritterui.api.targeting_profile.TargetingProfileCrud;
 import com.kritter.kritterui.api.tracking_event.TrackingEventCrud;
+import com.kritter.kritterui.api.userreport.UserReportCrud;
 
 public class ApiDef {
     
@@ -346,6 +354,32 @@ public class ApiDef {
     public static Message pause_site(Connection con, Site site){
         return SiteCrud.pause_site(con, site, true);
     }
+    /* ReqLogging API's */
+    public static JsonNode insert_req_logging(Connection con, JsonNode jsonNode){
+        return ReqLoggingCrud.insert_req_logging(con, jsonNode);
+    }
+    public static Message insert_req_logging(Connection con, ReqLoggingEntity reqLoggingEntity){
+        return ReqLoggingCrud.insert_req_logging(con, reqLoggingEntity, true);
+    }
+    public static JsonNode update_req_logging(Connection con, JsonNode jsonNode){
+        return ReqLoggingCrud.update_req_logging(con, jsonNode);
+    }
+    public static Message update_req_logging(Connection con, ReqLoggingEntity reqLoggingEntity){
+        return ReqLoggingCrud.update_req_logging(con, reqLoggingEntity, true);
+    }
+    public static JsonNode check_update_insert_req_logging(Connection con, JsonNode jsonNode){
+        return ReqLoggingCrud.check_update_insert_req_logging(con, jsonNode);
+    }
+    public static Message check_update_insert_req_logging(Connection con, ReqLoggingEntity reqLoggingEntity){
+        return ReqLoggingCrud.check_update_insert_req_logging(con, reqLoggingEntity, true);
+    }
+    public static JsonNode various_get_req_logging(Connection con, JsonNode jsonNode){
+        return ReqLoggingCrud.various_get_req_logging(con, jsonNode);
+    }
+    public static ReqLoggingList various_get_req_logging(Connection con, ReqLoggingInput reqLoggingInput){
+        return ReqLoggingCrud.various_get_req_logging(con, reqLoggingInput);
+    }
+
     /* EXT SITE API */
     public static JsonNode various_get_ext_site(Connection con, JsonNode jsonNode){
         return Ext_siteCrud.various_get_ext_site(con, jsonNode);
@@ -677,7 +711,7 @@ public class ApiDef {
         return ExtSiteReportCrud.get_data(con, extsiteReportEntity, exportAsCsv, absoluteFileName);
     }
     
-    /*ExtSite API*/
+    /*Fraud API*/
     public static JsonNode get_data(Connection con, FraudReportEntity fraudReportEntity, 
             boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
         return FraudReportCrud.get_data(con, fraudReportEntity, exportAsCsv, absoluteFileName);
@@ -686,6 +720,19 @@ public class ApiDef {
     public static JsonNode get_data(Connection con, TrackingEvent trackingEvent, 
             boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
         return TrackingEventCrud.get_data(con, trackingEvent, exportAsCsv, absoluteFileName);
+    }
+    /*UserReport API*/
+    public static JsonNode get_data(Connection con, UserReport userReport, 
+            boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
+        return UserReportCrud.get_data(con, userReport, exportAsCsv, absoluteFileName);
+    }
+    /*AlgoModel API*/
+    public static JsonNode get_data(Connection con, AlgoModelEntity algoModelEntity){
+        return AlgoModelCrud.get_data(con, algoModelEntity);
+    }
+    /*AlgoModel API*/
+    public static JsonNode get_data(Connection con, ReqLoggingInput reqLoggingInput){
+        return ReqLoggingCrud.get_data(con, reqLoggingInput);
     }
     /*REPORTING API*/
     public static JsonNode get_data(Connection con, ReportingEntity reportingEntity, 

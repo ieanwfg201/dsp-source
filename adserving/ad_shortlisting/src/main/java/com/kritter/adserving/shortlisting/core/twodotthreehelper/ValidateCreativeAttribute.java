@@ -40,15 +40,13 @@ public class ValidateCreativeAttribute {
         Set<Short> resultingIntersection = SetUtils.intersectNSets(impressionCreativeAttributes,
                                                                    adCreativeAttributes);
 
-        logger.debug("Impression banner object's creative attributes and ad creative attributes intersection" +
-                     " size: {} , if size non-zero then impression does not allow this ad to be served.",
+        logger.debug("Impression banner object's creative attributes and ad creative attributes intersection  size: {} , if size non-zero then impression does not allow this ad to be served.",
                      resultingIntersection.size());
 
         if(null != resultingIntersection && resultingIntersection.size() > 0)
         {
             //the creative is not appropriate for the requesting impression.
-            ReqLog.debugWithDebug(logger, request, "Creative id: {} does not qualify for creative attributes demanded " +
-                    "by the impression: {}",
+            ReqLog.debugWithDebug(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the impression: {}",
                     adEntity.getCreativeId(),
                     bidRequestImpressionDTO.getBidRequestImpressionId());
             return false;

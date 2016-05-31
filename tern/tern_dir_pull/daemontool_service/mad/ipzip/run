@@ -3,7 +3,7 @@
 exec 2>&1
 
 DAEMON=/usr/share/kritter/tern/tern_dir_pull/bin/tern_dir_pull.py
-CONF=/usr/share/kritter/tern/tern_dir_pull/conf/btm/ipzip/
+CONF=/usr/share/kritter/tern/tern_dir_pull/conf/mad/ipzip/
 
 SLEEP=`perl -e "print int(rand(500))"`
 

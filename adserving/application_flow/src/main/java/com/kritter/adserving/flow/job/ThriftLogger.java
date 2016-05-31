@@ -43,6 +43,8 @@ public class ThriftLogger implements Job {
     private String userAgentHeaderName;
     private String xForwardedForHeaderName;
     private String remoteAddressHeaderName;
+    private Logger bidRequestLogger;
+    private static final String BID_REQ_DELIM_FOR_NOFILL = "|";
 
     public ThriftLogger(String name,
                         String applicationLoggerName,
@@ -53,7 +55,8 @@ public class ThriftLogger implements Job {
                         CampaignCache campaignCache,
                         String userAgentHeaderName,
                         String xForwardedForHeaderName,
-                        String remoteAddressHeaderName)
+                        String remoteAddressHeaderName,
+                        String bidRequestLoggerName)
     {
         this.name = name;
         this.applicationLogger = LoggerFactory.getLogger(applicationLoggerName);
@@ -65,6 +68,7 @@ public class ThriftLogger implements Job {
         this.userAgentHeaderName = userAgentHeaderName;
         this.xForwardedForHeaderName = xForwardedForHeaderName;
         this.remoteAddressHeaderName = remoteAddressHeaderName;
+        this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
     }
 
     @Override
@@ -87,8 +91,7 @@ public class ThriftLogger implements Job {
 
             if(null == request || request.isRequestForSystemDebugging())
             {
-                this.applicationLogger.error("Aborting!!!, Request object is null inside " +
-                                             "Thrift logger of adserving flow. Or is a Test Debug Request...");
+                this.applicationLogger.error("Aborting!!!, Request object is null inside Thrift logger of adserving flow. Or is a Test Debug Request...");
                 return;
             }
 
@@ -316,17 +319,34 @@ public class ThriftLogger implements Job {
 
             //set no-fill reason if any, otherwise would be fill.
             NoFillReason noFillReason = fetchNoFillReason(request);
+            String noFillReasonForBidLog = null;
+
             if(null != noFillReason)
             {
                 adservingRequestResponse.setNofillReason(noFillReason);
+                noFillReasonForBidLog = noFillReason.toString();
             }
             else if(!isRequestAFill)
             {
                 adservingRequestResponse.setNofillReason(NoFillReason.INTERNAL_ERROR);
+                noFillReasonForBidLog = NoFillReason.INTERNAL_ERROR.toString();
             }
             else
+            {
                 adservingRequestResponse.setNofillReason(NoFillReason.FILL);
+                noFillReasonForBidLog = NoFillReason.FILL.toString();
+            }
 
+
+            if(INVENTORY_SOURCE.RTB_EXCHANGE.getCode() == request.getInventorySource())
+            {
+                StringBuffer bidRequestBuffer = new StringBuffer();
+                bidRequestBuffer.append(request.getRequestId());
+                bidRequestBuffer.append(BID_REQ_DELIM_FOR_NOFILL);
+                bidRequestBuffer.append(noFillReasonForBidLog);
+                this.bidRequestLogger.debug(bidRequestBuffer.toString());
+            }
+            
             //set requesting slot id array
             if(null != request.getRequestedSlotIdList())
                 adservingRequestResponse.setReqSlotIds(request.getRequestedSlotIdList());
@@ -620,6 +640,26 @@ public class ThriftLogger implements Job {
             return NoFillReason.Video_CompanionType;
         if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Exception.getCode())
             return NoFillReason.Video_Exception;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.CREATIVE_NOT_VIDEO.getCode())
+            return NoFillReason.CREATIVE_NOT_VIDEO;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.DEAL_ID_MISMATCH.getCode())
+            return NoFillReason.DEAL_ID_MISMATCH;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.VIDEO_PROPS_NULL.getCode())
+            return NoFillReason.VIDEO_PROPS_NULL;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_REQ_NULL.getCode())
+            return NoFillReason.NATIVE_REQ_NULL;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_PROPS_NULL.getCode())
+            return NoFillReason.NATIVE_PROPS_NULL;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_REQ_ASSET_NULL.getCode())
+            return NoFillReason.NATIVE_REQ_ASSET_NULL;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.CREATIVE_NOT_NATIVE.getCode())
+            return NoFillReason.CREATIVE_NOT_NATIVE;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_TITLE_LEN.getCode())
+            return NoFillReason.NATIVE_TITLE_LEN;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_IMGSIZE.getCode())
+            return NoFillReason.NATIVE_IMGSIZE;
+        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_DESC_LEN.getCode())
+            return NoFillReason.NATIVE_DESC_LEN;
         return null;
     }
 }

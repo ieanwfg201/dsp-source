@@ -92,20 +92,19 @@ public class RequestProcessor
             return null;
         }
         if(alternativeRequestEnricher != null && requestEnricher == null){
-            this.logger.debug("Unknown integration scope, but identified alternative enricher, calling " +
+            this.logger.debug("Unknown integration scope, but identified alternative enricher, calling {}" ,
                     alternativeRequestEnricher.getClass().getSimpleName());
             return alternativeRequestEnricher.validateAndEnrichRequest(requestId,httpServletRequest,this.logger);
         }
         if(alternativeRequestEnricher != null && requestEnricher != null){
-            this.logger.debug("Inside " + requestEnricher.getClass().getSimpleName() +
-                    " scope, but calling alternative enricher " +
-                    alternativeRequestEnricher.getClass().getSimpleName());
+            this.logger.debug("Inside {} scope, but calling alternative enricher {}" ,
+                    requestEnricher.getClass().getSimpleName() ,alternativeRequestEnricher.getClass().getSimpleName());
             return alternativeRequestEnricher.validateAndEnrichRequest(requestId,httpServletRequest,this.logger);
         }
 
 
-        this.logger.debug("Inside " + requestEnricher.getClass().getSimpleName() + " integration scope, " +
-                "calling " + requestEnricher.getClass().getSimpleName() + ". ");
+        this.logger.debug("Inside {} integration scope, calling {}" ,
+                requestEnricher.getClass().getSimpleName() , requestEnricher.getClass().getSimpleName() );
         return requestEnricher.validateAndEnrichRequest(requestId,httpServletRequest,logger);
     }
 

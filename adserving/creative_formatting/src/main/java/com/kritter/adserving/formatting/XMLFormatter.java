@@ -70,8 +70,7 @@ public class XMLFormatter implements CreativesFormatter
 
         if(null == response || null == response.getResponseAdInfo())
         {
-            logger.error("No Ads shortlisted for this request,nothing to format in " +
-                         "formatCreatives of XMLFormatter");
+            logger.error("No Ads shortlisted for this request,nothing to format in formatCreatives of XMLFormatter");
             return null;
         }
 

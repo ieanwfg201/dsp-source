@@ -1,13 +1,13 @@
-Source: kritter-tern-dir-pull-conf-btm-maxmind-service
+Source: kritter-tern-dir-pull-conf-mad-maxmind-service
 Maintainer: KRITTER <contact@kritter.in>
 Section: misc
 Priority: optional
 Standards-Version: 3.9.3
 Build-Depends: debhelper (>= 8)
 
-Package: kritter-tern-dir-pull-conf-btm-maxmind-service
+Package: kritter-tern-dir-pull-conf-mad-maxmind-service
 Architecture: any
 Depends: ${misc:Depends},
-Description: kritters tern_dir_pull btm maxmind conf service
- a maxmind service for btm maxmind conf of 
+Description: kritters tern_dir_pull mad maxmind conf service
+ a maxmind service for mad maxmind conf of 
  tern_dir_pull - a log pull transportation package by kritter

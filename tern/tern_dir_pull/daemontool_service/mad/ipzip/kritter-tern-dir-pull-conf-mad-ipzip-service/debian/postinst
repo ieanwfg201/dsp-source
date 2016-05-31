@@ -1,12 +1,12 @@
 #!/bin/sh -x
 #DEBHELPER#
 set -e
-if [ -d /etc/kritter-tern-dir-pull-conf-btm-ipzip-service/log/main ]; then
-        chown -v nobody:nogroup /etc/kritter-tern-dir-pull-conf-btm-ipzip-service/log
-        chown -v nobody:nogroup /etc/kritter-tern-dir-pull-conf-btm-ipzip-service/log/main
-        chmod -v 1755 /etc/kritter-tern-dir-pull-conf-btm-ipzip-service/log
-        chmod -v g+s /etc/kritter-tern-dir-pull-conf-btm-ipzip-service/log
+if [ -d /etc/kritter-tern-dir-pull-conf-mad-ipzip-service/log/main ]; then
+        chown -v nobody:nogroup /etc/kritter-tern-dir-pull-conf-mad-ipzip-service/log
+        chown -v nobody:nogroup /etc/kritter-tern-dir-pull-conf-mad-ipzip-service/log/main
+        chmod -v 1755 /etc/kritter-tern-dir-pull-conf-mad-ipzip-service/log
+        chmod -v g+s /etc/kritter-tern-dir-pull-conf-mad-ipzip-service/log
 fi
-if [ -e /etc/kritter-tern-dir-pull-conf-btm-ipzip-service/run ]; then
-        update-service --add /etc/kritter-tern-dir-pull-conf-btm-ipzip-service 
+if [ -e /etc/kritter-tern-dir-pull-conf-mad-ipzip-service/run ]; then
+        update-service --add /etc/kritter-tern-dir-pull-conf-mad-ipzip-service 
 fi

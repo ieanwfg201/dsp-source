@@ -159,7 +159,7 @@ public class CreativeTargetingMatcher
 
             if(null == creative)
             {
-                logger.error("Creative null in cache,FATAL error!!! for creative id: " + adEntity.getCreativeId());
+                logger.error("Creative null in cache,FATAL error!!! for creative id: {}" , adEntity.getCreativeId());
                 continue;
             }
 
@@ -171,8 +171,7 @@ public class CreativeTargetingMatcher
 
             Set<Short> resultingIntersection = SetUtils.intersectNSets(siteCreativeAttributes,adCreativeAttributes);
 
-            logger.debug("Site creative attributes and ad creative attributes intersection size: {} and site's " +
-                         "policy for these creative attributes is exclusion? : {}",
+            logger.debug("Site creative attributes and ad creative attributes intersection size: {} and site's policy for these creative attributes is exclusion? : {}",
                          resultingIntersection.size(), site.isCreativeAttributesForExclusion());
 
             if(     siteCreativeAttributes.size() > 0                                       &&
@@ -281,10 +280,8 @@ public class CreativeTargetingMatcher
 
                 if(!sizeCheckForBanner)
                 {
-                    ReqLog.errorWithDebug(logger, request, "We could not find any creative supporting the requesting sizes of (width,height) " +
-                            "combinations: " +
-                            fetchRequestedWidthAndHeightPairForDebug(requestedWidths,requestedHeights) +
-                            " for/by creativeid: " + creative.getId());
+                    ReqLog.errorWithDebug(logger, request, "We could not find any creative supporting the requesting sizes of (width,height) combinations: {}  for/by creativeid: {}" +
+                            fetchRequestedWidthAndHeightPairForDebug(requestedWidths,requestedHeights) , creative.getId());
                 }
             } 
             else if(creative.getCreativeFormat().equals(CreativeFormat.Native)) {

@@ -118,8 +118,7 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
 
             if( budgetRemainingForeseen < Budget.min_budget )
             {
-                ReqLog.errorWithDebug(logger, request, "Adunit's budget : {} is less than minimum value inside " +
-                             "EcpmBidCalculatorNotUsingBidder for adid : {} , removing this ad from final list... ",
+                ReqLog.errorWithDebug(logger, request, "Adunit's budget : {} is less than minimum value inside EcpmBidCalculatorNotUsingBidder for adid : {} , removing this ad from final list... ",
                              budgetRemainingForeseen ,responseAdInfo.getAdId());
                 finalResponseAdInfo.remove(responseAdInfo);
                 continue;

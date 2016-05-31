@@ -237,7 +237,7 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
         }
         catch (NumberFormatException nfe)
         {
-            logger.error("appWapForSiteCode requested has invalid value : " + appWapForSiteCode);
+            logger.error("appWapForSiteCode requested has invalid value : {}" , appWapForSiteCode);
         }
 
         try
@@ -250,8 +250,8 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
         }
         catch (NumberFormatException nfe)
         {
-            logger.error("requesting latitude or longitude has invalid value : lat: " +
-                    requestingLatitude + ", lon: " + requestingLongitude);
+            logger.error("requesting latitude or longitude has invalid value : lat:{} lon:{} " ,
+                    requestingLatitude , requestingLongitude);
         }
 
         //also set requested slot size.
@@ -270,8 +270,8 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
         }
         catch (NumberFormatException nfe)
         {
-            logger.error("requesting width or height has invalid value : width: " +
-                         width + ", height: " + height);
+            logger.error("requesting width or height has invalid value : width:{} height:{}" ,
+                         width , height);
         }
 
         ApplicationGeneralUtils.logDebug
@@ -310,12 +310,12 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
 
         if(ip == null){
         	request.setRequestEnrichmentErrorCodeAndMessage(Request.REQUEST_ENRICHMENT_ERROR_CODE.REQUEST_MALFORMED, "IP address cannot be deturmined");
-            this.logger.error("For requestId: " + requestId + " Request is malformed inside AggregatorEnricherWithRequestParameters");
+            this.logger.error("For requestId: {} Request is malformed inside AggregatorEnricherWithRequestParameters",requestId );
         	return request;
         }
         if(invocationCodeVersion == null){
         	request.setRequestEnrichmentErrorCodeAndMessage(Request.REQUEST_ENRICHMENT_ERROR_CODE.REQUEST_MALFORMED, "Parameter " + this.invocationCodeVersionParameterName + " is not found or empty");
-            this.logger.error("For requestId: " + requestId + " Request is malformed inside AggregatorEnricherWithRequestParameters");
+            this.logger.error("For requestId: {} Request is malformed inside AggregatorEnricherWithRequestParameters", requestId);
         	return request;
         }        
 
@@ -350,15 +350,13 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
 
             if(null == handsetMasterData)
             {
-                this.logger.error("Device detection failed inside AggregatorEnricherWithRequestParameters, " +
-                        "can not proceed further");
+                this.logger.error("Device detection failed inside AggregatorEnricherWithRequestParameters, can not proceed further");
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_UNDETECTED);
                 return request;
             }
             if(handsetMasterData.isBot())
             {
-                this.logger.error("Device detected is BOT inside AggregatorEnricherWithRequestParameters, " +
-                        "can not proceed further");
+                this.logger.error("Device detected is BOT inside AggregatorEnricherWithRequestParameters, can not proceed further");
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
                 return request;
             }
@@ -388,8 +386,7 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
                 {
                     request.setCountry(country);
                     ApplicationGeneralUtils.logDebug(this.logger,
-                            " Country detected successfully inside " +
-                                    " AggregatorEnricherWithRequestParameters, id being: ",
+                            " Country detected successfully inside AggregatorEnricherWithRequestParameters, id being: ",
                             String.valueOf(country.getCountryInternalId()));
                 }
                 else

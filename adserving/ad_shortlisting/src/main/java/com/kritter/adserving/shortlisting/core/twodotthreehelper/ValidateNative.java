@@ -26,6 +26,7 @@ import com.kritter.entity.native_props.demand.NativeScreenshot;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
+import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.cache.CreativeCache;
 import com.kritter.serving.demand.entity.AdEntity;
@@ -37,10 +38,10 @@ public class ValidateNative {
             NativeIconCache nativeIconCache,
             NativeScreenshotCache nativeScreenshotCache){
         boolean isNFR = true;
+        Request.NO_FILL_REASON nfrReason = null;
+        Request.NO_FILL_REASON nonNativeNfrReason = Request.NO_FILL_REASON.FILL;
         if(bidRequestImpressionDTOs == null){
-                logger.error("bidRequestImpressionDTOs is null inside native of " +
-                             "AdShortlistingRTBExchangeTwoDotThree, cannot process " +
-                             "request for this impressionId: {} ");
+                logger.error("bidRequestImpressionDTOs is null inside native of AdShortlistingRTBExchangeTwoDotThree, cannot process request for this impressionId: {} ");
                 return;
         }
         for(BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs){
@@ -58,11 +59,13 @@ public class ValidateNative {
             } 
             if(nativeObj == null){
                 logger.error("NativeObj null");
+                nonNativeNfrReason = Request.NO_FILL_REASON.NATIVE_REQ_NULL;
                 continue;
             }
             Asset[] assets = nativeObj.getAssets();
             if(assets == null){
                 logger.error("NativeObj Assets null");
+                nonNativeNfrReason = Request.NO_FILL_REASON.NATIVE_REQ_ASSET_NULL;
                 continue;
             }
             
@@ -70,30 +73,34 @@ public class ValidateNative {
             for(ResponseAdInfo responseAdInfo : response.getResponseAdInfo()){
                 AdEntity adEntity = adEntityCache.query(responseAdInfo.getAdId());
                 if(null == adEntity){
-                    logger.error("AdEntity not found in cache,FATAL error!!! for adId: {} " +
+                    logger.error("AdEntity not found in cache,FATAL error!!! for adId: {} " ,
                             responseAdInfo.getAdId());
                     continue;
                 }
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
                 if(null == creative) {
-                    logger.error("Creative null in cache,!!! for creative id: " + adEntity.getCreativeId());
+                    logger.error("Creative null in cache,!!! for creative id: {}" , adEntity.getCreativeId());
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.Native){
-                    logger.error("Creative Not Native,!!! for creative id: " + adEntity.getCreativeId());
+                    logger.error("Creative Not Native,!!! for creative id: {}" , adEntity.getCreativeId());
+                    nonNativeNfrReason = Request.NO_FILL_REASON.CREATIVE_NOT_NATIVE;
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
                     logger.error("DealID check not satisfied");
+                    nonNativeNfrReason = Request.NO_FILL_REASON.DEAL_ID_MISMATCH;
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidFloorPrice() != null &&  bidRequestImpressionDTO.getBidFloorPrice()>responseAdInfo.getEcpmValue()){
                     logger.error("Floor price unmet");
+                    nonNativeNfrReason = Request.NO_FILL_REASON.BIDDER_FLOOR_UNMET;
                     continue;
                 }
                 NativeDemandProps nativeDemandPros  = creative.getNative_demand_props();
                 if(nativeDemandPros == null){
-                    logger.error("Native Demand Props Null,!!! for creative id: " + adEntity.getCreativeId());
+                    logger.error("Native Demand Props Null,!!! for creative id: {}" , adEntity.getCreativeId());
+                    nonNativeNfrReason = Request.NO_FILL_REASON.NATIVE_PROPS_NULL;
                     continue;
                 }
                 HashMap<String, NativeIcon> nativeIconMap = new HashMap<String, NativeIcon>();
@@ -127,6 +134,7 @@ public class ValidateNative {
                             nativeDemandPropseActual.setTitle(nativeDemandPros.getTitle());
                         }else{
                             pass=false;
+                            nfrReason = Request.NO_FILL_REASON.NATIVE_TITLE_LEN;
                         }
                     }
                     if(!pass){continue;}
@@ -140,6 +148,7 @@ public class ValidateNative {
                                 responseAdInfo.setNativeScreenshot(nativeScreenshotMap.get(s));
                             }else{
                                 pass = false;
+                                nfrReason = Request.NO_FILL_REASON.NATIVE_IMGSIZE;
                             }
                         }
                     }
@@ -149,6 +158,7 @@ public class ValidateNative {
                             nativeDemandPropseActual.setDesc(nativeDemandPros.getDesc());
                         }else{
                             pass=false;
+                            nfrReason = Request.NO_FILL_REASON.NATIVE_DESC_LEN;
                         }
                     }
                     if(!pass){
@@ -162,7 +172,7 @@ public class ValidateNative {
                                 bidRequestImpressionDTO.getBidRequestImpressionId(),
                                 responseAdInfo
                         );
-                        isNFR = true;
+                        isNFR = false;
                     } catch (Exception e) {
                         logger.error(e.getMessage(),e);
                     }
@@ -170,7 +180,16 @@ public class ValidateNative {
             }
         }
         if(isNFR){
-            request.setNoFillReason(Request.NO_FILL_REASON.NATIVE_MISMATCH);
+            if(null != nfrReason){
+                request.setNoFillReason(nfrReason);
+                ReqLog.debugWithDebug(logger, request, "Validate Native NFR: {}", nfrReason);
+            }else if (nonNativeNfrReason != Request.NO_FILL_REASON.FILL ){
+                request.setNoFillReason(nonNativeNfrReason);
+                ReqLog.debugWithDebug(logger, request, "Validate Native NFR: {}", nonNativeNfrReason);
+            }else{
+                request.setNoFillReason(Request.NO_FILL_REASON.NATIVE_MISMATCH);  
+                ReqLog.debugWithDebug(logger, request, "Validate Native NFR: {}", Request.NO_FILL_REASON.NATIVE_MISMATCH);
+            }
         }
     }
 }

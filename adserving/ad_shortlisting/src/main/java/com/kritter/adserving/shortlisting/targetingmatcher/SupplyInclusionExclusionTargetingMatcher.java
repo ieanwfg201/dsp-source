@@ -64,7 +64,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
+                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -147,8 +147,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                 if(publisherSiteListMap.containsKey(site.getPublisherIncId()) && null == siteListMap)
                 {
 
-                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with no site specified for this publisher id: {} , " +
-                            "passing it .",adEntity.getAdGuid(),site.getPublisherIncId());
+                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with no site specified for this publisher id: {} ,passing it .",adEntity.getAdGuid(),site.getPublisherIncId());
 
                     shortlistedAdIdSet.add(adId);
                     continue;
@@ -162,8 +161,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                         )
                 {
 
-                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with this site:{} not specified for this publisher id: {} , " +
-                            "failing it .",adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
+                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with this site:{} not specified for this publisher id: {} ,failing it .",adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
                     continue;
                 }
 
@@ -181,8 +179,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
 
                     if(null == externalSupplyAttributesList)
                     {
-                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with this site:{} specified but ext attr not specified for this publisher id: {} , " +
-                                " passing it .",adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
+                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with this site:{} specified but ext attr not specified for this publisher id: {} , passing it .",adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
 
                         shortlistedAdIdSet.add(adId);
                         continue;
@@ -204,8 +201,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
 
                     if(found)
                     {
-                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with this site:{} specified for this publisher id: {} , " +
-                                        "and the internalId for external supply attributes: {} is contained by targeting passing it .",
+                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with this site:{} specified for this publisher id: {} ,and the internalId for external supply attributes: {} is contained by targeting passing it .",
                                 adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId(),internalIdForExternalSupplyAttributes);
 
                         shortlistedAdIdSet.add(adId);
@@ -227,8 +223,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                 /*Requesting publisher is not excluded by the ad.*/
                 if(!publisherSiteListMap.containsKey(site.getPublisherIncId()))
                 {
-                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this publisher not " +
-                            "specified: {} , passing it. {} ",adEntity.getAdGuid(),site.getPublisherIncId());
+                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this publisher not specified: {} , passing it. {} ",adEntity.getAdGuid(),site.getPublisherIncId());
 
                     shortlistedAdIdSet.add(adId);
                     continue;
@@ -238,8 +233,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                 if(publisherSiteListMap.containsKey(site.getPublisherIncId()) && null == siteListMap)
                 {
 
-                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with no site specified for this publisher id: {} , " +
-                            "failing it .",adEntity.getAdGuid(),site.getPublisherIncId());
+                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with no site specified for this publisher id: {} ,failing it .",adEntity.getAdGuid(),site.getPublisherIncId());
 
                     continue;
                 }
@@ -252,8 +246,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                         )
                 {
 
-                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} not specified for this publisher id: {} , " +
-                            "passing it .",adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
+                    ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} not specified for this publisher id: {} ,passing it .",adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
 
                     shortlistedAdIdSet.add(adId);
                     continue;
@@ -273,9 +266,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
 
                     if(null == externalSupplyAttributesList)
                     {
-                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} specified " +
-                                        "but ext attr not specified for this publisher id: {} , " +
-                                        ", this means that no external attributes are excluded, passing it .",
+                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} specified but ext attr not specified for this publisher id: {}, this means that no external attributes are excluded, passing it .",
                                 adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
 
                         shortlistedAdIdSet.add(adId);
@@ -298,16 +289,14 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
 
                     if(found)
                     {
-                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} specified for this publisher id: {} , " +
-                                        "and the internalId for external supply attributes: {} is contained by targeting failing it .",
+                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} specified for this publisher id: {} ,and the internalId for external supply attributes: {} is contained by targeting failing it .",
                                 adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId(),internalIdForExternalSupplyAttributes);
 
                         continue;
                     }
                     else
                     {
-                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} specified for this publisher id: {} , " +
-                                        "and the internalId for external supply attributes: {} is not contained by targeting passing it .",
+                        ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} specified for this publisher id: {} ,and the internalId for external supply attributes: {} is not contained by targeting passing it .",
                                 adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId(),internalIdForExternalSupplyAttributes);
 
                         shortlistedAdIdSet.add(adId);

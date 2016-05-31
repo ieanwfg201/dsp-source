@@ -199,7 +199,7 @@
         <constructor-arg index="7" value="res-object"/>
         <constructor-arg index="8">
             <map>
-                <entry key="mopub-pub-guid" value-ref="mopub_response_creator"/>
+                <entry key="mopub-pub-guid" value-ref="mopub_response_creator_2_3"/>
             </map>
         </constructor-arg>
         <constructor-arg index="9" value="KRITTER_INVENTORY_SRC"/>
@@ -217,6 +217,7 @@
         <constructor-arg index="7" value="User-Agent"/>
         <constructor-arg index="8" value="X-Forwarded-For"/>
         <constructor-arg index="9" value="REMOTE_ADDR"/>
+        <constructor-arg index="10" value="bid.req.logger"/>
     </bean>    
 
     <bean id="ssp_job" class="com.kritter.adserving.flow.job.SspOrInHouse">

@@ -1,6 +1,10 @@
 package com.kritter.utils.common;
 
+import java.net.URLEncoder;
 import java.util.*;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -77,6 +81,13 @@ public class ConversionEventIdUtils
     private short START_INDEX_CLICK_REQUEST_ID;
 
     private int totalBitSetSizeVersion1;
+
+    @Setter
+    private boolean replaceCharactersInConversionId;
+    private static final String DOUBLE_UNDERSCORE = "__";
+    private static final String DOUBLE_UNDERSCORE_REPLACEMENT = "\\.";
+    private static final String DOUBLE_DASH = "--";
+    private static final String DOUBLE_DASH_REPLACEMENT = "\\*";
 
     public ConversionEventIdUtils(
                                    short SIZE_INTERNAL_BID,
@@ -344,6 +355,13 @@ public class ConversionEventIdUtils
         byte[] bytesToEncode = fetchByteArrayFromBitArrayWithoutShifting(bitSetConversionEventData);
         String encodedData = new String(base64.encode(bytesToEncode));
 
+        /*Code block where we can choose to replace characters based on client config if required.*/
+        if(replaceCharactersInConversionId)
+        {
+            encodedData = encodedData.replaceAll(DOUBLE_UNDERSCORE,DOUBLE_UNDERSCORE_REPLACEMENT);
+            encodedData = encodedData.replaceAll(DOUBLE_DASH,DOUBLE_UNDERSCORE_REPLACEMENT);
+        }
+
         return encodedData;
     }
 
@@ -386,6 +404,14 @@ public class ConversionEventIdUtils
         try
         {
             Base64 base64 = new Base64(0,null,true);
+
+            /*code block to rebuild conversion id in original form*/
+            if(replaceCharactersInConversionId)
+            {
+                conversionEventIdValue = conversionEventIdValue.replaceAll(DOUBLE_UNDERSCORE_REPLACEMENT,DOUBLE_UNDERSCORE);
+                conversionEventIdValue = conversionEventIdValue.replaceAll(DOUBLE_DASH_REPLACEMENT,DOUBLE_DASH);
+            }
+
             byte[] byteArray = base64.decode(conversionEventIdValue.getBytes());
 
             int[] bitSetConversionEventData = fetchBitArrayFromByteArray(byteArray);
@@ -906,21 +932,21 @@ public class ConversionEventIdUtils
     {
         double internalBid = 0.001f;                                       // 32
         double advertiserBid = 0.002f;                                     // 32
-        int adId = 24;                                                  // 20
-        int siteId = -1;                                                // 20
+        int adId = 2;                                                  // 20
+        int siteId = 1;                                                // 20
         int inventorySource = 5;                                          // 3
         int carrierId = 1;                                             // 24
         int countryId = 2;                                               // 14
         int deviceModelId = 1;                                           // 18
-        int deviceManufacturerId = 21;                                    // 16
-        int deviceOsId = 1;                                              // 10
+        int deviceManufacturerId = 2;                                    // 16
+        int deviceOsId = 50;                                              // 10
         int deviceBrowserId = 1;                                         // 12
         int externalSupplyAttributesInternalId = 4;                 // 32
         short selectedSiteCategoryId = 1;                                 // 14
-        short bidderModelId = 0;                                          // 8
+        short bidderModelId = 4;                                          // 8
         short supplySourceType = -1;                                       // 5
         short connectionTypeId = -1;                                       // 6
-        short deviceTypeId = 19;                                            //6
+        short deviceTypeId = 2;                                            //6
         String clickRequestId = "011c3e84-ecd5-d501-4fe4-8672e3000003";   // 128
 
         /*ConversionUrlData(internalBid=0.0010000000474974513, advertiserBid=0.0020000000949949026,
@@ -944,6 +970,7 @@ public class ConversionEventIdUtils
         ConversionEventIdUtils conversionEventIdUtils = new ConversionEventIdUtils((short)32,(short)32,(short)20,(short)20,(short)3,(short)24,(short)14,(short)18,
                 (short)16,(short)10,(short)12,(short)32,(short)14,(short)8,(short)5,(short)3,(short)5,(short)128);
 
+        //conversionEventIdUtils.setReplaceCharactersInConversionId(false);
         ConversionUrlData conversionUrlData = new ConversionUrlData();
         conversionUrlData.setInternalBid(internalBid);
         conversionUrlData.setAdvertiserBid(advertiserBid);
@@ -970,5 +997,8 @@ public class ConversionEventIdUtils
         ConversionUrlData c1 = conversionEventIdUtils.prepareConversionUrlDataFromConversionEventPrimaryId(res);
 
         System.out.println(c1);
+
+        System.out.println(URLEncoder.encode(res,"UTF-8"));
+        System.out.println(URLEncoder.encode(URLEncoder.encode(res,"UTF-8"),"UTF-8"));
     }
 }
