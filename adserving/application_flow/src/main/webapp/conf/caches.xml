@@ -257,12 +257,12 @@
                 <ref bean="mnc_mcc_data_cache"/>
                 <ref bean="iab_categories_cache"/>
                 <ref bean="maxmind_connection_type_cache"/>
-                <ref bean="adx_geo_criteria_cache"/>
+               <!-- <ref bean="adx_geo_criteria_cache"/>-->
                 <ref bean="ssp_global_rules_cache"/>
                 <ref bean="account_cache"/>
-                <ref bean="adx_mobile_carrier_cache"/>
+               <!-- <ref bean="adx_mobile_carrier_cache"/>
                 <ref bean="country_code_cache"/>
-                <ref bean="operators_cache"/>
+                <ref bean="operators_cache"/>-->
                 <ref bean="site_meta_data_cache"/>
                 <!--<ref bean="user_recent_history_cache"/>-->
                 <ref bean="native_icon_cache"/>
@@ -467,7 +467,8 @@
       </constructor-arg>
     </bean>
     -->
-   <!--Adx cache beans and properties-->
+
+   <!--Adx cache beans and properties
     <bean id="adx_geo_criteria_cache" class="com.kritter.adx.reader.cache.AdxGeoCriteriaCache">
             <constructor-arg index="0">
                 <list>
@@ -632,7 +633,7 @@
        </constructor-arg>
     </bean>
 
-   <!-- Adx cache classes end -->
+    Adx cache classes end -->
 
    <bean id="ssp_global_rules_properties" class="java.util.Properties">
       <constructor-arg>
