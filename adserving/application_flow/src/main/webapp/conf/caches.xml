@@ -278,7 +278,7 @@
                 <ref bean="native_icon_cache"/>
                 <ref bean="native_screenshot_cache"/>
                 <ref bean="mobile_app_categories_cache"/>
-                <ref bean="vertical_iab_cache"/>
+                <!--<ref bean="vertical_iab_cache"/>-->
                 <ref bean="req_logging_cache"/>
             </list>
         </constructor-arg>
