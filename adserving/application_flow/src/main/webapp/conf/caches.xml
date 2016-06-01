@@ -225,6 +225,27 @@
             <constructor-arg index="2"><ref bean="maxmind_connection_type_cache_props"/></constructor-arg>
         </bean>
 
+	<bean id="req_logging_cache" class="com.kritter.req_logging.ReqLoggingCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="req_logging_cache_properties"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="req_logging_cache"/>
+   	</bean>
+
+	<bean id="vertical_iab_cache" class="com.kritter.adx.reader.cache.MobileAppCategoryCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="vertical_iab_cache_properties"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="vertical_iab_cache"/>
+        </bean>
+
+
         <!--
         <bean id="user_recent_history_cache" class="com.kritter.nosql.user.recenthistory.UserRecentImpressionHistoryCache">
             <constructor-arg index="0" value="user_recent_history_cache"/>
@@ -517,16 +538,6 @@
         <constructor-arg index="3" value="country_code_cache"/>
     </bean>
 
-    <bean id="req_logging_cache" class="com.kritter.req_logging.ReqLoggingCache">
-            <constructor-arg index="0">
-                <list>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="req_logging_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="req_logging_cache"/>
-    </bean>
-
     <bean id="country_code_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -576,16 +587,6 @@
             <constructor-arg index="3" value="mobile_app_categories_cache"/>
     </bean>
 
-    <bean id="vertical_iab_cache" class="com.kritter.adx.reader.cache.MobileAppCategoryCache">
-            <constructor-arg index="0">
-                <list>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="vertical_iab_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="vertical_iab_cache"/>
-    </bean>
-
     <bean id="blocked_sensitive_categories_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -624,15 +625,6 @@
        </constructor-arg>
     </bean>
 
-    <bean id="vertical_iab_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">3600000</prop>
-           <prop key="query"><![CDATA[select * from adx_pub_vertical_rtb_mapping where last_modified >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-    </bean>
-
     Adx cache classes end -->
 
    <bean id="ssp_global_rules_properties" class="java.util.Properties">
@@ -661,5 +653,14 @@
          </props>
        </constructor-arg>
    </bean>
+
+   <bean id="vertical_iab_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">3600000</prop>
+           <prop key="query"><![CDATA[select * from adx_pub_vertical_rtb_mapping where last_modified >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+    </bean>
 
 </beans>
