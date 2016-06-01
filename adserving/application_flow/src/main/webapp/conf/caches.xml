@@ -235,17 +235,6 @@
             <constructor-arg index="3" value="req_logging_cache"/>
        </bean>
 	
-       <bean id="vertical_iab_cache" class="com.kritter.adx.reader.cache.MobileAppCategoryCache">
-            <constructor-arg index="0">
-                <list>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="vertical_iab_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="vertical_iab_cache"/>
-       </bean>
-
-
         <!--
         <bean id="user_recent_history_cache" class="com.kritter.nosql.user.recenthistory.UserRecentImpressionHistoryCache">
             <constructor-arg index="0" value="user_recent_history_cache"/>
@@ -281,15 +270,10 @@
                <!-- <ref bean="adx_geo_criteria_cache"/>-->
                 <ref bean="ssp_global_rules_cache"/>
                 <ref bean="account_cache"/>
-               <!-- <ref bean="adx_mobile_carrier_cache"/>
-                <ref bean="country_code_cache"/>
-                <ref bean="operators_cache"/>-->
                 <ref bean="site_meta_data_cache"/>
                 <!--<ref bean="user_recent_history_cache"/>-->
                 <ref bean="native_icon_cache"/>
                 <ref bean="native_screenshot_cache"/>
-                <!-- ref bean="mobile_app_categories_cache"/ -->
-                <ref bean="vertical_iab_cache"/>
                 <ref bean="req_logging_cache"/>
             </list>
         </constructor-arg>
@@ -489,144 +473,6 @@
     </bean>
     -->
 
-   <!--Adx cache beans and properties
-    <bean id="adx_geo_criteria_cache" class="com.kritter.adx.reader.cache.AdxGeoCriteriaCache">
-            <constructor-arg index="0">
-                <list>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="adx_geo_criteria_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="adx_geo_criteria_cache"/>
-    </bean>
-
-    <bean id="adx_geo_criteria_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">86400000</prop>
-           <prop key="query"><![CDATA[select * from adx_geo_criteria_data where last_modified >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-    </bean>
-
-    <bean id="adx_mobile_carrier_cache" class="com.kritter.adx.reader.cache.AdxMobileCarrierCache">
-            <constructor-arg index="0">
-                <list>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="adx_mobile_carrier_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="adx_mobile_carrier_cache"/>
-    </bean>
-
-    <bean id="adx_mobile_carrier_cache_properties" class="java.util.Properties">
-        <constructor-arg>
-            <props>
-                <prop key="refresh_interval">86400000</prop>
-                <prop key="query"><![CDATA[select * from adx_mobile_carrier_info where last_modified >= '$last_modified']]></prop>
-            </props>
-        </constructor-arg>
-    </bean>
-
-    <bean id="country_code_cache" class="com.kritter.adx.reader.cache.CountryCodesMappingsCache">
-        <constructor-arg index="0">
-            <list>
-            </list>
-        </constructor-arg>
-        <constructor-arg index="1"><ref bean="country_code_cache_properties"/></constructor-arg>
-        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-        <constructor-arg index="3" value="country_code_cache"/>
-    </bean>
-
-    <bean id="country_code_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">86400000</prop>
-           <prop key="query"><![CDATA[select * from country_code_mappings where last_modified >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-    </bean>
-
-    <bean id="operators_cache" class="com.kritter.adx.reader.cache.OperatorsCache">
-            <constructor-arg index="0">
-                <list>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="operators_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="operators_cache"/>
-    </bean>
-
-    <bean id="operators_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">86400000</prop>
-           <prop key="query"><![CDATA[select * from country_mnc_mcc_operators where last_modified >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-    </bean>
-
-    <bean id="blocked_sensitive_categories_cache" class="com.kritter.adx.reader.cache.AdxBlockedSensitiveCategoriesCache">
-            <constructor-arg index="0">
-                <list>
-                    <value>com.kritter.adx.reader.entity.OpenRTBCategoryCode</value>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="blocked_sensitive_categories_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="blocked_sensitive_categories_cache"/>
-    </bean>
-
-    <bean id="mobile_app_categories_cache" class="com.kritter.adx.reader.cache.MobileAppCategoryCache">
-            <constructor-arg index="0">
-                <list>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="mobile_app_category_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="mobile_app_categories_cache"/>
-    </bean>
-
-    <bean id="blocked_sensitive_categories_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">3600000</prop>
-           <prop key="query"><![CDATA[select * from adx_sensitive_cat_rtb_cat where last_modified >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-    </bean>
-
-    <bean id="blocked_product_categories_cache" class="com.kritter.adx.reader.cache.AdxBlockedProductCategoriesCache">
-            <constructor-arg index="0">
-                <list>
-                    <value>com.kritter.adx.reader.entity.OpenRTBCategoryCode</value>
-                </list>
-            </constructor-arg>
-            <constructor-arg index="1"><ref bean="blocked_product_categories_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="blocked_product_categories_cache"/>
-    </bean>
-
-    <bean id="blocked_product_categories_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">3600000</prop>
-           <prop key="query"><![CDATA[select * from adx_rtb_content_categories where last_modified >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-    </bean>
-
-    <bean id="mobile_app_category_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">3600000</prop>
-           <prop key="query"><![CDATA[select * from mobile_app_cat where last_modified >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-    </bean>
-
-    Adx cache classes end -->
-
    <bean id="ssp_global_rules_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -654,13 +500,4 @@
        </constructor-arg>
    </bean>
   
-   <bean id="vertical_iab_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">3600000</prop>
-           <prop key="query"><![CDATA[select * from adx_pub_vertical_rtb_mapping where last_modified >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-    </bean>
-
 </beans>
