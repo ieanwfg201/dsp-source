@@ -8,6 +8,7 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
 import com.kritter.constants.StatusIdEnum;
+import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.targeting_profile.column.Retargeting;
 import com.kritter.constants.MarketPlace;
 import com.kritter.serving.demand.indexbuilder.AdEntitySecondaryIndexBuilder;
@@ -137,6 +138,16 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             int impressionCap = resultSet.getInt("impression_cap");
             int impressionsAccrued = resultSet.getInt("impressions_accrued");
             int bidtype = resultSet.getInt("bidtype");
+            String external_tracker = resultSet.getString("external_tracker");
+            ExtTracker extTracker = null;
+            if(external_tracker != null){
+                extTracker= ExtTracker.getObject(external_tracker.trim());
+                if(extTracker != null){
+                    if(extTracker.getExtImpTracker() == null || extTracker.getExtImpTracker().size()< 1){
+                        extTracker=null;
+                    }
+                }
+            }
             
             TargetingProfile.TargetingBuilder targetingBuilder = new
                     TargetingProfile.TargetingBuilder(targetingGuid,accountId,false,profileLastModified);
@@ -189,7 +200,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
                                                 MarketPlace.getMarketPlace(marketplaceId),
                                                 bid,advertiserBid,isMarkedForDeletion,lastModified,
                                                 isFrequencyCapped, maxCap, timeWindowInHours,
-                                                demandtype, qps, accountGuid, bidtype
+                                                demandtype, qps, accountGuid, bidtype, extTracker
                                                )
                                                .setLandingUrl(landingUrl)
                                                .setAccountId(accountIncId)

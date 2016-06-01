@@ -57,6 +57,7 @@ public class AdEntity extends Entity{
     private int frequency_cap = UserConstant.frequency_cap_default;
     private int time_window = UserConstant.frequency_cap_time_window_default;
     private int bidtype = 0;
+    private String external_tracker = "";
     
     public String getCreative(){ 
     	return creative_id+":"+ creative_guid;
@@ -267,6 +268,13 @@ public class AdEntity extends Entity{
     public void setBidtype(int bidtype) {
         this.bidtype = bidtype;
     }
+    public String getExternal_tracker() {
+        return external_tracker;
+    }
+    public void setExternal_tracker(String external_tracker) {
+        this.external_tracker = external_tracker;
+    }
+
 
     public Ad getEntity(){
     	Ad ad = new Ad();

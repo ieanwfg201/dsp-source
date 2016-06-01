@@ -10,6 +10,11 @@
     <name>demand</name>
     <dependencies>
         <dependency>
+            <groupId>com.kritter.entity.external_tracker</groupId>
+            <artifactId>kritter_entity_external_tracker</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.entity.creative_macro</groupId>
             <artifactId>kritter_entity_creative_macro</artifactId>
             <version>1.0.0</version>

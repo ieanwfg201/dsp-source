@@ -52,7 +52,7 @@ public class FormatCreative {
         cfe.setCsc(cscBeaconUrl);
         this.creativeArray.add(cfe);
     }
-    public void addBannerEntity(String img, Short w, Short h, String alt, String curl, String csc){
+    public void addBannerEntity(String img, Short w, Short h, String alt, String curl, String csc, List<String> extImpTracker){
         CreativeFormatEntity cfe = new CreativeFormatEntity();
         cfe.setType(CreativeFormat.BANNER.getLabel());
         cfe.setImg(img);
@@ -67,6 +67,9 @@ public class FormatCreative {
         }
         cfe.setCurl(curl);
         cfe.setCsc(csc);
+        if(extImpTracker != null){
+            cfe.setExtImpTracker(extImpTracker);
+        }
         this.creativeArray.add(cfe);
     }
     public void addRichMediaEntity(String adm, String cscBeaconUrl){

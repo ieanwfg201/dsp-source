@@ -1,5 +1,7 @@
 package com.kritter.utils.common.url;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,8 +95,17 @@ public class URLFieldFactory
         URLFieldUtils.setBitSetToStorage(position,urlFieldLength.getLength(), bitArray, bitSetData);
     }
 
-    public void generate()
+    public String generate()
     {
+        Base64 base64 = new Base64(0,null,true);
+        byte[] bytesToEncode = URLFieldUtils.fetchByteArrayFromBitArrayWithoutShifting(bitSetData);
+        return new String(base64.encode(bytesToEncode));
+    }
 
+    public static void main(String s[]) throws Exception
+    {
+        URLFieldFactory urlFieldFactory = new URLFieldFactory();
+        urlFieldFactory.init();
+        urlFieldFactory.stackFieldForStorage("kritter-user-id",URLFieldLength.KRITTER_USER_ID);
     }
 }

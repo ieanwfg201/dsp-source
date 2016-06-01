@@ -21,6 +21,7 @@ import com.kritter.serving.demand.entity.CreativeSlot;
 import com.kritter.utils.common.ServerConfig;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -151,7 +152,12 @@ public class JSONFormatter implements CreativesFormatter{
                 }
 
                 CreativeSlot creativeSlot = this.creativeSlotCache.query(responseAdInfo.getCreativeBanner().getSlotId());
-                formatBanner(formatCreative, responseAdInfo, creative, creativeSlot, clickUrl.toString(), cscBeaconUrl.toString());
+                List<String> extImpTracker = null;
+                if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getExtImpTracker() != null){
+                    extImpTracker = adEntity.getExtTracker().getExtImpTracker();
+                }
+                formatBanner(formatCreative, responseAdInfo, creative, creativeSlot, clickUrl.toString(), 
+                        cscBeaconUrl.toString(), extImpTracker);
 
 			}
             else if(creative.getCreativeFormat().equals(CreativeFormat.TEXT))
@@ -167,10 +173,11 @@ public class JSONFormatter implements CreativesFormatter{
 	    formatCreative.addTextEntity(creative.getText(), clickUrl.toString(), cscBeaconUrl.toString());
 	}
 
-    private void formatBanner(FormatCreative formatCreative, ResponseAdInfo responseAdInfo, Creative creative, CreativeSlot creativeSlot, String clickUrl, String cscBeaconUrl) throws JSONException
+    private void formatBanner(FormatCreative formatCreative, ResponseAdInfo responseAdInfo, Creative creative, 
+            CreativeSlot creativeSlot, String clickUrl, String cscBeaconUrl, List<String> extImpTracker) throws JSONException
     {
         formatCreative.addBannerEntity(this.cdnBaseImageUrl + responseAdInfo.getCreativeBanner().getResourceURI(), 
                 creativeSlot.getCreativeSlotWidth(), creativeSlot.getCreativeSlotHeight(), 
-                creative.getText(), clickUrl, cscBeaconUrl);
+                creative.getText(), clickUrl, cscBeaconUrl, extImpTracker);
 	}
 }

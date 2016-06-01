@@ -1,6 +1,7 @@
 package com.kritter.entity.formatter_entity.creative;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -36,6 +37,8 @@ public class CreativeFormatEntity {
     private String text; /** For Text */
     @Getter@Setter
     private String adm; /** For RichMedia */
+    @Getter@Setter
+    private List<String> extImpTracker; /** For Banner */
     
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
@@ -109,6 +112,16 @@ public class CreativeFormatEntity {
             sb.append(CDATA_SUFFIX);
             sb.append("</csc>");
         }
+        if(this.extImpTracker != null){
+            for(String str:this.extImpTracker){
+                sb.append("<extcsc>");
+                sb.append(CDATA_PREFIX);
+                sb.append(str);
+                sb.append(CDATA_PREFIX);
+                sb.append("</extcsc>");
+            }
+        }
+
         sb.append("</ad>");
         
         return sb.toString();
@@ -144,6 +157,13 @@ public class CreativeFormatEntity {
             sb.append("<img src=\"");
             sb.append(this.csc);
             sb.append("\" style=\"display: none;\"/>");
+        }
+        if(this.extImpTracker != null){
+            for(String str:this.extImpTracker){
+                sb.append("<img src=\"");
+                sb.append(str);
+                sb.append("\" style=\"display: none;\"/>");
+            }
         }
         return sb.toString();
     }

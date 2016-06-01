@@ -24,6 +24,7 @@ import com.kritter.constants.MarketPlace;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.constants.tracking_partner.TrackingPartner;
+import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
@@ -80,7 +81,58 @@ public class AdCrud {
             ad.setFrequency_cap(rset.getInt("frequency_cap"));
             ad.setTime_window(rset.getInt("time_window"));
             ad.setBidtype(rset.getInt("bidtype"));
+            populateExternalTracker(ad, rset.getString("external_tracker"));
         }
+    }
+    
+    private static void populateExternalTracker(Ad ad, String external_Tracker){
+        try{
+        if(external_Tracker != null){
+            String external_TrackerTrim = external_Tracker.trim();
+            if(!"".equals(external_TrackerTrim)){
+                ExtTracker extTracker = ExtTracker.getObject(external_Tracker);
+                if(extTracker != null){
+                    if(extTracker.getExtImpTracker() != null && extTracker.getExtImpTracker().size()>0){
+                        StringBuffer sBuff = new StringBuffer("");
+                        boolean isFirst = true;
+                        for(String str:extTracker.getExtImpTracker()){
+                            if(isFirst){
+                                isFirst=false;
+                            }else{
+                                sBuff.append(",");
+                            }
+                            sBuff.append(str);
+                        }
+                        ad.setExternal_tracker(sBuff.toString());
+                    }
+                }
+            }
+        }
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+        }
+        
+    }
+    private static String generateExternalTracker(Ad ad){
+        ExtTracker extTracker = new ExtTracker();
+        if(ad.getExternal_tracker() != null){
+            String external_tracker = ad.getExternal_tracker().trim();
+            String split[] = external_tracker.split(",");
+            boolean isFirst = true;
+            List<String> extTrackerUriList = null;
+            for(String str:split){
+                String strTrim = str.trim();
+                if(!"".equals(strTrim)){
+                    if(isFirst){
+                        isFirst=false;
+                        extTrackerUriList = new LinkedList<String>();
+                    }
+                    extTrackerUriList.add(strTrim);
+                }
+            }
+            extTracker.setExtImpTracker(extTrackerUriList);
+        }
+        return extTracker.toJson().toString();
     }
 
     public static List<Ad> geAdByCampaignGuid(String adGuid,Connection connection)
@@ -250,6 +302,7 @@ public class AdCrud {
             pstmt.setInt(22, ad.getFrequency_cap());
             pstmt.setInt(23, ad.getTime_window());
             pstmt.setInt(24, ad.getBidtype());
+            pstmt.setString(25, generateExternalTracker(ad));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -495,7 +548,8 @@ public class AdCrud {
             pstmt.setInt(20, ad.getFrequency_cap());
             pstmt.setInt(21, ad.getTime_window());
             pstmt.setInt(22, ad.getBidtype());
-            pstmt.setInt(23, ad.getId());
+            pstmt.setString(23, generateExternalTracker(ad));
+            pstmt.setInt(24, ad.getId());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

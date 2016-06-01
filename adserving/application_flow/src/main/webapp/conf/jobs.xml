@@ -218,6 +218,7 @@
         <constructor-arg index="8" value="X-Forwarded-For"/>
         <constructor-arg index="9" value="REMOTE_ADDR"/>
         <constructor-arg index="10" value="bid.req.logger"/>
+        <constructor-arg index="11"><ref bean="req_logging_cache"/></constructor-arg>
     </bean>    
 
     <bean id="ssp_job" class="com.kritter.adserving.flow.job.SspOrInHouse">

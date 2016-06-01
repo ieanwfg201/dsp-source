@@ -2,6 +2,8 @@ package com.kritter.serving.demand.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.constants.MarketPlace;
+import com.kritter.entity.external_tracker.ExtTracker;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -50,6 +52,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
     private int qps;
     private final String accountGuid;
     private int bidtype = 0;
+    private ExtTracker extTracker;
     
     public AdEntity(AdEntityBuilder adEntityBuilder)
     {
@@ -80,6 +83,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         this.qps = adEntityBuilder.qps;
         this.accountGuid = adEntityBuilder.accountGuid;
         this.bidtype =  adEntityBuilder.bidtype;
+        this.extTracker = adEntityBuilder.extTracker;
     }
 
     @Override
@@ -119,6 +123,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         private final int qps;
         private String accountGuid;
         private int bidtype = 0;
+        private ExtTracker extTracker;
         
         public AdEntityBuilder(Integer adIncId,
                                String adGuid,
@@ -140,7 +145,8 @@ public class AdEntity implements IUpdatableEntity<Integer>
                                int demandtype,
                                int qps,
                                String accountGuid,
-                               int bidtype) throws Exception
+                               int bidtype,
+                               ExtTracker extTracker) throws Exception
         {
             this.adIncId = adIncId;
             this.adGuid = adGuid;
@@ -163,6 +169,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
             this.qps = qps;
             this.accountGuid = accountGuid;
             this.bidtype = bidtype;
+            this.extTracker = extTracker;
         }
 
         public AdEntityBuilder setLandingUrl(String landingUrl)

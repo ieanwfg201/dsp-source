@@ -349,6 +349,7 @@ GET     /download              		controllers.StaticFileController.download(file:
 GET     /images/*file               controllers.StaticFileController.serveImage(file)
 GET     /template/load/:template	controllers.StaticFileController.loadTemplate(template)
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /getapplicationlog          controllers.StaticFileController.getapplicationlog()
 
 # Retargeting Segment
 GET    /advertiser/:account_guid/retargetingsegment/create     controllers.retargeting_segment.RetargetingSegmentController.create(account_guid:String)

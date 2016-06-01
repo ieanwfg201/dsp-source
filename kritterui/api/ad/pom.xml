@@ -10,6 +10,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritterui_api_ad</name>
   <dependencies>
     <dependency>
+        <groupId>com.kritter.entity.external_tracker</groupId>
+        <artifactId>kritter_entity_external_tracker</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.utils</groupId>
         <artifactId>uuid</artifactId>
         <version>1.0</version>

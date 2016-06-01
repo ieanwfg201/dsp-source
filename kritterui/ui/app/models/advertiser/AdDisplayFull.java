@@ -65,4 +65,7 @@ public class AdDisplayFull extends AdDisplay{
 	public String Bidtype() {
         return BidType.getEnum(ad.getBidtype()).getName();
     }
+	public String getExternaltracker(){
+	    return ad.getExternal_tracker();
+	}
 }

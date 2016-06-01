@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageInputStream;
@@ -47,7 +46,14 @@ public class StaticFileController extends Controller{
 			return ok("File Missing");    
 	}
 	
-	public static Result loadTemplate(String template){
+    public static Result getapplicationlog(){
+            File file = new File("public/../logs/application.log").getAbsoluteFile(); 
+            response().setContentType("application/x-download");  
+            response().setHeader("Content-disposition","attachment; filename="+file.getName()); 
+            return ok(file);
+    }
+
+    public static Result loadTemplate(String template){
 		Class<?> clazz;
 		try {
 			clazz = Class.forName("views.html." +  template);

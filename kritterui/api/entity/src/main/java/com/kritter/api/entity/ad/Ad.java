@@ -72,7 +72,7 @@ public class Ad {
     /** the time window for which frequency cap should be honored */
     private int time_window = UserConstant.frequency_cap_time_window_default;
     private int bidtype = BidType.AUTO.getCode();
-    
+    private String external_tracker = "";
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -99,6 +99,8 @@ public class Ad {
         result = prime * result
                 + ((creative_guid == null) ? 0 : creative_guid.hashCode());
         result = prime * result + creative_id;
+        result = prime * result + ((external_tracker == null) ? 0
+                : external_tracker.hashCode());
         result = prime * result + frequency_cap;
         result = prime * result + ((guid == null) ? 0 : guid.hashCode());
         result = prime * result
@@ -183,6 +185,11 @@ public class Ad {
         } else if (!creative_guid.equals(other.creative_guid))
             return false;
         if (creative_id != other.creative_id)
+            return false;
+        if (external_tracker == null) {
+            if (other.external_tracker != null)
+                return false;
+        } else if (!external_tracker.equals(other.external_tracker))
             return false;
         if (frequency_cap != other.frequency_cap)
             return false;
@@ -414,6 +421,12 @@ public class Ad {
     }
     public void setBidtype(int bidtype) {
         this.bidtype = bidtype;
+    }
+    public String getExternal_tracker() {
+        return external_tracker;
+    }
+    public void setExternal_tracker(String external_tracker) {
+        this.external_tracker = external_tracker;
     }
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

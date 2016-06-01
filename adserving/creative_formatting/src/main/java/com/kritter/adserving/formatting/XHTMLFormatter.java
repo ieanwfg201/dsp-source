@@ -17,6 +17,8 @@ import com.kritter.utils.common.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.kritter.formatterutil.CreativeFormatterUtils;
+
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -159,8 +161,12 @@ public class XHTMLFormatter implements CreativesFormatter
 
                 StringBuffer creativeImageUrl = new StringBuffer(this.cdnBaseImageUrl);
                 creativeImageUrl.append(responseAdInfo.getCreativeBanner().getResourceURI());
-
-                fCreative.addBannerEntity(creativeImageUrl.toString(), null, null, creative.getText(), clickUrl.toString(), cscBeaconUrl.toString());
+                List<String> extImpTracker = null;
+                if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getExtImpTracker() != null){
+                    extImpTracker = adEntity.getExtTracker().getExtImpTracker();
+                }
+                fCreative.addBannerEntity(creativeImageUrl.toString(), null, null, creative.getText(), 
+                        clickUrl.toString(), cscBeaconUrl.toString(),extImpTracker);
             }
             else if(creative.getCreativeFormat().equals(CreativeFormat.TEXT))
             {

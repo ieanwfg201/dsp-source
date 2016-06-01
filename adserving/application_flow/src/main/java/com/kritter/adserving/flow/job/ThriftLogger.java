@@ -12,6 +12,8 @@ import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
 
 import com.kritter.entity.user.userid.ExternalUserId;
+import com.kritter.req_logging.ReqLoggingCache;
+import com.kritter.req_logging.ReqLoggingCacheEntity;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.cache.CampaignCache;
 import com.kritter.serving.demand.entity.AdEntity;
@@ -44,6 +46,7 @@ public class ThriftLogger implements Job {
     private String xForwardedForHeaderName;
     private String remoteAddressHeaderName;
     private Logger bidRequestLogger;
+    private ReqLoggingCache reqLoggingCache;
     private static final String BID_REQ_DELIM_FOR_NOFILL = "|";
 
     public ThriftLogger(String name,
@@ -56,7 +59,8 @@ public class ThriftLogger implements Job {
                         String userAgentHeaderName,
                         String xForwardedForHeaderName,
                         String remoteAddressHeaderName,
-                        String bidRequestLoggerName)
+                        String bidRequestLoggerName,
+                        ReqLoggingCache reqLoggingCache)
     {
         this.name = name;
         this.applicationLogger = LoggerFactory.getLogger(applicationLoggerName);
@@ -69,6 +73,7 @@ public class ThriftLogger implements Job {
         this.xForwardedForHeaderName = xForwardedForHeaderName;
         this.remoteAddressHeaderName = remoteAddressHeaderName;
         this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
+        this.reqLoggingCache = reqLoggingCache;
     }
 
     @Override
@@ -337,8 +342,16 @@ public class ThriftLogger implements Job {
                 noFillReasonForBidLog = NoFillReason.FILL.toString();
             }
 
+            ReqLoggingCacheEntity reqLoggingCacheEntity = null;
 
-            if(INVENTORY_SOURCE.RTB_EXCHANGE.getCode() == request.getInventorySource())
+            if(null != request.getSite())
+                reqLoggingCacheEntity = reqLoggingCache.query(request.getSite().getPublisherId());
+
+            boolean logBidRequest = false;
+            if(null != reqLoggingCacheEntity)
+                logBidRequest = reqLoggingCacheEntity.isEnable();
+
+            if(logBidRequest && INVENTORY_SOURCE.RTB_EXCHANGE.getCode() == request.getInventorySource())
             {
                 StringBuffer bidRequestBuffer = new StringBuffer();
                 bidRequestBuffer.append(request.getRequestId());
@@ -346,7 +359,7 @@ public class ThriftLogger implements Job {
                 bidRequestBuffer.append(noFillReasonForBidLog);
                 this.bidRequestLogger.debug(bidRequestBuffer.toString());
             }
-            
+
             //set requesting slot id array
             if(null != request.getRequestedSlotIdList())
                 adservingRequestResponse.setReqSlotIds(request.getRequestedSlotIdList());
