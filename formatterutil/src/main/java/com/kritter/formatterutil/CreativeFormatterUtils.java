@@ -20,6 +20,17 @@ import java.security.NoSuchAlgorithmException;
 public class CreativeFormatterUtils
 {
     private static final String URI_FIELD_DELIMITER = "/";
+    public static final String CLICK_URL_MACRO       = "$CLICK_URL";
+    public static final String CREATIVE_IMAGE_URL    = "$CREATIVE_IMAGE";
+    public static final String CREATIVE_TEXT         = "$CREATIVE_TEXT";
+    public static final String CREATIVE_CSC_BEACON   = "$CREATIVE_CSC_BEACON";
+    public static final String CREATIVE_ALT_TEXT     = "$CREATIVE_ALT_TEXT";
+    public static final String CREATIVE_TYPE         = "$CREATIVE_TYPE";
+    public static final String CREATIVE_IMAGE_WIDTH  = "$CREATIVE_IMAGE_WIDTH";
+    public static final String CREATIVE_IMAGE_HEIGHT = "$CREATIVE_IMAGE_HEIGHT";
+    public static final String RICHMEDIA_PAYLOAD     = "$RICHMEDIA_PAYLOAD";
+    public static final String WIN_NOTIFICATION_URL  = "$WIN_NOTIFICATION_URL";
+
 
     public static String prepareClickUri(Logger logger,Request request,
                                          ResponseAdInfo responseAdInfo,

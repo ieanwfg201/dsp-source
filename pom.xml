@@ -100,6 +100,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>ex_int/openrtb/2.3</module>
     <module>ex_int/native_admarkup/2.3</module>
     <module>ex_int/video_admarkup</module>
+    <module>ex_int/banner_admarkup/common</module>
     <module>ex_int/mopub/2.3</module>
     <module>geo/utils</module>
     <module>geo/common</module>

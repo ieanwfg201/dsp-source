@@ -1,21 +1,20 @@
 package com.kritter.bidreqres.response_creator.mopub2_3;
 
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
-import com.kritter.adserving.formatting.CreativesFormatter;
 import com.kritter.bidreqres.entity.mopub2_3.*;
 import com.kritter.bidrequest.entity.IBidResponse;
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.bidrequest.response_creator.IBidResponseCreator;
-import com.kritter.constants.ExternalUserIdType;
 import com.kritter.constants.VideoBidResponseProtocols;
-import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.entity.video_props.VideoProps;
+import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
 import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
 import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
 import com.kritter.common.caches.iab.categories.IABCategoriesCache;
 import com.kritter.common.caches.iab.index.IABIDIndex;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.entity.creative_macro.CreativeMacro;
+import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
@@ -23,7 +22,6 @@ import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
-import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ServerConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -55,7 +53,6 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
     private String trackingEventUrl;
 
     //template for formatting.
-    private static final String HTML_BANNER_TEMPLATE = prepareHTMLBannerTemplate();
     private static final String CURRENCY = "USD";
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Random randomPicker = new Random();
@@ -234,8 +231,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                     prepareBannerHTMLAdMarkup(
                             request,
                             responseAdInfo,
-                            response,
-                            winNotificationURLBuffer
+                            response, adEntity.getExtTracker()
                     )
             );
         else if (creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
@@ -333,8 +329,21 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         bidResponseBidMopubDTO.setWinNotificationUrl(winNotificationURLBuffer.toString());
 
         BidResponseBidExtMopubDTO bidResponseBidExtMopubDTO = new BidResponseBidExtMopubDTO();
-        String impTrackers[] = new String[1];
+        int extraTrackingSize=0;
+        if(adEntity.getExtTracker() != null){
+            if(adEntity.getExtTracker().getExtImpTracker() != null && adEntity.getExtTracker().getExtImpTracker().size()>0){
+                extraTrackingSize = adEntity.getExtTracker().getExtImpTracker().size();
+            }
+        }
+        String impTrackers[] = new String[1+extraTrackingSize];
         impTrackers[0] = fetchImpressionTrackerSameAsCSC(request,responseAdInfo,response);
+        if(extraTrackingSize>0){
+            int count =1;
+            for(String str:adEntity.getExtTracker().getExtImpTracker()){
+                impTrackers[count] = str;
+                count++;
+            }
+        }
         bidResponseBidExtMopubDTO.setImptrackers(impTrackers);
         if(creative.getCreativeFormat() != null && CreativeFormat.VIDEO == creative.getCreativeFormat()){
             VideoProps videoProps = creative.getVideoProps();
@@ -405,102 +414,12 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
     private String prepareBannerHTMLAdMarkup(
                                              Request request,
                                              ResponseAdInfo responseAdInfo,
-                                             Response response,
-                                             StringBuffer winNotificationURLBuffer
+                                             Response response, ExtTracker extTracker
                                             ) throws BidResponseException
     {
-        String clickUri = CreativeFormatterUtils.prepareClickUri
-                                                                (
-                                                                    this.logger,
-                                                                    request,
-                                                                    responseAdInfo,
-                                                                    response.getBidderModelId(),
-                                                                    urlVersion,
-                                                                    request.getInventorySource(),
-                                                                    response.getSelectedSiteCategoryId(),
-                                                                    this.secretKey
-                                                                );
-
-        if(null == clickUri)
-            throw new BidResponseException("Click URI could not be formed using different attributes like " +
-                                           "handset,location,bids,version,etc. inside BidRequestResponseCreatorMopub");
-
-        StringBuffer clickUrl = new StringBuffer(this.postImpressionBaseClickUrl);
-        clickUrl.append(clickUri);
-
-        /*********prepare win notification url , also include bidder price.****************/
-        winNotificationURLBuffer.append(this.postImpressionBaseWinApiUrl);
-        winNotificationURLBuffer.append(clickUri);
-        String suffixToAdd = this.notificationUrlSuffix;
-        suffixToAdd = suffixToAdd.replace(
-                                          this.notificationUrlBidderBidPriceMacro,
-                                          String.valueOf(responseAdInfo.getEcpmValue())
-                                         );
-        winNotificationURLBuffer.append(suffixToAdd);
-        /*********done preparing win notification url, included bidder price as well*******/
-
-        //set common post impression uri to be used in any type of post impression url.
-        responseAdInfo.setCommonURIForPostImpression(clickUri);
-
-        StringBuffer cscBeaconUrl = new StringBuffer(this.postImpressionBaseCSCUrl);
-        cscBeaconUrl.append(clickUri);
-
-        /**modify csc url to have bid-switch exchangeId as a parameter for usage in post-impression server************/
-        logger.debug("Going to modify CSC URL if request has user ids available, for kritterUserId:{} ",
-                request.getUserId());
-
-        Set<ExternalUserId> externalUserIdSet = request.getExternalUserIds();
-        String exchangeUserId = null;
-        if(null != externalUserIdSet)
-        {
-            for(ExternalUserId externalUserId : externalUserIdSet)
-            {
-                if(externalUserId.getIdType().equals(ExternalUserIdType.EXCHANGE_CONSUMER_ID))
-                    exchangeUserId = externalUserId.getUserId();
-            }
-        }
-
-        cscBeaconUrl = new StringBuffer(ApplicationGeneralUtils.modifyCSCURLForUserIds(
-                exchangeUserId,
-                request.getUserId(),
-                cscBeaconUrl.toString())
-        );
-
-        logger.debug("CSC url is modified to contain exchange and kritter UserId, after modification url:{} ",
-                cscBeaconUrl.toString());
-
-        /**************************modifying csc url completed********************************************************/
-
-        Creative creative = responseAdInfo.getCreative();
-
-        if(!creative.getCreativeFormat().equals(CreativeFormat.BANNER))
-            logger.error("Creative is not banner inside BidRequestResponseCreatorMopub,adId:{} ",
-                         responseAdInfo.getAdId());
-
-        if(null == responseAdInfo.getCreativeBanner())
-        {
-            logger.error("CreativeBanner is null inside XHTMLFormatter,cannot format ad, for adid: " +
-                         responseAdInfo.getAdId());
-            return null;
-        }
-
-        String htmlBannerResponse = HTML_BANNER_TEMPLATE.replace
-                (CreativesFormatter.CLICK_URL_MACRO,clickUrl.toString());
-        htmlBannerResponse = htmlBannerResponse.replace
-                (CreativesFormatter.CREATIVE_CSC_BEACON,cscBeaconUrl.toString());
-
-        StringBuffer creativeImageUrl = new StringBuffer(this.cdnBaseImageUrl);
-        creativeImageUrl.append(responseAdInfo.getCreativeBanner().getResourceURI());
-        htmlBannerResponse = htmlBannerResponse.replace
-                (CreativesFormatter.CREATIVE_IMAGE_URL,creativeImageUrl.toString());
-
-        if(null != responseAdInfo.getCreative().getText())
-            htmlBannerResponse = htmlBannerResponse.replace(
-                                                            CreativesFormatter.CREATIVE_ALT_TEXT,
-                                                            creative.getText()
-                                                           );
-
-        return htmlBannerResponse;
+        return BannerAdMarkUp.prepare(logger, request, response, responseAdInfo, urlVersion, secretKey, 
+                macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix, 
+                notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker);
     }
     
     private String prepareVideoAdMarkup(
@@ -514,20 +433,6 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                 logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
                 cdnBaseImageUrl, trackingEventUrl, null, null);
-    }
-
-    private static String prepareHTMLBannerTemplate()
-    {
-        StringBuffer sb = new StringBuffer("<a href=\"");
-        sb.append(CreativesFormatter.CLICK_URL_MACRO);
-        sb.append("\"><img src=\"");
-        sb.append(CreativesFormatter.CREATIVE_IMAGE_URL);
-        sb.append("\" alt=\"");
-        sb.append(CreativesFormatter.CREATIVE_ALT_TEXT);
-        sb.append("\"/></a><img src=\"");
-        sb.append(CreativesFormatter.CREATIVE_CSC_BEACON);
-        sb.append("\" style=\"display: none;\"/>");
-        return sb.toString();
     }
 
     private static class EcpmValueComparator implements Comparator<ResponseAdInfo>
