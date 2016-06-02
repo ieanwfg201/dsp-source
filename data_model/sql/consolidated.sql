@@ -1311,7 +1311,7 @@ account_guid VARCHAR(100) NOT NULL,
 created_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 modified_on TIMESTAMP NOT NULL,
 CONSTRAINT fk_saved_query_account_guid FOREIGN KEY(account_guid) REFERENCES account(guid)
-)ENGINE=InnoDB charset=latin1;
+)ENGINE=InnoDB;
 alter table saved_query add column reporting_type smallint default 1 after modified_on;
 alter table site add column floor double default 0 after comments;
 alter table ad add column tracking_partner int default 0 after comment;
