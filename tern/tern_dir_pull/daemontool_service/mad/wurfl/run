@@ -11,4 +11,4 @@ echo "Starting in $SLEEP seconds..."
 sleep $SLEEP
 
 
-exec setuidgid kritter python ${DAEMON} ${CONF}
+exec setuidgid ubuntu python ${DAEMON} ${CONF}
