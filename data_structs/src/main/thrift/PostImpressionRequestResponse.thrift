@@ -14,6 +14,7 @@ CONVERSION =6,
 INT_EXCHANGE_WIN =7,
 TEVENT =8,
 BEVENT_CSCWIN = 9,
+USR =10,
 }
 
 enum PostImpressionTerminationReason{
@@ -40,6 +41,7 @@ HEALTHY_REQUEST = 19,
 CONVERSION_EXPIRED = 20,
 DUPLICATE = 21,
 BILLABLE_EVENT = 22,
+RETARGETING_SEGMENT_NF = 23,
 }
 
 /**
@@ -148,5 +150,14 @@ struct PostImpressionRequestResponse {
 53: optional i32 pub_inc_id, /*publisher integer id from mysql, always populated,-1 in case not available*/
 54: optional string tevent, /* tevent name */
 55: optional string teventtype, /* teventtype */
-56: optional i16 deviceType,
+56: optional i16 deviceType,           /*device Type of the requesting user,whether mobile/desktop*/
+57: optional double bidFloor,          /*bid floor of the impression*/
+58: optional string exchangeUserId,    /*exchange's user id*/
+59: optional string kritterUserId,     /*kritter's user id*/
+60: optional string externalSiteAppId, /*external supply's site/app id on exchange*/
+61: optional string ifa,               /*ID sanctioned for advertiser use in the clear (i.e., not hashed)*/
+62: optional string dpidmd5,           /*Platform device ID (e.g., Android ID); hashed via MD5.*/
+63: optional string dpidsha1,          /*Platform device ID (e.g., Android ID); hashed via SHA1.*/
+64: optional string macsha1,           /*MAC address of the device; hashed via SHA1.*/
+65: optional string macmd5,            /*MAC address of the device; hashed via MD5.*/
 }

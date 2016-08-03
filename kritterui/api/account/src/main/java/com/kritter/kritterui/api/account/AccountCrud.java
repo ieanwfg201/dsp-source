@@ -116,7 +116,10 @@ public class AccountCrud {
             }
             account.setBilling_name(rset.getString("billing_name"));
             account.setBilling_email(rset.getString("billing_email"));
-            
+            String ext = rset.getString("ext");
+            if(ext != null){
+                account.setExt(ext);
+            }
         }
     }
     
@@ -333,6 +336,7 @@ public class AccountCrud {
             pstmt.setString(38, generateDemandProps(account));
             pstmt.setString(39, account.getBilling_name());
             pstmt.setString(40, account.getBilling_email());
+            pstmt.setString(41, account.getExt());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -888,7 +892,8 @@ public class AccountCrud {
             pstmt.setString(35, generateDemandProps(account));
             pstmt.setString(36, account.getBilling_name());
             pstmt.setString(37, account.getBilling_email());
-            pstmt.setInt(38, account.getId());
+            pstmt.setString(38, account.getExt());
+            pstmt.setInt(39, account.getId());
 
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){

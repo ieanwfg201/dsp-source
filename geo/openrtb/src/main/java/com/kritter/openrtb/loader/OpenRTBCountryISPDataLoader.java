@@ -105,8 +105,7 @@ public class OpenRTBCountryISPDataLoader implements ThirdPartyDataLoader
 
             if(null == mccmncispCountryEntityMap || mccmncispCountryEntityMap.size() == 0)
             {
-                logger.error("No MCC MNC data could be found for loading, skipping further workflow," +
-                             "inside prepareDatabase of OpenRTBCountryISPDataLoader");
+                logger.error("No MCC MNC data could be found for loading, skipping further workflow, inside prepareDatabase of OpenRTBCountryISPDataLoader");
                 return;
             }
 
@@ -310,8 +309,7 @@ public class OpenRTBCountryISPDataLoader implements ThirdPartyDataLoader
             }
             catch (Exception e)
             {
-                cacheLogger.error("Exception while loading country and isp data inside " +
-                                  "CountryISPDataLoadingTask in the class OpenRTBCountryISPDataLoader",e);
+                cacheLogger.error("Exception while loading country and isp data inside CountryISPDataLoadingTask in the class OpenRTBCountryISPDataLoader",e);
             }
         }
     }

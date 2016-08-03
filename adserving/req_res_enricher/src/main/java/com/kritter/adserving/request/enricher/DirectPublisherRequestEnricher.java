@@ -6,14 +6,14 @@ import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
 import com.kritter.constants.ExternalUserIdType;
-import com.kritter.device.HandsetDetectionProvider;
-import com.kritter.device.entity.HandsetMasterData;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.InternetServiceProvider;
-import com.kritter.geo.common.entity.reader.ConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
+import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.constants.StatusIdEnum;
+import com.kritter.device.common.HandsetDetectionProvider;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
     private HandsetDetectionProvider handsetDetectionProvider;
     private CountryDetectionCache countryDetectionCache;
     private ISPDetectionCache ispDetectionCache;
-    private ConnectionTypeDetectionCache connectionTypeDetectionCache;
+    private IConnectionTypeDetectionCache connectionTypeDetectionCache;
 
     public DirectPublisherRequestEnricher(
                                           String loggerName,
@@ -115,7 +115,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
                                           HandsetDetectionProvider handsetDetectionProvider,
                                           CountryDetectionCache countryDetectionCache,
                                           ISPDetectionCache ispDetectionCache,
-                                          ConnectionTypeDetectionCache connectionTypeDetectionCache,
+                                          IConnectionTypeDetectionCache connectionTypeDetectionCache,
                                           String kritterCookieIdName
                                          )
     {
@@ -235,7 +235,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
             if(null==site || !(site.getStatus() == StatusIdEnum.Active.getCode()))
             {
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.SITE_NOT_FIT);
-                this.logger.error("Requesting site is not fit or is not found in cache . siteid: " + siteId );
+                this.logger.error("Requesting site is not fit or is not found in cache . siteid:{} " , siteId );
                 return request;
             }
 
@@ -250,8 +250,11 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
                 externalUserIds = new HashSet<ExternalUserId>();
                 request.setExternalUserIds(externalUserIds);
             }
-            externalUserIds.add(new ExternalUserId(ExternalUserIdType.AGGREGATOR_USER_ID, request.getInventorySource(),
-                                                   requestingUserId));
+
+            if(requestingUserId != null) {
+                externalUserIds.add(new ExternalUserId(ExternalUserIdType.COOKIE_ID, request.getInventorySource(),
+                        requestingUserId));
+            }
 
             logger.debug("Cookie :{} received from end user and set as one of externalUserIds", requestingUserId);
 

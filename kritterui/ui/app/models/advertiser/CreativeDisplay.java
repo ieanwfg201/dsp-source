@@ -50,6 +50,14 @@ public class CreativeDisplay extends EntityDisplay{
     public boolean isVideoFormat(){
         return cc.getFormat_id()==4;
     }
+    public boolean isDirectVideoFormat(){
+        if(cc.getFormat_id()==4){
+        	if(cc.getVideoDemandType() ==2){
+        		return true;
+        	}
+        }
+        return false;
+    }
 
 	public boolean isRichMediaFormat(){
 		return cc.getFormat_id()==3;

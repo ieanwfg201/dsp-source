@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 
 import play.Logger;
+import play.Play;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import com.kritter.api.entity.tracking_event.TrackingEvent;
 import com.kritter.kritterui.api.utils.TimeManipulation.TimeManipulator;
 
 public class TrackingEventBaseEntity {
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
 
     protected static String ALL = "[\"all\"]";
     protected static String NONE = "[\"none\"]";
@@ -68,7 +70,7 @@ public class TrackingEventBaseEntity {
                 || "".equals(trackingEvent.getStart_time_str())) {
             Date date = DateUtils.addDays(new Date(), -1);
             start_date = TimeManipulator.convertDate(date,
-                    "yyyy-MM-dd 00:00:00", "UTC");
+                    "yyyy-MM-dd 00:00:00", timezoneid);
         } else {
             this.start_date = trackingEvent.getStart_time_str();
         }
@@ -77,7 +79,7 @@ public class TrackingEventBaseEntity {
                 || "".equals(trackingEvent.getEnd_time_str())) {
             Date date = DateUtils.addDays(new Date(), -1);
             end_date = TimeManipulator.convertDate(date, "yyyy-MM-dd 00:00:00",
-                    "UTC");
+                    timezoneid);
         } else {
             this.end_date = trackingEvent.getEnd_time_str();
         }
@@ -88,9 +90,9 @@ public class TrackingEventBaseEntity {
         this.trackingEvent = new TrackingEvent();
         Date date = DateUtils.addDays(new Date(), -1);
         start_date = TimeManipulator.convertDate(date, "yyyy-MM-dd 00:00:00",
-                "UTC");
+                timezoneid);
         end_date = TimeManipulator.convertDate(date, "yyyy-MM-dd 23:59:59",
-                "UTC");
+                timezoneid);
     }
 
     public void setStart_date(String start_date) {
@@ -101,7 +103,7 @@ public class TrackingEventBaseEntity {
         String str = trackingEvent.getStart_time_str();
         if (str == null || "".equals(str)) {
             return TimeManipulator.convertDate(DateUtils.addDays(new Date(), -1),
-                    "yyyy-MM-dd 00:00:00", "UTC");
+                    "yyyy-MM-dd 00:00:00", timezoneid);
         }
         return str;
     }
@@ -114,7 +116,7 @@ public class TrackingEventBaseEntity {
         String str = trackingEvent.getEnd_time_str();
         if (str == null || "".equals(str)) {
             return TimeManipulator.convertDate(DateUtils.addDays(new Date(), -1),
-                    "yyyy-MM-dd 00:00:00", "UTC");
+                    "yyyy-MM-dd 00:00:00", timezoneid);
         }
         return str;
     }

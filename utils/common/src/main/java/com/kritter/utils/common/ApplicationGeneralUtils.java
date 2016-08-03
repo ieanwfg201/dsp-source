@@ -23,6 +23,7 @@ public class ApplicationGeneralUtils
         public static final Integer DEFAULT_COUNTRY_CARRIER_ID = -1;
         public static final Short DEFAULT_SELECTED_SITE_CATEGORY_ID = -1;
         public static final Integer DEFAULT_INTERNAL_ID_FOR_EXTERNAL_SUPPLY_ATTRIBUTES = -1;
+        public static final Integer DEFAULT_ADPOSITION_ID = -1;
         public static final String OS_TARGETING_VERSION_SEPARATOR = "-";
         public static final String URI_PATH_SEPARATOR = "/";
         private static final String BID_SEPARATOR = ",";
@@ -426,7 +427,20 @@ public class ApplicationGeneralUtils
     public static final String URL_PARAM_VALUE_DELIMITER = "=";
     public static final String EXCHANGE_USER_ID_PARAM_NAME = "eid";
     public static final String KRITTER_USER_ID_PARAM_NAME = "kid";
+    public static final String ADSERVING_POSTIMPRESSION_INFO_PARAM_NAME = "iid";
 
+    public static String modifyURLForQueryParamStart(String url)
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append(url);
+
+        if(url.contains(URL_QUERY_BEGIN_QUESTION_MARK))
+            sb.append(URL_QUERY_PARAM_DELIMITER);
+        else
+            sb.append(URL_QUERY_BEGIN_QUESTION_MARK);
+
+        return sb.toString();
+    }
     public static String modifyCSCURLForUserIds(
                                                 String exchangeUserIdValue,
                                                 String kritterUserIdValue,
@@ -437,12 +451,7 @@ public class ApplicationGeneralUtils
             return cscURL;
 
         StringBuffer cscUrlToModify = new StringBuffer();
-        cscUrlToModify.append(cscURL);
-
-        if(cscURL.contains(URL_QUERY_BEGIN_QUESTION_MARK))
-            cscUrlToModify.append(URL_QUERY_PARAM_DELIMITER);
-        else
-            cscUrlToModify.append(URL_QUERY_BEGIN_QUESTION_MARK);
+        cscUrlToModify.append(modifyURLForQueryParamStart(cscURL));
 
         if(null != exchangeUserIdValue)
         {
@@ -461,5 +470,4 @@ public class ApplicationGeneralUtils
 
         return cscUrlToModify.toString();
     }
-
 }

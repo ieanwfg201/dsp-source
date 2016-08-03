@@ -212,7 +212,7 @@ public class MaxMindISPDataLoader implements ThirdPartyDataLoader
                             country = countryDetectionCache.findCountryForIpAddress(startIpValue);
                             if(null == country)
                             {
-                                logger.error("Country is null for operator ,start ip: " + startIpValue);
+                                logger.error("Country is null for operator ,start ip: {}", startIpValue);
                                 continue;
                             }
                         }
@@ -418,8 +418,7 @@ public class MaxMindISPDataLoader implements ThirdPartyDataLoader
             }
             catch (Exception e)
             {
-                cacheLogger.error("Exception while loading isp data inside " +
-                                  "ISPDataLoadingTask in the class MaxMindISPDataLoader",e);
+                cacheLogger.error("Exception while loading isp data inside ISPDataLoadingTask in the class MaxMindISPDataLoader",e);
             }
         }
     }

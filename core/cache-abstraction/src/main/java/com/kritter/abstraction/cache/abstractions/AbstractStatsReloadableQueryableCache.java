@@ -28,10 +28,12 @@ public abstract class AbstractStatsReloadableQueryableCache<I, E extends IEntity
     @Getter private Date lastFailedRefreshTime = new Date();
     @Getter private int noOfRefreshes = 0, noOfFailures = 0, noOfSuccesses = 0;
     private Map<I, String> errorMap = new HashMap<I,String>();
+    @Getter Logger logger;
 
-    public AbstractStatsReloadableQueryableCache(List<Class> secIndexKeyClassList, Logger log, Properties props) throws InitializationException
+    public AbstractStatsReloadableQueryableCache(List<Class> secIndexKeyClassList, Logger logger, Properties props) throws InitializationException
     {
-        super(secIndexKeyClassList, log);
+        super(secIndexKeyClassList, logger);
+        this.logger = logger;
         if(props == null)
             throw new InitializationException("Properties object cannot be null");
         String refreshInterval = props.getProperty("refresh_interval");

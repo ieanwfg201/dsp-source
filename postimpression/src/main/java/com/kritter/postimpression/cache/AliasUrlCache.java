@@ -66,7 +66,7 @@ public class AliasUrlCache extends
         }catch(Exception e){
 
             addToErrorMap(id, "Exception while processing UrlAliasEntity in AliasUrlCache " + id );
-            logger.error("Exception while processing UrlAliasEntity in AliasUrlCache " + id);
+            logger.error("Exception while processing UrlAliasEntity in AliasUrlCache {}", id);
             throw new RefreshException("Exception while processing UrlAliasEntity in AliasUrlCache ", e);
 
         }

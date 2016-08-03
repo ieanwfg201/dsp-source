@@ -5,7 +5,7 @@ import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
 import com.kritter.common.site.cache.SiteMetaDataLoader;
 import com.kritter.constants.LoggingResource;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.device.HandsetPopulationProvider;
+import com.kritter.device.common.HandsetPopulationProvider;
 import com.kritter.fanoutinfra.executorservice.common.KExecutor;
 import com.kritter.geo.common.entity.reader.*;
 import com.kritter.geo.common.entity.writer.IspMappingsLoader;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.Properties;
@@ -31,6 +32,8 @@ public class PreImpressionContextListener implements ServletContextListener
     private IspMappingsLoader ispMappingsLoader;
     private CountryDetectionCache countryDetectionCache;
     private ISPDetectionCache ispDetectionCache;
+    private StateDetectionCache stateDetectionCache;
+    private CityDetectionCache cityDetectionCache;
     private HandsetPopulationProvider handsetPopulationProvider;
     private CustomIPFileDetectionCache customIPFileDetectionCache;
     private CreativeSlotSizeCache creativeSlotSizeCache;
@@ -43,12 +46,14 @@ public class PreImpressionContextListener implements ServletContextListener
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent)
     {
+        ServletContext servletContext = servletContextEvent.getServletContext();
+
         System.out.println("Servlet Context Initialization event received, going to initialize ad serving...");
 
-        System.out.println("Configure log4j in ad serving using properties file path " +
-                           LoggingResource.LOG_4J_PROPERTIES_FILE_PATH_ADSERVER);
+        String log4jFilePath = servletContext.getInitParameter(LoggingResource.LOG4J_PROPERTIES_ADSERVING_KEY);
 
-        PropertyConfigurator.configure(LoggingResource.LOG_4J_PROPERTIES_FILE_PATH_ADSERVER);
+        System.out.println("Configure log4j in ad serving using properties file path " + log4jFilePath);
+        PropertyConfigurator.configure(log4jFilePath);
 
         System.out.println("Done configuring log4j, now initializing the entire ad serving Workflow");
 
@@ -71,9 +76,20 @@ public class PreImpressionContextListener implements ServletContextListener
         this.zipCodeFileDataCache          = (ZipCodeFileDataCache)this.beanFactory.getBean("zip_code_file_cache");
         this.externalSupplyAttributesCache = (ExternalSupplyAttributesCache)this.beanFactory.getBean("external_supply_attr_cache");
         this.siteMetaDataLoader            = (SiteMetaDataLoader)this.beanFactory.getBean("site_meta_data_loader");
-        this.kexecutor = KExecutor.getKExecutor("adserving.application");
-        
-        servletContextEvent.getServletContext().setAttribute("workflow",this.preImpressionWorkflow);
+        this.kexecutor                     = KExecutor.getKExecutor("adserving.application");
+
+        try
+        {
+            this.stateDetectionCache       = (StateDetectionCache) this.beanFactory.getBean("state_detector");
+            this.cityDetectionCache        = (CityDetectionCache) this.beanFactory.getBean("city_detector");
+        }
+        catch (Exception e)
+        {
+            System.out.println("Exception in fetching state ,city beans,must not be defined, no error " +
+                                e.getMessage());
+        }
+
+        servletContext.setAttribute("workflow",this.preImpressionWorkflow);
 
         System.out.println("AdServing Application context initialized .... ");
     }
@@ -92,6 +108,10 @@ public class PreImpressionContextListener implements ServletContextListener
             this.countryDetectionCache.releaseResources();
         if(null != this.ispDetectionCache)
             this.ispDetectionCache.releaseResources();
+        if(null != this.stateDetectionCache)
+            this.stateDetectionCache.releaseResources();
+        if(null != this.cityDetectionCache)
+            this.cityDetectionCache.releaseResources();
         if(null != this.handsetPopulationProvider)
             this.handsetPopulationProvider.releaseResources();
         if(null != this.customIPFileDetectionCache)

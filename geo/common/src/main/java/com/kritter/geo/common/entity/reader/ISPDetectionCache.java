@@ -35,7 +35,7 @@ public class ISPDetectionCache
     private TimerTask timerTask;
     private Map<String,Long> lastRefreshStartTimeMap;
 
-    //keep country data indexed on data-source and as sorted array for binary search.
+    //keep ISP data indexed on data-source and as sorted array for binary search.
     private Map<String,IpRangeKeyValue[]> sortedISPArrayAgainstDataSource;
     private static final String COLON = ":";
 
@@ -306,8 +306,7 @@ public class ISPDetectionCache
             }
             catch (RefreshException re)
             {
-                cacheLogger.error("RefreshException while loading country data inside " +
-                        "CountryDataFileReloadTimerTask in the class CountryDetectionCache",re);
+                cacheLogger.error("RefreshException while loading country data inside CountryDataFileReloadTimerTask in the class CountryDetectionCache",re);
             }
         }
     }

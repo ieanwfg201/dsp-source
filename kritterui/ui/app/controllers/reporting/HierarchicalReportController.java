@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.util.Map;
 
 import play.Logger;
+import play.Play;
 import play.db.DB;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -23,7 +24,7 @@ import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
 
 public class HierarchicalReportController extends Controller{
-
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
 	public static  ObjectMapper  om  = new ObjectMapper();
 	public static Result reportPage( String reportType, Option<String> filter){ 
 		if(filter.nonEmpty()) 
@@ -118,6 +119,7 @@ public class HierarchicalReportController extends Controller{
 
 			con =  DB.getConnection();
 			ReportingEntity re = new ReportingEntity();
+			re.setTimezone(timezoneid);
 			HierarchyPopulator.populateSupplySourceType(re, supplysourcetype);
 			HierarchyPopulator.populateSiteHygiene(re, site_hygiene);
 			HierarchyPopulator.populate(re,reportType, crumbs);

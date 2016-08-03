@@ -353,6 +353,21 @@ public class Ext_siteCrud {
                 }
                 pstmt.setTimestamp(1, new Timestamp(new Date().getTime()));
                 break;
+            case update_ext_site_name:
+                String str2 = ext_site_input.getId_list(); 
+                if(str2 == null || "ALL".equalsIgnoreCase(str2) || "".equalsIgnoreCase(str2) || "none".equalsIgnoreCase(str2)){
+                    Message msg = new Message();
+                    msg.setError_code(ErrorEnum.EXT_SITE_ID_NP.getId());
+                    msg.setMsg(ErrorEnum.EXT_SITE_ID_NP.getName());
+                    return msg;
+                }else{
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Ext_site.update_ext_site_name);
+                }
+                pstmt.setString(1, ext_site_input.getStr());
+                pstmt.setTimestamp(2, new Timestamp(new Date().getTime()));
+                pstmt.setInt(3, Integer.parseInt(ext_site_input.getId_list()));
+                break;
+                
             default:
                 break;
             }

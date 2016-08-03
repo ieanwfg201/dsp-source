@@ -64,7 +64,6 @@ public class CreativeContainerEntity extends Entity{
     private int mime = VideoMimeTypes.MPEG4.getCode();
     @Getter@Setter
     private int duration = -1;
-    @Getter@Setter
     private int protocol = VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode();
     @Getter@Setter
     private int startdelay = -11;
@@ -90,6 +89,8 @@ public class CreativeContainerEntity extends Entity{
     private int companiontype = VASTCompanionTypes.Unknown.getCode();
     @Getter@Setter
     private String trackingStr = "[]";
+    @Getter@Setter
+    private String direct_videos = "[]";
     
     public String getExt_resource_url() {
         return ext_resource_url;
@@ -171,7 +172,12 @@ public class CreativeContainerEntity extends Entity{
     public void setLast_modified(long last_modified) {
         this.last_modified = last_modified;
     }
-    
+    public int getProtocol() {
+        return protocol;
+    }
+    public void setProtocol(int protocol) {
+        this.protocol = protocol;
+    }
     public Creative_container getEntity(){
     	Creative_container cc = new Creative_container();
     	BeanUtils.copyProperties(this, cc);

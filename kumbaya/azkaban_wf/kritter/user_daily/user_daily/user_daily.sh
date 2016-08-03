@@ -19,14 +19,14 @@ done
 
 MAINCLASS=com.kritter.kumbaya.countdistinct.kritter_user_counts.KritterUserCount
 
-inputFilePattern=${2}/${3}-*/*
+inputFilePattern="${2}/${3}-*/*"
 outputFilePath=${4}/${3}/usercount.txt
 delimiter=${5}
 logType="adserving"
 processingTime=${3}
 
-echo 'java  -cp "$CLASSPATH" $MAINCLASS ${inputFilePattern} ${outputFilePath} ${delimiter} ${logType} ${processingTime}'
-java  -cp "$CLASSPATH" $MAINCLASS ${inputFilePattern} ${outputFilePath} ${delimiter} ${logType} ${processingTime}
+echo "java  -cp "$CLASSPATH" $MAINCLASS \"${inputFilePattern}\" ${outputFilePath} ${delimiter} ${logType} ${processingTime}"
+eval java  -cp "$CLASSPATH" $MAINCLASS \"${inputFilePattern}\" ${outputFilePath} ${delimiter} ${logType} ${processingTime}
 
 
 exit $?

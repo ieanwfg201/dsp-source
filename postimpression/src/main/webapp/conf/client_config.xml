@@ -47,5 +47,12 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="34"><ref bean="billable_event_url_reader"/></constructor-arg>
         <constructor-arg index="35"><ref bean="billable_event_enricher_fraud_processor"/></constructor-arg>
         <constructor-arg index="36" value="false"/>
+        <constructor-arg index="37"><null /></constructor-arg>
+        <constructor-arg index="38"><null /></constructor-arg>
+        <constructor-arg index="39"><null /></constructor-arg>
+        <constructor-arg index="40"><null /></constructor-arg>
+        <constructor-arg index="41"><null /></constructor-arg>
+        <constructor-arg index="42"><ref bean="nofrdp_event_url_reader"/></constructor-arg>
+        <constructor-arg index="43"><ref bean="nofrdp_enricher_fraud_processor"/></constructor-arg>
     </bean>
 </beans>

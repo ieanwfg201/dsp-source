@@ -17,7 +17,8 @@ public enum Ext_siteEnum
             get_rejected_ext_site_by_pub(9,"get_rejected_ext_site_by_pub"),
             get_unapproved_ext_site_by_pub_os(10,"get_unapproved_ext_site_by_pub_os"),
             get_approved_ext_site_by_pub_os(11,"get_approved_ext_site_by_pub_os"),
-            get_rejected_ext_site_by_pub_os(12,"get_rejected_ext_site_by_pub_os");
+            get_rejected_ext_site_by_pub_os(12,"get_rejected_ext_site_by_pub_os"),
+            update_ext_site_name(13,"update_ext_site_name");
             
             private int code;
             private String name;

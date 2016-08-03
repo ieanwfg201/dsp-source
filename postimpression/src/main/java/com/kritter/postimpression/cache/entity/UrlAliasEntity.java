@@ -2,6 +2,7 @@ package com.kritter.postimpression.cache.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
@@ -9,6 +10,7 @@ import java.sql.Timestamp;
  * This class represents url alias entity in system.
  */
 
+@ToString
 public class UrlAliasEntity implements IUpdatableEntity<Integer>{
 
     @Getter

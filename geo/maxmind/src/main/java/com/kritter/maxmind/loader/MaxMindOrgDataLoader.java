@@ -157,15 +157,14 @@ public class MaxMindOrgDataLoader implements ThirdPartyDataLoader
             inputDataFile = new File(this.orgDatabaseFileFullPath);
             if(null == inputDataFile || !inputDataFile.exists())
             {
-                logger.error("Maxmind Organization Geo-141 CSV at the file path: , " + this.orgDatabaseFileFullPath +
-                             " could not be read due to error being ");
+                logger.error("Maxmind Organization Geo-141 CSV at the file path: ,{} could not be read due to error being ",this.orgDatabaseFileFullPath);
                 return;
             }
         }
         catch (Exception e)
         {
-            logger.error("Maxmind Organization Geo-141 CSV at the file path: , " + this.orgDatabaseFileFullPath +
-                         " could not be read due to error being ",e);
+            logger.error("Maxmind Organization Geo-141 CSV at the file path: {}",this.orgDatabaseFileFullPath);
+	    logger.error("could not be read due to error being ", e);
             return;
         }
 
@@ -248,7 +247,7 @@ public class MaxMindOrgDataLoader implements ThirdPartyDataLoader
                             country = countryDetectionCache.findCountryForIpAddress(startIpValue);
                             if(null == country)
                             {
-                                logger.error("Country is null for operator ,start ip: " + startIpValue);
+                                logger.error("Country is null for operator ,start ip: {}", startIpValue);
                                 continue;
                             }
                         }
@@ -457,8 +456,7 @@ public class MaxMindOrgDataLoader implements ThirdPartyDataLoader
             }
             catch (Exception e)
             {
-                cacheLogger.error("Exception while loading isp data inside " +
-                        "OrganizationDataLoadingTask in the class MaxMindOrgDataLoader",e);
+                cacheLogger.error("Exception while loading isp data inside OrganizationDataLoadingTask in the class MaxMindOrgDataLoader",e);
             }
         }
     }

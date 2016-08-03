@@ -12,6 +12,7 @@ import com.kritter.postimpression.thrift.struct.PostImpressionTerminationReason;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.constants.BEventType;
 import com.kritter.constants.ConnectionType;
+import com.kritter.utils.common.url.URLField;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
@@ -23,6 +24,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import com.kritter.constants.INVENTORY_SOURCE;
+import com.kritter.constants.NoFraudPostImpEvents;
 
 /**
  * This class logs postimpression parameters in a thrift format
@@ -255,6 +257,10 @@ public class ThriftLogger implements Job
 
             //set win notification related parameters.
             postImpressionRequestResponse.setAuction_currency(AUCTION_CURRENCY);
+            if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP.
+                getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
+            	 postImpressionRequestResponse.setAuction_currency(null);
+            }
             if(null != request.getWinBidPriceFromExchange())
                 postImpressionRequestResponse.setAuction_price(request.getWinBidPriceFromExchange());
             if(null != request.getAuctionId())
@@ -271,6 +277,48 @@ public class ThriftLogger implements Job
             if(null != request.getTtype()){
                 postImpressionRequestResponse.setTeventtype(request.getTtype());
             }
+
+            /**********************************Set url fields from adserving**************************************/
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap)
+            {
+                URLField bidFloor = urlFieldMap.get(URLField.BID_FLOOR.getCode());
+                if(null != bidFloor && null != bidFloor.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setBidFloor(((Float)bidFloor.getUrlFieldProperties().getFieldValue()).doubleValue());
+
+                URLField kritterUserId = urlFieldMap.get(URLField.KRITTER_USER_ID.getCode());
+                if(null != kritterUserId && null != kritterUserId.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setKritterUserId((String)kritterUserId.getUrlFieldProperties().getFieldValue());
+
+                URLField exchangeUserId = urlFieldMap.get(URLField.EXCHANGE_USER_ID.getCode());
+                if(null != exchangeUserId && null != exchangeUserId.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setExchangeUserId((String)exchangeUserId.getUrlFieldProperties().getFieldValue());
+
+                URLField extSupplyIdFromExchange = urlFieldMap.get(URLField.EXTERNAL_SITE_ID.getCode());
+                if(null != extSupplyIdFromExchange && null != extSupplyIdFromExchange.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setExternalSiteAppId((String)extSupplyIdFromExchange.getUrlFieldProperties().getFieldValue());
+
+                URLField ifa = urlFieldMap.get(URLField.ID_FOR_ADVERTISER.getCode());
+                if(null != ifa && null != ifa.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setIfa((String)ifa.getUrlFieldProperties().getFieldValue());
+
+                URLField dpidmd5 = urlFieldMap.get(URLField.DEVICE_PLATFORM_ID_MD5.getCode());
+                if(null != dpidmd5 && null != dpidmd5.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setDpidmd5((String)dpidmd5.getUrlFieldProperties().getFieldValue());
+
+                URLField dpidsha1 = urlFieldMap.get(URLField.DEVICE_PLATFORM_ID_SHA1.getCode());
+                if(null != dpidsha1 && null != dpidsha1.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setDpidsha1((String)dpidsha1.getUrlFieldProperties().getFieldValue());
+
+                URLField macsha1 = urlFieldMap.get(URLField.MAC_ADDRESS_SHA1.getCode());
+                if(null != macsha1 && null != macsha1.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setMacsha1((String)macsha1.getUrlFieldProperties().getFieldValue());
+
+                URLField macmd5 = urlFieldMap.get(URLField.MAC_ADDRESS_MD5.getCode());
+                if(null != macmd5 && null != macmd5.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setMacmd5((String)macmd5.getUrlFieldProperties().getFieldValue());
+            }
+            /**********************************Done setting url fields from adserving*****************************/
 
             try
             {
@@ -297,10 +345,19 @@ public class ThriftLogger implements Job
     private PostImpressionEvent fetchPostImpressionEvent(Request request)
     {
         PostImpressionEvent postImpressionEvent = null;
-        if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.TEVENT.
+        if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP.
+                getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
+            if(NoFraudPostImpEvents.clk == request.getNfrdpType()){
+                postImpressionEvent = PostImpressionEvent.CLICK;
+            }else if(NoFraudPostImpEvents.csc == request.getNfrdpType()){
+                postImpressionEvent = PostImpressionEvent.RENDER;
+            }if(NoFraudPostImpEvents.win == request.getNfrdpType()){
+                postImpressionEvent = PostImpressionEvent.WIN_NOTIFICATION;
+            }
+        }if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.TEVENT.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.TEVENT;
-        }if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.BEVENT.
+        }else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.BEVENT.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             if(BEventType.cscwin == request.getBEventType()){
                 postImpressionEvent = PostImpressionEvent.BEVENT_CSCWIN;
@@ -341,6 +398,10 @@ public class ThriftLogger implements Job
         else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.TRACKING_URL_FROM_THIRD_PARTY.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.THIRD_PARTY_TRACKING_EVENT;
+        }
+        else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.USR.
+                getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
+            postImpressionEvent = PostImpressionEvent.USR;
         }
 
         return postImpressionEvent;
@@ -421,6 +482,10 @@ public class ThriftLogger implements Job
         else if(request.getOnlineFraudReason().getFraudReasonValue().equals(ONLINE_FRAUD_REASON.BILLABLE_EVENT.getFraudReasonValue())){
             postImpressionTerminationReason = PostImpressionTerminationReason.BILLABLE_EVENT;
         }
+        else if(request.getOnlineFraudReason().getFraudReasonValue().equals(ONLINE_FRAUD_REASON.RETARGETING_SEGMENT_NF.getFraudReasonValue())){
+            postImpressionTerminationReason = PostImpressionTerminationReason.RETARGETING_SEGMENT_NF;
+        }
+
         return postImpressionTerminationReason;
     }
 }

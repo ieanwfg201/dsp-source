@@ -3,6 +3,7 @@ package com.kritter.geo.common.entity;
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -18,6 +19,7 @@ import java.sql.Timestamp;
  *
  *
  */
+@ToString
 public class Country implements IUpdatableEntity<IpRangeKeyValue>
 {
     @Getter

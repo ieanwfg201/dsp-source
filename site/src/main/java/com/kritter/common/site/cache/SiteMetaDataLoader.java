@@ -133,8 +133,7 @@ public class SiteMetaDataLoader
                             }
                             catch (Exception e)
                             {
-                                logger.error("Exception in resolving the url {} , skipping passback url content " +
-                                             "fetch for site id :{}",passbackUrl,siteGuid);
+                                logger.error("Exception in resolving the url {} , skipping passback url content fetch for site id :{}",passbackUrl,siteGuid);
                             }
 
                             HttpRequest httpRequest = new HttpRequest(
@@ -278,8 +277,7 @@ public class SiteMetaDataLoader
             }
             catch (Exception e)
             {
-                cacheLogger.error("Exception while loading site meta data inside " +
-                                  "SiteMetaDataLoadingTask inside SiteMetaDataLoader",e);
+                cacheLogger.error("Exception while loading site meta data inside SiteMetaDataLoadingTask inside SiteMetaDataLoader",e);
             }
         }
     }

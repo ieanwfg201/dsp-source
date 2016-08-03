@@ -7,6 +7,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+
+import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.Payout;
 import com.kritter.constants.SITE_PLATFORM;
 import lombok.EqualsAndHashCode;
@@ -42,7 +44,7 @@ public class Site {
     /** optional true if categories are to be excluded  */
     private boolean is_category_list_excluded = true;
     /** mandatory @see com.kritter.constants.HygieneCategory  */
-    private String hygiene_list = null;
+    private String hygiene_list = ""+HygieneCategory.FAMILY_SAFE.getCode();
     /** optional @see com.kritter.constants.HygieneCategory  specifies hygiene which sites wants to opt in */
     private String opt_in_hygiene_list = null;
     /** optional json array of creative attributes id*/

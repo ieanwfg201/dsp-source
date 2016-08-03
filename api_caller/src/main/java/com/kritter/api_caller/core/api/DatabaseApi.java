@@ -1,37 +1,37 @@
 package com.kritter.api_caller.core.api;
 
-import com.kritter.api_caller.core.action.ApiAction;
 import com.kritter.api_caller.core.action.DatabaseApiAction;
 import com.kritter.api_caller.core.model.DatabaseRequestEntity;
+import com.kritter.api_caller.core.model.DatabaseResponseEntity;
 
 /**
  * This class implements an api which talks to database provided to it.
  * This class acts as base class for any database api which wishes to
  * perform some concrete actions.
  */
-public class DatabaseApi implements Api{
-
+public class DatabaseApi implements Api<DatabaseResponseEntity,DatabaseRequestEntity>
+{
     private DatabaseApiAction databaseApiAction;
+    private String databaseApiSignature;
 
-    public DatabaseApi(DatabaseApiAction databaseApiAction){
+    public DatabaseApi(DatabaseApiAction databaseApiAction,String databaseApiSignature)
+    {
         this.databaseApiAction = databaseApiAction;
+        this.databaseApiSignature = databaseApiSignature;
     }
 
     @Override
-    public String getApiSignature() {
-        return null;
+    public String getApiSignature()
+    {
+        return this.databaseApiSignature;
     }
 
     @Override
-    public ApiAction getApiActionInstance() {
-        return this.databaseApiAction;
-    }
+    public DatabaseResponseEntity processApiRequest(DatabaseRequestEntity input)
+    {
+        if(null == input)
+            return null;
 
-    @Override
-    public Object processApiRequest(Object input) {
-
-        DatabaseRequestEntity databaseRequestEntity = (DatabaseRequestEntity)input;
-
-        return this.databaseApiAction.fetchApiResponseFromDatabase(databaseRequestEntity);
+        return this.databaseApiAction.fetchApiResponseFromDatabase(input);
     }
 }

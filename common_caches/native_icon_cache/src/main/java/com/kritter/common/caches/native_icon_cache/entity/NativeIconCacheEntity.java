@@ -4,7 +4,9 @@ import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.entity.native_props.demand.NativeIcon;
 
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 public class NativeIconCacheEntity implements IUpdatableEntity<Integer>{
     @Setter
     private boolean markedForDeletion = false;

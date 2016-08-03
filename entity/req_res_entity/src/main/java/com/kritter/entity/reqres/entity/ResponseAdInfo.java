@@ -1,6 +1,7 @@
 package com.kritter.entity.reqres.entity;
 
 import com.kritter.constants.MarketPlace;
+import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.entity.native_props.demand.NativeDemandProps;
 import com.kritter.entity.native_props.demand.NativeIcon;
@@ -78,6 +79,8 @@ public class ResponseAdInfo
     private String dealId;
     @Getter @Setter
     private VideoProps videoProps;
+    @Getter @Setter
+    private VideoInfo videoInfo;
 
 
     public ResponseAdInfo(Integer adId,Double hardBid,Double advertiserBid,Double dailyRemainingBudget)

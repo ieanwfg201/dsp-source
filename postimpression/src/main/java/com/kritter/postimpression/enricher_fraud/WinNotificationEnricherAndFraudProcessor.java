@@ -42,8 +42,7 @@ public class WinNotificationEnricherAndFraudProcessor implements OnlineEnricherA
         {
             OnlineEnricherAndFraudCheck onlineEnricherAndFraudCheck = onlineEnricherAndFraudCheckIterator.next();
 
-            logger.debug("Inside WinNotificationEnricherAndFraudProcessor, running enricher and fraud checker " +
-                         "instance: {}", onlineEnricherAndFraudCheck.getIdentifier());
+            logger.debug("Inside WinNotificationEnricherAndFraudProcessor, running enricher and fraud checker instance: {}", onlineEnricherAndFraudCheck.getIdentifier());
 
             ONLINE_FRAUD_REASON fraudReason = onlineEnricherAndFraudCheck.fetchFraudReason(context,true);
 

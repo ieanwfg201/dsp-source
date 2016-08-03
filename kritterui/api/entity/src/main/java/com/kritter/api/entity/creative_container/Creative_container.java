@@ -107,221 +107,212 @@ public class Creative_container {
     private int companiontype = VASTCompanionTypes.Unknown.getCode();
     @Getter@Setter
     private String trackingStr="[]";
+    @Getter@Setter
+    private String direct_videos;
+
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((account_guid == null) ? 0 : account_guid.hashCode());
-        result = prime * result + api;
-        result = prime * result + bitrate;
-        result = prime * result + boxingallowed;
-        result = prime * result + companiontype;
-        result = prime * result + (int) (created_on ^ (created_on >>> 32));
-        result = prime * result
-                + ((creative_attr == null) ? 0 : creative_attr.hashCode());
-        result = prime * result
-                + ((creative_macro == null) ? 0 : creative_macro.hashCode());
-        result = prime * result + creative_macro_quote;
-        result = prime * result + delivery;
-        result = prime * result + duration;
-        result = prime * result + ((ext_resource_url == null) ? 0
-                : ext_resource_url.hashCode());
-        result = prime * result + format_id;
-        result = prime * result + ((guid == null) ? 0 : guid.hashCode());
-        result = prime * result + height;
-        result = prime * result
-                + ((html_content == null) ? 0 : html_content.hashCode());
-        result = prime * result + id;
-        result = prime * result + ((label == null) ? 0 : label.hashCode());
-        result = prime * result
-                + (int) (last_modified ^ (last_modified >>> 32));
-        result = prime * result + linearity;
-        result = prime * result + maxextended;
-        result = prime * result + mime;
-        result = prime * result + modified_by;
-        result = prime * result + ((native_active_players == null) ? 0
-                : native_active_players.hashCode());
-        result = prime * result
-                + ((native_cta == null) ? 0 : native_cta.hashCode());
-        result = prime * result
-                + ((native_desc == null) ? 0 : native_desc.hashCode());
-        result = prime * result + ((native_download_count == null) ? 0
-                : native_download_count.hashCode());
-        result = prime * result
-                + ((native_icons == null) ? 0 : native_icons.hashCode());
-        result = prime * result
-                + ((native_rating == null) ? 0 : native_rating.hashCode());
-        result = prime * result + ((native_screenshots == null) ? 0
-                : native_screenshots.hashCode());
-        result = prime * result
-                + ((native_title == null) ? 0 : native_title.hashCode());
-        result = prime * result + playbackmethod;
-        result = prime * result + protocol;
-        result = prime * result + ((resource_uri_ids == null) ? 0
-                : resource_uri_ids.hashCode());
-        result = prime * result + startdelay;
-        result = prime * result
-                + ((status_id == null) ? 0 : status_id.hashCode());
-        result = prime * result + ((text == null) ? 0 : text.hashCode());
-        result = prime * result
-                + ((trackingStr == null) ? 0 : trackingStr.hashCode());
-        result = prime * result
-                + ((vastTagUrl == null) ? 0 : vastTagUrl.hashCode());
-        result = prime * result + videoDemandType;
-        result = prime * result + width;
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((account_guid == null) ? 0 : account_guid.hashCode());
+		result = prime * result + api;
+		result = prime * result + bitrate;
+		result = prime * result + boxingallowed;
+		result = prime * result + companiontype;
+		result = prime * result + (int) (created_on ^ (created_on >>> 32));
+		result = prime * result + ((creative_attr == null) ? 0 : creative_attr.hashCode());
+		result = prime * result + ((creative_macro == null) ? 0 : creative_macro.hashCode());
+		result = prime * result + creative_macro_quote;
+		result = prime * result + delivery;
+		result = prime * result + ((direct_videos == null) ? 0 : direct_videos.hashCode());
+		result = prime * result + duration;
+		result = prime * result + ((ext_resource_url == null) ? 0 : ext_resource_url.hashCode());
+		result = prime * result + format_id;
+		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
+		result = prime * result + height;
+		result = prime * result + ((html_content == null) ? 0 : html_content.hashCode());
+		result = prime * result + id;
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + (int) (last_modified ^ (last_modified >>> 32));
+		result = prime * result + linearity;
+		result = prime * result + maxextended;
+		result = prime * result + mime;
+		result = prime * result + modified_by;
+		result = prime * result + ((native_active_players == null) ? 0 : native_active_players.hashCode());
+		result = prime * result + ((native_cta == null) ? 0 : native_cta.hashCode());
+		result = prime * result + ((native_desc == null) ? 0 : native_desc.hashCode());
+		result = prime * result + ((native_download_count == null) ? 0 : native_download_count.hashCode());
+		result = prime * result + ((native_icons == null) ? 0 : native_icons.hashCode());
+		result = prime * result + ((native_rating == null) ? 0 : native_rating.hashCode());
+		result = prime * result + ((native_screenshots == null) ? 0 : native_screenshots.hashCode());
+		result = prime * result + ((native_title == null) ? 0 : native_title.hashCode());
+		result = prime * result + playbackmethod;
+		result = prime * result + protocol;
+		result = prime * result + ((resource_uri_ids == null) ? 0 : resource_uri_ids.hashCode());
+		result = prime * result + startdelay;
+		result = prime * result + ((status_id == null) ? 0 : status_id.hashCode());
+		result = prime * result + ((text == null) ? 0 : text.hashCode());
+		result = prime * result + ((trackingStr == null) ? 0 : trackingStr.hashCode());
+		result = prime * result + ((vastTagUrl == null) ? 0 : vastTagUrl.hashCode());
+		result = prime * result + videoDemandType;
+		result = prime * result + width;
+		return result;
+	}
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Creative_container other = (Creative_container) obj;
-        if (account_guid == null) {
-            if (other.account_guid != null)
-                return false;
-        } else if (!account_guid.equals(other.account_guid))
-            return false;
-        if (api != other.api)
-            return false;
-        if (bitrate != other.bitrate)
-            return false;
-        if (boxingallowed != other.boxingallowed)
-            return false;
-        if (companiontype != other.companiontype)
-            return false;
-        if (created_on != other.created_on)
-            return false;
-        if (creative_attr == null) {
-            if (other.creative_attr != null)
-                return false;
-        } else if (!creative_attr.equals(other.creative_attr))
-            return false;
-        if (creative_macro == null) {
-            if (other.creative_macro != null)
-                return false;
-        } else if (!creative_macro.equals(other.creative_macro))
-            return false;
-        if (creative_macro_quote != other.creative_macro_quote)
-            return false;
-        if (delivery != other.delivery)
-            return false;
-        if (duration != other.duration)
-            return false;
-        if (ext_resource_url == null) {
-            if (other.ext_resource_url != null)
-                return false;
-        } else if (!ext_resource_url.equals(other.ext_resource_url))
-            return false;
-        if (format_id != other.format_id)
-            return false;
-        if (guid == null) {
-            if (other.guid != null)
-                return false;
-        } else if (!guid.equals(other.guid))
-            return false;
-        if (height != other.height)
-            return false;
-        if (html_content == null) {
-            if (other.html_content != null)
-                return false;
-        } else if (!html_content.equals(other.html_content))
-            return false;
-        if (id != other.id)
-            return false;
-        if (label == null) {
-            if (other.label != null)
-                return false;
-        } else if (!label.equals(other.label))
-            return false;
-        if (last_modified != other.last_modified)
-            return false;
-        if (linearity != other.linearity)
-            return false;
-        if (maxextended != other.maxextended)
-            return false;
-        if (mime != other.mime)
-            return false;
-        if (modified_by != other.modified_by)
-            return false;
-        if (native_active_players == null) {
-            if (other.native_active_players != null)
-                return false;
-        } else if (!native_active_players.equals(other.native_active_players))
-            return false;
-        if (native_cta == null) {
-            if (other.native_cta != null)
-                return false;
-        } else if (!native_cta.equals(other.native_cta))
-            return false;
-        if (native_desc == null) {
-            if (other.native_desc != null)
-                return false;
-        } else if (!native_desc.equals(other.native_desc))
-            return false;
-        if (native_download_count == null) {
-            if (other.native_download_count != null)
-                return false;
-        } else if (!native_download_count.equals(other.native_download_count))
-            return false;
-        if (native_icons == null) {
-            if (other.native_icons != null)
-                return false;
-        } else if (!native_icons.equals(other.native_icons))
-            return false;
-        if (native_rating == null) {
-            if (other.native_rating != null)
-                return false;
-        } else if (!native_rating.equals(other.native_rating))
-            return false;
-        if (native_screenshots == null) {
-            if (other.native_screenshots != null)
-                return false;
-        } else if (!native_screenshots.equals(other.native_screenshots))
-            return false;
-        if (native_title == null) {
-            if (other.native_title != null)
-                return false;
-        } else if (!native_title.equals(other.native_title))
-            return false;
-        if (playbackmethod != other.playbackmethod)
-            return false;
-        if (protocol != other.protocol)
-            return false;
-        if (resource_uri_ids == null) {
-            if (other.resource_uri_ids != null)
-                return false;
-        } else if (!resource_uri_ids.equals(other.resource_uri_ids))
-            return false;
-        if (startdelay != other.startdelay)
-            return false;
-        if (status_id != other.status_id)
-            return false;
-        if (text == null) {
-            if (other.text != null)
-                return false;
-        } else if (!text.equals(other.text))
-            return false;
-        if (trackingStr == null) {
-            if (other.trackingStr != null)
-                return false;
-        } else if (!trackingStr.equals(other.trackingStr))
-            return false;
-        if (vastTagUrl == null) {
-            if (other.vastTagUrl != null)
-                return false;
-        } else if (!vastTagUrl.equals(other.vastTagUrl))
-            return false;
-        if (videoDemandType != other.videoDemandType)
-            return false;
-        if (width != other.width)
-            return false;
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Creative_container other = (Creative_container) obj;
+		if (account_guid == null) {
+			if (other.account_guid != null)
+				return false;
+		} else if (!account_guid.equals(other.account_guid))
+			return false;
+		if (api != other.api)
+			return false;
+		if (bitrate != other.bitrate)
+			return false;
+		if (boxingallowed != other.boxingallowed)
+			return false;
+		if (companiontype != other.companiontype)
+			return false;
+		if (created_on != other.created_on)
+			return false;
+		if (creative_attr == null) {
+			if (other.creative_attr != null)
+				return false;
+		} else if (!creative_attr.equals(other.creative_attr))
+			return false;
+		if (creative_macro == null) {
+			if (other.creative_macro != null)
+				return false;
+		} else if (!creative_macro.equals(other.creative_macro))
+			return false;
+		if (creative_macro_quote != other.creative_macro_quote)
+			return false;
+		if (delivery != other.delivery)
+			return false;
+		if (direct_videos == null) {
+			if (other.direct_videos != null)
+				return false;
+		} else if (!direct_videos.equals(other.direct_videos))
+			return false;
+		if (duration != other.duration)
+			return false;
+		if (ext_resource_url == null) {
+			if (other.ext_resource_url != null)
+				return false;
+		} else if (!ext_resource_url.equals(other.ext_resource_url))
+			return false;
+		if (format_id != other.format_id)
+			return false;
+		if (guid == null) {
+			if (other.guid != null)
+				return false;
+		} else if (!guid.equals(other.guid))
+			return false;
+		if (height != other.height)
+			return false;
+		if (html_content == null) {
+			if (other.html_content != null)
+				return false;
+		} else if (!html_content.equals(other.html_content))
+			return false;
+		if (id != other.id)
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (last_modified != other.last_modified)
+			return false;
+		if (linearity != other.linearity)
+			return false;
+		if (maxextended != other.maxextended)
+			return false;
+		if (mime != other.mime)
+			return false;
+		if (modified_by != other.modified_by)
+			return false;
+		if (native_active_players == null) {
+			if (other.native_active_players != null)
+				return false;
+		} else if (!native_active_players.equals(other.native_active_players))
+			return false;
+		if (native_cta == null) {
+			if (other.native_cta != null)
+				return false;
+		} else if (!native_cta.equals(other.native_cta))
+			return false;
+		if (native_desc == null) {
+			if (other.native_desc != null)
+				return false;
+		} else if (!native_desc.equals(other.native_desc))
+			return false;
+		if (native_download_count == null) {
+			if (other.native_download_count != null)
+				return false;
+		} else if (!native_download_count.equals(other.native_download_count))
+			return false;
+		if (native_icons == null) {
+			if (other.native_icons != null)
+				return false;
+		} else if (!native_icons.equals(other.native_icons))
+			return false;
+		if (native_rating == null) {
+			if (other.native_rating != null)
+				return false;
+		} else if (!native_rating.equals(other.native_rating))
+			return false;
+		if (native_screenshots == null) {
+			if (other.native_screenshots != null)
+				return false;
+		} else if (!native_screenshots.equals(other.native_screenshots))
+			return false;
+		if (native_title == null) {
+			if (other.native_title != null)
+				return false;
+		} else if (!native_title.equals(other.native_title))
+			return false;
+		if (playbackmethod != other.playbackmethod)
+			return false;
+		if (protocol != other.protocol)
+			return false;
+		if (resource_uri_ids == null) {
+			if (other.resource_uri_ids != null)
+				return false;
+		} else if (!resource_uri_ids.equals(other.resource_uri_ids))
+			return false;
+		if (startdelay != other.startdelay)
+			return false;
+		if (status_id != other.status_id)
+			return false;
+		if (text == null) {
+			if (other.text != null)
+				return false;
+		} else if (!text.equals(other.text))
+			return false;
+		if (trackingStr == null) {
+			if (other.trackingStr != null)
+				return false;
+		} else if (!trackingStr.equals(other.trackingStr))
+			return false;
+		if (vastTagUrl == null) {
+			if (other.vastTagUrl != null)
+				return false;
+		} else if (!vastTagUrl.equals(other.vastTagUrl))
+			return false;
+		if (videoDemandType != other.videoDemandType)
+			return false;
+		if (width != other.width)
+			return false;
+		return true;
+	}
     public int getId() {
         return id;
     }

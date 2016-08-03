@@ -27,7 +27,8 @@ public enum ADTagMacros {
     USER_GEO_LNG(20,"{{USER_GEO_LNG}}","\\{\\{USER_GEO_LNG\\}\\}"),
     DEVICE_ID(21,"{{DEVICE_ID}}","\\{\\{DEVICE_ID\\}\\}"),
     CLICK_URL(22,"[CLICK_URL]","\\[CLICK_URL]"),
-    SECURE_CLICK_URL(23,"[SECURE_CLICK_URL]","\\[SECURE_CLICK_URL]");
+    SECURE_CLICK_URL(23,"[SECURE_CLICK_URL]","\\[SECURE_CLICK_URL]"),
+    RANDOM(24,"RANDOM","RANDOM");
     
     private int code;
     private String name;

@@ -2,4 +2,4 @@
 
 type=command
 dependencies=kritter_logevents_upload
-command=sh kritter_first_level_pig.sh '${kritter_first_level_code_path}' '${pig_home}' "${adserving_readytoprocess_path}"/"${process_time_dir}" "${postimp_readytoprocess_path}"/"${process_time_dir}" '${OUTPUT}'/'${process_time_dir}' '${thrift_jar_path}' "${billing_readytoprocess_path}"/"${process_time_dir}" '${process_time}' '${process_time_dir}'
+command=sh kritter_first_level_pig.sh '${kritter_first_level_code_path}' '${pig_home}' "${adserving_readytoprocess_path}"/"${process_time_dir}" "${postimp_readytoprocess_path}"/"${process_time_dir}" '${OUTPUT}'/'${process_time_dir}' '${thrift_jar_path}' "${billing_readytoprocess_path}"/"${process_time_dir}" '${process_time}' '${process_time_dir}' '${tz}'

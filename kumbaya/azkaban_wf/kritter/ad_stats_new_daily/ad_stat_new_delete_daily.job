@@ -1,0 +1,5 @@
+#ad_stat_new_delete_daily.job
+type=command
+dependencies=ad_stat_new_upload_daily
+
+command=sh ad_stat_new_delete_daily.sh ${daily_report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${daily_retention}

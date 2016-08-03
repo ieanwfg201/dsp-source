@@ -6,6 +6,8 @@ import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.common.caches.account.entity.AccountEntity;
+import com.kritter.constants.OpenRTBVersion;
+import com.kritter.constants.ThirdPartyDemandChannel;
 import com.kritter.entity.demand_props.DemandProps;
 import com.kritter.entity.supply_props.SupplyProps;
 import com.kritter.utils.databasemanager.DatabaseManager;
@@ -82,8 +84,27 @@ public class AccountCache extends AbstractDBStatsReloadableQueryableCache<String
                             timeout, last_modified,currency,test, supplyProps.getBtype(),demand_url);
                 }
             }
-            return new AccountEntity(id, guid, demandtype, demandpreference, qps, 
-                    timeout, last_modified,currency,test, null,demand_url);
+
+            AccountEntity accountEntity = new AccountEntity(id, guid, demandtype, demandpreference, qps,
+                                                            timeout, last_modified,currency,test, null,demand_url);
+
+            int thirdPartyDemandChannelType = resultSet.getInt("third_party_demand_channel_type");
+            if(thirdPartyDemandChannelType == ThirdPartyDemandChannel.MARKETPLACE_OF_DSP.getCode())
+                accountEntity.setThirdPartyDemandChannel(ThirdPartyDemandChannel.MARKETPLACE_OF_DSP);
+            else if(thirdPartyDemandChannelType == ThirdPartyDemandChannel.STANDALONE_DSP_BIDDER.getCode())
+                accountEntity.setThirdPartyDemandChannel(ThirdPartyDemandChannel.STANDALONE_DSP_BIDDER);
+
+            int openRTBVersionRequired = resultSet.getInt("open_rtb_ver_required");
+            if(openRTBVersionRequired == OpenRTBVersion.VERSION_2_0.getCode())
+                accountEntity.setOpenRTBVersion(OpenRTBVersion.VERSION_2_0);
+            else if(openRTBVersionRequired == OpenRTBVersion.VERSION_2_1.getCode())
+                accountEntity.setOpenRTBVersion(OpenRTBVersion.VERSION_2_1);
+            else if(openRTBVersionRequired == OpenRTBVersion.VERSION_2_2.getCode())
+                accountEntity.setOpenRTBVersion(OpenRTBVersion.VERSION_2_2);
+            else if(openRTBVersionRequired == OpenRTBVersion.VERSION_2_3.getCode())
+                accountEntity.setOpenRTBVersion(OpenRTBVersion.VERSION_2_3);
+
+            return accountEntity;
         }
         catch (SQLException e)
         {

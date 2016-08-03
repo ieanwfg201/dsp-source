@@ -35,10 +35,10 @@ public class VersionRange
         int pos = 0;
         for(; pos < valueList.size() && pos < majorVersionList.size(); pos++)
         {
-            if(majorVersionList.get(pos) > valueList.get(pos))
-                return true;
             if(majorVersionList.get(pos) < valueList.get(pos))
                 return false;
+            else
+                return true;
         }
         if(pos < majorVersionList.size())
         {
@@ -67,10 +67,10 @@ public class VersionRange
         int pos = 0;
         for(; pos < valueList.size() && pos < minorVerList.size(); pos++)
         {
-            if(minorVerList.get(pos) > valueList.get(pos))
-                return false;
-            if(minorVerList.get(pos) < valueList.get(pos))
+            if(minorVerList.get(pos) <= valueList.get(pos))
                 return true;
+            else
+                return false;
         }
         if(pos < minorVerList.size())
             return false;

@@ -46,7 +46,7 @@ public abstract class AbstractStatsReloadableCache implements IRefreshable
     {
         if(log == null || props == null || StringUtils.isEmpty(props.getProperty("refresh_interval")))
             throw new InitializationException("Logger or Properties object cannot be null. \"refresh_interval\" info should be provided");
-        this.refreshInterval = Long.parseLong(props.getProperty("refresh_interval")) * 1000;
+        this.refreshInterval = Long.parseLong(props.getProperty("refresh_interval"));
         constructionTime = new Date();
     }
 

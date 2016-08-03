@@ -63,6 +63,36 @@ public class NingClient implements KHttpClient {
         }        
     }
     
+	@Override
+	public String get(URI target, int requestTimeoutMillis, int maxConnectionPerHost, int maxConnection)
+			throws Exception {
+        String returnStr = null;
+        if (this.client != null) {
+            this.client.close();
+        }
+        AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
+                .setAllowPoolingConnections(true)
+                .setCompressionEnforced(false)
+                .setMaxConnections(maxConnection)
+                .setMaxConnectionsPerHost(maxConnectionPerHost)
+                .setRequestTimeout(requestTimeoutMillis)
+                .build();
+        this.client = new AsyncHttpClient(config);
+        Request request;
+        request = this.client.prepareGet(target.toASCIIString())
+                .build();
+        try {
+            Future<String> f = this.client.executeRequest(request, new NingAsyncHandler(this.loggerName));
+            returnStr = f.get();
+            return returnStr;
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            return returnStr;
+        }finally{
+            this.client.close();
+        }        
+	}
+
     public static void main(String args[]) throws Exception{
         /*KHttpClient n = new NingClient();
         long c =  new Date().getTime();
@@ -77,7 +107,19 @@ public class NingClient implements KHttpClient {
         //}
         long d =  new Date().getTime();
         System.out.println(d);
-        System.out.println(d-c);*/
-    }
+        System.out.println(d-c);
+        
+                KHttpClient n = new NingClient("sdqw");
+        long c =  new Date().getTime();
+        System.out.println(c);
+        //for(int i=1;i<100;i++){
+         n.get(new URI("http://localhost/50x.html"), 10000, 1, 1);
+        //
+        long d =  new Date().getTime();
+        System.out.println(d);
+        System.out.println(d-c);
 
+        
+        */
+    }
 }

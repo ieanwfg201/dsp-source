@@ -51,6 +51,7 @@
                 <tbody>
                     <tr>
                         <td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="extsiteListData.isItemChecked(gridItem)" ></td>
+                        <td field-name="id"> <div class="trnggridcelltextselect">{{gridItem.id}}</div></td>
                         <td field-name="siteInc"> <div class="trnggridcelltextselect">{{gridItem.siteInc}}</div></td>
                         <td field-name="req"> <div class="trnggridcelltextselect">{{gridItem.req}}</div></td>
                         <td field-name="extSupplyId"> <div class="trnggridcelltextselect">{{gridItem.extSupplyId}}</div></td>
@@ -60,6 +61,10 @@
                         <td field-name="osId"> <div class="trnggridcelltextselect">{{gridItem.osId}}</div></td>
                         <td field-name="lastModified"> <div class="trnggridcelltextselect">{{gridItem.lastModified}}</div></td> 
                         <td field-name="action" > 
+                             <button class="btn btn-default" ng-click="updateextSiteName( gridItem.id  , 'editname')" 
+                                                data-toggle="tooltip" data-placement="top" title="Edit Ext Site Name">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                             </button>
                              <button class="btn btn-default" ng-click="updateextSite( gridItem.id  , 'approve')" 
                                                 data-toggle="tooltip" data-placement="top" title="Approve Ext Site">
                                     <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>

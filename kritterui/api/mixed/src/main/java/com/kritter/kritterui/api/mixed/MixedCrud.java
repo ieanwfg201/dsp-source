@@ -22,6 +22,8 @@ import com.kritter.api.entity.native_screenshot.NativeScreenshotList;
 import com.kritter.api.entity.native_screenshot.NativeScreenshotListEntity;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.api.entity.site.SiteListEntity;
+import com.kritter.api.entity.video_info.VideoInfoList;
+import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.AdAPIEnum;
 import com.kritter.constants.CreativeBannerAPIEnum;
@@ -30,6 +32,7 @@ import com.kritter.constants.NativeIconAPIEnum;
 import com.kritter.constants.NativeScreenshotAPIEnum;
 import com.kritter.constants.Payout;
 import com.kritter.constants.SiteAPIEnum;
+import com.kritter.constants.VideoInfoAPIEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.kritterui.api.account.AccountCrud;
 import com.kritter.kritterui.api.account_budget.Account_Budget_Crud;
@@ -40,6 +43,7 @@ import com.kritter.kritterui.api.io.IOCrud;
 import com.kritter.kritterui.api.native_icon.NativeIconCrud;
 import com.kritter.kritterui.api.native_screenshot.NativeScreenshotCrud;
 import com.kritter.kritterui.api.site.SiteCrud;
+import com.kritter.kritterui.api.video_info.VideoInfoCrud;
 
 public class MixedCrud {
 
@@ -309,6 +313,51 @@ public class MixedCrud {
         nativelistEntity.setId_list(cc.getNative_icons().replaceAll("\\{", "").replaceAll("\\}", "").replaceAll("\\[", "").replaceAll("\\]", ""));
         nativelistEntity.setNativeenum(NativeScreenshotAPIEnum.get_native_screenshot_by_ids);
         return NativeScreenshotCrud.various_get_native_screenshot(con, nativelistEntity);
+    }
+    public static JsonNode get_video_info_from_container(Connection con, JsonNode jsonNode){
+        if(jsonNode == null){
+        	VideoInfoList videInfoList = new VideoInfoList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.CREATIVE_CONTAINER_NULL.getId());
+            msg.setMsg(ErrorEnum.CREATIVE_CONTAINER_NULL.getName());
+            videInfoList.setMsg(msg);
+            return videInfoList.toJson();
+        }
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            Creative_container cc = objectMapper.treeToValue(jsonNode, Creative_container.class);
+            return get_video_info_from_container(con, cc).toJson();
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+        	VideoInfoList videInfoList = new VideoInfoList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
+            videInfoList.setMsg(msg);
+            return videInfoList.toJson();
+        }
+    }
+    public static VideoInfoList get_video_info_from_container(Connection con, Creative_container cc){
+        if(con == null){
+        	VideoInfoList videInfoList = new VideoInfoList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            videInfoList.setMsg(msg);
+            return videInfoList;
+        }
+        if(cc == null){
+        	VideoInfoList videInfoList = new VideoInfoList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.CREATIVE_CONTAINER_NULL.getId());
+            msg.setMsg(ErrorEnum.CREATIVE_CONTAINER_NULL.getName());
+            videInfoList.setMsg(msg);
+            return videInfoList;
+        }
+        VideoInfoListEntity videoInfolistEntity = new VideoInfoListEntity();
+        videoInfolistEntity.setId_list(cc.getDirect_videos().replaceAll("\\{", "").replaceAll("\\}", "").replaceAll("\\[", "").replaceAll("\\]", ""));
+        videoInfolistEntity.setVideoenum(VideoInfoAPIEnum.get_video_info_by_ids);
+        return VideoInfoCrud.various_get_video_info(con, videoInfolistEntity);
     }
 
 }

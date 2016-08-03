@@ -15,11 +15,11 @@ import models.advertiser.BannerDisplay;
 import models.advertiser.CreativeDisplay;
 import models.advertiser.CreativeDisplayFull;
 import models.advertiser.CreativeListDisplay;
+import models.advertiser.DirectvideoDisplay;
 import models.advertiser.NativeIconDisplay;
 import models.advertiser.NativeScreenshotDisplay;
 import models.entities.CreativeBannerEntity;
 import models.entities.CreativeContainerEntity;
-import models.formbinders.AdWorkFlowEntity;
 import models.formbinders.CreativeWorkFlowEntity;
 import models.formelements.SelectOption;
 import net.coobird.thumbnailator.Thumbnails;
@@ -49,8 +49,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.Files;
 import com.kritter.api.entity.account.Account;
-import com.kritter.api.entity.ad.Ad;
-import com.kritter.api.entity.ad.AdListEntity;
 import com.kritter.api.entity.creative_banner.Creative_banner;
 import com.kritter.api.entity.creative_banner.ImageUploadResponse;
 import com.kritter.api.entity.creative_container.CreativeContainerList;
@@ -59,14 +57,16 @@ import com.kritter.api.entity.creative_container.Creative_container;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.api.upload_to_cdn.IUploadToCDN;
 import com.kritter.api.upload_to_cdn.everest.UploadToCDN;
-import com.kritter.constants.AdAPIEnum;
 import com.kritter.constants.CreativeContainerAPIEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
+import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.kritterui.api.def.ApiDef;
+import com.kritter.utild.ucloud_upload.upload.UploadToUCloud;
 import com.kritter.utils.amazon_s3_upload.UploadToS3;
+import com.kritter.utils.edgecast_upload.UploadToEdgecast;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 public class CreativeController extends Controller {
 
@@ -489,6 +489,73 @@ public class CreativeController extends Controller {
             return ok("screenshot uploaded successfully");
         }
     }
+    public static Result uploadDirectvideo(String accountGuid){
+        return uploadDirectvideo(accountGuid, false);
+    }
+    //@SecuredAction
+    public static Result uploadDirectvideo(String accountGuid,boolean isApicall){ 
+    	MultipartFormData multipartFormData = request().body().asMultipartFormData();
+    	FilePart directvideo = multipartFormData.getFile("file"); 
+    	if (directvideo != null) { 
+    		String fileName = directvideo.getFilename();
+    		File file = directvideo.getFile();
+    		String destFileUuid = SingletonUUIDGenerator.getSingletonUUIDGenerator().generateUniversallyUniqueIdentifier().toString();
+    		String destFilePath = getImageUrl(accountGuid, destFileUuid, fileName, false,false);
+    		File originalOutputFile = new File("public/"+destFilePath).getAbsoluteFile();
+    		originalOutputFile.getParentFile().mkdirs();
+            List<SelectOption> slotOptions = validateDirectVideo();
+    		try {
+    			if(!originalOutputFile.exists()){
+    				originalOutputFile.createNewFile();
+    			}
+    			Files.copy(file, originalOutputFile);
+    			if(isApicall){
+    				ImageUploadResponse iur = new ImageUploadResponse();
+    				iur.setErrorCode(ErrorEnum.NO_ERROR.getId());
+    				iur.setMessage(ErrorEnum.NO_ERROR.getName());
+    				iur.setSlotOptions(getSlotOptions(slotOptions).toString());
+    				iur.setBannerUrl(getImageUrl(accountGuid, destFileUuid, fileName, true,false));
+    				iur.setThumbUrl("");
+    				return ok(iur.toJson().toString());
+    			}else{
+    				ObjectNode  response = new ObjectNode(JsonNodeFactory.instance);                     
+    				response.put("message", "Video Uploaded Succesfully");
+    				response.put("slotOptions",getSlotOptions(slotOptions));
+    				response.put("thumbUrl", "");
+    				response.put("bannerUrl", getImageUrl(accountGuid, destFileUuid, fileName, true,false));
+    				return ok(response);
+    			}
+    		} catch (Exception e) {
+    			if(isApicall){
+    				ImageUploadResponse iur = new ImageUploadResponse();
+    				iur.setErrorCode(ErrorEnum.VIDEO_UPLOAD_FAILED.getId());
+    				iur.setMessage(ErrorEnum.VIDEO_UPLOAD_FAILED.getName());
+    				return ok(iur.toJson().toString());
+    			}else{
+    				Logger.error("Error in reading uploaded video property. "+ e.getMessage(),e);
+    				flash("error", "video Uploading failed");
+    			}
+    		}
+    	} else {
+    		if(isApicall){
+    			ImageUploadResponse iur = new ImageUploadResponse();
+    			iur.setErrorCode(ErrorEnum.VIDEO_UPLOAD_FAILED.getId());
+    			iur.setMessage(ErrorEnum.VIDEO_UPLOAD_FAILED.getName());
+    			return ok(iur.toJson().toString());
+    		}else{
+    			flash("error", "video Uploading failed");
+    		}
+    	}
+    	if(isApicall){
+    		ImageUploadResponse iur = new ImageUploadResponse();
+    		iur.setErrorCode(ErrorEnum.VIDEO_UPLOAD_FAILED.getId());
+    		iur.setMessage(ErrorEnum.VIDEO_UPLOAD_FAILED.getName());
+    		return ok(iur.toJson().toString());
+    	}else{
+    		return ok("video uploaded successfully");
+    	}
+    }
+
     private static ArrayNode getSlotOptions(List<SelectOption> options){
 		ArrayNode optionNode = new ArrayNode(JsonNodeFactory.instance);
 		for (SelectOption selectOption : options) {
@@ -533,6 +600,10 @@ public class CreativeController extends Controller {
 		}
 		return slotIdMap.get(width+"*"+height);
 	}
+    private static List<SelectOption> validateDirectVideo() { 
+        List<SelectOption> slotIds = MetadataAPI.creativeSlots();
+        return slotIds; 
+    }
     private static List<SelectOption> validateUploadedIcon(int width,
             int height) { 
         List<SelectOption> slotIds = MetadataAPI.iconSlots();
@@ -600,6 +671,33 @@ public class CreativeController extends Controller {
 	           return false;
 	       }
 	   }
+       private static boolean postToEdgeCast(File originalOutputFile){
+           try{
+               String edgecast_host = Play.application().configuration().getString("edgecast_host");
+               String edgecast_port = Play.application().configuration().getString("edgecast_port");
+               String edgecast_username = Play.application().configuration().getString("edgecast_username");
+               String edgecast_password = Play.application().configuration().getString("edgecast_password");
+               return UploadToEdgecast.upload(edgecast_host, edgecast_port, originalOutputFile, 
+                       edgecast_username, edgecast_password);
+           }catch(Exception e){
+               Logger.error(e.getMessage(),e);
+               return false;
+           }
+       }
+       private static boolean postToUCloud(File originalOutputFile){
+           try{
+               String ucloudPublicKey = Play.application().configuration().getString("ucloudPublicKey");
+               String ucloudPrivateKey = Play.application().configuration().getString("ucloudPrivateKey");
+               String ucloudproxySuffix = Play.application().configuration().getString("ucloudproxySuffix");
+               String uclouddownloadProxySuffix = Play.application().configuration().getString("uclouddownloadProxySuffix");
+               String ucloudbucketName = Play.application().configuration().getString("ucloudbucketName");
+               return UploadToUCloud.uploadToUCloud(ucloudPublicKey, ucloudPrivateKey, 
+                       ucloudproxySuffix, uclouddownloadProxySuffix, originalOutputFile, ucloudbucketName);
+           }catch(Exception e){
+               Logger.error(e.getMessage(),e);
+               return false;
+           }
+       }
 	public static Result saveBanner(){
 		JsonNode reqData = request().body().asJson();
 		ObjectMapper om = new ObjectMapper();
@@ -636,7 +734,19 @@ public class CreativeController extends Controller {
 	                                response.put("message", "S3 upload failed");
 	                                return badRequest(response);
 	                            }
-	                        }
+						}else if("edgecast".equals(uploadtoCDNFlag)){
+                            boolean upload_success = postToEdgeCast(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                            if(!upload_success){
+                                response.put("message", "Edgecast upload failed");
+                                return badRequest(response);
+                            }
+						}else if("ucloud".equals(uploadtoCDNFlag)){
+                            boolean upload_success = postToUCloud(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                            if(!upload_success){
+                                response.put("message", "Ucloud upload failed");
+                                return badRequest(response);
+                            }
+                        }
 					} 
 				}
 				response.put("message", "Banner Saved Sucessfully");  
@@ -657,6 +767,39 @@ public class CreativeController extends Controller {
 
 		}
 		return badRequest(response);
+	}
+	
+	public static String saveBannerApi(Creative_banner cb){
+		BannerDisplay bannerDisplay = null;
+
+		bannerDisplay = new BannerDisplay(cb);
+		String name = bannerDisplay.getBannerUrl();
+		String uuid = name.substring(name.lastIndexOf("/")+1);
+		uuid = uuid.substring(0, uuid.lastIndexOf("."));
+		String uploadtoCDNFlag = Play.application().configuration().getString("cdn_upload");
+		if("evrest".equals(uploadtoCDNFlag)){
+		    boolean cdn_upload_success = postToEvrest(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile(), uuid);
+		    if(!cdn_upload_success){
+		        return "CDN upload failed";
+		    }
+		}else if("s3".equals(uploadtoCDNFlag)){
+                boolean s3_upload_success = postToS3(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                if(!s3_upload_success){
+                    return "S3 upload failed";
+                }
+		}else if("edgecast".equals(uploadtoCDNFlag)){
+            boolean upload_success = postToEdgeCast(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+            if(!upload_success){
+                return "Edgecast upload failed";
+            }
+		}else if("ucloud".equals(uploadtoCDNFlag)){
+            boolean upload_success = postToUCloud(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+            if(!upload_success){
+                return "Ucloud upload failed";
+            }
+        }
+		return "success";
+	
 	}
 
     public static Result saveIcon(){
@@ -695,7 +838,19 @@ public class CreativeController extends Controller {
                                     response.put("message", "S3 upload failed");
                                     return badRequest(response);
                                 }
+                        }else if("edgecast".equals(uploadtoCDNFlag)){
+                            boolean upload_success = postToEdgeCast(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                            if(!upload_success){
+                                response.put("message", "EdgeCast upload failed");
+                                return badRequest(response);
                             }
+                        }else if("ucloud".equals(uploadtoCDNFlag)){
+                            boolean upload_success = postToUCloud(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                            if(!upload_success){
+                                response.put("message", "UCloud upload failed");
+                                return badRequest(response);
+                            }
+                        }
                     } 
                 }
                 response.put("message", "Icon Saved Sucessfully");  
@@ -754,7 +909,19 @@ public class CreativeController extends Controller {
                                     response.put("message", "S3 upload failed");
                                     return badRequest(response);
                                 }
+                        }else if("edgecast".equals(uploadtoCDNFlag)){
+                            boolean upload_success = postToEdgeCast(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                            if(!upload_success){
+                                response.put("message", "Edgecast upload failed");
+                                return badRequest(response);
                             }
+                        }else if("ucloud".equals(uploadtoCDNFlag)){
+                            boolean upload_success = postToUCloud(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                            if(!upload_success){
+                                response.put("message", "Ucloud upload failed");
+                                return badRequest(response);
+                            }
+                        }
                     } 
                 }
                 response.put("message", "Screenshot Saved Sucessfully");  
@@ -772,6 +939,76 @@ public class CreativeController extends Controller {
                 }
             }
             response.put("message", "Screenshot save failed. Please retry");
+        }
+        return badRequest(response);
+    }
+    public static Result saveDirectvideo(){
+        JsonNode reqData = request().body().asJson();
+        ObjectMapper om = new ObjectMapper();
+        ObjectNode  response = new ObjectNode(JsonNodeFactory.instance); 
+        Connection con = null; 
+        ArrayNode saveddirectvideos = response.putArray("directvideos");
+        if(reqData.get("directvideos") !=  null ){
+            try {
+                con = DB.getConnection();
+                ArrayNode directvideos =(ArrayNode) reqData.get("directvideos");
+                DirectvideoDisplay directVideoDisplay = null;
+                for (JsonNode jsonNode : directvideos) {
+                ((ObjectNode)jsonNode).remove("slotName");
+                ((ObjectNode)jsonNode).remove("slotDescription");
+                    VideoInfo cb = om.treeToValue(jsonNode, VideoInfo.class);
+                    cb.setModified_by(1);
+                    Message msg = ApiDef.insert_video_info(con, cb );
+                    if(msg.getError_code()==0){     
+                    	directVideoDisplay = new DirectvideoDisplay(cb);
+                        String name = directVideoDisplay.getBannerUrl();
+                        String uuid = name.substring(name.lastIndexOf("/")+1);
+                        uuid = uuid.substring(0, uuid.lastIndexOf("."));
+                        saveddirectvideos.add(directVideoDisplay.toJson());
+                        String uploadtoCDNFlag = Play.application().configuration().getString("cdn_upload");
+                        if("evrest".equals(uploadtoCDNFlag)){
+                            boolean cdn_upload_success = postToEvrest(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile(), uuid);
+                            if(!cdn_upload_success){
+                                response.put("message", "CDN upload failed");
+                                return badRequest(response);
+                            }
+                        }else if("s3".equals(uploadtoCDNFlag)){
+                                boolean s3_upload_success = postToS3(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                                if(!s3_upload_success){
+                                    response.put("message", "S3 upload failed");
+                                    return badRequest(response);
+                                }
+                        }else if("edgecast".equals(uploadtoCDNFlag)){
+                            boolean upload_success = postToEdgeCast(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                            if(!upload_success){
+                                response.put("message", "EdgeCast upload failed");
+                                return badRequest(response);
+                            }
+                        }else if("ucloud".equals(uploadtoCDNFlag)){
+                            boolean upload_success = postToUCloud(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                            if(!upload_success){
+                                response.put("message", "UCloud upload failed");
+                                return badRequest(response);
+                            }
+                        }
+                    } 
+                }
+                response.put("message", "directvideo Saved Sucessfully");  
+                return ok(response);
+
+            } catch (Exception e) {
+                Logger.error("An exception has occured while saving directvideo",e);
+            }
+            finally{
+                try{
+                    if(con != null)
+                        con.close();
+                }catch(SQLException ex){
+                    Logger.error("Failed to close DD connection",ex);
+                }
+            }
+            response.put("message", "directvideo save failed. Please retry");
+
         }
         return badRequest(response);
     }
@@ -882,6 +1119,19 @@ public class CreativeController extends Controller {
 
         return ok(nativescreenshots);
     }
+    public static Result directvideoList(int creativeId){
+        ArrayNode directvideos = new ArrayNode(JsonNodeFactory.instance);
+        if(creativeId != -1){
+            Creative_container cc = DataAPI.getCreativeContainer(creativeId);
+
+            List<VideoInfo> videoinfoList = DataAPI.getVideoInfoList(cc.getDirect_videos());
+
+            for (VideoInfo video_info : videoinfoList) {  
+            	directvideos.addPOJO(new DirectvideoDisplay(video_info).toJson());
+            }
+        }
+        return ok(directvideos);
+    }
 	
 	@SecuredAction
 	public static Result updateStatusForm(int creativeId,   String action) {
@@ -985,6 +1235,4 @@ public class CreativeController extends Controller {
             }
         }
     }
-
-
 }

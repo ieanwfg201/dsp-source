@@ -1,4 +1,4 @@
-@(adForm:Form[models.entities.AdEntity], adDisplay:models.advertiser.AdDisplay,isClone:String, allow_adomain:String, user_flow_enabled:String )
+@(adForm:Form[models.entities.AdEntity], adDisplay:models.advertiser.AdDisplay,isClone:String, allow_adomain:String, user_flow_enabled:String, mma_required:String )
 
 @main2("Ad Creation Form"){@navs.navadvt(adDisplay.getAccountGuid())}{@navs.breadcrumbs(adDisplay.getBreadCrumbPaths())} {
 
@@ -74,8 +74,13 @@
                             @components.formElements.textinput(adForm("time_window"), '_label ->"Time Window (1-48)" )
                         </div>
                      }		
-                        @components.formElements.textarea(adForm("external_tracker"), "External Imp Tracker (for banner, comma seperated)")
+                        @components.formElements.textarea(adForm("external_imp_tracker"), "External Imp Tracker (for banner, comma separated)")
+                        @components.formElements.textarea(adForm("external_click_tracker"), "External Click Tracker (for banner, comma separated)")
+                        @if("true" == mma_required) {
+					 @components.formElements.multiselectlist3(adForm("mma_tier_1_list"), '_label -> "MMA Industry Tier 1", '_row->true) 
+                     @components.formElements.multiselectlist3(adForm("mma_tier_2_list"), '_label -> "MMA Industry Tier 2", '_row->true )
                         
+                        }
 				</div>
 				
 				@components.formElements.submitbutton("save", "Save")

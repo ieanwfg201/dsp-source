@@ -272,6 +272,55 @@ public class MetadataCrud {
     public static JsonNode get_campaign_as_meta_by_id(Connection con){
         return get_metalist(con,MetadataType.CAMPAIGN_AS_META_BY_ID,null).toJson();
     }
+    public static JsonNode get_state_by_country_ui_id(Connection con){
+        return get_metalist(con,MetadataType.STATE_BY_COUNTRY_UI_IDS,null).toJson();
+    }
+    public static JsonNode get_city_by_state_ui_id(Connection con){
+        return get_metalist(con,MetadataType.CITY_BY_STATE_UI_IDS,null).toJson();
+    }
+    public static JsonNode get_state_by_ui_ids(Connection con){
+        return get_metalist(con,MetadataType.STATE_BY_UI_IDS,null).toJson();
+    }
+    public static JsonNode get_city_by_ui_ids(Connection con){
+        return get_metalist(con,MetadataType.CITY_BY_UI_IDS,null).toJson();
+    }
+    public static JsonNode get_mma_category_tier1_all(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_TIER1_ALL,null).toJson();
+    }
+    public static JsonNode get_mma_category_tier2_by_tier1(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_TIER2_BY_TIER1,null).toJson();
+    }
+    public static JsonNode get_mma_category_by_ids(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_BY_IDS,null).toJson();
+    }
+    public static JsonNode get_mma_industry_tier1_all(Connection con){
+        return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER1_ALL,null).toJson();
+    }
+    public static JsonNode get_mma_industry_tier2_by_tier1(Connection con){
+        return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER2_BY_TIER1,null).toJson();
+    }
+    public static JsonNode get_mma_industry_by_ids(Connection con){
+        return get_metalist(con,MetadataType.MMA_INDUSTRY_BY_IDS,null).toJson();
+    }
+    public static JsonNode get_all_adpos(Connection con){
+        return get_metalist(con,MetadataType.ADPOS_ALL,null).toJson();
+    }
+    public static JsonNode get_adpos_by_ids(Connection con){
+        return get_metalist(con,MetadataType.ADPOS_BY_IDS,null).toJson();
+    }
+    public static JsonNode get_adpos_by_pubids(Connection con){
+        return get_metalist(con,MetadataType.ADPOS_BY_PUBIDS,null).toJson();
+    }
+    public static JsonNode get_channel_tier1_all(Connection con){
+        return get_metalist(con,MetadataType.CHANNEL_TIER1_ALL,null).toJson();
+    }
+    public static JsonNode get_channel_tier2_by_tier1(Connection con){
+        return get_metalist(con,MetadataType.CHANNEL_TIER2_BY_TIER1,null).toJson();
+    }
+    public static JsonNode get_channel_by_ids(Connection con){
+        return get_metalist(con,MetadataType.CHANNEL_BY_IDS,null).toJson();
+    }
+
     
     public static MetaList get_metalist(Connection con,MetadataType metadataType, MetaInput metaInput){
 
@@ -471,6 +520,174 @@ public class MetadataCrud {
                             com.kritter.kritterui.api.db_query_def.Metadata.get_campaign_as_meta_by_id, "<id>", metaInput.getQuery_id_list(), 
                             ",", false));
                     break;
+                case STATE_BY_COUNTRY_UI_IDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.get_state_by_country_ui_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case CITY_BY_STATE_UI_IDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.get_city_by_state_ui_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case STATE_BY_UI_IDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.get_state_by_ui_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case CITY_BY_UI_IDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.get_city_by_ui_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case MMA_CATEGORY_TIER1_ALL:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.mma_category_tier1_all);
+                    break;
+                case MMA_CATEGORY_TIER2_BY_TIER1:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.mma_category_tier2_by_tier1, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case MMA_CATEGORY_BY_IDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.mma_category_by_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case MMA_INDUSTRY_TIER1_ALL:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.mma_industry_tier1_all);
+                    break;
+                case MMA_INDUSTRY_TIER2_BY_TIER1:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.mma_industry_tier2_by_tier1, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case MMA_INDUSTRY_BY_IDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.mma_industry_by_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case ADPOS_ALL:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.adpos_all);
+                    break;
+                case ADPOS_BY_IDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.adpos_by_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case ADPOS_BY_PUBIDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.adpos_by_pubids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case CHANNEL_TIER1_ALL:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.channel_tier1_all);
+                    break;
+                case CHANNEL_TIER2_BY_TIER1:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.channel_tier2_by_tier1, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case CHANNEL_BY_IDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.channel_by_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
                 default:
                     break;
             }
@@ -522,6 +739,15 @@ public class MetadataCrud {
                         populate_with_description(metaField, rset);
                         break;
                     case CATEGORY_BY_ID:
+                        populate_with_description(metaField, rset);
+                        break;
+                    case ADPOS_ALL:
+                        populate_with_description(metaField, rset);
+                        break;
+                    case ADPOS_BY_IDS:
+                        populate_with_description(metaField, rset);
+                        break;
+                    case ADPOS_BY_PUBIDS:
                         populate_with_description(metaField, rset);
                         break;
                     default:

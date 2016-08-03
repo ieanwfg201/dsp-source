@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -11,6 +12,7 @@ import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.ExternalSupplyAttributes;
 import com.kritter.serving.demand.entity.TargetingProfile;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -19,19 +21,24 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.AD_SUPPLY_INC_EXC;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
     private ExternalSupplyAttributesCache externalSupplyAttributesCache;
+    private String adNoFillReasonMapKey;
 
     public SupplyInclusionExclusionTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
-                                                    ExternalSupplyAttributesCache externalSupplyAttributesCache) {
+                                                    ExternalSupplyAttributesCache externalSupplyAttributesCache,
+                                                    String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.externalSupplyAttributesCache = externalSupplyAttributesCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -143,9 +150,30 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                     continue;
                 }
 
+                // Publisher site list map doesn't contain the publisher, i.e., the publisher is not included.
+                // Skip this ad.
+                if(!publisherSiteListMap.containsKey(site.getPublisherIncId())) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
+
+                    logger.debug("SupplyAttributes are inclusion targeted by ad: {} with this publisher:{} not " +
+                            "specified. Failing it .", adId, site.getPublisherIncId());
+
+                    if(request.isRequestForSystemDebugging())
+                    {
+                        request.addDebugMessageForTestRequest("SupplyAttributes are inclusion targeted by ad: ");
+                        request.addDebugMessageForTestRequest(adEntity.getAdGuid());
+                        request.addDebugMessageForTestRequest(" ,with this publisher not specified: ");
+                        request.addDebugMessageForTestRequest(String.valueOf(site.getPublisherIncId()));
+                        request.addDebugMessageForTestRequest(", failing adId.");
+                    }
+
+                    continue;
+                }
+
+                // This publisher has been included. Check for site inclusion now
                 /*supply attributes are targeted by the ad.Publisher included but no sites specified...*/
-                if(publisherSiteListMap.containsKey(site.getPublisherIncId()) && null == siteListMap)
-                {
+                if(null == siteListMap) {
 
                     ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with no site specified for this publisher id: {} ,passing it .",adEntity.getAdGuid(),site.getPublisherIncId());
 
@@ -154,24 +182,16 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                 }
 
                 /*specific sites are targeted by ad and publisher included but requesting site not included*/
-                if(
-                        publisherSiteListMap.containsKey(site.getPublisherIncId()) &&
-                                null != siteListMap                                        &&
-                                !siteListMap.containsKey(site.getSiteIncId())
-                        )
-                {
+                if(!siteListMap.containsKey(site.getSiteIncId())) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
 
                     ReqLog.debugWithDebug(logger, request, "SupplyAttributes are inclusion targeted by ad: {} with this site:{} not specified for this publisher id: {} ,failing it .",adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
                     continue;
                 }
 
                 /*specific sites are targeted by ad and publisher included and requesting site included*/
-                if(
-                        publisherSiteListMap.containsKey(site.getPublisherIncId()) &&
-                                null != siteListMap                                        &&
-                                siteListMap.containsKey(site.getSiteIncId())
-                        )
-                {
+                if(siteListMap.containsKey(site.getSiteIncId())) {
                     List<ExternalSupplyAttributes> externalSupplyAttributesList = siteListMap.get(site.getSiteIncId());
 
                     if(null != externalSupplyAttributesList && externalSupplyAttributesList.size() <=0 )
@@ -206,6 +226,22 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
 
                         shortlistedAdIdSet.add(adId);
                         continue;
+                    } else {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                this.adNoFillReasonMapKey, context);
+
+                        if(request.isRequestForSystemDebugging())
+                        {
+                            request.addDebugMessageForTestRequest("SupplyAttributes are inclusion targeted by ad: ");
+                            request.addDebugMessageForTestRequest(adEntity.getAdGuid());
+                            request.addDebugMessageForTestRequest(" ,with this site specified: ");
+                            request.addDebugMessageForTestRequest(String.valueOf(site.getSiteIncId()));
+                            request.addDebugMessageForTestRequest(", for publisher id: ");
+                            request.addDebugMessageForTestRequest(String.valueOf(site.getPublisherIncId()));
+                            request.addDebugMessageForTestRequest(", and the internal id for external supply attributes: ");
+                            request.addDebugMessageForTestRequest(String.valueOf(internalIdForExternalSupplyAttributes));
+                            request.addDebugMessageForTestRequest(", is not contained by the targeting passing it.");
+                        }
                     }
                 }
             }
@@ -230,8 +266,10 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                 }
 
                 /*If exclusion specifies the requesting publisher.*/
-                if(publisherSiteListMap.containsKey(site.getPublisherIncId()) && null == siteListMap)
+                if(null == siteListMap)
                 {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
 
                     ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with no site specified for this publisher id: {} ,failing it .",adEntity.getAdGuid(),site.getPublisherIncId());
 
@@ -239,12 +277,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                 }
 
                 /*requesting publisher excluded but requesting site not excluded*/
-                if(
-                        publisherSiteListMap.containsKey(site.getPublisherIncId()) &&
-                                null != siteListMap                                        &&
-                                !siteListMap.containsKey(site.getSiteIncId())
-                        )
-                {
+                if(!siteListMap.containsKey(site.getSiteIncId())) {
 
                     ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} not specified for this publisher id: {} ,passing it .",adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId());
 
@@ -253,12 +286,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                 }
 
                 /*requesting publisher excluded and requesting site excluded, so look for external supply attributes*/
-                if(
-                        publisherSiteListMap.containsKey(site.getPublisherIncId()) &&
-                                null != siteListMap                                        &&
-                                siteListMap.containsKey(site.getSiteIncId())
-                        )
-                {
+                if(siteListMap.containsKey(site.getSiteIncId())) {
                     List<ExternalSupplyAttributes> externalSupplyAttributesList = siteListMap.get(site.getSiteIncId());
 
                     if(null != externalSupplyAttributesList && externalSupplyAttributesList.size() <=0 )
@@ -296,6 +324,9 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                     }
                     else
                     {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                this.adNoFillReasonMapKey, context);
+
                         ReqLog.debugWithDebug(logger, request, "SupplyAttributes are exclusion targeted by ad: {} with this site:{} specified for this publisher id: {} ,and the internalId for external supply attributes: {} is not contained by targeting passing it .",
                                 adEntity.getAdGuid(),site.getSiteIncId(),site.getPublisherIncId(),internalIdForExternalSupplyAttributes);
 
@@ -307,7 +338,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
         }
 
         if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.AD_SUPPLY_INC_EXC);
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

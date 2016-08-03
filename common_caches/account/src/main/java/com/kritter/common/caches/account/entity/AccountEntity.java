@@ -4,17 +4,19 @@ import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.constants.DemandPreference;
 import com.kritter.constants.DemandType;
 import com.kritter.entity.account.AccountDef;
+import lombok.ToString;
+
 import java.io.IOException;
 import java.sql.Timestamp;
 
 /**
  * This class keeps Account Entity
  */
+@ToString
 public class AccountEntity extends AccountDef implements IUpdatableEntity<String>
 {
 
     private final Timestamp updateTime;
-
 
     public AccountEntity(int id, String guid, int demandType, int demandPreference
             , int qps, int timeout, Timestamp updateTime, int currency, boolean test, Short[] btype, String demand_url) throws IOException

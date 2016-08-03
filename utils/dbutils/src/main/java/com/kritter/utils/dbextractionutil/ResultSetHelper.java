@@ -65,7 +65,8 @@ public class ResultSetHelper
         }
         catch (Exception e)
         {
-            logger.error("Error reading content categories map: " + valueToRead,e);
+            logger.error("Error reading content categories map: {}", valueToRead);
+	    logger.error("Exception: ",e);
         }
 
         if(null != valueToReturn && valueToReturn.length == 0)

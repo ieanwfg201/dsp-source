@@ -1,6 +1,8 @@
 import MySQLdb
 import os
 from time import gmtime, strftime
+import sys
+import traceback
 
 from config import *
 from fetch_data import *
@@ -60,7 +62,7 @@ if __name__ == '__main__':
         createMPS(campaignList, campaignBudget, forecast, cfg.dimensions, cfg.dimensionNames, mpsOutputFile, segPrefix, adPrefix, cfg.segmentMapFileName, cfg.adNameMapFileName, logitCTRPredictor, cfg.othersId, "", cfg.campaignIdDimName)
 
     except Exception, e:
-        appLogger.info('Run failed at %s %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), e)  
+        appLogger.info('Run failed at %s %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), traceback.format_exc())
         sys.exit(1)
     finally:
         if cursor is not None:

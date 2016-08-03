@@ -5,6 +5,9 @@ angular.module('app.ui.form.ctrls', [ 'multi-select' ]).
     	$scope.tier1categories_url = "/metadata/options/tier1categories";
     	$scope.tier2categories_url = "/metadata/options/tier2categories";
     	$scope.hygiene_list_url = "/metadata/options/hygienelist";
+		$scope.mma_tier1_url = "/metadata/options/tier1mmaindustry";
+		$scope.mma_tier2_url = "/metadata/options/tier2mmaindustry/";
+    	
     	
         $scope.hygiene_list = $("#hygiene_list").val();
         
@@ -15,6 +18,13 @@ angular.module('app.ui.form.ctrls', [ 'multi-select' ]).
     	
     	$scope.hygiene_list_msmodel = Object.create(MultiSelectModel);
     	$scope.hygiene_list_msmodel.init($scope.hygiene_list_url, 'valueArray', true);
+    	
+		$scope.mma_tier_1_list_msmodel = Object.create(MultiSelectModel);  
+		$scope.mma_tier_1_list_msmodel.init($scope.mma_tier1_url, 'valueArray', true);
+	
+		$scope.mma_tier_2_list_msmodel = Object.create(MultiSelectModel);  
+		$scope.mma_tier_2_list_msmodel.init($scope.mma_tier2_url, 'valueArray', true);
+		$scope.mma_tier_1_list_msmodel.addDependent("mma_tier2", $scope.mma_tier_2_list_msmodel);
     	
         
         $scope.selectedHygiene = [];

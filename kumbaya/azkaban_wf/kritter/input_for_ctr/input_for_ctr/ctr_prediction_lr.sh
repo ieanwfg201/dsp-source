@@ -1,9 +1,9 @@
 #!/bin/sh
 
-previous_time=`date -u --date="1 day ago" +%Y-%m-%d`
-process_time_day=`date -u +%Y-%m-%d`
-process_time_dir=`date -u +%Y-%m-%d`
-process_time=`date -u +%Y-%m-%d-%H-%M`
+previous_time=`date --date="1 day ago" +%Y-%m-%d`
+process_time_day=`date +%Y-%m-%d`
+process_time_dir=`date +%Y-%m-%d`
+process_time=`date +%Y-%m-%d-%H-%M`
 
 #cd ${1}
 

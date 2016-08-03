@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.core;
 
+import com.kritter.core.workflow.Context;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 
@@ -13,6 +14,7 @@ public interface CreativeAndFloorMatchingRTBExchange
 {
     public void processAdUnitsForEachBidRequestImpression(
                                                           Request request,
-                                                          Response response
+                                                          Response response,
+                                                          Context context
                                                          ) throws Exception;
 }

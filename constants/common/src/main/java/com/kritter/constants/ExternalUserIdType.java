@@ -7,13 +7,16 @@ import lombok.Getter;
  * etc.
  */
 public enum ExternalUserIdType {
-    SHA1_DEVICE_ID("sdid", false),
-    MD5_DEVICE_ID("mdid", false),
-    SHA1_DEVICE_PLATFORM_ID("sdpid", false),
-    MD5_DEVICE_PLATFORM_ID("mdpid", false),
+    SHA1_DEVICE_ID("didsha1", false),
+    MD5_DEVICE_ID("didmd5", false),
+    SHA1_DEVICE_PLATFORM_ID("dpidsha1", false),
+    MD5_DEVICE_PLATFORM_ID("dpidmd5", false),
+    IFA_USER_ID("ifa", false),
+    MAC_SHA1_DEVICE_ID("macsha1", false),
+    MAC_MD5_DEVICE_ID("macmd5", false),
     COOKIE_ID("cid", false),
-    EXCHANGE_CONSUMER_ID("euid", true),
-    BUYER_USER_ID("buid", true),
+    EXCHANGE_CONSUMER_ID("id", true),
+    BUYER_USER_ID("buyeruid", true),
     AGGREGATOR_USER_ID("auid", true);
 
     @Getter

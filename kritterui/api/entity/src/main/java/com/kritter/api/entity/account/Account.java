@@ -102,10 +102,12 @@ public class Account {
     private int timeout = 200;
     @JsonIgnore@Getter@Setter
     private DemandProps demandProps = null;
-    @JsonIgnore@Getter@Setter
+    @Getter@Setter
     private String demand_url = "";
     private String billing_name = "";
     private String billing_email="";
+    @Getter@Setter
+    private String ext="";
     public String getPaypal_id() {
         return paypal_id;
     }

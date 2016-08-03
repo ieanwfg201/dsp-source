@@ -136,8 +136,7 @@ public class CustomIPFileDetectionCache
 
             if(!inputDataFile.exists())
             {
-                logger.error("File does not exist inside CustomIPFileDetectionCache" +
-                             ", the file looked up was: "  + filePath.toString());
+                logger.error("File does not exist inside CustomIPFileDetectionCache, the file looked up was: {}", filePath.toString());
                 continue;
             }
 
@@ -266,8 +265,7 @@ public class CustomIPFileDetectionCache
         }
         catch (Exception e)
         {
-            logger.error("Exception inside doesIPExistInCustomIPFiles in getting ip address numeric value." +
-                         ipAddress);
+            logger.error("Exception inside doesIPExistInCustomIPFiles in getting ip address numeric value.{}", ipAddress);
         }
 
         for(String fileId : fileIdsForDataToCheck)
@@ -276,8 +274,7 @@ public class CustomIPFileDetectionCache
 
             if(null == customIpData || customIpData.length <= 0)
             {
-                logger.error("Custom ip data does not exist in CustomIPFileDetectionCache for fileid: " + fileId +
-                             ",skipping applying custom ip filters to it from selected ads...");
+                logger.error("Custom ip data does not exist in CustomIPFileDetectionCache for fileid: {},skipping applying custom ip filters to it from selected ads...", fileId);
                 continue;
             }
 
@@ -316,8 +313,7 @@ public class CustomIPFileDetectionCache
             }
             catch (RefreshException re)
             {
-                cacheLogger.error("RefreshException while loading custom ip data inside " +
-                                  "CustomIPFileDetectionCache in the class CountryDetectionCache",re);
+                cacheLogger.error("RefreshException while loading custom ip data inside CustomIPFileDetectionCache in the class CountryDetectionCache ",re);
             }
         }
     }

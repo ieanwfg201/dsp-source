@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -8,6 +9,7 @@ import com.kritter.core.workflow.Context;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.SetUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -18,16 +20,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SiteCategoryTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.AD_SITE_CATEGORY_INC_EXC;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
+    private String adNoFillReasonMapKey;
 
-    public SiteCategoryTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache) {
+    public SiteCategoryTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
+                                        String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -78,6 +85,9 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
                 {
                     ReqLog.debugWithDebug(logger, request, "For adid: {}, sitecategory excl passes...", adEntity.getAdGuid());
                     shortlistedAdIdSet.add(adId);
+                } else {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
                 }
             }
             else if(null != targetingProfile.getCategoriesInclusionList())
@@ -94,12 +104,15 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
                 {
                     ReqLog.debugWithDebug(logger, request, "For adid: {}, sitecategory incl passes...", adEntity.getAdGuid());
                     shortlistedAdIdSet.add(adId);
+                } else {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
                 }
             }
         }
 
         if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.AD_SITE_CATEGORY_INC_EXC);
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

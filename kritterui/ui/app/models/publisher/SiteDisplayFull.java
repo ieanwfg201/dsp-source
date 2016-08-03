@@ -106,6 +106,9 @@ public class SiteDisplayFull extends SiteDisplay{
 
     public String getUrlExclusion() {
         String excList = site.getUrl_exclusion();
+        if(excList == null)
+            return "";
+
         String[] tmp = excList.split(",");
         String excListStr = "";
         for (String string : tmp) {

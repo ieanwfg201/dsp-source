@@ -1,13 +1,15 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
 import com.kritter.core.workflow.Context;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.entity.Version;
 import com.kritter.utils.entity.VersionRange;
 import lombok.Getter;
@@ -20,6 +22,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class HandsetBrowserMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.AD_BROWSER;
+
     private static final String DASH = "-";
     private static final String ALL_VERSIONS = "All";
 
@@ -29,13 +33,15 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
 
     private AdEntityCache adEntityCache;
     private String contextHandsetMasterDataKey;
+    private String adNoFillReasonMapKey;
 
     public HandsetBrowserMatcher(String name, String loggerName, AdEntityCache adEntityCache,
-                                 String contextHandsetMasterDataKey) {
+                                 String contextHandsetMasterDataKey, String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.contextHandsetMasterDataKey = contextHandsetMasterDataKey;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -85,6 +91,8 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
                 if(!browserMap.containsKey(handsetBrowserId))
                 {
                     ReqLog.debugWithDebug(logger, request, "The requesting handset does not comply with any targeted browser in ad, skipping adId: {} ",adEntity.getAdGuid());
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
                     continue;
                 }
 
@@ -110,6 +118,17 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
                 {
                     ReqLog.debugWithDebug(logger, request, "The browserversion: {} is within targeted version range. For adid : {}, passing it...", handsetBrowserVersion, adEntity.getAdGuid());
                     filteredAdIds.add(adId);
+                } else {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
+
+                    logger.debug("The browserversion: {} is outside targeted version range. For adid : {}, skipping " +
+                            "it...", handsetBrowserVersion, adId);
+                    request.addDebugMessageForTestRequest("The browserversion: ");
+                    request.addDebugMessageForTestRequest(handsetBrowserVersion);
+                    request.addDebugMessageForTestRequest("is outside targeted version range. For adid : ");
+                    request.addDebugMessageForTestRequest(adEntity.getAdGuid());
+                    request.addDebugMessageForTestRequest(" skipping it.");
                 }
             }
         }
@@ -120,7 +139,7 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
         }
 
         if(null == request.getNoFillReason() && filteredAdIds.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.AD_BROWSER);
+            request.setNoFillReason(noFillReason);
 
         return filteredAdIds;
     }

@@ -49,8 +49,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.kritter</groupId>
-            <artifactId>device</artifactId>
+            <groupId>com.kritter.device</groupId>
+            <artifactId>common</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

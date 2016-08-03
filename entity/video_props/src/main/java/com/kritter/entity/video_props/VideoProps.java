@@ -62,6 +62,8 @@ public class VideoProps {
     private int companiontype = VASTCompanionTypes.Unknown.getCode();
     @Getter@Setter
     private Integer[] tracking; 
+    @Getter@Setter
+    private String[] video_info; 
     
     /**
      * absent is position and companion ad

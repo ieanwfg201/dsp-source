@@ -164,8 +164,8 @@ public class CountryDetectionCache
 
                         IpRangeKeyValue ipRangeKeyValue = new IpRangeKeyValue
                                                                            (
-                                                                            BigInteger.valueOf(Long.valueOf(startIp)),
-                                                                            BigInteger.valueOf(Long.valueOf(endIp)),
+                                                                            new BigInteger(startIp),
+                                                                            new BigInteger(endIp),
                                                                             Integer.valueOf(countryId),
                                                                             dataSource
                                                                            );
@@ -355,8 +355,7 @@ public class CountryDetectionCache
             }
             catch (RefreshException re)
             {
-                cacheLogger.error("RefreshException while loading country data inside " +
-                                  "CountryDataFileReloadTimerTask in the class CountryDetectionCache",re);
+                cacheLogger.error("RefreshException while loading country data inside CountryDataFileReloadTimerTask in the class CountryDetectionCache",re);
             }
         }
     }

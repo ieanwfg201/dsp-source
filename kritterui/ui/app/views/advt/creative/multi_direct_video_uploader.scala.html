@@ -1,0 +1,105 @@
+@slot_options = {
+	<table class="table">
+           <thead>
+               <tr>
+                   <th width="30%">Slot Dimension</th>
+                   <th width="30%">Slot Description</th> 
+               </tr>
+           </thead>
+           <tbody>
+               <tr ng-repeat="option in slotOptions">
+                    <td>{{option.name}}</td>
+                    <td>{{option.description}}</td>
+               </tr>
+           </tbody>
+       </table>
+}
+
+@footer = {
+      <div> 
+           <button type="button" class="btn btn-danger btn-s" ng-click="directvideouploader.clearQueue()" ng-disabled="!directvideouploader.queue.length">
+               <span class="glyphicon glyphicon-trash"></span> Remove all
+           </button>
+           
+            <button type="button" class="btn btn-success btn-s" ng-click="ok()" ng-disabled="!hasValidDirectvideos">
+               <span class="glyphicon glyphicon-save"></span> Save Direct Videos
+           </button>
+           
+	 		<button type="button" class="btn btn-info btn-s" ng-click="cancel()" >
+                 Cancel
+           </button>
+       </div> 
+}
+
+@content = {
+	<div class="form-group row">
+		<div class="col-sm-3">
+			<label for="directvideo_selector" > Select the Video to Upload</label>
+		</div>
+	
+		<div class="col-sm-9">
+			<input id="directvideo_selector" type="file" nv-file-select uploader="directvideouploader" multiple/>
+		</div>
+	</div> 
+		    
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="30%">Thumbnail</th>
+                    <th width="30%">Slot</th>
+                    <th ng-show="directvideouploader.isHTML5">Size</th>
+                    <th ng-show="directvideouploader.isHTML5">Progress</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in directvideouploader.queue">
+                    <td><div><img ng-src="{{item.thumbUrl}}" class="img-thumbnail"></img></div><div><strong>{{ item.file.name }}</strong></div></td>
+                    <td>
+                     <span ng-show="item.showOptions">
+                     	<select   ng-model="item.slot"     ng-required="true" ng-options="option.label for option in   item.slotOptions"> </select>
+                     </span>
+                     <span ng-show="item.showError">
+                     	{{item.message}}
+                     </span>
+                    </td>
+                    <td ng-show="directvideouploader.isHTML5" nowrap>{{ item.file.size/1024|number:2 }} KB</td>
+                    <td ng-show="directvideouploader.isHTML5">
+                        <div class="progress" style="margin-bottom: 0;">
+                            <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i> </span>
+                        <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i> </span>
+                        <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i> </span>
+                    </td>
+                    <td nowrap>
+                        <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+         <div class="progress" style="">
+          <div class="progress-bar" role="progressbar" ng-style="{ 'width': directvideouploader.progress + '%' }"></div>
+      </div>
+      <span ng-show="hasInValidDirectvideos"><h3>There are invalid direct video in the table. Please remove them.</h3></span>  
+}
+
+@components.containers.modal("Upload Direct Video", "ok", "cancel"){@footer}{
+<tabset>
+	<tab heading="Uploaded Direct Video">
+		<div class="well">
+			@content
+		</div> 
+	</tab>
+	<tab heading="Available Slot Options">
+		<div class="well" style="height:400px;overflow:scroll">
+			@slot_options
+		 </div>
+	</tab>
+</tabset>
+}

@@ -6,6 +6,7 @@ OUTPUT=$3
 THRIFT_JAR_PATH=$4
 PROCESS_TIME="$5 $6"
 POST_IMP_INPUT_FILES=$7
+tz=$8
 
 if [ "$1" = "" ]; then
     PIG_HOME=/usr/share/pig
@@ -29,6 +30,10 @@ fi
 if [ "$7" = "" ]; then
     POST_IMP_INPUT_FILES=/home/rohan/testdata/kritter/postim*
 fi
+if [ "$8" = "" ]; then
+    tz=UTC
+fi
+
 
 MAPRED=/tmp/logevents_`date +%s`
 pig_script=logevents
@@ -41,5 +46,5 @@ PIG_OPTS="$PIG_OPTS -Dhadoop.tmp.dir=${MAPRED}/$pig_script/hadoop"
 
 export PIG_OPTS
 
-echo "$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param PROCESS_TIME="$PROCESS_TIME" --param POST_IMP_INPUT_FILES="$POST_IMP_INPUT_FILES""
-$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param PROCESS_TIME="$PROCESS_TIME" --param POST_IMP_INPUT_FILES="$POST_IMP_INPUT_FILES"
+echo "$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param PROCESS_TIME="$PROCESS_TIME" --param POST_IMP_INPUT_FILES="$POST_IMP_INPUT_FILES" --param tz="$tz""
+$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param PROCESS_TIME="$PROCESS_TIME" --param POST_IMP_INPUT_FILES="$POST_IMP_INPUT_FILES" --param tz="$tz"

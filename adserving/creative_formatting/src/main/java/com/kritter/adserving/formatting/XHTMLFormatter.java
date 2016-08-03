@@ -91,7 +91,7 @@ public class XHTMLFormatter implements CreativesFormatter
 
             if(null == creative)
             {
-                this.logger.error("The creative entity not found in cache inside formatCreatives() XHTMLFormatter,id being:" + adEntity.getCreativeId());
+                this.logger.error("The creative entity not found in cache inside formatCreatives() XHTMLFormatter,id being:{}" , adEntity.getCreativeId());
                 continue;
             }
 
@@ -132,7 +132,7 @@ public class XHTMLFormatter implements CreativesFormatter
                 for(ExternalUserId externalUserId : externalUserIdSet)
                 {
                     if(externalUserId.getIdType().equals(ExternalUserIdType.EXCHANGE_CONSUMER_ID))
-                        exchangeUserId = externalUserId.getUserId();
+                        exchangeUserId = externalUserId.toString();
                 }
             }
 
@@ -153,7 +153,7 @@ public class XHTMLFormatter implements CreativesFormatter
 
                 if(null == responseAdInfo.getCreativeBanner())
                 {
-                    logger.error("CreativeBanner is null inside XHTMLFormatter,cannot format ad, for adid: " +
+                    logger.error("CreativeBanner is null inside XHTMLFormatter,cannot format ad, for adid:{} " ,
                                  responseAdInfo.getAdId());
                     continue;
                 }
@@ -162,8 +162,8 @@ public class XHTMLFormatter implements CreativesFormatter
                 StringBuffer creativeImageUrl = new StringBuffer(this.cdnBaseImageUrl);
                 creativeImageUrl.append(responseAdInfo.getCreativeBanner().getResourceURI());
                 List<String> extImpTracker = null;
-                if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getExtImpTracker() != null){
-                    extImpTracker = adEntity.getExtTracker().getExtImpTracker();
+                if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getImpTracker() != null){
+                    extImpTracker = adEntity.getExtTracker().getImpTracker();
                 }
                 fCreative.addBannerEntity(creativeImageUrl.toString(), null, null, creative.getText(), 
                         clickUrl.toString(), cscBeaconUrl.toString(),extImpTracker);

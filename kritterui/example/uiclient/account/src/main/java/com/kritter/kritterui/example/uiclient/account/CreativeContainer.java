@@ -22,6 +22,7 @@ public class CreativeContainer {
         conn.setDoOutput(true);
         ObjectMapper mapper = new ObjectMapper();
         DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+        System.out.println(cli.toJson());
         mapper.writeValue(wr, cli.toJson());
         wr.flush();
         wr.close();

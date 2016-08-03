@@ -54,8 +54,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/video_props</module>
     <module>entity/vast/wrapper/3.0</module>
     <module>entity/vast/wrapper/2.0</module>
+    <module>entity/vast/normal/3.0</module>
+    <module>entity/vast/normal/2.0</module>
     <module>entity/userreports</module>
     <module>entity/algomodel</module>
+    <module>entity/pmp</module>
     <module>utils/common</module>
     <module>utils/state_manager</module>
     <module>utils/targeting</module>
@@ -64,11 +67,15 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>utils/pub_payout_serde</module>
     <module>utils/thrift_log_serde</module>
     <module>utils/amazon_s3_upload</module>
+    <module>utils/edgecast_upload</module>
+    <module>utils/ucloud_upload</module>
     <module>utils/amazon_glacier_upload</module>
     <module>utils/nosql/common</module>
     <module>utils/cookie_sync/common</module>
     <module>utils/doubleclick/doubleclick-core</module>
     <module>utils/http_client</module>
+    <module>utils/mma_loader</module>
+    <module>utils/channel_loader</module>
     <module>core/metrics</module>
     <module>core/cache-abstraction</module>
     <module>core/expression-tree</module>
@@ -89,10 +96,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/winner</module>
     <module>entity/creative_macro</module>
     <module>entity/common</module>
+    <module>entity/ad_stats</module>
     <module>entity/req_res_entity</module>
     <module>entity/user</module>
     <module>entity/req_logging</module>
     <module>entity/external_tracker</module>
+    <module>entity/mma_categories</module>
+    <module>entity/ad_ext</module>
     <module>ex_int/utils</module>
     <module>ex_int/openrtb/2.0</module>
     <module>ex_int/openrtb/2.1</module>
@@ -102,9 +112,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>ex_int/video_admarkup</module>
     <module>ex_int/banner_admarkup/common</module>
     <module>ex_int/mopub/2.3</module>
+    <module>ex_int/tencent</module>
+    <module>ex_int/youku/2.2</module>
     <module>geo/utils</module>
     <module>geo/common</module>
     <module>geo/maxmind</module>
+    <module>geo/thirdpartydata</module>
     <module>geo/openrtb</module>
     <module>geo/geo</module>
     <module>rtb/ds</module>
@@ -121,10 +134,18 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>common_caches/account</module>
     <module>common_caches/ssp_rules</module>
     <module>common_caches/retargeting_segment</module>
+    <module>common_caches/video_info_cache</module>
     <module>common_caches/native_icon_cache</module>
     <module>common_caches/native_screenshot_cache</module>
     <module>common_caches/req_logging_cache</module>
+    <module>common_caches/ad_stats</module>
+    <module>common_caches/mma_cache</module>
+    <module>common_caches/adposition_cache</module>
+    <module>common_caches/channel_cache</module>
+    <module>common_caches/pmp</module>
     <module>adserving/mopub_req_enricher_2.3</module>
+    <module>adserving/youku_req_res_enricher</module>
+    <module>adserving/tencent_req_enricher</module>
     <module>adserving/adexchange_req_enricher</module>
     <module>adserving/req_res_enricher</module>
     <module>adserving/ctr_prediction</module>
@@ -144,6 +165,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>kumbaya/libraries/query_planner</module>
     <module>kumbaya/libraries/report_delete</module>
     <module>kumbaya/libraries/ext_site_app_merger</module>
+    <module>kumbaya/countdistinct</module>
     <module>billing</module>
     <module>kritterui/api</module>
     <module>skunkworks/thrift_b64_reader</module>

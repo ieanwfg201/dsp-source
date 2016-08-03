@@ -2,12 +2,14 @@ package com.kritter.common.caches.iab.categories.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
 /**
  * This class keeps an IAB content category description.
  */
+@ToString
 public class IABCategoryEntity implements IUpdatableEntity<String>
 {
     @Getter

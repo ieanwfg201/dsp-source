@@ -52,8 +52,7 @@ public class RandomEcpmSelection implements AdRankingSelection
      */
     private ResponseAdInfo[] randomlySelectAdIds(Set<ResponseAdInfo> shortListedAdUnits, 
             int numberOfAdsRequired, int requestedNumberOfAds) {
-        logger.debug("Performing random selection of finalized adunits inside randomlySelectAdIds of " +
-                "RandomBasedOnEcpmSelection");
+        logger.debug("Performing random selection of finalized adunits inside randomlySelectAdIds of RandomBasedOnEcpmSelection");
 
 
         if(requestedNumberOfAds != 0 && requestedNumberOfAds < numberOfAdsRequired)

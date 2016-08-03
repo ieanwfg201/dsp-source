@@ -1,0 +1,6 @@
+# ad_stat_new_movetoinprocess.job
+
+type=command
+dependencies=ad_stat_new_init
+command=mkdir -p ${ad_stat_readytoprocess_path}/"${process_time_dir}"
+command.1=sh ad_stat_new_movetoinprocess.sh ${ad_stat_input_path} ${ad_stat_readytoprocess_path}/"${process_time_dir}" "${process_time}" "${process_time_dir}" "${kritter_first_level_code_path}"

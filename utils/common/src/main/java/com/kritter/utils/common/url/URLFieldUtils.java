@@ -1,5 +1,7 @@
 package com.kritter.utils.common.url;
 
+import java.util.Arrays;
+
 /**
  * This class keeps utility methods to be used inside classes storing and fetching url fields.
  */
@@ -271,5 +273,16 @@ public class URLFieldUtils
         }
 
         return result;
+    }
+
+    public static byte[] trimForNullBytes(byte[] bytes)
+    {
+        int i = bytes.length - 1;
+        while (i >= 0 && bytes[i] == 0)
+        {
+            --i;
+        }
+
+        return Arrays.copyOf(bytes, i + 1);
     }
 }

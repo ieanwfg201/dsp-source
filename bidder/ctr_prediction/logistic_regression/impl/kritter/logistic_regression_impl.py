@@ -46,7 +46,8 @@ def deleteDataFromDB(dbConnection, tableName, modelId):
         cursor.execute(query)
         dbConnection.commit()
     except Exception, e:
-        configLogger.info("Exception occurred %s", e)
+        appLogger.info("Exception occurred %s", traceback.format_exc())
+        raise e
     finally:
         if cursor is not None:
             cursor.close()
@@ -80,7 +81,7 @@ def storeResultsInDB(dbConnection, tableName, modelId, results):
         cursor.execute(query)
         dbConnection.commit()
     except Exception, e:
-        configLogger.info("Exception occurred %s", e)
+        appLogger.info("Exception occurred %s", traceback.format_exc())
     finally:
         if cursor is not None:
             cursor.close()
@@ -225,8 +226,7 @@ if __name__ == '__main__':
             appLogger.info('Run failed at %s. Symlink creation failed. Output file : %s, symlink : %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), logisticRegressionOutputFileName, outputSymLink)
             sys.exit(1)
     except Exception, e:
-        traceback.print_exc()
-        appLogger.info('Run failed at %s %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), e)
+        appLogger.info('Run failed at %s. Traceback : %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), traceback.format_exc())
         sys.exit(1)
     finally:
         if dbConnection is not None:

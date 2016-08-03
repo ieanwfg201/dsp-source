@@ -12,6 +12,7 @@ import com.kritter.entity.native_props.NativeProps;
 import lombok.Getter;
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Setter;
+import lombok.ToString;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
@@ -20,7 +21,7 @@ import org.codehaus.jackson.type.TypeReference;
  * property requesting via an exchange, ssp, dcp or directly. The site could be
  * of pc context, mobile wap site or app.
  */
-
+@ToString
 public class Site implements IUpdatableEntity<String>
 {
     @Getter
@@ -99,7 +100,28 @@ public class Site implements IUpdatableEntity<String>
     private String externalAppBundle;
     @Getter @Setter
     private String[] externalCategories;
-
+    @Getter @Setter
+    private Integer[] mmaCatgories;
+    @Getter @Setter
+    private boolean mmaCatgoriesExclude;
+    @Getter @Setter
+    private Integer[] mmaCatgoriesForExcInc;
+    @Getter @Setter
+    private Integer[] mmaindustryCode;
+    @Getter @Setter
+    private boolean mmaindustrCodeExclude;
+    @Getter @Setter
+    private Integer[] mmaindustrCodeExcInc;
+    @Getter @Setter
+    private String adPosition;
+    @Getter @Setter
+    private Integer adPositionUiId;
+    @Getter @Setter
+    private String channelFirstLevelCode;
+    @Getter @Setter
+    private String channelSecondLevelCode;
+    @Getter @Setter
+    private Integer channelInternalId;
     /*Demand preferences if set here can be used at site level.
     * By default they exist at account level.*/
     @Getter @Setter
@@ -226,6 +248,8 @@ public class Site implements IUpdatableEntity<String>
                 typeReferenceForPassbackContent= new TypeReference<NoFillPassbackContent[]>(){};
         private boolean isNative = false;
         private NativeProps nativeProps = null;
+        private String adPosition;
+
 
         public SiteEntityBuilder(Integer siteIncId,
                                  String siteGuid,
@@ -295,6 +319,12 @@ public class Site implements IUpdatableEntity<String>
             this.isAdvertiserIdListExcluded = isAdvertiserIdListExcluded;
             return this;
         }
+        public SiteEntityBuilder setAdPosition(String adPosition)
+        {
+            this.adPosition = adPosition;
+            return this;
+        }
+
 
         public SiteEntityBuilder setCampaignInclusionExclusionSchemaMap(String campaignInclusionExclusionJson)
         {

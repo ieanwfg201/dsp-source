@@ -43,7 +43,8 @@ public class LoadData {
             FileStatus[] files = srcFs.listStatus(path);
             return files;
         } catch (Exception e) {
-                    m_logger.error("Exception in shellListStatus: Could not list "+path.toString(),e);
+                    m_logger.error("Exception in shellListStatus: Could not list {}");
+		    m_logger.error(path.toString(),e);
         }
         return null;
     }

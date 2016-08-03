@@ -125,7 +125,7 @@ public class JSONFormatter implements CreativesFormatter{
                 for(ExternalUserId externalUserId : externalUserIdSet)
                 {
                     if(externalUserId.getIdType().equals(ExternalUserIdType.EXCHANGE_CONSUMER_ID))
-                        exchangeUserId = externalUserId.getUserId();
+                        exchangeUserId = externalUserId.toString();
                 }
             }
 
@@ -153,8 +153,8 @@ public class JSONFormatter implements CreativesFormatter{
 
                 CreativeSlot creativeSlot = this.creativeSlotCache.query(responseAdInfo.getCreativeBanner().getSlotId());
                 List<String> extImpTracker = null;
-                if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getExtImpTracker() != null){
-                    extImpTracker = adEntity.getExtTracker().getExtImpTracker();
+                if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getImpTracker() != null){
+                    extImpTracker = adEntity.getExtTracker().getImpTracker();
                 }
                 formatBanner(formatCreative, responseAdInfo, creative, creativeSlot, clickUrl.toString(), 
                         cscBeaconUrl.toString(), extImpTracker);

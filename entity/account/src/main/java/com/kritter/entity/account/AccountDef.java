@@ -1,15 +1,12 @@
 package com.kritter.entity.account;
 
+import com.kritter.constants.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.io.IOException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-
-import com.kritter.constants.DemandPreference;
-import com.kritter.constants.DemandType;
-import com.kritter.constants.SupportedCurrencies;
 
 public class AccountDef
 {
@@ -31,8 +28,19 @@ public class AccountDef
     public boolean test = false;
     @Getter@Setter
     public Short[] btype = null;
+
+    /*In case of third party demand channel, url is used as bidder URL where
+    * open rtb requests are sent.*/
     @Getter@Setter
     public String demand_url;
+
+    /*Used in identifying what kind of demand channel this advertiser account is.*/
+    @Getter @Setter
+    private ThirdPartyDemandChannel thirdPartyDemandChannel;
+
+    /*The open rtb version this third party demand channel will accept.*/
+    @Getter @Setter
+    private OpenRTBVersion openRTBVersion;
     
     public static AccountDef getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();

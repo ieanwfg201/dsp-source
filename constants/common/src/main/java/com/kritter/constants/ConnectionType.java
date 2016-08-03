@@ -7,9 +7,15 @@ import java.util.Map;
 * Created by kshitij on 4/5/15.
 */
 public enum ConnectionType {
-    WIFI("WiFi", (short)1),
-    CARRIER("Carrier", (short)2),
-    UNKNOWN("Unknown", (short)-1);
+	/** Connection type greater than 50 is not honored . Used for build purposes*/
+    UNKNOWN("Unknown", (short)0),
+    Ethernet("Ethernet", (short)1),
+    WIFI("WIFI", (short)2),
+    MobiledataUnknown("MobiledataUnknown", (short)3),
+    MobiledataTwoG("MobiledataTwoG", (short)4),
+    MobiledataThreeG("MobiledataThreeG", (short)5),
+    CARRIER("Carrier", (short)51);
+
 
     private String connectionTypeName;
     private short id;

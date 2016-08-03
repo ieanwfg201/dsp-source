@@ -64,16 +64,21 @@ import com.kritter.api.entity.targeting_profile.TargetingProfileList;
 import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.api.entity.tracking_event.TrackingEvent;
+import com.kritter.api.entity.video_info.VideoInfoList;
+import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.MetadataType;
+import com.kritter.entity.ad_stats.AdStats;
 import com.kritter.entity.algomodel.AlgoModelEntity;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
 import com.kritter.entity.req_logging.ReqLoggingEntity;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.entity.userreports.UserReport;
+import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.kritterui.api.account.AccountCrud;
 import com.kritter.kritterui.api.account_budget.Account_Budget_Crud;
 import com.kritter.kritterui.api.ad.AdCrud;
+import com.kritter.kritterui.api.ad_stats.AdStatsCrud;
 import com.kritter.kritterui.api.algo_models.AlgoModelCrud;
 import com.kritter.kritterui.api.campaign.CampaignCrud;
 import com.kritter.kritterui.api.campaign_budget.CampaignBudgetCrud;
@@ -100,6 +105,7 @@ import com.kritter.kritterui.api.ssp.SSPCrud;
 import com.kritter.kritterui.api.targeting_profile.TargetingProfileCrud;
 import com.kritter.kritterui.api.tracking_event.TrackingEventCrud;
 import com.kritter.kritterui.api.userreport.UserReportCrud;
+import com.kritter.kritterui.api.video_info.VideoInfoCrud;
 
 public class ApiDef {
     
@@ -232,6 +238,13 @@ public class ApiDef {
     public static Message check_io(Connection con, Insertion_Order io){
         return IOCrud.check_io(con, io);
     }
+    public static JsonNode get_io(Connection con, JsonNode jsonNode){
+        return IOCrud.get_io(con, jsonNode);
+    }
+    public static Insertion_Order_List get_io(Connection con, Insertion_Order io){
+        return IOCrud.get_io(con, io);
+    }
+    
     public static JsonNode list_io(Connection con, JsonNode jsonNode){
         return IOCrud.list_io(con, jsonNode);
     }
@@ -697,6 +710,33 @@ public class ApiDef {
     public static Message insert_update_meta(Connection con, MetadataType metadataType, MetaInput metaInput){
         return MetadataCrud.insert_update_meta(con, metaInput, metadataType, true);
     }
+    public static JsonNode get_mma_category_tier1_all(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_TIER1_ALL,null).toJson();
+    }
+    public static JsonNode get_mma_category_tier2_by_tier1(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_TIER2_BY_TIER1,null).toJson();
+    }
+    public static JsonNode get_mma_category_by_ids(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_BY_IDS,null).toJson();
+    }
+    public static JsonNode get_mma_industry_tier1_all(Connection con){
+        return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER1_ALL,null).toJson();
+    }
+    public static JsonNode get_mma_industry_tier2_by_tier1(Connection con){
+        return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER2_BY_TIER1,null).toJson();
+    }
+    public static JsonNode get_mma_industry_by_ids(Connection con){
+        return get_metalist(con,MetadataType.MMA_INDUSTRY_BY_IDS,null).toJson();
+    }
+    public static JsonNode get_channel_tier1_all(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_TIER1_ALL,null).toJson();
+    }
+    public static JsonNode get_channel_tier2_by_tier1(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_TIER2_BY_TIER1,null).toJson();
+    }
+    public static JsonNode get_channel_by_ids(Connection con){
+        return get_metalist(con,MetadataType.MMA_CATEGORY_BY_IDS,null).toJson();
+    }
     
     /* LOG API */
     
@@ -720,6 +760,11 @@ public class ApiDef {
     public static JsonNode get_data(Connection con, TrackingEvent trackingEvent, 
             boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
         return TrackingEventCrud.get_data(con, trackingEvent, exportAsCsv, absoluteFileName);
+    }
+    /*AdStats API*/
+    public static JsonNode get_data(Connection con, AdStats adStats, 
+            boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
+        return AdStatsCrud.get_data(con, adStats, exportAsCsv, absoluteFileName);
     }
     /*UserReport API*/
     public static JsonNode get_data(Connection con, UserReport userReport, 
@@ -955,4 +1000,30 @@ public class ApiDef {
     public static NativeScreenshotList get_native_screenshot_from_container(Connection con, Creative_container cc){
         return MixedCrud.get_native_screenshot_from_container(con, cc);
     }
+    /*VIDEO INFO ICON APIs*/
+    public static JsonNode insert_video_info(Connection con, JsonNode jsonNode){
+        return VideoInfoCrud.insert_video_info(con, jsonNode);
+    }    
+    public static Message insert_video_info(Connection con, VideoInfo video_info){
+        return VideoInfoCrud.insert_video_info(con, video_info, true);
+    }
+    public static JsonNode update_video_info(Connection con, JsonNode jsonNode){
+        return VideoInfoCrud.update_video_info(con, jsonNode);
+    }    
+    public static Message update_video_info(Connection con, VideoInfo video_info){
+        return VideoInfoCrud.update_video_info(con, video_info, true);
+    }
+    public static JsonNode various_get_video_info(Connection con, JsonNode jsonNode){
+        return VideoInfoCrud.various_get_video_info(con, jsonNode);
+    }
+    public static VideoInfoList various_get_video_info(Connection con, VideoInfoListEntity cblistEntity){
+        return VideoInfoCrud.various_get_video_info(con, cblistEntity);
+    }
+    public static JsonNode get_video_info_from_container(Connection con, JsonNode jsonNode){
+        return MixedCrud.get_video_info_from_container(con, jsonNode);
+    }
+    public static VideoInfoList get_video_info_from_container(Connection con, Creative_container cc){
+        return MixedCrud.get_video_info_from_container(con, cc);
+    }
+
 }

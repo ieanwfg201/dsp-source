@@ -13,16 +13,6 @@ CREATE TABLE IF NOT EXISTS account_type
     last_modified TIMESTAMP NOT NULL,
     is_deprecated boolean DEFAULT false
 );
-insert into account_type (id, name,description,created_on,last_modified,is_deprecated) values 
-(1,'root','universally super user',now(),now(),false),
-(2,'directpublisher','direct publisher having our adcode',now(),now(),false),
-(3,'directadvertiser','direct advertiser having demand',now(),now(),false),
-(4,'exchange','adexchange who performs auction',now(),now(),false),
-(5,'atd','agency trading desk,which buys inventory on behalf of advertisers',now(),now(),false),
-(6,'adops','ad operations',now(),now(),false),
-(7,'pubops','publisher operations',now(),now(),false),
-(8,'pubbd','publisher business developer',now(),now(),false),
-(9,'adsales','advertiser sales',now(),now(),false);
 
 -- status-es for entities (Active, Paused, Expired, Rejected, Pending Approval, Archived)
 CREATE TABLE IF NOT EXISTS status 
@@ -34,17 +24,6 @@ CREATE TABLE IF NOT EXISTS status
     last_modified TIMESTAMP NOT NULL,
     is_deprecated boolean DEFAULT false
 );
-
-insert into status (id,name,description,created_on,last_modified,is_deprecated) values 
-(1,'Active','Entity is in active status',now(),now(),false),
-(2,'Paused','Entity has been paused by the user',now(),now(),false),
-(3,'Expired','Entity completion date has passed',now(),now(),false),
-(4,'Rejected','Entity has been rejected in the approval process',now(),now(),false),
-(5,'Pending','Entity is pending approval',now(),now(),false),
-(6,'Experimental','Entity is for experimentation',now(),now(),false),
-(7,'Sandbox','Entity is for sandbox testing',now(),now(),false),
-(8,'DEBUG','Entity is for debugging purposes',now(),now(),false),
-(9,'Approved','Entity is approved',now(),now(),false);
 
 -- account table.
 CREATE TABLE IF NOT EXISTS account
@@ -81,10 +60,6 @@ CREATE TABLE IF NOT EXISTS account
     paypal_id VARCHAR(256) DEFAULT NULL,
     CONSTRAINT fk_account_acctype FOREIGN KEY(type_id) REFERENCES account_type(id)
 );
-insert into account (guid,status,type_id,name,userid,password,email,address,country,city,phone,modified_by,created_on,last_modified) values 
-('root-guid',1,1,'root','admin','$2a$10$O5twVdGKoWvtabDCsivzi.EHJFKUqRQXhM41NMnxJmnFH/Lg4Vn8y','chaharv@gmail.com','private','india','bangalore','999999999',1,now(),now()),
-('test_pub_guid',1,2,'test_pub','testpub','$2a$10$O5twVdGKoWvtabDCsivzi.EHJFKUqRQXhM41NMnxJmnFH/Lg4Vn8y','test','india','india','bang','999999999',1,now(),now()),
-('test_adv_guid',1,3,'test_adv','testadv','$2a$10$O5twVdGKoWvtabDCsivzi.EHJFKUqRQXhM41NMnxJmnFH/Lg4Vn8y','test','india','india','bang','9999999',1,now(),now());
 
 -- dimensions for creatives. should follow IAB standards.0 height and 0 width means variable size.
 -- this includes all the possible IAB mobile and web ad unit sizes.
@@ -102,37 +77,6 @@ CREATE TABLE IF NOT EXISTS creative_slots
     is_deprecated boolean DEFAULT false,
     CONSTRAINT fk_creative_slot_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
--- The ids entered here should not conflict with the sql under creative_slot folder
-insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values 
-(1,120,20,'Feature Phone Small Banner',1,now(),now(),false),
-(2,168,28,'Feature Phone Medium Banner',1,now(),now(),false),
-(3,216,36,'Feature Phone Large Banner',1,now(),now(),false),
-(4,300,250,'Smartphone Static Interstitial',1,now(),now(),false),
-(5,300,50,'Smartphone Static Banner',1,now(),now(),false),
-(6,320,50,'Smartphone Static Wide Banner',1,now(),now(),false),
-(7,300,250,'Smartphone Rich Interstitial',1,now(),now(),false),
-(8,300,50,'Smartphone Rich Banner & Expandable',1,now(),now(),false),
-(9,320,50,'Smartphone Rich Wide Banner & Expandable',1,now(),now(),false),
-(10,970,250,'Billboard',1,now(),now(),false),
-(11,300,600,'Filmstrip',1,now(),now(),false),
-(12,300,1050,'Portrait',1,now(),now(),false),
-(13,970,90,'Pushdown',1,now(),now(),false),
-(14,300,250,'Sidekick',1,now(),now(),false),
-(15,300,600,'Sidekick',1,now(),now(),false),
-(16,970,250,'Sidekick',1,now(),now(),false),
-(17,970,90,'Slider',1,now(),now(),false),
-(18,300,250,'Medium Rectangle',1,now(),now(),false),
-(19,180,150,'Rectangle',1,now(),now(),false),
-(20,160,600,'Wide Skyscraper',1,now(),now(),false),
-(21,728,90,'Leaderboard',1,now(),now(),false),(22,970,90,'Super Leaderboard',1,now(),now(),false),
-(23,300,600,'Half Page',1,now(),now(),false),(24,120,60,'Button 2',1,now(),now(),false),(25,88,31,'Micro Bar',1,now(),now(),false),
-(26,300,250,'In-Banner Video(File Loaded)',1,now(),now(),false),(27,180,150,'In-Banner Video(File Loaded)',1,now(),now(),false),
-(28,160,600,'In-Banner Video(File Loaded)',1,now(),now(),false),(29,728,90,'In-Banner Video(File Loaded)',1,now(),now(),false),
-(30,300,600,'In-Banner Video(File Loaded)',1,now(),now(),false),(31,300,250,'In-Banner Video(Streaming)',1,now(),now(),false),
-(32,180,150,'In-Banner Video(Streaming)',1,now(),now(),false),(33,160,600,'In-Banner Video(Streaming)',1,now(),now(),false),
-(34,728,90,'In-Banner Video(Streaming)',1,now(),now(),false),(35,300,600,'In-Banner Video(Streaming)',1,now(),now(),false),
-(36,300,250,'Pop Ups',1,now(),now(),false),(37,550,480,'Pop Ups',1,now(),now(),false),(38,300,600,'',1,now(),now(),false),
-(39,0,0,'Floating Variable Initial Dimensions',1,now(),now(),false),(40,0,0,'Variable Between the page aka Interstitial',1,now(),now(),false);
 
 -- kinds of creatives (text, banner, third party banners, rich media, ad tags)
 CREATE TABLE IF NOT EXISTS creative_formats
@@ -146,11 +90,6 @@ CREATE TABLE IF NOT EXISTS creative_formats
     is_deprecated boolean DEFAULT false,
     CONSTRAINT fk_creative_format_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
-insert into creative_formats (id,name,description,modified_by,created_on,last_modified,is_deprecated) values 
-(1,'Text','Text Creative',1,now(),now(),false),
-(2,'Banner','Banner Creative',1,now(),now(),false),
-(3,'Rich Media','Rich Media Creative',1,now(),now(),false),
-(4,'Video','Video Creative',1,now(),now(),false);
 
 CREATE TABLE IF NOT EXISTS creative_attributes
 (
@@ -162,24 +101,6 @@ CREATE TABLE IF NOT EXISTS creative_attributes
     CONSTRAINT fk_creative_attr_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
 
-insert into creative_attributes (id,value,modified_by,created_on,last_modified) values
-(1,"Audio Ad (Auto Play)",1,now(),now()),
-(2,"Audio Ad (User Initiated)",1,now(),now()),
-(3,"Expandable (Automatic)",1,now(),now()),
-(4,"Expandable (User Initiated - Click)",1,now(),now()),
-(5,"Expandable (User Initiated - Rollover)",1,now(),now()),
-(6,"In-Banner Video Ad (Auto Play)",1,now(),now()),
-(7,"In-Banner Video Ad (User Initiated)",1,now(),now()),
-(8,"Pop (e.g., Over, Under, or upon Exit)",1,now(),now()),
-(9,"Provocative or Suggestive Imagery",1,now(),now()),
-(10,"Shaky, Flashing, Flickering, Extreme Animation, Smileys",1,now(),now()),
-(11,"Surveys",1,now(),now()),
-(12,"Text Only",1,now(),now()),
-(13,"User Interactive (e.g., Embedded Games)",1,now(),now()),
-(14,"Windows Dialog or Alert Style",1,now(),now()),
-(15,"Has audio on/off button",1,now(),now()),
-(16,"Ad can be skipped (e.g., skip button on preroll video)",1,now(),now()),
-(17,"Banner Only",1,now(),now());
 -- Above Banner only entry refer to non openrtb entry equal to that defined in com.kritter.constants.CreativeAttribute
 
 CREATE TABLE IF NOT EXISTS creative_banner
@@ -196,8 +117,6 @@ CREATE TABLE IF NOT EXISTS creative_banner
     CONSTRAINT fk_creative_banner_modified_by FOREIGN KEY(modified_by) REFERENCES account(id),
     CONSTRAINT fk_creative_banner_slot FOREIGN KEY(slot_id) REFERENCES creative_slots(id)
 );
-
-insert into creative_banner (guid,account_guid,slot_id,resource_uri,modified_by,last_modified) values ('test_banner_guid','test_adv_guid',6,"test_banner.png",1,now());
 
 -- actual creative content alongside account identifier
 CREATE TABLE IF NOT EXISTS creative_container
@@ -233,11 +152,6 @@ CREATE TABLE IF NOT EXISTS creative_container
 alter table creative_container add column status_id smallint(6) NOT NULL DEFAULT 1 after last_modified;
 alter table creative_container ADD CONSTRAINT fk_creative_container_status FOREIGN KEY (status_id) REFERENCES status(id);
 
-insert into creative_container (guid,account_guid,label,format_id,creative_attr,text,modified_by,created_on,last_modified,status_id) values 
-('test_creative_text','test_adv_guid','text_ad_test',1,'[12]','This is test text ad,comes default with installation of the DSP, part of test advertiser account.',1,now(),now(),1);
-
-insert into creative_container (guid,account_guid,label,format_id,creative_attr,text,resource_uri_ids,modified_by,created_on,last_modified,status_id) values
-('test_creative_banner','test_adv_guid','banner_ad_test',2,'[10]','This is test banner ad,comes default with installation of the DSP, part of test advertiser account.','["test_banner_guid"]',1,now(),now(),1);
 
 -- marketplace details (primarily pricing),cpm or cpc or cpa.
 CREATE TABLE IF NOT EXISTS marketplace
@@ -251,11 +165,6 @@ CREATE TABLE IF NOT EXISTS marketplace
     is_deprecated boolean default false,
     CONSTRAINT fk_marketplace_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
-
-insert into marketplace (id,pricing,description,modified_by,created_on,last_modified,is_deprecated) values 
-(1,'CPC','Cost per click in dollars',1,now(),now(),false),
-(2,'CPM','Cost per thousand impressions in dollars',1,now(),now(),false),
-(3,'CPD','Cost per download/Acquisition in dollars',1,now(),now(),false);
 
 -- ARRAYs are values separated by commas stored as TEXT and converted at server end.
 -- ARRAY format: [val1,val2,val3] where val can be integer/short.
@@ -284,8 +193,8 @@ CREATE TABLE IF NOT EXISTS targeting_profile
     country_json TEXT DEFAULT NULL, -- e.g {"1":[1,2],"3":[1,2]} where key is id from ui_targeting_country table and value is id set from country table.
     carrier_json TEXT DEFAULT NULL, -- e.g {"1":[1,2],"3":[1,2]} where key is id from ui_targeting_isp and value is id set from isp table.
 
-    state_json   TEXT DEFAULT NULL,
-    city_json    TEXT DEFAULT NULL,
+    state_json   TEXT DEFAULT NULL, -- e.g {"1":[],"3":[]} where key is id from ui_targeting_state table.
+    city_json    TEXT DEFAULT NULL, -- e.g {"1":[],"3":[]} where key is id from ui_targeting_city table.
     zipcode_file_id_set TEXT,
 
     -- site_list contains the list of sites to be included or excluded. is_site_list_excluded is false if the sites are to be included and true if excluded
@@ -314,27 +223,6 @@ alter table targeting_profile add column hours_list TEXT default NULL after supp
 -- midp targeting , 1= midp1,2 =midp2, 3= both  
 alter table targeting_profile add column midp SMALLINT default 3 after hours_list;
 
-insert into targeting_profile (
-    guid,
-    name,
-    account_guid,
-    status_id,
-    brand_list,
-    model_list,
-    os_json,
-    browser_json,
-    country_json,
-    carrier_json,
-    site_list,
-    is_site_list_excluded,
-    category_list,
-    is_category_list_excluded,
-    custom_ip_file_id_set,
-    modified_by,
-    created_on,
-    last_modified) values 
-    ('test_targeting_profile_guid','test_targeting_profile','test_adv_guid',true,'[32,1]','[283]','{"9":"3.2-4.2"}','{"3":"All-All"}',null,null,'[1]',false,'[1]',false,null,1,now(),now()),('test_targeting_profile_guid2','test_targeting_profile2','test_adv_guid',true,null,null,null,null,null,null,'[1]',false,'[1]',false,null,1,now(),now());
-
 -- campaign table.
 CREATE TABLE IF NOT EXISTS campaign
 (
@@ -352,8 +240,6 @@ CREATE TABLE IF NOT EXISTS campaign
     CONSTRAINT fk_campaign_status FOREIGN KEY(status_id) REFERENCES status(id),
     CONSTRAINT fk_campaign_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
-insert into campaign (guid,name,account_guid,status_id,start_date,end_date,created_on,modified_by,last_modified) values 
-('test_campaign_guid','test_campaign','test_adv_guid',1,now(),'2025-05-25 15:16:49',now(),1,now());
 
 -- line_item or ad
 -- (creative_ids have to be unique across accounts)(a creative may correspond to more than one ad.)
@@ -392,9 +278,6 @@ CREATE TABLE IF NOT EXISTS ad
     CONSTRAINT fk_ad_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
 
-insert into ad(guid,creative_id,creative_guid,landing_url,targeting_guid,campaign_id,campaign_guid,categories_list,hygiene_list,status_id,marketplace_id,internal_max_bid,advertiser_bid,created_on,last_modified,modified_by) values 
-('test_ad_guid',2,'test_creative_banner','http://kritter.in','test_targeting_profile_guid2',1,'test_campaign_guid','[1]','[1]',1,2,0.1,0.2,now(),now(),1);
-
 CREATE TABLE IF NOT EXISTS allocation_id
 (
     id INT PRIMARY KEY,
@@ -403,8 +286,6 @@ CREATE TABLE IF NOT EXISTS allocation_id
     fraction double NOT NULL DEFAULT 0.0,
     last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
-insert into allocation_id (id,definition,description,fraction) values (1,'EXPERIMENT',null,0.5);
 
 CREATE TABLE IF NOT EXISTS content_categories
 (
@@ -421,404 +302,6 @@ CREATE TABLE IF NOT EXISTS content_categories
     CONSTRAINT fk_categories_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
 
--- All of the IAB categories are included here however we might not show all of them
--- and just show the parent categories (whose code field do not have '-' in them),
--- or we might choose to show few of them,they can be set to be not visible on interface.
-
-insert into content_categories (code,value,modified_by,created_on,last_modified) values 
-("IAB1","Arts & Entertainment",1,now(),now()),
-("IAB1-1","Books & Literature",1,now(),now()),
-("IAB1-2","Celebrity Fan/Gossip",1,now(),now()),
-("IAB1-3","Fine Art",1,now(),now()),
-("IAB1-4","Humor",1,now(),now()),
-("IAB1-5","Movies",1,now(),now()),
-("IAB1-6","Music",1,now(),now()),
-("IAB1-7","Television",1,now(),now()),
-("IAB2","Automotive",1,now(),now()),
-("IAB2-1","Auto Parts",1,now(),now()),
-("IAB2-2","Auto Repair",1,now(),now()),
-("IAB2-3","Buying/Selling Cars",1,now(),now()),
-("IAB2-4","Car Culture",1,now(),now()),
-("IAB2-5","Certified Pre-Owned",1,now(),now()),
-("IAB2-6","Convertible",1,now(),now()),
-("IAB2-7","Coupe",1,now(),now()),
-("IAB2-8","Crossover",1,now(),now()),
-("IAB2-9","Diesel",1,now(),now()),
-("IAB2-10","Electric Vehicle",1,now(),now()),
-("IAB2-11","Hatchback",1,now(),now()),
-("IAB2-12","Hybrid",1,now(),now()),
-("IAB2-13","Luxury",1,now(),now()),
-("IAB2-14","MiniVan",1,now(),now()),
-("IAB2-15","Motorcycles",1,now(),now()),
-("IAB2-16","Off-Road Vehicles",1,now(),now()),
-("IAB2-17","Performance Vehicles",1,now(),now()),
-("IAB2-18","Pickup",1,now(),now()),
-("IAB2-19","Road-Side Assistance",1,now(),now()),
-("IAB2-20","Sedan",1,now(),now()),
-("IAB2-21","Trucks & Accessories",1,now(),now()),
-("IAB2-22","Vintage Cars",1,now(),now()),
-("IAB2-23","Wagon",1,now(),now()),
-("IAB3","Business",1,now(),now()),
-("IAB3-1","Advertising",1,now(),now()),
-("IAB3-2","Agriculture",1,now(),now()),
-("IAB3-3","Biotech/Biomedical",1,now(),now()),
-("IAB3-4","Business Software",1,now(),now()),
-("IAB3-5","Construction",1,now(),now()),
-("IAB3-6","Forestry",1,now(),now()),
-("IAB3-7","Government",1,now(),now()),
-("IAB3-8","Green Solutions",1,now(),now()),
-("IAB3-9","Human Resources",1,now(),now()),
-("IAB3-10","Logistics",1,now(),now()),
-("IAB3-11","Marketing",1,now(),now()),
-("IAB3-12","Metals",1,now(),now()),
-("IAB4","Careers",1,now(),now()),
-("IAB4-1","Career Planning",1,now(),now()),
-("IAB4-2","College",1,now(),now()),
-("IAB4-3","Financial Aid",1,now(),now()),
-("IAB4-4","Job Fairs",1,now(),now()),
-("IAB4-5","Job Search",1,now(),now()),
-("IAB4-6","Resume Writing/Advice",1,now(),now()),
-("IAB4-7","Nursing",1,now(),now()),
-("IAB4-8","Scholarships",1,now(),now()),
-("IAB4-9","Telecommuting",1,now(),now()),
-("IAB4-10","U.S. Military",1,now(),now()),
-("IAB4-11","Career Advice",1,now(),now()),
-("IAB5","Education",1,now(),now()),
-("IAB5-1","7-12 Education",1,now(),now()),
-("IAB5-2","Adult Education",1,now(),now()),
-("IAB5-3","Art History",1,now(),now()),
-("IAB5-4","Colledge Administration",1,now(),now()),
-("IAB5-5","College Life",1,now(),now()),
-("IAB5-6","Distance Learning",1,now(),now()),
-("IAB5-7","English as a 2nd Language",1,now(),now()),
-("IAB5-8","Language Learning",1,now(),now()),
-("IAB5-9","Graduate School",1,now(),now()),
-("IAB5-10","Homeschooling",1,now(),now()),
-("IAB5-11","Homework/Study Tips",1,now(),now()),
-("IAB5-12","K-6 Educators",1,now(),now()),
-("IAB5-13","Private School",1,now(),now()),
-("IAB5-14","Special Education",1,now(),now()),
-("IAB5-15","Studying Business",1,now(),now()),
-("IAB6","Family & Parenting",1,now(),now()),
-("IAB6-1","Adoption",1,now(),now()),
-("IAB6-2","Babies & Toddlers",1,now(),now()),
-("IAB6-3","Daycare/Pre School",1,now(),now()),
-("IAB6-4","Family Internet",1,now(),now()),
-("IAB6-5","Parenting - K-6 Kids",1,now(),now()),
-("IAB6-6","Parenting teens",1,now(),now()),
-("IAB6-7","Pregnancy",1,now(),now()),
-("IAB6-8","Special Needs Kids",1,now(),now()),
-("IAB6-9","Eldercare",1,now(),now()),
-("IAB7","Health & Fitness",1,now(),now()),
-("IAB7-1","Exercise",1,now(),now()),
-("IAB7-2","A.D.D.",1,now(),now()),
-("IAB7-3","AIDS/HIV",1,now(),now()),
-("IAB7-4","Allergies",1,now(),now()),
-("IAB7-5","Alternative Medicine",1,now(),now()),
-("IAB7-6","Arthritis",1,now(),now()),
-("IAB7-7","Asthma",1,now(),now()),
-("IAB7-8","Autism/PDD",1,now(),now()),
-("IAB7-9","Bipolar Disorder",1,now(),now()),
-("IAB7-10","Brain Tumor",1,now(),now()),
-("IAB7-11","Cancer",1,now(),now()),
-("IAB7-12","Cholesterol",1,now(),now()),
-("IAB7-13","Chronic Fatigue Syndrome",1,now(),now()),
-("IAB7-14","Chronic Pain",1,now(),now()),
-("IAB7-15","Cold & Flu",1,now(),now()),
-("IAB7-16","Deafness",1,now(),now()),
-("IAB7-17","Dental Care",1,now(),now()),
-("IAB7-18","Depression",1,now(),now()),
-("IAB7-19","Dermatology",1,now(),now()),
-("IAB7-20","Diabetes",1,now(),now()),
-("IAB7-21","Epilepsy",1,now(),now()),
-("IAB7-22","GERD/Acid Reflux",1,now(),now()),
-("IAB7-23","Headaches/Migraines",1,now(),now()),
-("IAB7-24","Heart Disease",1,now(),now()),
-("IAB7-25","Herbs for Health",1,now(),now()),
-("IAB7-26","Holistic Healing",1,now(),now()),
-("IAB7-27","IBS/Crohn's Disease",1,now(),now()),
-("IAB7-28","Incest/Abuse Support",1,now(),now()),
-("IAB7-29","Incontinence",1,now(),now()),
-("IAB7-30","Infertility",1,now(),now()),
-("IAB7-31","Men's Health",1,now(),now()),
-("IAB7-32","Nutrition",1,now(),now()),
-("IAB7-33","Orthopedics",1,now(),now()),
-("IAB7-34","Panic/Anxiety Disorders",1,now(),now()),
-("IAB7-35","Pediatrics",1,now(),now()),
-("IAB7-36","Physical Therapy",1,now(),now()),
-("IAB7-37","Psychology/Psychiatry",1,now(),now()),
-("IAB7-38","Senor Health",1,now(),now()),
-("IAB7-39","Sexuality",1,now(),now()),
-("IAB7-40","Sleep Disorders",1,now(),now()),
-("IAB7-41","Smoking Cessation",1,now(),now()),
-("IAB7-42","Substance Abuse",1,now(),now()),
-("IAB7-43","Thyroid Disease",1,now(),now()),
-("IAB7-44","Weight Loss",1,now(),now()),
-("IAB7-45","Women's Health",1,now(),now()),
-("IAB8","Food & Drink",1,now(),now()),
-("IAB8-1","American Cuisine",1,now(),now()),
-("IAB8-2","Barbecues & Grilling",1,now(),now()),
-("IAB8-3","Cajun/Creole",1,now(),now()),
-("IAB8-4","Chinese Cuisine",1,now(),now()),
-("IAB8-5","Cocktails/Beer",1,now(),now()),
-("IAB8-6","Coffee/Tea",1,now(),now()),
-("IAB8-7","Cuisine-Specific",1,now(),now()),
-("IAB8-8","Desserts & Baking",1,now(),now()),
-("IAB8-9","Dining Out",1,now(),now()),
-("IAB8-10","Food Allergies",1,now(),now()),
-("IAB8-11","French Cuisine",1,now(),now()),
-("IAB8-12","Health/Lowfat Cooking",1,now(),now()),
-("IAB8-13","Italian Cuisine",1,now(),now()),
-("IAB8-14","Japanese Cuisine",1,now(),now()),
-("IAB8-15","Mexican Cuisine",1,now(),now()),
-("IAB8-16","Vegan",1,now(),now()),
-("IAB8-17","Vegetarian",1,now(),now()),
-("IAB8-18","Wine",1,now(),now()),
-("IAB9","Hobbies & Interests",1,now(),now()),
-("IAB9-1","Art/Technology",1,now(),now()),
-("IAB9-2","Arts & Crafts",1,now(),now()),
-("IAB9-3","Beadwork",1,now(),now()),
-("IAB9-4","Birdwatching",1,now(),now()),
-("IAB9-5","Board Games/Puzzles",1,now(),now()),
-("IAB9-6","Candle & Soap Making",1,now(),now()),
-("IAB9-7","Card Games",1,now(),now()),
-("IAB9-8","Chess",1,now(),now()),
-("IAB9-9","Cigars",1,now(),now()),
-("IAB9-10","Collecting",1,now(),now()),
-("IAB9-11","Comic Books",1,now(),now()),
-("IAB9-12","Drawing/Sketching",1,now(),now()),
-("IAB9-13","Freelance Writing",1,now(),now()),
-("IAB9-14","Genealogy",1,now(),now()),
-("IAB9-15","Getting Published",1,now(),now()),
-("IAB9-16","Guitar",1,now(),now()),
-("IAB9-17","Home Recording",1,now(),now()),
-("IAB9-18","Investors & Patents",1,now(),now()),
-("IAB9-19","Jewelry Making",1,now(),now()),
-("IAB9-20","Magic & Illusion",1,now(),now()),
-("IAB9-21","Needlework",1,now(),now()),
-("IAB9-22","Painting",1,now(),now()),
-("IAB9-23","Photography",1,now(),now()),
-("IAB9-24","Radio",1,now(),now()),
-("IAB9-25","Roleplaying Games",1,now(),now()),
-("IAB9-26","Sci-Fi & Fantasy",1,now(),now()),
-("IAB9-27","Scrapbooking",1,now(),now()),
-("IAB9-28","Screenwriting",1,now(),now()),
-("IAB9-29","Stamps & Coins",1,now(),now()),
-("IAB9-30","Video & Computer Games",1,now(),now()),
-("IAB9-31","Woodworking",1,now(),now()),
-("IAB10","Home & Garden",1,now(),now()),
-("IAB10-1","Appliances",1,now(),now()),
-("IAB10-2","Entertaining",1,now(),now()),
-("IAB10-3","Environmental Safety",1,now(),now()),
-("IAB10-4","Gardening",1,now(),now()),
-("IAB10-5","Home Repair",1,now(),now()),
-("IAB10-6","Home Theater",1,now(),now()),
-("IAB10-7","Interior Decorating",1,now(),now()),
-("IAB10-8","Landscaping",1,now(),now()),
-("IAB10-9","Remodeling & Construction",1,now(),now()),
-("IAB11","Law, Gov't & Politics",1,now(),now()),
-("IAB11-1","Immigration",1,now(),now()),
-("IAB11-2","Legal Issues",1,now(),now()),
-("IAB11-3","U.S. Government Resources",1,now(),now()),
-("IAB11-4","Politics",1,now(),now()),
-("IAB11-5","Commentary",1,now(),now()),
-("IAB12","News",1,now(),now()),
-("IAB12-1","International News",1,now(),now()),
-("IAB12-2","National News",1,now(),now()),
-("IAB12-3","Local News",1,now(),now()),
-("IAB13","Personal Finance",1,now(),now()),
-("IAB13-1","Beginning Investing",1,now(),now()),
-("IAB13-2","Credit/Debt & Loans",1,now(),now()),
-("IAB13-3","Financial News",1,now(),now()),
-("IAB13-4","Financial Planning",1,now(),now()),
-("IAB13-5","Hedge Fund",1,now(),now()),
-("IAB13-6","Insurance",1,now(),now()),
-("IAB13-7","Investing",1,now(),now()),
-("IAB13-8","Mutual Funds",1,now(),now()),
-("IAB13-9","Options",1,now(),now()),
-("IAB13-10","Retirement Planning",1,now(),now()),
-("IAB13-11","Stocks",1,now(),now()),
-("IAB13-12","Tax Planning",1,now(),now()),
-("IAB14","Society",1,now(),now()),
-("IAB14-1","Dating",1,now(),now()),
-("IAB14-2","Divorce Support",1,now(),now()),
-("IAB14-3","Gay Life",1,now(),now()),
-("IAB14-4","Marriage",1,now(),now()),
-("IAB14-5","Senior Living",1,now(),now()),
-("IAB14-6","Teens",1,now(),now()),
-("IAB14-7","Weddings",1,now(),now()),
-("IAB14-8","Ethnic Specific",1,now(),now()),
-("IAB15","Science",1,now(),now()),
-("IAB15-1","Astrology",1,now(),now()),
-("IAB15-2","Biology",1,now(),now()),
-("IAB15-3","Chemistry",1,now(),now()),
-("IAB15-4","Geology",1,now(),now()),
-("IAB15-5","Paranormal Phenomena",1,now(),now()),
-("IAB15-6","Physics",1,now(),now()),
-("IAB15-7","Space/Astronomy",1,now(),now()),
-("IAB15-8","Geography",1,now(),now()),
-("IAB15-9","Botany",1,now(),now()),
-("IAB15-10","Weather",1,now(),now()),
-("IAB16","Pets",1,now(),now()),
-("IAB16-1","Aquariums",1,now(),now()),
-("IAB16-2","Birds",1,now(),now()),
-("IAB16-3","Cats",1,now(),now()),
-("IAB16-4","Dogs",1,now(),now()),
-("IAB16-5","Large Animals",1,now(),now()),
-("IAB16-6","Reptiles",1,now(),now()),
-("IAB16-7","Veterinary Medicine",1,now(),now()),
-("IAB17","Sports",1,now(),now()),
-("IAB17-1","Auto Racing",1,now(),now()),
-("IAB17-2","Baseball",1,now(),now()),
-("IAB17-3","Bicycling",1,now(),now()),
-("IAB17-4","Bodybuilding",1,now(),now()),
-("IAB17-5","Boxing",1,now(),now()),
-("IAB17-6","Canoeing/Kayaking",1,now(),now()),
-("IAB17-7","Cheerleading",1,now(),now()),
-("IAB17-8","Climbing",1,now(),now()),
-("IAB17-9","Cricket",1,now(),now()),
-("IAB17-10","Figure Skating",1,now(),now()),
-("IAB17-11","Fly Fishing",1,now(),now()),
-("IAB17-12","Football",1,now(),now()),
-("IAB17-13","Freshwater Fishing",1,now(),now()),
-("IAB17-14","Game & Fish",1,now(),now()),
-("IAB17-15","Golf",1,now(),now()),
-("IAB17-16","Horse Racing",1,now(),now()),
-("IAB17-17","Horses",1,now(),now()),
-("IAB17-18","Hunting/Shooting",1,now(),now()),
-("IAB17-19","Inline Skating",1,now(),now()),
-("IAB17-20","Martial Arts",1,now(),now()),
-("IAB17-21","Mountain Biking",1,now(),now()),
-("IAB17-22","NASCAR Racing",1,now(),now()),
-("IAB17-23","Olympics",1,now(),now()),
-("IAB17-24","Paintball",1,now(),now()),
-("IAB17-25","Power & Motorcycles",1,now(),now()),
-("IAB17-26","Pro Basketball",1,now(),now()),
-("IAB17-27","Pro Ice Hockey",1,now(),now()),
-("IAB17-28","Rodeo",1,now(),now()),
-("IAB17-29","Rugby",1,now(),now()),
-("IAB17-30","Running/Jogging",1,now(),now()),
-("IAB17-31","Sailing",1,now(),now()),
-("IAB17-32","Saltwater Fishing",1,now(),now()),
-("IAB17-33","Scuba Diving",1,now(),now()),
-("IAB17-34","Skateboarding",1,now(),now()),
-("IAB17-35","Skiing",1,now(),now()),
-("IAB17-36","Snowboarding",1,now(),now()),
-("IAB17-37","Surfing/Bodyboarding",1,now(),now()),
-("IAB17-38","Swimming",1,now(),now()),
-("IAB17-39","Table Tennis/Ping-Pong",1,now(),now()),
-("IAB17-40","Tennis",1,now(),now()),
-("IAB17-41","Volleyball",1,now(),now()),
-("IAB17-42","Walking",1,now(),now()),
-("IAB17-43","Waterski/Wakeboard",1,now(),now()),
-("IAB17-44","World Soccer",1,now(),now()),
-("IAB18","Style & Fashion",1,now(),now()),
-("IAB18-1","Beauty",1,now(),now()),
-("IAB18-2","Body Art",1,now(),now()),
-("IAB18-3","Fashion",1,now(),now()),
-("IAB18-4","Jewelry",1,now(),now()),
-("IAB18-5","Clothing",1,now(),now()),
-("IAB18-6","Accessories",1,now(),now()),
-("IAB19","Technology & Computing",1,now(),now()),
-("IAB19-1","3-D Graphics",1,now(),now()),
-("IAB19-2","Animation",1,now(),now()),
-("IAB19-3","Antivirus Software",1,now(),now()),
-("IAB19-4","C/C++",1,now(),now()),
-("IAB19-5","Cameras & Camcorders",1,now(),now()),
-("IAB19-6","Cell Phones",1,now(),now()),
-("IAB19-7","Computer Certification",1,now(),now()),
-("IAB19-8","Computer Networking",1,now(),now()),
-("IAB19-9","Computer Peripherals",1,now(),now()),
-("IAB19-10","Computer Reviews",1,now(),now()),
-("IAB19-11","Data Centers",1,now(),now()),
-("IAB19-12","Databases",1,now(),now()),
-("IAB19-13","Desktop Publishing",1,now(),now()),
-("IAB19-14","Desktop Video",1,now(),now()),
-("IAB19-15","Email",1,now(),now()),
-("IAB19-16","Graphics Software",1,now(),now()),
-("IAB19-17","Home Video/DVD",1,now(),now()),
-("IAB19-18","Internet Technology",1,now(),now()),
-("IAB19-19","Java",1,now(),now()),
-("IAB19-20","JavaScript",1,now(),now()),
-("IAB19-21","Mac Support",1,now(),now()),
-("IAB19-22","MP3/MIDI",1,now(),now()),
-("IAB19-23","Net Conferencing",1,now(),now()),
-("IAB19-24","Net for Beginners",1,now(),now()),
-("IAB19-25","Network Security",1,now(),now()),
-("IAB19-26","Palmtops/PDAs",1,now(),now()),
-("IAB19-27","PC Support",1,now(),now()),
-("IAB19-28","Portable",1,now(),now()),
-("IAB19-29","Entertainment",1,now(),now()),
-("IAB19-30","Shareware/Freeware",1,now(),now()),
-("IAB19-31","Unix",1,now(),now()),
-("IAB19-32","Visual Basic",1,now(),now()),
-("IAB19-33","Web Clip Art",1,now(),now()),
-("IAB19-34","Web Design/HTML",1,now(),now()),
-("IAB19-35","Web Search",1,now(),now()),
-("IAB19-36","Windows",1,now(),now()),
-("IAB20","Travel",1,now(),now()),
-("IAB20-1","Adventure Travel",1,now(),now()),
-("IAB20-2","Africa",1,now(),now()),
-("IAB20-3","Air Travel",1,now(),now()),
-("IAB20-4","Australia & New Zealand",1,now(),now()),
-("IAB20-5","Bed & Breakfasts",1,now(),now()),
-("IAB20-6","Budget Travel",1,now(),now()),
-("IAB20-7","Business Travel",1,now(),now()),
-("IAB20-8","By US Locale",1,now(),now()),
-("IAB20-9","Camping",1,now(),now()),
-("IAB20-10","Canada",1,now(),now()),
-("IAB20-11","Caribbean",1,now(),now()),
-("IAB20-12","Cruises",1,now(),now()),
-("IAB20-13","Eastern Europe",1,now(),now()),
-("IAB20-14","Europe",1,now(),now()),
-("IAB20-15","France",1,now(),now()),
-("IAB20-16","Greece",1,now(),now()),
-("IAB20-17","Honeymoons/Getaways",1,now(),now()),
-("IAB20-18","Hotels",1,now(),now()),
-("IAB20-19","Italy",1,now(),now()),
-("IAB20-20","Japan",1,now(),now()),
-("IAB20-21","Mexico & Central America",1,now(),now()),
-("IAB20-22","National Parks",1,now(),now()),
-("IAB20-23","South America",1,now(),now()),
-("IAB20-24","Spas",1,now(),now()),
-("IAB20-25","Theme Parks",1,now(),now()),
-("IAB20-26","Traveling with Kids",1,now(),now()),
-("IAB20-27","United Kingdom",1,now(),now()),
-("IAB21","Real Estate",1,now(),now()),
-("IAB21-1","Apartments",1,now(),now()),
-("IAB21-2","Architects",1,now(),now()),
-("IAB21-3","Buying/Selling Homes",1,now(),now()),
-("IAB22","Shopping",1,now(),now()),
-("IAB22-1","Contests & Freebies",1,now(),now()),
-("IAB22-2","Couponing",1,now(),now()),
-("IAB22-3","Comparison",1,now(),now()),
-("IAB22-4","Engines",1,now(),now()),
-("IAB23","Religion & Spirituality",1,now(),now()),
-("IAB23-1","Alternative Religions",1,now(),now()),
-("IAB23-2","Atheism/Agnosticism",1,now(),now()),
-("IAB23-3","Buddhism",1,now(),now()),
-("IAB23-4","Catholicism",1,now(),now()),
-("IAB23-5","Christianity",1,now(),now()),
-("IAB23-6","Hinduism",1,now(),now()),
-("IAB23-7","Islam",1,now(),now()),
-("IAB23-8","Judaism",1,now(),now()),
-("IAB23-9","Latter-Day Saints",1,now(),now()),
-("IAB23-10","Pagan/Wiccan",1,now(),now()),
-("IAB24","Uncategorized",1,now(),now()),
-("IAB25","Non-Standard Content",1,now(),now()),
-("IAB25-1","Unmoderated UGC",1,now(),now()),
-("IAB25-2","Extreme Graphic/Explicit Violence",1,now(),now()),
-("IAB25-3","Pornography",1,now(),now()),
-("IAB25-4","Profane Content",1,now(),now()),
-("IAB25-5","Hate Content",1,now(),now()),
-("IAB25-6","Under Construction",1,now(),now()),
-("IAB25-7","Incentivized",1,now(),now()),
-("IAB26","Illegal Content",1,now(),now()),
-("IAB26-1","Illegal Content",1,now(),now()),
-("IAB26-2","Warez",1,now(),now()),
-("IAB26-3","Spyware/Malware",1,now(),now()),
-("IAB26-4","Copyright Infringement",1,now(),now());
-
 CREATE TABLE IF NOT EXISTS hygiene_categories
 (
     id SMALLINT UNSIGNED PRIMARY KEY,
@@ -829,12 +312,6 @@ CREATE TABLE IF NOT EXISTS hygiene_categories
     last_modified TIMESTAMP NOT NULL,
     CONSTRAINT fk_hyg_categ_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
-
-insert into hygiene_categories(id,name,description,modified_by,created_on,last_modified) values 
-(1,'Family Safe','Family safe content',1,now(),now()),
-(2,'Mature','Mature content',1,now(),now()),
-(3,'Performance','Performance/Subscription content',1,now(),now()),
-(4,'Premium','Premium/Brand content',1,now(),now());
 
 CREATE TABLE IF NOT EXISTS site_platform
 (
@@ -847,11 +324,6 @@ CREATE TABLE IF NOT EXISTS site_platform
     CONSTRAINT fk_site_platform_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
 
-insert into site_platform (id,name,description,modified_by,created_on,last_modified) values
-(1,'Web','Display PC',1,now(),now()),
-(2,'Mobile Web','Mobile Web',1,now(),now()),
-(3,'Mobile Application','Mobile Application',1,now(),now());
-
 CREATE TABLE IF NOT EXISTS app_store
 (
     id SMALLINT UNSIGNED PRIMARY KEY,
@@ -862,14 +334,6 @@ CREATE TABLE IF NOT EXISTS app_store
     last_modified TIMESTAMP NOT NULL,
     CONSTRAINT fk_app_store_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
-
-insert into app_store (id,name,description,modified_by,created_on,last_modified) values
-(1,'App Store','Apple Store',1,now(),now()),
-(2,'BlackBerry World','BlackBerry Store',1,now(),now()),
-(3,'Google Play','Google Store',1,now(),now()),
-(4,'Nokia Store','Nokia Store',1,now(),now()),
-(5,'Windows Phone Store','Microsoft',1,now(),now()),
-(6,'Windows Store','Microsoft',1,now(),now());
 
 CREATE TABLE IF NOT EXISTS site
 (
@@ -903,9 +367,6 @@ CREATE TABLE IF NOT EXISTS site
     CONSTRAINT fk_site_status FOREIGN KEY(status_id) REFERENCES status(id),
     CONSTRAINT fk_site_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
-
-insert into site(guid,name,pub_id,pub_guid,site_url,categories_list,hygiene_list,site_platform_id,status_id,last_modified,modified_by) values 
-('test_site_guid','xyz',2,'test_pub_guid','kritter.in','[1,2]','[1]',1,1,now(),1);
 
 -- budget tables, figures in USD.Somebody creates IO, then assigns it to account so that balance+=amount_of_IO.
 -- Then campaigns are assigned the total budget and daily limits along with targeting profile.
@@ -959,8 +420,6 @@ CREATE TABLE IF NOT EXISTS campaign_budget
     CONSTRAINT fk_campaign_budget_guid FOREIGN KEY(campaign_guid) REFERENCES campaign(guid),
     CONSTRAINT fk_campaign_budget_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
-
-insert into campaign_budget (campaign_id,campaign_guid,internal_total_budget,adv_total_budget,internal_total_burn,adv_total_burn,internal_daily_budget,adv_daily_budget,internal_daily_burn,adv_daily_burn,modified_by,created_on,last_modified) values (1,'test_campaign_guid',1000,1000,0,0,100,100,0,0,1,now(),now());
 
 CREATE TABLE IF NOT EXISTS payout
 (
@@ -1124,13 +583,11 @@ CONSTRAINT unique_country_datasource UNIQUE (country_code,country_name,data_sour
 CREATE TABLE IF NOT EXISTS ui_targeting_country
 (
 id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
-country_code VARCHAR(5) UNIQUE NOT NULL,
+country_code VARCHAR(10) UNIQUE NOT NULL,
 country_name VARCHAR(200) UNIQUE NOT NULL,
 entity_id_set TEXT NOT NULL, -- [1,2] where 1,2 refers to id column in country table which corresponds ids from multiple data source
 modified_on TIMESTAMP NOT NULL
 )ENGINE=INNODB;
-
-insert into ui_targeting_country (id,country_code,country_name,entity_id_set,modified_on) values (-1,'None','None','[]',now());
 
 CREATE TABLE IF NOT EXISTS state
 (
@@ -1197,8 +654,6 @@ modified_on TIMESTAMP NOT NULL
 )ENGINE=INNODB;
 
 alter table ui_targeting_isp add index ui_targeting_isp_isp_name (isp_ui_name);
-
-insert into ui_targeting_isp (id,country_ui_id,isp_ui_name,entity_id_set,modified_on) values (-1,-1,'None','[]',now());
 
 -- This table stores file id and name for custom ip ranges provided in CSV format
 -- The full path for the online system is fetched as base_path(conf) plus the file_id.
@@ -1276,24 +731,6 @@ last_modified TIMESTAMP NOT NULL
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
-insert into formats_attributes_mapping(creative_formats_id, creative_attributes_id, modified_by) values
-(2,1,1),(3,1,1),(4,1,1),
-(2,2,1),(3,2,1),(4,2,1),
-(3,3,1),
-(3,4,1),
-(3,5,1),
-(3,6,1),
-(3,7,1),
-(1,8,1),(2,8,1),(3,8,1),
-(2,9,1),(3,9,1),(4,9,1),
-(2,10,1),(3,10,1),
-(1,11,1),(2,11,1),(3,11,1),
-(1,12,1),
-(3,13,1),
-(2,14,1),
-(2,15,1),(3,15,1),(4,15,1),
-(3,16,1),(4,16,1),
-(2,17,1);
 alter table account add column im varchar(256) default NULL after paypal_id;
 alter table account add column comment TEXT default NULL after im;
 alter table targeting_profile add column geo_targeting_type int default 0 after supply_source;
@@ -1372,9 +809,6 @@ id int default 2 primary key not null,
 name varchar(32) not null
 )ENGINE=INNODB;
 
-insert into supply_source_type(id,name) value(2,'WAP');
-insert into supply_source_type(id,name) value(3,'APP');
-
 alter table insertion_order add column belongs_to INTEGER UNSIGNED NOT NULL default 1 after created_by;
 
 CREATE TABLE IF NOT EXISTS reporting_hygiene_categories
@@ -1387,12 +821,6 @@ CREATE TABLE IF NOT EXISTS reporting_hygiene_categories
     last_modified TIMESTAMP NOT NULL,
     CONSTRAINT fk_ui_hyg_categ_modified_by FOREIGN KEY(modified_by) REFERENCES account(id)
 );
-
-insert into reporting_hygiene_categories(id,name,description,modified_by,created_on,last_modified) values
-('[1]','Family Safe','Family safe content',1,now(),now()),
-('[2]','Mature','Mature content',1,now(),now()),
-('[3]','Performance','Performance/Subscription content',1,now(),now()),
-('[4]','Premium','Premium/Brand content',1,now(),now());
 
 -- External supply attributes to target, schema is:  {siteincid:[{internalid,externalid,name,domain}]}
 -- {"1":[{"intid":1,"id":"123","name":"name","domain":"domain"},{"intid":2,"id":"456","name":"name2","domain":"domain2"},
@@ -1410,8 +838,6 @@ ext_supply_domain VARCHAR(2500),
 last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 UNIQUE KEY ext_supply_pub_unique (site_inc_id,ext_supply_id) 
 )ENGINE=INNODB CHARSET=latin1; 
-
-insert into ext_supply_attr (id,site_inc_id,ext_supply_id) values (-1,-1,"-1");
 
 drop table latlong;
 drop table zipcode;
@@ -1445,24 +871,20 @@ CREATE TABLE IF NOT EXISTS ui_targeting_state
 (
 id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
 country_ui_id INTEGER NOT NULL,
-state_name VARCHAR(200) NOT NULL,
+state_name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 entity_id_set TEXT NOT NULL, -- [1,2] where 1,2 refers to id column in state table
 modified_on TIMESTAMP NOT NULL
 )ENGINE=INNODB;
-
-insert into ui_targeting_state (id,country_ui_id,state_name,entity_id_set) values (-1,-1,'None','[]');
 
 -- This table stores cityname along with set of ids generated by different geo datasources for a given cityname.
 CREATE TABLE IF NOT EXISTS ui_targeting_city
 (
 id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
 state_ui_id INTEGER NOT NULL,
-city_name VARCHAR(200) NOT NULL,
+city_name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 entity_id_set TEXT NOT NULL, -- [1,2] where 1,2 refers to id column in city table
 modified_on TIMESTAMP NOT NULL
 )ENGINE=INNODB;
-
-insert into ui_targeting_city (id,state_ui_id,city_name,entity_id_set) values (-1,-1,'None','[]');
 
 create table IF NOT EXISTS logevents
 (
@@ -1544,11 +966,6 @@ CREATE TABLE IF NOT EXISTS connection_type_metadata
     created_on TIMESTAMP NULL DEFAULT NULL,
     last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=INNODB CHARSET=latin1;
-
-insert into connection_type_metadata (id, name, created_on, last_modified) values (1, "WiFi", NOW(), NOW());
-insert into connection_type_metadata (id, name, created_on, last_modified) values (2, "Carrier", NOW(), NOW());
-insert into connection_type_metadata (id, name, created_on, last_modified) values (-1, "Unknown", NOW(), NOW());
-insert into connection_type_metadata (id, name, created_on, last_modified) values (0, "All", NOW(), NOW());
 
 alter table targeting_profile add column connection_type_targeting_json VARCHAR(512) default NULL after exchange_supply_inc_exc;
 
@@ -1649,12 +1066,6 @@ CREATE TABLE IF NOT EXISTS parent_account_type
     is_deprecated boolean DEFAULT false
 );
 
-insert into parent_account_type (id, name,description,created_on,last_modified,is_deprecated) values
-(1,'AD-NETWORK','Ad-Network',now(),now(),false),
-(2,'ATD','Agency Trading Desk',now(),now(),false),
-(3,'PTD','Publisher Trading Desk',now(),now(),false),
-(4,'DEFAULT','Default account type where account type not defined',now(),now(),false);
-
 CREATE TABLE IF NOT EXISTS parent_account
 (
     id INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -1666,8 +1077,6 @@ CREATE TABLE IF NOT EXISTS parent_account
     last_modified TIMESTAMP NOT NULL,
     CONSTRAINT fk_parent_account_acctype FOREIGN KEY(type_id) REFERENCES parent_account_type(id)    
 );
-
-insert into parent_account (guid,status,type_id,name) values ('default_parent_account_guid',1,4,'default parent account');
 
 -- Below query ensures that all account entities refer to some parent account, by default kept as same.
 alter table account add column parent_account_guid VARCHAR(100) NOT NULL DEFAULT 'default_parent_account_guid', ADD FOREIGN KEY 
@@ -1689,8 +1098,6 @@ CREATE TABLE IF NOT EXISTS account_user_type
     last_modified TIMESTAMP NOT NULL,
     is_deprecated boolean DEFAULT false
 );
-
-insert into account_user_type (id,name,description,created_on,last_modified,is_deprecated) values (1,'Admin','Admin Super User having complete access to demand and supply',now(),now(),false);
 
 CREATE TABLE IF NOT EXISTS account_user
 (
@@ -1776,12 +1183,7 @@ alter table site add column is_native boolean default false after native_props;
 alter table account add column billing_name text  after supply_props;
 alter table account add column billing_email text  after billing_name;
 
-insert into creative_formats(id,name,description,modified_by,created_on,last_modified,is_deprecated) values(51,"Native","Native Ad",1,now(),now(),false);
-insert into creative_attributes(id,value,modified_by,created_on,last_modified) values(51,"Native",1,now(),now());
-
 alter table creative_container add column native_demand_props TEXT  after ext_resource_url;
-insert into formats_attributes_mapping(creative_formats_id,creative_attributes_id,last_modified,modified_by) values(51,51,now(),1);
-
 -- set charset according to parent table charset
 CREATE TABLE `native_screenshot` 
 (   
@@ -1828,16 +1230,10 @@ alter table creative_container add column creative_macro TEXT  after native_dema
 
 alter table creative_container add column video_props TEXT  after creative_macro;
 
-insert into formats_attributes_mapping(creative_formats_id,creative_attributes_id,last_modified,modified_by) values(3,17,now(),1);
-
 create table IF NOT EXISTS device_type(
 id int default 2 primary key not null,
 name varchar(32) not null
 )ENGINE=INNODB;
-
-insert into device_type(id,name) value(0,'UNKNOWN');
-insert into device_type(id,name) value(1,'DESKTOP');
-insert into device_type(id,name) value(2,'MOBILE');
 
 CREATE TABLE IF NOT EXISTS `req_logging` (
   `pubId` VARCHAR(100) DEFAULT NULL,
@@ -1850,3 +1246,236 @@ CREATE TABLE IF NOT EXISTS `req_logging` (
 
 -- external tracker refer com.kritter.entity.external_tracker.ExtTracker
 alter table ad add column external_tracker TEXT after bidtype; 
+alter table country modify column country_code VARCHAR(10) NOT NULL;
+
+alter table logevents add column adv_inc_id int after referer;
+alter table logevents add column pub_inc_id int after adv_inc_id;
+alter table logevents add column tevent text after pub_inc_id;
+alter table logevents add column teventtype text after tevent;
+alter table logevents add column deviceType SMALLINT after teventtype;
+alter table logevents add column bidFloor DOUBLE after deviceType;
+alter table logevents add column exchangeUserId text after bidFloor;
+alter table logevents add column kritterUserId text after exchangeUserId;
+alter table logevents add column externalSiteAppId text after kritterUserId;
+
+ALTER TABLE formats_attributes_mapping ADD CONSTRAINT uq_formats_attributes_mapping UNIQUE(creative_formats_id, creative_attributes_id);
+
+alter table account add column ext text  after billing_email;
+
+ALTER TABLE isp_mappings ADD CONSTRAINT uq_isp_mappings UNIQUE(country_name, isp_name);
+alter table state add column state_code VARCHAR(50) after country_id;
+alter table city add column city_code VARCHAR(50) after state_id;
+
+drop table ui_targeting_city;
+drop table ui_targeting_state;
+
+-- This table stores statename along with set of ids generated by different geo datasources for a given statename.
+CREATE TABLE IF NOT EXISTS ui_targeting_state
+(
+id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+country_ui_id INTEGER NOT NULL,
+state_name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+entity_id_set TEXT NOT NULL, -- [1,2] where 1,2 refers to id column in state table
+modified_on TIMESTAMP NOT NULL
+)ENGINE=INNODB;
+
+-- This table stores cityname along with set of ids generated by different geo datasources for a given cityname.
+CREATE TABLE IF NOT EXISTS ui_targeting_city
+(
+id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+state_ui_id INTEGER NOT NULL,
+city_name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+entity_id_set TEXT NOT NULL, -- [1,2] where 1,2 refers to id column in city table
+modified_on TIMESTAMP NOT NULL
+)ENGINE=INNODB;
+
+drop table ui_targeting_city;
+drop table ui_targeting_state;
+
+-- This table stores statename along with set of ids generated by different geo datasources for a given statename.
+CREATE TABLE IF NOT EXISTS ui_targeting_state
+(
+id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+country_ui_id INTEGER NOT NULL,
+state_name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+entity_id_set TEXT NOT NULL, -- [1,2] where 1,2 refers to id column in state table
+modified_on TIMESTAMP NOT NULL
+)ENGINE=INNODB;
+
+-- This table stores cityname along with set of ids generated by different geo datasources for a given cityname.
+CREATE TABLE IF NOT EXISTS ui_targeting_city
+(
+id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+state_ui_id INTEGER NOT NULL,
+city_name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+entity_id_set TEXT NOT NULL, -- [1,2] where 1,2 refers to id column in city table
+modified_on TIMESTAMP NOT NULL
+)ENGINE=INNODB;
+
+
+-- set charset according to parent table charset
+CREATE TABLE `video_info`
+(   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `guid` varchar(100) NOT NULL,
+    `account_guid` varchar(100) NOT NULL,
+    `video_size` smallint(6) NOT NULL,
+    `resource_uri` varchar(100) NOT NULL,
+    `modified_by` int(10) unsigned NOT NULL,
+    `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `last_modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `guid` (`guid`),
+    KEY `fk_video_info_account` (`account_guid`),
+    KEY `fk_video_info_modified_by` (`modified_by`),
+    CONSTRAINT `fk_video_info_account` FOREIGN KEY (`account_guid`) REFERENCES `account` (`guid`),
+    CONSTRAINT `fk_video_info_modified_by` FOREIGN KEY (`modified_by`) REFERENCES `account` (`id`)
+) ENGINE=InnoDB ;
+
+alter table video_info add column ext text after last_modified;
+
+CREATE TABLE `mma_categories` (
+  `code` varchar(128) NOT NULL,
+  `name` varchar(512) NOT NULL,
+  `parent_code` varchar(128) DEFAULT NULL,
+  `tier` int(11) DEFAULT '1',
+  `modified_by` int(10) unsigned NOT NULL DEFAULT 1,
+  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `code` (`code`),
+  KEY `fk_mma_categories_modified_by` (`modified_by`),
+  CONSTRAINT `fk_mma_categories_modified_by` FOREIGN KEY (`modified_by`) REFERENCES `account` (`id`)
+) ENGINE=InnoDB;
+
+CREATE TABLE `supply_mma_mapping` (
+    `exchangename` varchar(16) NOT NULL,
+    `supplycode` varchar(128) NOT NULL,
+    `mma_category_code` varchar(128) NOT NULL,
+    `modified_by` int(10) unsigned NOT NULL DEFAULT 1,
+    `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     `id` int unsigned NOT NULL AUTO_INCREMENT,
+     PRIMARY KEY (`id`),
+     UNIQUE KEY `exchangename_supplycode` (`exchangename`,`supplycode`),
+     KEY `fk_supply_mma_mapping_modified_by` (`modified_by`),
+     CONSTRAINT `fk_supply_mma_mapping_modified_by` FOREIGN KEY (`modified_by`) REFERENCES `account` (`id`),
+     KEY `fk_supply_mma_mapping_mma_category_code` (`mma_category_code`),
+     CONSTRAINT `fk_supply_mma_mapping_mma_category_code` FOREIGN KEY (`mma_category_code`) REFERENCES `mma_categories` (`code`)
+) ENGINE=InnoDB;
+
+CREATE TABLE `mma_exchangename_id_mapping` (
+  `exchangename` varchar(16) NOT NULL,
+  `exchangeid` INTEGER NOT NULL,
+  `exchangeguid` VARCHAR(100) NOT NULL,
+   UNIQUE KEY `mma_exchangename_id` (`exchangename`,`exchangeid`),
+   `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+create table ui_mma_category (
+    `id` int unsigned NOT NULL AUTO_INCREMENT,
+    `name` varchar(512) NOT NULL,
+    `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+create table mma_code_mma_ui_mapping (
+    `code` varchar(128) NOT NULL,
+    `ui_id` int unsigned NOT NULL AUTO_INCREMENT,
+    `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `mma_code_mma_ui_mapping_name` (`code`,`ui_id`),
+    KEY `fk_mma_code_mma_ui_mapping_code` (`code`),
+    CONSTRAINT `fk_mma_code_mma_ui_mapping_code` FOREIGN KEY (`code`) REFERENCES `mma_categories` (`code`),
+    KEY `fk_mma_code_mma_ui_mapping_ui_id` (`ui_id`),
+    CONSTRAINT `fk_mma_code_mma_ui_mapping_ui_id` FOREIGN KEY (`ui_id`) REFERENCES `ui_mma_category` (`id`)
+
+) ENGINE=InnoDB;
+
+alter table ad add column ext TEXT after external_tracker;
+
+alter table ui_mma_category add column tier int default 1 after name;
+
+alter table targeting_profile add column ext TEXT after device_type;
+
+alter table ui_mma_category add column mma_type int default 1 after tier;
+
+alter table mma_categories add column mma_type int default 1 after last_modified;
+
+-- This table contains mapping between a third party connection (demand channel modelled as advertiser in our system),
+-- and its DSP that has a seat on it. In case of where third party connection is a standalone DSP the dsp_id is same
+-- as third_party_conn_id. Example bidswitch is marketplace of DSPs, in which case it would have multiple entries.
+create table third_party_conn_dsp_mapping
+(
+    id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    third_party_conn_id VARCHAR(100) NOT NULL,
+    dsp_id VARCHAR(100) NOT NULL,
+    last_modified timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_third_party_conn_id_adv_id FOREIGN KEY (third_party_conn_id) REFERENCES account(guid)
+) ENGINE = InnoDB;
+
+
+-- This table contains mapping between a stand alone DSP and advertiser/agency using it.
+-- In case of standalone DSP this table can be used for sending whitelist of advertisers.
+create table dsp_adv_agency_mapping
+(
+    id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    dsp_id VARCHAR(100) NOT NULL,
+    adv_id VARCHAR(100) NOT NULL,
+    last_modified timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE = InnoDB;
+
+-- This table contains private marketplace deal with all of its attributes. The deal is created for a publisher.
+create table pmp_deals
+(
+    deal_id VARCHAR(200) UNIQUE NOT NULL PRIMARY KEY, -- nomenclature: SSP-MMYY-Numeric_Value,e.g: nativead-0716-9871344567
+    deal_name VARCHAR(200) UNIQUE NOT NULL,           -- nomenclature: ATD/Buyer-dsp-publisher-placement-MMDDYY,e.g: VIVAKI-MEDIAMATH-nativehome-sports_home-071116
+    ad_guid VARCHAR(100) NOT NULL,                    -- ad.guid column,so that deal is aware where its applied via targeting,otherwise will be part of all requests.
+    site_id_list TEXT NOT NULL,                       -- This has list of site ids for which deal is applicable,e.g: ["1","2"] or can be null
+    bcat TEXT,                                        -- iab categories code array for list of iab categories to block.
+    third_party_conn_list TEXT NOT NULL,              -- string array, with each value as an advertiser guid.
+    dsp_id_list TEXT,                                 -- integer array, with each value as id from third_party_conn_dsp_mapping table.
+    adv_id_list TEXT,                                 -- integer array, with each value as id from dsp_adv_agency_mapping table.
+    wadomain TEXT,                                    -- whitelisted domains of advertisers,Map<String,String[]> syntax json.
+    auction_type smallint NOT NULL,                   -- possible values 1,2,3. Refer to descriptions in open rtb documents for pmp auction type.
+    request_cap int unsigned,                  
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    deal_cpm double,
+    last_modified TIMESTAMP NOT NULL
+) ENGINE = InnoDB;
+
+create table`ad_position` (
+  `internalid` int unsigned NOT NULL AUTO_INCREMENT,
+  `pubIncId` int NOT NULL,
+  `adposid` varchar(512) NOT NULL,
+  `name`  TEXT,
+  `description` TEXT,
+  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`internalid`),
+  UNIQUE KEY `ad_position_unique` (`pubIncId`,`adposid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `channel` (
+  `internalid` int unsigned NOT NULL AUTO_INCREMENT,
+  `exchangename` varchar(16) NOT NULL,
+  `channelcode` varchar(128) NOT NULL,
+   `tier` int(11) DEFAULT '1',
+  `modified_by` int(10) unsigned NOT NULL DEFAULT '1',
+  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`internalid`),
+  UNIQUE KEY `channel_exchangename_channelcode` (`exchangename`,`channelcode`),
+  KEY `fk_channel_modified_by` (`modified_by`),
+  CONSTRAINT `fk_channel_modified_by` FOREIGN KEY (`modified_by`) REFERENCES `account` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table account add column third_party_demand_channel_type int;
+alter table account add column open_rtb_ver_required int;
+
+alter table channel add column parentcode varchar(128) default NULL after last_modified;
+alter table channel add column channelname varchar(128) default NULL after parentcode;
+
+alter table site add column video_supply_props text after is_native;
+alter table site add column is_video boolean default false after video_supply_props;

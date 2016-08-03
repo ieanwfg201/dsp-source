@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -8,6 +9,7 @@ import com.kritter.core.workflow.Context;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
@@ -17,16 +19,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ConnectionTypeTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.NO_ADS_CONNECTION_TYPE;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
+    private String adNoFillReasonMapKey;
 
-    public ConnectionTypeTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache) {
+    public ConnectionTypeTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
+                                          String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -62,12 +69,15 @@ public class ConnectionTypeTargetingMatcher implements TargetingMatcher {
                 } else {
                     // Fails the filter
                     ReqLog.debugWithDebug(logger,request, "The ad id {} is connection type targeted and fails the check. Detected ConnectionType:{}", adEntity.getAdGuid(), connectionType);
+
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
                 }
             }
         }
 
         if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.NO_ADS_CONNECTION_TYPE);
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

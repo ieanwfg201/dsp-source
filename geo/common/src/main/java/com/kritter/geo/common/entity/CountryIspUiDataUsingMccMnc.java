@@ -2,6 +2,7 @@ package com.kritter.geo.common.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
  * would be mcc and mnc codes.
  * Key = mnc-mcc and value as this entity.
  */
+@ToString
 public class CountryIspUiDataUsingMccMnc implements IUpdatableEntity<String>
 {
     @Getter

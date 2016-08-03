@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.kritter.constants.MarketPlace;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.constants.tracking_partner.TrackingPartner;
+import com.kritter.entity.ad_ext.AdExt;
 import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
@@ -82,9 +84,91 @@ public class AdCrud {
             ad.setTime_window(rset.getInt("time_window"));
             ad.setBidtype(rset.getInt("bidtype"));
             populateExternalTracker(ad, rset.getString("external_tracker"));
+            populateExt(ad, rset.getString("ext"));
         }
     }
     
+    private static void populateExt(Ad ad,String ext){
+    	if(ext == null){
+    		return;
+    	}
+    	String extTrim = ext.trim();
+    	try{
+    		AdExt adExt = AdExt.getObject(extTrim);
+    		if(adExt != null){
+    			if(adExt.getMma_tier1() != null){
+    				StringBuffer sBuff = new StringBuffer("[");
+    				boolean isFirst = true;
+    				for(Integer i:adExt.getMma_tier1() ){
+    					if(isFirst){
+    						isFirst = false;
+    					}else{
+    						sBuff.append(",");
+    					}
+    					sBuff.append(i);
+    				}
+    				sBuff.append("]");
+    				ad.setMma_tier_1_list(sBuff.toString());
+    			}
+    			if(adExt.getMma_tier2() != null){
+    				StringBuffer sBuff = new StringBuffer("[");
+    				boolean isFirst = true;
+    				for(Integer i:adExt.getMma_tier2() ){
+    					if(isFirst){
+    						isFirst = false;
+    					}else{
+    						sBuff.append(",");
+    					}
+    					sBuff.append(i);
+    				}
+    				sBuff.append("]");
+    				ad.setMma_tier_2_list(sBuff.toString());
+    			}
+    		}
+    	}catch(Exception e){
+    		LOG.error(e.getMessage(),e);
+    	}
+    	
+    }
+    
+    private static String generateExt(Ad ad){
+		AdExt adExt = new AdExt();
+    	if(ad.getMma_tier_1_list() != null){
+    		HashSet<Integer> t1Set = new HashSet<Integer>();
+    		String t1 = ad.getMma_tier_1_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+    		String t1Split[] = t1.split(",");
+    		for(String str:t1Split){
+    			String strTrim=str.trim();
+    			if(!"".equals(strTrim)){
+    				try{
+    					int i = Integer.parseInt(strTrim);
+    					t1Set.add(i);
+    				}catch(Exception e){
+    					LOG.error(e.getMessage(),e);
+    				}
+    			}
+    		}
+    		adExt.setMma_tier1(t1Set);
+        	if(ad.getMma_tier_2_list() != null){
+        		HashSet<Integer> t2Set = new HashSet<Integer>();
+        		String t2 = ad.getMma_tier_2_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+        		String t2Split[] = t2.split(",");
+        		for(String str:t2Split){
+        			String strTrim=str.trim();
+        			if(!"".equals(strTrim)){
+        				try{
+        					int i = Integer.parseInt(strTrim);
+        					t2Set.add(i);
+        				}catch(Exception e){
+        					LOG.error(e.getMessage(),e);
+        				}
+        			}
+        		}
+        		adExt.setMma_tier2(t2Set);
+        	}
+    	}
+    	return adExt.toJson().toString();
+    }
     private static void populateExternalTracker(Ad ad, String external_Tracker){
         try{
         if(external_Tracker != null){
@@ -92,10 +176,10 @@ public class AdCrud {
             if(!"".equals(external_TrackerTrim)){
                 ExtTracker extTracker = ExtTracker.getObject(external_Tracker);
                 if(extTracker != null){
-                    if(extTracker.getExtImpTracker() != null && extTracker.getExtImpTracker().size()>0){
+                    if(extTracker.getImpTracker() !=null && extTracker.getImpTracker().size()>0){
                         StringBuffer sBuff = new StringBuffer("");
                         boolean isFirst = true;
-                        for(String str:extTracker.getExtImpTracker()){
+                        for(String str:extTracker.getImpTracker()){
                             if(isFirst){
                                 isFirst=false;
                             }else{
@@ -103,7 +187,20 @@ public class AdCrud {
                             }
                             sBuff.append(str);
                         }
-                        ad.setExternal_tracker(sBuff.toString());
+                        ad.setExternal_imp_tracker(sBuff.toString());
+                    }
+                    if(extTracker.getClickTracker() !=null && extTracker.getClickTracker().size()>0){
+                        StringBuffer sBuff = new StringBuffer("");
+                        boolean isFirst = true;
+                        for(String str:extTracker.getClickTracker()){
+                            if(isFirst){
+                                isFirst=false;
+                            }else{
+                                sBuff.append(",");
+                            }
+                            sBuff.append(str);
+                        }
+                        ad.setExternal_click_tracker(sBuff.toString());
                     }
                 }
             }
@@ -115,8 +212,8 @@ public class AdCrud {
     }
     private static String generateExternalTracker(Ad ad){
         ExtTracker extTracker = new ExtTracker();
-        if(ad.getExternal_tracker() != null){
-            String external_tracker = ad.getExternal_tracker().trim();
+        if(ad.getExternal_imp_tracker() != null){
+            String external_tracker = ad.getExternal_imp_tracker().trim();
             String split[] = external_tracker.split(",");
             boolean isFirst = true;
             List<String> extTrackerUriList = null;
@@ -130,7 +227,24 @@ public class AdCrud {
                     extTrackerUriList.add(strTrim);
                 }
             }
-            extTracker.setExtImpTracker(extTrackerUriList);
+            extTracker.setImpTracker(extTrackerUriList);
+        }
+        if(ad.getExternal_click_tracker() != null){
+            String external_tracker = ad.getExternal_click_tracker().trim();
+            String split[] = external_tracker.split(",");
+            boolean isFirst = true;
+            List<String> extTrackerUriList = null;
+            for(String str:split){
+                String strTrim = str.trim();
+                if(!"".equals(strTrim)){
+                    if(isFirst){
+                        isFirst=false;
+                        extTrackerUriList = new LinkedList<String>();
+                    }
+                    extTrackerUriList.add(strTrim);
+                }
+            }
+            extTracker.setClickTracker(extTrackerUriList);
         }
         return extTracker.toJson().toString();
     }
@@ -303,6 +417,7 @@ public class AdCrud {
             pstmt.setInt(23, ad.getTime_window());
             pstmt.setInt(24, ad.getBidtype());
             pstmt.setString(25, generateExternalTracker(ad));
+            pstmt.setString(26, generateExt(ad));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -549,7 +664,8 @@ public class AdCrud {
             pstmt.setInt(21, ad.getTime_window());
             pstmt.setInt(22, ad.getBidtype());
             pstmt.setString(23, generateExternalTracker(ad));
-            pstmt.setInt(24, ad.getId());
+            pstmt.setString(24, generateExt(ad));
+            pstmt.setInt(25, ad.getId());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

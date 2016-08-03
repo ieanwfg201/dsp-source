@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import play.data.validation.Constraints.Required;
 
 import com.kritter.api.entity.ad.Ad;
+import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.MarketPlace;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.UserConstant;
@@ -35,7 +36,7 @@ public class AdEntity extends Entity{
     private String categories_tier_1_list = "[]";
     private String categories_tier_2_list = "[]";
     @AtleastOne
-    private String hygiene_list = null;
+    private String hygiene_list = "["+HygieneCategory.FAMILY_SAFE.getCode()+"]";
     private StatusIdEnum status_id = StatusIdEnum.Pending;
     private MarketPlace marketplace_id = MarketPlace.CPM;
     private TrackingPartner tracking_partner = TrackingPartner.NONE;
@@ -57,7 +58,11 @@ public class AdEntity extends Entity{
     private int frequency_cap = UserConstant.frequency_cap_default;
     private int time_window = UserConstant.frequency_cap_time_window_default;
     private int bidtype = 0;
-    private String external_tracker = "";
+    private String external_imp_tracker = "";
+    private String external_click_tracker = "";
+    private String mma_tier_1_list = "[]";
+    private String mma_tier_2_list = "[]";
+
     
     public String getCreative(){ 
     	return creative_id+":"+ creative_guid;
@@ -268,12 +273,30 @@ public class AdEntity extends Entity{
     public void setBidtype(int bidtype) {
         this.bidtype = bidtype;
     }
-    public String getExternal_tracker() {
-        return external_tracker;
-    }
-    public void setExternal_tracker(String external_tracker) {
-        this.external_tracker = external_tracker;
-    }
+    public String getExternal_imp_tracker() {
+		return external_imp_tracker;
+	}
+	public void setExternal_imp_tracker(String external_imp_tracker) {
+		this.external_imp_tracker = external_imp_tracker;
+	}
+	public String getExternal_click_tracker() {
+		return external_click_tracker;
+	}
+	public void setExternal_click_tracker(String external_click_tracker) {
+		this.external_click_tracker = external_click_tracker;
+	}
+	public String getMma_tier_1_list() {
+		return mma_tier_1_list;
+	}
+	public void setMma_tier_1_list(String mma_tier_1_list) {
+		this.mma_tier_1_list = mma_tier_1_list;
+	}
+	public String getMma_tier_2_list() {
+		return mma_tier_2_list;
+	}
+	public void setMma_tier_2_list(String mma_tier_2_list) {
+		this.mma_tier_2_list = mma_tier_2_list;
+	}
 
 
     public Ad getEntity(){

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+exec 2>&1
+
+DAEMON=/usr/share/kritter/tern/tern_file/bin/tern_file.py
+CONF=/usr/share/kritter/tern/tern_file/conf/kritter/adstats/
+
+SLEEP=`perl -e "print int(rand(10))"`
+
+echo "Starting in $SLEEP seconds..."
+sleep $SLEEP
+
+
+exec setuidgid ubuntu python ${DAEMON} ${CONF}

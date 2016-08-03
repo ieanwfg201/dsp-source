@@ -99,6 +99,12 @@ public class TPMetadataAPI {
     private static List<MetaField> fetchCountryListByIds(String countryIds){
         return fetchMetaListByIds(countryIds,MetadataType.COUNTRY_BY_ID);
     }
+    private static List<MetaField> fetchStateListByIds(String countryIds){
+        return fetchMetaListByIds(countryIds,MetadataType.STATE_BY_UI_IDS);
+    }
+    private static List<MetaField> fetchCityListByIds(String countryIds){
+        return fetchMetaListByIds(countryIds,MetadataType.CITY_BY_UI_IDS);
+    }
     private static List<MetaField> fetchBrandListByIds(String brandIds){
         return fetchMetaListByIds(brandIds,MetadataType.HANDSET_MANUFACTURER_BY_ID);
     }
@@ -165,6 +171,22 @@ public class TPMetadataAPI {
     public static List<String> getCountryValues(String countryIds){        
         List<String> soptions = new LinkedList<String>();
         List<MetaField> mfields = fetchCountryListByIds(countryIds);
+        for (MetaField metaField : mfields) {
+            soptions.add(metaField.getName());
+        } 
+        return soptions;
+    }
+    public static List<String> getStateValues(String stateIds){        
+        List<String> soptions = new LinkedList<String>();
+        List<MetaField> mfields = fetchStateListByIds(stateIds);
+        for (MetaField metaField : mfields) {
+            soptions.add(metaField.getName());
+        } 
+        return soptions;
+    }
+    public static List<String> getCityValues(String cityIds){        
+        List<String> soptions = new LinkedList<String>();
+        List<MetaField> mfields = fetchCityListByIds(cityIds);
         for (MetaField metaField : mfields) {
             soptions.add(metaField.getName());
         } 
@@ -414,6 +436,62 @@ public class TPMetadataAPI {
             }
         }catch(Exception e){
             Logger.error("Error loading carrierList",e);
+        } 
+        finally{
+            try {
+                if(con != null)
+                    con.close();
+            } catch (SQLException e) { 
+                Logger.error("Unable to close connection",e);
+            } 
+        }
+        return metalistToArrayNode(mfields, true);
+    }
+    public static ArrayNode stateList(String countryList){
+        Connection con = null;
+        List<MetaField> mfields = null;
+        try{
+            if(countryList == null || "none".equalsIgnoreCase(countryList)||
+            		"all".equalsIgnoreCase(countryList) || "[none]".equalsIgnoreCase(countryList)){
+                return new ArrayNode(JsonNodeFactory.instance);
+            }
+            con = DB.getConnection(true); 
+            MetaInput metaInput = new MetaInput();
+            metaInput.setQuery_id_list(countryList);
+            MetaList mlist = ApiDef.get_metalist(con, MetadataType.STATE_BY_COUNTRY_UI_IDS, metaInput);
+            if(mlist != null){
+                mfields = mlist.getMetaFieldList();
+            }
+        }catch(Exception e){
+            Logger.error("Error loading stateList",e);
+        } 
+        finally{
+            try {
+                if(con != null)
+                    con.close();
+            } catch (SQLException e) { 
+                Logger.error("Unable to close connection",e);
+            } 
+        }
+        return metalistToArrayNode(mfields, true);
+    }
+    public static ArrayNode cityList(String stateList){
+        Connection con = null;
+        List<MetaField> mfields = null;
+        try{
+            if(stateList == null || "none".equalsIgnoreCase(stateList)||
+            		"all".equalsIgnoreCase(stateList) || "[none]".equalsIgnoreCase(stateList)){
+                return new ArrayNode(JsonNodeFactory.instance);
+            }
+            con = DB.getConnection(true); 
+            MetaInput metaInput = new MetaInput();
+            metaInput.setQuery_id_list(stateList);
+            MetaList mlist = ApiDef.get_metalist(con, MetadataType.CITY_BY_STATE_UI_IDS, metaInput);
+            if(mlist != null){
+                mfields = mlist.getMetaFieldList();
+            }
+        }catch(Exception e){
+            Logger.error("Error loading stateList",e);
         } 
         finally{
             try {

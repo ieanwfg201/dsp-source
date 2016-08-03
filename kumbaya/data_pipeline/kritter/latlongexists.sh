@@ -5,6 +5,7 @@ SCRIPT_PATH=$2
 INPUT_FILES=$3
 OUTPUT=$4
 THRIFT_JAR_PATH=$5
+tz=$6
 
 if [ "$1" = "" ]; then
     PIG_HOME=/usr/share/pig
@@ -25,6 +26,10 @@ fi
 if [ "$5" = "" ]; then
     THRIFT_JAR_PATH=../../../data_structs/target/com.kritter.thrift-structs-1.0.0.jar
 fi
+if [ "$6" = "" ]; then
+    tz=UTC
+fi
+
 
 MAPRED=/tmp/latlong_`date +%s`
 pig_script=latlong
@@ -37,5 +42,5 @@ PIG_OPTS="$PIG_OPTS -Dhadoop.tmp.dir=${MAPRED}/$pig_script/hadoop"
 
 export PIG_OPTS
 
-echo "$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param INPUT_FILES="$INPUT_FILES" --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH""
-$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param INPUT_FILES="$INPUT_FILES" --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH"
+echo "$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param INPUT_FILES="$INPUT_FILES" --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param tz="$tz""
+$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param INPUT_FILES="$INPUT_FILES" --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param tz="$tz"

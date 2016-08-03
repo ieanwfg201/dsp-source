@@ -39,6 +39,12 @@ public class TargetingDisplayFull extends TargetingDisplay{
     public List<String> getCountryValues(){
         return TPMetadataAPI.getCountryValues(tp.getCountry_json());
     }
+    public List<String> getStateValues(){
+        return TPMetadataAPI.getStateValues(tp.getState_json());
+    }
+    public List<String> getCityValues(){
+        return TPMetadataAPI.getCityValues(tp.getCity_json());
+    }
     public List<String> getCarrierValues(){
         return TPMetadataAPI.getCarrierValues(tp.getCarrier_json());
     }
@@ -143,5 +149,37 @@ public class TargetingDisplayFull extends TargetingDisplay{
     public String getPmpDeal(){
         return tp.getPmp_dealid();
     }
-
+    public String mmaIncExc(){
+    	if(tp.isMma_inc_exc()){
+    		return "Inclusion";
+    	}
+    	return "Exclusion";
+    }
+	public List<String> getMMATier1(){ 
+		return MetadataAPI.getValues(MetadataType.MMA_CATEGORY_BY_IDS, tp.getMma_tier_1_list());
+	}
+    public List<String> getMMATier2(){ 
+        return MetadataAPI.getValues(MetadataType.MMA_CATEGORY_BY_IDS, tp.getMma_tier_2_list());
+    }
+    public String adposIncExc(){
+    	if(tp.isAdposition_inc_exc()){
+    		return "Inclusion";
+    	}
+    	return "Exclusion";
+    }
+	public List<String> getAdpos(){ 
+		return MetadataAPI.getValues(MetadataType.ADPOS_BY_IDS, tp.getAdposition_list());
+	}
+    public String channelIncExc(){
+    	if(tp.isChannel_inc_exc()){
+    		return "Inclusion";
+    	}
+    	return "Exclusion";
+    }
+	public List<String> getChannelTier1(){ 
+		return MetadataAPI.getValues(MetadataType.CHANNEL_BY_IDS, tp.getChannel_tier_1_list());
+	}
+	public List<String> getChannelTier2(){ 
+		return MetadataAPI.getValues(MetadataType.CHANNEL_BY_IDS, tp.getChannel_tier_2_list());
+	}
 }

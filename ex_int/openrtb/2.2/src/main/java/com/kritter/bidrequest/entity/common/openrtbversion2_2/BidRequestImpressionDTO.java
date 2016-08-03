@@ -146,6 +146,18 @@ public class BidRequestImpressionDTO {
         return bidFloorCurrency;
     }
 
+    /*Flag to indicate if the impression requires secure HTTPS URL creative assets
+      and markup, where 0 = non-secure, 1 = secure. If omitted, the secure state is
+      unknown, but non-secure HTTP support can be assumed.*/
+    @JsonProperty("secure")
+    @Setter
+    private Integer secure;
+
+    @JsonIgnore
+    public Integer getSecure(){
+        return secure;
+    }
+
 	/**
 	 *Array of names for supported iframe busters. Exchange specific.
 	 */

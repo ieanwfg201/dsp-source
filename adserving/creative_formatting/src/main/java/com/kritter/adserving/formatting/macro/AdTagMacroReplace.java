@@ -169,6 +169,10 @@ public class AdTagMacroReplace {
                             strTemp = strTemp.replaceAll(ADTagMacros.SECURE_CLICK_URL.getDesc(),defaultReplace);
                         }
                         break;
+                    case RANDOM:
+                        String a = quote+System.nanoTime()+quote;
+                        strTemp = strTemp.replaceAll(ADTagMacros.RANDOM.getDesc(),a);
+                        break;
                     default:
                         break;
                 }

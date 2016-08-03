@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -7,6 +8,7 @@ import com.kritter.common.site.entity.Site;
 import com.kritter.core.workflow.Context;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.SITE_AD_DOMAIN;
+
     private static final String DOT = ".";
 
     @Getter
@@ -24,11 +28,14 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
     private Logger logger;
 
     private AdEntityCache adEntityCache;
+    private String adNoFillReasonMapKey;
 
-    public SiteDomainsExclusionTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache) {
+    public SiteDomainsExclusionTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
+                                                String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -76,6 +83,9 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
             }
             catch (MalformedURLException mue)
             {
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                        this.adNoFillReasonMapKey, context);
+
                 ReqLog.errorWithDebug(logger,request, "The landing url is not well formed,skipping ad unit {}" , adEntity.getAdGuid());
                 continue;
             }
@@ -95,6 +105,9 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
                         adDomain.indexOf(sb.toString()) != -1
                         )
                 {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
+
                     ReqLog.debugWithDebug(logger,request, "Addomain is excluded by site ... ,ad-domain {}, blocked domain by site is {}",adDomain,  blockedDomain);
                     isAdAllowed = false;
                     break;
@@ -106,7 +119,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
         }
 
         if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.SITE_AD_DOMAIN);
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

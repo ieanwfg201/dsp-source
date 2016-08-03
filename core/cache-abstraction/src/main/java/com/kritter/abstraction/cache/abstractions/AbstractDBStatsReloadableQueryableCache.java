@@ -9,10 +9,7 @@ import com.kritter.utils.databasemanager.DatabaseManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -66,11 +63,23 @@ public abstract class AbstractDBStatsReloadableQueryableCache<I, E extends IUpda
         dbManager = dbMgr;
     }
 
+    /**
+     * Constructor reads the queryEntities and saves a reference to the DB manager
+     * @param secIndexKeyClassList List of class for Secondary indices to be passed to super class
+     * @param log Initialized Logger
+     * @param props Properties with queryEntities information it
+     * @param dbMgr Initialized Database manager
+     * @param loadDataInsideConstructor => if required data can be loaded at construction time,
+     *                                  care should be taken not to initialize anything in the
+     *                                  classes using this constructor after call to super(),
+     *                                  as that would not be available here for processing.
+     * @throws InitializationException
+     */
     public AbstractDBStatsReloadableQueryableCache(List<Class> secIndexKeyClassList,
                                                    Logger log,
                                                    Properties props,
                                                    DatabaseManager dbMgr,
-                                                   Map<Integer,Object> queryParametersMapToSet) throws InitializationException
+                                                   boolean loadDataInsideConstructor) throws InitializationException
     {
         super(secIndexKeyClassList, log, props);
 
@@ -83,6 +92,35 @@ public abstract class AbstractDBStatsReloadableQueryableCache<I, E extends IUpda
         if(dbMgr == null)
             throw new InitializationException("Database Manager cannot be null");
         dbManager = dbMgr;
+
+        if(loadDataInsideConstructor)
+        {
+            //call refresh once so that data is available to cache upon initialization.
+            try {
+                refreshEntities();
+            } catch (RefreshException re) {
+                throw new InitializationException("RefreshException inside AbstractDBStatsReloadableQueryableCache ", re);
+            }
+        }
+    }
+
+    public AbstractDBStatsReloadableQueryableCache(List<Class> secIndexKeyClassList,
+                                                   Logger log,
+                                                   Properties props,
+                                                   DatabaseManager dbMgr,
+                                                   Map<Integer,Object> queryParametersMapToSet) throws InitializationException
+    {
+        super(secIndexKeyClassList, log, props);
+
+        this.logger = log;
+        // Assumption: all DB based updatable caches will have update_time column in their schema for the database table
+        query = props.getProperty("query");
+        if (StringUtils.isEmpty(query))
+            throw new InitializationException("Query for DB caches cannot be null/empty");
+
+        if (dbMgr == null)
+            throw new InitializationException("Database Manager cannot be null");
+        dbManager = dbMgr;
         this.queryParametersMapToSet = queryParametersMapToSet;
     }
 
@@ -90,18 +128,21 @@ public abstract class AbstractDBStatsReloadableQueryableCache<I, E extends IUpda
      * This method executes the queryEntities fetching the entities modified after the time we saved as the most recent modification time
      * It loops over the ResultSet and expects the concrete child class to build an entity out of it or return null
      * in cases of errors in entity completeness. Error map could be used for saving info on failed/inconsistent entities.
+     *
+     * Use super.getLogger(), as refreshEntities is called in parent class' constructor, till which time logger
+     * instance of this class is not initialized,
      * @throws RefreshException
      */
     @Override
-    protected void refreshEntities() throws RefreshException
+    protected synchronized void refreshEntities() throws RefreshException
     {
-        logger.debug("Inside refreshEntities() of AbstractDBStatsReloadableQueryableCache class.");
+        super.getLogger().debug("Inside refreshEntities() of AbstractDBStatsReloadableQueryableCache class.");
         Connection conn = null;
         try
         {
             String refreshQuery = query.replaceAll("\\$last_modified", mostRecentEntityTime.toString());
 
-            logger.debug("Refresh query is : {}", refreshQuery);
+            super.getLogger().debug("Refresh query is : {}", refreshQuery);
 
             conn = dbManager.getConnectionFromPool();
 
@@ -147,12 +188,14 @@ public abstract class AbstractDBStatsReloadableQueryableCache<I, E extends IUpda
         }
         catch (SQLException e)
         {
-            logger.error("SQLException thrown while running DB based refresh in cache: " + this.getName(), e);
+            super.getLogger().error("SQLException thrown while running DB based refresh in cache: {}", this.getName());
+            super.getLogger().error("SQLException:", e);
             throw new RefreshException("SQLException thrown while running DB based refresh in cache: " + this.getName(), e);
         }
         catch (RuntimeException e)
         {
-            logger.error("RuntimeException thrown while running DB based refresh in cache: " + this.getName(), e);
+            super.getLogger().error("RuntimeException thrown while running DB based refresh in cache: {}", this.getName());
+            super.getLogger().error("RuntimeException:", e);
             throw new RefreshException("RuntimeException thrown while running DB based refresh in cache: " + this.getName(), e);
         }
         finally

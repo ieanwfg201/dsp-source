@@ -7,6 +7,7 @@ import models.StaticUtils;
 
 
 import play.Logger;
+import play.Play;
 import play.db.DB;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -57,7 +58,9 @@ import com.kritter.constants.AdAPIEnum;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.CreativeBannerAPIEnum;
 import com.kritter.constants.CreativeContainerAPIEnum;
+import com.kritter.constants.IOStatus;
 import com.kritter.constants.SavedQueryEnum;
+import com.kritter.constants.SiteAPIEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
 import com.kritter.constants.error.ErrorEnum;
@@ -67,12 +70,14 @@ import controllers.advertiser.CreativeController;
 import controllers.advertiser.TargetingProfileController;
 
 public class KAPI extends Controller{
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
     public static Result reporting(){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
         try{
             con = DB.getConnection();
             ReportingEntity entity = ReportingEntity.getObject(jsonNode.toString());
+            entity.setTimezone(timezoneid);
             org.codehaus.jackson.JsonNode resultNode = ApiDef.get_data(con, entity, false, false, null);
             return ok(resultNode.toString());
         }catch(Exception e){
@@ -97,6 +102,7 @@ public class KAPI extends Controller{
         try{
             con = DB.getConnection();
             ReportingEntity entity = ReportingEntity.getObject(jsonNode.toString());
+            entity.setTimezone(timezoneid);
             org.codehaus.jackson.JsonNode resultNode = ApiDef.get_data(con, entity, true, false, null);
             return ok(resultNode.toString());
         }catch(Exception e){
@@ -215,9 +221,9 @@ public class KAPI extends Controller{
         try{
             con = DB.getConnection();
             if("adv".equals(type)){
-                return ok(ApiDef.get_adv_dashboard(con, "UTC",guid).toString());
+                return ok(ApiDef.get_adv_dashboard(con, timezoneid,guid).toString());
             }else if("pub".equals(type)){
-                return ok(ApiDef.get_pub_dashboard(con, "UTC",guid).toString());
+                return ok(ApiDef.get_pub_dashboard(con, timezoneid,guid).toString());
             }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.ACTION_TYPE_ABSENT.getId());
@@ -252,9 +258,23 @@ public class KAPI extends Controller{
                 Insertion_Order entity = Insertion_Order.getObject(jsonNode.toString());
                 Message msg  = ApiDef.check_io(con, entity);
                 return ok(msg.toJson().toString());
+            }else if("getio".equals(actionType)){
+                Insertion_Order entity = Insertion_Order.getObject(jsonNode.toString());
+                Insertion_Order_List msg  = ApiDef.get_io(con, entity);
+                return ok(msg.toJson().toString());
             }else if("listiobyaccountbystatus".equals(actionType)){
                 IOListEntity entity = IOListEntity.getObject(jsonNode.toString());
                 Insertion_Order_List msg  = ApiDef.list_io_by_account_guid_by_status(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("approveio".equals(actionType)){
+                Insertion_Order entity = Insertion_Order.getObject(jsonNode.toString());
+                entity.setStatus(IOStatus.Approved);
+                Message msg  = ApiDef.approve_io(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("rejectio".equals(actionType)){
+                Insertion_Order entity = Insertion_Order.getObject(jsonNode.toString());
+                entity.setStatus(IOStatus.REJECTED);
+                Message msg  = ApiDef.reject_io(con, entity);
                 return ok(msg.toJson().toString());
             }
             Message msg = new Message();
@@ -300,6 +320,21 @@ public class KAPI extends Controller{
             }else if("list".equals(actionType)){
                 SiteListEntity entity = SiteListEntity.getObject(jsonNode.toString());
                 SiteList msg  = ApiDef.list_site_by_account_id(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("approve".equals(actionType)){
+                SiteListEntity entity = SiteListEntity.getObject(jsonNode.toString());
+                entity.setSiteApiEnum(SiteAPIEnum.approve_multiple_site);
+                Message msg  = ApiDef.change_site_status(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("reject".equals(actionType)){
+                SiteListEntity entity = SiteListEntity.getObject(jsonNode.toString());
+                entity.setSiteApiEnum(SiteAPIEnum.reject_multiple_site);
+                Message msg  = ApiDef.change_site_status(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("pause".equals(actionType)){
+                SiteListEntity entity = SiteListEntity.getObject(jsonNode.toString());
+                entity.setSiteApiEnum(SiteAPIEnum.pause_multiple_site);
+                Message msg  = ApiDef.change_site_status(con, entity);
                 return ok(msg.toJson().toString());
             }
             Message msg = new Message();
@@ -469,6 +504,11 @@ public class KAPI extends Controller{
                 entity.setAdenum(AdAPIEnum.activate_ad_by_ids);
                 Message msg  = ApiDef.change_status_ad(con, entity);
                 return ok(msg.toJson().toString());
+            }else if("sendadforapproval".equals(actionType)){
+                AdListEntity entity = AdListEntity.getObject(jsonNode.toString());
+                entity.setAdenum(AdAPIEnum.approve_ad_again_on_tp_update);
+                Message msg  = ApiDef.change_status_ad(con, entity);
+                return ok(msg.toJson().toString());
             }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.ACTION_TYPE_ABSENT.getId());
@@ -589,10 +629,24 @@ public class KAPI extends Controller{
             if("create".equals(actionType)){
                 Creative_banner entity = Creative_banner.getObject(jsonNode.toString());
                 Message msg  = ApiDef.insert_creative_banner(con,  entity);
+                if(msg.getError_code() == 0){
+                	String s = CreativeController.saveBannerApi(entity);
+                	if(!"success".equals(s)){
+                		msg.setMsg(s);
+                		msg.setError_code(ErrorEnum.CREATIVE_BANNER_NOT_INSERTED.getId());
+                	}
+                }
                 return ok(msg.toJson().toString());
             }else if("edit".equals(actionType)){
                 Creative_banner entity = Creative_banner.getObject(jsonNode.toString());
                 Message msg  = ApiDef.update_creative_banner(con,  entity);
+                if(msg.getError_code() == 0){
+                	String s = CreativeController.saveBannerApi(entity);
+                	if(!"success".equals(s)){
+                		msg.setMsg(s);
+                		msg.setError_code(ErrorEnum.CREATIVE_BANNER_NOT_UPDATED.getId());
+                	}
+                }
                 return ok(msg.toJson().toString());
             }else if("get".equals(actionType)){
                 CreativeBannerListEntity entity = CreativeBannerListEntity.getObject(jsonNode.toString());

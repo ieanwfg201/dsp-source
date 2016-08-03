@@ -62,7 +62,7 @@ public abstract class AbstractQueryableCache<I, E extends IEntity<I>> implements
                 // Verify if ISecondaryIndex is a class(superclass or super interface) of the provided class
                 if(!(ISecondaryIndex.class.isAssignableFrom(secIndexClass)))
                 {
-                    logger.error("Provided class: " + secIndexClass.getName() + " is not of class type ISecondaryIndex");
+                    logger.error("Provided class: {} is not of class type ISecondaryIndex",secIndexClass.getName());
                     throw new InitializationException("Provided class: " + secIndexClass.getName() + " is not of class type ISecondaryIndex");
                 }
 
@@ -165,7 +165,7 @@ public abstract class AbstractQueryableCache<I, E extends IEntity<I>> implements
         {
             // Example: in cases where some application updated 'update_time' of the entity more than once
             // after the entity was de-activated
-            logger.warn("Entity id: " + entityId + " does not exist in ICache: " + this.getName() + ". Hence cannot delete");
+            logger.warn("Entity id: {} does not exist in ICache: {}. Hence cannot delete",entityId, this.getName());
             return;
         }
 
@@ -237,4 +237,8 @@ public abstract class AbstractQueryableCache<I, E extends IEntity<I>> implements
     // Give a chance to child class to clean up in case it holds additional data structures
     protected abstract void cleanUp() throws ProcessingException;
     public abstract ISecondaryIndexWrapper getSecondaryIndexKey(Class className, E entity);
+
+    public Collection<E> getAllEntities() {
+        return primaryIndex.values();
+    }
 }

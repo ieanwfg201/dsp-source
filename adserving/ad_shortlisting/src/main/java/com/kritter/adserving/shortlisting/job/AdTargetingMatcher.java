@@ -1,12 +1,14 @@
 package com.kritter.adserving.shortlisting.job;
 
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.entity.HandsetMasterData;
+import com.kritter.geo.common.entity.CountryUserInterfaceId;
 import com.kritter.geo.common.entity.CountryUserInterfaceIdSecondaryIndex;
 import com.kritter.geo.common.entity.IspUserInterfaceIdSecondaryIndex;
 import com.kritter.geo.common.entity.reader.*;
@@ -65,6 +67,9 @@ public class AdTargetingMatcher implements Job {
         this.countryUserInterfaceIdCache = countryUserInterfaceIdCache;
         this.ispUserInterfaceIdCache = ispUserInterfaceIdCache;
         this.targetingMatchers = targetingMatchers;
+
+        Collection<CountryUserInterfaceId> countryUserInterfaceIds = this.countryUserInterfaceIdCache.getAllEntities();
+        logger.debug("Data from country user interface id cache inside ad targeting matcher is : {} ", countryUserInterfaceIds);
     }
 
     /**
@@ -148,7 +153,7 @@ public class AdTargetingMatcher implements Job {
 
             /****************************************Set no fill reason.**********************************************/
         if(adIdsForCountry.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.NO_ADS_COUNTRY_CARRIER);
+            request.setNoFillReason(NoFillReason.NO_ADS_COUNTRY_CARRIER);
         /*********************************************************************************************************/
 
         //pick adids for handset manufacturer/brand.
@@ -170,7 +175,7 @@ public class AdTargetingMatcher implements Job {
 
         /****************************************Set no fill reason.**********************************************/
         if(null == request.getNoFillReason() && adIdsForHandsetBrand.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.NO_ADS_BRAND);
+            request.setNoFillReason(NoFillReason.NO_ADS_BRAND);
         /*********************************************************************************************************/
 
         //pick adids for handset model.
@@ -188,7 +193,7 @@ public class AdTargetingMatcher implements Job {
 
         /****************************************Set no fill reason.**********************************************/
         if(null == request.getNoFillReason() && adIdsForHandsetModel.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.NO_ADS_MODEL);
+            request.setNoFillReason(NoFillReason.NO_ADS_MODEL);
         /*********************************************************************************************************/
 
         //now take the intersection for individual shortlisted sets.
@@ -221,12 +226,12 @@ public class AdTargetingMatcher implements Job {
         for(TargetingMatcher targetingMatcher : targetingMatchers) {
             finalShortlistedAdIds = targetingMatcher.shortlistAds(finalShortlistedAdIds, request, context);
 
-            logger.debug("Shortlisted ads after {} = ", targetingMatcher.getName());
+            ReqLog.debugWithDebug(logger, request, "Shortlisted ads after {} = ", targetingMatcher.getName());
             if(finalShortlistedAdIds == null || finalShortlistedAdIds.size() == 0) {
-                logger.debug("null");
+                ReqLog.debugWithDebug(logger, request, "null");
             } else {
                 for(Integer adId : finalShortlistedAdIds) {
-                    logger.debug("\tad id : {}", adId);
+                    ReqLog.debugWithDebug(logger, request, "\tad id : {}", adId);
                 }
             }
         }

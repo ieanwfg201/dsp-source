@@ -17,6 +17,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>com.kritter.ex_int</groupId>
+            <artifactId>ex_int_openrtb_2_2</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.entity.winner</groupId>
             <artifactId>kritter_entity_winner</artifactId>
             <version>1.0.0</version>

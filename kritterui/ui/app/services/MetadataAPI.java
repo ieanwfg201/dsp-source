@@ -83,6 +83,7 @@ import com.kritter.constants.VideoLinearity;
 import com.kritter.constants.VideoMimeTypes;
 import com.kritter.constants.VideoPlaybackMethods;
 import com.kritter.constants.tracking_partner.TrackingPartner;
+import com.kritter.entity.demand_props.DemandProps;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.kritterui.api.def.ApiDef;
 import com.kritter.postimpression.thrift.struct.PostImpressionEvent;
@@ -97,7 +98,12 @@ public class MetadataAPI {
 		List<SelectOption> emptyOptions = new ArrayList<SelectOption>();
 		return emptyOptions;
 	}
-
+	public static String getDemandUrl(DemandProps dp){
+	    if(dp != null && dp.getDemand_url() != null){
+	        return dp.getDemand_url();
+	    }
+	    return "";
+	}
     public static List<SelectOption> algomodel(){
         List<SelectOption> options = emptyOptions();
         AlgoModel[] types = AlgoModel.values();
@@ -148,6 +154,19 @@ public class MetadataAPI {
         for (VideoBidResponseProtocols type : types) {
             selectOptions.add(new SelectOption(type.name(),  type.getCode()+""));
         } 
+        return selectOptions;
+    }
+    public static List<SelectOption> nonwrapperprotocol(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        selectOptions.add(new SelectOption(VideoBidResponseProtocols.NONVAST.name(),  VideoBidResponseProtocols.NONVAST.getCode()+""));
+        selectOptions.add(new SelectOption(VideoBidResponseProtocols.VAST_2_0.name(),  VideoBidResponseProtocols.VAST_2_0.getCode()+""));
+        selectOptions.add(new SelectOption(VideoBidResponseProtocols.VAST_3_0.name(),  VideoBidResponseProtocols.VAST_3_0.getCode()+""));
+        return selectOptions;
+    }
+    public static List<SelectOption> wrapperprotocol(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        selectOptions.add(new SelectOption(VideoBidResponseProtocols.VAST_2_0_WRAPPER.name(),  VideoBidResponseProtocols.VAST_2_0_WRAPPER.getCode()+""));
+        selectOptions.add(new SelectOption(VideoBidResponseProtocols.VAST_3_0_WRAPPER.name(),  VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()+""));
         return selectOptions;
     }
     public static List<String> videoTrackingEvents(String str){
@@ -331,6 +350,13 @@ public class MetadataAPI {
 
 		return options;
 	}
+	public static List<SelectOption> listIncTrue(){
+		List<SelectOption> options = emptyOptions();
+		options.add(new SelectOption("Inclusion", "true"));
+		options.add(new SelectOption("Exclusion", "false"));
+
+		return options;
+	}
     public static List<SelectOption> freqCapOptions(){
         List<SelectOption> options = emptyOptions();
         options.add(new SelectOption("No", "false"));
@@ -506,7 +532,32 @@ public class MetadataAPI {
 		}
 		return "";
 	}
-	public static List<String> getValues(MetadataType type, String ids){
+    public static List<String> getCreativeMacroByName(String creativeMacroIds){
+        List<String> ll = new LinkedList<String>();
+        try{
+        if(creativeMacroIds != null){
+            String creativeMacroIdTrim = creativeMacroIds.trim().replaceAll("\\[", "").replaceAll("]", "");
+            if(!"".equals(creativeMacroIdTrim)){
+                String split[] = creativeMacroIdTrim.split(",");
+                for(String s:split){
+                    String strim = s.trim();
+                    if(!"".equals(strim)){
+                        Integer i = Integer.parseInt(strim);
+                        ADTagMacros a = ADTagMacros.getEnum(i);
+                        if(a!= null){
+                            ll.add(a.getName());
+                        }
+                    }
+                }
+            }
+        }
+        }catch(Exception e){
+            Logger.error(e.getMessage(),e);
+        }
+        return ll;
+        
+    }
+        public static List<String> getValues(MetadataType type, String ids){
 		List<String> values = new ArrayList<String>();
 		List<MetaField> mfields  = new ArrayList<MetaField>();
 		Connection con = null;
@@ -560,6 +611,158 @@ public class MetadataAPI {
 	        }
 	    }
 	    return selectOptions;
+	}
+	public static ArrayNode tier1mmacategory(){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.MMA_CATEGORY_TIER1_ALL, null);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNode(mfields);
+	}
+	public static ArrayNode tier2mmacategory(String tier1List){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaInput mi = new MetaInput();
+			if(tier1List != null){
+				mi.setQuery_id_list(tier1List.trim().replaceAll("\\[", "").replaceAll("]", ""));
+			}
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.MMA_CATEGORY_TIER2_BY_TIER1, mi);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNode(mfields);
+	}
+	public static ArrayNode tier1mmaindustry(){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.MMA_INDUSTRY_TIER1_ALL, null);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNode(mfields);
+	}
+	public static ArrayNode tier2mmaindustry(String tier1List){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaInput mi = new MetaInput();
+			if(tier1List != null){
+				mi.setQuery_id_list(tier1List.trim().replaceAll("\\[", "").replaceAll("]", ""));
+			}
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.MMA_INDUSTRY_TIER2_BY_TIER1, mi);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNode(mfields);
+	}
+	public static ArrayNode adposition_list(){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.ADPOS_ALL, null);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNodeWithDescription(mfields);
+	}
+	public static ArrayNode tier1channel(){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.CHANNEL_TIER1_ALL, null);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNode(mfields);
+	}
+	public static ArrayNode tier2channelBytier1(String tier1List){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaInput mi = new MetaInput();
+			if(tier1List != null){
+				mi.setQuery_id_list(tier1List.trim().replaceAll("\\[", "").replaceAll("]", ""));
+			}
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.CHANNEL_TIER2_BY_TIER1, mi);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNode(mfields);
 	}
 	
 	public static ArrayNode tier_1_categories(){
@@ -775,7 +978,9 @@ public class MetadataAPI {
            ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
            ConnectionType[] types = ConnectionType.values();
            for (ConnectionType src : types) {
-                   optionNodes.add((new SelectOption(src.name(),src.getId()+"")).toJson());
+           			if(src.getId()<(short)50){
+                   		optionNodes.add((new SelectOption(src.name(),src.getId()+"")).toJson());
+                    }
            } 
            return optionNodes;
        }

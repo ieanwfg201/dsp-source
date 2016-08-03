@@ -50,6 +50,7 @@ public class Ext_site {
     public static final String aprrove_ext_site_by_ids = "update ext_supply_attr set approved=true,unapproved=false,last_modified=? where id in (<id>)";
     
     public static final String unaprrove_ext_site_by_ids = "update ext_supply_attr set unapproved=true,last_modified=? where id in (<id>)";
+    public static final String update_ext_site_name = "update ext_supply_attr set ext_supply_name=?,last_modified=? where id = ?";
 
     public static final String get_unapproved_ext_site_by_pub_os  = "select a.id as pub_inc_id,c.id as id, c.site_inc_id as site_inc_id, " +
             "c.ext_supply_id as ext_supply_id, c.ext_supply_name as ext_supply_name, c.ext_supply_domain as ext_supply_domain, " +

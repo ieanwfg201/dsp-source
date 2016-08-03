@@ -5,6 +5,7 @@ import java.sql.Connection;
 
 import models.entities.fraudreport.FraudReportFormEntity;
 import play.Logger;
+import play.Play;
 import play.data.Form;
 import play.db.DB;
 import play.libs.Json;
@@ -27,6 +28,7 @@ import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
 
 public class FraudReportController extends Controller{
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
 
 	private static Form<FraudReportFormEntity> fraudreportConfigForm = Form.form(FraudReportFormEntity.class);
 	
@@ -65,6 +67,7 @@ public class FraudReportController extends Controller{
 				    reportingEntity.setPagesize(PageConstants.csv_page_size);
 				    reportingEntity.setRollup(true);
 				}
+				reportingEntity.setTimezone(timezoneid);
 				org.codehaus.jackson.JsonNode data = ApiDef.get_data(con, reportingEntity, returnWithId, exportAsCsv, absoluteFileName);
             	if(data != null){
             	    ObjectMapper objectMapper = new ObjectMapper(); 

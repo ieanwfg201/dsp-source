@@ -214,6 +214,98 @@ public class IOCrud {
         } 
     }
     
+    public static JsonNode get_io(Connection con, JsonNode jsonNode){
+        if(con == null){
+            Insertion_Order_List iolist = new Insertion_Order_List();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            iolist.setMsg(msg);
+            return iolist.toJson();
+        }
+        if(jsonNode == null){
+            Insertion_Order_List iolist = new Insertion_Order_List();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.IO_NULL.getId());
+            msg.setMsg(ErrorEnum.IO_NULL.getName());
+            iolist.setMsg(msg);
+            return iolist.toJson();
+
+        }
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            Insertion_Order io = objectMapper.treeToValue(jsonNode, Insertion_Order.class);
+            return get_io(con, io).toJson();
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            Insertion_Order_List iolist = new Insertion_Order_List();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
+            iolist.setMsg(msg);
+            return iolist.toJson();
+        }
+    }
+    
+    public static Insertion_Order_List get_io(Connection con, Insertion_Order io){
+        if(con == null){
+            Insertion_Order_List iolist = new Insertion_Order_List();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            iolist.setMsg(msg);
+            return iolist;
+        }
+        if(io == null){
+            Insertion_Order_List iolist = new Insertion_Order_List();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.IO_NULL.getId());
+            msg.setMsg(ErrorEnum.IO_NULL.getName());
+            iolist.setMsg(msg);
+            return iolist;
+        }
+        PreparedStatement pstmt = null;
+        try{
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Insertion_Order.get_io);
+            pstmt.setString(1, io.getOrder_number());
+            pstmt.setString(2, io.getAccount_guid());
+            ResultSet rset = pstmt.executeQuery();
+            if(rset.next()){
+                populateIO(io, rset, false);
+                Insertion_Order_List iolist = new Insertion_Order_List();
+                Message msg = new Message();
+                msg.setError_code(ErrorEnum.NO_ERROR.getId());
+                msg.setMsg(ErrorEnum.NO_ERROR.getName());
+                iolist.setMsg(msg);
+                List<Insertion_Order> list = new LinkedList<Insertion_Order>();
+                list.add(io);
+                iolist.setInsertion_order_list(list);
+                return iolist;
+            }
+            Insertion_Order_List iolist = new Insertion_Order_List();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.IO_NOT_FOUND.getId());
+            msg.setMsg(ErrorEnum.IO_NOT_FOUND.getName());
+            iolist.setMsg(msg);
+            return iolist;
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            Insertion_Order_List iolist = new Insertion_Order_List();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
+            iolist.setMsg(msg);
+            return iolist;
+        }finally{
+            if(pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+        } 
+    }
     public static JsonNode list_io(Connection con, JsonNode jsonNode){
         if(con == null){
             Insertion_Order_List iolist = new Insertion_Order_List();

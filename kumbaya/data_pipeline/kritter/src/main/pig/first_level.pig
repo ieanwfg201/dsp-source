@@ -91,7 +91,7 @@ decoded = FOREACH raw_data GENERATE FLATTEN(com.kritter.kumbaya.libraries.pigudf
 decoded_data = FOREACH decoded GENERATE ThriftBytesToTupleDef($0);
 
 proj_data = FOREACH decoded_data GENERATE AdservingRequestResponse.terminationReason as terminationReason, 
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(AdservingRequestResponse.time * 1000,'yyyy-MM-dd HH:00:00', 'UTC') as time, 
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(AdservingRequestResponse.time * 1000,'yyyy-MM-dd HH:00:00', '$tz') as time, 
     AdservingRequestResponse.inventorySource as inventorySource, AdservingRequestResponse.siteId as siteId, 
     AdservingRequestResponse.deviceId as deviceId, AdservingRequestResponse.deviceManufacturerId as deviceManufacturerId, 
     AdservingRequestResponse.deviceModelId as deviceModelId, AdservingRequestResponse.deviceOsId as deviceOsId, 
@@ -114,7 +114,7 @@ ex_proj = FOREACH ex_filter GENERATE siteId as siteId, supply_source_type as sup
 STORE ex_proj INTO '$OUTPUT/externalsite.gz' USING PigStorage('');
 
 
-supply_proj_data = FOREACH filter_data GENERATE com.kritter.kumbaya.libraries.pigudf.EpochToDateStrFifteenMin(epochtime * 1000, 'UTC') as time, 
+supply_proj_data = FOREACH filter_data GENERATE com.kritter.kumbaya.libraries.pigudf.EpochToDateStrFifteenMin(epochtime * 1000, '$tz') as time, 
     selectedSiteCategoryId as selectedSiteCategoryId, countryId as countryId, countryCarrierId as countryCarrierId, 
     countryRegionId as countryRegionId, deviceManufacturerId as deviceManufacturerId, deviceOsId as deviceOsId, 
     exchangeId as exchangeId,total_request as total_request, total_impression as total_impression, bidValue as total_bidValue, 
@@ -208,7 +208,7 @@ post_imp_decoded_data = FOREACH post_imp_decoded GENERATE PostImpThriftBytesToTu
 
 
 post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE PostImpressionRequestResponse.status as terminationReason, 
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', 'UTC') as time, 
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', '$tz') as time, 
     PostImpressionRequestResponse.siteId as siteId, PostImpressionRequestResponse.deviceId as deviceId, 
     PostImpressionRequestResponse.countryId as countryId, PostImpressionRequestResponse.adId as adId, 
     PostImpressionRequestResponse.exchangeId as exchangeId, 
@@ -223,7 +223,7 @@ post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE PostImpressionReques
     PostImpressionRequestResponse.deviceManufacturerId as deviceManufacturerId, PostImpressionRequestResponse.deviceOsId as deviceOsId, 
     PostImpressionRequestResponse.selectedSiteCategoryId as selectedSiteCategoryId, PostImpressionRequestResponse.eventTime as epochTime,
     PostImpressionRequestResponse.bidderModelId as bidderModelId, '' as nofillReason,
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStrXMin(PostImpressionRequestResponse.eventTime * 1000,'UTC','yyyy-MM-dd-HH-mm', '30') as time30,
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStrXMin(PostImpressionRequestResponse.eventTime * 1000,'$tz','yyyy-MM-dd-HH-mm', '30') as time30,
     PostImpressionRequestResponse.campaignId as campaignId, PostImpressionRequestResponse.bidprice_to_exchange as bidprice_to_exchange,
     PostImpressionRequestResponse.deviceBrowserId as browserId, com.kritter.kumbaya.libraries.pigudf.DecodeReturnDouble(PostImpressionRequestResponse.event, 'CONVERSION', PostImpressionRequestResponse.cpa_goal, '0.0') as cpa_goal, PostImpressionRequestResponse.supply_source_type as supply_source_type,
     PostImpressionRequestResponse.ext_supply_attr_internal_id as ext_supply_attr_internal_id,
@@ -232,7 +232,7 @@ post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE PostImpressionReques
 
 post_imp_filter_data =  FILTER post_imp_proj_data BY terminationReason == 'HEALTHY_REQUEST';
 
-supply_post_imp_proj_data = FOREACH post_imp_filter_data GENERATE com.kritter.kumbaya.libraries.pigudf.EpochToDateStrFifteenMin(epochTime * 1000, 'UTC') as time, selectedSiteCategoryId as selectedSiteCategoryId , countryId as countryId, countryCarrierId as countryCarrierId, countryRegionId as countryRegionId, deviceManufacturerId as deviceManufacturerId, deviceOsId as deviceOsId, exchangeId as exchangeId, 0 as total_request, 0 as total_impression, 0 as total_bidValue, total_click as total_click, total_csc as total_csc, total_win as total_win, total_win_bidValue as total_win_amount, supply_source_type;
+supply_post_imp_proj_data = FOREACH post_imp_filter_data GENERATE com.kritter.kumbaya.libraries.pigudf.EpochToDateStrFifteenMin(epochTime * 1000, '$tz') as time, selectedSiteCategoryId as selectedSiteCategoryId , countryId as countryId, countryCarrierId as countryCarrierId, countryRegionId as countryRegionId, deviceManufacturerId as deviceManufacturerId, deviceOsId as deviceOsId, exchangeId as exchangeId, 0 as total_request, 0 as total_impression, 0 as total_bidValue, total_click as total_click, total_csc as total_csc, total_win as total_win, total_win_bidValue as total_win_amount, supply_source_type;
 
 post_imp_group_data = GROUP post_imp_filter_data BY (time, siteId, deviceId, countryId, adId, exchangeId, event_type, countryCarrierId, countryRegionId, deviceManufacturerId, deviceOsId, bidderModelId, nofillReason, campaignId, browserId, supply_source_type, ext_supply_attr_internal_id,connectionTypeId, adv_inc_id, pub_inc_id);
 
@@ -306,13 +306,13 @@ billing_decoded = FOREACH billing_raw_data GENERATE FLATTEN(com.kritter.kumbaya.
 billing_decoded_data = FOREACH billing_decoded GENERATE BillingThriftBytesToTupleDef($0);
 
 billing_proj_data = FOREACH billing_decoded_data GENERATE Billing.status as terminationReason, 
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(Billing.eventTime * 1000,'yyyy-MM-dd HH:00:00','UTC') as time, 
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(Billing.eventTime * 1000,'yyyy-MM-dd HH:00:00','$tz') as time, 
     Billing.siteId as siteId, Billing.deviceId as deviceId, Billing.countryId as countryId, Billing.adId as adId, Billing.exchangeId as exchangeId, 
     Billing.countryCarrierId as countryCarrierId, Billing.countryRegionId as countryRegionId, Billing.deviceManufacturerId as deviceManufacturerId, 
     Billing.deviceOsId as deviceOsId, Billing.selectedSiteCategoryId as selectedSiteCategoryId, Billing.demandCharges as demandCharges, 
     Billing.supplyCost as supplyCost, Billing.earning as earning,-1 as creativeId, Billing.campaignId as campaignId, 
     Billing.advertiserId as advertiserId,Billing.bidderModelId as bidderModelId, '' as  nofillReason,
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStrXMin(Billing.eventTime * 1000,'UTC','yyyy-MM-dd-HH-mm', '30') as time30,
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStrXMin(Billing.eventTime * 1000,'$tz','yyyy-MM-dd-HH-mm', '30') as time30,
     Billing.browserId as browserId, Billing.exchangepayout as exchangepayout ,Billing.exchangerevenue as exchangerevenue, 
     Billing.networkpayout as networkpayout,Billing.networkrevenue as networkrevenue, (int)org.apache.pig.piggybank.evaluation.decode.Decode(Billing.billingType, 'CPC', '1', '0') as billedclicks, (int)org.apache.pig.piggybank.evaluation.decode.Decode(Billing.billingType, 'CPM', '1', 'INTEXCWIN', '1', 'BEVENT_CSCWIN_DEM','1', '0') as billedcsc,
     Billing.supply_source_type as supply_source_type, Billing.ext_supply_attr_internal_id as ext_supply_attr_internal_id,

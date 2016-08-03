@@ -787,3 +787,73 @@ ALTER TABLE first_level_ext_site_monthly change column countryId countryId int(1
   KEY `uu_daily_adId` (`adId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `ad_no_fill_reason`
+(
+    ad_id INTEGER UNSIGNED NOT NULL, -- refers to id in ad table
+    no_fill_reason_name VARCHAR(100) NOT NULL, -- refers to id in no_fill_reason table
+    request_hour TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    count INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    created_on TIMESTAMP NOT NULL DEFAULT now(),
+    last_modified TIMESTAMP NOT NULL,
+    CONSTRAINT `fk_ad_no_fill_reason_ad_id` FOREIGN KEY (`ad_id`) REFERENCES `ad` (`id`),   
+    CONSTRAINT `uq_ad_id_no_fill_reason_hour` UNIQUE (ad_id, no_fill_reason_name, request_hour)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `ad_no_fill_reason_daily`
+(
+    ad_id INTEGER UNSIGNED NOT NULL, -- refers to id in ad table
+    no_fill_reason_name VARCHAR(100) NOT NULL, -- refers to id in no_fill_reason table
+    request_day TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    count INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    created_on TIMESTAMP NOT NULL DEFAULT now(),
+    last_modified TIMESTAMP NOT NULL,
+    CONSTRAINT `fk_ad_no_fill_reason_daily_ad_id` FOREIGN KEY (`ad_id`) REFERENCES `ad` (`id`),   
+    CONSTRAINT `uq_ad_id_no_fill_reason_day` UNIQUE (ad_id, no_fill_reason_name, request_day)
+) ENGINE=InnoDB;
+
+alter table ad_no_fill_reason change column request_hour request_time timestamp NOT NULL DEFAULT '0000-00-00 00:00:00';
+alter table ad_no_fill_reason_daily change column request_day request_time timestamp NOT NULL DEFAULT '0000-00-00 00:00:00';
+
+alter table ad_no_fill_reason add column processing_time timestamp NOT NULL DEFAULT now() after request_time;
+alter table ad_no_fill_reason_daily add column processing_time timestamp NOT NULL DEFAULT now() after request_time;
+
+alter table ad_no_fill_reason drop foreign key `fk_ad_no_fill_reason_ad_id`;
+alter table ad_no_fill_reason_daily drop foreign key `fk_ad_no_fill_reason_daily_ad_id`;
+
+alter table ad_no_fill_reason drop index `uq_ad_id_no_fill_reason_hour`;
+alter table ad_no_fill_reason_daily drop index `uq_ad_id_no_fill_reason_day`;
+
+alter table ad_no_fill_reason add CONSTRAINT `fk_ad_no_fill_reason_ad_id` FOREIGN KEY (`ad_id`) REFERENCES `ad` (`id`);
+alter table ad_no_fill_reason add constraint `uq_ad_id_no_fill_reason_hour` UNIQUE (ad_id, no_fill_reason_name, request_time, processing_time);
+
+alter table ad_no_fill_reason_daily add CONSTRAINT `fk_ad_no_fill_reason_daily_ad_id` FOREIGN KEY (`ad_id`) REFERENCES `ad` (`id`);
+alter table ad_no_fill_reason_daily add constraint `uq_ad_id_no_fill_reason_day` UNIQUE (ad_id, no_fill_reason_name, request_time, processing_time);
+
+drop table ad_no_fill_reason;
+CREATE TABLE `ad_no_fill_reason` (
+  `ad_id` int(10) unsigned NOT NULL,
+  `no_fill_reason_name` varchar(100) NOT NULL,
+  `request_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `count` int(10) unsigned NOT NULL DEFAULT '0',
+  `processing_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  KEY `fk_ad_no_fill_reason_ad_id` (`ad_id`),
+  CONSTRAINT `fk_ad_no_fill_reason_ad_id` FOREIGN KEY (`ad_id`) REFERENCES `ad` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ALTER TABLE ad_no_fill_reason ADD INDEX ad_no_fill_reason_ad_id(ad_id);
+ALTER TABLE ad_no_fill_reason ADD INDEX ad_no_fill_reason_request_time(request_time);
+
+
+drop table ad_no_fill_reason_daily;
+CREATE TABLE `ad_no_fill_reason_daily` (
+  `ad_id` int(10) unsigned NOT NULL,
+  `no_fill_reason_name` varchar(100) NOT NULL,
+  `request_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `count` int(10) unsigned NOT NULL DEFAULT '0',
+  `processing_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  KEY `fk_ad_no_fill_reason_ad_id` (`ad_id`),
+  CONSTRAINT `fk_ad_no_fill_reason_ad_daily_id` FOREIGN KEY (`ad_id`) REFERENCES `ad` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE ad_no_fill_reason_daily ADD INDEX ad_no_fill_reason_daily_ad_id(ad_id);
+ALTER TABLE ad_no_fill_reason_daily ADD INDEX ad_no_fill_reason_daily_request_time(request_time);
+

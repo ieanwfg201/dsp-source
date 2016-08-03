@@ -2,6 +2,7 @@ package com.kritter.core.metrics;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import lombok.Getter;
 
 /**
  * Metrics for the workflow and jobs.
@@ -14,6 +15,7 @@ import com.codahale.metrics.MetricRegistry;
  * For each job, the same three metrics are exposed.
  */
 public class YammerMetrics {
+    @Getter
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
     private static final String INVOCATIONS_COUNTER_NAME = "invocations";

@@ -2,12 +2,14 @@ package com.kritter.common.site.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
 /**
  * This class keeps a row for site_metadata table.
  */
+@ToString
 public class SiteMetaDataEntity implements IUpdatableEntity<String>
 {
     @Getter

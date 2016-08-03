@@ -126,23 +126,55 @@
                         </table> 
                 </fieldset>
                 <fieldset ng-show="showVideoForm">
-                        @components.formElements.selectlist2(creativeForm("videoDemandType"), "VideoDemandType",services.MetadataAPI.videoDemandType() )
+                        @components.formElements.selectlist2(creativeForm("videoDemandType"), "VideoDemandType",
+                        	services.MetadataAPI.videoDemandType(), '_ngSync ->true, '_ngChange ->"updateVideoDemandType()", '_numeric->true)
+					<div ng-show="showVideoWrapperForm" ng-if="showVideoWrapperForm">
                         @components.formElements.textinput(creativeForm("vastTagUrl"), '_label ->"Vast Tag Url")
+                        @components.formElements.selectlist2(creativeForm("protocol"), "Protocol (2.0->2.0 Wrapper) ",services.MetadataAPI.wrapperprotocol() )
+					</div>
                         @components.formElements.selectlist2(creativeForm("mime"), "Mime",services.MetadataAPI.mime() )
-                        @components.formElements.selectlist2(creativeForm("protocol"), "Protocol (2.0->2.0 Wrapper) ",services.MetadataAPI.protocol() )
-                        @components.formElements.textinput(creativeForm("duration"), '_label ->"Duration (-1 means Unknown)")
+						@components.formElements.textinput(creativeForm("duration"), '_label ->"Duration (-1 means Unknown)")
                         @components.formElements.textinput(creativeForm("startdelay"), '_label ->"StartDelay (-11 means Unknown)")
                         @components.formElements.textinput(creativeForm("width"), '_label ->"Width (-1 means Unknown)")
                         @components.formElements.textinput(creativeForm("height"), '_label ->"Height (-1 means Unknown)")
                         @components.formElements.selectlist2(creativeForm("linearity"), "Linearity",services.MetadataAPI.linearity() )
                         @components.formElements.textinput(creativeForm("maxextended"), '_label ->"MaxExtended (0 means Unknown)")
                         @components.formElements.textinput(creativeForm("bitrate"), '_label ->"BitRate (-1 means Unknown)")
-                        @components.formElements.selectlist2(creativeForm("boxingallowed"), "Boxing Allowed",services.MetadataAPI.boxingallowed() )
+					    @components.formElements.selectlist2(creativeForm("boxingallowed"), "Boxing Allowed",services.MetadataAPI.boxingallowed() )
                         @components.formElements.selectlist2(creativeForm("playbackmethod"), "Boxing Allowed",services.MetadataAPI.playbackmethod() )
                         @components.formElements.selectlist2(creativeForm("delivery"), "Delivery",services.MetadataAPI.delivery() )
                         @components.formElements.selectlist2(creativeForm("api"), "API",services.MetadataAPI.api() )
                         @components.formElements.selectlist2(creativeForm("companiontype"), "CompanionType",services.MetadataAPI.companiontype() )
                         @components.formElements.multiselectlist3(creativeForm("trackingStr"), '_label ->"Track Events" , '_row->true)
+					<div ng-show="showDirectVideoForm" ng-if="showDirectVideoForm">
+                        @components.formElements.selectlist2(creativeForm("protocol"), "Protocol (NONVAST->For very specific exchanges) ",services.MetadataAPI.nonwrapperprotocol() )
+						@components.formElements.hiddenfield(creativeForm("direct_videos"), "direct_videos", true)
+                        
+						<button type="button" class="btn btn-success" ng-click="openDirectvideoForm()">
+                            <i class="fa fa-upload">Upload One Video</i>
+                        </button>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th width="30%">Video Urls</th>
+                                    <th width="30%">Slot</th> 
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="directvideo in directvideos">
+                                    <td><div><a href="{{directvideo.downloadUrl}}">Download</a></td>
+                                    <td><span tooltip-placement="top" tooltip="{{directvideo.slotDescription}}" tooltip-append-to-body="true"><b>{{directvideo.slotName}}</b></span></select></td>
+                                    <td nowrap>
+                                        <button type="button" class="btn btn-danger btn-xs" ng-click="removeDirectVideos(directvideo)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </td >
+                                </tr>
+                            </tbody>
+                        </table> 
+                        
+					</div>
                 </fieldset>
 				
 				@components.formElements.submitbutton("save", "Save")

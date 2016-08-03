@@ -1,10 +1,10 @@
 import logging
+import traceback
+import sys
 
 from bidder.utils.log_utils import *
 from bidder.utils.ds_utils import *
 from bidder.utils.trie import *
-
-sfLogger = logging.getLogger(__name__)
 
 def getForecastTrie(forecast):
     """ Takes a forecast and builds a trie for the same
@@ -23,6 +23,8 @@ def getForecastTrie(forecast):
     return root
 
 def loadExistingForecastFile(existingForecastFileName, dimDelimiter, fieldsDelimiter):
+    sfLogger = logging.getLogger(__name__)
+
     existingForecast = []
     try:
         # Read the file line by line and create existing segment forecasts
@@ -44,10 +46,12 @@ def loadExistingForecastFile(existingForecastFileName, dimDelimiter, fieldsDelim
                 existingForecast.append(logLine)
     except:
         # No file found, could be due to the fact that it's a new forecast
-        sfLogger.info("Existing forecast file '%s' not found", existingForecastFileName)
+        sfLogger.info("Existing forecast file '%s' not found. Exception %s", existingForecastFileName, traceback.format_exc())
     return existingForecast
 
 def loadExistingForecastFileExcludeDimValues(existingForecastFileName, dimDelimiter, fieldsDelimiter, excludeValuesList):
+    sfLogger = logging.getLogger(__name__)
+
     existingForecast = []
     try:
         # Read the file line by line and create existing segment forecasts
@@ -78,7 +82,7 @@ def loadExistingForecastFileExcludeDimValues(existingForecastFileName, dimDelimi
                     existingForecast.append(logLine)
     except:
         # No file found, could be due to the fact that it's a new forecast
-        sfLogger.info("Existing forecast file '%s' not found", existingForecastFileName)
+        sfLogger.info("Existing forecast file '%s' not found. Exception %s", existingForecastFileName, traceback.format_exc())
     return existingForecast
 
 def loadMultipleExistingForecastFiles(existingForecastFileNames, weights, dimDelimiter, fieldsDelimiter):

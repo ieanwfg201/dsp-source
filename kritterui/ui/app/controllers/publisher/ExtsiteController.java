@@ -2,6 +2,8 @@ package controllers.publisher;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import models.formbinders.EditExtSiteNameWorkFlowEntity;
 import models.formbinders.ExtSiteWorkFlowEntity;
 import play.Logger;
 import play.data.Form;
@@ -23,6 +25,7 @@ import controllers.advertiser.IOController.IO_ACTIONS;
 public class ExtsiteController extends Controller{
 
 	static Form<ExtSiteWorkFlowEntity> extsiteWorkflowForm = Form.form(ExtSiteWorkFlowEntity.class);
+	static Form<EditExtSiteNameWorkFlowEntity> editextsiteNameWorkflowForm = Form.form(EditExtSiteNameWorkFlowEntity.class);
 
 	@SecuredAction
 	public static Result workflowForm(int id, String action  ) {   
@@ -31,24 +34,70 @@ public class ExtsiteController extends Controller{
 	}
 
 	@SecuredAction
-	public static Result updateextSite() { 
-		Form<ExtSiteWorkFlowEntity> extsiteWfEntityForm1 = extsiteWorkflowForm.bindFromRequest();
+    public static Result editworkflowForm(int id, String action  ) {   
+	    EditExtSiteNameWorkFlowEntity swe = new EditExtSiteNameWorkFlowEntity(id, action,""); 
+        return ok(views.html.publisher.editextsiteNameWorkflowForm.render(editextsiteNameWorkflowForm.fill(swe),action));
+    }
+	
+    @SecuredAction
+    public static Result updateextSite() { 
+        Form<ExtSiteWorkFlowEntity> extsiteWfEntityForm1 = extsiteWorkflowForm.bindFromRequest();
+        Connection con = null;
+        ObjectNode response = Json.newObject();
+        try{
+            Message statusMsg = null;
+            if(!extsiteWfEntityForm1.hasErrors()){
+                con = DB.getConnection();
+                ExtSiteWorkFlowEntity extsiteWfEntity = extsiteWfEntityForm1.get();
+                Ext_site_input ext_site_input = new Ext_site_input();
+                ext_site_input.setId_list(extsiteWfEntity.getId()+"");
+                if(IO_ACTIONS.valueOf(extsiteWfEntity.getAction())==IO_ACTIONS.approve){ 
+                    ext_site_input.setExt_siteenum(Ext_siteEnum.aprrove_ext_site_by_ids);
+                    statusMsg = ApiDef.update_ext_site(con, ext_site_input);                 
+                }else if(IO_ACTIONS.valueOf(extsiteWfEntity.getAction())==IO_ACTIONS.reject){  
+                    ext_site_input.setExt_siteenum(Ext_siteEnum.unaprrove_ext_site_by_ids);
+                    statusMsg = ApiDef.update_ext_site(con, ext_site_input);                 
+                }
+                if(statusMsg.getError_code()==0){
+                    response.put("message", "Update Successful");
+                    return ok(response);
+                }else{
+                    response.put("message", "Update Failed. Please retry");
+                    return badRequest(response);
+                }
+            }
+            response.put("message", "Update Failed. Please retry");
+            return badRequest(response);
+        }catch(Exception e){
+            play.Logger.error(e.getMessage(),e);
+            response.put("message", "Update Failed. Please retry");
+            return badRequest(response);
+        }
+        finally{
+            try {
+                if(con!=null){
+                    con.close();
+                }
+            } catch (SQLException e) {
+                Logger.error("Error closing ",e);
+            }
+        }
+    }
+	@SecuredAction
+	public static Result updateextsitename() { 
+		Form<EditExtSiteNameWorkFlowEntity> editextsiteNameWorkflowForm1 = editextsiteNameWorkflowForm.bindFromRequest();
 		Connection con = null;
         ObjectNode response = Json.newObject();
         try{
 		    Message statusMsg = null;
-    		if(!extsiteWfEntityForm1.hasErrors()){
+    		if(!editextsiteNameWorkflowForm1.hasErrors()){
 		    	con = DB.getConnection();
-		    	ExtSiteWorkFlowEntity extsiteWfEntity = extsiteWfEntityForm1.get();
+		    	EditExtSiteNameWorkFlowEntity extsiteWfEntity = editextsiteNameWorkflowForm1.get();
 		    	Ext_site_input ext_site_input = new Ext_site_input();
 		    	ext_site_input.setId_list(extsiteWfEntity.getId()+"");
-		    	if(IO_ACTIONS.valueOf(extsiteWfEntity.getAction())==IO_ACTIONS.approve){ 
-		    	    ext_site_input.setExt_siteenum(Ext_siteEnum.aprrove_ext_site_by_ids);
-	    			statusMsg = ApiDef.update_ext_site(con, ext_site_input);				 
-    			}else if(IO_ACTIONS.valueOf(extsiteWfEntity.getAction())==IO_ACTIONS.reject){  
-                    ext_site_input.setExt_siteenum(Ext_siteEnum.unaprrove_ext_site_by_ids);
-                    statusMsg = ApiDef.update_ext_site(con, ext_site_input);                 
-	    		}
+		    	ext_site_input.setStr(extsiteWfEntity.getComment());
+		    	ext_site_input.setExt_siteenum(Ext_siteEnum.update_ext_site_name);
+		    	statusMsg = ApiDef.update_ext_site(con, ext_site_input);				 
     			if(statusMsg.getError_code()==0){
 			    	response.put("message", "Update Successful");
 		    		return ok(response);

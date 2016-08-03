@@ -10,7 +10,7 @@ import com.kritter.constants.MarketPlace;
 import com.kritter.constants.SupplyDemandDimension;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;

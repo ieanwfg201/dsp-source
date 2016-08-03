@@ -159,9 +159,13 @@ public class PostImpressionUtils
      * @param requestURI
      * @throws Exception
      */
+    public void populatePostImpressionRequestObject( Request postImpressionRequest,String requestURI) throws Exception{
+    	populatePostImpressionRequestObject(postImpressionRequest, requestURI, true);
+    }
+    
     public void populatePostImpressionRequestObject(
                                                    Request postImpressionRequest,
-                                                   String requestURI
+                                                   String requestURI, boolean hashPresent
                                                   ) throws Exception
     {
         String requestURIParts[] = requestURI.split(this.uriFieldsDelimiter);
@@ -180,7 +184,7 @@ public class PostImpressionUtils
             //prepare request for version 1
             if(urlVersion.intValue() == 1)
             {
-                preparePostImpressionRequestWithRequestParametersForVersion1(postImpressionRequest,requestURIParts);
+                preparePostImpressionRequestWithRequestParametersForVersion1(postImpressionRequest,requestURIParts, hashPresent);
             }
         }
         catch (RuntimeException e)
@@ -189,6 +193,37 @@ public class PostImpressionUtils
                                 "PostImpressionUtils", e);
         }
     }
+    public void populatePostImpressionRequestObjectForNoFRDP(
+            Request postImpressionRequest,
+            String requestURI, boolean hashPresent
+           ) throws Exception
+    {
+    	
+    	String requestURIParts[] = requestURI.split(this.uriFieldsDelimiter);
+
+    	//the request uri parts have to be atleast three length so as the version
+    	//could be checked.
+    	if(requestURIParts.length < 3)
+    		throw new Exception("The postimpression uri is malformed , not of appropriate length," +
+    				"even unable to check the version of the uri inside " +
+    				"populatePostImpressionRequestObject() of PostImpressionUtils");
+
+    	try
+    	{
+    		Integer urlVersion = Integer.parseInt(requestURIParts[2]);
+
+    		//prepare request for version 1
+    		if(urlVersion.intValue() == 1)
+    		{
+    			preparePostImpressionRequestWithRequestParametersForVersion1(postImpressionRequest,requestURIParts, hashPresent);
+    		}
+    	}
+    	catch (RuntimeException e)
+    	{
+    		throw new Exception("RuntimeException inside populatePostImpressionRequestObjet() of " +
+    				"PostImpressionUtils", e);
+    	}
+}
 
     /**
      * This function populates postimpression request object with request time parameters for version 1.
@@ -198,10 +233,13 @@ public class PostImpressionUtils
      */
     private void preparePostImpressionRequestWithRequestParametersForVersion1(
                                                                               Request postImpressionRequest,
-                                                                              String requestURIParts[]
+                                                                              String requestURIParts[], boolean hashPresent
                                                                              ) throws Exception
     {
-        if(null == requestURIParts || requestURIParts.length != 22)
+        if(hashPresent && (null == requestURIParts || requestURIParts.length != 22))
+            throw new Exception("Inside preparePostImpressionRequestWithRequestParametersForVersion1() of " +
+                                "PostImpressionUtils, URI is malformed");
+        if(!hashPresent && (null == requestURIParts || requestURIParts.length != 21))
             throw new Exception("Inside preparePostImpressionRequestWithRequestParametersForVersion1() of " +
                                 "PostImpressionUtils, URI is malformed");
 
@@ -228,7 +266,10 @@ public class PostImpressionUtils
             Integer externalSupplyAttributesInternalId = Integer.valueOf(requestURIParts[18]);
             Short connectionTypeId = Short.valueOf(requestURIParts[19]);
             Short deviceTypeId = Short.valueOf(requestURIParts[20]);
-            String hashValue = requestURIParts[21];
+            String hashValue = null;
+            if(hashPresent){
+            	hashValue = requestURIParts[21];
+            }
 
             String impressionIdSplitForAdId[] = impressionId.split(this.requestIdAdIdDelimiter);
 

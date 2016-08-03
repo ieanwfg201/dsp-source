@@ -2,7 +2,9 @@ package com.kritter.maxmind.loader;
 
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.geo.common.ThirdPartyDataLoader;
+import com.kritter.geo.common.entity.City;
 import com.kritter.geo.common.entity.Country;
+import com.kritter.geo.common.entity.State;
 import com.kritter.geo.common.utils.GeoCommonUtils;
 import com.kritter.maxmind.entity.MaxmindCountryStateCityData;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
@@ -139,9 +141,7 @@ public class MaxMindStateCityDataLoader implements ThirdPartyDataLoader
 
                 if(null == countryCode || null == stateCode || null == stateName)
                 {
-                    logger.error("Country code or state code or state name is null inside " +
-                                 "fetchCountryCodeStateCodeStateNameDataFromFile of MaxMindStateCityDataLoader " +
-                                 line);
+                    logger.error("Country code or state code or state name is null inside fetchCountryCodeStateCodeStateNameDataFromFile of MaxMindStateCityDataLoader {} ", line);
                     continue;
                 }
 
@@ -234,9 +234,7 @@ public class MaxMindStateCityDataLoader implements ThirdPartyDataLoader
                 //if any of attributes is null we can ignore the entry.
                 if(null == countryCode || null == stateCode || null == cityName)
                 {
-                    logger.error("CountryCode or stateCode or cityname is null " +
-                                 "inside fetchMaxmindCountryStateCityDataFromFile of MaxMindStateCityDataLoader: " +
-                                 line);
+                    logger.error("CountryCode or stateCode or cityname is null inside fetchMaxmindCountryStateCityDataFromFile of MaxMindStateCityDataLoader: {} ", line);
                     continue;
                 }
 
@@ -249,8 +247,7 @@ public class MaxMindStateCityDataLoader implements ThirdPartyDataLoader
                 Country country = countryMap.get(countryCode);
                 if(null == country)
                 {
-                    logger.error("Country not found for country code: " + countryCode +
-                                 " inside fetchMaxmindCountryStateCityDataFromFile of MaxMindStateCityDataLoader");
+                    logger.error("Country not found for country code: {} inside fetchMaxmindCountryStateCityDataFromFile of MaxMindStateCityDataLoader", countryCode);
                     continue;
                 }
 
@@ -333,10 +330,10 @@ public class MaxMindStateCityDataLoader implements ThirdPartyDataLoader
                                                                 new HashSet<MaxmindCountryStateCityData>();
 
                     /*Query already present state data from sql, key is concat(country_id,Control-A,stateName)*/
-                    Map<String,Integer> stateIdFromSqlMap = GeoCommonUtils.
-                            fetchStateIdDataFromSqlDatabaseForDataSource(connection, dataSourceName);
-                    Map<String,Integer> cityIdFromSqlMap = GeoCommonUtils.
-                            fetchCityIdDataFromSqlDatabaseForDataSource(connection, dataSourceName);
+                    Map<String,State> stateIdFromSqlMap = GeoCommonUtils.
+                            fetchStateDataFromSqlDatabaseForDataSource(connection, dataSourceName);
+                    Map<String,City> cityIdFromSqlMap = GeoCommonUtils.
+                            fetchCityDataFromSqlDatabaseForDataSource(connection, dataSourceName);
 
                     /*First read the complete data into a set to be used later for population*/
                     while(null != (line = br.readLine()))
@@ -357,7 +354,7 @@ public class MaxMindStateCityDataLoader implements ThirdPartyDataLoader
 
                         if(null == maxmindCountryStateCityData)
                         {
-                            logger.error("No data found for state city for blockid: " + blockId);
+                            logger.error("No data found for state city for blockid: {} ", blockId);
                             continue;
                         }
 
@@ -408,11 +405,15 @@ public class MaxMindStateCityDataLoader implements ThirdPartyDataLoader
 
                     /*Query state id database from sql again for usage in city database creation.*/
                     stateIdFromSqlMap = GeoCommonUtils.
-                            fetchStateIdDataFromSqlDatabaseForDataSource(connection, dataSourceName);
+                            fetchStateDataFromSqlDatabaseForDataSource(connection, dataSourceName);
 
                     for(MaxmindCountryStateCityData entry : maxmindCountryStateCityDataSet)
                     {
-                        Integer stateId = stateIdFromSqlMap.get(entry.prepareKeyForStateDataMapStorage());
+                        State state = stateIdFromSqlMap.get(entry.prepareKeyForStateDataMapStorage());
+                        Integer stateId = null;
+
+                        if(null != state)
+                            stateId = state.getStateId();
 
                         if(null == stateId)
                         {
@@ -529,18 +530,23 @@ public class MaxMindStateCityDataLoader implements ThirdPartyDataLoader
         Integer stateId = null;
 
         //fetch state and city data present in sql database.
-        Map<String,Integer> stateIdFromSqlMap =
-                GeoCommonUtils.fetchStateIdDataFromSqlDatabaseForDataSource(connection, dataSourceName);
-        Map<String,Integer> cityIdDatabaseFromSql =
-                GeoCommonUtils.fetchCityIdDataFromSqlDatabaseForDataSource(connection,dataSourceName);
+        Map<String,State> stateIdFromSqlMap =
+                GeoCommonUtils.fetchStateDataFromSqlDatabaseForDataSource(connection, dataSourceName);
+        Map<String,City> cityIdDatabaseFromSql =
+                GeoCommonUtils.fetchCityDataFromSqlDatabaseForDataSource(connection,dataSourceName);
 
         StringBuffer stateCityDetectionDataBuffer = new StringBuffer();
 
         //form detection file data and push into file.
         for(MaxmindCountryStateCityData dataElement : maxmindCountryStateCityDataSet)
         {
-            stateId = stateIdFromSqlMap.get(dataElement.prepareKeyForStateDataMapStorage());
-            cityId = cityIdDatabaseFromSql.get(dataElement.prepareKeyForCityDataMapStorage());
+            State state = stateIdFromSqlMap.get(dataElement.prepareKeyForStateDataMapStorage());
+            if(null != state)
+                stateId = state.getStateId();
+
+            City city = cityIdDatabaseFromSql.get(dataElement.prepareKeyForCityDataMapStorage());
+            if(null != city)
+                cityId = city.getCityId();
 
             if(null == stateId || null == cityId)
             {
@@ -587,8 +593,7 @@ public class MaxMindStateCityDataLoader implements ThirdPartyDataLoader
             }
             catch (Exception e)
             {
-                cacheLogger.error("Exception while loading state/city data inside " +
-                                  "MaxMindStateCityDataLoadingTask in the class MaxMindStateCityDataLoader",e);
+                cacheLogger.error("Exception while loading state/city data inside MaxMindStateCityDataLoadingTask in the class MaxMindStateCityDataLoader",e);
             }
         }
     }

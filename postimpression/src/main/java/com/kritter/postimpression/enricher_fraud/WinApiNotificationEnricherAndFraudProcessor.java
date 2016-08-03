@@ -42,8 +42,7 @@ public class WinApiNotificationEnricherAndFraudProcessor implements OnlineEnrich
         {
             OnlineEnricherAndFraudCheck onlineEnricherAndFraudCheck = onlineEnricherAndFraudCheckIterator.next();
 
-            logger.debug("Inside WinApiNotificationEnricherAndFraudProcessor, running enricher and fraud checker " +
-                         "instance: {}", onlineEnricherAndFraudCheck.getIdentifier());
+            logger.debug("Inside WinApiNotificationEnricherAndFraudProcessor, running enricher and fraud checker instance: {}", onlineEnricherAndFraudCheck.getIdentifier());
 
             ONLINE_FRAUD_REASON fraudReason = onlineEnricherAndFraudCheck.fetchFraudReason(context,true);
 

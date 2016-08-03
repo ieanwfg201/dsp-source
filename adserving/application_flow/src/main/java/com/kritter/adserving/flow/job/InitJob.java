@@ -2,8 +2,6 @@ package com.kritter.adserving.flow.job;
 
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.adserving.request.reader.RequestProcessor;
-import com.kritter.entity.user.userid.ExternalUserId;
-import com.kritter.entity.user.userid.UserIdProvider;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
@@ -11,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
 
 /**
  * This class is the init job for pre-impression workflow.
@@ -26,7 +23,6 @@ public class InitJob implements Job
     private RequestProcessor requestProcessor;
     private String isRequestForSystemDebuggingHeaderName;
     private String inventorySourceHeader;
-    private UserIdProvider userIdProvider;
 
     public InitJob(
                    String loggerName,
@@ -34,8 +30,7 @@ public class InitJob implements Job
                    String requestObjectKey,
                    RequestProcessor requestProcessor,
                    String isRequestForSystemDebuggingHeaderName,
-                   String inventorySourceHeader,
-                   UserIdProvider userIdProvider
+                   String inventorySourceHeader
                   )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -44,7 +39,6 @@ public class InitJob implements Job
         this.requestProcessor = requestProcessor;
         this.isRequestForSystemDebuggingHeaderName = isRequestForSystemDebuggingHeaderName;
         this.inventorySourceHeader = inventorySourceHeader;
-        this.userIdProvider = userIdProvider;
     }
 
     @Override
@@ -100,16 +94,6 @@ public class InitJob implements Job
                 catch (RuntimeException rte)
                 {
                     request.setRequestAsDebugSystemForSupplyDemandMatching(false);
-                }
-            }
-
-            if(this.userIdProvider != null) {
-                Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
-                if(externalUserIds != null) {
-                    // Find internal user id for the supplied external user ids and set the internal user id in the
-                    // request
-                    String internalUserId = this.userIdProvider.getInternalUserId(externalUserIds);
-                    request.setUserId(internalUserId);
                 }
             }
 

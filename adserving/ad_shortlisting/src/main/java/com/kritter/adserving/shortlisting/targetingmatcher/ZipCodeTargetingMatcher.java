@@ -1,6 +1,7 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -13,6 +14,7 @@ import com.kritter.geo.common.entity.reader.ZipCodeFileDataCache;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 public class ZipCodeTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.AD_ZIPCODE;
+
     @Getter
     private String name;
     private Logger logger;
@@ -30,12 +34,14 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
     private ZipCodeFileDataCache zipCodeFileDataCache;
     private ZipCodeDetectionCache zipCodeDetectionCache;
     private CountryUserInterfaceIdCache countryUserInterfaceIdCache;
+    private String adNoFillReasonMapKey;
 
     public ZipCodeTargetingMatcher(
             String name, String loggerName, AdEntityCache adEntityCache,
             ZipCodeFileDataCache zipCodeFileDataCache,
             ZipCodeDetectionCache zipCodeDetectionCache,
-            CountryUserInterfaceIdCache countryUserInterfaceIdCache
+            CountryUserInterfaceIdCache countryUserInterfaceIdCache,
+            String adNoFillReasonMapKey
     ) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -44,6 +50,7 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
         this.zipCodeFileDataCache = zipCodeFileDataCache;
         this.zipCodeDetectionCache = zipCodeDetectionCache;
         this.countryUserInterfaceIdCache = countryUserInterfaceIdCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -96,13 +103,16 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
                 }
                 else
                 {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
+
                     ReqLog.debugWithDebug(logger, request, "The ad is zipcode targeted and fails the check..aguid {} .", adEntity.getAdGuid());
                 }
             }
         }
 
         if(null == request.getNoFillReason() && shortListedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.AD_ZIPCODE);
+            request.setNoFillReason(noFillReason);
 
         return shortListedAdIdSet;
     }

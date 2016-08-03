@@ -2,6 +2,8 @@ import MySQLdb
 import pickle
 from time import gmtime, strftime
 from subprocess import call
+import sys
+import traceback
 
 from config import *
 from utils.log_configure.log_configure import *
@@ -39,7 +41,7 @@ def deleteDataFromDB(dbConnection, tableName, modelId):
         cursor.execute(query)
         dbConnection.commit()
     except Exception, e:
-        configLogger.info("Exception occurred %s", e)
+        configLogger.info("Exception occurred %s", traceback.format_exc())
     finally:
         if cursor != None:
             cursor.close()
@@ -73,7 +75,7 @@ def storeResultsInDB(dbConnection, tableName, modelId, results, weight):
         cursor.execute(query)
         dbConnection.commit()
     except Exception, e:
-        configLogger.info("Exception occurred %s", e)
+        configLogger.info("Exception occurred %s", traceback.format_exc())
     finally:
         if cursor != None:
             cursor.close()
@@ -276,7 +278,7 @@ if __name__ == '__main__':
         if cfg.dumpToDB != 0:
             putFileContentsInDB(outputFileName, outputDbConnection, cfg.modelTable, cfg.modelId, cfg.modelWeight)
     except Exception, e:
-        appLogger.info('Run failed at %s %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), e)  
+        appLogger.info('Run failed at %s %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), traceback.format_exc())
         sys.exit(1)
     finally:
         if dbConnection is not None:

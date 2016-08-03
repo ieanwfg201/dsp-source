@@ -343,8 +343,7 @@ public class MaxMindCountryDataLoader implements ThirdPartyDataLoader
             }
             catch (Exception e)
             {
-                cacheLogger.error("Exception while loading country data inside " +
-                                  "CountryDataLoadingTask in the class MaxMindCountryDataLoader",e);
+                cacheLogger.error("Exception while loading country data inside CountryDataLoadingTask in the class MaxMindCountryDataLoader",e);
             }
         }
     }

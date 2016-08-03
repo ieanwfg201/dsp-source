@@ -1,6 +1,8 @@
 import ConfigParser
 import re
 import logging
+import traceback
+import sys
 
 dimensions_key = "dimensions"
 decay_factor_key = "decay_factor"
@@ -16,8 +18,6 @@ database_password_key = "password"
 database_dbname_key = "dbname"
 dimension_id_name_table_key = "id_name_mapping_table"
 
-configLogger = logging.getLogger(__name__)
-
 class ConfigParams :
     """ Class to hold elements of the configuration
         Contains the following :
@@ -25,6 +25,8 @@ class ConfigParams :
         list of dimensions in the model
     """
     def __init__(self, config_file_path) :
+        self.configLogger = logging.getLogger(__name__)
+
         cfg = ConfigParser.RawConfigParser()
         try :
             cfg.read(config_file_path)
@@ -54,8 +56,8 @@ class ConfigParams :
             except :
                 self.time_window_length = -1
         except Exception as e:
-            configLogger.error("Problem with config file %s", e)
-            raise e
+            self.configLogger.error("Problem with config file %s", traceback.format_exc())
+            sys.exit(1)
 
 
 if __name__ == '__main__' :

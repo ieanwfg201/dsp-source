@@ -77,8 +77,8 @@ post_imp_decoded = FOREACH post_imp_raw_data GENERATE FLATTEN(com.kritter.kumbay
 post_imp_decoded_data = FOREACH post_imp_decoded GENERATE PostImpThriftBytesToTupleDef($0);
 
 post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE '$PROCESS_TIME' as process_time,
-            com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.time * 1000,'yyyy-MM-dd HH:mm:ss', 'UTC'),
-            com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:mm:ss', 'UTC'),
+            com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.time * 1000,'yyyy-MM-dd HH:mm:ss', '$tz'),
+            com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:mm:ss', '$tz'),
             PostImpressionRequestResponse.status, PostImpressionRequestResponse.event as event, PostImpressionRequestResponse.campaignId, 	
             PostImpressionRequestResponse.adId, PostImpressionRequestResponse.marketplace_id,
             PostImpressionRequestResponse.exchangeId, PostImpressionRequestResponse.siteId, PostImpressionRequestResponse.ext_supply_attr_internal_id, 
@@ -98,13 +98,16 @@ post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE '$PROCESS_TIME' as p
             PostImpressionRequestResponse.auction_bid_id, PostImpressionRequestResponse.auction_id, PostImpressionRequestResponse.auction_imp_id,  
             PostImpressionRequestResponse.countryRegionId, PostImpressionRequestResponse.selectedSiteCategoryId, PostImpressionRequestResponse.urlVersion,  
             PostImpressionRequestResponse.bidderModelId, PostImpressionRequestResponse.slotId, PostImpressionRequestResponse.buyerUid,
-            PostImpressionRequestResponse.connectionTypeId, PostImpressionRequestResponse.referer;
+            PostImpressionRequestResponse.connectionTypeId, PostImpressionRequestResponse.referer, PostImpressionRequestResponse.adv_inc_id,
+            PostImpressionRequestResponse.pub_inc_id, PostImpressionRequestResponse.tevent, PostImpressionRequestResponse.teventtype,
+            PostImpressionRequestResponse.deviceType, PostImpressionRequestResponse.bidFloor, PostImpressionRequestResponse.exchangeUserId,
+            PostImpressionRequestResponse.kritterUserId, PostImpressionRequestResponse.externalSiteAppId;
 
 post_imp_filter = FILTER post_imp_proj_data BY event == 'CLICK' OR event == 'CONVERSION';
 
 STORE post_imp_filter INTO '$OUTPUT/logevents' USING PigStorage('');
 
-post_imp_fraud = FOREACH post_imp_decoded_data GENERATE com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', 'UTC') as time,PostImpressionRequestResponse.status as terminationReason,
+post_imp_fraud = FOREACH post_imp_decoded_data GENERATE com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', '$tz') as time,PostImpressionRequestResponse.status as terminationReason,
     PostImpressionRequestResponse.event as event,PostImpressionRequestResponse.siteId as siteId,
     PostImpressionRequestResponse.adId as adId,'$PROCESS_TIME' as process_time;
 
@@ -116,7 +119,7 @@ STORE post_imp_fraud_group_data_gen INTO '$OUTPUT/fraud.gz' USING PigStorage(''
 
 tracking_event_data = FOREACH post_imp_decoded_data GENERATE 
     PostImpressionRequestResponse.event as event,
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', 'UTC') as time,
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', '$tz') as time,
     PostImpressionRequestResponse.pub_inc_id as pub_inc_id, 
     PostImpressionRequestResponse.siteId as siteId,
     PostImpressionRequestResponse.ext_supply_attr_internal_id as ext_supply_attr_internal_id, 

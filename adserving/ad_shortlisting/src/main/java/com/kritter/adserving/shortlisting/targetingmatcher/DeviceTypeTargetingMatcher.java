@@ -1,13 +1,15 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
 import com.kritter.constants.DeviceType;
 import com.kritter.core.workflow.Context;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +22,22 @@ import java.util.Set;
  */
 public class DeviceTypeTargetingMatcher implements TargetingMatcher
 {
+    private static NoFillReason noFillReason = NoFillReason.DEVICE_TYPE;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
+    private String adNoFillReasonMapKey;
 
-    public DeviceTypeTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache)
+    public DeviceTypeTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
+                                      String adNoFillReasonMapKey)
     {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -94,6 +101,7 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
 
             else
             {
+                boolean foundTargetedDeviceType = false;
                 for(Short deviceTypeId : deviceTypeTargetedArray)
                 {
                     if(requestingDeviceTypeCode == deviceTypeId)
@@ -101,11 +109,26 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
                         ReqLog.debugWithDebug(logger,request, "Ad:{}  targets device type (desktop/mobile etc)...passing it",
                         adEntity.getAdGuid());
                         shortlistedAdIdSet.add(adId);
+                        foundTargetedDeviceType = true;
                         break;
+                    }
+                }
+
+                if(!foundTargetedDeviceType) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
+
+                    if(request.isRequestForSystemDebugging()) {
+                        request.addDebugMessageForTestRequest("Ad : " + adEntity.getAdGuid());
+                        request.addDebugMessageForTestRequest(" targets device type (desktop/mobile etc). No matching" +
+                                "device type found. Hence dropping it.");
                     }
                 }
             }
         }
+
+        if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

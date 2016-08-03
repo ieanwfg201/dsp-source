@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -8,6 +9,7 @@ import com.kritter.constants.HygieneCategory;
 import com.kritter.core.workflow.Context;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.SetUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -17,16 +19,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class HygieneTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.AD_SITE_HYGIENE;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
+    private String adNoFillReasonMapKey;
 
-    public HygieneTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache) {
+    public HygieneTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
+                                   String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -55,6 +62,19 @@ public class HygieneTargetingMatcher implements TargetingMatcher {
             {
                 ReqLog.errorWithDebug(logger,request,"Site id:{} or adguid: {} , do not have hygiene lists defined, no connection can be made...skipping ad..." , 
                         site.getSiteGuid() , adEntity.getAdGuid() );
+
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                        this.adNoFillReasonMapKey, context);
+
+                if(request.isRequestForSystemDebugging())
+                {
+                    request.addDebugMessageForTestRequest("Site id: ");
+                    request.addDebugMessageForTestRequest(site.getSiteGuid());
+                    request.addDebugMessageForTestRequest(" or adid: ");
+                    request.addDebugMessageForTestRequest(adEntity.getAdGuid());
+                    request.addDebugMessageForTestRequest(" ,do not have hygiene lists defined, no connection can " +
+                            "be made...skipping ad...");
+                }
 
                 continue;
             }
@@ -89,12 +109,15 @@ public class HygieneTargetingMatcher implements TargetingMatcher {
             }
             else
             {
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                        this.adNoFillReasonMapKey, context);
+
                 ReqLog.debugWithDebug(logger,request,"Hygiene match not found for site: {} and ad: {}", site.getSiteGuid(), adEntity.getAdGuid());
             }
         }
 
         if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.AD_SITE_HYGIENE);
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

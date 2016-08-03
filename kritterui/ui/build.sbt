@@ -22,7 +22,9 @@ libraryDependencies ++= Seq(
   "com.kritter.kritterui.api.def"  % "kritter_kritterui_api_def" % "1.0.0",
   "com.kritter.kritterui.api.upload_to_cdn"  % "kritter_kritterui_api_upload_to_cdn" % "1.0.0",
   "com.kritter.thrift"  % "structs" % "1.0.0",
-  "com.kritter.utils.amazon_s3_upload"  % "kritter_utils_amazon_s3_upload" % "1.0.0"
+  "com.kritter.utils.amazon_s3_upload"  % "kritter_utils_amazon_s3_upload" % "1.0.0",
+  "com.kritter.utils.edgecast_upload"  % "kritter_utils_edgecast_upload" % "1.0.0",
+  "com.kritter.utils.ucloud_upload"  % "kritter_utils_ucloud_upload" % "1.0.0"
 )
 
 

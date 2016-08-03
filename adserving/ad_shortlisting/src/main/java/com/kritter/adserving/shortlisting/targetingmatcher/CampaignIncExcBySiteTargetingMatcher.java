@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -11,6 +12,7 @@ import com.kritter.constants.DemandType;
 import com.kritter.core.workflow.Context;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,19 +22,23 @@ import java.util.Map;
 import java.util.Set;
 
 public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.SITE_INC_EXC_ADV_CMPGN;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
     private AccountCache account_cache;
+    private String adNoFillReasonMapKey;
 
     public CampaignIncExcBySiteTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
-            AccountCache account_cache) {
+            AccountCache account_cache, String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.account_cache = account_cache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -101,6 +107,10 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 if(!campaignInclusionExclusionSchemaMap.containsKey(advertiserId))
                 {
                     ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} not contained in targeting.Failing",advertiserId);
+
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
+
                     continue;
                 }
 
@@ -119,6 +129,10 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 {
                     ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} contained and campaign {} not included .Failing",
                             advertiserId,campaignId);
+
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
+
                     continue;
                 }
 
@@ -173,7 +187,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
         }
 
         if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.SITE_INC_EXC_ADV_CMPGN);
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

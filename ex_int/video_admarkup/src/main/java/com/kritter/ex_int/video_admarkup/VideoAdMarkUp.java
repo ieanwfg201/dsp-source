@@ -4,13 +4,18 @@ import java.net.URLEncoder;
 
 import org.slf4j.Logger;
 import com.kritter.bidrequest.exception.BidResponseException;
+import com.kritter.constants.ContentDeliveryMethods;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.constants.VideoBidResponseProtocols;
+import com.kritter.constants.VideoMimeTypes;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
+import com.kritter.entity.vast.normal.threedotzero.CreateVastNormalThreeDotZero;
+import com.kritter.entity.vast.normal.twodotzero.CreateVastNormalTwoDotZero;
 import com.kritter.entity.vast.wrapper.three_dot_zero.CreateVastWrapper;
 import com.kritter.entity.vast.wrapper.two_dot_zero.CreateVastWrapperTwoDotZero;
+import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.entity.Creative;
@@ -82,13 +87,21 @@ public class VideoAdMarkUp {
                     responseAdInfo.getAdId());
             return null;
         }
-
         VideoProps videProps = responseAdInfo.getVideoProps();
         if(videProps==null){
             logger.error("Creative videoProps inside BidRequestResponseCreator,adId:{} ",
                     responseAdInfo.getAdId());
             return null;
         }
+        VideoInfo videoInfo = responseAdInfo.getVideoInfo();
+        if(videoInfo == null){
+        	logger.error("Creative videoInfo null inside BidRequestResponseCreator,adId:{} ",
+                    responseAdInfo.getAdId());
+            return null;
+        }
+        StringBuffer creativeUrl = new StringBuffer(cdnBaseImageUrl);
+        creativeUrl.append(videoInfo.getResource_uri());
+
         if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()){
             String vastStr = CreateVastWrapper.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
                     responseAdInfo.getImpressionId(), videProps.getVastTagUrl(), 
@@ -136,6 +149,75 @@ public class VideoAdMarkUp {
                     logger.error(e.getMessage(),e);
                 }
             }
+        }else if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0.getCode()){
+            String bitRateStr = null;
+            if(videProps.getBitrate()!=-1){
+            	bitRateStr = videProps.getBitrate()+"";
+            }
+            String deliveryStr = null;
+            ContentDeliveryMethods cdmethods = ContentDeliveryMethods.getEnum(videProps.getDelivery());
+            if(cdmethods != null && cdmethods != ContentDeliveryMethods.Unknown){
+            	deliveryStr = cdmethods.getName();
+            }
+            
+            String vastStr = CreateVastNormalTwoDotZero.createVastNormalString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
+            		responseAdInfo.getImpressionId(),trackingUrl.toString(), request.getSite().getPublisherId(), videProps.getLinearity(), 
+            		videProps.getCompaniontype(), videProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
+            		convertDurationStr(videProps.getDuration()),null, creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
+            		VideoMimeTypes.getEnum(videProps.getMime()).getMime(), bitRateStr, videProps.getWidth(), videProps.getHeight());
+            if(vastStr == null){
+                logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
+                        responseAdInfo.getAdId());
+                return null;                
+            }else{
+                logger.debug("VastStr Is");
+                logger.debug(vastStr);
+                if(request.isRequestForSystemDebugging()){
+                    request.addDebugMessageForTestRequest("VastStr Is");
+                    request.addDebugMessageForTestRequest(vastStr);
+                }
+                try{
+                    ///return URLEncoder.encode(vastStr,"UTF-8");
+                    return vastStr;
+                }catch(Exception e){
+                    logger.error(e.getMessage(),e);
+                }
+            }
+        }else if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0.getCode()){
+            String bitRateStr = null;
+            if(videProps.getBitrate()!=-1){
+            	bitRateStr = videProps.getBitrate()+"";
+            }
+            String deliveryStr = null;
+            ContentDeliveryMethods cdmethods = ContentDeliveryMethods.getEnum(videProps.getDelivery());
+            if(cdmethods != null && cdmethods != ContentDeliveryMethods.Unknown){
+            	deliveryStr = cdmethods.getName();
+            }
+            
+            String vastStr = CreateVastNormalThreeDotZero.createVastNormalString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
+            		responseAdInfo.getImpressionId(),trackingUrl.toString(), request.getSite().getPublisherId(), videProps.getLinearity(), 
+            		videProps.getCompaniontype(), videProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
+            		convertDurationStr(videProps.getDuration()),null, creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
+            		VideoMimeTypes.getEnum(videProps.getMime()).getMime(), bitRateStr, videProps.getWidth(), videProps.getHeight(),
+            		null);
+            if(vastStr == null){
+                logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
+                        responseAdInfo.getAdId());
+                return null;                
+            }else{
+                logger.debug("VastStr Is");
+                logger.debug(vastStr);
+                if(request.isRequestForSystemDebugging()){
+                    request.addDebugMessageForTestRequest("VastStr Is");
+                    request.addDebugMessageForTestRequest(vastStr);
+                }
+                try{
+                    ///return URLEncoder.encode(vastStr,"UTF-8");
+                    return vastStr;
+                }catch(Exception e){
+                    logger.error(e.getMessage(),e);
+                }
+            }
         }
         return null;
 /**
@@ -150,5 +232,29 @@ Access-Control-Allow-Credentials: true
             
     
  */
+    }
+    private static String convertDurationStr(int duration){
+    	if(duration < 1){
+    		return null;
+    	}
+    	int sec = duration % 60;
+    	int min = (duration/60) %60;
+    	int hr = (duration/60) /60;
+    	StringBuffer sbuff = new StringBuffer("");
+    	if(hr < 10){
+    		sbuff.append("0");
+    	}
+    	sbuff.append(hr);
+    	sbuff.append(":");
+    	if(min < 10){
+    		sbuff.append("0");
+    	}
+    	sbuff.append(min);
+    	sbuff.append(":");
+    	if(sec < 10){
+    		sbuff.append("0");
+    	}
+    	sbuff.append(sec);
+    	return sbuff.toString();
     }
 }

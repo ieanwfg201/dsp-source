@@ -10,6 +10,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import com.kritter.api.entity.log.LogEntity;
 
+
 public class LogEventHelper {
     
 
@@ -172,6 +173,33 @@ public class LogEventHelper {
         }
         if(logEntity.isConnectionTypeId()){
             populateNonWhere("connectionTypeId", "connectionTypeId");
+        }
+        if(logEntity.isAdv_inc_id()){
+            populateNonWhere("adv_inc_id", "adv_inc_id");
+        }
+        if(logEntity.isPub_inc_id()){
+            populateNonWhere("pub_inc_id", "pub_inc_id");
+        }
+        if(logEntity.isTevent()){
+            populateNonWhere("tevent", "tevent");
+        }
+        if(logEntity.isTeventtype()){
+            populateNonWhere("teventtype", "teventtype");
+        }
+        if(logEntity.isDeviceType()){
+            populateNonWhere("deviceType", "deviceType");
+        }
+        if(logEntity.isBidFloor()){
+            populateNonWhere("bidFloor", "bidFloor");
+        }
+        if(logEntity.isExchangeUserId()){
+            populateNonWhere("exchangeUserId", "exchangeUserId");
+        }
+        if(logEntity.isKritterUserId()){
+            populateNonWhere("kritterUserId", "kritterUserId");
+        }
+        if(logEntity.isExternalSiteAppId()){
+            populateNonWhere("externalSiteAppId", "externalSiteAppId");
         }
         return createQuery(logEntity);
     }

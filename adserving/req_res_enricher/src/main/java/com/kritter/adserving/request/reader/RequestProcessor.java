@@ -82,9 +82,7 @@ public class RequestProcessor
          */
 
         if(alternativeRequestEnricher == null && requestEnricher != null){
-            this.logger.debug("Inside " + requestEnricher.getClass().getSimpleName() +
-                    " scope, calling enricher " +
-                    requestEnricher.getClass().getSimpleName());
+            this.logger.debug("Inside {}  scope, calling enricher {} ",requestEnricher.getClass().getSimpleName(), requestEnricher.getClass().getSimpleName());
             return requestEnricher.validateAndEnrichRequest(requestId,httpServletRequest,this.logger);
         }
         if(alternativeRequestEnricher == null && requestEnricher == null){

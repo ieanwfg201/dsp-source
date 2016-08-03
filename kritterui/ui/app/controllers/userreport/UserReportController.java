@@ -5,6 +5,7 @@ import java.sql.Connection;
 
 import models.entities.userreport.UserReportFormEntity;
 import play.Logger;
+import play.Play;
 import play.data.Form;
 import play.db.DB;
 import play.libs.Json;
@@ -27,7 +28,7 @@ import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
 
 public class UserReportController extends Controller{
-
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
 	private static Form<UserReportFormEntity> userReportConfigForm = Form.form(UserReportFormEntity.class);
 	
 	@SecuredAction
@@ -64,6 +65,7 @@ public class UserReportController extends Controller{
 				    reportingEntity.setStartindex(PageConstants.start_index);
 				    reportingEntity.setPagesize(PageConstants.csv_page_size);
 				}
+				reportingEntity.setTimezone(timezoneid);
 				org.codehaus.jackson.JsonNode data = ApiDef.get_data(con, reportingEntity, returnWithId, exportAsCsv, absoluteFileName);
             	if(data != null){
             	    ObjectMapper objectMapper = new ObjectMapper(); 

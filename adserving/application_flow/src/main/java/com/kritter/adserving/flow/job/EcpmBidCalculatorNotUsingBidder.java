@@ -1,5 +1,6 @@
 package com.kritter.adserving.flow.job;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
@@ -8,6 +9,7 @@ import com.kritter.constants.Budget;
 import com.kritter.constants.MarketPlace;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,18 +30,21 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
     private String jobName;
     private String requestObjectKey;
     private String responseObjectKey;
+    private String adNoFillReasonMapKey;
 
     public EcpmBidCalculatorNotUsingBidder(
                                            String loggerName,
                                            String name,
                                            String requestObjectKey,
-                                           String responseObjectKey
+                                           String responseObjectKey,
+                                           String adNoFillReasonMapKey
                                           )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.jobName = name;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -132,11 +137,13 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
                              request.getSite().getEcpmFloorValue(),request.getSite().getId(),
                              responseAdInfo.getAdId());
                 finalResponseAdInfo.remove(responseAdInfo);
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(responseAdInfo.getAdId(),
+                        NoFillReason.ECPM_FLOOR_UNMET.getValue(), this.adNoFillReasonMapKey, context);
             }
         }
 
         if(finalResponseAdInfo.size() <= 0 && null == request.getNoFillReason())
-            request.setNoFillReason(Request.NO_FILL_REASON.ECPM_FLOOR_UNMET);
+            request.setNoFillReason(NoFillReason.ECPM_FLOOR_UNMET);
 
         //set final response-ad-info set into response.
         response.setResponseAdInfo(finalResponseAdInfo);

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -31,7 +32,7 @@ public class CountryUserInterfaceIdCache extends AbstractDBStatsReloadableQuerya
                                        DatabaseManager dbMgr,
                                        String cacheName) throws InitializationException
     {
-        super(secIndexKeyClassList, logger, props, dbMgr);
+        super(secIndexKeyClassList, logger, props, dbMgr,true);
         this.name = cacheName;
     }
 
@@ -50,6 +51,9 @@ public class CountryUserInterfaceIdCache extends AbstractDBStatsReloadableQuerya
             Set<Integer> countryIdSetForAllDataSources = ( null != entityIdSet ?
                 new HashSet<Integer>(Arrays.asList(entityIdSet)) :
                 new HashSet<Integer>());
+
+            logger.debug("Datasource country id set used is: {} and ui country id is: {} ",
+                          countryIdSetForAllDataSources,id);
 
             return new CountryUserInterfaceId(countryCode,id,countryIdSetForAllDataSources,modifiedOn);
         }

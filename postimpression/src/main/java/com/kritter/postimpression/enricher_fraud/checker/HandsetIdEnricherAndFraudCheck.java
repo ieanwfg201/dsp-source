@@ -2,8 +2,8 @@ package com.kritter.postimpression.enricher_fraud.checker;
 
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.device.HandsetDetectionProvider;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.HandsetDetectionProvider;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.postimpression.entity.Request;
 import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
 import org.slf4j.Logger;
@@ -129,7 +129,8 @@ public class HandsetIdEnricherAndFraudCheck implements OnlineEnricherAndFraudChe
                 request.setDeviceOsId(handsetMasterData.getDeviceOperatingSystemId());
                 request.setBrowserId(handsetMasterData.getDeviceBrowserId());
 
-                return ONLINE_FRAUD_REASON.HANDSET_ID_MISMATCH;
+                logger.error("HANDSET_ID_MISMATCH however relaxing this fraud check so as to allow more clicks into the system.");
+                return ONLINE_FRAUD_REASON.HEALTHY_REQUEST;
             }
 
             else if(

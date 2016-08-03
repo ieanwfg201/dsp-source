@@ -43,6 +43,9 @@ public class AdController extends Controller{
 	private static String allow_adomain = Play.application().configuration().getString("allow_adomain");
 	private static String user_flow_enabled = Play.application().configuration().getString("user_flow_enabled");
 	private static String retargeting_flow_enabled = Play.application().configuration().getString("retargeting_flow_enabled");
+	private static String mma_required = Play.application().configuration().getString("mma_required");
+	private static String adposition_required = Play.application().configuration().getString("adposition_required");
+	private static String channel_required = Play.application().configuration().getString("channel_required");
 
 	@SecuredAction
 	public static Result createAd(  int campaignId, Option<String> formId,
@@ -53,7 +56,7 @@ public class AdController extends Controller{
 		ad.setCampaign_guid(campaign.getGuid());
 		ad.setAccount_guid(campaign.getAccount_guid());
 		if(!formId.nonEmpty()){	 
-			return ok(adForm.render( adFormTemplate.fill(ad), new AdDisplay(ad.getEntity()), "false", allow_adomain, user_flow_enabled));
+			return ok(adForm.render( adFormTemplate.fill(ad), new AdDisplay(ad.getEntity()), "false", allow_adomain, user_flow_enabled, mma_required));
 		}else{
 			@SuppressWarnings("unchecked")
 			Form<AdEntity> adForm1 = (Form<AdEntity>) Cache.get(formId.get());
@@ -62,7 +65,7 @@ public class AdController extends Controller{
 				formData.put("targeting_guid", targetingGuid.get());
 			if(creativeGuid.nonEmpty())
 				formData.put("creative", creativeGuid.get());
-			return ok(adForm.render( adForm1.bind(formData), new AdDisplay(ad.getEntity()), "false", allow_adomain, user_flow_enabled));
+			return ok(adForm.render( adForm1.bind(formData), new AdDisplay(ad.getEntity()), "false", allow_adomain, user_flow_enabled,mma_required));
 		}
 	}
 
@@ -75,7 +78,7 @@ public class AdController extends Controller{
 			adEntity.setDestination(destination.get()); 
 		AdDisplay	adDisplay =	new AdDisplay(ad);
 		adEntity.setAccount_guid(adDisplay.getAccountGuid());
-		return ok(adForm.render(  adFormTemplate.fill(adEntity), adDisplay, "false", allow_adomain, user_flow_enabled));
+		return ok(adForm.render(  adFormTemplate.fill(adEntity), adDisplay, "false", allow_adomain, user_flow_enabled,mma_required));
 	}
 	
 	@SecuredAction
@@ -88,7 +91,7 @@ public class AdController extends Controller{
 		BeanUtils.copyProperties(ad,  adEntity); 
         AdDisplay   adDisplay = new AdDisplay(ad);
         adEntity.setAccount_guid(adDisplay.getAccountGuid());
-        return ok(adForm.render(  adFormTemplate.fill(adEntity), adDisplay, "true", allow_adomain, user_flow_enabled));
+        return ok(adForm.render(  adFormTemplate.fill(adEntity), adDisplay, "true", allow_adomain, user_flow_enabled,mma_required));
 	}
 
 	@SecuredAction
@@ -97,7 +100,7 @@ public class AdController extends Controller{
 		AdDisplayFull adDisplay = new AdDisplayFull(ad);
 		if(destination.nonEmpty())
 			adDisplay.setDestination(destination.get());
-		return ok(views.html.advt.campaign.adHome.render(adDisplay,retargeting_flow_enabled));
+		return ok(views.html.advt.campaign.adHome.render(adDisplay,retargeting_flow_enabled,mma_required,adposition_required,channel_required));
 	}
 
 	@SecuredAction
@@ -244,7 +247,7 @@ public class AdController extends Controller{
 					}
 
 				}else{
-					return badRequest(adForm.render( filledForm, new AdDisplay(ad.getEntity()), "false", allow_adomain, user_flow_enabled));
+					return badRequest(adForm.render( filledForm, new AdDisplay(ad.getEntity()), "false", allow_adomain, user_flow_enabled,mma_required));
 				}
 			}catch(Exception e){
                 play.Logger.error(e.getMessage(),e);
@@ -272,7 +275,7 @@ public class AdController extends Controller{
 		    ad1.setCampaign_guid(filledForm.field("campaign_guid").value());
 		    ad1.setCampaign_id(Integer.parseInt(filledForm.field("campaign_id").value()));
 		}
-		return badRequest(adForm.render( filledForm, new AdDisplay(ad1), "false", allow_adomain, user_flow_enabled));
+		return badRequest(adForm.render( filledForm, new AdDisplay(ad1), "false", allow_adomain, user_flow_enabled,mma_required));
 	}
 
 	@SecuredAction

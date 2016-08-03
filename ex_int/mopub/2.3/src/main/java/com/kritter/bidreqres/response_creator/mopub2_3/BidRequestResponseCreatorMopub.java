@@ -8,6 +8,10 @@ import com.kritter.bidrequest.response_creator.IBidResponseCreator;
 import com.kritter.constants.VideoBidResponseProtocols;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
+import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
+import com.kritter.ex_int.utils.comparator.advdomain.FetchAdvertiserDomain;
+import com.kritter.ex_int.utils.comparator.common.ShortArrayToIntegerArray;
+import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
 import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
 import com.kritter.common.caches.iab.categories.IABCategoriesCache;
@@ -142,8 +146,8 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
             Collections.sort(list,comparator);
 
             ResponseAdInfo responseAdInfoToUse = list.get(0);
-            responseAdInfoToUse = pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
-                    (responseAdInfoToUse,list);
+            responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
+                    (responseAdInfoToUse,list, randomPicker);
 
             BidResponseBidMopubDTO bidResponseBidMopubDTO =
                     prepareBidResponseSeatBidMopub(
@@ -231,7 +235,8 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                     prepareBannerHTMLAdMarkup(
                             request,
                             responseAdInfo,
-                            response, adEntity.getExtTracker()
+                            response, adEntity.getExtTracker(),
+                            winNotificationURLBuffer
                     )
             );
         else if (creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
@@ -241,7 +246,8 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                             responseAdInfo,
                             response,
                             winNotificationURLBuffer,
-                            creative.getCreative_macro()
+                            creative.getCreative_macro(),
+                            adEntity.getExtTracker()
                     )
             );
         else if(creative.getCreativeFormat().equals(CreativeFormat.VIDEO))
@@ -261,7 +267,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         else
         {
             advertiserDomain = new String[1];
-            advertiserDomain[0] = fetchAdvertiserDomain(adEntity.getLandingUrl());
+            advertiserDomain[0] = FetchAdvertiserDomain.fetchAdvertiserDomain(adEntity.getLandingUrl());
         }
 
         if (null == advertiserDomain[0])
@@ -275,7 +281,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         bidResponseBidMopubDTO.setRequestImpressionId(bidRequestImpressionId);
         bidResponseBidMopubDTO.setCampaignId(String.valueOf(adEntity.getCampaignIncId()));
 
-        Integer[] creativeAttributes = fetchIntegerArrayFromShortArray(creative.getCreativeAttributes());
+        Integer[] creativeAttributes = ShortArrayToIntegerArray.fetchIntegerArrayFromShortArray(creative.getCreativeAttributes());
         if (null == creativeAttributes)
         {
             logger.error("Creative Attributes could not be found using adId:{} and landingURL:{} ",
@@ -331,15 +337,15 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         BidResponseBidExtMopubDTO bidResponseBidExtMopubDTO = new BidResponseBidExtMopubDTO();
         int extraTrackingSize=0;
         if(adEntity.getExtTracker() != null){
-            if(adEntity.getExtTracker().getExtImpTracker() != null && adEntity.getExtTracker().getExtImpTracker().size()>0){
-                extraTrackingSize = adEntity.getExtTracker().getExtImpTracker().size();
+            if(adEntity.getExtTracker().getImpTracker() != null && adEntity.getExtTracker().getImpTracker().size()>0){
+                extraTrackingSize = adEntity.getExtTracker().getImpTracker().size();
             }
         }
         String impTrackers[] = new String[1+extraTrackingSize];
         impTrackers[0] = fetchImpressionTrackerSameAsCSC(request,responseAdInfo,response);
         if(extraTrackingSize>0){
             int count =1;
-            for(String str:adEntity.getExtTracker().getExtImpTracker()){
+            for(String str:adEntity.getExtTracker().getImpTracker()){
                 impTrackers[count] = str;
                 count++;
             }
@@ -373,13 +379,15 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
             ResponseAdInfo responseAdInfo,
             Response response,
             StringBuffer winNotificationURLBuffer,
-            CreativeMacro creativeMacro
+            CreativeMacro creativeMacro,
+            ExtTracker extTracker
     ) throws BidResponseException
     {
         return RichMediaAdMarkUp.prepareRichmediaAdMarkup(request, responseAdInfo, response, 
                 winNotificationURLBuffer, logger, urlVersion, secretKey, postImpressionBaseClickUrl, 
                 postImpressionBaseCSCUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix, 
-                notificationUrlBidderBidPriceMacro, null, null, creativeMacro, this.macroPostImpressionBaseClickUrl);
+                notificationUrlBidderBidPriceMacro, null, null, creativeMacro, this.macroPostImpressionBaseClickUrl,
+                extTracker);
     }
 
     private String fetchImpressionTrackerSameAsCSC(
@@ -414,12 +422,14 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
     private String prepareBannerHTMLAdMarkup(
                                              Request request,
                                              ResponseAdInfo responseAdInfo,
-                                             Response response, ExtTracker extTracker
+                                             Response response, ExtTracker extTracker,
+                                             StringBuffer winNotificationURLBuffer
                                             ) throws BidResponseException
     {
         return BannerAdMarkUp.prepare(logger, request, response, responseAdInfo, urlVersion, secretKey, 
-                macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix, 
-                notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker);
+                postImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
+                notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker,
+                winNotificationURLBuffer, null);
     }
     
     private String prepareVideoAdMarkup(
@@ -430,82 +440,8 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
     ) throws BidResponseException
     {
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
-                logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
+                logger, urlVersion, secretKey, postImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
                 cdnBaseImageUrl, trackingEventUrl, null, null);
-    }
-
-    private static class EcpmValueComparator implements Comparator<ResponseAdInfo>
-    {
-        @Override
-        public int compare(
-                           ResponseAdInfo responseAdInfoFirst,
-                           ResponseAdInfo responseAdInfoSecond
-                          )
-        {
-
-            if(responseAdInfoFirst.getEcpmValue() > responseAdInfoSecond.getEcpmValue())
-                return -1;
-            else if(responseAdInfoFirst.getEcpmValue() < responseAdInfoSecond.getEcpmValue())
-                return 1;
-            else return 0;
-        }
-    }
-
-    private static String fetchAdvertiserDomain(String landingUrl)
-    {
-        if(null == landingUrl)
-            return null;
-
-        URL uri = null;
-
-        try
-        {
-            uri = new URL(landingUrl);
-        }
-        catch (MalformedURLException mue)
-        {
-            return null;
-        }
-
-        return uri.getHost();
-    }
-
-    private Integer[] fetchIntegerArrayFromShortArray(Short[] array)
-    {
-        if(null == array || array.length <= 0)
-            return null;
-
-        Integer[] dest = new Integer[array.length];
-        for(int i=0;i<array.length;i++)
-        {
-            dest[i] = array[i].intValue();
-        }
-
-        return dest;
-    }
-
-    private ResponseAdInfo pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
-            (
-                    ResponseAdInfo responseAdInfoHighestEcpm,
-                    List<ResponseAdInfo> responseAdInfoList
-            )
-    {
-        int sameHighestEcpmCount = 1;
-
-        for(int i=1; i< responseAdInfoList.size();i++)
-        {
-            if(responseAdInfoHighestEcpm.getEcpmValue().compareTo(responseAdInfoList.get(i).getEcpmValue()) == 0)
-            {
-                sameHighestEcpmCount += 1;
-            }
-        }
-
-        int index = randomPicker.nextInt(sameHighestEcpmCount);
-
-        if(index >= 0)
-            return responseAdInfoList.get(index);
-
-        return responseAdInfoList.get(0);
     }
 }

@@ -1,14 +1,25 @@
 package com.kritter.postimpression.workflow.jobs;
 
+import com.kritter.entity.user.userid.ExternalUserId;
+import com.kritter.entity.user.userid.UserIdProvider;
+import com.kritter.entity.user.usersegment.UserSegmentProvider;
+import com.kritter.fanoutinfra.apiclient.common.KHttpClient;
+import com.kritter.fanoutinfra.apiclient.ning.NingClient;
+import com.kritter.fanoutinfra.executorservice.common.KExecutor;
 import com.kritter.constants.DeviceType;
+import com.kritter.constants.ExternalUserIdType;
 import com.kritter.entity.user.recenthistory.RecentHistoryProvider;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
 import com.kritter.constants.INVENTORY_SOURCE;
+import com.kritter.constants.NoFraudPostImpEvents;
+import com.kritter.constants.UserConstant;
 import com.kritter.constants.tracking_partner.TrackingPartner;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
+import com.kritter.entity.user.userid.InternalUserIdCreator;
+import com.kritter.entity.user.userid.UserIdUpdator;
 import com.kritter.postimpression.enricher_fraud.*;
 import com.kritter.postimpression.entity.Request;
 import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
@@ -22,6 +33,7 @@ import com.kritter.postimpression.utils.MacroUtils;
 import com.kritter.user.thrift.struct.ImpressionEvent;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ConversionUrlData;
+import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.cookie_sync.common.CookieSyncManager;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
 import org.slf4j.Logger;
@@ -32,7 +44,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -49,6 +63,7 @@ public class EventURLProcessorJob implements Job
 {
     private String name;
     private Logger logger;
+    private String loggerName;
     private String uriKey;
     private String postImpressionRequestObjectKey;
     private ClickUrlReader clickUrlReader;
@@ -90,6 +105,13 @@ public class EventURLProcessorJob implements Job
 
     /*If this is set then certain characters can be replaced by other allowed ones.Case for CAKE*/
     private boolean replaceCharactersInConversionId;
+    private UsrUrlReader usrUrlReader;
+    private UsrEnricherAndFraudProcessor usrEnricherFraudProcessor;
+    private UserIdProvider userIdProvider;
+    private UserSegmentProvider userSegmentProvider;
+    private UserIdUpdator userIdUpdator;
+    private NOFraudParamUrlReader nofraudParamUrlReader;
+    private NoFraudParamEnricherAndFraudProcessor nofraudParamEnricherAndFraudProcessor;
 
     public EventURLProcessorJob(
             String name,
@@ -128,10 +150,18 @@ public class EventURLProcessorJob implements Job
             RecentHistoryProvider recentHistoryProvider,
             BillableEventUrlReader billableEventUrlReader,
             BillableEventEnricherAndFraudProcessor billableEventFraudProcessor,
-            boolean replaceCharactersInConversionId
+            boolean replaceCharactersInConversionId,
+            UsrUrlReader usrUrlReader,
+            UsrEnricherAndFraudProcessor usrEnricherFraudProcessor,
+            UserIdProvider userIdProvider,
+            UserSegmentProvider userSegmentProvider,
+            UserIdUpdator userIdUpdator,
+            NOFraudParamUrlReader nofraudParamUrlReader,
+            NoFraudParamEnricherAndFraudProcessor nofraudParamEnricherAndFraudProcessor
             )
     {
         this.name = name;
+        this.loggerName = loggerName;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
         this.uriKey = uriKey;
@@ -169,6 +199,14 @@ public class EventURLProcessorJob implements Job
         this.billableEventUrlReader = billableEventUrlReader;
         this.billableEventFraudProcessor = billableEventFraudProcessor;
         this.replaceCharactersInConversionId = replaceCharactersInConversionId;
+        this.usrUrlReader = usrUrlReader;
+        this.usrEnricherFraudProcessor = usrEnricherFraudProcessor;
+        this.userIdProvider = userIdProvider;
+        this.userSegmentProvider = userSegmentProvider;
+        this.userIdUpdator = userIdUpdator;
+        this.nofraudParamUrlReader = nofraudParamUrlReader;
+        this.nofraudParamEnricherAndFraudProcessor = nofraudParamEnricherAndFraudProcessor;
+
     }
 
     @Override
@@ -211,9 +249,34 @@ public class EventURLProcessorJob implements Job
         PostImpressionUtils.logDebug(logger," PostImpressionURI-Identifier String = ",
                 postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix());
 
+        // Get the exchange user id from the URLField object
+        Map<Short, URLField> urlFieldMap = postImpressionRequest.getUrlFieldsFromAdservingMap();
+
+        URLField exchangeUserIdURLField = urlFieldMap.get(URLField.EXCHANGE_USER_ID.getCode());
+        URLField kritterUserIdURLField =  urlFieldMap.get(URLField.KRITTER_USER_ID.getCode());
+
+        String exchangeUserId = null;
+        if(exchangeUserIdURLField != null) {
+            exchangeUserId = (String) exchangeUserIdURLField.getUrlFieldProperties().getFieldValue();
+            logger.debug("Obtained exchange user id : {} from URL Fields.", exchangeUserId);
+        } else {
+            logger.debug("No exchange user id passed in URL Fields.");
+        }
+
+        String kritterInternalUserId = null;
+        if(kritterUserIdURLField != null) {
+            kritterInternalUserId = (String) kritterUserIdURLField.getUrlFieldProperties().getFieldValue();
+            logger.debug("Obtained kritter user id : {} from URL Fields.", kritterInternalUserId);
+        } else {
+            logger.debug("No kritter user id passed in URL Fields.");
+        }
+
         if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
                 PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CLICK
-                .getUrlIdentifierPrefix()))
+                .getUrlIdentifierPrefix()) || 
+        		( (postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
+                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        .getUrlIdentifierPrefix())) && (NoFraudPostImpEvents.clk == postImpressionRequest.getNfrdpType())))
         {
              /*Use property from instance to see if double underscores need to be replaced.*/
             ApplicationGeneralUtils.getConversionEventIdUtils().setReplaceCharactersInConversionId(replaceCharactersInConversionId);
@@ -223,9 +286,27 @@ public class EventURLProcessorJob implements Job
 
             try
             {
-                this.clickUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
+            	ONLINE_FRAUD_REASON onlineFraudReason = null;
+            	if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
+                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        .getUrlIdentifierPrefix())){
+            		
+            		if(this.nofraudParamUrlReader == null){
+            			logger.error("nofraudParamUrlReader is null inside EventURLProcessorJob");
+            			return;
+            		}
+            		if(this.nofraudParamEnricherAndFraudProcessor == null){
+            			logger.error("nofraudParamEnricherAndFraudProcessor is null inside EventURLProcessorJob");
+            			return;
+            		}
+            		this.nofraudParamUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
+                	onlineFraudReason = this.nofraudParamEnricherAndFraudProcessor.performOnlineFraudChecks(context);
+            		
+            	}else{
+            		this.clickUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
 
-                ONLINE_FRAUD_REASON onlineFraudReason = this.clickFraudProcessor.performOnlineFraudChecks(context);
+                	onlineFraudReason = this.clickFraudProcessor.performOnlineFraudChecks(context);
+            	}
 
                 postImpressionRequest.setOnlineFraudReason(onlineFraudReason);
 
@@ -272,11 +353,11 @@ public class EventURLProcessorJob implements Job
                         //debugging purposes.
                         URL url = new URL(landingPageUrl);
                         postImpressionRequest.setConversionDataForClickEvent(url.getQuery());
-                        logger.error("ModifiedLandingUrl after replacing macros : {}", landingPageUrl);
+                        logger.debug("ModifiedLandingUrl after replacing macros : {}", landingPageUrl);
                     }
                     catch (RuntimeException re)
                     {
-                        logger.error("Could not replace macros in landing page. {}", re.getMessage());
+                        logger.error("Could not replace macros in landing page.", re);
                     }
                     ThirdPartyTrackingData thirdPartyTrackingData = prepareThirdPartyTrackingData(postImpressionRequest);
 
@@ -308,14 +389,26 @@ public class EventURLProcessorJob implements Job
                                             );
 
                             //important info so keeping error mode, even in debug mode this will be logged in production.
-                            logger.debug("Conversion info to be sent to thirdPartyTrackerName {} , " +
-                                    "ModifiedLandingUrl {} ", trackingPartner.getName(), landingPageUrl);
+                            logger.debug("Conversion info to be sent to thirdPartyTrackerName {} , ModifiedLandingUrl {} ", trackingPartner.getName(), landingPageUrl);
 
                             //check that url is wellformed and log the parameters present in the url for
                             //debugging purposes.
                             URL url = new URL(landingPageUrl);
                             postImpressionRequest.setConversionDataForClickEvent(url.getQuery());
                         }
+                    }
+
+                }
+                if(adEntity != null && adEntity.getExtTracker() != null
+                		&& adEntity.getExtTracker().getClickTracker() != null
+                		&& adEntity.getExtTracker().getClickTracker().size()>0){
+                    KExecutor kexecutor = KExecutor.getKExecutor(loggerName);
+                    if(kexecutor == null){
+                    	logger.debug("POstIMp: KExecutor not Found");
+                    }else{
+                    	KHttpClient k = new NingClient(loggerName);
+                    	kexecutor.call(adEntity.getExtTracker().getClickTracker(), k, 
+                    			100, 20, 20);
                     }
 
                 }
@@ -411,11 +504,11 @@ public class EventURLProcessorJob implements Job
                         //debugging purposes.
                         URL url = new URL(landingPageUrl);
                         postImpressionRequest.setConversionDataForClickEvent(url.getQuery());
-                        logger.error("ModifiedLandingUrl after replacing macros : {}", landingPageUrl);
+                        logger.debug("ModifiedLandingUrl after replacing macros : {}", landingPageUrl);
                     }
                     catch (RuntimeException re)
                     {
-                        logger.error("Could not replace macros in landing page. {}", re.getMessage());
+                        logger.error("Could not replace macros in landing page.", re);
                     }
                     ThirdPartyTrackingData thirdPartyTrackingData = prepareThirdPartyTrackingData(postImpressionRequest);
 
@@ -447,8 +540,7 @@ public class EventURLProcessorJob implements Job
                                             );
 
                             //important info so keeping error mode, even in debug mode this will be logged in production.
-                            logger.debug("Conversion info to be sent to thirdPartyTrackerName {} , " +
-                                    "ModifiedLandingUrl {} ", trackingPartner.getName(), landingPageUrl);
+                            logger.debug("Conversion info to be sent to thirdPartyTrackerName {} , ModifiedLandingUrl {} ", trackingPartner.getName(), landingPageUrl);
 
                             //check that url is wellformed and log the parameters present in the url for
                             //debugging purposes.
@@ -492,13 +584,34 @@ public class EventURLProcessorJob implements Job
         //in case of csc write one by one pixel gif image.
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
                 PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CSC
-                .getUrlIdentifierPrefix()))
+                .getUrlIdentifierPrefix()) || ( (postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
+                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        .getUrlIdentifierPrefix())) && (NoFraudPostImpEvents.csc == postImpressionRequest.getNfrdpType())))
         {
             try
             {
-                this.cscUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
+            	ONLINE_FRAUD_REASON onlineFraudReason = null;
+            	if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
+                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        .getUrlIdentifierPrefix())){
+            		if(this.nofraudParamUrlReader == null){
+            			logger.error("nofraudParamUrlReader is null inside EventURLProcessorJob");
+            			return;
+            		}
+            		if(this.nofraudParamEnricherAndFraudProcessor == null){
+            			logger.error("nofraudParamEnricherAndFraudProcessor is null inside EventURLProcessorJob");
+            			return;
+            		}
+            		this.nofraudParamUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
 
-                ONLINE_FRAUD_REASON onlineFraudReason = this.cscFraudProcessor.performOnlineFraudChecks(context);
+                	onlineFraudReason = this.nofraudParamEnricherAndFraudProcessor.performOnlineFraudChecks(context);
+            		
+            	}else{
+
+            		this.cscUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
+
+                	onlineFraudReason = this.cscFraudProcessor.performOnlineFraudChecks(context);
+            	}
 
                 postImpressionRequest.setOnlineFraudReason(onlineFraudReason);
 
@@ -507,12 +620,10 @@ public class EventURLProcessorJob implements Job
 
                 /*****************If no fraud, means impression shown successfully to end user***********************/
                 //update impression history for user.
-                String kritterUserId = httpServletRequest.getParameter(ApplicationGeneralUtils.KRITTER_USER_ID_PARAM_NAME);
 
-                logger.debug("KritterUserId: {} in CSC url ", kritterUserId);
-
-                if(null != kritterUserId && onlineFraudReason.getFraudReasonValue().
-                                            equalsIgnoreCase(ONLINE_FRAUD_REASON.HEALTHY_REQUEST.getFraudReasonValue())
+                if(null != kritterInternalUserId
+                        && onlineFraudReason.getFraudReasonValue().
+                                equalsIgnoreCase(ONLINE_FRAUD_REASON.HEALTHY_REQUEST.getFraudReasonValue())
                         && null != recentHistoryProvider)
                 {
                     SortedSet<ImpressionEvent> impressionEvents = new TreeSet<ImpressionEvent>();
@@ -522,10 +633,10 @@ public class EventURLProcessorJob implements Job
                     impressionEvent.setTimestamp(System.currentTimeMillis());
                     impressionEvents.add(impressionEvent);
 
-                    recentHistoryProvider.updateRecentHistory(kritterUserId,impressionEvents);
+                    recentHistoryProvider.updateRecentHistory(kritterInternalUserId, impressionEvents);
 
                     logger.debug("RecentImpressionHistory updated for kritterUserId:{} for adId: {} ",
-                                 kritterUserId,postImpressionRequest.getAdId());
+                                 kritterInternalUserId, postImpressionRequest.getAdId());
                 }
 
             }
@@ -541,6 +652,7 @@ public class EventURLProcessorJob implements Job
                 String advertisingCookie = fetchAdvertisingCookieFromEndUser(httpServletRequest);
                 boolean isAdvertisingCookieSetAtEndUser = false;
 
+
                 if(null != advertisingCookie)
                 {
                     logger.debug("Advertising cookie found as {} " , advertisingCookie);
@@ -551,6 +663,49 @@ public class EventURLProcessorJob implements Job
                 else
                 {
                     advertisingCookie = setAdvertisingCookieToEndUser(httpServletResponse);
+                }
+
+                // Update the internal user id passed in the request against the exchange user id obtained
+                if(this.userIdUpdator != null) {
+                    Set<String> externalUserIds = new HashSet<String>();
+                    if(exchangeUserId != null) {
+                        if(kritterInternalUserId == null) {
+                            // No mapping from exchange user id to internal user id exists. Create one
+                            externalUserIds.add(exchangeUserId);
+                            logger.debug("No mapping from external user id : {} to an internal user id exists. Creating one.", exchangeUserId);
+                        }
+                    } else {
+                        // Exchange user id is not found. No need to update the internal user id in id updator
+                        logger.debug("Exchange user id not found in the request. No update for exchange user id in the matching table.");
+
+                    }
+
+                    ExternalUserId advertisingCookieExtId = new ExternalUserId(ExternalUserIdType.COOKIE_ID, 0,
+                            advertisingCookie);
+                    if(kritterInternalUserId != null) {
+                        if(!kritterInternalUserId.equals(advertisingCookieExtId.toString())) {
+                            // If the internal user id is not the same as cookie id, create a mapping from cookie id
+                            // to the internal user id
+                            logger.debug("Updating internal user id : {} for cookie id: {}.", kritterInternalUserId,
+                                    advertisingCookieExtId.toString());
+                            externalUserIds.add(kritterInternalUserId);
+                        }
+                    }
+
+                    if(kritterInternalUserId == null) {
+                        // Internal user id not found for the given exchange user id. Create entry for the same
+                        // Also create entry for the advertising cookie to internal user id. Advertising cookie
+                        // id is to be used as internal user id. Additional formatting has to be done to the cookie
+                        // id to encapsulate information for the id type being cookie.
+                        kritterInternalUserId = advertisingCookieExtId.toString();
+                        logger.debug("Updating internal user id : {} for cookie id: {}.", kritterInternalUserId,
+                                kritterInternalUserId);
+                        externalUserIds.add(kritterInternalUserId);
+                    }
+
+                    this.userIdUpdator.updateUserId(externalUserIds, kritterInternalUserId);
+                    logger.debug("Updating internal user id : {} for external ids.",
+                        kritterInternalUserId);
                 }
 
                 logger.debug("Writing 1*1 pixel gif to response as event is CSC...");
@@ -725,18 +880,36 @@ public class EventURLProcessorJob implements Job
         }
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
                 PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.WIN_NOTIFICATION
-                .getUrlIdentifierPrefix()))
+                .getUrlIdentifierPrefix()) || ( (postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
+                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        .getUrlIdentifierPrefix())) && (NoFraudPostImpEvents.win == postImpressionRequest.getNfrdpType())))
         {
             try
             {
-                logger.debug("Event received is win notification...calling win notification url reader...");
+            	ONLINE_FRAUD_REASON onlineFraudReason = null;
+            	if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
+                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        .getUrlIdentifierPrefix())){
+            		if(this.nofraudParamUrlReader == null){
+            			logger.error("nofraudParamUrlReader is null inside EventURLProcessorJob");
+            			return;
+            		}
+            		if(this.nofraudParamEnricherAndFraudProcessor == null){
+            			logger.error("nofraudParamEnricherAndFraudProcessor is null inside EventURLProcessorJob");
+            			return;
+            		}
+            		this.nofraudParamUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
+                	onlineFraudReason = this.nofraudParamEnricherAndFraudProcessor.performOnlineFraudChecks(context);
+            		
+            	}else{
+            		logger.debug("Event received is win notification...calling win notification url reader...");
 
-                this.exchangeWinNoticeUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
+                	this.exchangeWinNoticeUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
 
-                logger.debug("Calling win notification enricher and fraud processor....");
+                	logger.debug("Calling win notification enricher and fraud processor....");
 
-                ONLINE_FRAUD_REASON onlineFraudReason = this.winNotificationEnricherAndFraudProcessor.performOnlineFraudChecks(context);
-
+                	onlineFraudReason = this.winNotificationEnricherAndFraudProcessor.performOnlineFraudChecks(context);
+            	}
                 this.logger.debug("The online fraud reason caught is {} " ,onlineFraudReason.getFraudReasonValue());
 
                 postImpressionRequest.setOnlineFraudReason(onlineFraudReason);
@@ -844,6 +1017,115 @@ public class EventURLProcessorJob implements Job
                 logger.error("Exception inside EventURLProcessorJob while processing billable event",e);
             }
         }
+        else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
+                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.USR
+                        .getUrlIdentifierPrefix()))
+        {
+            if(this.usrUrlReader == null || this.usrEnricherFraudProcessor == null) {
+                // If the resources are not provided then this event should not even be coming to the server. Check
+                // the configuration
+                logger.error("usr event is not handled on this server. Please check the configuration to ensure that this event is supported.");
+                return;
+            }
+
+            try
+            {
+                this.usrUrlReader.decipherPostImpressionUrl(postImpressionRequest, requestURI, context);
+
+                ONLINE_FRAUD_REASON onlineFraudReason = this.usrEnricherFraudProcessor.performOnlineFraudChecks(context);
+
+                postImpressionRequest.setOnlineFraudReason(onlineFraudReason);
+
+                PostImpressionUtils.logDebug(this.logger,"The online fraud reason caught is " ,
+                                             onlineFraudReason.getFraudReasonValue());
+            }
+            catch(Exception e)
+            {
+                logger.error("Exception inside EventURLProcessorJob while processing inhouse csc url",e);
+            }
+
+            try
+            {
+                logger.debug("Finding advertising cookie if set at the end user's browser...");
+
+                String advertisingCookie = fetchAdvertisingCookieFromEndUser(httpServletRequest);
+                String kritterUserId=null;
+                if(null != advertisingCookie)
+                {
+                    logger.debug("Advertising cookie found as {} " , advertisingCookie);
+                    postImpressionRequest.setBuyerUid(advertisingCookie);
+                    
+                }
+                //set the advertising cookie for the end user.
+                else
+                {
+                    advertisingCookie = setAdvertisingCookieToEndUser(httpServletResponse);
+                }
+
+                // Update the internal user id passed in the request against the exchange user id obtained
+                if(this.userIdUpdator != null) {
+                    Set<String> externalUserIds = new HashSet<String>();
+                    if(exchangeUserId != null) {
+                        if(kritterInternalUserId == null) {
+                            // No mapping from exchange user id to internal user id exists. Create one
+                            externalUserIds.add(exchangeUserId);
+                            logger.debug("No mapping from external user id : {} to an internal user id exists. Creating one.", exchangeUserId);
+                        }
+                    } else {
+                        // Exchange user id is not found. No need to update the internal user id in id updator
+                        logger.debug("Exchange user id not found in the request. No update for exchange user id in the matching table.");
+
+                    }
+
+                    ExternalUserId advertisingCookieExtId = new ExternalUserId(ExternalUserIdType.COOKIE_ID, 0,
+                            advertisingCookie);
+                    if(kritterInternalUserId != null) {
+                        if(!kritterInternalUserId.equals(advertisingCookieExtId.toString())) {
+                            // If the internal user id is not the same as cookie id, create a mapping from cookie id
+                            // to the internal user id
+                            logger.debug("Updating internal user id : {} for cookie id: {}.", kritterInternalUserId,
+                                    advertisingCookieExtId.toString());
+                            externalUserIds.add(kritterInternalUserId);
+                        }
+                    }
+
+                    if(kritterInternalUserId == null) {
+                        // Internal user id not found for the given exchange user id. Create entry for the same
+                        // Also create entry for the advertising cookie to internal user id. Advertising cookie
+                        // id is to be used as internal user id. Additional formatting has to be done to the cookie
+                        // id to encapsulate information for the id type being cookie.
+                        kritterInternalUserId = advertisingCookieExtId.toString();
+                        logger.debug("Creating internal user id : {} for cookie id: {}.", kritterInternalUserId,
+                                kritterInternalUserId);
+                        externalUserIds.add(kritterInternalUserId);
+                    }
+
+                    this.userIdUpdator.updateUserId(externalUserIds, kritterInternalUserId);
+                    logger.debug("Updating internal user id : {} for external ids.",
+                            kritterInternalUserId);
+                }
+
+                if(this.userSegmentProvider != null) {
+                    // String internalUserId = this.userIdProvider.getInternalUserId(externalUserIdSet);
+                    if (kritterInternalUserId != null &&
+                            postImpressionRequest.getRetargetingSegment() != UserConstant.retargeting_segment_default) {
+                        try {
+                            this.userSegmentProvider.updateRetargetingSegmentInUserSegmentUsingExecutorService(
+                                    kritterInternalUserId, postImpressionRequest.getRetargetingSegment());
+                        } catch (Exception e) {
+                            logger.error("Error in updating UserSegment", e);
+                        }
+                    }
+                }
+
+                PostImpressionUtils.writeOneByOnePixelToResponse(
+                                        (HttpServletResponse)context.getValue(Workflow.CONTEXT_RESPONSE_KEY));
+            }
+            catch (IOException e){
+                logger.error("IOException inside EventURLProcessorJob ",e);
+            }
+        }
+
     }
 
     private ThirdPartyTrackingData prepareThirdPartyTrackingData(Request request)

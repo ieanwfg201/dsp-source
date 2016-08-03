@@ -32,7 +32,7 @@ public class CacheReloadTimerTask extends TimerTask
         }
         catch(RefreshException refreshExcp)
         {
-            logger.error("ICache Refresh failed for cache: " + cacheName);
+            logger.error("ICache Refresh failed for cache: {}", cacheName);
         }
     }
 }

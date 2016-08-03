@@ -6,7 +6,7 @@ import com.kritter.core.workflow.Workflow;
 import com.kritter.geo.common.entity.*;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.CountryUserInterfaceIdCache;
-import com.kritter.geo.common.entity.reader.ConnectionTypeDetectionCache;
+import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPUserInterfaceIdCache;
 import com.kritter.postimpression.entity.Request;
@@ -39,7 +39,7 @@ public class LocationEnricherAndFraudCheck implements OnlineEnricherAndFraudChec
     private ISPDetectionCache ispDetectionCache;
     private CountryUserInterfaceIdCache countryUserInterfaceIdCache;
     private ISPUserInterfaceIdCache ispUserInterfaceIdCache;
-    private ConnectionTypeDetectionCache connectionTypeDetectionCache;
+    private IConnectionTypeDetectionCache connectionTypeDetectionCache;
 
 	public LocationEnricherAndFraudCheck(
                                          String signature,
@@ -82,7 +82,7 @@ public class LocationEnricherAndFraudCheck implements OnlineEnricherAndFraudChec
                                          ISPDetectionCache ispDetectionCache,
                                          CountryUserInterfaceIdCache countryUserInterfaceIdCache,
                                          ISPUserInterfaceIdCache ispUserInterfaceIdCache,
-                                         ConnectionTypeDetectionCache connectionTypeDetectionCache
+                                         IConnectionTypeDetectionCache connectionTypeDetectionCache
                                         ) throws Exception
     {
 		this.signature = signature;

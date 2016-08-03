@@ -3,6 +3,7 @@ package models.entities;
 import org.springframework.beans.BeanUtils;
 import play.data.validation.Constraints.Required;
 import com.kritter.api.entity.site.Site;
+import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.Payout;
 import com.kritter.constants.SITE_PLATFORM;
 
@@ -34,7 +35,7 @@ public class SiteEntity extends Entity{
     private String category_list_inc_exc_tier_2 = null;
     private boolean is_category_list_excluded = true;
     
-    private String hygiene_list = null;
+    private String hygiene_list =  ""+HygieneCategory.FAMILY_SAFE.getCode();
     private String opt_in_hygiene_list = "[]";
     private String creative_attr_inc_exc = null;
     private boolean is_creative_attr_exc = true;

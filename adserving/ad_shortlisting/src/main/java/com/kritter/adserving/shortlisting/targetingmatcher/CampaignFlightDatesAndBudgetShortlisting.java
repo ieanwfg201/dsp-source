@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -9,6 +10,7 @@ import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.cache.CampaignCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Campaign;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,19 +19,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.CAMPAIGN_DATE_BUDGET;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
     private CampaignCache campaignCache;
+    private String adNoFillReasonMapKey;
 
     public CampaignFlightDatesAndBudgetShortlisting(String name, String loggerName, AdEntityCache adEntityCache,
-                                                    CampaignCache campaignCache) {
+                                                    CampaignCache campaignCache, String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.campaignCache = campaignCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -55,7 +61,11 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
 
             if(null == campaign)
             {
-                ReqLog.debugWithDebug(logger,request, "Campaign not found in cache,FATAL error!!! for campaign id: {} " , campaignId);
+                ReqLog.debugWithDebug(logger,request, "Campaign not found in cache,FATAL error!!! for campaign id: {} ",
+                        campaignId);
+
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                        this.adNoFillReasonMapKey, context);
                 continue;
             }
 
@@ -88,11 +98,14 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
                 logMessage.append(campaign.getCampaignGuid());
 
                 ReqLog.debugWithDebug(logger,request, logMessage.toString());
+
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                        this.adNoFillReasonMapKey, context);
             }
         }
 
         if(null == request.getNoFillReason() && activeAdIds.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.CAMPAIGN_DATE_BUDGET);
+            request.setNoFillReason(noFillReason);
 
         return activeAdIds;
     }

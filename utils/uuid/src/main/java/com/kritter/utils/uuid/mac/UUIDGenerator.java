@@ -36,14 +36,13 @@ import java.util.regex.Pattern;
  *
  */
 
-public class UUIDGenerator implements IUUIDGenerator{
+public class UUIDGenerator extends com.kritter.utils.uuid.rand.UUIDGenerator implements IUUIDGenerator{
 
     private static final int VERSION = 1;
-    private static long MAC_ADDRESS;
+    private static Long MAC_ADDRESS = null;
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
-    public UUIDGenerator(){
-
+    public UUIDGenerator() {
         MAC_ADDRESS = getMacAddress();
     }
 
@@ -63,9 +62,11 @@ public class UUIDGenerator implements IUUIDGenerator{
                     break;
             }
 
-            if(mac == null)
-                throw new RuntimeException("No network device found on this machine. Unable to extract" +
-                        "mac address");
+            if(mac == null) {
+                return -1;
+                // throw new RuntimeException("No network device found on this machine. Unable to extract" +
+                        // "mac address");
+            }
 
             for(int i = 0; i < 6; ++i) {
                 long ithByte = mac[i];
@@ -85,6 +86,9 @@ public class UUIDGenerator implements IUUIDGenerator{
      * @return
      */
     public UUID generateUniversallyUniqueIdentifier() {
+        if(MAC_ADDRESS == null) {
+            return super.generateUniversallyUniqueIdentifier();
+        }
 
         long msbBits = 0;
         long lsbBits = 0;
@@ -105,6 +109,9 @@ public class UUIDGenerator implements IUUIDGenerator{
     }
 
     public static long extractTimeInLong(String uuidString) {
+        if(MAC_ADDRESS == null) {
+            return com.kritter.utils.uuid.rand.UUIDGenerator.extractTimeInLong(uuidString);
+        }
 
         UUID uuid = UUID.fromString(uuidString);
 

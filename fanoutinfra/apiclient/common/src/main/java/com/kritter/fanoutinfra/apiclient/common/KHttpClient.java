@@ -9,4 +9,6 @@ public interface KHttpClient {
 
     String post(URI target, byte[] content, int requestTimeoutMillis,
             int maxConnectionPerHost, int maxConnection) throws Exception;
+    String get(URI target, int requestTimeoutMillis,
+            int maxConnectionPerHost, int maxConnection) throws Exception;
 }

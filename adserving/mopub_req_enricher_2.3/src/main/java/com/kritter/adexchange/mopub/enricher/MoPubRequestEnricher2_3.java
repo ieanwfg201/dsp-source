@@ -12,13 +12,13 @@ import com.kritter.common.caches.iab.categories.entity.IABCategoryEntity;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.*;
-import com.kritter.device.HandsetDetectionProvider;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.HandsetDetectionProvider;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.CountryIspUiDataUsingMccMnc;
 import com.kritter.geo.common.entity.InternetServiceProvider;
-import com.kritter.geo.common.entity.reader.ConnectionTypeDetectionCache;
+import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.geo.common.entity.reader.MncMccCountryISPDetectionCache;
@@ -53,7 +53,7 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
     private MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache;
     private CountryDetectionCache countryDetectionCache;
     private ISPDetectionCache ispDetectionCache;
-    private ConnectionTypeDetectionCache connectionTypeDetectionCache;
+    private IConnectionTypeDetectionCache connectionTypeDetectionCache;
     private static final String ENCODING = "UTF-8";
 
     public MoPubRequestEnricher2_3( String loggerName,
@@ -85,7 +85,7 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
                                     MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache,
                                     CountryDetectionCache countryDetectionCache,
                                     ISPDetectionCache ispDetectionCache,
-                                    ConnectionTypeDetectionCache connectionTypeDetectionCache
+                                    IConnectionTypeDetectionCache connectionTypeDetectionCache
                                   )
     {
         this.logger = LoggerFactory.getLogger(loggerName);

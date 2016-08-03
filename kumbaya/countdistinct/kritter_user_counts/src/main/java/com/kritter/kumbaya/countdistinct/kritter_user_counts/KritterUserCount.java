@@ -96,6 +96,7 @@ public class KritterUserCount {
             String logType, String delimiter) throws Exception{
         BufferedReader br = null;
         FileReader fr = null;
+        System.out.println("Processing: " +absoluteFilePath);
         try{
             File f = new File(absoluteFilePath);
             fr = new FileReader(f);

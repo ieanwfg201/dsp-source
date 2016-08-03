@@ -46,7 +46,9 @@ public interface PostImpressionEventUrlReader {
         COOKIE_BASED_CONV_JS("/cnv_cky"),
         MACRO_CLICK("/macroclk"),
         TEVENT("/tevent"),
-        BEVENT("/bevent");
+        BEVENT("/bevent"),
+		USR("/usr"),
+		NOFRDP("/nofrdp");
 
         private String urlIdentifierPrefix;
 

@@ -388,7 +388,7 @@ public class SiteCrud {
                 autoCommitFlag = con.getAutoCommit();
                 con.setAutoCommit(false);
             }
-            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Site.insert_site);
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Site.insert_site,PreparedStatement.RETURN_GENERATED_KEYS);
             if(userSpecifiedGuid)
                 pstmt.setString(1, site.getGuid());
             else
@@ -434,9 +434,15 @@ public class SiteCrud {
                 msg.setMsg(ErrorEnum.SITE_NOT_INSERTED.getName());
                 return msg;
             }
+            ResultSet keyResultSet = pstmt.getGeneratedKeys();
+            int db_id = -1;
+            if (keyResultSet.next()) {
+                db_id = keyResultSet.getInt(1);
+            }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.NO_ERROR.getId());
             msg.setMsg(ErrorEnum.NO_ERROR.getName());
+            msg.setId(db_id+"");
             return msg;
         }catch(Exception e){
             LOG.error(e.getMessage(),e);

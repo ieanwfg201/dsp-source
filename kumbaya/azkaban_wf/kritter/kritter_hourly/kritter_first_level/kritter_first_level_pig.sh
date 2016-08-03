@@ -20,9 +20,9 @@ export PIG_OPTS
 
 
 echo "##########################################################################################################"
-echo "${2}/bin/pig -x local -f src/main/pig/first_level.pig  --param INPUT_FILES='${3}' --param OUTPUT='${5}' --param thrift_jar_path='${6}' --param PROCESS_TIME='${8}' --param POST_IMP_INPUT_FILES=${4} --param BILLING_INPUT_FILES=${7}"
+echo "${2}/bin/pig -x local -f src/main/pig/first_level.pig  --param INPUT_FILES='${3}' --param OUTPUT='${5}' --param thrift_jar_path='${6}' --param PROCESS_TIME='${8}' --param POST_IMP_INPUT_FILES=${4} --param BILLING_INPUT_FILES=${7} --param tz='${10}'"
 
-exec ${2}/bin/pig -x local -f src/main/pig/first_level.pig  --param INPUT_FILES=${3} --param OUTPUT=${5} --param thrift_jar_path=${6} --param PROCESS_TIME="${8}" --param POST_IMP_INPUT_FILES=${4} --param BILLING_INPUT_FILES=${7}
+exec ${2}/bin/pig -x local -f src/main/pig/first_level.pig  --param INPUT_FILES=${3} --param OUTPUT=${5} --param thrift_jar_path=${6} --param PROCESS_TIME="${8}" --param POST_IMP_INPUT_FILES=${4} --param BILLING_INPUT_FILES=${7} --param tz=${10}
 
 
 

@@ -63,10 +63,15 @@ public class ConvertBidRequestImpNative {
                 asset.setRequired(1);
                 assetList.add(asset);
             }
-            if(nativeSupplyProps.getScreenshot_imagesize() != null){
-                String s = NativeScreenShotImageSize.getEnum(nativeSupplyProps.getScreenshot_imagesize()).getName();
+            if(nativeSupplyProps.getScreenshot_imagesize() != null || nativeSupplyProps.getScreenshot_size() != null){
+                String s = null;
+
+                if(null != nativeSupplyProps.getScreenshot_imagesize())
+                    s = NativeScreenShotImageSize.getEnum(nativeSupplyProps.getScreenshot_imagesize()).getName();
+
                 if(null == s)
                     s = nativeSupplyProps.getScreenshot_size();
+
                 String str[] = s.split("\\*");
                 Asset asset = new Asset();
                 Image img = new Image();

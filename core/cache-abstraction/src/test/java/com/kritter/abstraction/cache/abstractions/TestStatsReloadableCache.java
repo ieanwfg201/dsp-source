@@ -41,7 +41,7 @@ public class TestStatsReloadableCache
     public void testRefresh() throws InitializationException, InterruptedException, RefreshException
     {
         Properties properties = new Properties();
-        properties.put("refresh_interval", "2");
+        properties.put("refresh_interval", "2000");
         SampleStatsReloadableCache cache = new SampleStatsReloadableCache(logger, properties);
         assertEquals(true, cache.getConstructionTime() != null);
 

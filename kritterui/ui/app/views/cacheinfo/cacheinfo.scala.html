@@ -1,0 +1,25 @@
+@(cacheInfo:Form[models.entities.cacheinfo.CacheInfoFormEntity])
+@main("Get Cache Info"){
+	@components.containers.panel("Get cache Info"){
+    <form id="cacheInfoForm" action="/cacheinfo/getcachinfo" method="POST" data-ng-controller="cacheInfoController">
+    <div class="page">
+        <section class="panel panel-default">
+            <div class="panel-heading">
+                <strong><span class="glyphicon glyphicon-th"></span>Get Cache Info</strong>
+            </div>
+            <div class="panel-body">
+            <div class="cachinfo">
+                @components.formElements.textinput(cacheInfo("url"),'_label -> "Adserving Domain Name or IP like http://10.24.1.45")
+                @components.formElements.textinput(cacheInfo("cache_name"),'_label -> "Cache name")
+                <button type="button" class="btn btn-default btn-primary" ng-click="getcacheInfo()">Get CachInfo</button>
+            </div>
+            </div>
+        </section>
+    </div>
+    </form>
+    <div class="panel-body" id="cachInfoDisplayWindow">
+    </div>
+	 <script src="@routes.Assets.at("javascripts/apps/cacheinfo/cacheinfo.js")" type="text/javascript"></script>
+	 
+	}
+}

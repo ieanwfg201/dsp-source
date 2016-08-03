@@ -2,8 +2,8 @@ package com.kritter.serving.demand.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.constants.MidpValue;
-import com.kritter.constants.SupplySourceEnum;
 import com.kritter.entity.targeting_profile.column.Retargeting;
+import com.kritter.entity.targeting_profile.column.TPExt;
 import com.kritter.utils.entity.TargetingProfileLocationEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,9 +12,6 @@ import lombok.ToString;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -61,6 +58,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
     private final Retargeting retargeting;
     private final Map<String,String[]> pmpDealIdInfoMap;
     private final Short[] deviceTypeArray;
+    private final TPExt tpExt;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public TargetingProfile(TargetingBuilder targetingBuilder)
@@ -96,6 +94,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         this.retargeting = targetingBuilder.retargeting;
         this.pmpDealIdInfoMap = targetingBuilder.pmpDealIdInfoMap;
         this.deviceTypeArray = targetingBuilder.deviceTypeArray;
+        this.tpExt = targetingBuilder.tpExt;
     }
 
     @Override
@@ -139,6 +138,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         private Retargeting retargeting;
         private Map<String,String[]> pmpDealIdInfoMap;
         private Short[] deviceTypeArray;
+        private TPExt tpExt;
         private static final TypeReference<Map<String,String>>
                      typeReferenceForOSBrowserJSon = new TypeReference<Map<String, String>>() {};
 
@@ -365,6 +365,12 @@ public class TargetingProfile implements IUpdatableEntity<String>{
             this.retargeting = retargeting;
             return this;
         }
+        public TargetingBuilder setTPExt(TPExt tpExt)
+        {
+            this.tpExt = tpExt;
+            return this;
+        }
+
         public TargetingProfile build()
         {
             return new TargetingProfile(this);

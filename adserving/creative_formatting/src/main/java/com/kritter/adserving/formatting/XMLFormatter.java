@@ -132,7 +132,7 @@ public class XMLFormatter implements CreativesFormatter
                 for(ExternalUserId externalUserId : externalUserIdSet)
                 {
                     if(externalUserId.getIdType().equals(ExternalUserIdType.EXCHANGE_CONSUMER_ID))
-                        exchangeUserId = externalUserId.getUserId();
+                        exchangeUserId = externalUserId.toString();
                 }
             }
 
@@ -162,8 +162,8 @@ public class XMLFormatter implements CreativesFormatter
                 StringBuffer creativeImageUrl = new StringBuffer(this.cdnBaseImageUrl);
                 creativeImageUrl.append(responseAdInfo.getCreativeBanner().getResourceURI());
                 List<String> extImpTracker = null;
-                if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getExtImpTracker() != null){
-                    extImpTracker = adEntity.getExtTracker().getExtImpTracker();
+                if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getImpTracker() != null){
+                    extImpTracker = adEntity.getExtTracker().getImpTracker();
                 }
                 fCreative.addBannerEntity(creativeImageUrl.toString(), creativeSlot.getCreativeSlotWidth(), 
                         creativeSlot.getCreativeSlotHeight(),creative.getText(), 

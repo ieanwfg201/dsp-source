@@ -15,7 +15,8 @@ import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.Res
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespData;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespImage;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespLink;
-import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespNative;
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespNativeFirstLevel;
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespNativeParent;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespTitle;
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.entity.native_props.demand.NativeDemandProps;
@@ -85,7 +86,7 @@ public class NativeAdMarkUp {
             for(ExternalUserId externalUserId : externalUserIdSet)
             {
                 if(externalUserId.getIdType().equals(ExternalUserIdType.EXCHANGE_CONSUMER_ID))
-                    exchangeUserId = externalUserId.getUserId();
+                    exchangeUserId = externalUserId.toString();
             }
         }
 
@@ -109,8 +110,8 @@ public class NativeAdMarkUp {
         }
 
         NativeDemandProps nativeDemandProps = responseAdInfo.getNativeDemandProps();
-        
-        RespNative respNative = new RespNative();
+        RespNativeParent respNativeParent = new RespNativeParent();
+        RespNativeFirstLevel respNative = new RespNativeFirstLevel();
         String[] imptrackers = new String[1];
         imptrackers[0] = cscBeaconUrl.toString();
         respNative.setImptrackers(imptrackers);
@@ -172,10 +173,10 @@ public class NativeAdMarkUp {
         RespAsset[] stockArr = new RespAsset[respAssetList.size()];
         stockArr = respAssetList.toArray(stockArr);
         respNative.setAssets(stockArr);
-        
+        respNativeParent.setRespNativeForstLevel(respNative);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-        JsonNode jsonNode = objectMapper.valueToTree(respNative);
+        JsonNode jsonNode = objectMapper.valueToTree(respNativeParent);
         return jsonNode.toString();
 
     }

@@ -93,7 +93,7 @@ public class DoBillingByFile {
                             }if(pirr.getEvent() == PostImpressionEvent.BEVENT_CSCWIN){
                                 pirrList.add(pirr);
                             }else{
-                                LOG.debug("NON BILLABLE EVENT: " +  pirr.toString());
+                                LOG.debug("NON BILLABLE EVENT: {} ",  pirr.toString());
                             }
                         }
                     }

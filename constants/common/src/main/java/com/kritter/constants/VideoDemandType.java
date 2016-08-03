@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum VideoDemandType {
-
-    VastTagUrl(1,"VastTagUrl");
+	
+    VastTagUrl(1,"VastTagUrl"),
+    DirectVideo(2,"DirectVideo");
     
     private int code;
     private String name;

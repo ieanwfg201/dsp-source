@@ -1,5 +1,6 @@
 package com.kritter.adserving.flow.job;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
@@ -12,6 +13,7 @@ import com.kritter.bidder.online.entity.ServedEntityInfo;
 import com.kritter.constants.BidType;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,7 @@ public class EcpmBidCalculatorUsingBidder implements Job
     private String responseObjectKey;
     private RealTimeBidder realTimeBidder;
     private AdEntityCache adEntityCache;
+    private String adNoFillReasonMapKey;
 
     public EcpmBidCalculatorUsingBidder(
                                         String loggerName,
@@ -46,7 +49,8 @@ public class EcpmBidCalculatorUsingBidder implements Job
                                         String requestObjectKey,
                                         String responseObjectKey,
                                         RealTimeBidder realTimeBidder,
-                                        AdEntityCache adEntityCache
+                                        AdEntityCache adEntityCache,
+                                        String adNoFillReasonMapKey
                                        )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -55,6 +59,7 @@ public class EcpmBidCalculatorUsingBidder implements Job
         this.responseObjectKey = responseObjectKey;
         this.realTimeBidder = realTimeBidder;
         this.adEntityCache = adEntityCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -113,8 +118,11 @@ public class EcpmBidCalculatorUsingBidder implements Job
             
             if(!isBidSet){
                 ExchangeBidWithEntityId exchangeBidWithEntityId = exchangeBidWithEntityIdMap.get(responseAdInfo.getAdId());
-                if(null == exchangeBidWithEntityId)
+                if(null == exchangeBidWithEntityId) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(responseAdInfo.getAdId(),
+                            NoFillReason.CAMPAIGN_DATE_BUDGET.getValue(), this.adNoFillReasonMapKey, context);
                     continue;
+                }
 
                 double ecpmValue = exchangeBidWithEntityIdMap.get(responseAdInfo.getAdId()).getBidValue();
                 responseAdInfo.setEcpmValue(ecpmValue);
@@ -128,7 +136,7 @@ public class EcpmBidCalculatorUsingBidder implements Job
 
         if(finalResponseAdInfoSet.size() <= 0 && null == request.getNoFillReason())
         {
-            request.setNoFillReason(Request.NO_FILL_REASON.BIDDER_BID_NEGATIVE_ZERO);
+            request.setNoFillReason(NoFillReason.BIDDER_BID_NEGATIVE_ZERO);
             ReqLog.debugWithDebug(logger, request, "Bidder bid is calculated as negative or zero in this request and no ad could get a positive ecpm value ");
             
         }

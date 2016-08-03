@@ -28,6 +28,14 @@ controller('tpController',function ($scope, $http, $upload) {
 	$scope.tier2categories_url = "/metadata/options/tier2categories";
 	$scope.hour_list_url = "/metadata/options/hours";
 	$scope.device_type_url = "/metadata/options/device_type";
+	$scope.state_url = "/metadata/options/state/";
+	$scope.city_url = "/metadata/options/city/";
+	$scope.mma_tier1_url = "/metadata/options/tier1mmacategory";
+	$scope.mma_tier2_url = "/metadata/options/tier2mmacategory/";
+	$scope.adposition_list_url = "/metadata/options/adposition_list";
+	$scope.channel_tier1_url = "/metadata/options/tier1channel";
+	$scope.channel_tier2_url = "/metadata/options/tier2channel/";
+	
 	var path = $.url().attr('path');
     var pathComps = path.split("/");
     $scope.accountGuid = pathComps[2];  
@@ -47,8 +55,16 @@ controller('tpController',function ($scope, $http, $upload) {
 	$scope.carrier_json_msmodel = Object.create(MultiSelectModel);
 	$scope.carrier_json_msmodel.init($scope.carrier_url, 'valueArray', true); 
 
+	$scope.state_json_msmodel = Object.create(MultiSelectModel);
+	$scope.state_json_msmodel.init($scope.state_url, 'valueArray', true); 
+
 	$scope.country_json_msmodel.addDependent("carriers", $scope.carrier_json_msmodel);
-	
+	$scope.country_json_msmodel.addDependent("state", $scope.state_json_msmodel);
+
+	$scope.city_json_msmodel = Object.create(MultiSelectModel);
+	$scope.city_json_msmodel.init($scope.city_url, 'valueArray', true); 
+	$scope.state_json_msmodel.addDependent("city", $scope.city_json_msmodel);
+
 	$scope.pub_list_msmodel = Object.create(MultiSelectModel);  
 	$scope.pub_list_msmodel.init($scope.pub_url, 'valueArray', true);
 	$scope.exchange_list_msmodel = Object.create(MultiSelectModel);  
@@ -92,7 +108,22 @@ controller('tpController',function ($scope, $http, $upload) {
 	$scope.model_list_msmodel.init( $scope.model_url, 'valueArray', true);
 	$scope.brand_list_msmodel.addDependent("models", $scope.model_list_msmodel);
 
+	$scope.mma_tier_1_list_msmodel = Object.create(MultiSelectModel);  
+	$scope.mma_tier_1_list_msmodel.init($scope.mma_tier1_url, 'valueArray', true, false);
 	
+	$scope.mma_tier_2_list_msmodel = Object.create(MultiSelectModel);  
+	$scope.mma_tier_2_list_msmodel.init($scope.mma_tier2_url, 'valueArray', true);
+	$scope.mma_tier_1_list_msmodel.addDependent("mma_tier2", $scope.mma_tier_2_list_msmodel);
+
+	$scope.adposition_list_msmodel = Object.create(MultiSelectModel);  
+	$scope.adposition_list_msmodel.init($scope.adposition_list_url, 'valueArray', true, false);
+	
+	$scope.channel_tier_1_list_msmodel = Object.create(MultiSelectModel);  
+	$scope.channel_tier_1_list_msmodel.init($scope.channel_tier1_url, 'valueArray', true, false);
+	
+	$scope.channel_tier_2_list_msmodel = Object.create(MultiSelectModel);  
+	$scope.channel_tier_2_list_msmodel.init($scope.channel_tier2_url, 'valueArray', true);
+	$scope.channel_tier_1_list_msmodel.addDependent("channel_tier2", $scope.channel_tier_2_list_msmodel);
 
 	$scope.custom_ip_file_id_set="#";
 

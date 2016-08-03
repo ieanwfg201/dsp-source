@@ -117,8 +117,7 @@ public class ZipCodeFileDataCache
 
             if(!inputDataFile.exists())
             {
-                logger.error("File does not exist inside ZipCodeFileDataCache" +
-                             ", the file looked up was: "  + filePath.toString());
+                logger.error("File does not exist inside ZipCodeFileDataCache, the file looked up was:{} ", filePath.toString());
                 continue;
             }
 
@@ -225,8 +224,7 @@ public class ZipCodeFileDataCache
 
             if(null == zipCodeData || zipCodeData.size() <= 0)
             {
-                logger.error("ZipCodeData does not exist in ZipCodeFileDataCache for fileid: " + fileId +
-                             ",skipping applying zipcode filters for selected ads...");
+                logger.error("ZipCodeData does not exist in ZipCodeFileDataCache for fileid: {},skipping applying zipcode filters for selected ads...",fileId);
                 continue;
             }
 

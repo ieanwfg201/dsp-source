@@ -4,11 +4,12 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.*;
-import com.kritter.device.HandsetDetectionProvider;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.HandsetDetectionProvider;
+import com.kritter.device.common.entity.HandsetMasterData;
+import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.InternetServiceProvider;
-import com.kritter.geo.common.entity.reader.ConnectionTypeDetectionCache;
+import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.utils.common.ApplicationGeneralUtils;
@@ -19,7 +20,9 @@ import org.springframework.beans.factory.annotation.Required;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Neil Attewell on 2014/07/30.
@@ -48,7 +51,7 @@ public class ParameterBasedAggregatorRequestEnricher implements RequestEnricher 
     private HandsetDetectionProvider handsetDetectionProvider;
     private CountryDetectionCache countryDetectionCache;
     private ISPDetectionCache ispDetectionCache;
-    private ConnectionTypeDetectionCache connectionTypeDetectionCache;
+    private IConnectionTypeDetectionCache connectionTypeDetectionCache;
 
     public ParameterBasedAggregatorRequestEnricher(String loggerName){
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -119,7 +122,17 @@ public class ParameterBasedAggregatorRequestEnricher implements RequestEnricher 
         SITE_PLATFORM sitePlatform = getSitePlatform(requestAppWapForSiteCode);
         request.setRequestedNumberOfAds(requestNumberOfAds);
         request.setSitePlatformValue(sitePlatform.getPlatform());
-        request.setUserId(requestUserId);
+        Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
+        if(externalUserIds == null) {
+            externalUserIds = new HashSet<ExternalUserId>();
+            request.setExternalUserIds(externalUserIds);
+        }
+
+        if(requestUserId != null) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.AGGREGATOR_USER_ID, request.getInventorySource(),
+                    requestUserId));
+        }
+
         request.setRequestingLongitudeValue(requestLongitude);
         request.setRequestingLatitudeValue(requestLatitude);
         /*other extra parameters end.*/
@@ -474,7 +487,7 @@ public class ParameterBasedAggregatorRequestEnricher implements RequestEnricher 
         this.ispDetectionCache = ispDetectionCache;
     }
     @Required
-    public void setConnectionTypeDetectionCache(ConnectionTypeDetectionCache connectionTypeDetectionCache) {
+    public void setConnectionTypeDetectionCache(IConnectionTypeDetectionCache connectionTypeDetectionCache) {
         this.connectionTypeDetectionCache = connectionTypeDetectionCache;
     }
     @Required

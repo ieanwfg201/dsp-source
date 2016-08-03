@@ -1,15 +1,19 @@
 package com.kritter.adserving.shortlisting.core.twodotthreehelper;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import org.slf4j.Logger;
 
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionVideoObjectDTO;
+import com.kritter.common.caches.video_info_cache.VideoInfoCache;
+import com.kritter.common.caches.video_info_cache.entity.VideoInfoCacheEntity;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.reqres.log.ReqLog;
+import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.cache.CreativeCache;
@@ -19,7 +23,7 @@ import com.kritter.serving.demand.entity.Creative;
 public class ValidateVideo {
     public static void checkVideo(BidRequestImpressionDTO[] bidRequestImpressionDTOs,Site site,
             Request request, Logger logger, Response response, AdEntityCache adEntityCache, 
-            CreativeCache creativeCache
+            CreativeCache creativeCache, VideoInfoCache videoInfoCache
             ){
         boolean isNFR = true;
         if(bidRequestImpressionDTOs == null){
@@ -27,8 +31,8 @@ public class ValidateVideo {
                 return;
         }
 
-        Request.NO_FILL_REASON nfrReason = Request.NO_FILL_REASON.FILL;
-        Request.NO_FILL_REASON nfrReasonPriority = null;
+        NoFillReason nfrReason = NoFillReason.FILL;
+        NoFillReason nfrReasonPriority = null;
 
         for(BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs){
             if(bidRequestImpressionDTO == null){
@@ -42,40 +46,51 @@ public class ValidateVideo {
             for(ResponseAdInfo responseAdInfo : response.getResponseAdInfo()){
                 AdEntity adEntity = adEntityCache.query(responseAdInfo.getAdId());
                 if(null == adEntity){
-                    logger.error("AdEntity not found in cache,FATAL error!!! for adId: {} " +
+                    logger.error("AdEntity not found in cache,FATAL error!!! for adId: {} ",
                             responseAdInfo.getAdId());
                     continue;
                 }
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
                 if(null == creative) {
-                    logger.error("Creative null in cache,!!! for creative id: " + adEntity.getCreativeId());
+                    logger.error("Creative null in cache,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.VIDEO){
-                    nfrReason = Request.NO_FILL_REASON.CREATIVE_NOT_VIDEO;
-                    logger.error("Creative Not Video,!!! for creative id: " + adEntity.getCreativeId());
+                    nfrReason = NoFillReason.CREATIVE_NOT_VIDEO;
+                    logger.error("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
-                    nfrReason = Request.NO_FILL_REASON.DEAL_ID_MISMATCH;
+                    nfrReason = NoFillReason.DEAL_ID_MISMATCH;
                     logger.error("DealID check not satisfied");
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidFloorPrice() != null &&  bidRequestImpressionDTO.getBidFloorPrice()>responseAdInfo.getEcpmValue()){
-                    nfrReason = Request.NO_FILL_REASON.BIDDER_FLOOR_UNMET;
+                    nfrReason = NoFillReason.BIDDER_FLOOR_UNMET;
                     logger.error("Floor price unmet");
                     continue;
                 }
                 VideoProps videoProps  = creative.getVideoProps();
                 if(videoProps == null){
-                    nfrReason = Request.NO_FILL_REASON.VIDEO_PROPS_NULL;
-                    logger.error("Video Props Null,!!! for creative id: " + adEntity.getCreativeId());
+                    nfrReason = NoFillReason.VIDEO_PROPS_NULL;
+                    logger.error("Video Props Null,!!! for creative id:{} ",  adEntity.getCreativeId());
                     continue;
                 }
+                VideoInfo videoInfo=null;
+                if(videoProps != null && videoProps.getVideo_info() != null){
+                    for(String videoId:videoProps.getVideo_info()){
+                        VideoInfoCacheEntity videoInfoCacheEntity = videoInfoCache.query(Integer.parseInt(videoId));
+                        if(videoInfoCacheEntity != null){
+                            videoInfo = videoInfoCacheEntity.getVideoInfo();
+                        }
+                    }
+                }
+
                 nfrReasonPriority = ValidateVideoHelper.validate(logger, videoProps, videoObj);
-                if(nfrReason ==  Request.NO_FILL_REASON.FILL){
+                if(nfrReason ==  NoFillReason.FILL){
                     try {
                         responseAdInfo.setVideoProps(videoProps);
+                        responseAdInfo.setVideoInfo(videoInfo);
                         response.addResponseAdInfoAgainstBidRequestImpressionId(
                                 bidRequestImpressionDTO.getBidRequestImpressionId(),
                                 responseAdInfo
@@ -100,14 +115,14 @@ public class ValidateVideo {
 
     public static void checkVideo(com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionDTO[] bidRequestImpressionDTOs,
             Site site, Request request, Logger logger, Response response, AdEntityCache adEntityCache, 
-            CreativeCache creativeCache
+            CreativeCache creativeCache, VideoInfoCache videoInfoCache
             ){
         boolean isNFR = true;
         if(bidRequestImpressionDTOs == null){
                 logger.error("bidRequestImpressionDTOs is null inside video of AdShortlistingRTBExchangeTwoDotThree, cannot process request for this impressionId: {} ");
                 return;
         }
-        Request.NO_FILL_REASON nfrReason = Request.NO_FILL_REASON.FILL;
+        NoFillReason nfrReason = NoFillReason.FILL;
         for(com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs){
             if(bidRequestImpressionDTO == null){
                 continue;
@@ -120,17 +135,17 @@ public class ValidateVideo {
             for(ResponseAdInfo responseAdInfo : response.getResponseAdInfo()){
                 AdEntity adEntity = adEntityCache.query(responseAdInfo.getAdId());
                 if(null == adEntity){
-                    logger.error("AdEntity not found in cache,FATAL error!!! for adId: {} " +
+                    logger.error("AdEntity not found in cache,FATAL error!!! for adId: {} ", 
                             responseAdInfo.getAdId());
                     continue;
                 }
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
                 if(null == creative) {
-                    logger.error("Creative null in cache,!!! for creative id: " + adEntity.getCreativeId());
+                    logger.error("Creative null in cache,!!! for creative id:{} "  , adEntity.getCreativeId());
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.VIDEO){
-                    logger.error("Creative Not Video,!!! for creative id: " + adEntity.getCreativeId());
+                    logger.error("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
@@ -143,13 +158,24 @@ public class ValidateVideo {
                 }
                 VideoProps videoProps  = creative.getVideoProps();
                 if(videoProps == null){
-                    logger.error("Video Props Null,!!! for creative id: " + adEntity.getCreativeId());
+                    logger.error("Video Props Null,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
+                VideoInfo videoInfo=null;
+                if(videoProps != null && videoProps.getVideo_info() != null){
+                    for(String videoId:videoProps.getVideo_info()){
+                        VideoInfoCacheEntity videoInfoCacheEntity = videoInfoCache.query(Integer.parseInt(videoId));
+                        if(videoInfoCacheEntity != null){
+                            videoInfo = videoInfoCacheEntity.getVideoInfo();
+                        }
+                    }
+                }
+
                 nfrReason = ValidateVideoHelper.validate(logger, videoProps, videoObj);
-                if(nfrReason ==  Request.NO_FILL_REASON.FILL){
+                if(nfrReason ==  NoFillReason.FILL){
                     try {
                         responseAdInfo.setVideoProps(videoProps);
+                        responseAdInfo.setVideoInfo(videoInfo);
                         response.addResponseAdInfoAgainstBidRequestImpressionId(
                                 bidRequestImpressionDTO.getBidRequestImpressionId(),
                                 responseAdInfo

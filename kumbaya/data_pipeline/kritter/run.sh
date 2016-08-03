@@ -8,6 +8,7 @@ THRIFT_JAR_PATH=$5
 PROCESS_TIME="$6 $7"
 POST_IMP_INPUT_FILES=$8
 BILLING_INPUT_FILES=$9
+tz=$10
 
 if [ "$1" = "" ]; then
     PIG_HOME=/usr/share/pig
@@ -39,6 +40,10 @@ fi
 if [ "$9" = "" ]; then
     BILLING_INPUT_FILES=/home/rohan/testdata/kritter/billing*
 fi
+
+if [ "$10" = "" ]; then
+    tz=UTC
+fi
 MAPRED=/tmp/first_level_`date +%s`
 pig_script=first_level
 PIG_OPTS="-Dmapred.output.dir=${MAPRED}/$pig_script/output"
@@ -50,5 +55,5 @@ PIG_OPTS="$PIG_OPTS -Dhadoop.tmp.dir=${MAPRED}/$pig_script/hadoop"
 
 export PIG_OPTS
 
-echo "$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param INPUT_FILES="$INPUT_FILES" --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param PROCESS_TIME="$PROCESS_TIME" --param POST_IMP_INPUT_FILES="$POST_IMP_INPUT_FILES" --param BILLING_INPUT_FILES="$BILLING_INPUT_FILES""
-$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param INPUT_FILES="$INPUT_FILES" --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param PROCESS_TIME="$PROCESS_TIME" --param POST_IMP_INPUT_FILES="$POST_IMP_INPUT_FILES" --param BILLING_INPUT_FILES="$BILLING_INPUT_FILES"
+echo "$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param INPUT_FILES="$INPUT_FILES" --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param PROCESS_TIME="$PROCESS_TIME" --param POST_IMP_INPUT_FILES="$POST_IMP_INPUT_FILES" --param BILLING_INPUT_FILES="$BILLING_INPUT_FILES" --param tz="$tz""
+$PIG_HOME/bin/pig -x local -f $SCRIPT_PATH  --param INPUT_FILES="$INPUT_FILES" --param OUTPUT="$OUTPUT" --param thrift_jar_path="$THRIFT_JAR_PATH" --param PROCESS_TIME="$PROCESS_TIME" --param POST_IMP_INPUT_FILES="$POST_IMP_INPUT_FILES" --param BILLING_INPUT_FILES="$BILLING_INPUT_FILES" --param tz="$tz"

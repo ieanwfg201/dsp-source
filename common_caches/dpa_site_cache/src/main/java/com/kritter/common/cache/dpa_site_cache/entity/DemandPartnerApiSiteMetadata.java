@@ -2,6 +2,7 @@ package com.kritter.common.cache.dpa_site_cache.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.ToString;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
@@ -12,6 +13,7 @@ import java.util.*;
 /**
  * This class keeps site's and publisher's metadata used in context of a demand partner api.
  */
+@ToString
 public class DemandPartnerApiSiteMetadata implements IUpdatableEntity<String>
 {
     @Getter

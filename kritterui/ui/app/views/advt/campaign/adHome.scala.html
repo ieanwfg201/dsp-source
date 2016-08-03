@@ -1,4 +1,4 @@
-@(ad:models.advertiser.AdDisplayFull,retargeting_flow_enabled:String)
+@(ad:models.advertiser.AdDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String,channel_required:String)
 @main2("Ad Home- @ad.getName()"){@navs.navadvt(ad.getAccountGuid())}{@navs.breadcrumbs(ad.getBreadCrumbPaths())}{
 
 	@components.containers.panel("Ad Summary-"+ ad.getName()){
@@ -32,11 +32,17 @@
             @components.fielddisplays.intdisplay("AD-Time Window of Freq Cap", ad.getTimeWindow())
         }
         
-        @components.fielddisplays.textdisplay("AD-ExternalTracker", ad.getExternaltracker())
-		 
+        @components.fielddisplays.textdisplay("AD-ExternalImpTracker", ad.getExternalimptracker())
+        @components.fielddisplays.textdisplay("AD-ExternalClickTracker", ad.getExternalclicktracker())
+        @if("true" == mma_required){
+			@components.fielddisplays.listdisplay("AD-MMAIndustry Tier 1", ad.getMMATier1())
+		
+			@components.fielddisplays.listdisplay("AD-MMAIndustry-Tier 2", ad.getMMATier2()) 
+        
+		} 
 		@advt.creative.creativeDisplay(ad.getCreativeDisplay())
 		
-		@advt.targeting.targetingHomeContent(ad.getTargetingFull(),retargeting_flow_enabled)
+		@advt.targeting.targetingHomeContent(ad.getTargetingFull(),retargeting_flow_enabled,mma_required,adposition_required,channel_required)
 		 
 		</div>
 	}

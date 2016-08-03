@@ -1,0 +1,108 @@
+//version: 20150313
+package RTB;
+message Request {
+    message Impression {
+        message Banner {
+            optional uint32 width = 1; //Width of ad space.
+            optional uint32 height = 2; //Height of ad space.
+            repeated string mimes = 3; //supported material type (e.g. “jpg”, ”swf”).
+            optional string extra_style = 4; //Material size that is allowed to be advertised by this ad space in addition to existing ad space specification.Format: width x height. Such as 960*90;1000*90 (separate multiple sizes with “;”).
+            optional uint32 visibility = 5; //Screen sequence of ad space. 0: unknown; 1: first screen; 2: non-first screen.
+        }
+        message Video {
+            repeated string mimes = 1; //Supported Content type (e.g. "flv","swf").
+            optional uint32 linearity = 2; //No practical effect at present. linear/in-stream(1) or non-linear/overlay(2).
+            optional uint32 minduration = 3; //Minimum duration of video ad. Unit: ms.
+            optional uint32 maxduration = 4; //Maximum duration of video ad. Unit: ms.
+            optional uint32 protocol = 5; //No practical effect at present.Vast 1.0/2.0/3.0/wrapper.
+            optional uint32 width = 6; //Width of ad space.
+            optional uint32 height = 7; //Height of ad space.
+        }
+        message MaterialFormat {
+            optional uint32 width = 1; //Width of ad space, txt type represents the number of Chinese character.
+            optional uint32 height = 2; //Height of ad space, which is 0 if the type is txt.
+            optional string mimes = 3; //Display type which is allowed by material. All lowercase. Please separate multiple types with “,”. E.g. “swf,jgp,txt”.
+        }
+        optional string id = 1; //Unique ID of impression.
+        optional string tagid = 2; //Ad space ID, which is similar to the ad space ID in resource report, such as Ent_F_Width1.
+        optional float bidfloor = 3; //Base price of impression. Unit: fen/CPM.
+        optional Banner banner = 4; //Banner ad space.
+        optional Video video = 5; //Video ad space.
+        optional string clientid = 6; //Invalid field.
+        optional string tradecode = 7; //List of restriction industry code of this ad space, such as 018;014;008;006;001;004;002.
+        optional string sns_lists = 8; //(Suspended) List of socialized display format supported by this ad space.
+        optional string dealid = 9; //Only available for GPB, which is used to inform DSP about the advertising.
+        repeated MaterialFormat adm_require = 10; //Invalid field.
+    }
+    message Site {
+        optional string name = 1; //Website name.
+        optional string page = 2; //URL of the current page.
+        optional string ref = 3; //Referrer url.
+        optional string channel = 4; //Channel number.
+    }
+    message Device {
+        optional string ip = 1; //Device IP.
+        optional string ua = 2; //Device user agent.
+        message Geo {
+            optional float latitude = 1; //Latitude. Value scope: -90 to 90. South is set to negative value.
+            optional float longitude = 2; //Longitude. Value scope: -180 to 180. West is set to negative value.
+        }
+        optional Geo geo = 3; //Geo information.Only fuzzy value limited to a certain precision is provided. Please refer to instruction document for generation rules. Unavailable at present.
+        optional string idfa = 4; //IDFA, not encrypted by default. (If it is encrypted in MD5, convert MD5(idfa) to uppercase.)
+        optional uint32 idfa_enc = 5; //0: cleartext; 1: MD5; 2: SHA1. Filled with 0 by default.
+        optional string openudid = 6; //Openudid, not encrypted by default.
+        optional uint32 carrier = 7; //Carrier ID. 0: WIFI; 70120: China Mobile; 70121: China Telecom; 70123: China Unicom (different from the OpenRTB Definition).Unavailable at present.
+        optional string make = 8; //Device brand, such as Apple, unavailable at present.
+        optional string model = 9; //Device model, such as iPhone, unavailable at present.
+        optional string os = 10; //Device OS, such as iOS.
+        optional string Osv = 11; //Device OS version, such as 3.1.2, unavailable at present.
+        optional uint32 Js = 12; //1: support JavaScript; 0: not support;unavailable at present.
+        optional uint32 connectiontype = 13; //Connection type. 0: unknown; 1: Ethernet; 2: WIFI; 3: mobile data – unknown; 4: 2G; 5: 3G; 6: 4G; unavailable at present.
+        optional uint32 devicetype = 14; //1: mobile phone/pad; 2: PC; 3: TV; unavailable at present.
+        optional string mac = 15; //[V4.0]Encrypted mac. MD5(mac) toUpperCase. Perform the format conversion before encryption. (Remove the separator “:”-> to uppercase)
+        optional string imei = 16; //[V4.0]Encrypted imei.MD5(imei) toUpperCase. Encrypt the original value.
+        optional string androidid = 17; //[V4.0]Encrypted androidid. MD5(androidid) toUpperCase. Encrypt the original value.
+    }
+    message User {
+        optional string id = 1; //tuid,tencent user id
+        optional string buyerid=2; //dsp user id matched with cookie mapping.
+        optional string gender = 3; //(Not in use at present)M: male; F: female; NULL: unknown.
+        optional uint32 age = 4; //(Not in use at present)0: 0-20; 1:21-30; 2: 31-40; 3: 41-50; 4: 51-60; 5: 60+.
+    }
+    optional string id = 1; //bid request id, one bid request may contains multiple impressions.
+    optional uint32 at = 2; //Auction type. 1: first pricing; 2: second pricing. Only type 2 is supported at present.
+    optional Site site = 3; //Media site information.
+    optional Device device = 4; //Device information.
+    optional User user = 5; //User information.
+    repeated Impression impression = 6; //Opportunity of ad impression. One request can contain multiple ad spaces. Each ad space represents one opportunity of ad impression.
+    optional string DEPRECATED_inner_info = 7; //Ignore it. Useless field.
+    message App {
+        optional string id = 1; //App ID. It is appeared as the package name on Android, such as com.rovio.angrybirds; appeared as AppStore ID on iOS, such as 327860; unavailable at present.
+        optional string name = 2; //App name.
+        optional string domain = 3; //App domain, unavailable at present.
+        repeated string cat = 4; //Category information of the app in AppStore, Google Play or other app market, unavailable at present.
+        repeated string sectioncat = 5; //Subcategory, unavailable at present.
+    }
+optional App app = 8; //Mobile app information.
+}
+
+message Response {
+    message Bid {
+        optional string id = 1; //response id per impression(Impression ID identified by DSP).
+        optional string impid = 2; //Required. Identify the impression ID. (set to corresponding Request.Impression.id)
+        optional float price = 3; //Bid price, unit: fen/CPM.
+        optional string adid = 4; //Ad ID or order ID, in common with the dsp_order_id in material uploading API.
+        optional string nurl = 5; //It is not recommended to use this field for now. Win notice url.
+        optional string adm = 6; //Expired, not in use at present.
+        optional string ext = 7; //Replace the macro ${EXT2} in the impression & click tracking. (base64 encoded preferred，no more than 512 bytes)
+        optional string adm_para = 8; //String of the parameter list that is passed to adm.Such as http://creative.dsp.mediav.com/aa.html?cid=xxxx&pid=xxxx. This field will be filled in the part of xxxx.
+        optional string deprecated_respinfo = 9; //Ignore it. Useless field.
+        optional string ext2 = 10; //Replace the macro ${EXT2} in the impression tracking. (base64 encoded preferred，no more than 512 bytes)
+    }
+    message SeatBid {
+    repeated Bid bid = 1; //Corresponds to the impression in request. Multiple or a part of the impressions can be respondedwith the participation of bidding.
+    }
+    optional string id = 1; //bid request id, be equal to ID Request.id. Required.
+    optional string bidid = 2; //bid response id, not be actually used.
+    repeated SeatBid seatbid = 3; //Return the bidding information. Currently only Setting the result in seatbid[0] is supported.
+}

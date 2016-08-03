@@ -20,6 +20,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <version>1.0.0</version>
     </dependency>
     <dependency>
+        <groupId>com.kritter.ex_int</groupId>
+        <artifactId>ex_int_openrtb_2_2</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>org.codehaus.jackson</groupId>
         <artifactId>jackson-mapper-asl</artifactId>
         <version>1.9.13</version>

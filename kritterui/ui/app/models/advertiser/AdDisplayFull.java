@@ -43,6 +43,12 @@ public class AdDisplayFull extends AdDisplay{
     public List<String> getTier2Categories(){ 
         return MetadataAPI.getValues(MetadataType.CATEGORY_BY_ID, ad.getCategories_tier_2_list());
     }
+	public List<String> getMMATier1(){ 
+		return MetadataAPI.getValues(MetadataType.MMA_INDUSTRY_BY_IDS, ad.getMma_tier_1_list());
+	}
+    public List<String> getMMATier2(){ 
+        return MetadataAPI.getValues(MetadataType.MMA_INDUSTRY_BY_IDS, ad.getMma_tier_2_list());
+    }
 	
 	public String getMarketplace() {
 		return ad.getMarketplace_id().name();
@@ -65,7 +71,10 @@ public class AdDisplayFull extends AdDisplay{
 	public String Bidtype() {
         return BidType.getEnum(ad.getBidtype()).getName();
     }
-	public String getExternaltracker(){
-	    return ad.getExternal_tracker();
+	public String getExternalimptracker(){
+	    return ad.getExternal_imp_tracker();
+	}
+	public String getExternalclicktracker(){
+	    return ad.getExternal_click_tracker();
 	}
 }

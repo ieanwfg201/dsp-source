@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -7,6 +8,7 @@ import com.kritter.common.site.entity.Site;
 import com.kritter.core.workflow.Context;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.SetUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -17,16 +19,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AdCategoryTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.SITE_AD_CATEGORY_INC_EXC;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
+    private String adNoFillReasonMapKey;
 
-    public AdCategoryTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache) {
+    public AdCategoryTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
+                                      String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -81,6 +88,8 @@ public class AdCategoryTargetingMatcher implements TargetingMatcher {
                 if(null != result && result.size() > 0)
                 {
                     ReqLog.debugWithDebug(logger, request, "Site {} ,specifies exclusion category list, failing adId: {}", site.getSiteGuid(),adEntity.getAdGuid());
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            this.adNoFillReasonMapKey, context);
                     continue;
                 }
                 else
@@ -101,12 +110,15 @@ public class AdCategoryTargetingMatcher implements TargetingMatcher {
                 {
                     
                     ReqLog.requestDebug(request, "Site: "+site.getSiteGuid()+" ,specifies inclusion category list, failing adId: "+adEntity.getAdGuid());
+
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                this.adNoFillReasonMapKey, context);
                 }
             }
         }
 
         if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.SITE_AD_CATEGORY_INC_EXC);
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

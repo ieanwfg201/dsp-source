@@ -9,10 +9,10 @@ import java.util.Map;
 public enum OpenRTBVersion
 {
 
-    VERSION_2_0(0,"openrtb-version-2.0"),
-    VERSION_2_1(1,"openrtb-version-2.1"),
-    VERSION_2_2(2,"openrtb-version-2.2"),
-    VERSION_2_3(3,"openrtb-version-2.3");
+    VERSION_2_0(1,"openrtb-version-2.0"),
+    VERSION_2_1(2,"openrtb-version-2.1"),
+    VERSION_2_2(3,"openrtb-version-2.2"),
+    VERSION_2_3(4,"openrtb-version-2.3");
 
     private int code;
     private String name;

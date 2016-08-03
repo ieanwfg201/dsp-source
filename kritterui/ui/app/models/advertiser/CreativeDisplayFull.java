@@ -2,14 +2,13 @@ package models.advertiser;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import services.DataAPI;
 import services.MetadataAPI;
-
 import com.kritter.api.entity.creative_banner.Creative_banner;
 import com.kritter.api.entity.creative_container.Creative_container;
 import com.kritter.constants.APIFrameworks;
 import com.kritter.constants.ContentDeliveryMethods;
+import com.kritter.constants.CreativeMacroQuote;
 import com.kritter.constants.MetadataType;
 import com.kritter.constants.VASTCompanionTypes;
 import com.kritter.constants.VideoBidResponseProtocols;
@@ -20,6 +19,7 @@ import com.kritter.constants.VideoMimeTypes;
 import com.kritter.constants.VideoPlaybackMethods;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
+import com.kritter.entity.video_props.VideoInfo;
 
 
 public class CreativeDisplayFull extends CreativeDisplay{
@@ -39,6 +39,18 @@ public class CreativeDisplayFull extends CreativeDisplay{
 			}
 		} 
 		return bannerList;
+	}
+
+	public List<DirectvideoDisplay> getDirectvideodisplay(){
+		String ids = cc.getDirect_videos();
+		List<DirectvideoDisplay> viList = new ArrayList<DirectvideoDisplay>();
+		if(ids != null && ids != ""){ 
+			List<VideoInfo> cbList = DataAPI.getDirectVideoList(ids.replaceAll("\\[", "]").replaceAll("]", ""));
+			for (VideoInfo video_info : cbList) {
+				viList.add(new DirectvideoDisplay(video_info));
+			}
+		} 
+		return viList;
 	}
 
 	public List<NativeIconDisplay> getNativeIcons(){
@@ -161,6 +173,16 @@ public class CreativeDisplayFull extends CreativeDisplay{
     }
     public String getCompanionType(){
         return VASTCompanionTypes.getEnum(cc.getCompaniontype()).getName();
+    }
+    public List<String> getCreativemacro() {
+        return MetadataAPI.getCreativeMacroByName(cc.getCreative_macro());
+    }
+    public String getCreativemacroquote(){
+        CreativeMacroQuote c = CreativeMacroQuote.getEnum(cc.getCreative_macro_quote());
+        if(c != null){
+            return c.getName();
+        }
+        return "";
     }
 /**
                         @components.formElements.selectlist2(creativeForm("companiontype"), "",services.MetadataAPI.companiontype() )

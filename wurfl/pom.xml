@@ -50,10 +50,10 @@
                     <executable>mvn</executable>
                     <arguments>
                         <argument>install:install-file</argument>
-                        <argument>-Dfile=${basedir}/../external_libraries/wurfl/1.5.2.1/wurfl-1.5.2.1.jar</argument>
+                        <argument>-Dfile=${basedir}/../external_libraries/wurfl/1.7.0.0/wurfl-1.7.0.0.jar</argument>
                         <argument>-DgroupId=net.sourceforge.wurfl</argument>
                         <argument>-DartifactId=wurfl</argument>
-                        <argument>-Dversion=1.5.2.1</argument>
+                        <argument>-Dversion=1.7.0.0</argument>
                         <argument>-Dpackaging=jar</argument>
                     </arguments>
                 </configuration>

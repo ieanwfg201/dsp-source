@@ -4,6 +4,7 @@ import com.kritter.abstraction.cache.interfaces.ISecondaryIndex;
 import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.Set;
 /**
  * This class keeps countryUserInterfaceId for a country.
  */
+@ToString
 public class CountryUserInterfaceId implements IUpdatableEntity<Integer>
 {
     @Getter
@@ -22,6 +24,7 @@ public class CountryUserInterfaceId implements IUpdatableEntity<Integer>
     private Set<Integer> countryIdSet;
     @Getter
     private Timestamp modifiedOn;
+    private static final String SEPARATOR = ":";
 
     public CountryUserInterfaceId(String countryCode,
                                   Integer countryUserInterfaceId,
@@ -133,5 +136,17 @@ public class CountryUserInterfaceId implements IUpdatableEntity<Integer>
                 return dataSourceCountryIdSet;
             }
         };
+    }
+
+    public String toString()
+    {
+        StringBuffer signature = new StringBuffer();
+
+        signature.append(countryCode);
+        signature.append(SEPARATOR);
+        signature.append(countryUserInterfaceId);
+        signature.append(SEPARATOR);
+        signature.append(countryIdSet);
+        return signature.toString();
     }
 }

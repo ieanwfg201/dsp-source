@@ -162,8 +162,7 @@ public class CreativeSlotSizeCache
             }
             catch (RefreshException re)
             {
-                cacheLogger.error("RefreshException while loading creative slot data inside " +
-                                  "CreativeSlotSizeReloadTimerTask in the class CreativeSlotSizeCache",re);
+                cacheLogger.error("RefreshException while loading creative slot data inside CreativeSlotSizeReloadTimerTask in the class CreativeSlotSizeCache",re);
             }
         }
     }

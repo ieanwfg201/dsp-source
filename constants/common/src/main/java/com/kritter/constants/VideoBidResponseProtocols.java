@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum VideoBidResponseProtocols {
-
+	
+	NONVAST(-97,"NONVAST"),
     //VAST_1_0(1,"VAST 1.0"),
-    //VAST_2_0(2,"VAST 2.0"),
-    //VAST_3_0(3,"VAST 3.0"),
+    VAST_2_0(2,"VAST 2.0"),
+    VAST_3_0(3,"VAST 3.0"),
     //VAST_1_0_WRAPPER(4,"VAST 1.0 Wrapper"),
     VAST_2_0_WRAPPER(5,"VAST 2.0 Wrapper"),
     VAST_3_0_WRAPPER(6,"VAST 3.0 Wrapper");;

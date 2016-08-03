@@ -1,12 +1,14 @@
 package com.kritter.postimpression.macros;
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.kritter.constants.ConnectionType;
 import com.kritter.constants.DeviceType;
 import com.kritter.postimpression.entity.Request;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ConversionUrlData;
+import com.kritter.utils.common.url.URLField;
 import lombok.Getter;
 
 public enum Macros {
@@ -78,6 +80,123 @@ public enum Macros {
         @Override
         public String getMacroValue(Request request) {
             return request.getDetectedSite().getSiteGuid();
+        }
+    },
+    BID_FLOOR("BID_FLOOR"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.BID_FLOOR.getCode());
+                if(null != urlField)
+                    return String.valueOf((Float)(urlField.getUrlFieldProperties().getFieldValue()));
+                return null;
+            }
+            return null;
+        }
+    },
+    EXTERNAL_SITE_ORIGINAL_ID("EXTERNAL_SITE_ORIGINAL_ID"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.EXTERNAL_SITE_ID.getCode());
+                if(null != urlField)
+                    return (String)urlField.getUrlFieldProperties().getFieldValue();
+                return null;
+            }
+            return null;
+        }
+    },
+    EXCHANGE_USER_ID("EXCHANGE_USER_ID"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.EXCHANGE_USER_ID.getCode());
+                if(null != urlField)
+                    return (String)urlField.getUrlFieldProperties().getFieldValue();
+                return null;
+            }
+            return null;
+        }
+    },
+    KRITTER_USER_ID("KRITTER_USER_ID"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.KRITTER_USER_ID.getCode());
+                if(null != urlField)
+                    return (String)urlField.getUrlFieldProperties().getFieldValue();
+                return null;
+            }
+            return null;
+        }
+    },
+    ID_FOR_ADVERTISER("ID_FOR_ADVERTISER"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.ID_FOR_ADVERTISER.getCode());
+                if(null != urlField)
+                    return (String)urlField.getUrlFieldProperties().getFieldValue();
+                return null;
+            }
+            return null;
+        }
+    },
+    DEVICE_PLATFORM_ID_SHA1("DEVICE_PLATFORM_ID_SHA1"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.DEVICE_PLATFORM_ID_SHA1.getCode());
+                if(null != urlField)
+                    return (String)urlField.getUrlFieldProperties().getFieldValue();
+                return null;
+            }
+            return null;
+        }
+    },
+    DEVICE_PLATFORM_ID_MD5("DEVICE_PLATFORM_ID_MD5"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.DEVICE_PLATFORM_ID_MD5.getCode());
+                if(null != urlField)
+                    return (String)urlField.getUrlFieldProperties().getFieldValue();
+                return null;
+            }
+            return null;
+        }
+    },
+    MAC_ADDRESS_SHA1("MAC_ADDRESS_SHA1"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.MAC_ADDRESS_SHA1.getCode());
+                if(null != urlField)
+                    return (String)urlField.getUrlFieldProperties().getFieldValue();
+                return null;
+            }
+            return null;
+        }
+    },
+    MAC_ADDRESS_MD5("MAC_ADDRESS_MD5"){
+        @Override
+        public String getMacroValue(Request request) {
+            Map<Short,URLField> urlFieldMap = request.getUrlFieldsFromAdservingMap();
+            if(null != urlFieldMap) {
+                URLField urlField = urlFieldMap.get(URLField.MAC_ADDRESS_MD5.getCode());
+                if(null != urlField)
+                    return (String)urlField.getUrlFieldProperties().getFieldValue();
+                return null;
+            }
+            return null;
         }
     };
 

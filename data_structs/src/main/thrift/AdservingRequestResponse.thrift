@@ -107,6 +107,21 @@ CREATIVE_NOT_NATIVE = 79,        /*Creative Not Native*/
 NATIVE_TITLE_LEN = 80,           /*Native Title Length Mismatch*/
 NATIVE_IMGSIZE = 81,             /*Native Image Size Mismatch*/
 NATIVE_DESC_LEN = 82,            /*Native DESC Length Mismatch*/
+DEVICE_TYPE = 83,                /*Device type mismatch*/
+FREQUENCY_CAP = 84,              /*Frequency cap reached*/
+CREATIVE_FORMAT_ERROR = 85,      /*Creative format neither banner nor richmedia or not found*/
+NO_ADS_COUNTRY_CARRIER_OS_BRAND = 86,  /*Either of country or carrier or os or brand matching not found. To be used for dumping the no fill reason for the ads in db.*/
+CAMPAIGN_NOT_FOUND = 87,         /*Campaign not found*/
+RETARGETING = 88,                /*Retargeting filter applied*/
+LOST_TO_COMPETITION = 89,        /*Lost to other competing ads due to not having best ECPM.*/
+NO_ADS_STATE = 90,               /*The state targeting for ad(s) failed or state could not be detected and ad(s) were targeting states*/
+NO_ADS_CITY = 91,                /*The city targeting for ad(s) failed or city could not be detected and ad(s) were targeting cities*/
+MMA_MISMATCH = 92,               /*MMA Taregting or filter did not match*/ 
+MMA_IND_FILTER = 93,             /*MMA industry filter fail*/ 
+MMA_CAT_TARGET = 94,             /*MMA cat targeting fail*/ 
+ADPOSITION_MISMATCH = 95,        /*Ad Position Targeting fail*/ 
+CHANNEL_MISMATCH = 96,           /*Channel Targeting fail*/ 
+ 
 }
 
 /**
@@ -208,4 +223,12 @@ struct AdservingRequestResponse {
 48: optional i16 deviceType,
 49: optional list<i16> bcat,
 50: optional list<i16> battr,
+51: optional string ds_country, /*The name of the datasource used for country detection,example: maxmind,ip2location or some personal client's database.*/
+52: optional string ds_isp,     /*The name of the datasource used for carrier detection,example: maxmind,ip2location or some personal client's database.*/
+53: optional string ds_state,   /*The name of the datasource used for state detection,example: maxmind,ip2location or some personal client's database.*/
+54: optional string ds_city,    /*The name of the datasource used for city detection,example: maxmind,ip2location or some personal client's database.*/
+55: optional i32 stateId,       /*state id(ui_targeting_state) of the end user.*/
+56: optional i32 cityId,        /*city id(ui_targeting_city) of the end user.*/
+57: optional i32 adpositionId,  /*ad position ui id*/
+58: optional i32 channelId,     /*channel internal id*/
 }

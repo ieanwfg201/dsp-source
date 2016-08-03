@@ -142,9 +142,7 @@ public class ExchangeWinNoticeUrlReader implements PostImpressionEventUrlReader
             logger.error("WinBidPrice value not correct inside ExchangeWinNoticeUrlReader ",nfe);
         }
 
-        logger.debug("Setting Winbidprice:{}, bidpriceToExchange:{}, auctionId:{}," +
-                     "auctionbidid:{}, auctionimpid:{}",winBidPriceValue,bidPriceValue,
-                     auctionId,auctionBid,auctionImpressionId);
+        logger.debug("Setting Winbidprice:{}, bidpriceToExchange:{}, auctionId:{}, auctionbidid:{}, auctionimpid:{}",winBidPriceValue,bidPriceValue, auctionId,auctionBid,auctionImpressionId);
 
         postImpressionRequest.setWinBidPriceFromExchange(winBidPriceValue);
         postImpressionRequest.setBidPriceToExchange(bidPriceValue);

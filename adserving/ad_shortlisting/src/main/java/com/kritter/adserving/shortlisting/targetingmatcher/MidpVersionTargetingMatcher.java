@@ -5,7 +5,7 @@ import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
 import com.kritter.constants.MidpValue;
 import com.kritter.core.workflow.Context;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;

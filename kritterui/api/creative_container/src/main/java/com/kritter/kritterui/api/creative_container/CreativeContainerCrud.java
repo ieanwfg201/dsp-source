@@ -8,13 +8,10 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.kritter.api.entity.creative_container.CreativeContainerList;
 import com.kritter.api.entity.creative_container.CreativeContainerListEntity;
 import com.kritter.api.entity.creative_container.Creative_container;
@@ -158,6 +155,7 @@ public class CreativeContainerCrud {
                               sbuff.append("]");
                               cc.setTrackingStr(sbuff.toString());
                           }
+                          cc.setDirect_videos(arrayToString(videoProps.getVideo_info()));
                       }
                   }catch(Exception e){
                       LOG.error(e.getMessage(),e);
@@ -167,6 +165,25 @@ public class CreativeContainerCrud {
         }
     }
 
+    private static String arrayToString(String[] str){
+    	StringBuffer sbuff = new StringBuffer("[");
+    	boolean isFirst = true;
+    	if(str!=null&&str.length>0){
+    		for(String strElement:str){
+    			String strElememtTrim = strElement.trim();
+    			if(!"".equals(strElememtTrim)){
+    				if(isFirst){
+    					isFirst = false;
+    				}else{
+    					sbuff.append(",");
+    				}
+    				sbuff.append(strElememtTrim);
+    			}
+    		}
+    	}
+    	sbuff.append("]");
+    	return sbuff.toString();
+    }
     private static List<Integer> stringtolist(String str){
         try{
             if(str==null){
@@ -184,6 +201,33 @@ public class CreativeContainerCrud {
                     ll.add(Integer.parseInt(s));
                 }
                 return ll;
+            }
+            return null;
+        }catch(Exception e){
+            return null;
+        }
+    }
+    private static String[] stringtoarray(String str){
+        try{
+            if(str==null){
+                return null;
+            }
+            String strTrim = str.trim();
+            if("".equals(strTrim)){
+                return null;
+            }
+            String strNew = strTrim.replaceAll("\\[", "").replaceAll("]", "");
+            String strSplit[] = strNew.split(",");
+            if(strSplit.length>0){
+                List<String> ll = new LinkedList<String>();
+                for(String s:strSplit){
+                	if(!"".equals(s)){
+                		ll.add(s);
+                	}
+                }
+                String[] array = new String[ll.size()];
+                ll.toArray(array);
+                return array;
             }
             return null;
         }catch(Exception e){
@@ -212,6 +256,8 @@ public class CreativeContainerCrud {
         if(l != null){
             vp.setTracking(l.toArray(new Integer[l.size()]));
         }
+        vp.setVideo_info(stringtoarray(cc.getDirect_videos()));
+        
         return vp.toJson().toString();
     }
     public static String generateCreativeMacros(Creative_container cc){

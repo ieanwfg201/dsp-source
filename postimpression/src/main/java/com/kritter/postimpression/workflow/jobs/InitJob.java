@@ -7,10 +7,14 @@ import com.kritter.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.utils.PostImpressionUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
+import com.kritter.utils.common.url.URLField;
+import com.kritter.utils.common.url.URLFieldFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * This class represents initial job in post impression workflow.
@@ -152,6 +156,16 @@ public class InitJob implements Job{
                         POSTIMPRESSION_EVENT_URL_PREFIX.WIN_API_NOTIFICATION);
             }
             /***********************************************************************************/
+            /************************USR for Cookie Drop and Retargeting Segment*******************************************/
+            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+                    USR.getUrlIdentifierPrefix()))
+            {
+                logger.debug("Inside InitJob, Event url is usr url for cookie drop and segment .");
+                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                        POSTIMPRESSION_EVENT_URL_PREFIX.USR);
+            }
+            /***********************************************************************************/
+
             /************************INT_EXCHANGE_WIN***********************************************/
             if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
                     INT_EXCHANGE_WIN.getUrlIdentifierPrefix()))
@@ -173,6 +187,38 @@ public class InitJob implements Job{
                         POSTIMPRESSION_EVENT_URL_PREFIX.COOKIE_BASED_CONV_JS);
             }
             /***********************************************************************************/
+
+            /************************Tracking event*********************************************/
+            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+                    TEVENT.getUrlIdentifierPrefix()))
+            {
+                logger.debug("Inside InitJob, Event url is Tevent.");
+
+                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                        POSTIMPRESSION_EVENT_URL_PREFIX.TEVENT);
+            }
+            /***********************************************************************************/
+
+            /************************BTracking event********************************************/
+            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+                    BEVENT.getUrlIdentifierPrefix()))
+            {
+                logger.debug("Inside InitJob, Event url is Bevent.");
+
+                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                        POSTIMPRESSION_EVENT_URL_PREFIX.BEVENT);
+            }
+            /***********************************************************************************/
+            /************************NOFRDP event********************************************/
+            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+                    NOFRDP.getUrlIdentifierPrefix()))
+            {
+                logger.debug("Inside InitJob, Event url is NOFRDP.");
+
+                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                        POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP);
+            }
+            /***********************************************************************************/
         }
         catch (Exception e)
         {
@@ -184,5 +230,31 @@ public class InitJob implements Job{
         }
         //finally set the request object to context.
         context.setValue(this.postImpressionRequestObjectKey,request);
+
+        /*Set to request object the information from adserving application.*/
+        String adservingInformation =
+                    httpServletRequest.getParameter(ApplicationGeneralUtils.ADSERVING_POSTIMPRESSION_INFO_PARAM_NAME);
+
+        logger.debug("Adserving info received : {} ", adservingInformation);
+        if(null != adservingInformation)
+        {
+            URLFieldFactory urlFieldFactory = new URLFieldFactory(adservingInformation);
+
+            Map<Short,URLField> urlFieldFromAdservingMap = null;
+
+            try
+            {
+                urlFieldFromAdservingMap = urlFieldFactory.decodeFields();
+                if(null != urlFieldFromAdservingMap)
+                {
+                    logger.debug("URLField map set for adserving info");
+                    request.setUrlFieldsFromAdservingMap(urlFieldFromAdservingMap);
+                }
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                logger.error("UnsupportedEncodingException inside InitJob ",e);
+            }
+        }
     }
 }

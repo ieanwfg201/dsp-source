@@ -1,5 +1,6 @@
 import traceback
 from time import gmtime, strftime
+import sys
 
 from bidder.traffic_forecasting.conf_utils.conf_reader import *
 from bidder.traffic_forecasting.core.algorithm.exponential_smoothing import *
@@ -90,9 +91,7 @@ if __name__ == '__main__' :
             cursor.execute(updateQuery)
         dbConnection.commit()
     except Exception, e:
-        traceback.print_exc()
-        ex_type, ex, tb = sys.exc_info()
-        appLogger.info('Run failed at %s %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), e)
+        appLogger.info('Run failed at %s %s', strftime("%Y-%m-%d %H:%M:%S", gmtime()), traceback.format_exc())
         sys.exit(1)
     finally :
         if cursor is not None :

@@ -18,7 +18,10 @@ public class WinEntity {
     @Getter@Setter
     private float win_price = 0.0001f;
     @Getter@Setter
-    private BidResponseEntity winnerBidResponse = null;
+    private BidResponseEntity winnerBidResponse2_3 = null;
+    @Getter@Setter
+    private com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity winnerBidResponse2_2 = null;
+
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);

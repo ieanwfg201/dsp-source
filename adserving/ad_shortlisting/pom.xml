@@ -88,6 +88,26 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>video_info_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>mma_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>adposition_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>channel_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.thrift</groupId>
             <artifactId>structs</artifactId>
             <version>1.0.0</version>

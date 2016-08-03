@@ -1,5 +1,8 @@
 package com.kritter.adserving.shortlisting.core;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.utils.common.AdNoFillStatsUtils;
+import com.kritter.core.workflow.Context;
 import com.kritter.entity.native_props.NativeProps;
 import com.kritter.entity.native_props.demand.NativeDemandProps;
 import com.kritter.entity.native_props.demand.NativeIcon;
@@ -8,7 +11,6 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.reqres.log.ReqLog;
-import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.req.Title;
 import com.kritter.common.caches.account.AccountCache;
 import com.kritter.common.caches.account.entity.AccountEntity;
 import com.kritter.common.caches.native_icon_cache.NativeIconCache;
@@ -53,7 +55,8 @@ public class CreativeTargetingMatcher
     private NativeIconCache nativeIconCache;
     private NativeScreenshotCache nativeScreenshotCache;
     private AccountCache accountCache;
-    
+    private String adNoFillReasonMapKey;
+
     public CreativeTargetingMatcher(String loggerName,
                                     CreativeBannerCache creativeBannerCache,
                                     CreativeCache creativeCache,
@@ -62,7 +65,9 @@ public class CreativeTargetingMatcher
                                     CreativeSlotSizeCache creativeSlotSizeCache,
                                     NativeIconCache nativeIconCache,
                                     NativeScreenshotCache nativeScreenshotCache,
-                                    AccountCache accountCache)
+                                    AccountCache accountCache,
+                                    String adNoFillReasonMapKey
+    )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.creativeBannerCache = creativeBannerCache;
@@ -74,6 +79,7 @@ public class CreativeTargetingMatcher
         this.nativeIconCache = nativeIconCache;
         this.nativeScreenshotCache = nativeScreenshotCache;
         this.accountCache = accountCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
 
@@ -89,7 +95,8 @@ public class CreativeTargetingMatcher
     public void processAdIdsForCreativeFiltering(
                                                  Request request,
                                                  Response response,
-                                                 Site site
+                                                 Site site,
+                                                 Context context
                                                 )
     {
         if(null==response.getResponseAdInfo() || response.getResponseAdInfo().size() == 0)
@@ -157,8 +164,13 @@ public class CreativeTargetingMatcher
 
             Creative creative = creativeCache.query(adEntity.getCreativeId());
 
+            int adId = adEntity.getAdIncId();
+
             if(null == creative)
             {
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                        NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey, context);
+
                 logger.error("Creative null in cache,FATAL error!!! for creative id: {}" , adEntity.getCreativeId());
                 continue;
             }
@@ -186,6 +198,9 @@ public class CreativeTargetingMatcher
                     )
               )
             {
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                        NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+
                 //the creative is not appropriate for the requesting site.
                 ReqLog.debugWithDebug(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the siteid: {}",
                              adEntity.getCreativeId(), site.getId());
@@ -204,6 +219,7 @@ public class CreativeTargetingMatcher
             if(demandTypeCode==DemandType.DSP.getCode() && demandPreference != null && 
                     (demandPreference==DemandPreference.OnlyDSP || demandPreference==DemandPreference.DirectThenDSP)){
                 responseAdInfoSetForUse.add(responseAdInfo);
+                creativeFoundForRequestedSlot = true;
                 continue;
             }
 
@@ -223,6 +239,10 @@ public class CreativeTargetingMatcher
                     CreativeBanner creativeBanner = creativeBannerCache.query(bannerId);
                     if(null == creativeBanner)
                     {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey,
+                                context);
+
                         logger.error("Creative banner is null(not found in cache) for banner id: " + bannerId);
                         break;
                     }
@@ -245,6 +265,10 @@ public class CreativeTargetingMatcher
                     CreativeBanner creativeBanner = creativeBannerCache.query(bannerId);
                     if(null == creativeBanner)
                     {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey,
+                                context);
+
                         logger.error("Creative banner is null(not found in cache) for banner id: " + bannerId);
                         continue;
                     }
@@ -253,6 +277,10 @@ public class CreativeTargetingMatcher
 
                     if(null == creativeSlot)
                     {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey,
+                                context);
+
                         logger.error("Creative slot is null(not found in cache) for slot id: " +
                                       creativeBanner.getSlotId());
                         continue;
@@ -280,6 +308,9 @@ public class CreativeTargetingMatcher
 
                 if(!sizeCheckForBanner)
                 {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_SIZE.getValue(), this.adNoFillReasonMapKey, context);
+
                     ReqLog.errorWithDebug(logger, request, "We could not find any creative supporting the requesting sizes of (width,height) combinations: {}  for/by creativeid: {}" +
                             fetchRequestedWidthAndHeightPairForDebug(requestedWidths,requestedHeights) , creative.getId());
                 }
@@ -287,16 +318,25 @@ public class CreativeTargetingMatcher
             else if(creative.getCreativeFormat().equals(CreativeFormat.Native)) {
                 ReqLog.debugWithDebug(logger, request, "checking for native creative id " , creative.getId());
                 if(!site.isNative()){
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+
                     logger.debug("Site is not native: {} ", site.getSiteGuid());
                     continue;
                 }
                 NativeProps nativeSiteProps = site.getNativeProps();
                 if(nativeSiteProps == null){
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+
                     logger.debug("Site's native props are null, site guid: {} ", site.getSiteGuid());
                     continue;
                 }
                 NativeDemandProps nativeDemandProps = creative.getNative_demand_props();
                 if(nativeDemandProps == null){
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey, context);
+
                     logger.debug("Native Demand props is null for creative id: {} ", creative.getId());
                     continue;
                 }
@@ -337,6 +377,9 @@ public class CreativeTargetingMatcher
                     iconCheckPassed = true;
                 }
                 if(!iconCheckPassed){
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey, context);
+
                     logger.debug("Icon check failed for creative id : {} " , creative.getId());
                     continue;
                 }
@@ -387,8 +430,19 @@ public class CreativeTargetingMatcher
                     isRichmediaAllowed = false;
 
                 //if richmedia allowed, check if handset is compatible with javascript
-                if(isRichmediaAllowed && request.getHandsetMasterData().isDeviceJavascriptCompatible())
+                if(request.getHandsetMasterData().isDeviceJavascriptCompatible())
                 {
+                    // Rich media not allowed, skip this ad.
+                    if(!isRichmediaAllowed) {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+
+                        String debugMessage = "Ad id : %d is rich media but site id : %d does not allow it. Failing.";
+                        request.addDebugMessageForTestRequest(String.format(debugMessage, adId, site.getSiteIncId()));
+                        continue;
+                    }
+
+                    // Rich media allowed on site
                     ReqLog.debugWithDebug(logger, request, "Site allows richmedia ads and handset is javascript compatible, allowing ad: {} ",
                                  adEntity.getAdGuid());
                     responseAdInfo.setRichMediaAdIsCompatibleForAdserving(true);
@@ -408,12 +462,12 @@ public class CreativeTargetingMatcher
         response.setResponseAdInfo(responseAdInfoSetForUse);
 
         if(!richMediaAdFound && !creativeAttributesMatchAtleastOnce && null == request.getNoFillReason())
-            request.setNoFillReason(Request.NO_FILL_REASON.CREATIVE_ATTR);
+            request.setNoFillReason(NoFillReason.CREATIVE_ATTR);
 
         if(!richMediaAdFound && !creativeFoundForRequestedSlot && null == request.getNoFillReason())
-            request.setNoFillReason(Request.NO_FILL_REASON.CREATIVE_SIZE);
+            request.setNoFillReason(NoFillReason.CREATIVE_SIZE);
         if(!site.isNative() && !creativeFoundForRequestedSlot){
-            request.setNoFillReason(Request.NO_FILL_REASON.NATIVE_MISMATCH);
+            request.setNoFillReason(NoFillReason.NATIVE_MISMATCH);
         }
     }
 

@@ -18,6 +18,10 @@
         @if("API" == display.getDemandtype()){
             @components.fielddisplays.intdisplay("QPS", display.getAccount().getQps()))
         }
+        @if("DSP" == display.getDemandtype()){
+            @components.fielddisplays.intdisplay("QPS", display.getAccount().getQps())
+            @components.fielddisplays.textdisplay("Demand Url", display.getDemandUrl())
+        }
         </div>
 }
 

@@ -78,7 +78,7 @@ post_imp_decoded_data = FOREACH post_imp_decoded GENERATE PostImpThriftBytesToTu
 
 
 post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE PostImpressionRequestResponse.status as terminationReason, 
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', 'UTC') as time, 
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', '$tz') as time, 
     PostImpressionRequestResponse.siteId as siteId, PostImpressionRequestResponse.deviceId as deviceId, 
     PostImpressionRequestResponse.countryId as countryId, PostImpressionRequestResponse.adId as adId, 
     PostImpressionRequestResponse.exchangeId as exchangeId, 
@@ -93,7 +93,7 @@ post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE PostImpressionReques
     PostImpressionRequestResponse.deviceManufacturerId as deviceManufacturerId, PostImpressionRequestResponse.deviceOsId as deviceOsId, 
     PostImpressionRequestResponse.selectedSiteCategoryId as selectedSiteCategoryId, PostImpressionRequestResponse.eventTime as epochTime,
     PostImpressionRequestResponse.bidderModelId as bidderModelId, '' as nofillReason,
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStrXMin(PostImpressionRequestResponse.eventTime * 1000,'UTC','yyyy-MM-dd-HH-mm', '30') as time30,
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStrXMin(PostImpressionRequestResponse.eventTime * 1000,'$tz','yyyy-MM-dd-HH-mm', '30') as time30,
     PostImpressionRequestResponse.campaignId as campaignId, PostImpressionRequestResponse.bidprice_to_exchange as bidprice_to_exchange,
     PostImpressionRequestResponse.deviceBrowserId as browserId, com.kritter.kumbaya.libraries.pigudf.DecodeReturnDouble(PostImpressionRequestResponse.event, 'CONVERSION', PostImpressionRequestResponse.cpa_goal, '0.0') as cpa_goal, PostImpressionRequestResponse.supply_source_type as supply_source_type,
     PostImpressionRequestResponse.ext_supply_attr_internal_id as ext_supply_attr_internal_id,

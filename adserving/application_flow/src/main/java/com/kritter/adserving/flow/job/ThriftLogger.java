@@ -1,10 +1,10 @@
 package com.kritter.adserving.flow.job;
 
+import com.kritter.common.caches.ad_stats.cache.AdStatsCache;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.adserving.thrift.struct.*;
-import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
 import com.kritter.constants.SITE_PASSBACK_STATUS;
 import com.kritter.core.workflow.Context;
@@ -18,6 +18,7 @@ import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.cache.CampaignCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Campaign;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
@@ -48,6 +49,8 @@ public class ThriftLogger implements Job {
     private Logger bidRequestLogger;
     private ReqLoggingCache reqLoggingCache;
     private static final String BID_REQ_DELIM_FOR_NOFILL = "|";
+    private AdStatsCache adStatsCache;
+    private String adNoFillReasonMapKey;
 
     public ThriftLogger(String name,
                         String applicationLoggerName,
@@ -60,7 +63,9 @@ public class ThriftLogger implements Job {
                         String xForwardedForHeaderName,
                         String remoteAddressHeaderName,
                         String bidRequestLoggerName,
-                        ReqLoggingCache reqLoggingCache)
+                        ReqLoggingCache reqLoggingCache,
+                        AdStatsCache adStatsCache,
+                        String adNoFillReasonMapKey)
     {
         this.name = name;
         this.applicationLogger = LoggerFactory.getLogger(applicationLoggerName);
@@ -74,6 +79,8 @@ public class ThriftLogger implements Job {
         this.remoteAddressHeaderName = remoteAddressHeaderName;
         this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
         this.reqLoggingCache = reqLoggingCache;
+        this.adStatsCache = adStatsCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -96,7 +103,8 @@ public class ThriftLogger implements Job {
 
             if(null == request || request.isRequestForSystemDebugging())
             {
-                this.applicationLogger.error("Aborting!!!, Request object is null inside Thrift logger of adserving flow. Or is a Test Debug Request...");
+                this.applicationLogger.error("Aborting!!!, Request object is null inside Thrift logger of adserving " +
+                        "flow. Or is a Test Debug Request...");
                 return;
             }
 
@@ -106,7 +114,7 @@ public class ThriftLogger implements Job {
             adservingRequestResponse.setRequestId(request.getRequestId());
 
             //set time
-            adservingRequestResponse.setTime(System.currentTimeMillis()/1000);
+            adservingRequestResponse.setTime(request.getTime()/1000);
 
             InventorySource inventorySource = fetchInventorySource(request);
 
@@ -205,11 +213,24 @@ public class ThriftLogger implements Job {
                                                     request.getInternetServiceProvider().getOperatorInternalId()
                                                    );
 
-            if(null!=request.getCountryUserInterfaceId())
+            /******************************************set location attributes****************************************/
+            if(null != request.getCountry())
+                adservingRequestResponse.setDs_country(request.getCountry().getDataSourceName());
+            if(null != request.getInternetServiceProvider())
+                adservingRequestResponse.setDs_isp(request.getInternetServiceProvider().getDataSourceName());
+            if(null != request.getDataSourceNameUsedForStateDetection())
+                adservingRequestResponse.setDs_state(request.getDataSourceNameUsedForStateDetection());
+            if(null != request.getDataSourceNameUsedForCityDetection())
+                adservingRequestResponse.setDs_city(request.getDataSourceNameUsedForCityDetection());
+            if(null != request.getCountryUserInterfaceId())
                 adservingRequestResponse.setCountryId(request.getCountryUserInterfaceId());
-
-            if(null!=request.getCarrierUserInterfaceId())
+            if(null != request.getStateUserInterfaceId())
+                adservingRequestResponse.setStateId(request.getStateUserInterfaceId());
+            if(null != request.getCityUserInterfaceId())
+                adservingRequestResponse.setCityId(request.getCityUserInterfaceId());
+            if(null != request.getCarrierUserInterfaceId())
                 adservingRequestResponse.setCountryCarrierId(request.getCarrierUserInterfaceId());
+            /*********************************************************************************************************/
 
             Response response = (Response)context.getValue(this.responseObjectKey);
 
@@ -257,7 +278,8 @@ public class ThriftLogger implements Job {
                         adservingRequestResponse.setBattr(Arrays.asList(request.getSite().getCreativeAttributesForInclusionExclusion()));
                     }
                 }
-                
+
+                Set<Integer> adIdsInExchangeResponse = new HashSet<Integer>();
                 for(String impressionIdExchange : impressionIdSetExchange)
                 {
                     ResponseAdInfo responseAdInfo =
@@ -289,6 +311,27 @@ public class ThriftLogger implements Job {
 
                     adservingRequestResponse.addToImpressions(impression);
                     isRequestAFill = true;
+
+                    if(adStatsCache != null) {
+                        this.applicationLogger.debug("Updating no fill reason to fill for ads that are sent in response");
+                        adIdsInExchangeResponse.add(responseAdInfo.getAdId());
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(responseAdInfo.getAdId(),
+                                NoFillReason.FILL.getValue(), this.adNoFillReasonMapKey, context);
+                    }
+                }
+
+                if(adStatsCache != null) {
+                    Set<ResponseAdInfo> responseAdInfoSet = response.getResponseAdInfo();
+                    this.applicationLogger.debug("Updating no fill reason to fill for ads not sent in response");
+                    if(responseAdInfoSet != null) {
+                        for (ResponseAdInfo responseAdInfo : responseAdInfoSet) {
+                            if(!adIdsInExchangeResponse.contains(responseAdInfo.getAdId())) {
+                                AdNoFillStatsUtils.updateContextForNoFillOfAd(responseAdInfo.getAdId(),
+                                        NoFillReason.LOST_TO_COMPETITION.getValue(), this.adNoFillReasonMapKey,
+                                        context);
+                            }
+                        }
+                    }
                 }
             }
             //case of non-exchange inventory
@@ -319,11 +362,25 @@ public class ThriftLogger implements Job {
 
                     adservingRequestResponse.addToImpressions(impression);
                     isRequestAFill = true;
+
+                    if(adStatsCache != null) {
+                        this.applicationLogger.debug("Updating no fill reason to fill for ads that are sent in response");
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(responseAdInfo.getAdId(),
+                                NoFillReason.FILL.getValue(), this.adNoFillReasonMapKey, context);
+                    }
                 }
             }
 
+            if(adStatsCache != null) {
+                this.applicationLogger.debug("Updating stats in ad stats cache.");
+                @SuppressWarnings("unchecked")
+                Map<Integer, Integer> adToNofillReasonMap = (Map<Integer, Integer>) context.getValue(
+                        this.adNoFillReasonMapKey);
+                adStatsCache.updateAdNofillReasonMap(request.getTime(), adToNofillReasonMap);
+            }
+
             //set no-fill reason if any, otherwise would be fill.
-            NoFillReason noFillReason = fetchNoFillReason(request);
+            NoFillReason noFillReason = request.getNoFillReason();
             String noFillReasonForBidLog = null;
 
             if(null != noFillReason)
@@ -404,7 +461,15 @@ public class ThriftLogger implements Job {
                 adservingRequestResponse.setExt_supply_attr_internal_id
                                        (ApplicationGeneralUtils.DEFAULT_INTERNAL_ID_FOR_EXTERNAL_SUPPLY_ATTRIBUTES);
             /******************************************************************************************************/
-
+            if(request.getSite() != null && request.getSite().getAdPositionUiId() != null){
+            	adservingRequestResponse.setAdpositionId(request.getSite().getAdPositionUiId() );
+            }else{
+            	adservingRequestResponse.setAdpositionId(ApplicationGeneralUtils.DEFAULT_ADPOSITION_ID);
+            }
+            if(request.getSite() != null && request.getSite().getChannelInternalId() != null){
+            	adservingRequestResponse.setChannelId(request.getSite().getChannelInternalId() );
+            }
+            
             try
             {
                 TSerializer thriftSerializer = new TSerializer();
@@ -485,194 +550,6 @@ public class ThriftLogger implements Job {
             return TerminationReason.DEVICE_BOT;
         }
 
-        return null;
-    }
-
-    private NoFillReason fetchNoFillReason(Request request)
-    {
-        if(null == request.getNoFillReason())
-            return null;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NO_ADS_COUNTRY_CARRIER.getCode())
-            return NoFillReason.NO_ADS_COUNTRY_CARRIER;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NO_ADS_BRAND.getCode())
-            return NoFillReason.NO_ADS_BRAND;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NO_ADS_MODEL.getCode())
-            return NoFillReason.NO_ADS_MODEL;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.SITE_INC_EXC_ADV_CMPGN.getCode())
-            return NoFillReason.SITE_INC_EXC_ADV_CMPGN;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_INV_SRC.getCode())
-            return NoFillReason.AD_INV_SRC;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_INV_SRC_TYPE.getCode())
-            return NoFillReason.AD_INV_SRC_TYPE;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_SITE_CATEGORY_INC_EXC.getCode())
-            return NoFillReason.AD_SITE_CATEGORY_INC_EXC;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.SITE_AD_CATEGORY_INC_EXC.getCode())
-            return NoFillReason.SITE_AD_CATEGORY_INC_EXC;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_DIRECT_SUPPLY_INC_EXC.getCode())
-            return NoFillReason.AD_DIRECT_SUPPLY_INC_EXC;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_EXCHNG_SUPPLY_INC_EXC.getCode())
-            return NoFillReason.AD_EXCHNG_SUPPLY_INC_EXC;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_SUPPLY_INC_EXC.getCode())
-            return NoFillReason.AD_SUPPLY_INC_EXC;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_SITE_HYGIENE.getCode())
-            return NoFillReason.AD_SITE_HYGIENE;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_OS_MIDP.getCode())
-            return NoFillReason.AD_OS_MIDP;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_BROWSER.getCode())
-            return NoFillReason.AD_BROWSER;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.SITE_AD_DOMAIN.getCode())
-            return NoFillReason.SITE_AD_DOMAIN;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_CUSTOM_IP.getCode())
-            return NoFillReason.AD_CUSTOM_IP;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_HOUR_DAY.getCode())
-            return NoFillReason.AD_HOUR_DAY;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.CREATIVE_ATTR.getCode())
-            return NoFillReason.CREATIVE_ATTR;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.CREATIVE_SIZE.getCode())
-            return NoFillReason.CREATIVE_SIZE;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.ECPM_FLOOR_UNMET.getCode())
-            return NoFillReason.ECPM_FLOOR_UNMET;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.SITE_INC_EXC_ADV_CMPGN.getCode())
-            return NoFillReason.SITE_INC_EXC_ADV_CMPGN;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.CAMPAIGN_DATE_BUDGET.getCode())
-            return NoFillReason.CAMPAIGN_DATE_BUDGET;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.BIDDER_BID_NEGATIVE_ZERO.getCode())
-            return NoFillReason.BIDDER_BID_NEGATIVE_ZERO;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_ZIPCODE.getCode())
-            return NoFillReason.AD_ZIPCODE;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.AD_LAT_LONG.getCode())
-            return NoFillReason.AD_LAT_LONG;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NO_ADS_CONNECTION_TYPE.getCode())
-            return NoFillReason.NO_ADS_CONNECTION_TYPE;
-
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NO_ADS_TABLET_TARGETING.getCode())
-            return NoFillReason.NO_ADS_TABLET_TARGETING;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.ONLY_MEDIATION_DP.getCode())
-            return NoFillReason.ONLY_MEDIATION_DP;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.ONLY_DSP_DP.getCode())
-            return NoFillReason.ONLY_DSP_DP;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_REQ_CONVERT.getCode())
-            return NoFillReason.EX_OD_REQ_CONVERT;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_REQ_SER_NULL.getCode())
-            return NoFillReason.EX_OD_REQ_SER_NULL;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_URL_MAP_EMP.getCode())
-            return NoFillReason.EX_OD_URL_MAP_EMP;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_EXEC_NULL.getCode())
-            return NoFillReason.EX_OD_EXEC_NULL;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_API_INCORRECT.getCode())
-            return NoFillReason.EX_OD_API_INCORRECT;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_RESP_EMPTY.getCode())
-            return NoFillReason.EX_OD_RESP_EMPTY;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_BID_RESP_EMPTY.getCode())
-            return NoFillReason.EX_OD_BID_RESP_EMPTY;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_AP_INCORRECT.getCode())
-            return NoFillReason.EX_OD_AP_INCORRECT;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_WIN_NULL.getCode())
-            return NoFillReason.EX_OD_WIN_NULL;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.EX_OD_EXCEPTION.getCode())
-            return NoFillReason.EX_OD_EXCEPTION;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.ONLY_DIRECT_DP.getCode())
-            return NoFillReason.ONLY_DIRECT_DP;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.ONLY_DIRECTthenMed_DP.getCode())
-            return NoFillReason.ONLY_DIRECTthenMed_DP;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.ONLY_DIRECTthenDSP_DP.getCode())
-            return NoFillReason.ONLY_DIRECTthenDSP_DP;
-        
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_MISMATCH.getCode())
-            return NoFillReason.NATIVE_MISMATCH;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.VIDEO_MISMATCH.getCode())
-            return NoFillReason.VIDEO_MISMATCH;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_ApiFramework.getCode())
-            return NoFillReason.Video_ApiFramework;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Mime.getCode())
-            return NoFillReason.Video_Mime;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Duration.getCode())
-            return NoFillReason.Video_Duration;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Protocol.getCode())
-            return NoFillReason.Video_Protocol;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_StartDelay.getCode())
-            return NoFillReason.Video_StartDelay;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Width.getCode())
-            return NoFillReason.Video_Width;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Height.getCode())
-            return NoFillReason.Video_Height;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Linearity.getCode())
-            return NoFillReason.Video_Linearity;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_MaxExtended.getCode())
-            return NoFillReason.Video_MaxExtended;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_BitRate.getCode())
-            return NoFillReason.Video_BitRate;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Boxing.getCode())
-            return NoFillReason.Video_Boxing;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_PlayBack.getCode())
-            return NoFillReason.Video_PlayBack;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Delivery.getCode())
-            return NoFillReason.Video_Delivery;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_CompanionType.getCode())
-            return NoFillReason.Video_CompanionType;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.Video_Exception.getCode())
-            return NoFillReason.Video_Exception;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.CREATIVE_NOT_VIDEO.getCode())
-            return NoFillReason.CREATIVE_NOT_VIDEO;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.DEAL_ID_MISMATCH.getCode())
-            return NoFillReason.DEAL_ID_MISMATCH;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.VIDEO_PROPS_NULL.getCode())
-            return NoFillReason.VIDEO_PROPS_NULL;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_REQ_NULL.getCode())
-            return NoFillReason.NATIVE_REQ_NULL;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_PROPS_NULL.getCode())
-            return NoFillReason.NATIVE_PROPS_NULL;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_REQ_ASSET_NULL.getCode())
-            return NoFillReason.NATIVE_REQ_ASSET_NULL;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.CREATIVE_NOT_NATIVE.getCode())
-            return NoFillReason.CREATIVE_NOT_NATIVE;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_TITLE_LEN.getCode())
-            return NoFillReason.NATIVE_TITLE_LEN;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_IMGSIZE.getCode())
-            return NoFillReason.NATIVE_IMGSIZE;
-        if(request.getNoFillReason().getCode() == Request.NO_FILL_REASON.NATIVE_DESC_LEN.getCode())
-            return NoFillReason.NATIVE_DESC_LEN;
         return null;
     }
 }

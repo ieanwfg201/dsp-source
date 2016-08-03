@@ -17,8 +17,9 @@ public interface ThirdPartyDataLoader
         COUNTRY_DATA(2,"geo country third party data"),
         ISP_DATA(3,"geo operator/isp third party data"),
         STATE_CITY_DATA(4,"geo state and city third party data"),
-        ORG_DATA(5,"geo operator/brand third party data");
-
+        ORG_DATA(5,"geo operator/brand third party data"),
+        STATE_DATA(6,"geo state third party data"),
+        CITY_DATA(7,"geo city third party data");
 
         @Getter
         private int geoDataType;

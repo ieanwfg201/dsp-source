@@ -42,8 +42,7 @@ public class InternalExcWinEnricherAndFraudProcessor implements OnlineEnricherAn
         {
             OnlineEnricherAndFraudCheck onlineEnricherAndFraudCheck = onlineEnricherAndFraudCheckIterator.next();
 
-            logger.debug("Inside InternalExcWinEnricherAndFraudProcessor, running enricher and fraud checker " +
-                         "instance: {}", onlineEnricherAndFraudCheck.getIdentifier());
+            logger.debug("Inside InternalExcWinEnricherAndFraudProcessor, running enricher and fraud checker instance: {}", onlineEnricherAndFraudCheck.getIdentifier());
 
             ONLINE_FRAUD_REASON fraudReason = onlineEnricherAndFraudCheck.fetchFraudReason(context,true);
 

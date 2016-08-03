@@ -1,10 +1,14 @@
 package com.kritter.geo.common.utils;
 
 import com.google.common.io.Files;
+import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
 import com.kritter.geo.common.entity.*;
+import com.kritter.geo.common.entity.reader.CountryUserInterfaceIdCache;
+import com.kritter.geo.common.entity.reader.StateUserInterfaceIdCache;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +25,13 @@ public class GeoCommonUtils
     private static final String QUERY_STATE_DATA_LOAD = "select * from state where data_source_name = ?";
     private static final String QUERY_CITY_DATA_LOAD = "select * from city where data_source_name = ?";
     private static final String QUERY_COUNTRY_UI_DATA_LOAD = "select * from ui_targeting_country";
+    private static final String QUERY_STATE_UI_DATA_LOAD = "select * from ui_targeting_state";
+    private static final String QUERY_CITY_UI_DATA_LOAD = "select * from ui_targeting_city";
     private static final String QUERY_ISP_UI_DATA_LOAD = "select * from ui_targeting_isp";
     private static final String QUERY_ISP_MAPPINGS_DATA_LOAD = "select * from isp_mappings";
     private static final String QUERY_MCC_MNC_DATA_LOAD = "select * from mcc_mnc";
-    private static final String CONTROL_A = String.valueOf((char)1);
     private static final int EARTH_RADIUS_MILES = 3959;
-
+    private static final Logger logger = LoggerFactory.getLogger("cache.logger");
     /**
      * This function fetches country data from sql database for a given data source.
      * @param connectionToDatabase
@@ -85,8 +90,8 @@ public class GeoCommonUtils
     }
 
     /**
-     * This function fetches stateid data from mysql for a given datasource.
-     * Data formed is countryid control-A stateName -> stateid.
+     * This function fetches state data from mysql for a given data source.
+     * Data formed is countryid control-A stateName -> state.
      * WARNING: This method does not close connection, have to be closed
      * explicitly from method calling this method.
      * @param connectionToDatabase
@@ -94,15 +99,15 @@ public class GeoCommonUtils
      * @return
      * @throws SQLException
      */
-    public static Map<String,Integer> fetchStateIdDataFromSqlDatabaseForDataSource(
-                                                                                   Connection connectionToDatabase,
-                                                                                   String dataSourceName
-                                                                                  ) throws SQLException
+    public static Map<String,State> fetchStateDataFromSqlDatabaseForDataSource(
+                                                                               Connection connectionToDatabase,
+                                                                               String dataSourceName
+                                                                              ) throws SQLException
     {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        Map<String,Integer> dataMapToReturn = new HashMap<String, Integer>();
+        Map<String,State> dataMapToReturn = new HashMap<String, State>();
 
         try
         {
@@ -110,22 +115,26 @@ public class GeoCommonUtils
             pstmt.setString(1,dataSourceName);
             rs = pstmt.executeQuery();
 
-            StringBuffer key = null;
+            String key = null;
 
             while(rs.next())
             {
                 int stateId = rs.getInt("id");
-                String countryId = rs.getString("country_id");
+                int countryId = rs.getInt("country_id");
                 String stateName = rs.getString("state_name");
-                key = new StringBuffer(countryId);
-                key.append(CONTROL_A);
-                key.append(stateName);
-                dataMapToReturn.put(key.toString(),stateId);
+                String stateCode = rs.getString("state_code");
+                key = State.generateKeyForUniquenessCheck(countryId,stateName);
+                State state = new State(stateId,dataSourceName);
+                state.setCountryId(countryId);
+                state.setStateCode(stateCode);
+                state.setStateName(stateName);
+
+                dataMapToReturn.put(key,state);
             }
         }
         catch (SQLException e)
         {
-            throw new SQLException("Inside GeoCommonUtils, SQLException in getting stateId database",e);
+            throw new SQLException("Inside GeoCommonUtils, SQLException in getting state database",e);
         }
         finally
         {
@@ -146,8 +155,8 @@ public class GeoCommonUtils
     }
 
     /**
-     * This function fetches cityid data from mysql for a given datasource.
-     * Data formed is stateId control-A cityName -> cityid.
+     * This function fetches city data from mysql for a given data source.
+     * Data formed is stateId control-A cityName -> city.
      * WARNING: This method does not close connection, have to be closed
      * explicitly from method calling this method.
      * @param connectionToDatabase
@@ -155,15 +164,15 @@ public class GeoCommonUtils
      * @return
      * @throws SQLException
      */
-    public static Map<String,Integer> fetchCityIdDataFromSqlDatabaseForDataSource(
-                                                                                  Connection connectionToDatabase,
-                                                                                  String dataSourceName
-                                                                                 ) throws SQLException
+    public static Map<String,City> fetchCityDataFromSqlDatabaseForDataSource(
+                                                                             Connection connectionToDatabase,
+                                                                             String dataSourceName
+                                                                            ) throws SQLException
     {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        Map<String,Integer> dataMapToReturn = new HashMap<String, Integer>();
+        Map<String,City> dataMapToReturn = new HashMap<String, City>();
 
         try
         {
@@ -171,22 +180,27 @@ public class GeoCommonUtils
             pstmt.setString(1,dataSourceName);
             rs = pstmt.executeQuery();
 
-            StringBuffer key = null;
+            String key = null;
 
             while(rs.next())
             {
                 int cityId = rs.getInt("id");
-                String stateId = rs.getString("state_id");
+                Integer stateId = rs.getInt("state_id");
+                String cityCode = rs.getString("city_code");
                 String cityName = rs.getString("city_name");
-                key = new StringBuffer(stateId);
-                key.append(CONTROL_A);
-                key.append(cityName);
-                dataMapToReturn.put(key.toString(),cityId);
+                Timestamp timestamp = rs.getTimestamp("modified_on");
+                key = City.generateKeyForUniquenessCheck(stateId,cityName);
+                City city = new City(cityId,dataSourceName);
+                city.setStateId(stateId);
+                city.setCityCode(cityCode);
+                city.setCityName(cityName);
+                city.setLastUpdated(timestamp);
+                dataMapToReturn.put(key,city);
             }
         }
         catch (SQLException e)
         {
-            throw new SQLException("Inside GeoCommonUtils, SQLException in getting cityId database",e);
+            throw new SQLException("Inside GeoCommonUtils, SQLException in getting city database",e);
         }
         finally
         {
@@ -511,6 +525,112 @@ public class GeoCommonUtils
         return countryDataFromUIDatabase;
     }
 
+    private static Map<String,UIState> fetchUiStateData(Connection connectionToDatabase) throws SQLException
+    {
+        Map<String,UIState> stateDataFromUIDatabase = new HashMap<String, UIState>();
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try
+        {
+            pstmt = connectionToDatabase.prepareStatement(QUERY_STATE_UI_DATA_LOAD);
+            rs = pstmt.executeQuery();
+
+            while(rs.next())
+            {
+                Integer id = rs.getInt("id");
+                Integer countryUiId = rs.getInt("country_ui_id");
+                String stateName = rs.getString("state_name");
+                Integer[] entityIdSet = ResultSetHelper.getResultSetIntegerArray(rs, "entity_id_set");
+                Set<Integer> stateIdSetForAllDataSources = (
+                                                             null != entityIdSet ?
+                                                             new HashSet<Integer>(Arrays.asList(entityIdSet)) :
+                                                             new HashSet<Integer>()
+                                                           );
+
+                UIState uiState = new UIState(id,countryUiId,stateName,stateIdSetForAllDataSources);
+
+                String key = UIState.generateKeyForUniquenessCheck(countryUiId,stateName);
+                stateDataFromUIDatabase.put(key, uiState);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new SQLException("Inside GeoCommonUtils, SQLException in getting UICountry database ",e);
+        }
+        finally
+        {
+            try
+            {
+                if (null != rs)
+                    rs.close();
+                if (null != pstmt)
+                    pstmt.close();
+            }
+            catch (SQLException e)
+            {
+                throw new SQLException(
+                        "Inside GeoCommonUtils, SQLException in closing connection meta resources.",e);
+            }
+        }
+
+        return stateDataFromUIDatabase;
+    }
+
+    private static Map<String,UICity> fetchUiCityData(Connection connectionToDatabase) throws SQLException
+    {
+        Map<String,UICity> cityDataFromUIDatabase = new HashMap<String, UICity>();
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try
+        {
+            pstmt = connectionToDatabase.prepareStatement(QUERY_CITY_UI_DATA_LOAD);
+            rs = pstmt.executeQuery();
+
+            while(rs.next())
+            {
+                Integer id = rs.getInt("id");
+                Integer stateUiId = rs.getInt("state_ui_id");
+                String cityName = rs.getString("city_name");
+                Integer[] entityIdSet = ResultSetHelper.getResultSetIntegerArray(rs, "entity_id_set");
+                Set<Integer> cityIdSetForAllDataSources = (
+                                                            null != entityIdSet ?
+                                                            new HashSet<Integer>(Arrays.asList(entityIdSet)) :
+                                                            new HashSet<Integer>()
+                                                          );
+
+                UICity uiCity = new UICity(id,stateUiId,cityName,cityIdSetForAllDataSources);
+
+                String key = UICity.generateKeyForUniquenessCheck(stateUiId,cityName);
+                cityDataFromUIDatabase.put(key, uiCity);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new SQLException("Inside GeoCommonUtils, SQLException in getting UIState database ",e);
+        }
+        finally
+        {
+            try
+            {
+                if (null != rs)
+                    rs.close();
+                if (null != pstmt)
+                    pstmt.close();
+            }
+            catch (SQLException e)
+            {
+                throw new SQLException(
+                        "Inside GeoCommonUtils, SQLException in closing connection meta resources.",e);
+            }
+        }
+
+        return cityDataFromUIDatabase;
+    }
+
     /**
      * This function retrieves UICountry data from database against their countryCode.
      * This function closes the connection being passed to it.
@@ -611,7 +731,8 @@ public class GeoCommonUtils
     }
 
     /**
-     * This function takes a set of country to be stored into ui table for targeting exposure.
+     * This function feeds a set of country entity into ui_targeting_country table
+     * for targeting exposure on user interface and for targeting matching purposes.
      * @param countryDataMap
      * @param connectionToDatabase
      * @param sqlBatchSize
@@ -622,7 +743,7 @@ public class GeoCommonUtils
                                                                           int sqlBatchSize) throws SQLException
     {
         Map<String,UICountry> countryDataFromUIDatabase = fetchUiCountryData(connectionToDatabase);
-        Map<String,UICountry> tempCountryDataFromUIDatabase = new HashMap<String, UICountry>();
+        Map<String,UICountry> uiCountryNewDataForUIDatabaseStorage = new HashMap<String, UICountry>();
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -650,17 +771,7 @@ public class GeoCommonUtils
                                           country.getCountryName(),
                                           countryIdSet);
 
-                UICountry absentFromDatabaseUiCountry = tempCountryDataFromUIDatabase.get(country.getCountryName());
-
-                if(null != absentFromDatabaseUiCountry)
-                {
-                    absentFromDatabaseUiCountry.addToCountryIdSet(country.getCountryInternalId());
-                    tempCountryDataFromUIDatabase.put(country.getCountryName(),uiCountry);
-                }
-                else
-                {
-                    tempCountryDataFromUIDatabase.put(country.getCountryName(),uiCountry);
-                }
+                uiCountryNewDataForUIDatabaseStorage.put(country.getCountryName(),uiCountry);
 
                 //update batch size counter only if uiCountry not present in database.
                 batchSizeCounter ++;
@@ -716,7 +827,7 @@ public class GeoCommonUtils
             {
                 int rowsInserted = 0;
 
-                Iterator<UICountry> it = tempCountryDataFromUIDatabase.values().iterator();
+                Iterator<UICountry> it = uiCountryNewDataForUIDatabaseStorage.values().iterator();
                 while(it.hasNext())
                 {
                     UICountry entry = it.next();
@@ -753,12 +864,11 @@ public class GeoCommonUtils
 
                     batchSizeCounter = 0;
                     sqlDataBuffer = new StringBuffer();
-                    tempCountryDataFromUIDatabase = new HashMap<String, UICountry>();
+                    uiCountryNewDataForUIDatabaseStorage = new HashMap<String, UICountry>();
                     countryDataFromUIDatabase = fetchUiCountryData(connectionToDatabase);
                 }
             }
         }
-
     }
 
     /**
@@ -1231,6 +1341,344 @@ public class GeoCommonUtils
                     sqlDataBuffer = new StringBuffer();
                     //fetch all data from ui_targeting_isp inserted till now.
                     ispUIDataAgainstISPUiNameAndCountryUiId = fetchUiTargetingIspData(connectionToDatabase);
+                }
+            }
+        }
+    }
+
+    /**
+     * This function feeds a set of state entity into ui_targeting_state table
+     * for targeting exposure on user interface and for targeting matching purposes.
+     * @param stateDataMap
+     * @param connectionToDatabase
+     * @param sqlBatchSize
+     * @throws SQLException
+     */
+    public static void feedStateDataForTargetingExposureOnUserInterface
+                                                       (
+                                                        Map<String,State> stateDataMap,
+                                                        Connection connectionToDatabase,
+                                                        CountryUserInterfaceIdCache countryUserInterfaceIdCache,
+                                                        int sqlBatchSize
+                                                       ) throws SQLException,UnSupportedOperationException
+    {
+        Map<String,UIState> stateDataFromUIDatabase = fetchUiStateData(connectionToDatabase);
+        Map<String,UIState> uiStateNewDataForUIDatabaseStorage = new HashMap<String, UIState>();
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        //now use input data set to insert new rows or update existing ones.
+        Iterator<State> inputStateDataSetIterator = stateDataMap.values().iterator();
+
+        StringBuffer sqlDataBuffer = new StringBuffer();
+        int batchSizeCounter = 0;
+        int totalEntities = 0;
+
+        while(inputStateDataSetIterator.hasNext())
+        {
+            totalEntities ++;
+
+            State state = inputStateDataSetIterator.next();
+            Set<Integer> uiCountryIdSet = countryUserInterfaceIdCache.query
+                                                (new CountryUserInterfaceIdSecondaryIndex(state.getCountryId()));
+
+            logger.debug("Country Id used is: {} ", state.getCountryId());
+
+            CountryUserInterfaceId countryUserInterfaceIdEntity = null;
+
+            logger.debug("ui country id set is not null: {} ", null != uiCountryIdSet);
+            logger.debug("ui country id set is: {} ", uiCountryIdSet);
+
+            if(null != uiCountryIdSet)
+            {
+                for (Integer uiCountryId : uiCountryIdSet)
+                {
+                    countryUserInterfaceIdEntity = countryUserInterfaceIdCache.query(uiCountryId);
+                    break;
+                }
+            }
+
+            if(null == countryUserInterfaceIdEntity)
+            {
+                throw new SQLException("Country user interface id entity could not be found for country id: " +
+                                        state.getCountryId());
+            }
+
+            String key = UIState.generateKeyForUniquenessCheck
+                                            (countryUserInterfaceIdEntity.getId(),state.getStateName());
+
+            UIState uiState = stateDataFromUIDatabase.get(key);
+
+            if(null == uiState)
+            {
+                Set<Integer> stateIdSet = new HashSet<Integer>();
+                stateIdSet.add(state.getStateId());
+
+                uiState = new UIState(countryUserInterfaceIdEntity.getId(),state.getStateName(),stateIdSet);
+                uiStateNewDataForUIDatabaseStorage.put(key,uiState);
+
+                //update batch size counter only if uiCountry not present in database.
+                batchSizeCounter ++;
+            }
+            else if(!uiState.doesIdExistInStateIdSet(state.getStateId()))
+            {
+                uiState.addToStateIdSet(state.getStateId());
+                //since uiState is updated with new id, update into database too.
+                try
+                {
+
+                    int rowsUpdated = 0;
+
+                    pstmt = connectionToDatabase.prepareStatement(UIState.getUPDATION_QUERY());
+                    pstmt.setString(1,ResultSetHelper.prepareIntegerArrayForMySQLInsertion
+                            (
+                                    uiState.getStateIdSet().
+                                            toArray(new Integer[uiState.getStateIdSet().size()]))
+                    );
+
+                    pstmt.setInt(2,countryUserInterfaceIdEntity.getId());
+                    pstmt.setString(3,state.getStateName());
+
+                    rowsUpdated = pstmt.executeUpdate();
+
+                    if(rowsUpdated <= 0)
+                        throw new SQLException("UIState entry not present in database for statename: " +
+                                               state.getStateName() + " while adding into entityidset");
+                }
+                catch (SQLException e)
+                {
+                    throw new SQLException("Inside GeoCommonUtils, SQLException in updating UIState entry ",e);
+                }
+                finally
+                {
+                    try
+                    {
+                        if (null != rs)
+                            rs.close();
+                        if (null != pstmt)
+                            pstmt.close();
+                    }
+                    catch (SQLException e)
+                    {
+                        throw new SQLException(
+                                "Inside GeoCommonUtils, SQLException in closing connection meta resources.",e);
+                    }
+                }
+            }
+
+            if(
+                batchSizeCounter == sqlBatchSize       ||
+                totalEntities    == stateDataMap.size()
+              )
+            {
+                int rowsInserted = 0;
+
+                Iterator<UIState> it = uiStateNewDataForUIDatabaseStorage.values().iterator();
+                while(it.hasNext())
+                {
+                    UIState entry = it.next();
+                    sqlDataBuffer.append(entry.prepareNewUIStateRowForInsertionIntoSQL());
+                }
+
+                if(sqlDataBuffer.length() > 0)
+                {
+                    sqlDataBuffer.deleteCharAt(sqlDataBuffer.length()-1);
+                    StringBuffer finalUIStateDataInsertionQuery = new StringBuffer(UIState.getINSERTION_QUERY());
+
+                    finalUIStateDataInsertionQuery.append(sqlDataBuffer.toString());
+
+                    Statement stmt = null;
+
+                    try
+                    {
+                        stmt = connectionToDatabase.createStatement();
+                        rowsInserted = stmt.executeUpdate(finalUIStateDataInsertionQuery.toString());
+                    }
+                    catch (SQLException sqle)
+                    {
+                        throw new SQLException("Rows insertion of uiState data could not happen,Aborting!!!",sqle);
+                    }
+                    finally
+                    {
+                        if(null != stmt)
+                            stmt.close();
+                    }
+
+                    if(rowsInserted <= 0)
+                        throw new SQLException("Rows insertion of uiState data could not happen.Aborting!!!");
+
+                    batchSizeCounter = 0;
+                    sqlDataBuffer = new StringBuffer();
+                    uiStateNewDataForUIDatabaseStorage = new HashMap<String, UIState>();
+                    stateDataFromUIDatabase = fetchUiStateData(connectionToDatabase);
+                }
+            }
+        }
+    }
+
+    /**
+     * This function feeds a set of state entity into ui_targeting_state table
+     * for targeting exposure on user interface and for targeting matching purposes.
+     * @param cityDataMap
+     * @param connectionToDatabase
+     * @param sqlBatchSize
+     * @throws SQLException
+     */
+    public static void feedCityDataForTargetingExposureOnUserInterface
+                                                        (
+                                                                Map<String,City> cityDataMap,
+                                                                Connection connectionToDatabase,
+                                                                StateUserInterfaceIdCache stateUserInterfaceIdCache,
+                                                                int sqlBatchSize
+                                                        ) throws SQLException,UnSupportedOperationException
+    {
+        Map<String,UICity> cityDataFromUIDatabase = fetchUiCityData(connectionToDatabase);
+        Map<String,UICity> uiCityNewDataForUIDatabaseStorage = new HashMap<String, UICity>();
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        //now use input data set to insert new rows or update existing ones.
+        Iterator<City> inputCityDataSetIterator = cityDataMap.values().iterator();
+
+        StringBuffer sqlDataBuffer = new StringBuffer();
+        int batchSizeCounter = 0;
+        int totalEntities = 0;
+
+        while(inputCityDataSetIterator.hasNext())
+        {
+            totalEntities ++;
+
+            City city = inputCityDataSetIterator.next();
+            Set<Integer> uiStateIdSet = stateUserInterfaceIdCache.query
+                                                        (new StateUserInterfaceIdSecondaryIndex(city.getStateId()));
+
+            StateUserInterfaceId stateUserInterfaceIdEntity = null;
+            if(null != uiStateIdSet)
+            {
+                for (Integer uiStateId : uiStateIdSet)
+                {
+                    stateUserInterfaceIdEntity = stateUserInterfaceIdCache.query(uiStateId);
+                    break;
+                }
+            }
+
+            if(null == stateUserInterfaceIdEntity)
+            {
+                throw new SQLException("State user interface id entity could not be found for state id: " +
+                                        city.getStateId());
+            }
+
+            String key = UICity.generateKeyForUniquenessCheck
+                                            (stateUserInterfaceIdEntity.getId(),city.getCityName());
+
+            UICity uiCity = cityDataFromUIDatabase.get(key);
+
+            if(null == uiCity)
+            {
+                Set<Integer> cityIdSet = new HashSet<Integer>();
+                cityIdSet.add(city.getCityId());
+
+                uiCity = new UICity(stateUserInterfaceIdEntity.getId(),city.getCityName(),cityIdSet);
+                uiCityNewDataForUIDatabaseStorage.put(key,uiCity);
+
+                //update batch size counter only if uiCity not present in database.
+                batchSizeCounter ++;
+            }
+            else if(!uiCity.doesIdExistInCityIdSet(city.getCityId()))
+            {
+                uiCity.addToCityIdSet(city.getCityId());
+
+                //since uiCity is updated with new id, update into database too.
+                try
+                {
+
+                    int rowsUpdated = 0;
+
+                    pstmt = connectionToDatabase.prepareStatement(UICity.getUPDATION_QUERY());
+                    pstmt.setString(1,ResultSetHelper.prepareIntegerArrayForMySQLInsertion
+                                      (
+                                        uiCity.getCityIdSet().
+                                            toArray(new Integer[uiCity.getCityIdSet().size()])
+                                      )
+                                   );
+
+                    pstmt.setInt(2,stateUserInterfaceIdEntity.getId());
+                    pstmt.setString(3,city.getCityName());
+
+                    rowsUpdated = pstmt.executeUpdate();
+
+                    if(rowsUpdated <= 0)
+                        throw new SQLException("UICity entry not present in database for cityname: " +
+                                                city.getCityName() + " while adding into entityidset");
+                }
+                catch (SQLException e)
+                {
+                    throw new SQLException("Inside GeoCommonUtils, SQLException in updating UICity entry ",e);
+                }
+                finally
+                {
+                    try
+                    {
+                        if (null != rs)
+                            rs.close();
+                        if (null != pstmt)
+                            pstmt.close();
+                    }
+                    catch (SQLException e)
+                    {
+                        throw new SQLException
+                                ("Inside GeoCommonUtils, SQLException in closing connection meta resources.",e);
+                    }
+                }
+            }
+
+            if(
+                batchSizeCounter == sqlBatchSize       ||
+                totalEntities    == cityDataMap.size()
+              )
+            {
+                int rowsInserted = 0;
+
+                Iterator<UICity> it = uiCityNewDataForUIDatabaseStorage.values().iterator();
+                while(it.hasNext())
+                {
+                    UICity entry = it.next();
+                    sqlDataBuffer.append(entry.prepareNewUICityRowForInsertionIntoSQL());
+                }
+
+                if(sqlDataBuffer.length() > 0)
+                {
+                    sqlDataBuffer.deleteCharAt(sqlDataBuffer.length()-1);
+                    StringBuffer finalUICityDataInsertionQuery = new StringBuffer(UICity.getINSERTION_QUERY());
+
+                    finalUICityDataInsertionQuery.append(sqlDataBuffer.toString());
+
+                    Statement stmt = null;
+
+                    try
+                    {
+                        stmt = connectionToDatabase.createStatement();
+                        rowsInserted = stmt.executeUpdate(finalUICityDataInsertionQuery.toString());
+                    }
+                    catch (SQLException sqle)
+                    {
+                        throw new SQLException("Rows insertion of uiCity data could not happen,Aborting!!!",sqle);
+                    }
+                    finally
+                    {
+                        if(null != stmt)
+                            stmt.close();
+                    }
+
+                    if(rowsInserted <= 0)
+                        throw new SQLException("Rows insertion of uiCity data could not happen.Aborting!!!");
+
+                    batchSizeCounter = 0;
+                    sqlDataBuffer = new StringBuffer();
+                    uiCityNewDataForUIDatabaseStorage = new HashMap<String, UICity>();
+                    cityDataFromUIDatabase = fetchUiCityData(connectionToDatabase);
                 }
             }
         }

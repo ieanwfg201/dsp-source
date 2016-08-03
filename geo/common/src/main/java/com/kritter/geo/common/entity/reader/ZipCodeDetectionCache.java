@@ -209,8 +209,7 @@ public class ZipCodeDetectionCache
             }
             catch (Exception e)
             {
-                cacheLogger.error("Exception while loading zipcode database" +
-                                  "in the class ZipCodeDatabaseReloadTimerTask",e);
+                cacheLogger.error("Exception while loading zipcode database in the class ZipCodeDatabaseReloadTimerTask",e);
             }
         }
     }

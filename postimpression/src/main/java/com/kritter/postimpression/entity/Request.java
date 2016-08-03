@@ -1,17 +1,22 @@
 package com.kritter.postimpression.entity;
 
 import com.kritter.common.site.entity.Site;
-import com.kritter.device.entity.HandsetMasterData;
 import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.constants.BEventType;
 import com.kritter.constants.ConnectionType;
+import com.kritter.constants.NoFraudPostImpEvents;
+import com.kritter.constants.UserConstant;
+import com.kritter.device.common.entity.HandsetMasterData;
+import com.kritter.utils.common.url.URLField;
+import com.kritter.utils.common.url.URLFieldFactory;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * This class consists of postimpression request related data.
@@ -187,6 +192,10 @@ public class Request
     @Getter @Setter
     private Integer externalSupplyAttributesInternalId;
     /******************************************************************************************/
+    /***************************************Retargeting Segment *******************************/
+    @Getter @Setter
+    private Integer retargetingSegment = UserConstant.retargeting_segment_default;
+    /******************************************************************************************/
     /***************************************Tracking events************************************/
     @Getter @Setter
     private String ttype;
@@ -198,6 +207,15 @@ public class Request
     private BEventType bEventType = null;
     @Getter @Setter
     private Double mbr;
+    /******************************************************************************************/
+    /***************************************NoFRDP Events************************************/
+    @Getter @Setter
+    private NoFraudPostImpEvents nfrdpType = null;
+    /******************************************************************************************/
+
+    /******************************************************************************************/
+    @Getter @Setter
+    private Map<Short,URLField> urlFieldsFromAdservingMap;
     /******************************************************************************************/
 
     public Request(
@@ -211,6 +229,7 @@ public class Request
         this.requestId = requestId;
         this.postImpressionEvent = postImpressionEvent;
         this.requestMetaData = new HashMap<String, Object>();
+        this.urlFieldsFromAdservingMap = new HashMap<Short, URLField>();
     }
 
     public void setRequestMetaData(String key,Object value) throws Exception{

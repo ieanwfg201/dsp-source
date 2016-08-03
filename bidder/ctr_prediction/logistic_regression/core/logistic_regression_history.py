@@ -2,7 +2,6 @@ import logging
 
 from bidder.utils.log_utils import *
 
-logger = logging.getLogger(__name__)
 
 def loadExistingClickLogSegments(clickLogSegmentFileName, dimensionDelimiter, fieldsDelimiter):
     """
@@ -21,6 +20,7 @@ def loadExistingClickLogSegments(clickLogSegmentFileName, dimensionDelimiter, fi
     """
     # Read the input file line by line
     segmentClickLogLines = []
+    logger = logging.getLogger(__name__)
     try:
         with open(clickLogSegmentFileName) as clickLogSegmentFile:
             for line in clickLogSegmentFile:
@@ -66,6 +66,7 @@ def dumpClickLogSegments(clickLogSegmentFileName, clickLogSegments, dimensionDel
     :returns: Click log segments that pass the threshold
     :type: list
     """
+    logger = logging.getLogger(__name__)
     clickLogSegmentFile = open(clickLogSegmentFileName, 'w')
     thresholdedClickLogSegments = []
     for clickLogSegment in clickLogSegments:
@@ -102,6 +103,7 @@ def mergeExistingNewClickLogs(newClickLogs, existingClickLogs, decayFactor):
     :param decayFactor: value between 0 and 1 by which the historical click data has to be decayed
     :type decayFactor: float
     """
+    logger = logging.getLogger(__name__)
     consolidatedClickLogs = []
     newClickLogs = sorted(newClickLogs, clickLogLineComparator)
     existingClickLogs = sorted(existingClickLogs, clickLogLineComparator)

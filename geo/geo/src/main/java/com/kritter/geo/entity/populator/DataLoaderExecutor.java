@@ -45,8 +45,7 @@ public class DataLoaderExecutor
         this.dataLoadMasterNode = Boolean.valueOf(serverConfig.getValueForKey(dataLoadMasterNodeParam));
 
         //important message so logging in error mode.
-        logger.error("The data loader executor on this node/machine/dsp-application is parent? " +
-                     dataLoadMasterNode + " will be loading data from this node if true.");
+        logger.error("The data loader executor on this node/machine/dsp-application is parent? {} will be loading data from this node if true.",dataLoadMasterNode);
 
         if(dataLoadMasterNode)
             executeThirdPartyGeoDataLoaders();
@@ -115,7 +114,7 @@ public class DataLoaderExecutor
                 }
             }
 
-            //lastly run state city data loaders.
+            //then run state city data loaders.
             for(ThirdPartyDataLoader thirdPartyDataLoader : thirdPartyDataLoaderInstances)
             {
                 int geoDataType = thirdPartyDataLoader.getGeoDataLoaderType().getGeoDataType();
@@ -124,6 +123,34 @@ public class DataLoaderExecutor
                 {
                     logger.debug("Going to run state and city third party data loader for: {}",
                                  thirdPartyDataLoader.getDataSourceName());
+
+                    thirdPartyDataLoader.scheduleInputDatabaseConversionAndPopulationForInternalUsage();
+                }
+            }
+
+            //then run state data loader.
+            for(ThirdPartyDataLoader thirdPartyDataLoader : thirdPartyDataLoaderInstances)
+            {
+                int geoDataType = thirdPartyDataLoader.getGeoDataLoaderType().getGeoDataType();
+
+                if(geoDataType == ThirdPartyDataLoader.DATA_LOADER_TYPE.STATE_DATA.getGeoDataType())
+                {
+                    logger.debug("Going to run state third party data loader for: {}",
+                                  thirdPartyDataLoader.getDataSourceName());
+
+                    thirdPartyDataLoader.scheduleInputDatabaseConversionAndPopulationForInternalUsage();
+                }
+            }
+
+            //then run city data loaders.
+            for(ThirdPartyDataLoader thirdPartyDataLoader : thirdPartyDataLoaderInstances)
+            {
+                int geoDataType = thirdPartyDataLoader.getGeoDataLoaderType().getGeoDataType();
+
+                if(geoDataType == ThirdPartyDataLoader.DATA_LOADER_TYPE.CITY_DATA.getGeoDataType())
+                {
+                    logger.debug("Going to run city third party data loader for: {}",
+                                  thirdPartyDataLoader.getDataSourceName());
 
                     thirdPartyDataLoader.scheduleInputDatabaseConversionAndPopulationForInternalUsage();
                 }

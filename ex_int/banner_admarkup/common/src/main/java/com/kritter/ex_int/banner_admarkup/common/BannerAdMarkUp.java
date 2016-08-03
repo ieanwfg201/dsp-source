@@ -23,7 +23,9 @@ public class BannerAdMarkUp {
             String postImpressionBaseClickUrl, String postImpressionBaseWinApiUrl,
             String notificationUrlSuffix, String notificationUrlBidderBidPriceMacro,
             String postImpressionBaseCSCUrl, String cdnBaseImageUrl,
-            boolean templateWithWin, ExtTracker extTracker) throws BidResponseException{
+            boolean templateWithWin, ExtTracker extTracker, StringBuffer winNotificationURLBuffer,
+            String extraClikUrlSuffix
+            ) throws BidResponseException{
 
         String clickUri = CreativeFormatterUtils.prepareClickUri
                                                                 (
@@ -42,8 +44,16 @@ public class BannerAdMarkUp {
 
         StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
         clickUrl.append(clickUri);
+        if(extraClikUrlSuffix != null){
+        	if(clickUri.contains("?")){
+        		clickUrl.append("&");
+        	}else{
+        		clickUrl.append("?");
+        	}
+        	clickUrl.append(extraClikUrlSuffix);
+        }
         /*********prepare win notification url , also include bidder price.****************/
-        StringBuffer winNotificationURLBuffer = new StringBuffer(postImpressionBaseWinApiUrl);
+        winNotificationURLBuffer.append(postImpressionBaseWinApiUrl);
         winNotificationURLBuffer.append(clickUri);
         String suffixToAdd = notificationUrlSuffix;
         suffixToAdd = suffixToAdd.replace(
@@ -67,7 +77,7 @@ public class BannerAdMarkUp {
         if(null != externalUserIdSet) {
             for(ExternalUserId externalUserId : externalUserIdSet) {
                 if(externalUserId.getIdType().equals(ExternalUserIdType.EXCHANGE_CONSUMER_ID))
-                    exchangeUserId = externalUserId.getUserId();
+                    exchangeUserId = externalUserId.toString();
             }
         }
         cscBeaconUrl = new StringBuffer(ApplicationGeneralUtils.modifyCSCURLForUserIds(
@@ -117,9 +127,9 @@ public class BannerAdMarkUp {
                                                             CreativeFormatterUtils.CREATIVE_ALT_TEXT,
                                                             creative.getText()
                                                            );
-        if(extTracker != null && extTracker.getExtImpTracker() != null){
+        if(extTracker != null && extTracker.getImpTracker() != null){
             StringBuffer sBuff = new StringBuffer("");
-            for(String str:extTracker.getExtImpTracker()){
+            for(String str:extTracker.getImpTracker()){
                 sBuff.append("<img src=\"");
                 sBuff.append(str);
                 sBuff.append("\" style=\"display: none;\"/>");

@@ -1,0 +1,4 @@
+#ad_stat_new_upload_daily.job
+type=command
+dependencies=ad_stat_new_pig_daily
+command=sh ad_stat_new_upload_daily.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}'

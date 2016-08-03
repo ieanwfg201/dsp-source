@@ -40,6 +40,8 @@ import com.kritter.api.entity.response.msg.Message;
 import com.kritter.api.entity.targeting_profile.TargetingProfileList;
 import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
+import com.kritter.api.entity.video_info.VideoInfoList;
+import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.AdAPIEnum;
 import com.kritter.constants.CampaignQueryEnum;
@@ -49,8 +51,10 @@ import com.kritter.constants.NativeIconAPIEnum;
 import com.kritter.constants.NativeScreenshotAPIEnum;
 import com.kritter.constants.PageConstants;
 import com.kritter.constants.TargetingProfileAPIEnum;
+import com.kritter.constants.VideoInfoAPIEnum;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
+import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.kritterui.api.def.ApiDef;
 
 public class DataAPI {
@@ -423,6 +427,36 @@ public class DataAPI {
 		}
 		return creativeBannerList;
 	}
+	public static List<VideoInfo> getDirectVideoList(String ids){
+		List<VideoInfo> videoInfoList = null;
+		Connection con = null;
+		try{
+		    con = DB.getConnection(); 
+			VideoInfoListEntity videoInfolistEntity = new VideoInfoListEntity(); 
+			videoInfolistEntity.setId_list(ids);
+			videoInfolistEntity.setVideoenum(VideoInfoAPIEnum.get_video_info_by_ids);
+			VideoInfoList cblist = ApiDef.various_get_video_info(con, videoInfolistEntity);
+			if(cblist.getMsg().getError_code()==0){
+				if( cblist.getCblist().size()>0){
+					videoInfoList=  cblist.getCblist();
+				}
+			}else{
+				videoInfoList = new ArrayList<VideoInfo>();
+			}
+		}catch(Exception e){
+			play.Logger.error(e.getMessage()+".Error fetching video info",e);
+		}
+		finally{
+			try {
+                if(con != null){
+				    con.close();
+                }
+			} catch (SQLException e) {
+				Logger.error("Error closing DB connection while fetching list of video info",e);
+			}
+		}
+		return videoInfoList;
+	}
     public static List<NativeIcon> getNativeIconList(String ids){
         List<NativeIcon> nativeIconList = null;
         if(ids == null){
@@ -493,6 +527,42 @@ public class DataAPI {
         }
         return nativeScreenshotList;
     }
+    
+    public static List<VideoInfo> getVideoInfoList(String ids){
+        List<VideoInfo> nativeIconList = null;
+        if(ids == null){
+            return new ArrayList<VideoInfo>();
+        }
+        String idTrim = ids.trim().replaceAll("\\[", "").replaceAll("]", "");
+        Connection con = null;
+        try{
+            con = DB.getConnection(); 
+            VideoInfoListEntity cblistEntity = new VideoInfoListEntity(); 
+            cblistEntity.setId_list(idTrim);
+            cblistEntity.setVideoenum(VideoInfoAPIEnum.get_video_info_by_ids);
+            VideoInfoList cblist = ApiDef.various_get_video_info(con, cblistEntity);
+            if(cblist.getMsg().getError_code()==0){
+                if( cblist.getCblist().size()>0){
+                    nativeIconList =  cblist.getCblist();
+                }
+            }else{
+                nativeIconList = new ArrayList<VideoInfo>();
+            }
+        }catch(Exception e){
+            play.Logger.error(e.getMessage()+".Error fetching video infos",e);
+        }
+        finally{
+            try {
+                if(con != null){
+                    con.close();
+                }
+            } catch (SQLException e) {
+                Logger.error("Error closing DB connection while fetching list of video info",e);
+            }
+        }
+        return nativeIconList;
+    }
+
 
 	public static List<Ad> getAdsByCampaign(String campaigns){
 		List<Ad> adList = null;

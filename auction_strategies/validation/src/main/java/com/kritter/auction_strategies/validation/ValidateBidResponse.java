@@ -14,4 +14,15 @@ public class ValidateBidResponse {
         }
         return false;
     }
+
+    public static boolean validate(com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity entity, Request request){
+        if(entity != null && request !=null && request.getSite() != null){
+            if(entity.getBidResponseSeatBid() != null && entity.getBidResponseSeatBid().length>0
+                    && entity.getBidResponseSeatBid()[0].getBidResponseBidEntities() != null
+                    && entity.getBidResponseSeatBid()[0].getBidResponseBidEntities().length>0){
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -4,11 +4,13 @@ import com.kritter.abstraction.cache.interfaces.ISecondaryIndex;
 import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+@ToString
 public class IspUserInterfaceId implements IUpdatableEntity<Integer>
 {
     @Getter

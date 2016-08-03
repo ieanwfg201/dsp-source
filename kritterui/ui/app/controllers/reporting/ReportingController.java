@@ -49,12 +49,13 @@ import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
 
 public class ReportingController extends Controller{
-
+	
 	private static Form<ReportFormEntity> reportConfigForm = Form.form(ReportFormEntity.class);
 	private static Form<SavedQueryFormEntity> savedReportForm = Form.form(SavedQueryFormEntity.class);
 	private static String show_carrier_ui = Play.application().configuration().getString("show_carrier_ui");
 	private static String allow_wifi = Play.application().configuration().getString("allow_wifi");
 	private static String ext_site_report_seperate = Play.application().configuration().getString("ext_site_report_seperate");
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
 	
 	@SecuredAction
 	public static Result dashboard(){
@@ -330,6 +331,7 @@ public class ReportingController extends Controller{
                 return badRequest(msg.toJson().toString());
             }
             ReportingEntity reportingEntity = entity.getReportingEntity();
+            reportingEntity.setTimezone(timezoneid);
             org.codehaus.jackson.JsonNode resultNode = ApiDef.get_data(con, reportingEntity, true, false, null);
             return ok(resultNode.toString());
         }catch(Exception e){
@@ -369,6 +371,7 @@ public class ReportingController extends Controller{
 				return badRequest(msg.toJson().toString());
 			}
 			ReportingEntity reportingEntity = entity.getReportingEntity();
+			reportingEntity.setTimezone(timezoneid);
 			org.codehaus.jackson.JsonNode resultNode = ApiDef.get_data(con, reportingEntity, monitoring, false, null);
 			return ok(resultNode.toString());
 		}catch(Exception e){
@@ -415,6 +418,7 @@ public class ReportingController extends Controller{
 			}
 			entity.setPubId(amPair.getAccount().getId());
 			ReportingEntity reportingEntity = entity.getReportingEntity();
+			reportingEntity.setTimezone(timezoneid);
 			org.codehaus.jackson.JsonNode resultNode = ApiDef.get_data(con, reportingEntity, monitoring, false, null);
 			return ok(resultNode.toString());
 		}catch(Exception e){
@@ -477,6 +481,7 @@ public class ReportingController extends Controller{
 				if(isLimited){
 				    reportingEntity.setReportingDIMTypeEnum(ReportingDIMTypeEnum.LIMITED);
 				}
+				reportingEntity.setTimezone(timezoneid);
 				org.codehaus.jackson.JsonNode data = ApiDef.get_data(con, reportingEntity, returnWithId, exportAsCsv, absoluteFileName);
             	if(data != null){
             	    ObjectMapper objectMapper = new ObjectMapper(); 
@@ -526,7 +531,7 @@ public class ReportingController extends Controller{
 		Connection con = null;
 		try {
 				con = DB.getConnection();
-				org.codehaus.jackson.JsonNode jsonNode = ApiDef.get_data(con, "UTC");
+				org.codehaus.jackson.JsonNode jsonNode = ApiDef.get_data(con, timezoneid);
 				if(jsonNode == null) { return ok(defaultOptions);}
 				defaultOptions.put("topAdvertiserByRevenueYes",convert(jsonNode.path("topAdvertiserByRevenueYes")));
 				defaultOptions.put("topCampaignByRevenueYes",convert(jsonNode.path("topCampaignByRevenueYes")));
@@ -583,6 +588,7 @@ public class ReportingController extends Controller{
 		re.setTop_n_for_last_x_hours(duration);
 		re.setFrequency(Frequency.ADMIN_INTERNAL_HOURLY);
 		re.setPagesize(PageConstants.pie_page_size);
+		re.setTimezone(timezoneid);
 		return  convert(ApiDef.get_pie(con, re));
 	}
 	private static JsonNode getBarchartData(Connection con, int duration){
@@ -592,6 +598,7 @@ public class ReportingController extends Controller{
 		re.setTop_n_for_last_x_hours(duration);
 		re.setFrequency(Frequency.ADMIN_INTERNAL_HOURLY); 
 		re.setPagesize(PageConstants.pie_page_size);
+		re.setTimezone(timezoneid);
 		return  convert(ApiDef.get_bar(con, re));
 	}
 

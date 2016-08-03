@@ -19,6 +19,18 @@ public class MetadataController extends Controller{
 			carrierOptions = TPMetadataAPI.carrierList(countryList); 
 			return ok(carrierOptions);
 		}
+		@SecuredAction
+		public static Result state(String countryList){
+			ArrayNode stateOptions = new ArrayNode(JsonNodeFactory.instance); 
+			stateOptions = TPMetadataAPI.stateList(countryList); 
+			return ok(stateOptions);
+		}
+		@SecuredAction
+		public static Result city(String stateList){
+			ArrayNode cityOptions = new ArrayNode(JsonNodeFactory.instance); 
+			cityOptions = TPMetadataAPI.cityList(stateList); 
+			return ok(cityOptions);
+		}
 
 		@SecuredAction
 		public static Result brands(String osList){
@@ -156,6 +168,41 @@ public class MetadataController extends Controller{
         public static Result targeting_ext_siteByPublishers(String pubList){
             ArrayNode siteOptions = MetadataAPI.targeting_ext_siteByPublishers(pubList); 
             return ok(siteOptions);
+        }
+        @SecuredAction
+        public static Result tier1mmacategory(){
+            ArrayNode publisherOptions = MetadataAPI.tier1mmacategory(); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result tier2MMAcategoryBytier1(String tier1List){
+            ArrayNode publisherOptions = MetadataAPI.tier2mmacategory(tier1List); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result tier1mmaindustry(){
+            ArrayNode publisherOptions = MetadataAPI.tier1mmaindustry(); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result tier2MMAindustryBytier1(String tier1List){
+            ArrayNode publisherOptions = MetadataAPI.tier2mmaindustry(tier1List); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result tier1channel(){
+            ArrayNode publisherOptions = MetadataAPI.tier1channel(); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result tier2channelBytier1(String tier1List){
+            ArrayNode publisherOptions = MetadataAPI.tier2channelBytier1(tier1List); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result adposition_list(){
+            ArrayNode publisherOptions = MetadataAPI.adposition_list(); 
+            return ok(publisherOptions);
         }
 
 		public static Result campaignforfilteringByAdvertiser(String advtList){

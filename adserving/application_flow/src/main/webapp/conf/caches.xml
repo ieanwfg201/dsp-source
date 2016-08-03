@@ -36,6 +36,29 @@
             <constructor-arg index="3" value="ui_isp_id_cache"/>
         </bean>
 
+        <bean id="ui_state_id_cache" class="com.kritter.geo.common.entity.reader.StateUserInterfaceIdCache">
+            <constructor-arg index="0">
+                <list>
+                    <value>com.kritter.geo.common.entity.StateUserInterfaceIdSecondaryIndex</value>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="ui_state_id_cache_properties"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="ui_state_id_cache"/>
+        </bean>
+
+        <bean id="ui_city_id_cache" class="com.kritter.geo.common.entity.reader.CityUserInterfaceIdCache">
+            <constructor-arg index="0">
+                <list>
+                    <value>com.kritter.geo.common.entity.CityUserInterfaceIdSecondaryIndex</value>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="ui_city_id_cache_properties"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="ui_city_id_cache"/>
+        </bean>
+
+        
 	<bean id="ad_entity_cache" class="com.kritter.serving.demand.cache.AdEntityCache">
 	    <constructor-arg index="0">
 		<list> 
@@ -120,6 +143,16 @@
             <constructor-arg index="3" value="creative_banner_cache"/>
         </bean>
 
+    <bean id="video_info_cache" class="com.kritter.common.caches.video_info_cache.VideoInfoCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="video_info_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="video_info_cache"/>
+    </bean>
+
         <bean id="native_icon_cache" class="com.kritter.common.caches.native_icon_cache.NativeIconCache">
             <constructor-arg index="0">
                 <list>
@@ -140,8 +173,8 @@
             <constructor-arg index="3" value="native_screenshot_cache"/>
         </bean>
         
-        <bean id="handset_detector" class="com.kritter.device.detector.HandsetDetector">
-            <constructor-arg index="0" value="com.kritter.device.index.HandsetMakeModelSecondaryIndex"/>
+        <bean id="handset_detector" class="com.kritter.device.wurfl.HandsetDetector">
+            <constructor-arg index="0" value="com.kritter.device.common.index.HandsetMakeModelSecondaryIndex"/>
             <constructor-arg index="1"><ref bean="handset_detector_cache_properties"/></constructor-arg>
             <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="handset_detector"/>
@@ -219,10 +252,10 @@
             <constructor-arg index="3" value="iab_categories_cache"/>
         </bean>
 
-        <bean id="maxmind_connection_type_cache" class="com.kritter.geo.common.entity.reader.ConnectionTypeDetectionCache">
-            <constructor-arg index="0" value="maxmind_connection_type_cache"/>
+        <bean id="connection_type_cache" class="com.kritter.maxmind.cache.ConnectionTypeDetectionCache">
+            <constructor-arg index="0" value="connection_type_cache"/>
             <constructor-arg index="1" value="cache.logger"/>
-            <constructor-arg index="2"><ref bean="maxmind_connection_type_cache_props"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="connection_type_cache_props"/></constructor-arg>
         </bean>
 	
 	<bean id="req_logging_cache" class="com.kritter.req_logging.ReqLoggingCache">
@@ -234,6 +267,44 @@
             <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="req_logging_cache"/>
        </bean>
+
+    <bean id="ad_stats_cache" class="com.kritter.common.caches.ad_stats.cache.AdStatsCache">
+        <constructor-arg index="0" value="ad_stats_cache"/>
+        <constructor-arg index="1" value="cache.logger"/>
+        <constructor-arg index="2" value="adstats.thriftlog"/>
+        <constructor-arg index="3" value="1"/>
+        <constructor-arg index="4"><ref bean="ad_stats_cache_props"/></constructor-arg>
+    </bean>
+
+    <bean id="mma_cache" class="com.kritter.common.caches.mma_cache.MMACache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="mma_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="mma_cache"/>
+    </bean>
+    <bean id="adposition_cache" class="com.kritter.common.caches.adposition_cache.AdPositionCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="adposition_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="adposition_cache"/>
+    </bean>
+
+    <bean id="channel_cache" class="com.kritter.common.caches.channel_cache.ChannelCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="channel_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="channel_cache"/>
+    </bean>
+
 	
         <!--
         <bean id="user_recent_history_cache" class="com.kritter.nosql.user.recenthistory.UserRecentImpressionHistoryCache">
@@ -253,6 +324,8 @@
             <list>
                 <ref bean="country_codes_mappings_cache"/>
                 <ref bean="ui_country_id_cache"/>
+                <ref bean="ui_state_id_cache"/>
+                <ref bean="ui_city_id_cache"/>
                 <ref bean="ui_isp_id_cache"/>
                 <ref bean="creative_slot_cache"/>
                 <ref bean="creative_banner_cache"/>
@@ -266,15 +339,20 @@
                 <ref bean="lr_csr_data_cache"/>
                 <ref bean="mnc_mcc_data_cache"/>
                 <ref bean="iab_categories_cache"/>
-                <ref bean="maxmind_connection_type_cache"/>
+                <ref bean="connection_type_cache"/>
                <!-- <ref bean="adx_geo_criteria_cache"/>-->
                 <ref bean="ssp_global_rules_cache"/>
                 <ref bean="account_cache"/>
                 <ref bean="site_meta_data_cache"/>
                 <!--<ref bean="user_recent_history_cache"/>-->
+                <ref bean="video_info_cache"/>
                 <ref bean="native_icon_cache"/>
                 <ref bean="native_screenshot_cache"/>
                 <ref bean="req_logging_cache"/>
+                <ref bean="ad_stats_cache"/>
+				<ref bean="mma_cache"/>
+				<ref bean="adposition_cache"/>
+				<ref bean="channel_cache"/>
             </list>
         </constructor-arg>
     </bean>
@@ -297,6 +375,24 @@
       </constructor-arg>
     </bean>
 
+    <bean id="ui_state_id_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">1800000</prop>
+           <prop key="query"><![CDATA[select * from ui_targeting_state]]></prop>
+         </props>
+      </constructor-arg>
+    </bean>
+
+    <bean id="ui_city_id_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">1800000</prop>
+           <prop key="query"><![CDATA[select * from ui_targeting_city]]></prop>
+         </props>
+      </constructor-arg>
+    </bean>
+
     <bean id="ui_isp_id_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -310,7 +406,7 @@
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select A.id as id,A.guid as guid,A.creative_id as creative_id,A.creative_guid as creative_guid,A.landing_url as landing_url,A.campaign_id as campaign_id,A.campaign_guid as campaign_guid,A.categories_list as ad_categories_list,A.hygiene_list as hygiene_list,A.status_id as status_id,A.marketplace_id as marketplace_id,A.internal_max_bid as internal_max_bid,A.advertiser_bid as advertiser_bid,A.tracking_partner as tracking_partner,A.last_modified as ad_last_modified,T.guid as targeting_profile_guid,T.account_guid as account_guid,AC.id as account_id, AC.demandtype as demandtype, AC.qps as qps,T.brand_list as brand_list,T.model_list as model_list,T.os_json as os_json,T.browser_json as browser_json,T.country_json as country_json,T.carrier_json as carrier_json,T.is_site_list_excluded as is_site_list_excluded,T.direct_supply_inc_exc as direct_supply_inc_exc,T.exchange_supply_inc_exc as exchange_supply_inc_exc,T.category_list as targeting_profile_category_list,T.is_category_list_excluded as is_category_list_excluded,T.custom_ip_file_id_set as custom_ip_file_id_set,T.zipcode_file_id_set as zipcode_file_id_set,T.lat_long as lat_long,T.ext_supply_attributes as ext_supply_attributes,T.supply_source_type as supply_source_type,T.supply_source as supply_source,T.connection_type_targeting_json as connection_type_targeting_json,T.tablet_targeting as tablet_targeting,T.supply_inc_exc as supply_inc_exc,T.hours_list as hours_list,T.midp as midp,T.last_modified as profile_last_modified,T.retargeting as retargeting,T.pmp_deal_json as pmp_deal_json,T.device_type as device_type,A.cpa_goal as cpa_goal,A.adv_domain as adv_domain,A.is_frequency_capped as is_frequency_capped,A.frequency_cap as frequency_cap,A.time_window as time_window,A.bidtype as bidtype,A.external_tracker as external_tracker,A.impression_cap as impression_cap,A.impressions_accrued as impressions_accrued from (select ad.*, IFNULL(ad_budget.impression_cap,0) as impression_cap, IFNULL(ad_budget.impressions_accrued,0) as impressions_accrued, ad_budget.last_modified as ad_budget_last_modified from ad left join ad_budget on ad.guid = ad_budget.ad_guid) as A,targeting_profile as T,account as AC where A.targeting_guid = T.guid and T.account_guid = AC.guid and (A.last_modified >= '$last_modified' or (A.ad_budget_last_modified is not NULL and A.ad_budget_last_modified >= '$last_modified'));]]></prop>
+           <prop key="query"><![CDATA[select A.id as id,A.guid as guid,A.creative_id as creative_id,A.creative_guid as creative_guid,A.landing_url as landing_url,A.campaign_id as campaign_id,A.campaign_guid as campaign_guid,A.categories_list as ad_categories_list,A.hygiene_list as hygiene_list,A.status_id as status_id,A.marketplace_id as marketplace_id,A.internal_max_bid as internal_max_bid,A.advertiser_bid as advertiser_bid,A.tracking_partner as tracking_partner,A.last_modified as ad_last_modified,T.guid as targeting_profile_guid,T.account_guid as account_guid,AC.id as account_id, AC.demandtype as demandtype, AC.qps as qps,T.brand_list as brand_list,T.model_list as model_list,T.os_json as os_json,T.browser_json as browser_json,T.country_json as country_json,T.carrier_json as carrier_json,T.state_json as state_json,T.city_json as city_json,T.is_site_list_excluded as is_site_list_excluded,T.direct_supply_inc_exc as direct_supply_inc_exc,T.exchange_supply_inc_exc as exchange_supply_inc_exc,T.category_list as targeting_profile_category_list,T.is_category_list_excluded as is_category_list_excluded,T.custom_ip_file_id_set as custom_ip_file_id_set,T.zipcode_file_id_set as zipcode_file_id_set,T.lat_long as lat_long,T.ext_supply_attributes as ext_supply_attributes,T.supply_source_type as supply_source_type,T.supply_source as supply_source,T.connection_type_targeting_json as connection_type_targeting_json,T.tablet_targeting as tablet_targeting,T.supply_inc_exc as supply_inc_exc,T.hours_list as hours_list,T.midp as midp,T.last_modified as profile_last_modified,T.retargeting as retargeting,T.pmp_deal_json as pmp_deal_json,T.device_type as device_type,T.ext as targetingExt,A.cpa_goal as cpa_goal,A.adv_domain as adv_domain,A.is_frequency_capped as is_frequency_capped,A.frequency_cap as frequency_cap,A.time_window as time_window,A.bidtype as bidtype,A.external_tracker as external_tracker,A.ext as ext,A.impression_cap as impression_cap,A.impressions_accrued as impressions_accrued from (select ad.*, IFNULL(ad_budget.impression_cap,0) as impression_cap, IFNULL(ad_budget.impressions_accrued,0) as impressions_accrued, ad_budget.last_modified as ad_budget_last_modified from ad left join ad_budget on ad.guid = ad_budget.ad_guid) as A,targeting_profile as T,account as AC where A.targeting_guid = T.guid and T.account_guid = AC.guid and (A.last_modified >= '$last_modified' or (A.ad_budget_last_modified is not NULL and A.ad_budget_last_modified >= '$last_modified'));]]></prop>
          </props>
        </constructor-arg>
    </bean>
@@ -349,6 +445,15 @@
          <props>
            <prop key="refresh_interval">30000</prop>
            <prop key="query"><![CDATA[select * from creative_banner where last_modified >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+   <bean id="video_info_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select * from video_info where last_modified >= '$last_modified']]></prop>
          </props>
        </constructor-arg>
    </bean>
@@ -451,11 +556,19 @@
       </constructor-arg>
     </bean>
 
-    <bean id="maxmind_connection_type_cache_props" class="java.util.Properties">
+    <bean id="connection_type_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
            <prop key="file_name"><![CDATA[/var/data/kritter/location/country/maxmind_netspeed_input.mmdb]]></prop>
            <prop key="refresh_interval">3600000</prop>
+         </props>
+      </constructor-arg>
+    </bean>
+
+    <bean id="ad_stats_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">900000</prop>
          </props>
       </constructor-arg>
     </bean>
@@ -486,7 +599,7 @@
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select id as id, guid as guid, last_modified as last_modified, demandtype as demandtype, demandpreference as demandpreference, qps as qps, timeout as timeout,currency as currency,demand_props as demand_props,supply_props as supply_props from account where last_modified >= '$last_modified']]></prop>
+           <prop key="query"><![CDATA[select id as id, guid as guid, last_modified as last_modified, demandtype as demandtype, demandpreference as demandpreference, qps as qps, timeout as timeout,currency as currency,demand_props as demand_props,supply_props as supply_props,third_party_demand_channel_type as third_party_demand_channel_type,open_rtb_ver_required as open_rtb_ver_required from account where last_modified >= '$last_modified']]></prop>
          </props>
        </constructor-arg>
    </bean>
@@ -500,4 +613,31 @@
        </constructor-arg>
    </bean>
   
+    <bean id="mma_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select c.exchangeid as id, a.supplycode as supplycode, b.ui_id as ui_id, a.last_modified as last_modified from supply_mma_mapping as a, mma_code_mma_ui_mapping as b,mma_exchangename_id_mapping as c  where a.mma_category_code = b.code and a.exchangename=c.exchangename and (a.last_modified >= '$last_modified' or b.last_modified >= '$last_modified' or c.last_modified >= '$last_modified') ]]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+    <bean id="adposition_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select internalid as internalid, pubIncId as pubIncId, adposid as adposid from ad_position where last_modified >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+    <bean id="channel_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select a.internalid as internalid, a.channelcode as channelcode,b.exchangeid as pubIncId from channel as a,mma_exchangename_id_mapping as b where a.exchangename = b.exchangename and (a.last_modified >= '$last_modified' or b.last_modified >= '$last_modified' ) ]]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
 </beans>

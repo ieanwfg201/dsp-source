@@ -10,7 +10,6 @@
         <constructor-arg index="3"><ref bean="adserving_request_processor"/></constructor-arg>
         <constructor-arg index="4" value="KRITTER-DEBUG-SYSTEM"/>
         <constructor-arg index="5" value="KRITTER_INVENTORY_SRC"/>
-        <constructor-arg index="6"><null /> </constructor-arg>
     </bean>
 
      <bean id="ad_targeting_matcher_job" class="com.kritter.adserving.shortlisting.job.AdTargetingMatcher">
@@ -25,12 +24,14 @@
         <constructor-arg index="8"><ref bean="ui_isp_id_cache"/></constructor-arg>
         <constructor-arg index="9">
             <list>
+                <ref bean="state_targeting"/>
+                <ref bean="city_targeting"/>
+                <ref bean="supply_inc_exc_targeting"/>
+                <ref bean="campaign_inc_exc_targeting"/>
                 <ref bean="campaign_flight_shortlisting"/>
                 <ref bean="device_type_targeting"/>
-                <ref bean="campaign_inc_exc_targeting"/>
                 <ref bean="inventory_source_targeting"/>
                 <ref bean="inventory_source_type_targeting"/>
-                <ref bean="supply_inc_exc_targeting"/>
                 <ref bean="site_category_targeting"/>
                 <ref bean="ad_category_targeting"/>
                 <ref bean="hygiene_targeting"/>
@@ -43,6 +44,9 @@
                 <ref bean="lat_long_targeting"/>
                 <ref bean="connection_type_targeting"/>
                 <ref bean="demand_preference_filter"/>
+                <ref bean="mma_targeting_filter"/>
+                <ref bean="adposition_targeting_filter"/>
+                <ref bean="channel_targeting_filter"/>
             </list>
         </constructor-arg>
     </bean>
@@ -68,10 +72,10 @@
         <!--This map contains open rtb version as key from OpenRTBVersion constant file and corresponding implementation.-->
         <constructor-arg index="5">
             <map>
-                <entry key="0" value-ref="creative_floor_matching_rtb_exchange_two_dot_zero"/>
-                <entry key="1" value-ref="creative_floor_matching_rtb_exchange_two_dot_one"/>
-                <entry key="2" value-ref="creative_floor_matching_rtb_exchange_two_dot_two"/>
-                <entry key="3" value-ref="creative_floor_matching_rtb_exchange_two_dot_three"/>
+                <entry key="1" value-ref="creative_floor_matching_rtb_exchange_two_dot_zero"/>
+                <entry key="2" value-ref="creative_floor_matching_rtb_exchange_two_dot_one"/>
+                <entry key="3" value-ref="creative_floor_matching_rtb_exchange_two_dot_two"/>
+                <entry key="4" value-ref="creative_floor_matching_rtb_exchange_two_dot_three"/>
             </map>    
         </constructor-arg>
     </bean>
@@ -140,6 +144,7 @@
         <constructor-arg index="1" value="ecpm_bid_calc_no_bidder"/>
         <constructor-arg index="2" value="req-object"/>
         <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4" value="ad-nofill-map"/>
     </bean>
 
     <!--This job can have multiple instances for using multiple online bidder impls in future by using jobsets-->
@@ -150,6 +155,7 @@
         <constructor-arg index="3" value="res-object"/>
         <constructor-arg index="4"><ref bean="basic_real_time_bidder"/></constructor-arg>
         <constructor-arg index="5"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="6" value="ad-nofill-map"/>
     </bean>
 
     <bean id="ad_ranking_selection_job_top_ecpm" class="com.kritter.adserving.flow.job.AdRankingSelectionJob">
@@ -219,6 +225,8 @@
         <constructor-arg index="9" value="REMOTE_ADDR"/>
         <constructor-arg index="10" value="bid.req.logger"/>
         <constructor-arg index="11"><ref bean="req_logging_cache"/></constructor-arg>
+        <constructor-arg index="12"><ref bean="ad_stats_cache"/></constructor-arg>
+        <constructor-arg index="13" value="ad-nofill-map"/>
     </bean>    
 
     <bean id="ssp_job" class="com.kritter.adserving.flow.job.SspOrInHouse">

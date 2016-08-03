@@ -5,8 +5,6 @@ import statsmodels.api
 import sys
 from time import strftime, gmtime
 
-appLogger = logging.getLogger(__name__)
-
 def solveLogisticRegression(csvFileName, outputFileName, intercept, objectiveName, delimiter, internalOthersId, othersId, emptyFile):
     """
     Load the csv file and solve the regression. Output the values for coefficients in the output file.
@@ -28,6 +26,8 @@ def solveLogisticRegression(csvFileName, outputFileName, intercept, objectiveNam
     :param emptyFile: 0 if empty, 1 if not empty
     :type emptyFile: int
     """
+    appLogger = logging.getLogger(__name__)
+
     if emptyFile == 0:
         # Empty csv file. No need to do anything
         outputFile = None

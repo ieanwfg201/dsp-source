@@ -2,6 +2,7 @@ package com.kritter.serving.demand.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.constants.MarketPlace;
+import com.kritter.entity.ad_ext.AdExt;
 import com.kritter.entity.external_tracker.ExtTracker;
 
 import lombok.EqualsAndHashCode;
@@ -53,6 +54,8 @@ public class AdEntity implements IUpdatableEntity<Integer>
     private final String accountGuid;
     private int bidtype = 0;
     private ExtTracker extTracker;
+    private boolean isRetargeted=false;
+    private AdExt adExt;
     
     public AdEntity(AdEntityBuilder adEntityBuilder)
     {
@@ -84,6 +87,8 @@ public class AdEntity implements IUpdatableEntity<Integer>
         this.accountGuid = adEntityBuilder.accountGuid;
         this.bidtype =  adEntityBuilder.bidtype;
         this.extTracker = adEntityBuilder.extTracker;
+        this.isRetargeted = adEntityBuilder.isRetargeted;
+        this.adExt = adEntityBuilder.adExt;
     }
 
     @Override
@@ -124,6 +129,8 @@ public class AdEntity implements IUpdatableEntity<Integer>
         private String accountGuid;
         private int bidtype = 0;
         private ExtTracker extTracker;
+        private boolean isRetargeted = false;
+        private AdExt adExt;
         
         public AdEntityBuilder(Integer adIncId,
                                String adGuid,
@@ -146,7 +153,8 @@ public class AdEntity implements IUpdatableEntity<Integer>
                                int qps,
                                String accountGuid,
                                int bidtype,
-                               ExtTracker extTracker) throws Exception
+                               ExtTracker extTracker,
+							   boolean isRetargeted) throws Exception
         {
             this.adIncId = adIncId;
             this.adGuid = adGuid;
@@ -170,6 +178,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
             this.accountGuid = accountGuid;
             this.bidtype = bidtype;
             this.extTracker = extTracker;
+            this.isRetargeted = isRetargeted;
         }
 
         public AdEntityBuilder setLandingUrl(String landingUrl)
@@ -199,6 +208,11 @@ public class AdEntity implements IUpdatableEntity<Integer>
         public AdEntityBuilder setAdvertiserDomain(String[] advertiserDomains)
         {
             this.advertiserDomains = advertiserDomains;
+            return this;
+        }
+        public AdEntityBuilder setAdExt(AdExt adExt)
+        {
+            this.adExt = adExt;
             return this;
         }
 

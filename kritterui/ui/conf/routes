@@ -23,11 +23,15 @@ POST 	/entitylist            						controllers.EntityListController.entityList()
 
 #TestPages
 GET    /testpages/viewtestsite                                  controllers.TestPagesController.viewtestsite()
-GET    /testpages/viewtestclick                                  controllers.TestPagesController.viewtestclick()
+GET    /testpages/viewtestclick                                 controllers.TestPagesController.viewtestclick()
 GET    /testpages/viewtestexchange                              controllers.TestPagesController.viewtestexchange()
 POST   /testpages/getadordebug                                  controllers.TestPagesController.getadordebug()
 POST   /testpages/exchangeresponsedebug                         controllers.TestPagesController.exchangeresponsedebug()
 POST   /testpages/performclick                                  controllers.TestPagesController.performclick()
+
+#CacheInfo
+GET    /cacheinfo/default                                  		controllers.CacheInfoController.viewcacheinfo()
+POST   /cacheinfo/getcachinfo									controllers.CacheInfoController.exchangeresponsedebug()
 
 # Log pages
 GET /logpages/log                                                controllers.LogPagesController.logs()
@@ -81,12 +85,15 @@ POST    /advertiser/creatives/save                 	             controllers.adv
 POST    /advertiser/creatives/banner/upload/:accountGuid         controllers.advertiser.CreativeController.uploadBanner(accountGuid:String)
 POST    /advertiser/creatives/icon/upload/:accountGuid           controllers.advertiser.CreativeController.uploadIcon(accountGuid:String)
 POST    /advertiser/creatives/screenshot/upload/:accountGuid     controllers.advertiser.CreativeController.uploadScreenshot(accountGuid:String)
+POST    /advertiser/creatives/directvideo/upload/:accountGuid    controllers.advertiser.CreativeController.uploadDirectvideo(accountGuid:String)
 POST    /advertiser/creatives/banner/save                        controllers.advertiser.CreativeController.saveBanner()
 POST    /advertiser/creatives/icon/save                          controllers.advertiser.CreativeController.saveIcon()
 POST    /advertiser/creatives/screenshot/save                    controllers.advertiser.CreativeController.saveScreenshot()
+POST    /advertiser/creatives/directvideo/save                   controllers.advertiser.CreativeController.saveDirectvideo()
 GET     /advertiser/creatives/:creative_id/banners	             controllers.advertiser.CreativeController.bannerList(creative_id:Int)
 GET     /advertiser/creatives/:creative_id/nativeicons           controllers.advertiser.CreativeController.nativeIconList(creative_id:Int)
 GET     /advertiser/creatives/:creative_id/nativescreenshots     controllers.advertiser.CreativeController.nativeScreenshotList(creative_id:Int)
+GET     /advertiser/creatives/:creative_id/directvideos          controllers.advertiser.CreativeController.directvideoList(creative_id:Int)
 GET 	/advertiser/creatives/metadata/creativeattrs/:typeid	 controllers.advertiser.CreativeController.creativeAtrributes(typeid:Int)
 GET     /advertiser/creatives/metadata/creativemacros            controllers.advertiser.CreativeController.creativeMacros()
 GET     /advertiser/creatives/metadata/videotracking             controllers.advertiser.CreativeController.videoTracking() 
@@ -134,7 +141,9 @@ GET    /site/workflow/form/:id/:action				controllers.publisher.SiteController.w
 POST   /site/update                					controllers.publisher.SiteController.updateSite()
 GET     /site/updateMultipleSite/:action            controllers.publisher.SiteController.updateMultipleSite(action:String, ids: Option[String])
 GET    /extsite/workflow/form/:id/:action           controllers.publisher.ExtsiteController.workflowForm(id:Int,action:String)
+GET    /extsite/workflow/editform/:id/:action       controllers.publisher.ExtsiteController.editworkflowForm(id:Int,action:String)
 POST   /extsite/update                              controllers.publisher.ExtsiteController.updateextSite()
+POST   /extsite/updateextsitename                   controllers.publisher.ExtsiteController.updateextsitename()
 GET    /extsite/updateMultipleextSite/:action       controllers.publisher.ExtsiteController.updateMultipleextSite(action:String, ids: Option[String])
 
 
@@ -198,6 +207,9 @@ GET    /algo/default                                             controllers.alg
 POST   /algo/data                                                controllers.algo.AlgoController.reportData()
 GET    /reqLogging/default                                       controllers.req_logging.ReqLoggingController.getReqLogging()
 POST   /reqLogging/data                                          controllers.req_logging.ReqLoggingController.reportData()
+GET    /adstats/default                                       	 controllers.adstats.AdStatsController.adstatsReport()
+POST   /adstats/data                                         	 controllers.adstats.AdStatsController.reportData()
+POST   /adstats/data/CSV                                         controllers.adstats.AdStatsController.reportDataCSV()
 
 
 
@@ -309,6 +321,8 @@ GET     /metadata/options/connection_type                           controllers.
 GET     /metadata/options/tier1categories   						controllers.MetadataController.tier_1_categories()
 GET     /metadata/options/tier2categories                           controllers.MetadataController.tier_2_categories()
 GET     /metadata/options/device_type                               controllers.MetadataController.device_type()
+GET     /metadata/options/state/:countryList       				    controllers.MetadataController.state(countryList:String)
+GET     /metadata/options/city/:stateList       				    controllers.MetadataController.city(stateList:String)
 
 
 GET		/metadata/options/hygienelist   						controllers.MetadataController.hygienelist()
@@ -320,6 +334,14 @@ GET     /metadata/options/screenshot_slot_options               controllers.Meta
 GET     /metadata/options/advertiserJsonArrayOptions                controllers.MetadataController.advertiserJsonArrayOptions()
 GET     /metadata/options/hours   									controllers.MetadataController.hourList()
 GET     /metadata/options/retargeting_segment_by_adv/:adv           controllers.MetadataController.retargeting_segment_by_adv(adv:String)
+
+GET     /metadata/options/tier1mmacategory                          controllers.MetadataController.tier1mmacategory()     
+GET     /metadata/options/tier2mmacategory/:tier1List               controllers.MetadataController.tier2MMAcategoryBytier1(tier1List:String)
+GET     /metadata/options/tier1mmaindustry                          controllers.MetadataController.tier1mmaindustry()     
+GET     /metadata/options/tier2mmaindustry/:tier1List               controllers.MetadataController.tier2MMAindustryBytier1(tier1List:String)
+GET     /metadata/options/adposition_list                           controllers.MetadataController.adposition_list()     
+GET     /metadata/options/tier1channel                              controllers.MetadataController.tier1channel()     
+GET     /metadata/options/tier2channel/:tier1List                   controllers.MetadataController.tier2channelBytier1(tier1List:String)
 
 
 # Login page

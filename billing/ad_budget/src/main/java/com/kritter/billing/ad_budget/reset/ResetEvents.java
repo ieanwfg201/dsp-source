@@ -117,8 +117,7 @@ public class ResetEvents {
 
         // The impression cap is for the duration of the entity
         if(entityBudget.getTimeWindow() == 0) {
-            logger.debug("Time window for entity id : {} is 0. Impression cap for the entire duration of campaign, hence" +
-                    "not resetting.", entityBudget.getEntityGuid());
+            logger.debug("Time window for entity id : {} is 0. Impression cap for the entire duration of campaign, hence not resetting.", entityBudget.getEntityGuid());
             return false;
         }
 

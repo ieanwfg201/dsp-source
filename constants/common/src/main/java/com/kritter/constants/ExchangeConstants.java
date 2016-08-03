@@ -12,7 +12,7 @@ public class ExchangeConstants {
     public static final String winMacroAuctionAdId = "\\$\\{AUCTION\\_AD\\_ID\\}";
     public static final String winMacroAuctionPrice = "\\$\\{AUCTION\\_PRICE\\}";
     public static final String winMacroAuctionCurrency = "\\$\\{AUCTION\\_CURRENCY\\}";
-    public static final String callDelimiter="";
+    public static final String callDelimiter=String.valueOf((char)1);
     public static final String ningApiClient = "NING";
     public static final String auction_strategy_second_price = "SECONDPRICE";
 }

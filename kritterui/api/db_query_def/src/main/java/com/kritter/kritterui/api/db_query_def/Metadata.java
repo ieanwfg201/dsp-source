@@ -52,4 +52,30 @@ public class Metadata {
     public static final String get_active_advertiser_list = "select id as id, name as name from account where status=1 and type_id=3";
     public static final String get_account_as_meta_by_id = "select id as id, name as name from account where id in (<id>)";
     public static final String get_campaign_as_meta_by_id = "select id as id, name as name from campaign where id in (<id>)";
+    public static final String get_state_by_country_ui_ids = "select id as id, state_name as name from ui_targeting_state where country_ui_id in (<id>)";
+    public static final String get_city_by_state_ui_ids = "select id as id, city_name as name from ui_targeting_city where state_ui_id in (<id>)";
+    public static final String get_state_by_ui_ids = "select id as id, state_name as name from ui_targeting_state where id in (<id>)";
+    public static final String get_city_by_ui_ids = "select id as id, city_name as name from ui_targeting_city where id in (<id>)";
+    public static final String mma_category_tier1_all = "select id as id, name as name from ui_mma_category where tier=1 and mma_type=1";
+    public static final String mma_category_tier2_by_tier1 = "select b3.id as id, b3.name as name from mma_code_mma_ui_mapping as b1,"
+    		+ "(select a1.code as code from mma_categories as a1 where a1.mma_type=1 and a1.parent_code in "
+    		+ "(select  c.code as code from ui_mma_category as a, mma_code_mma_ui_mapping as b, "
+    		+ "mma_categories as c where a.id=b.ui_id and b.code=c.code and a.mma_type=1 and c.mma_type=1 and a.id in (<id>))) b2, ui_mma_category b3 where "
+    		+ "b1.code=b2.code and b3.id=b1.ui_id";
+    public static final String mma_category_by_ids = "select id as id, name as name from ui_mma_category where id in (<id>) and mma_type=1";
+    public static final String mma_industry_tier1_all = "select id as id, name as name from ui_mma_category where tier=1 and mma_type=2";
+    public static final String mma_industry_tier2_by_tier1 = "select b3.id as id, b3.name as name from mma_code_mma_ui_mapping as b1,"
+    		+ "(select a1.code as code from mma_categories as a1 where a1.mma_type=2 and a1.parent_code in "
+    		+ "(select  c.code as code from ui_mma_category as a, mma_code_mma_ui_mapping as b, "
+    		+ "mma_categories as c where a.id=b.ui_id and b.code=c.code and a.mma_type=2 and c.mma_type=2 and a.id in (<id>))) b2, ui_mma_category b3 where "
+    		+ "b1.code=b2.code and b3.id=b1.ui_id";
+    public static final String mma_industry_by_ids = "select id as id, name as name from ui_mma_category where id in (<id>) and mma_type=2";
+    public static final String adpos_all = "select a.internalid as id, CONCAT(b.name,'-',a.name) as name, a.description as description from ad_position as a, account as b where a.pubIncId=b.id";
+    public static final String adpos_by_ids = "select a.internalid as id, CONCAT(b.name,'-',a.name) as name, a.description as description from ad_position as a, account as b where a.pubIncId=b.id and a.internalid in (<id>)";
+    public static final String adpos_by_pubids = "select a.internalid as id, CONCAT(b.name,'-',a.name) as name, a.description as description from ad_position as a, account as b where a.pubIncId=b.id and a.pubIncId in (<id>)";
+    public static final String channel_tier1_all = "select internalid as id, CONCAT(exchangename,'-',channelname) as name from channel where tier=1";
+    public static final String channel_tier2_by_tier1 = "select internalid as id , CONCAT(exchangename,'-',channelname) as name from channel "+
+    		"where tier=2 and parentcode in (select channelcode from channel where internalid in (<id>))";
+    public static final String channel_by_ids = "select internalid as id, CONCAT(exchangename,'-',channelname) as name from channel where internalid in (<id>)";
+   
 }

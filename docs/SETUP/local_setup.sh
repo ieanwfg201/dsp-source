@@ -160,6 +160,10 @@ echo "mkdir -p /var/data/kritter/log_readytoprocess/adserving"
 mkdir -p /var/data/kritter/log_readytoprocess/adserving
 chown -R $4:$5 /var/data/kritter/log_readytoprocess/adserving
 
+echo "mkdir -p /var/data/kritter/log_readytoprocess/adstats"
+mkdir -p /var/data/kritter/log_readytoprocess/adstats
+chown -R $4:$5 /var/data/kritter/log_readytoprocess/adstats
+
 
 echo "mkdir -p /var/data/kritter/bidder/offline_bidder/cpm_cpm/rev_max"
 mkdir -p /var/data/kritter/bidder/offline_bidder/cpm_cpm/rev_max
@@ -210,6 +214,19 @@ echo "mkdir -p /var/data/kritter/tern_file/db/adserving"
 mkdir -p /var/data/kritter/tern_file/db/adserving
 chown -R $4:$5 /var/data/kritter/tern_file/db/adserving
 su - $4 -c "python /usr/share/kritter/tern/tern_file/lib/journal/create_journal.py '/usr/share/kritter/tern/tern_file/sql/setup.sql' '/var/data/kritter/tern_file/db/adserving' 'tern_journal.db'"
+
+echo "mkdir -p /var/log/kritter/tern_file/adstats"
+mkdir -p /var/log/kritter/tern_file/adstats
+chown -R $4:$5 /var/log/kritter/tern_file/adstats
+
+echo "mkdir -p /var/data/kritter/tern_file/destination/adstats"
+mkdir -p /var/data/kritter/tern_file/destination/adstats
+chown -R $4:$5 /var/data/kritter/tern_file/destination/adstats
+
+echo "mkdir -p /var/data/kritter/tern_file/db/adstats"
+mkdir -p /var/data/kritter/tern_file/db/adstats
+chown -R $4:$5 /var/data/kritter/tern_file/db/adstats
+su - $4 -c "python /usr/share/kritter/tern/tern_file/lib/journal/create_journal.py '/usr/share/kritter/tern/tern_file/sql/setup.sql' '/var/data/kritter/tern_file/db/adstats' 'tern_journal.db'"
 
 echo "mkdir -p /var/log/kritter/tern_file/postimpression"
 mkdir -p /var/log/kritter/tern_file/postimpression
@@ -266,6 +283,10 @@ chown -R $2:$3  /var/data/kritter/bidder/cpc_cpm/rev_max/
 echo "mkdir -p /var/log/kritter/clicksr/logistic_regression"
 mkdir -p /var/log/kritter/clicksr/logistic_regression
 chown -R $2:$3 /var/log/kritter/clicksr/logistic_regression
+
+echo "mkdir -p /var/log/kritter/kumbaya/ad_stats"
+mkdir -p /var/log/kritter/kumbaya/ad_stats
+chown -R $2:$3 /var/log/kritter/kumbaya/ad_stats
 
 echo "mkdir -p /var/data/kritter"
 mkdir -p /var/data/kritter

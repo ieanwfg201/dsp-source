@@ -73,7 +73,7 @@ public class CreativeAndFloorPriceMatchingJob implements Job
 
             try
             {
-                creativeAndFloorMatchingRTBExchange.processAdUnitsForEachBidRequestImpression(request,response);
+                creativeAndFloorMatchingRTBExchange.processAdUnitsForEachBidRequestImpression(request,response, context);
             }
             catch (Exception e)
             {
@@ -81,6 +81,6 @@ public class CreativeAndFloorPriceMatchingJob implements Job
             }
         }
         else
-            creativeTargetingMatcher.processAdIdsForCreativeFiltering(request,response,request.getSite());
+            creativeTargetingMatcher.processAdIdsForCreativeFiltering(request,response,request.getSite(), context);
     }
 }

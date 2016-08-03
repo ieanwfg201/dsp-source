@@ -133,9 +133,7 @@ public class ExternalSupplyAttributesCache
             }
             catch (RefreshException re)
             {
-                cacheLogger.error("RefreshException while loading external supply attributes data inside " +
-                                  "ExternalSupplyAttributesReloadTimerTask in the class ExternalSupplyAttributesCache",
-                                  re);
+                cacheLogger.error("RefreshException while loading external supply attributes data inside ExternalSupplyAttributesReloadTimerTask in the class ExternalSupplyAttributesCache",re);
             }
         }
     }

@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 
 import play.Logger;
+import play.Play;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import com.kritter.api.entity.log.LogEntity;
 import com.kritter.kritterui.api.utils.TimeManipulation.TimeManipulator;
 
 public class LogPagesFormEntity {
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
     protected static String ALL = "[\"all\"]";
     protected static String NONE = "[\"none\"]";
 
@@ -38,9 +40,9 @@ public class LogPagesFormEntity {
         this.logEntity = new LogEntity();
         Date date = DateUtils.addDays(new Date(), -1);
         start_date = TimeManipulator.convertDate(date, "yyyy-MM-dd 00:00:00",
-                "UTC");
+                timezoneid);
         end_date = TimeManipulator.convertDate(date, "yyyy-MM-dd 23:59:59",
-                "UTC");
+                timezoneid);
     }
     protected List<Integer> stringToIdList(String valArrayStr) {
         List<Integer> idList = new ArrayList<Integer>();
@@ -254,7 +256,7 @@ public class LogPagesFormEntity {
         String str = logEntity.getStart_time_str();
         if (str == null || "".equals(str)) {
             return TimeManipulator.convertDate(DateUtils.addDays(new Date(), -1),
-                    "yyyy-MM-dd 00:00:00", "UTC");
+                    "yyyy-MM-dd 00:00:00", timezoneid);
         }
         return str;
     }
@@ -267,7 +269,7 @@ public class LogPagesFormEntity {
         String str = logEntity.getEnd_time_str();
         if (str == null || "".equals(str)) {
             return TimeManipulator.convertDate(DateUtils.addDays(new Date(), -1),
-                    "yyyy-MM-dd 00:00:00", "UTC");
+                    "yyyy-MM-dd 00:00:00", timezoneid);
         }
         return str;
     }

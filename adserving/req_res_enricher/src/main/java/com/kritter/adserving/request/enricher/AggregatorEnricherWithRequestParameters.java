@@ -1,17 +1,15 @@
 package com.kritter.adserving.request.enricher;
 
+import com.kritter.constants.*;
+import com.kritter.device.common.HandsetDetectionProvider;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
-import com.kritter.constants.ConnectionType;
-import com.kritter.constants.INVENTORY_SOURCE;
-import com.kritter.constants.SITE_PLATFORM;
-import com.kritter.constants.StatusIdEnum;
-import com.kritter.device.HandsetDetectionProvider;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.InternetServiceProvider;
-import com.kritter.geo.common.entity.reader.ConnectionTypeDetectionCache;
+import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.utils.common.ApplicationGeneralUtils;
@@ -22,7 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This enricher is similar to aggregator enricher however difference is that
@@ -54,7 +54,7 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
     private HandsetDetectionProvider handsetDetectionProvider;
     private CountryDetectionCache countryDetectionCache;
     private ISPDetectionCache ispDetectionCache;
-    private ConnectionTypeDetectionCache connectionTypeDetectionCache;
+    private IConnectionTypeDetectionCache connectionTypeDetectionCache;
 
     public AggregatorEnricherWithRequestParameters(
                                                     String loggerName,
@@ -128,7 +128,7 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
             HandsetDetectionProvider handsetDetectionProvider,
             CountryDetectionCache countryDetectionCache,
             ISPDetectionCache ispDetectionCache,
-            ConnectionTypeDetectionCache connectionTypeDetectionCache,
+            IConnectionTypeDetectionCache connectionTypeDetectionCache,
             String richMediaParameterName
     )
     {
@@ -302,7 +302,17 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
         else if(appWapForSiteCodeValue == SITE_PLATFORM.APP.getPlatform())
             sitePlatformValue = SITE_PLATFORM.WAP.getPlatform();
         request.setSitePlatformValue(sitePlatformValue);
-        request.setUserId(requestingUserId);
+        Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
+        if(externalUserIds == null) {
+            externalUserIds = new HashSet<ExternalUserId>();
+            request.setExternalUserIds(externalUserIds);
+        }
+
+        if(requestingUserId != null) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.AGGREGATOR_USER_ID, request.getInventorySource(),
+                    requestingUserId));
+        }
+
         request.setRequestingLongitudeValue(requestingLongitudeValue);
         request.setRequestingLatitudeValue(requestingLatitudeValue);
         request.setRichMediaParameterValue(richMediaParameterValue);
@@ -328,7 +338,7 @@ public class AggregatorEnricherWithRequestParameters implements RequestEnricher
             if(null==site || !(site.getStatus() == StatusIdEnum.Active.getCode()))
             {
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.SITE_NOT_FIT);
-                this.logger.error("Requesting site is not fit or is not found in cache . siteid: " + siteId );
+                this.logger.error("Requesting site is not fit or is not found in cache . siteid:{} ", siteId );
                return request;
             }
 

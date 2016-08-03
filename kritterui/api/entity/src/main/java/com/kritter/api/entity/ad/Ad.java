@@ -8,6 +8,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.kritter.constants.BidType;
+import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.MarketPlace;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.UserConstant;
@@ -37,7 +38,7 @@ public class Ad {
     /** optional - json array of tier2 category */
     private String categories_tier_2_list = "[]";
     /** mandatory - json array of hygiene @see com.kritter.constants.HygieneCategory */
-    private String hygiene_list = null;
+    private String hygiene_list = "["+HygieneCategory.FAMILY_SAFE.getCode()+"]";
     /** mandatory - @see com.kritter.constants.StatusIdEnum */
     private StatusIdEnum status_id = StatusIdEnum.Pending;
     /** mandatory - @see com.kritter.constants.MarketPlace */
@@ -72,178 +73,184 @@ public class Ad {
     /** the time window for which frequency cap should be honored */
     private int time_window = UserConstant.frequency_cap_time_window_default;
     private int bidtype = BidType.AUTO.getCode();
-    private String external_tracker = "";
+    private String external_imp_tracker = "";
+    private String external_click_tracker = "";
+    /** optional - json array of mma tier1 category */
+    private String mma_tier_1_list = "[]";
+    /** optional - json array of mma_tier2 category */
+    private String mma_tier_2_list = "[]";
+
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((adv_domain == null) ? 0 : adv_domain.hashCode());
-        long temp;
-        temp = Double.doubleToLongBits(advertiser_bid);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result
-                + ((allocation_ids == null) ? 0 : allocation_ids.hashCode());
-        result = prime * result + bidtype;
-        result = prime * result
-                + ((campaign_guid == null) ? 0 : campaign_guid.hashCode());
-        result = prime * result + campaign_id;
-        result = prime * result + ((categories_tier_1_list == null) ? 0
-                : categories_tier_1_list.hashCode());
-        result = prime * result + ((categories_tier_2_list == null) ? 0
-                : categories_tier_2_list.hashCode());
-        result = prime * result + ((comment == null) ? 0 : comment.hashCode());
-        temp = Double.doubleToLongBits(cpa_goal);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (int) (created_on ^ (created_on >>> 32));
-        result = prime * result
-                + ((creative_guid == null) ? 0 : creative_guid.hashCode());
-        result = prime * result + creative_id;
-        result = prime * result + ((external_tracker == null) ? 0
-                : external_tracker.hashCode());
-        result = prime * result + frequency_cap;
-        result = prime * result + ((guid == null) ? 0 : guid.hashCode());
-        result = prime * result
-                + ((hygiene_list == null) ? 0 : hygiene_list.hashCode());
-        result = prime * result + id;
-        temp = Double.doubleToLongBits(internal_max_bid);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (is_frequency_capped ? 1231 : 1237);
-        result = prime * result
-                + ((landing_url == null) ? 0 : landing_url.hashCode());
-        result = prime * result
-                + (int) (last_modified ^ (last_modified >>> 32));
-        result = prime * result
-                + ((marketplace_id == null) ? 0 : marketplace_id.hashCode());
-        result = prime * result + modified_by;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result
-                + ((status_id == null) ? 0 : status_id.hashCode());
-        result = prime * result
-                + ((targeting_guid == null) ? 0 : targeting_guid.hashCode());
-        result = prime * result + ((targeting_profile_name == null) ? 0
-                : targeting_profile_name.hashCode());
-        result = prime * result + time_window;
-        result = prime * result + ((tracking_partner == null) ? 0
-                : tracking_partner.hashCode());
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((adv_domain == null) ? 0 : adv_domain.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(advertiser_bid);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((allocation_ids == null) ? 0 : allocation_ids.hashCode());
+		result = prime * result + bidtype;
+		result = prime * result + ((campaign_guid == null) ? 0 : campaign_guid.hashCode());
+		result = prime * result + campaign_id;
+		result = prime * result + ((categories_tier_1_list == null) ? 0 : categories_tier_1_list.hashCode());
+		result = prime * result + ((categories_tier_2_list == null) ? 0 : categories_tier_2_list.hashCode());
+		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
+		temp = Double.doubleToLongBits(cpa_goal);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + (int) (created_on ^ (created_on >>> 32));
+		result = prime * result + ((creative_guid == null) ? 0 : creative_guid.hashCode());
+		result = prime * result + creative_id;
+		result = prime * result + ((external_click_tracker == null) ? 0 : external_click_tracker.hashCode());
+		result = prime * result + ((external_imp_tracker == null) ? 0 : external_imp_tracker.hashCode());
+		result = prime * result + frequency_cap;
+		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
+		result = prime * result + ((hygiene_list == null) ? 0 : hygiene_list.hashCode());
+		result = prime * result + id;
+		temp = Double.doubleToLongBits(internal_max_bid);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + (is_frequency_capped ? 1231 : 1237);
+		result = prime * result + ((landing_url == null) ? 0 : landing_url.hashCode());
+		result = prime * result + (int) (last_modified ^ (last_modified >>> 32));
+		result = prime * result + ((marketplace_id == null) ? 0 : marketplace_id.hashCode());
+		result = prime * result + ((mma_tier_1_list == null) ? 0 : mma_tier_1_list.hashCode());
+		result = prime * result + ((mma_tier_2_list == null) ? 0 : mma_tier_2_list.hashCode());
+		result = prime * result + modified_by;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((status_id == null) ? 0 : status_id.hashCode());
+		result = prime * result + ((targeting_guid == null) ? 0 : targeting_guid.hashCode());
+		result = prime * result + ((targeting_profile_name == null) ? 0 : targeting_profile_name.hashCode());
+		result = prime * result + time_window;
+		result = prime * result + ((tracking_partner == null) ? 0 : tracking_partner.hashCode());
+		return result;
+	}
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Ad other = (Ad) obj;
-        if (adv_domain == null) {
-            if (other.adv_domain != null)
-                return false;
-        } else if (!adv_domain.equals(other.adv_domain))
-            return false;
-        if (Double.doubleToLongBits(advertiser_bid) != Double
-                .doubleToLongBits(other.advertiser_bid))
-            return false;
-        if (allocation_ids == null) {
-            if (other.allocation_ids != null)
-                return false;
-        } else if (!allocation_ids.equals(other.allocation_ids))
-            return false;
-        if (bidtype != other.bidtype)
-            return false;
-        if (campaign_guid == null) {
-            if (other.campaign_guid != null)
-                return false;
-        } else if (!campaign_guid.equals(other.campaign_guid))
-            return false;
-        if (campaign_id != other.campaign_id)
-            return false;
-        if (categories_tier_1_list == null) {
-            if (other.categories_tier_1_list != null)
-                return false;
-        } else if (!categories_tier_1_list.equals(other.categories_tier_1_list))
-            return false;
-        if (categories_tier_2_list == null) {
-            if (other.categories_tier_2_list != null)
-                return false;
-        } else if (!categories_tier_2_list.equals(other.categories_tier_2_list))
-            return false;
-        if (comment == null) {
-            if (other.comment != null)
-                return false;
-        } else if (!comment.equals(other.comment))
-            return false;
-        if (Double.doubleToLongBits(cpa_goal) != Double
-                .doubleToLongBits(other.cpa_goal))
-            return false;
-        if (created_on != other.created_on)
-            return false;
-        if (creative_guid == null) {
-            if (other.creative_guid != null)
-                return false;
-        } else if (!creative_guid.equals(other.creative_guid))
-            return false;
-        if (creative_id != other.creative_id)
-            return false;
-        if (external_tracker == null) {
-            if (other.external_tracker != null)
-                return false;
-        } else if (!external_tracker.equals(other.external_tracker))
-            return false;
-        if (frequency_cap != other.frequency_cap)
-            return false;
-        if (guid == null) {
-            if (other.guid != null)
-                return false;
-        } else if (!guid.equals(other.guid))
-            return false;
-        if (hygiene_list == null) {
-            if (other.hygiene_list != null)
-                return false;
-        } else if (!hygiene_list.equals(other.hygiene_list))
-            return false;
-        if (id != other.id)
-            return false;
-        if (Double.doubleToLongBits(internal_max_bid) != Double
-                .doubleToLongBits(other.internal_max_bid))
-            return false;
-        if (is_frequency_capped != other.is_frequency_capped)
-            return false;
-        if (landing_url == null) {
-            if (other.landing_url != null)
-                return false;
-        } else if (!landing_url.equals(other.landing_url))
-            return false;
-        if (last_modified != other.last_modified)
-            return false;
-        if (marketplace_id != other.marketplace_id)
-            return false;
-        if (modified_by != other.modified_by)
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (status_id != other.status_id)
-            return false;
-        if (targeting_guid == null) {
-            if (other.targeting_guid != null)
-                return false;
-        } else if (!targeting_guid.equals(other.targeting_guid))
-            return false;
-        if (targeting_profile_name == null) {
-            if (other.targeting_profile_name != null)
-                return false;
-        } else if (!targeting_profile_name.equals(other.targeting_profile_name))
-            return false;
-        if (time_window != other.time_window)
-            return false;
-        if (tracking_partner != other.tracking_partner)
-            return false;
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Ad other = (Ad) obj;
+		if (adv_domain == null) {
+			if (other.adv_domain != null)
+				return false;
+		} else if (!adv_domain.equals(other.adv_domain))
+			return false;
+		if (Double.doubleToLongBits(advertiser_bid) != Double.doubleToLongBits(other.advertiser_bid))
+			return false;
+		if (allocation_ids == null) {
+			if (other.allocation_ids != null)
+				return false;
+		} else if (!allocation_ids.equals(other.allocation_ids))
+			return false;
+		if (bidtype != other.bidtype)
+			return false;
+		if (campaign_guid == null) {
+			if (other.campaign_guid != null)
+				return false;
+		} else if (!campaign_guid.equals(other.campaign_guid))
+			return false;
+		if (campaign_id != other.campaign_id)
+			return false;
+		if (categories_tier_1_list == null) {
+			if (other.categories_tier_1_list != null)
+				return false;
+		} else if (!categories_tier_1_list.equals(other.categories_tier_1_list))
+			return false;
+		if (categories_tier_2_list == null) {
+			if (other.categories_tier_2_list != null)
+				return false;
+		} else if (!categories_tier_2_list.equals(other.categories_tier_2_list))
+			return false;
+		if (comment == null) {
+			if (other.comment != null)
+				return false;
+		} else if (!comment.equals(other.comment))
+			return false;
+		if (Double.doubleToLongBits(cpa_goal) != Double.doubleToLongBits(other.cpa_goal))
+			return false;
+		if (created_on != other.created_on)
+			return false;
+		if (creative_guid == null) {
+			if (other.creative_guid != null)
+				return false;
+		} else if (!creative_guid.equals(other.creative_guid))
+			return false;
+		if (creative_id != other.creative_id)
+			return false;
+		if (external_click_tracker == null) {
+			if (other.external_click_tracker != null)
+				return false;
+		} else if (!external_click_tracker.equals(other.external_click_tracker))
+			return false;
+		if (external_imp_tracker == null) {
+			if (other.external_imp_tracker != null)
+				return false;
+		} else if (!external_imp_tracker.equals(other.external_imp_tracker))
+			return false;
+		if (frequency_cap != other.frequency_cap)
+			return false;
+		if (guid == null) {
+			if (other.guid != null)
+				return false;
+		} else if (!guid.equals(other.guid))
+			return false;
+		if (hygiene_list == null) {
+			if (other.hygiene_list != null)
+				return false;
+		} else if (!hygiene_list.equals(other.hygiene_list))
+			return false;
+		if (id != other.id)
+			return false;
+		if (Double.doubleToLongBits(internal_max_bid) != Double.doubleToLongBits(other.internal_max_bid))
+			return false;
+		if (is_frequency_capped != other.is_frequency_capped)
+			return false;
+		if (landing_url == null) {
+			if (other.landing_url != null)
+				return false;
+		} else if (!landing_url.equals(other.landing_url))
+			return false;
+		if (last_modified != other.last_modified)
+			return false;
+		if (marketplace_id != other.marketplace_id)
+			return false;
+		if (mma_tier_1_list == null) {
+			if (other.mma_tier_1_list != null)
+				return false;
+		} else if (!mma_tier_1_list.equals(other.mma_tier_1_list))
+			return false;
+		if (mma_tier_2_list == null) {
+			if (other.mma_tier_2_list != null)
+				return false;
+		} else if (!mma_tier_2_list.equals(other.mma_tier_2_list))
+			return false;
+		if (modified_by != other.modified_by)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (status_id != other.status_id)
+			return false;
+		if (targeting_guid == null) {
+			if (other.targeting_guid != null)
+				return false;
+		} else if (!targeting_guid.equals(other.targeting_guid))
+			return false;
+		if (targeting_profile_name == null) {
+			if (other.targeting_profile_name != null)
+				return false;
+		} else if (!targeting_profile_name.equals(other.targeting_profile_name))
+			return false;
+		if (time_window != other.time_window)
+			return false;
+		if (tracking_partner != other.tracking_partner)
+			return false;
+		return true;
+	}
     public int getId() {
         return id;
     }
@@ -422,13 +429,31 @@ public class Ad {
     public void setBidtype(int bidtype) {
         this.bidtype = bidtype;
     }
-    public String getExternal_tracker() {
-        return external_tracker;
-    }
-    public void setExternal_tracker(String external_tracker) {
-        this.external_tracker = external_tracker;
-    }
-    public JsonNode toJson(){
+    public String getExternal_imp_tracker() {
+		return external_imp_tracker;
+	}
+	public void setExternal_imp_tracker(String external_imp_tracker) {
+		this.external_imp_tracker = external_imp_tracker;
+	}
+	public String getExternal_click_tracker() {
+		return external_click_tracker;
+	}
+	public void setExternal_click_tracker(String external_click_tracker) {
+		this.external_click_tracker = external_click_tracker;
+	}
+	public String getMma_tier_1_list() {
+		return mma_tier_1_list;
+	}
+	public void setMma_tier_1_list(String mma_tier_1_list) {
+		this.mma_tier_1_list = mma_tier_1_list;
+	}
+	public String getMma_tier_2_list() {
+		return mma_tier_2_list;
+	}
+	public void setMma_tier_2_list(String mma_tier_2_list) {
+		this.mma_tier_2_list = mma_tier_2_list;
+	}
+	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;

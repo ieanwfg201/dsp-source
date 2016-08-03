@@ -51,6 +51,19 @@ public class TargetingProfileEntity extends Entity{
     private String pmp_exchange ="";
     private String pmp_dealid ="";
     private String device_type = "[]";
+    private boolean mma_inc_exc=true;
+    /** optional - json array of mma tier1 category */
+    private String mma_tier_1_list = "[]";
+    /** optional - json array of mma_tier2 category */
+    private String mma_tier_2_list = "[]";
+    private boolean adposition_inc_exc=true;
+    private String adposition_list = "[]";
+    private boolean channel_inc_exc=true;
+    /** optional - json array of channel tier1 category */
+    private String channel_tier_1_list = "[]";
+    /** optional - json array of channel_tier2 category */
+    private String channel_tier_2_list = "[]";
+
 
     public MidpValue getMidp() {
         return midp;
@@ -277,8 +290,56 @@ public class TargetingProfileEntity extends Entity{
     public void setPmp_dealid(String pmp_dealid) {
         this.pmp_dealid = pmp_dealid;
     }
+    public String getMma_tier_1_list() {
+		return mma_tier_1_list;
+	}
+	public void setMma_tier_1_list(String mma_tier_1_list) {
+		this.mma_tier_1_list = mma_tier_1_list;
+	}
+	public String getMma_tier_2_list() {
+		return mma_tier_2_list;
+	}
+	public void setMma_tier_2_list(String mma_tier_2_list) {
+		this.mma_tier_2_list = mma_tier_2_list;
+	}
+	public boolean isMma_inc_exc() {
+		return mma_inc_exc;
+	}
+	public void setMma_inc_exc(boolean mma_inc_exc) {
+		this.mma_inc_exc = mma_inc_exc;
+	}
 
-    public Targeting_profile getEntity(){
+    public String getAdposition_list() {
+		return adposition_list;
+	}
+	public void setAdposition_list(String adposition_list) {
+		this.adposition_list = adposition_list;
+	}
+	public boolean isAdposition_inc_exc() {
+		return adposition_inc_exc;
+	}
+	public void setAdposition_inc_exc(boolean adposition_inc_exc) {
+		this.adposition_inc_exc = adposition_inc_exc;
+	}
+	public boolean isChannel_inc_exc() {
+		return channel_inc_exc;
+	}
+	public void setChannel_inc_exc(boolean channel_inc_exc) {
+		this.channel_inc_exc = channel_inc_exc;
+	}
+	public String getChannel_tier_1_list() {
+		return channel_tier_1_list;
+	}
+	public void setChannel_tier_1_list(String channel_tier_1_list) {
+		this.channel_tier_1_list = channel_tier_1_list;
+	}
+	public String getChannel_tier_2_list() {
+		return channel_tier_2_list;
+	}
+	public void setChannel_tier_2_list(String channel_tier_2_list) {
+		this.channel_tier_2_list = channel_tier_2_list;
+	}
+	public Targeting_profile getEntity(){
     	Targeting_profile tp = new Targeting_profile();
     	BeanUtils.copyProperties(this, tp);
     	return tp;

@@ -20,9 +20,9 @@ export PIG_OPTS
 
 
 echo "##########################################################################################################"
-echo "${2}/bin/pig -x local -f src/main/pig/input_for_ctr.pig --param OUTPUT='${4}' --param thrift_jar_path='${5}' --param PROCESS_TIME='${6}' --param POST_IMP_INPUT_FILES=${3} "
+echo "${2}/bin/pig -x local -f src/main/pig/input_for_ctr.pig --param OUTPUT='${4}' --param thrift_jar_path='${5}' --param PROCESS_TIME='${6}' --param POST_IMP_INPUT_FILES=${3} --param tz='${8}'"
 
-exec ${2}/bin/pig -x local -f src/main/pig/input_for_ctr.pig  --param OUTPUT=${4} --param thrift_jar_path=${5} --param PROCESS_TIME="${6}" --param POST_IMP_INPUT_FILES=${3}
+exec ${2}/bin/pig -x local -f src/main/pig/input_for_ctr.pig  --param OUTPUT=${4} --param thrift_jar_path=${5} --param PROCESS_TIME="${6}" --param POST_IMP_INPUT_FILES=${3} --param tz=${8}
 
 
 

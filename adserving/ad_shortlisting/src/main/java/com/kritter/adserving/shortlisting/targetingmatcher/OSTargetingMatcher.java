@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -7,13 +8,17 @@ import com.kritter.adserving.shortlisting.job.AdTargetingMatcher;
 import com.kritter.core.workflow.Context;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class OSTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.AD_OS_MIDP;
+
     @Getter
     private String name;
     private Logger logger;
@@ -23,6 +28,7 @@ public class OSTargetingMatcher implements TargetingMatcher {
     private HandsetOsTargetingMatcher handsetOsTargetingMatcher;
     private MidpVersionTargetingMatcher midpVersionTargetingMatcher;
     private HandsetOsOrMidpTargetingMatcher handsetOsOrMidpTargetingMatcher;
+    private String adNoFillReasonMapKey;
 
     public OSTargetingMatcher(String name,
                               String loggerName,
@@ -30,7 +36,8 @@ public class OSTargetingMatcher implements TargetingMatcher {
                               boolean useMidpUnderOperatingSystem,
                               HandsetOsTargetingMatcher handsetOsTargetingMatcher,
                               MidpVersionTargetingMatcher midpVersionTargetingMatcher,
-                              HandsetOsOrMidpTargetingMatcher handsetOsOrMidpTargetingMatcher) {
+                              HandsetOsOrMidpTargetingMatcher handsetOsOrMidpTargetingMatcher,
+                              String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
@@ -38,6 +45,7 @@ public class OSTargetingMatcher implements TargetingMatcher {
         this.handsetOsTargetingMatcher = handsetOsTargetingMatcher;
         this.midpVersionTargetingMatcher = midpVersionTargetingMatcher;
         this.handsetOsOrMidpTargetingMatcher = handsetOsOrMidpTargetingMatcher;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -61,11 +69,6 @@ public class OSTargetingMatcher implements TargetingMatcher {
             ReqLog.requestDebug(request, "After filterAdIdsBasedOnMidpVersion , adidset: ");
             ReqLog.requestDebug(request, AdTargetingMatcher.
                         fetchGuidSetForAdIncIdSet(finalShortlistedAdIds, adEntityCache).toString());
-
-            /****************************************Set no fill reason.**********************************************/
-            if(null == request.getNoFillReason() && finalShortlistedAdIds.size() <= 0)
-                request.setNoFillReason(Request.NO_FILL_REASON.AD_OS_MIDP);
-            /*********************************************************************************************************/
         }
         else
         {
@@ -76,12 +79,20 @@ public class OSTargetingMatcher implements TargetingMatcher {
             ReqLog.requestDebug(request, "After checkAdIdsForHandsetOsAndMidpCombined , adidset: ");
             ReqLog.requestDebug(request, AdTargetingMatcher.
                         fetchGuidSetForAdIncIdSet(finalShortlistedAdIds, adEntityCache).toString());
-
-            /****************************************Set no fill reason.**********************************************/
-            if(null == request.getNoFillReason() && finalShortlistedAdIds.size() <= 0)
-                request.setNoFillReason(Request.NO_FILL_REASON.AD_OS_MIDP);
-            /*********************************************************************************************************/
         }
+
+        if(finalShortlistedAdIds == null)
+            finalShortlistedAdIds = new HashSet<Integer>();
+
+        for(Integer adId : adIdSet) {
+            if(!finalShortlistedAdIds.contains(adId)) {
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                        this.adNoFillReasonMapKey, context);
+            }
+        }
+
+        if(null == request.getNoFillReason() && finalShortlistedAdIds.size() <= 0)
+            request.setNoFillReason(noFillReason);
 
         return finalShortlistedAdIds;
     }

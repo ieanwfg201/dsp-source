@@ -8,8 +8,10 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
 import com.kritter.constants.StatusIdEnum;
+import com.kritter.entity.ad_ext.AdExt;
 import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.targeting_profile.column.Retargeting;
+import com.kritter.entity.targeting_profile.column.TPExt;
 import com.kritter.constants.MarketPlace;
 import com.kritter.serving.demand.indexbuilder.AdEntitySecondaryIndexBuilder;
 import com.kritter.utils.databasemanager.DatabaseManager;
@@ -86,8 +88,28 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             TargetingProfileLocationEntity targetedCarriers = new TargetingProfileLocationEntity();
             targetedCarriers.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("carrier_json"));
 
-            TargetingProfileLocationEntity targetedStates = null;//ResultSetHelper.getResultSetIntegerArray(resultSet,"state_list");
-            TargetingProfileLocationEntity targetedCities = null;//ResultSetHelper.getResultSetIntegerArray(resultSet,"city_list");
+            TargetingProfileLocationEntity targetedStates = new TargetingProfileLocationEntity();
+
+            try
+            {
+                targetedStates.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("state_json"));
+            }
+            catch (Exception e)
+            {
+                logger.error("Exception in reading state json for adid: {} ", id,e);
+            }
+
+            TargetingProfileLocationEntity targetedCities = new TargetingProfileLocationEntity();
+            
+            try
+            {
+                targetedCities.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("city_json"));
+            }
+            catch (Exception e)
+            {
+                logger.error("Exception in reading city json for adid: {} ", id,e);
+            }
+
             //TODO change zipcode as file list ids and then check for matching.
             Integer[] targetedZipCodes= null;//ResultSetHelper.getResultSetIntegerArray(resultSet,"zipcode_list");
 
@@ -132,6 +154,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             int timeWindowInHours = resultSet.getInt("time_window");
             int demandtype = resultSet.getInt("demandtype");
             int qps = resultSet.getInt("qps");
+            boolean isRetargeted = false;
             String retargeting = resultSet.getString("retargeting");
             String pmpDealIdJson = resultSet.getString("pmp_deal_json");
             Short[] deviceTypeArray = ResultSetHelper.getResultSetShortArray(resultSet,"device_type");
@@ -140,13 +163,24 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             int bidtype = resultSet.getInt("bidtype");
             String external_tracker = resultSet.getString("external_tracker");
             ExtTracker extTracker = null;
-            if(external_tracker != null){
+            if(external_tracker != null && !"".equals(external_tracker.trim())){
                 extTracker= ExtTracker.getObject(external_tracker.trim());
                 if(extTracker != null){
-                    if(extTracker.getExtImpTracker() == null || extTracker.getExtImpTracker().size()< 1){
+                    if((extTracker.getImpTracker() == null || extTracker.getImpTracker().size()< 1) &&
+                    		(extTracker.getClickTracker() == null || extTracker.getClickTracker().size()< 1)){
                         extTracker=null;
                     }
                 }
+            }
+            String extStr = resultSet.getString("ext");
+            AdExt adExt = null;
+            if(extStr != null && !"".equals(extStr.trim())){
+            	adExt =  AdExt.getObject(extStr.trim());
+            }
+            String targetingExtStr = resultSet.getString("targetingExt");
+            TPExt targetingExt = null;
+            if(targetingExtStr != null && !"".equals(targetingExtStr.trim())){
+            	targetingExt =  TPExt.getObject(targetingExtStr.trim());
             }
             
             TargetingProfile.TargetingBuilder targetingBuilder = new
@@ -177,11 +211,16 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             targetingBuilder.setTabletTargeting(tabletTargeting);
             targetingBuilder.setExchangeSpecificPMPDealIdInfo(pmpDealIdJson,targetingGuid);
             targetingBuilder.setDeviceTypeTargetingArray(deviceTypeArray);
+            targetingBuilder.setTPExt(targetingExt);
 
             if(retargeting != null){
                 String tmp_retargeting = retargeting.trim();
                 if(!"".equals(tmp_retargeting)){
-                    targetingBuilder.setRetargeting(Retargeting.getObject(tmp_retargeting));
+					Retargeting ret = Retargeting.getObject(tmp_retargeting);
+                    targetingBuilder.setRetargeting(ret);
+                    if(ret != null && ret.getSegment() != null && ret.getSegment().size()>0){
+                        isRetargeted = true;
+                    }
                 }
             }
 
@@ -200,20 +239,21 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
                                                 MarketPlace.getMarketPlace(marketplaceId),
                                                 bid,advertiserBid,isMarkedForDeletion,lastModified,
                                                 isFrequencyCapped, maxCap, timeWindowInHours,
-                                                demandtype, qps, accountGuid, bidtype, extTracker
+                                                demandtype, qps, accountGuid, bidtype, extTracker, isRetargeted
                                                )
                                                .setLandingUrl(landingUrl)
                                                .setAccountId(accountIncId)
                                                .setTrackingPartnerId(trackingPartnerId)
                                                .setCpaGoal(cpaGoal)
                                                .setAdvertiserDomain(advertiserDomains)
+                                               .setAdExt(adExt)
                                                .build();
         }
         catch(Exception e)
         {
             addToErrorMap(id, "Exception while processing AdEntityCache entry: " + id);
             logger.error("Exception thrown while processing AdEntityCache Entry",e);
-            throw new RefreshException("Exception thrown while processing AdEntityCache Entry", e);
+            throw new RefreshException("Exception thrown while processing AdEntityCache Entry"+id, e);
         }
     }
 

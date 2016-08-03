@@ -31,7 +31,7 @@ public class LogisticRegressionCSRDBCache extends AbstractDBStatsReloadableQuery
     private String dimValueDelimiter;
     private String dimCoeffDelimiter;
 
-    public LogisticRegressionCSRDBCache(List<Class> secIndexKeyClassList, Properties properties, DatabaseManager dbMgr, String cacheName) throws InitializationException {
+    public LogisticRegressionCSRDBCache(List<Class> secIndexKeyClassList, Properties properties, DatabaseManager dbMgr, String cacheName) throws InitializationException{
         super(secIndexKeyClassList, logger, properties, dbMgr);
         this.name = cacheName;
         this.othersId = Integer.parseInt(properties.getProperty(OTHERSID_KEY));

@@ -2,21 +2,27 @@
 angular.module('app.ui.form.ctrls', [ "angularFileUpload",    'multi-select'  ]).
 controller('creativeController',function ($scope, $http, $modal, FileUploader) {
 	$scope.format_id =  "";
+	$scope.videoDemandType =  $("#videoDemandType").val();
 	$scope.creativeId = $("#id").val();
 	$scope.showTextForm = false;
 	$scope.showHtmlForm = false;
 	$scope.showBannerForm = false;
 	$scope.showNativeForm = false;
 	$scope.showVideoForm = false;
+	$scope.showVideoWrapperForm = false;
+	$scope.showDirectVideoForm = false;
 	$scope.resource_uri_ids= $("#resource_uri_ids").val();
 	$scope.native_icons= $("#native_icons").val();
 	$scope.native_screenshots= $("#native_screenshots").val();
+	$scope.direct_videos= $("#direct_videos").val();
 	$scope.uploader = null;
 	$scope.iconuploader = null;
 	$scope.screenshotuploader = null;
+	$scope.directvideouploader = null;
 	$scope.banners= [];
 	$scope.nativeicons= [];
 	$scope.nativescreenshots= [];
+	$scope.directvideos= [];
 
 	$scope.creativeAttrOptions = [];
 	$scope.creativeAttrList = [];
@@ -52,6 +58,8 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
 				$scope.showHtmlForm = false;
 				$scope.showNativeForm = false;
 				$scope.showVideoForm = false;
+				$scope.showVideoWrapperForm = false;
+				$scope.showDirectVideoForm = false;
 				break;
 			
 			case "2":
@@ -60,6 +68,8 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
 				$scope.showHtmlForm = false;
 				$scope.showNativeForm = false;
 				$scope.showVideoForm = false;
+				$scope.showVideoWrapperForm = false;
+				$scope.showDirectVideoForm = false;
 				$scope.loadBanners();
 				break;
 				
@@ -69,6 +79,8 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
 				$scope.showHtmlForm = true;
 				$scope.showNativeForm = false;
 				$scope.showVideoForm = false;
+				$scope.showVideoWrapperForm = false;
+				$scope.showDirectVideoForm = false;
 				break;
             case "4":
                 $scope.showBannerForm = false;
@@ -76,6 +88,7 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
                 $scope.showHtmlForm = false;
                 $scope.showNativeForm = false;
                 $scope.showVideoForm = true;
+                $scope.updateVideoDemandType();
                 break;
             case "51":
                 $scope.showBannerForm = false;
@@ -83,6 +96,8 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
                 $scope.showHtmlForm = false;
                 $scope.showNativeForm = true;
                 $scope.showVideoForm = false;
+                $scope.showVideoWrapperForm = false;
+				$scope.showDirectVideoForm = false;
                 $scope.loadNativeicons();
                 $scope.loadNativescreenshots();
                 break;
@@ -92,6 +107,19 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
 		$scope.updateCreativeAttrs();
 	}
 
+	$scope.updateVideoDemandType = function(){
+		$scope.showVideoWrapperForm = false; 
+		if($scope.videoDemandType == "1") {
+				$scope.showVideoWrapperForm = true;
+				$scope.showDirectVideoForm = false;
+		}
+		if($scope.videoDemandType == "2") {
+				$scope.showDirectVideoForm = true;
+				$scope.showVideoWrapperForm = false;
+				$scope.loadDirectvideos();
+		}
+	}
+
 	$scope.removeBanner = function(banner){
 		for(var i = $scope.banners.length - 1; i >= 0; i--) {
 		    if($scope.banners[i].id === banner.id) {
@@ -99,6 +127,13 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
 		    }
 		}
 	};
+	$scope.removeDirectvideos = function(directvideo){
+        for(var i = $scope.directvideos.length - 1; i >= 0; i--) {
+            if($scope.directvideos[i].id === directvideo.id) {
+               $scope.directvideos.splice(i, 1);
+            }
+        }
+    };
 	$scope.removeNativeicons = function(nativeicon){
         for(var i = $scope.nativeicons.length - 1; i >= 0; i--) {
             if($scope.nativeicons[i].id === nativeicon.id) {
@@ -121,7 +156,15 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
         });
         $scope.resource_uri_ids=selections.join();
     });   
-
+	
+	$scope.$watch("directvideos.length", function(oldvalue,newvalue ) {  
+        var selections = []; 
+        $scope["directvideos"].forEach(function(entry) {
+            selections.push(entry.id);
+        });
+        $scope.direct_videos=selections.join();
+    }); 
+    
     $scope.$watch("nativeicons.length", function(oldvalue,newvalue ) {  
         var selections = []; 
         $scope["nativeicons"].forEach(function(entry) {
@@ -143,6 +186,13 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
     	      templateUrl: bannerId, 
     	      size: 'large', 
     	    });		  
+      }
+
+      $scope.previewDirectvideo= function(directvideoId){ 
+          var modalInstance = $modal.open({
+              templateUrl: directvideoId, 
+              size: 'large', 
+            });       
       }
 
       $scope.previewNativeicon= function(nativeiconId){ 
@@ -167,6 +217,15 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
     	  } 		  
       }
       
+      $scope.loadDirectvideos= function(){
+          if($scope.creativeId!= -1){
+              $url = "/advertiser/creatives/"+$scope.creativeId+"/directvideos";
+              $http.get($url).success( function(response){
+                    $scope.directvideos = response;                      
+              }); 
+          }           
+      }
+
       $scope.loadNativeicons= function(){
           if($scope.creativeId!= -1){
               $url = "/advertiser/creatives/"+$scope.creativeId+"/nativeicons";
@@ -188,6 +247,7 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
       
       $scope.init = function(){
     	  $scope.format_id = $("#format_id").val();
+    	  $scope.videoDemandType = $("#videoDemandType").val();
     	  $scope.updateCreativeType(); 
       }
        
@@ -225,6 +285,38 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
 		);
 		return false;
 	};
+		
+	$scope.openDirectvideoForm = function () {  
+        var modalInstance = $modal.open({
+            templateUrl: "/template/load/advt.creative.multi_direct_video_uploader", 
+            controller:directvideoController,
+            size: "medium",
+            resolve: {
+                creativeInfo: function () {
+                    var creativeInfo = {};
+                    creativeInfo.accountGuid = $scope.accountGuid;
+                    return creativeInfo;
+                }
+            }
+        });
+        modalInstance.result.then(
+                function (newdirectvideos) {
+                    var selections = []; 
+                    for( i = 0 ; i< newdirectvideos.length; i++){
+                        $scope.directvideos.push(newdirectvideos[i]);
+                    }
+                    $scope.directvideos.forEach(function(entry) {
+                        selections.push(entry.id);
+                    });
+                    $scope.direct_videos=selections.join();
+                    $("#direct_videos").attr("value", $scope.direct_videos );
+                }, 
+                function() {
+                }
+        );
+        return false;
+    };
+	
 	$scope.openNativeiconForm = function () {  
         var modalInstance = $modal.open({
             templateUrl: "/template/load/advt.creative.multi_icon_uploader", 
@@ -294,6 +386,12 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
     	      size: 'large', 
     	    });		  
       };
+      $scope.previewDirectvideo= function(directvideoId){ 
+          var modalInstance = $modal.open({
+              templateUrl: directvideoId, 
+              size: 'large', 
+            });       
+      }
       $scope.previewNativeicon= function(nativeiconId){ 
           var modalInstance = $modal.open({
               templateUrl: nativeiconId, 
@@ -441,6 +539,141 @@ var bannerController = function ($scope, $http,  $modalInstance, FileUploader, c
 		$modalInstance.dismiss('cancel');
 		return false;
 	};
+
+};
+
+var directvideoController = function ($scope, $http,  $modalInstance, FileUploader, creativeInfo) {
+    $scope.showFileSelect = false;
+    $scope.creativeInfo = creativeInfo;     
+    $scope.directvideoValidationUrl = "";  
+    $scope.hasValidDirectvideos = false; 
+    $scope.hasInValidDirectvideos = false;
+    $scope.slotOptions = [];
+    $scope.loadOptionsUrl = "/metadata/options/slot_options ";
+    
+    $scope.loadSlotOptions = function(){
+        $('#preloader').removeClass("hidden");  
+        $http.get($scope.loadOptionsUrl).success( function(response){  
+            for(  i= 0 ; i< response.length; i++){
+                var parts = response[i].label.split(":");
+                $scope.slotOptions.push({"name":parts[0], "description":parts[1]});
+            }
+            $('#preloader').addClass("hidden");  
+        }).error(function(response){
+             
+            $('#preloader').addClass("hidden");  
+        });
+    }
+    
+    $scope.loadSlotOptions();
+    
+    $scope.checkValidDirectvideos = function(){
+        $scope.hasValidDirectvideos = false; 
+        $scope.hasInValidDirectvideos = false;
+        for( i= 0 ; i<  $scope.directvideouploader.queue.length; i++){
+            item = $scope.directvideouploader.queue[i];
+            if(item.isSuccess){ 
+                $scope.hasValidDirectvideos = true;
+            }else if(item.isError){ 
+                $scope.hasInValidDirectvideos = true;
+            }
+        }
+    }
+    
+    $scope.directvideouploader = new FileUploader({
+        url:  "/advertiser/creatives/directvideo/upload/"+creativeInfo.accountGuid
+    });  
+    
+    $scope.directvideouploader.filters.push({
+        name: 'imageFilter',
+        fn: function(item /*{File|FileLikeObject}*/, options) {
+            var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+            return '|flv|mp4|m3u8|ts|3gp|mov|avi|wmv'.indexOf(type) !== -1;
+        }
+    });
+    
+    $scope.$watch("directvideouploader.queue.length", function(newValue, oldValue) {
+        $scope.checkValidDirectvideos();
+    });
+
+    // CALLBACKS
+
+ 
+    $scope.directvideouploader.onAfterAddingFile = function(fileItem) {
+        fileItem.slotOptions = {};
+        fileItem.slot="";
+        fileItem.showOptions = true;
+        fileItem.showError = false;
+        console.info('onAfterAddingFile', fileItem);
+        fileItem.upload();
+    };
+ 
+    $scope.directvideouploader.onSuccessItem = function(fileItem, response, status, headers) {   
+        fileItem.slotOptions = response.slotOptions;
+        fileItem.slot=response.slotOptions[0];
+        fileItem.showOptions = true;
+        fileItem.showError = false; 
+        fileItem.thumbUrl = response.thumbUrl;
+        fileItem.bannerUrl = response.bannerUrl; 
+        $scope.checkValidDirectvideos();
+    };
+    
+    $scope.directvideouploader.onErrorItem = function(fileItem, response, status, headers) {
+        fileItem.showOptions = false;
+        fileItem.showError = true;
+        fileItem.message = "Invalid Dimensions";
+        $scope.checkValidDirectvideos();
+    };
+ 
+//    $scope.directvideouploader.onCompleteItem = function(fileItem, response, status, headers) {
+//        //console.info('onCompleteItem', fileItem, response, status, headers);
+//    };
+//    $scope.directvideouploader.onCompleteAll = function() {
+//        //console.info('onCompleteAll');
+//    };
+
+    
+    $scope.ok = function () {
+        var saveDirectvideoUrl = '/advertiser/creatives/directvideo/save';  
+        var directvideos = [];
+        var directvideo = {};
+        var item = null;
+        
+        var hasValidDirectvideos = false;
+        $('#preloader').removeClass("hidden");  
+        for( i= 0 ; i<  $scope.directvideouploader.queue.length; i++){
+            item = $scope.directvideouploader.queue[i];
+            if(item.isSuccess){
+                directvideo = {};
+                directvideo.account_guid = creativeInfo.accountGuid; 
+                directvideo.video_size = item.slot.value;
+                var slotParts = item.slot.label.split("-");
+                directvideo.slotName = slotParts[0];
+                directvideo.slotDescription = slotParts[1];
+                directvideo.resource_uri = item.bannerUrl; 
+                directvideos.push(directvideo);
+            } 
+        }
+        
+        if($scope.hasInValidDirectvideos){
+            alert("There are invalid directvideos in the queue. Those will be ignored. ")
+        }
+        if($scope.hasValidDirectvideos){
+            $http.post(saveDirectvideoUrl,{"directvideos":directvideos}).success( function(response){  
+                $modalInstance.close(response.directvideos);     
+                $('#preloader').addClass("hidden");  
+            }).error(function(response){
+                alert("Encountered a Problem saving directvideos to database");
+                $('#preloader').addClass("hidden");  
+            });
+        }
+        
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+        return false;
+    };
 
 };
 

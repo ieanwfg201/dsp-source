@@ -5,6 +5,7 @@ import com.kritter.constants.SSPEnum;
 import com.kritter.entity.ssp_rules.Rule;
 import com.kritter.entity.ssp_rules.SSPGlobalRuleDef;
 import lombok.Getter;
+import lombok.ToString;
 import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -17,6 +18,7 @@ import java.util.Map;
 /**
  * This class keeps global ssp rules used in context of ssp.
  */
+@ToString
 public class SspGlobalRulesEntity implements IUpdatableEntity<Integer>
 {
 

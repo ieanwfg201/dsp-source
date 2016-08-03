@@ -1,0 +1,4 @@
+# ad_stat_new_init_daily.job
+
+type=command
+command=sh ad_stat_new_init_daily.sh

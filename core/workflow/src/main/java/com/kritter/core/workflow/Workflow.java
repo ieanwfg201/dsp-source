@@ -1,14 +1,20 @@
 package com.kritter.core.workflow;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricFilter;
 import com.kritter.abstraction.cache.entities.CachePool;
 import com.kritter.abstraction.cache.entities.CacheReloadTimerTask;
 import com.kritter.abstraction.cache.interfaces.ICache;
 import com.kritter.abstraction.cache.interfaces.IRefreshable;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.core.metrics.YammerMetrics;
+import lombok.Getter;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -18,6 +24,7 @@ import java.util.*;
 
 public class Workflow {
     private final JobSet initJobSet;
+    @Getter
     private final CachePool cachePool;
     private final YammerMetrics metrics;
 
@@ -97,20 +104,19 @@ public class Workflow {
         context.setValue(CONTEXT_RESPONSE_KEY, response);
 
         metrics.incrementTotalInvocations();
-        long beginTime = System.currentTimeMillis();
+        long beginTime = System.nanoTime();
 
         JobSet currentJobSet = initJobSet;
 
         if(workflowLogger.isDebugEnabled())
-            workflowLogger.debug("Starting job set: " + currentJobSet.getName());
+            workflowLogger.debug("Starting job set: {} ", currentJobSet.getName());
 
         while(currentJobSet != null)
         {
             boolean successCode = currentJobSet.execute(context, metrics);
 
             if(workflowLogger.isDebugEnabled())
-                workflowLogger.debug("The current job set " + currentJobSet.getName() +
-                                     " executed with success code as : " + successCode);
+                workflowLogger.debug("The current job set {} executed with success code as : {} ",currentJobSet.getName(), successCode);
 
             if(!successCode)
                 metrics.incrementTotalFailures();
@@ -121,8 +127,9 @@ public class Workflow {
                 currentJobSet = currentJobSet.getNextJob(context);
         }
 
-        long endTime = System.currentTimeMillis();
-        metrics.incrementTotalLatency(endTime - beginTime);
+        long endTime = System.nanoTime();
+        // Update latency to the nearest microsecond.
+        metrics.incrementTotalLatency((endTime - beginTime + 500) / 1000);
     }
 
     public void destroy() {
@@ -179,5 +186,44 @@ public class Workflow {
         stats.append("}");
 
         return stats.toString();
+    }
+
+    /**
+     * This method returns stats of each of the jobs
+     * @return gives a map with job invocations, latency in nanoseconds and failures
+     */
+    public String getJobStats() {
+        SortedMap<String, Counter> jobCounters = metrics.getMetricRegistry().getCounters(new MetricFilter() {
+            @Override
+            public boolean matches(String s, Metric metric) {
+                return s != null && !s.isEmpty() && s.indexOf(':') != -1;
+            }
+        });
+
+        Map<String, Map<String, Long>> jobStatsMap = new HashMap<String, Map<String, Long>>();
+        for(Map.Entry<String, Counter> entry : jobCounters.entrySet()) {
+            String name = entry.getKey();
+            Counter value = entry.getValue();
+
+            String[] tokens = name.split(":");
+            if(tokens.length < 2) continue;
+            String jobName = tokens[0];
+            String statName = tokens[1];
+            Map<String, Long> statsMap = jobStatsMap.get(jobName);
+            if(statsMap == null) {
+                statsMap = new HashMap<String, Long>();
+                jobStatsMap.put(jobName, statsMap);
+            }
+            statsMap.put(statName, value.getCount());
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(jobStatsMap);
+        } catch (IOException ioe) {
+            // Do nothing
+        }
+
+        return "";
     }
 }

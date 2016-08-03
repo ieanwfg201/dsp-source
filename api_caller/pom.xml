@@ -52,6 +52,11 @@
             <scope>compile</scope>
             <optional>false</optional>
         </dependency>
+        <dependency>
+            <groupId>com.kritter.utils</groupId>
+            <artifactId>http_client</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <organization>
         <name>Kritter</name>

@@ -2,12 +2,14 @@ package com.kritter.common.caches.dpa_ad_cache.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
 /**
  * This class keeps ad metadata defined for a demand partner api.
  */
+@ToString
 public class DemandPartnerApiAdMetadata implements IUpdatableEntity<String>
 {
     @Getter

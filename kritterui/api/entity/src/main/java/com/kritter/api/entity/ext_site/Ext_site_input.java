@@ -16,6 +16,7 @@ public class Ext_site_input {
     private String id_list = null ; /*comma separated list*/
     private String osid_list = null ; /*comma separated list*/
     private Ext_siteEnum ext_siteenum = Ext_siteEnum.get_ext_site_by_pub;
+    private String str = null;
     
     @Override
     public int hashCode() {
@@ -24,8 +25,11 @@ public class Ext_site_input {
         result = prime * result
                 + ((ext_siteenum == null) ? 0 : ext_siteenum.hashCode());
         result = prime * result + ((id_list == null) ? 0 : id_list.hashCode());
+        result = prime * result
+                + ((osid_list == null) ? 0 : osid_list.hashCode());
         result = prime * result + page_no;
         result = prime * result + page_size;
+        result = prime * result + ((str == null) ? 0 : str.hashCode());
         return result;
     }
     @Override
@@ -44,9 +48,19 @@ public class Ext_site_input {
                 return false;
         } else if (!id_list.equals(other.id_list))
             return false;
+        if (osid_list == null) {
+            if (other.osid_list != null)
+                return false;
+        } else if (!osid_list.equals(other.osid_list))
+            return false;
         if (page_no != other.page_no)
             return false;
         if (page_size != other.page_size)
+            return false;
+        if (str == null) {
+            if (other.str != null)
+                return false;
+        } else if (!str.equals(other.str))
             return false;
         return true;
     }
@@ -79,6 +93,12 @@ public class Ext_site_input {
     }
     public void setOsid_list(String osid_list) {
         this.osid_list = osid_list;
+    }
+    public String getStr() {
+        return str;
+    }
+    public void setStr(String str) {
+        this.str = str;
     }
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

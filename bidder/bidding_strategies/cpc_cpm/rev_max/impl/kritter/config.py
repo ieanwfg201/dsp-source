@@ -1,6 +1,8 @@
 import ConfigParser
 import re
 import logging
+import traceback
+import sys
 
 dimension_list_key = 'dimensions'
 dimension_name_list_key = 'dimension-names'
@@ -39,14 +41,14 @@ output_database_password_key = 'output-password'
 output_database_dbname_key = 'output-dbname'
 model_table_name_key = 'model-table'
 
-configLogger = logging.getLogger(__name__)
-
 
 class ConfigParams:
     """ Class to hold elements of the configuration """
 
     def __init__(self, config_file_path):
         """ Constructor for the class """
+        self.configLogger = logging.getLogger(__name__)
+
         cfg = ConfigParser.RawConfigParser()
         try:
             cfg.read(config_file_path)
@@ -118,8 +120,8 @@ class ConfigParams:
             if self.dumpToDB != 0:
                 self.modelTable = cfg.get('db', model_table_name_key)
         except Exception as e:
-            configLogger.error("Problem with config file %s", e)
-            raise e
+            self.configLogger.error("Problem with config file %s", traceback.format_exc())
+            sys.exit(1)
 
 
 if __name__ == '__main__':

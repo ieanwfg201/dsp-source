@@ -5,6 +5,7 @@ import java.sql.Connection;
 
 import models.entities.tracking_event.TrackingEventFormEntity;
 import play.Logger;
+import play.Play;
 import play.data.Form;
 import play.db.DB;
 import play.libs.Json;
@@ -27,7 +28,7 @@ import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
 
 public class TrackingEventController extends Controller{
-
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
 	private static Form<TrackingEventFormEntity> trackingEventConfigForm = Form.form(TrackingEventFormEntity.class);
 	
 	@SecuredAction
@@ -65,6 +66,7 @@ public class TrackingEventController extends Controller{
 				    reportingEntity.setPagesize(PageConstants.csv_page_size);
 				    reportingEntity.setRollup(true);
 				}
+				reportingEntity.setTimezone(timezoneid);
 				org.codehaus.jackson.JsonNode data = ApiDef.get_data(con, reportingEntity, returnWithId, exportAsCsv, absoluteFileName);
             	if(data != null){
             	    ObjectMapper objectMapper = new ObjectMapper(); 

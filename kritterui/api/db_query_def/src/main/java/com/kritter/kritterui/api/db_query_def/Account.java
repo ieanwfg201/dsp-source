@@ -8,8 +8,8 @@ public class Account {
             "payment_type,bank_transfer_beneficiary_name,bank_transfer_account_number,bank_transfer_bank_name,bank_transfer_bank_add," +
             "bank_transfer_branch_number,bank_transfer_vat_number,wire_beneficiary_name,wire_account_number,wire_bank_name,wire_transfer_bank_add," +
             "wire_swift_code,wire_iban,paypal_id,im,comment,api_key,inventory_source,billing_rules_json,demandtype,"
-            + "demandpreference,qps,timeout,demand_props,billing_name,billing_email)" +
-    		" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            + "demandpreference,qps,timeout,demand_props,billing_name,billing_email,ext)" +
+    		" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     
     public static String list_accounts_by_type = "select * from  account where type_id=? order by name limit ?,?";
     public static String list_accounts_by_type_by_status = "select * from  account where type_id=? and status=? order by name limit ?,?";
@@ -25,7 +25,7 @@ public class Account {
             "bank_transfer_branch_number=?,bank_transfer_vat_number=?,wire_beneficiary_name=?,wire_account_number=?," +
             "wire_bank_name=?,wire_transfer_bank_add=?," +
             "wire_swift_code=?,wire_iban=?,paypal_id=?,im=?,comment=?,api_key=?,inventory_source=?,billing_rules_json=?," +
-            "password=?,demandtype=?,demandpreference=?,qps=?,timeout=?, demand_props=?,billing_name=?,billing_email=? where id=? ";
+            "password=?,demandtype=?,demandpreference=?,qps=?,timeout=?, demand_props=?,billing_name=?,billing_email=?,ext=? where id=? ";
     
     public static String update_status = "update account set status=?,comment=?,last_modified=? where id=? ";
     

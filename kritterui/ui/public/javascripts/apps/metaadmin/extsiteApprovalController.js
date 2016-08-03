@@ -40,6 +40,22 @@ controller('extsiteApprovalController',function ($scope, $http, $modal) {
 		    }
 		);
 	};
+    $scope.updateextSiteName = function (id, action) {
+        var modalInstance = $modal.open({
+            templateUrl: '/extsite/workflow/editform/'+id+'/'+action, 
+            controller:editextsiteNameEditerController,
+            size: "medium" 
+        });
+        
+        modalInstance.result.then(
+            function () {
+                $log.info('Modal ok: ');
+            }, 
+            function() {
+                $log.info('Modal dismissed at: ' + new Date());
+            }
+        );
+    };
 	$scope.updateMultipleextSite = function(action){
 		var templateUrl = '/extsite/updateMultipleextSite/'+action; 
 		var ids = [];
@@ -81,6 +97,22 @@ var extsiteEditerController = function ($scope, $modalInstance) {
 	   
 };
 
+var editextsiteNameEditerController = function ($scope, $modalInstance) {
+
+      $scope.ok = function () {
+          var action_url = $('#editextsiteNameWorkflowForm').attr('action'); 
+          $.post(action_url, $('#editextsiteNameWorkflowForm').serialize(), function(response){
+              $modalInstance.dismiss('cancel');
+              location.reload(); 
+          });
+      };
+
+      $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+        return false;
+      };
+       
+};
 var extsiteWorkflowController = function ($scope, $modalInstance, campaigns) {
 
 	  $scope.campaigns = campaigns;

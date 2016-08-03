@@ -1,5 +1,10 @@
 package com.kritter.adserving.shortlisting.core;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.bidrequest.entity.common.openrtb2_0.BidRequestDeviceDTO;
+import com.kritter.constants.OpenRTBParameters;
+import com.kritter.utils.common.AdNoFillStatsUtils;
+import com.kritter.core.workflow.Context;
 import com.kritter.entity.reqres.entity.AdExchangeInfo;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
@@ -15,6 +20,8 @@ import com.kritter.serving.demand.cache.*;
 import com.kritter.serving.demand.entity.*;
 import com.kritter.utils.common.SetUtils;
 
+import com.kritter.utils.common.url.URLField;
+import com.kritter.utils.common.url.URLFieldProcessingException;
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +50,8 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
     private CreativeSlotSizeCache creativeSlotSizeCache;
     private static final short BANNER_CREATIVE_TYPE = (short)2;
     private static final short RICHMEDIA_CREATIVE_TYPE = (short)3;
+    private String adNoFillReasonMapKey;
+    private List<Integer> openRTBBidRequestParameterCodeList;
 
     public CreativeAndFloorMatchingRTBExchangeTwoDotZero(
                                                          String loggerName,
@@ -51,8 +60,9 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                                                          AdEntityCache adEntityCache,
                                                          CreativeSlotCache creativeSlotCache,
                                                          CampaignCache campaignCache,
-                                                         CreativeSlotSizeCache creativeSlotSizeCache
-                                                        )
+                                                         CreativeSlotSizeCache creativeSlotSizeCache,
+                                                         String adNoFillReasonMapKey,
+                                                         List<Integer> openRTBBidRequestParameterCodeList)
     {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.creativeBannerCache = creativeBannerCache;
@@ -62,6 +72,8 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
         this.campaignCache = campaignCache;
         this.creativeSlotSizeCache = creativeSlotSizeCache;
         this.comparator = new BannerSizeComparator();
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
+        this.openRTBBidRequestParameterCodeList = openRTBBidRequestParameterCodeList;
     }
 
     /**
@@ -74,7 +86,8 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
      */
     public void processAdUnitsForEachBidRequestImpression(
                                                           Request request,
-                                                          Response response
+                                                          Response response,
+                                                          Context context
                                                          ) throws Exception
     {
         logger.debug("Inside processAdUnitsForEachBidRequestImpression of CreativeAndFloorMatchingRTBExchangeTwoDotZero");
@@ -96,6 +109,18 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                 getBidRequest().getBidRequestParentNodeDTO();
         BidRequestImpressionDTO[] bidRequestImpressionDTOs = bidRequestParentNodeDTO.getBidRequestImpressionArray();
 
+        /*Set url fields required for postimpression events.*/
+
+        try
+        {
+            setURLFieldsFromBidRequest(bidRequestParentNodeDTO, request);
+        }
+        catch (Exception e)
+        {
+            logger.error("Exception inside processAdUnitsForEachBidRequestImpression of " +
+                         "CreativeAndFloorMatchingRTBExchangeTwoDotZero while setting url fields ",e);
+        }
+
         /**
          * For each impression find the matching ad.
          * Ad can not be text ad.As of now only banner impressions are allowed.
@@ -109,6 +134,9 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
         boolean creativeAttributesMatchAtleastOnce = false;
         boolean creativeFoundForRequestedSlot = false;
         boolean floorPriceMet = false;
+        Float averageFloorPrice = 0.0f;
+        int averageFloorPriceCounter = 0;
+        boolean bannerOrRichMediaRequired = false;
 
         for(BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs)
         {
@@ -185,6 +213,8 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                 continue;
             }
 
+            bannerOrRichMediaRequired = true;
+
             for(ResponseAdInfo responseAdInfo : response.getResponseAdInfo())
             {
                 AdEntity adEntity = adEntityCache.query(responseAdInfo.getAdId());
@@ -198,8 +228,13 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
 
+                int adId = adEntity.getAdIncId();
+
                 if(null == creative)
                 {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey, context);
+
                     logger.error("Creative null in cache,FATAL error!!! for creative id: " + adEntity.getCreativeId());
                     continue;
                 }
@@ -210,6 +245,9 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                                 !creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA)
                         )
                 {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey, context);
+
                     logger.error("Creative format is not banner or richmedia inside AdShortlistingRTBExchangeTwoDotZero, skipping adId: {} ", adEntity.getAdGuid());
                     continue;
                 }
@@ -243,6 +281,9 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
                 if(null != resultingIntersection && resultingIntersection.size() > 0)
                 {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+
                     //the creative is not appropriate for the requesting impression.
                     ReqLog.debugWithDebug(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the impression: {}",
                             adEntity.getCreativeId(),
@@ -266,6 +307,10 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                         CreativeBanner creativeBanner = creativeBannerCache.query(bannerId);
                         if(null == creativeBanner)
                         {
+                            AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                    NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey,
+                                    context);
+
                             logger.error("Creative banner is null(not found in cache) for banner id: " + bannerId);
                             break;
                         }
@@ -323,6 +368,10 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                         CreativeBanner creativeBanner = creativeBannerCache.query(bannerId);
                         if(null == creativeBanner)
                         {
+                            AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                    NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey,
+                                    context);
+
                             logger.error("Creative banner is null(not found in cache) for banner id: " + bannerId);
                             break;
                         }
@@ -331,6 +380,10 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
                         if(null == creativeSlot)
                         {
+                            AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                    NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey,
+                                    context);
+
                             logger.error("Creative slot is null(not found in cache) for slot id: {} " ,
                                     creativeBanner.getSlotId());
                             break;
@@ -449,13 +502,26 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
                     if(!sizeCheckForBanner)
                     {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                NoFillReason.CREATIVE_SIZE.getValue(), this.adNoFillReasonMapKey, context);
+
                         ReqLog.errorWithDebug(logger, request, "We could not find any creative supporting the requesting sizes of (width,height) combinations: {} for/by creativeId: {} " ,
                                 fetchRequestedWidthAndHeightPairForDebug(width,height) , creative.getId());
                     }
                 }
                 //if creative is richmedia then allow the creative if flow comes till here.
-                else if(isRichmediaAllowed && creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
+                else if(creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
                 {
+                    // Rich media not allowed, skip this ad.
+                    if(!isRichmediaAllowed) {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+
+                        String debugMessage = "Ad id : %d is rich media but request does not allow it. Failing.";
+                        request.addDebugMessageForTestRequest(String.format(debugMessage, adId));
+                        continue;
+                    }
+
                     if(request.isExternalResouceURLRequired() && creative.getExternalResourceURL() == null) {
                         ReqLog.debugWithDebug(logger, request, "External resource URL required by the supply. Not set for the ad. Skipping adunit:{}", adEntity.getAdGuid());
 
@@ -466,14 +532,28 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                 }
                 //if request did not have any size specified and is not richmedia creative then just
                 //pass the creative with any creative banner.
-                else if(isBannerAllowed && null != bannerUriIds && bannerUriIds.length > 0)
+                else if(null != bannerUriIds && bannerUriIds.length > 0)
                 {
+                    // Banner is not allowed, skip this ad.
+                    if(!isBannerAllowed) {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                                NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+
+                        String debugMessage = "Ad id : %d is banner but request does not allow it. Failing.";
+                        request.addDebugMessageForTestRequest(String.format(debugMessage, adId));
+                        continue;
+                    }
+
+                    // Banner allowed. Check further
                     creativeBannerToUse = creativeBannerCache.query(bannerUriIds[0]);
                     creativeFoundForRequestedSlot = true;
                 }
 
                 if(!creativeFoundForRequestedSlot)
                 {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_SIZE.getValue(), this.adNoFillReasonMapKey, context);
+
                     ReqLog.errorWithDebug(logger, request, "No creative could be found for impression id of this bidrequest.Skipping adunit:{} ",
                             adEntity.getAdGuid());
                     continue;
@@ -496,6 +576,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
                 ReqLog.requestDebug(request, " Ecpm floor value asked by exchange is : "+bidFloorForImpression);
 
+                boolean adFloorPriceMet = false;
                 //for the case of creative being banner.
                 if
                 (
@@ -529,7 +610,14 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                                     bidRequestImpressionDTO.getBidRequestImpressionId(),
                                     responseAdInfo
                             );
-                    floorPriceMet = true;
+
+                    if(null != bidRequestImpressionDTO.getBidFloorPrice())
+                    {
+                        averageFloorPrice += bidRequestImpressionDTO.getBidFloorPrice().floatValue();
+                        averageFloorPriceCounter ++;
+                    }
+
+                    adFloorPriceMet = true;
                 }
                 else if
                         (
@@ -556,27 +644,63 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                                     responseAdInfo
                             );
 
-                    floorPriceMet = true;
+                    if(null != bidRequestImpressionDTO.getBidFloorPrice())
+                    {
+                        averageFloorPrice += bidRequestImpressionDTO.getBidFloorPrice().floatValue();
+                        averageFloorPriceCounter ++;
+                    }
+
+                    adFloorPriceMet = true;
+                }
+
+                // If ad floor price met is true, set floor price met as true
+                floorPriceMet |= adFloorPriceMet;
+
+                if(!adFloorPriceMet) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.ECPM_FLOOR_UNMET.getValue(), this.adNoFillReasonMapKey, context);
+
+                    ReqLog.debugWithDebug(logger, request, "Ad id : {} has ecpm {} while the floor is {}. The ad " +
+                            "doesn't meet ecpm floor, skipping it.", adId, responseAdInfo.getEcpmValue(),
+                            bidFloorForImpression);
                 }
             }
         }
 
+        /*Set bid floor value, if calculated.*/
+        if(averageFloorPriceCounter > 0)
+        {
+            averageFloorPrice = averageFloorPrice / averageFloorPriceCounter;
+            request.setBidFloorForFilledExchangeImpressions(averageFloorPrice);
+        }
+
+        if(!bannerOrRichMediaRequired) {
+            for(ResponseAdInfo responseAdInfo : response.getResponseAdInfo()) {
+                int adId = responseAdInfo.getAdId();
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                        NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+            }
+
+            ReqLog.debugWithDebug(logger, request, "None of the impressions requested either banner or rich media." +
+                        " Skipping all the ads.");
+        }
+
         if(!creativeAttributesMatchAtleastOnce && null == request.getNoFillReason())
         {
-            request.setNoFillReason(Request.NO_FILL_REASON.CREATIVE_ATTR);
+            request.setNoFillReason(NoFillReason.CREATIVE_ATTR);
 
             ReqLog.debugWithDebug(logger, request, "NoFill found as creative attributes inside CreativeAndFloorMatchingRTBExchangeTwoDotZero");
         }
 
         if(!creativeFoundForRequestedSlot && null == request.getNoFillReason())
         {
-            request.setNoFillReason(Request.NO_FILL_REASON.CREATIVE_SIZE);
+            request.setNoFillReason(NoFillReason.CREATIVE_SIZE);
             ReqLog.debugWithDebug(logger, request, "NoFill found as creative size inside CreativeAndFloorMatchingRTBExchangeTwoDotZero");
         }
 
         if(!floorPriceMet && null == request.getNoFillReason())
         {
-            request.setNoFillReason(Request.NO_FILL_REASON.ECPM_FLOOR_UNMET);
+            request.setNoFillReason(NoFillReason.ECPM_FLOOR_UNMET);
             ReqLog.debugWithDebug(logger, request, "NoFill found as ecpm floor unmet inside CreativeAndFloorMatchingRTBExchangeTwoDotZero");
         }
 
@@ -807,5 +931,54 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
         }
 
         return sb.toString();
+    }
+
+    /*The following function sets attributes from bid request that need to be passed in the
+    * postimpression URLs.*/
+    private void setURLFieldsFromBidRequest(BidRequestParentNodeDTO bidRequestParentNodeDTO,Request request)
+                                                                                    throws URLFieldProcessingException
+    {
+        if(null == bidRequestParentNodeDTO)
+        {
+            logger.error("BidRequestParentNodeDTO is null inside setURLFieldsFromBidRequest of " +
+                         "CreativeAndFloorMatchingRTBExchangeTwoDotZero, cannot set urlfield attributes.");
+            return;
+        }
+
+        BidRequestDeviceDTO bidRequestDeviceDTO = bidRequestParentNodeDTO.getBidRequestDevice();
+
+        if(null == bidRequestDeviceDTO)
+        {
+            logger.error("BidRequestDeviceDTO is null inside setURLFieldsFromBidRequest of " +
+                         "CreativeAndFloorMatchingRTBExchangeTwoDotZero,cannot set urlfield attributes.");
+            return;
+        }
+
+        String dpidMd5 = bidRequestDeviceDTO.getMD5HashedDevicePlatformId();
+        String dpidSha1 = bidRequestDeviceDTO.getSHA1HashedDevicePlatformId();
+
+        if(null != this.openRTBBidRequestParameterCodeList)
+        {
+            for (Integer openRTBBidRequestParameterCode : this.openRTBBidRequestParameterCodeList)
+            {
+                int codeValue = openRTBBidRequestParameterCode.intValue();
+
+                if(codeValue == OpenRTBParameters.PARAMETER.DEVICE_PLATFORM_ID_MD5.getCode() && null != dpidMd5)
+                {
+                    URLField urlField = URLField.DEVICE_PLATFORM_ID_MD5;
+                    urlField.getUrlFieldProperties().setFieldValue(dpidMd5);
+                    request.getUrlFieldFactory().stackFieldForStorage(urlField);
+                }
+
+                /*if dpidmd5 is already available then dont log this one*/
+                if(codeValue == OpenRTBParameters.PARAMETER.DEVICE_PLATFORM_ID_SHA1.getCode()
+                   && null != dpidSha1 && null == dpidMd5)
+                {
+                    URLField urlField = URLField.DEVICE_PLATFORM_ID_SHA1;
+                    urlField.getUrlFieldProperties().setFieldValue(dpidSha1);
+                    request.getUrlFieldFactory().stackFieldForStorage(urlField);
+                }
+            }
+        }
     }
 }

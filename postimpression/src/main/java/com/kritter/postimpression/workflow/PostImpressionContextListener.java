@@ -2,7 +2,8 @@ package com.kritter.postimpression.workflow;
 
 import com.kritter.constants.LoggingResource;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.device.HandsetPopulationProvider;
+import com.kritter.device.common.HandsetPopulationProvider;
+import com.kritter.fanoutinfra.executorservice.common.KExecutor;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.geo.entity.populator.DataLoaderExecutor;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.Properties;
@@ -32,17 +34,21 @@ public class PostImpressionContextListener implements ServletContextListener
     private ConversionEventIdStorageCache cookieBasedConversionEventStorage;
     private EventIdStorageCache winEventStorage;
     private EventIdStorageCache clickEventStorage;
+    private EventIdStorageCache billableEventStorage;
+    private EventIdStorageCache macroClickEventStorage;
+    private KExecutor kexecutor;
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent)
     {
+        ServletContext servletContext = servletContextEvent.getServletContext();
 
         System.out.println("Postimpression context initialization event received, going for initialization...");
 
-        System.out.println("Configure log4j in postimpression using properties file path " +
-                LoggingResource.LOG_4J_PROPERTIES_FILE_PATH_POSTIMPRESSION);
+        String log4jFilePath = servletContext.getInitParameter(LoggingResource.LOG4J_PROPERTIES_POSTIMPRESSION_KEY);
 
-        PropertyConfigurator.configure(LoggingResource.LOG_4J_PROPERTIES_FILE_PATH_POSTIMPRESSION);
+        System.out.println("Configure log4j in postimpression using properties file path " + log4jFilePath);
+        PropertyConfigurator.configure(log4jFilePath);
 
         System.out.println("Done configuring log4j, now intializing the entire Postimpression Workflow");
 
@@ -64,8 +70,11 @@ public class PostImpressionContextListener implements ServletContextListener
                                                                      getBean("cookie_based_conversion_event_id_storage");
         this.winEventStorage = (EventIdStorageCache)this.beanFactory.getBean("win_event_id_storage");
         this.clickEventStorage = (EventIdStorageCache)this.beanFactory.getBean("click_event_id_storage");
+        this.billableEventStorage = (EventIdStorageCache)this.beanFactory.getBean("billable_event_id_storage");
+        this.macroClickEventStorage = (EventIdStorageCache)this.beanFactory.getBean("macro_click_event_id_storage");
+        this.kexecutor = KExecutor.getKExecutor("postimpression.application");
 
-        servletContextEvent.getServletContext().setAttribute("workflow",this.postImpressionWorkflow);
+        servletContext.setAttribute("workflow",this.postImpressionWorkflow);
 
         System.out.print("Completed initialization of PostImpressionContextListener...");
     }
@@ -101,6 +110,16 @@ public class PostImpressionContextListener implements ServletContextListener
 
         if(null != this.clickEventStorage)
             this.clickEventStorage.releaseResources();
+
+        if(null != this.billableEventStorage)
+            this.billableEventStorage.releaseResources();
+
+        if(null != this.macroClickEventStorage)
+            this.macroClickEventStorage.releaseResources();
+        
+        if(null != this.kexecutor){
+            this.kexecutor.shutdown();
+        }
 
         System.out.println("Completed destruction of PostImpressionContextListener...");
     }

@@ -78,7 +78,7 @@ decoded = FOREACH raw_data GENERATE FLATTEN(com.kritter.kumbaya.libraries.pigudf
 decoded_data = FOREACH decoded GENERATE ThriftBytesToTupleDef($0);
 
 proj_data = FOREACH decoded_data GENERATE AdservingRequestResponse.terminationReason as terminationReason, 
-    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(AdservingRequestResponse.time * 1000,'yyyy-MM-dd HH:00:00', 'UTC') as time, 
+    com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(AdservingRequestResponse.time * 1000,'yyyy-MM-dd HH:00:00', '$tz') as time, 
     AdservingRequestResponse.siteId as siteId, (AdservingRequestResponse.endUserlatitudeValue==0.0?0:1) as present;
 
 filter_data = FILTER proj_data BY terminationReason == 'HEALTHY_REQUEST';

@@ -1,11 +1,11 @@
 import MySQLdb
 import logging
 import json
+import sys
+import traceback
 
 from bidder.bidding_strategies.supply_matcher.targeting import *
 from bidder.utils.time_utils import *
-
-configLogger = logging.getLogger(__name__)
 
 def getCampaignsFromDB(dbConnection, timeDimension = -1, timePerWindow = 0):
     """ Gets all the campaigns from campaign table. Returns the targeting for each campaigns
@@ -17,6 +17,8 @@ def getCampaignsFromDB(dbConnection, timeDimension = -1, timePerWindow = 0):
 
         return Returns list of campaign objects
     """
+    configLogger = logging.getLogger(__name__)
+
     cursor = None
     try :
         cursor = dbConnection.cursor()
@@ -111,7 +113,8 @@ def getCampaignsFromDB(dbConnection, timeDimension = -1, timePerWindow = 0):
             campaignList.append(campaign)
         return campaignList
     except Exception, e:
-        configLogger.info("Exception occurred %s", e)
+        configLogger.info("Exception occurred %s", traceback.format_exc())
+        sys.exit(1)
     finally :
         if cursor is not None :
             cursor.close()

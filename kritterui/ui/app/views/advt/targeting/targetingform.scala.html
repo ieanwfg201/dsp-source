@@ -1,4 +1,4 @@
-@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String)
+@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String, state_city:String, mma_required:String,adposition_required:String,channel_required:String)
 
 @main2("Create Targeting Profile") {@navs.navadvt(tpDisplay.getAccountGuid())}{@navs.breadcrumbs(tpDisplay.getBreadCrumbPaths())}{
 
@@ -36,6 +36,10 @@
 					 <div  ng-show="showCountrycarrierSelector" class="animate-if"> 
 						 @components.formElements.multiselectlist3(tpForm("country_json"), '_label ->"Countries" , '_row->true)					   
 						 @components.formElements.multiselectlist3(tpForm("carrier_json"), '_label ->"Carriers" , '_row->true)						
+	                     @if("true" == state_city) {
+    	                   @components.formElements.multiselectlist3(tpForm("state_json"), '_label ->"State" , '_row->true)
+    	                   @components.formElements.multiselectlist3(tpForm("city_json"), '_label ->"City" , '_row->true)
+	                     }
 					 </div>
 					 
 					 <div  ng-show="showzipcodeListSelector" class="animate-if">
@@ -143,6 +147,29 @@
                      @components.formElements.multiselectlist3(tpForm("retargeting"), '_label ->"Retargeting (Select Exact Segment and not ALL)", '_row->true) 
                  </fieldset>
                 }
+                @if("true" == mma_required){
+				 <fieldset>
+					 <legend>MMA</legend>
+					 @components.formElements.selectlist2(tpForm("mma_inc_exc"), "MMA Inc/Exc", services.MetadataAPI.listIncTrue()) 
+					 @components.formElements.multiselectlist3(tpForm("mma_tier_1_list"), '_label ->"Target Tier 1 MMA Category", '_row->true)
+					 @components.formElements.multiselectlist3(tpForm("mma_tier_2_list"), '_label ->"Target Tier 2 MMA Category", '_row->true)
+				 </fieldset>
+				 }
+                @if("true" == adposition_required){
+				 <fieldset>
+					 <legend>ADPOSITION</legend>
+					 @components.formElements.selectlist2(tpForm("adposition_inc_exc"), "ADPosition Inc/Exc", services.MetadataAPI.listIncTrue()) 
+					 @components.formElements.multiselectlist3(tpForm("adposition_list"), '_label ->"Target AdPosition", '_row->true)
+				 </fieldset>
+				 }
+                @if("true" == channel_required){
+				 <fieldset>
+					 <legend>CHANNEL</legend>
+					 @components.formElements.selectlist2(tpForm("channel_inc_exc"), "Channel Inc/Exc", services.MetadataAPI.listIncTrue()) 
+					 @components.formElements.multiselectlist3(tpForm("channel_tier_1_list"), '_label ->"Target Tier 1 Channel", '_row->true)
+					 @components.formElements.multiselectlist3(tpForm("channel_tier_2_list"), '_label ->"Target Tier 2 Channel", '_row->true)
+				 </fieldset>
+				 }
 				 
 				 
 				 <button class="btn btn-default btn-primary pull-right" type="button" ng-click="saveTP()">Save</button>

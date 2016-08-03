@@ -10,6 +10,26 @@
     <name>post_impression_application</name>
     <dependencies>
         <dependency>
+            <groupId>com.kritter.entity.external_tracker</groupId>
+            <artifactId>kritter_entity_external_tracker</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.fanoutinfra.executorservice</groupId>
+            <artifactId>fanoutinfra_executorservice_common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.fanoutinfra.apiclient</groupId>
+            <artifactId>fanoutinfra_apiclient_ning</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.fanoutinfra.apiclient</groupId>
+            <artifactId>fanoutinfra_apiclient_common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.constants</groupId>
             <artifactId>kritter-constants</artifactId>
             <version>1.0.0</version>
@@ -57,8 +77,14 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.kritter</groupId>
-            <artifactId>device</artifactId>
+            <groupId>com.kritter.device</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.device</groupId>
+            <artifactId>wurfl</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
@@ -121,8 +147,8 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -140,6 +166,11 @@
             <groupId>com.kritter.entity</groupId>
             <artifactId>user</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -2,12 +2,15 @@ package com.kritter.common.caches.retargeting_segment.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
+import lombok.ToString;
+
 import java.io.IOException;
 import java.sql.Timestamp;
 
 /**
  * This class keeps Retargeting Segment Entity
  */
+@ToString
 public class RetargetingSegmentEntity extends RetargetingSegment implements IUpdatableEntity<Integer>{
 
     private final Timestamp updateTime;

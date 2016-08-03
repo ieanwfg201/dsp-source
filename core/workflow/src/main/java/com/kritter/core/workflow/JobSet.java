@@ -19,12 +19,13 @@ public class JobSet {
     private List<Job> jobs;
 
     public static String WORKFLOW_LOGGER_NAME = "workflow.logger";
-    private static Logger workflowLogger = LoggerFactory.getLogger(WORKFLOW_LOGGER_NAME);
+    private Logger workflowLogger;
 
     public JobSet(String name, TransitionRules rules, List<Job> jobs) {
         this.name = name;
         this.rules = rules;
         this.jobs = jobs;
+        this.workflowLogger = LoggerFactory.getLogger(WORKFLOW_LOGGER_NAME);
     }
 
     /**
@@ -36,7 +37,7 @@ public class JobSet {
      */
     public boolean execute(Context context, YammerMetrics metrics) {
         for(Job job : jobs) {
-            long beginTime = System.currentTimeMillis();
+            long beginTime = System.nanoTime();
 
             metrics.incrementJobInvocations(job.getName());
             try {
@@ -45,12 +46,13 @@ public class JobSet {
                     return false;
             } catch (RuntimeException rte) {
                 metrics.incrementJobFailures(job.getName());
-                workflowLogger.error("Error executing job " + job.getName() +
-                                     ", error : " + rte.getMessage(),rte);
+                workflowLogger.error("RuntimeException: ",rte);
+                workflowLogger.error("Error executing job {}, error : {}", job.getName(), rte.getMessage());
                 return false;
             } finally {
-                long endTime = System.currentTimeMillis();
-                metrics.incrementJobLatency(job.getName(), endTime - beginTime);
+                long endTime = System.nanoTime();
+                // Update job latency to the nearest microsecond.
+                metrics.incrementJobLatency(job.getName(), (endTime - beginTime + 500) / 1000);
             }
         }
         return true;

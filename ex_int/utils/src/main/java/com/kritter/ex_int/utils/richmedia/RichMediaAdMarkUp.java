@@ -11,6 +11,7 @@ import com.kritter.constants.ADTagMacros;
 import com.kritter.constants.CreativeMacroQuote;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.entity.creative_macro.CreativeMacro;
+import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
@@ -31,7 +32,8 @@ public class RichMediaAdMarkUp {
                  String notificationUrlSuffix,
                  String notificationUrlBidderBidPriceMacro, String template,
                  String appCategory, CreativeMacro creativeMacro,
-                 String macroPostImpressionBaseClickUrl
+                 String macroPostImpressionBaseClickUrl,
+                 ExtTracker extTracker
           ) throws BidResponseException {
               String clickUri = CreativeFormatterUtils.prepareClickUri(
                               logger,
@@ -78,7 +80,7 @@ public class RichMediaAdMarkUp {
                   {
                       if(externalUserId.getIdType().equals(
                               ExternalUserIdType.EXCHANGE_CONSUMER_ID))
-                          exchangeUserId = externalUserId.getUserId();
+                          exchangeUserId = externalUserId.toString();
                   }
               }
 
@@ -112,7 +114,16 @@ public class RichMediaAdMarkUp {
                       creativeMacro, request, responseAdInfo, response, appCategory, macroClickUrl.toString());
               richmediaResponse = richmediaResponse.replace(ApplicationGeneralUtils.RICHMEDIA_PAYLOAD,
                       str);
-      
+              if(extTracker != null && extTracker.getImpTracker() != null){
+                  StringBuffer sBuff = new StringBuffer("");
+                  for(String str1:extTracker.getImpTracker()){
+                      sBuff.append("<img src=\"");
+                      sBuff.append(str1);
+                      sBuff.append("\" style=\"display: none;\"/>");
+                  }
+                  richmediaResponse=richmediaResponse+sBuff.toString();
+              }
+
               return richmediaResponse;
           }
       
@@ -285,6 +296,10 @@ public class RichMediaAdMarkUp {
                           }else{
                               strTemp = strTemp.replaceAll(ADTagMacros.SECURE_CLICK_URL.getDesc(),defaultReplace);
                           }
+                          break;
+                      case RANDOM:
+                          String a = quote+System.nanoTime()+quote;
+                          strTemp = strTemp.replaceAll(ADTagMacros.RANDOM.getDesc(),a);
                           break;
                       default:
                           break;

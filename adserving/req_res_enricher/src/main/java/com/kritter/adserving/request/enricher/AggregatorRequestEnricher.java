@@ -7,11 +7,11 @@ import com.kritter.constants.ConnectionType;
 import com.kritter.constants.INVENTORY_SOURCE;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.constants.StatusIdEnum;
-import com.kritter.device.HandsetDetectionProvider;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.device.common.HandsetDetectionProvider;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.InternetServiceProvider;
-import com.kritter.geo.common.entity.reader.ConnectionTypeDetectionCache;
+import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.entity.user.userid.ExternalUserId;
@@ -55,7 +55,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
     private HandsetDetectionProvider handsetDetectionProvider;
     private CountryDetectionCache countryDetectionCache;
     private ISPDetectionCache ispDetectionCache;
-    private ConnectionTypeDetectionCache connectionTypeDetectionCache;
+    private IConnectionTypeDetectionCache connectionTypeDetectionCache;
 
     public AggregatorRequestEnricher(
                                      String loggerName,
@@ -127,7 +127,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
                                      HandsetDetectionProvider handsetDetectionProvider,
                                      CountryDetectionCache countryDetectionCache,
                                      ISPDetectionCache ispDetectionCache,
-                                     ConnectionTypeDetectionCache connectionTypeDetectionCache,
+                                     IConnectionTypeDetectionCache connectionTypeDetectionCache,
                                      String richMediaParameterName,
                                      String widthParameterName,
                                      String heightParameterName
@@ -278,14 +278,17 @@ public class AggregatorRequestEnricher implements RequestEnricher
         else if(appWapForSiteCodeValue == SITE_PLATFORM.APP.getPlatform())
             sitePlatformValue = SITE_PLATFORM.WAP.getPlatform();
         request.setSitePlatformValue(sitePlatformValue);
-        request.setUserId(requestingUserId);
         Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
         if(externalUserIds == null) {
             externalUserIds = new HashSet<ExternalUserId>();
             request.setExternalUserIds(externalUserIds);
         }
-        externalUserIds.add(new ExternalUserId(ExternalUserIdType.AGGREGATOR_USER_ID, request.getInventorySource(),
-                requestingUserId));
+
+        if(requestingUserId != null) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.AGGREGATOR_USER_ID, request.getInventorySource(),
+                    requestingUserId));
+        }
+
         request.setRequestingLongitudeValue(requestingLongitudeValue);
         request.setRequestingLatitudeValue(requestingLatitudeValue);
         request.setRichMediaParameterValue(richMediaParameterValue);

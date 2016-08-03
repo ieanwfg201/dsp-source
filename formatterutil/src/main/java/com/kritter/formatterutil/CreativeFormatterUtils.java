@@ -1,14 +1,19 @@
 package com.kritter.formatterutil;
 
 import com.kritter.constants.DeviceType;
+import com.kritter.constants.ExternalUserIdType;
+import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.constants.ConnectionType;
-import com.kritter.device.entity.HandsetMasterData;
+import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.utils.common.ApplicationGeneralUtils;
+import com.kritter.utils.common.url.URLField;
+import com.kritter.utils.common.url.URLFieldProcessingException;
 import org.slf4j.Logger;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 
 /**
  * This class is utility class for creative formatting.
@@ -31,6 +36,17 @@ public class CreativeFormatterUtils
     public static final String RICHMEDIA_PAYLOAD     = "$RICHMEDIA_PAYLOAD";
     public static final String WIN_NOTIFICATION_URL  = "$WIN_NOTIFICATION_URL";
 
+    public static String prepareClickUri(Logger logger,Request request,
+            ResponseAdInfo responseAdInfo,
+            Short bidderModelId,
+            int urlVersion,
+            int inventorySource,
+            Short selectedSiteCategoryId,
+            String secretKeyForHash)
+    {
+        return prepareClickUri(logger, request, responseAdInfo, bidderModelId, urlVersion, inventorySource,
+                selectedSiteCategoryId, secretKeyForHash, false);
+    }
 
     public static String prepareClickUri(Logger logger,Request request,
                                          ResponseAdInfo responseAdInfo,
@@ -38,7 +54,7 @@ public class CreativeFormatterUtils
                                          int urlVersion,
                                          int inventorySource,
                                          Short selectedSiteCategoryId,
-                                         String secretKeyForHash)
+                                         String secretKeyForHash, boolean noHash)
     {
         String impressionId = ApplicationGeneralUtils
                                                 .generateImpressionId(request.getRequestId(),
@@ -125,35 +141,38 @@ public class CreativeFormatterUtils
                 ? DeviceType.UNKNOWN.getCode() : request.getHandsetMasterData().getDeviceType().getCode();
 
         StringBuffer dataToHash = new StringBuffer(urlVersion);
-        dataToHash.append(inventorySource);
-        dataToHash.append(impressionId);
-        dataToHash.append(deviceId);
-        dataToHash.append(manufacturerId);
-        dataToHash.append(modelId);
-        dataToHash.append(osId);
-        dataToHash.append(browserId);
-        dataToHash.append(responseAdInfo.getSlotId());
-        dataToHash.append(siteId);
-        dataToHash.append(countryId);
-        dataToHash.append(countryCarrierId);
-        dataToHash.append(encodedBidInfo);
-        dataToHash.append(bidderModelId);
-        dataToHash.append(selectedSiteCategoryId);
-        dataToHash.append(supplySourceWapOrApp);
-        dataToHash.append(externalSupplyAttributesInternalId);
-        dataToHash.append(connectionTypeId);
-        dataToHash.append(deviceType);
+        if(!noHash){
+            dataToHash.append(inventorySource);
+            dataToHash.append(impressionId);
+            dataToHash.append(deviceId);
+            dataToHash.append(manufacturerId);
+            dataToHash.append(modelId);
+            dataToHash.append(osId);
+            dataToHash.append(browserId);
+            dataToHash.append(responseAdInfo.getSlotId());
+            dataToHash.append(siteId);
+            dataToHash.append(countryId);
+            dataToHash.append(countryCarrierId);
+            dataToHash.append(encodedBidInfo);
+            dataToHash.append(bidderModelId);
+            dataToHash.append(selectedSiteCategoryId);
+            dataToHash.append(supplySourceWapOrApp);
+            dataToHash.append(externalSupplyAttributesInternalId);
+            dataToHash.append(connectionTypeId);
+            dataToHash.append(deviceType);
+        }
 
         String hashValue = null;
-
-        try
-        {
-            hashValue = ApplicationGeneralUtils.calculateHashForData(dataToHash.toString(),secretKeyForHash);
-        }
-        catch(NoSuchAlgorithmException e)
-        {
-            logger.error("Could not generate hash in click url creation ", e);
-            return null;
+        if(!noHash){
+            try
+            {
+                hashValue = ApplicationGeneralUtils.calculateHashForData(dataToHash.toString(),secretKeyForHash);
+            }
+            catch(NoSuchAlgorithmException e)
+            {
+                logger.error("Could not generate hash in click url creation ", e);
+                return null;
+            }
         }
 
         StringBuffer sb = new StringBuffer(URI_FIELD_DELIMITER);
@@ -194,9 +213,107 @@ public class CreativeFormatterUtils
         sb.append(connectionTypeId);
         sb.append(URI_FIELD_DELIMITER);
         sb.append(deviceType);
-        sb.append(URI_FIELD_DELIMITER);
-        sb.append(hashValue);
+        if(!noHash){
+            sb.append(URI_FIELD_DELIMITER);
+            sb.append(hashValue);
+        }
+
+        String adservingInformationForPostimpressionTransport = null;
+        try
+        {
+            adservingInformationForPostimpressionTransport =
+                    encodeAndGenerateAdservingInformationForPostimpressionURLTransport(request,logger);
+        }
+        catch (URLFieldProcessingException e)
+        {
+            logger.error("URLFieldProcessingException inside CreativeFormatterUtils ",e);
+        }
+
+        if(null != adservingInformationForPostimpressionTransport)
+        {
+            sb.append(ApplicationGeneralUtils.URL_QUERY_BEGIN_QUESTION_MARK);
+            sb.append(ApplicationGeneralUtils.ADSERVING_POSTIMPRESSION_INFO_PARAM_NAME);
+            sb.append(ApplicationGeneralUtils.URL_PARAM_VALUE_DELIMITER);
+            sb.append(adservingInformationForPostimpressionTransport);
+        }
 
         return sb.toString();
+    }
+
+    private static String encodeAndGenerateAdservingInformationForPostimpressionURLTransport(Request request,Logger logger)
+                                                                                    throws URLFieldProcessingException
+
+    {
+        if(null != request.getGeneratedInformationForPostimpression())
+            return request.getGeneratedInformationForPostimpression();
+
+        Set<ExternalUserId> externalUserIdSet = request.getExternalUserIds();
+
+        String exchangeUserId = null;
+        if(null != externalUserIdSet)
+        {
+            for(ExternalUserId externalUserId : externalUserIdSet)
+            {
+                if(externalUserId.getIdType().equals(ExternalUserIdType.EXCHANGE_CONSUMER_ID))
+                    exchangeUserId = externalUserId.toString();
+            }
+        }
+
+        if(null != exchangeUserId)
+        {
+            try {
+                URLField exchangeUserIdField = URLField.EXCHANGE_USER_ID;
+                exchangeUserIdField.getUrlFieldProperties().setFieldValue(exchangeUserId);
+                request.getUrlFieldFactory().stackFieldForStorage(exchangeUserIdField);
+            }catch (URLFieldProcessingException e)
+            {
+                logger.error("URLFieldProcessingException inside CreativeFormatterUtils for exchange user id",e);
+            }
+        }
+
+        if(null != request.getUserId())
+        {
+            try{
+            URLField kritterUserIdField = URLField.KRITTER_USER_ID;
+            kritterUserIdField.getUrlFieldProperties().setFieldValue(request.getUserId());
+            request.getUrlFieldFactory().stackFieldForStorage(kritterUserIdField);
+            }catch (URLFieldProcessingException e)
+            {
+                logger.error("URLFieldProcessingException inside CreativeFormatterUtils for kritter user id",e);
+            }
+        }
+
+        if(null != request.getSite().getExternalSupplyId())
+        {
+            try{
+                URLField externalSiteIdField = URLField.EXTERNAL_SITE_ID;
+                externalSiteIdField.getUrlFieldProperties().setFieldValue(request.getSite().getExternalSupplyId());
+                request.getUrlFieldFactory().stackFieldForStorage(externalSiteIdField);
+
+            }catch (URLFieldProcessingException e)
+            {
+                logger.error("URLFieldProcessingException inside CreativeFormatterUtils for external site id",e);
+            }
+        }
+
+        if(null != request.getBidFloorForFilledExchangeImpressions());
+        {
+            try{
+            URLField bidFloorField = URLField.BID_FLOOR;
+            bidFloorField.getUrlFieldProperties().setFieldValue(request.getBidFloorForFilledExchangeImpressions());
+            request.getUrlFieldFactory().stackFieldForStorage(bidFloorField);
+            }catch (URLFieldProcessingException e)
+            {
+                logger.error("URLFieldProcessingException inside CreativeFormatterUtils for bidfloor value ",e);
+            }
+        }
+
+        if(null != request.getUrlFieldFactory())
+        {
+            String fieldGenerated = request.getUrlFieldFactory().generate();
+            request.setGeneratedInformationForPostimpression(fieldGenerated);
+            return fieldGenerated;
+        }
+        return null;
     }
 }

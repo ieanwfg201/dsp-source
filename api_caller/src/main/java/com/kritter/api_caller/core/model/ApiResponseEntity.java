@@ -1,8 +1,6 @@
 package com.kritter.api_caller.core.model;
 
 /**
- * This interface represents an thirdparty api response, the action to be taken on
- * the result is specific implementaion for each api call action.
+ * This interface represents response from a database or from a webserver.
  */
-public interface ApiResponseEntity {
-}
+public interface ApiResponseEntity {}

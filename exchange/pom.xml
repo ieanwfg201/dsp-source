@@ -36,6 +36,8 @@
     <modules>
         <module>request_openrtb_2_3</module>
         <module>response_openrtb_2_3</module>
+        <module>request_openrtb_2_2</module>
+        <module>response_openrtb_2_2</module>
         <module>formatting</module>
         <module>job</module>
     </modules>

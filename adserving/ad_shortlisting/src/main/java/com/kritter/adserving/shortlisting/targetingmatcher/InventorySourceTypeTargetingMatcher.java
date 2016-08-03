@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -10,6 +11,7 @@ import com.kritter.core.workflow.Context;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +20,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class InventorySourceTypeTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.AD_INV_SRC_TYPE;
+
     @Getter
     private String name;
     private Logger logger;
 
     private AdEntityCache adEntityCache;
+    private String adNoFillReasonMapKey;
 
-    public InventorySourceTypeTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache) {
+    public InventorySourceTypeTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
+                                               String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }
 
     @Override
@@ -66,6 +73,9 @@ public class InventorySourceTypeTargetingMatcher implements TargetingMatcher {
                 shortlistedAdIdSet.add(adId);
             else
             {
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                        this.adNoFillReasonMapKey, context);
+
                 ReqLog.debugWithDebug(logger,request, "SupplySourceType defined for adGuId:{} is {} ,does not qualify for site's platform type: {} ", 
                         adEntity.getAdGuid(),SupplySourceTypeEnum.getEnum(targetingProfile.getSupplySourceType()).getName(),
                         SITE_PLATFORM.getEnum(site.getSitePlatform()).getDescription());
@@ -73,7 +83,7 @@ public class InventorySourceTypeTargetingMatcher implements TargetingMatcher {
         }
 
         if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
-            request.setNoFillReason(Request.NO_FILL_REASON.AD_INV_SRC_TYPE);
+            request.setNoFillReason(noFillReason);
 
         return shortlistedAdIdSet;
     }

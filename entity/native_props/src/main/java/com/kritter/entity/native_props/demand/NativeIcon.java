@@ -2,6 +2,7 @@ package com.kritter.entity.native_props.demand;
 
 import java.io.IOException;
 
+import lombok.ToString;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -14,6 +15,7 @@ import lombok.Setter;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @EqualsAndHashCode
+@ToString
 public class NativeIcon {
     @Getter@Setter
     private int id = -1;

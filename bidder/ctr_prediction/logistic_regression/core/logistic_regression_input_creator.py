@@ -5,8 +5,6 @@ from logistic_regression_history import *
 
 from bidder.utils.log_utils import *
 
-appLogger = logging.getLogger(__name__)
-
 def getMapForRelevantDimValues(clickLogLines, dimPos, relativeThreshold, absoluteThreshold):
     """
     Takes click log lines and decides which dimension values are relevant and which are not based on
@@ -29,6 +27,8 @@ def getMapForRelevantDimValues(clickLogLines, dimPos, relativeThreshold, absolut
     that need to be discarded are absent in the map
     :rtype: map (int->int)
     """
+    appLogger = logging.getLogger(__name__)
+
     valueMap = {}
     for clickLogLine in clickLogLines:
         dimValue = clickLogLine.dimensionList[dimPos]
@@ -73,6 +73,8 @@ def getRelevantDimValues(clickLogLines, relativeThresholdList, absoluteThreshold
     :returns: list of maps containing dimension values for each dimension
     :rtype: list of maps. Each map is of type int->int
     """
+    appLogger = logging.getLogger(__name__)
+
     if clickLogLines is None or len(clickLogLines) == 0:
         return None
     dimensionList = clickLogLines[0].dimensionList
@@ -107,6 +109,8 @@ def filterAndConsolidateLogs(clickLogLines, relativeThresholdList, absoluteThres
     :returns: click log lines having dimension values deemed irrelevant as OTHERS
     :rtype: list of ClickLogLine objects
     """
+    appLogger = logging.getLogger(__name__)
+
     relevantDimValueMapList = getRelevantDimValues(clickLogLines, relativeThresholdList, absoluteThresholdList)
     segmentImpsClicksMap = {}
     for clickLogLine in clickLogLines:
@@ -156,6 +160,8 @@ def dumpCSVForLogisticRegression(consolidatedClickLogs, dimNameList, csvFileName
     :return: 0 if the csv file is empty, 1 otherwise
     :rtype: int
     """
+    appLogger = logging.getLogger(__name__)
+
     csvFile = None
 
     try:

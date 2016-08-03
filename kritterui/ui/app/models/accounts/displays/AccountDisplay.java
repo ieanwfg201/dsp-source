@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import models.Constants.Actions;
 import models.advertiser.EntityDisplay;
 import models.uiutils.Path;
+import services.MetadataAPI;
 
 import com.kritter.api.entity.account.Account;
 import com.kritter.constants.DemandPreference;
@@ -61,6 +62,9 @@ public class AccountDisplay extends EntityDisplay{
     }
 	public String getDemandpreference(){
         return DemandPreference.getEnum(account.getDemandpreference()).getName();
+    }
+    public String getDemandUrl(){
+        return MetadataAPI.getDemandUrl(account.getDemandProps());
     }
 	public String statusUpdateUrl(){
 		if(account.getStatus() == StatusIdEnum.Rejected)

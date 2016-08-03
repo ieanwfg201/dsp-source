@@ -18,7 +18,9 @@ import lombok.Setter;
 public class ExtTracker {
 
     @Getter@Setter
-    private List<String> extImpTracker;
+    private List<String> impTracker;
+    @Getter@Setter
+    private List<String> clickTracker;
     
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

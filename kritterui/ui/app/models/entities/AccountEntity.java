@@ -70,6 +70,7 @@ public class AccountEntity {
     private String demand_url = "";
     private String billing_name = "";
     private String billing_email="";
+    private String ext="";
 
 
     public String getDemand_url() {
@@ -320,6 +321,12 @@ public class AccountEntity {
     }
     public void setBilling_email(String billing_email) {
         this.billing_email = billing_email;
+    }
+    public String getExt() {
+        return ext;
+    }
+    public void setExt(String ext) {
+        this.ext = ext;
     }
     public Account getEntity(){
     	Account account = new Account();

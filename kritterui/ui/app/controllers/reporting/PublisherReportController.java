@@ -3,6 +3,7 @@ package controllers.reporting;
 
 import models.Constants.ReportDataType;
 import models.entities.reporting.ReportFormEntity;
+import play.Play;
 import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -17,7 +18,7 @@ import com.kritter.api.entity.reporting.ReportingEntity;
 
 
 public class PublisherReportController extends Controller{
-
+	private static String timezoneid = Play.application().configuration().getString("timezoneid");
     private static Form<ReportFormEntity> reportConfigForm = Form.form(ReportFormEntity.class); 
 
 //    @SecuredAction
@@ -76,7 +77,7 @@ public class PublisherReportController extends Controller{
         if(!filledFilterForm.hasErrors()){ 
                 ReportFormEntity reportFormEntity = filledFilterForm.get();
                 ReportingEntity reportingEntity = reportFormEntity.getReportEntity();
-                
+                reportingEntity.setTimezone(timezoneid);
                 result =  ReportingDataService.getData(reportingEntity, ReportDataType.TABLE, true); 
         } 
         return ok(result);

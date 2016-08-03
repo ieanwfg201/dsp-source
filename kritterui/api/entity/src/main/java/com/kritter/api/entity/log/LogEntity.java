@@ -10,6 +10,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.kritter.constants.PageConstants;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 public class LogEntity {
     private String start_time_str = "";
@@ -65,6 +68,24 @@ public class LogEntity {
     private boolean buyerUid = true;
     private boolean connectionTypeId = true;
     private boolean referer = true;
+    @Getter@Setter
+    private boolean adv_inc_id = true;
+    @Getter@Setter
+    private boolean pub_inc_id = true;
+    @Getter@Setter
+    private boolean tevent = true;
+    @Getter@Setter
+    private boolean teventtype = true;
+    @Getter@Setter
+    private boolean deviceType = true;
+    @Getter@Setter
+    private boolean bidFloor = true;
+    @Getter@Setter
+    private boolean exchangeUserId = true;
+    @Getter@Setter
+    private boolean kritterUserId = true;
+    @Getter@Setter
+    private boolean externalSiteAppId = true;
     private int startindex=PageConstants.start_index;
     private int pagesize=PageConstants.page_size;
     

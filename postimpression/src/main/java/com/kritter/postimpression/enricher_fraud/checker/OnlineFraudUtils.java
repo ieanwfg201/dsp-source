@@ -81,7 +81,9 @@ public class OnlineFraudUtils {
         //if event repeats.
         EVENT_DUPLICATE("DUPLICATE"),
 	    
-	    BILLABLE_EVENT("BILLABLE_EVENT");
+	    BILLABLE_EVENT("BILLABLE_EVENT"),
+        //if RETARGETING SEGMENT NOT FOUND.
+        RETARGETING_SEGMENT_NF("RETARGETING_SEGMENT_NF");
 
         private String value;
 
