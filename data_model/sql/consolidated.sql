@@ -1410,6 +1410,7 @@ create table third_party_conn_dsp_mapping
     id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
     third_party_conn_id VARCHAR(100) NOT NULL,
     dsp_id VARCHAR(100) NOT NULL,
+    description VARCHAR(100),
     last_modified timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_third_party_conn_id_adv_id FOREIGN KEY (third_party_conn_id) REFERENCES account(guid)
 ) ENGINE = InnoDB;
@@ -1422,6 +1423,7 @@ create table dsp_adv_agency_mapping
     id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
     dsp_id VARCHAR(100) NOT NULL,
     adv_id VARCHAR(100) NOT NULL,
+    description VARCHAR(100),
     last_modified timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = InnoDB;
 

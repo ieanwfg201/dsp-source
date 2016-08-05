@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.core;
 
+import com.kritter.adserving.shortlisting.core.directhelper.ValidateVideoDirect;
 import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.core.workflow.Context;
@@ -11,6 +12,9 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.reqres.log.ReqLog;
+import com.kritter.entity.video_props.VideoInfo;
+import com.kritter.entity.video_props.VideoProps;
+import com.kritter.entity.video_supply_props.VideoSupplyProps;
 import com.kritter.common.caches.account.AccountCache;
 import com.kritter.common.caches.account.entity.AccountEntity;
 import com.kritter.common.caches.native_icon_cache.NativeIconCache;
@@ -18,6 +22,8 @@ import com.kritter.common.caches.native_icon_cache.entity.NativeIconCacheEntity;
 import com.kritter.common.caches.native_screenshot_cache.NativeScreenshotCache;
 import com.kritter.common.caches.native_screenshot_cache.entity.NativeScreenshotCacheEntity;
 import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
+import com.kritter.common.caches.video_info_cache.VideoInfoCache;
+import com.kritter.common.caches.video_info_cache.entity.VideoInfoCacheEntity;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.RICHMEDIA_TYPE;
 import com.kritter.serving.demand.cache.*;
@@ -56,6 +62,7 @@ public class CreativeTargetingMatcher
     private NativeScreenshotCache nativeScreenshotCache;
     private AccountCache accountCache;
     private String adNoFillReasonMapKey;
+    private VideoInfoCache videoInfoCache;
 
     public CreativeTargetingMatcher(String loggerName,
                                     CreativeBannerCache creativeBannerCache,
@@ -66,7 +73,8 @@ public class CreativeTargetingMatcher
                                     NativeIconCache nativeIconCache,
                                     NativeScreenshotCache nativeScreenshotCache,
                                     AccountCache accountCache,
-                                    String adNoFillReasonMapKey
+                                    String adNoFillReasonMapKey,
+                                    VideoInfoCache videoInfoCache
     )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -80,6 +88,7 @@ public class CreativeTargetingMatcher
         this.nativeScreenshotCache = nativeScreenshotCache;
         this.accountCache = accountCache;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
+        this.videoInfoCache = videoInfoCache;
     }
 
 
@@ -117,7 +126,7 @@ public class CreativeTargetingMatcher
         int width = -1;
         int height = -1;
         List<Short> requestedSlotIdList = new ArrayList<Short>();
-        if(!site.isNative()){
+        if(!site.isNative() && !site.isVideo()){
             if(null != requestedWidths && requestedWidths.length == 1)
                 width = requestedWidths[0];
             if(null != requestedHeights && requestedHeights.length == 1)
@@ -227,6 +236,10 @@ public class CreativeTargetingMatcher
                 ReqLog.debugWithDebug(logger, request, "Site is Native but Creative not native " , creative.getId());
                 continue;
             }
+            if(site.isVideo() && !creative.getCreativeFormat().equals(CreativeFormat.VIDEO)){
+                ReqLog.debugWithDebug(logger, request, "Site is Video but Creative not video " , creative.getId());
+                continue;
+            }
             //if creative type is banner then check for size otherwise just allow.
             if(creative.getCreativeFormat().equals(CreativeFormat.BANNER))
             {
@@ -251,6 +264,9 @@ public class CreativeTargetingMatcher
                 }
 
                 Collections.sort(creativeBannerList,comparator);
+
+                /*Set in the response ad info complete list of banners, might be required for special json formatter*/
+                responseAdInfo.setCreativeBannerSetForNetworkTraffic(creativeBannerList);
 
                 Integer bannerUriIds[] = new Integer[creative.getBannerUriIds().length];
 
@@ -314,7 +330,42 @@ public class CreativeTargetingMatcher
                     ReqLog.errorWithDebug(logger, request, "We could not find any creative supporting the requesting sizes of (width,height) combinations: {}  for/by creativeid: {}" +
                             fetchRequestedWidthAndHeightPairForDebug(requestedWidths,requestedHeights) , creative.getId());
                 }
-            } 
+            } else if(creative.getCreativeFormat().equals(CreativeFormat.VIDEO)) {
+            	ReqLog.debugWithDebug(logger, request, "checking for video creative id " , creative.getId());
+                if(!site.isVideo()){
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                            NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
+
+                    logger.debug("Site is not video: {} ", site.getSiteGuid());
+                    continue;
+                }
+                VideoSupplyProps videoSupplyProps =  site.getVideoSupplyProps();
+                VideoProps videoProps = creative.getVideoProps();
+                NoFillReason vNFR = ValidateVideoDirect.validate(videoSupplyProps, videoProps);
+                if(vNFR != NoFillReason.FILL){
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
+                    		vNFR.getValue(), this.adNoFillReasonMapKey, context);
+
+                    logger.debug("Video MisMatch : {} ", site.getSiteGuid());
+                    continue;
+                }
+                VideoInfo videoInfo=null;
+                if(videoProps != null && videoProps.getVideo_info() != null){
+                    for(String videoId:videoProps.getVideo_info()){
+                        VideoInfoCacheEntity videoInfoCacheEntity = videoInfoCache.query(Integer.parseInt(videoId));
+                        if(videoInfoCacheEntity != null){
+                            videoInfo = videoInfoCacheEntity.getVideoInfo();
+                            break;
+                        }
+                    }
+                }
+
+                ReqLog.debugWithDebug(logger, request, "Match found for video creative id" + creative.getId());
+                creativeFoundForRequestedSlot = true;
+                responseAdInfo.setVideoProps(videoProps);
+                responseAdInfo.setVideoInfo(videoInfo);
+                responseAdInfoSetForUse.add(responseAdInfo);
+            }
             else if(creative.getCreativeFormat().equals(CreativeFormat.Native)) {
                 ReqLog.debugWithDebug(logger, request, "checking for native creative id " , creative.getId());
                 if(!site.isNative()){
@@ -438,7 +489,9 @@ public class CreativeTargetingMatcher
                                 NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
 
                         String debugMessage = "Ad id : %d is rich media but site id : %d does not allow it. Failing.";
-                        request.addDebugMessageForTestRequest(String.format(debugMessage, adId, site.getSiteIncId()));
+                        debugMessage = String.format(debugMessage, adId, site.getSiteIncId());
+                        logger.debug(debugMessage);
+                        request.addDebugMessageForTestRequest(debugMessage);
                         continue;
                     }
 
@@ -468,6 +521,9 @@ public class CreativeTargetingMatcher
             request.setNoFillReason(NoFillReason.CREATIVE_SIZE);
         if(!site.isNative() && !creativeFoundForRequestedSlot){
             request.setNoFillReason(NoFillReason.NATIVE_MISMATCH);
+        }
+        if(!site.isVideo() && !creativeFoundForRequestedSlot){
+            request.setNoFillReason(NoFillReason.VIDEO_MISMATCH);
         }
     }
 

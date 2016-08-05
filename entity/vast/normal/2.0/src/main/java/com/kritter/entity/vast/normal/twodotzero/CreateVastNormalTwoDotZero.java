@@ -82,7 +82,9 @@ public class CreateVastNormalTwoDotZero {
         	mediaFile.setType(mimeType);
         	mediaFile.setWidth(width);
         	mediaFiles.add(mediaFile);
-        	linear.setMediaFiles(mediaFiles);
+        	MediaFiles m = new MediaFiles();
+        	m.setMediaFile(mediaFiles);
+        	linear.setMediaFiles(m);
             if(tracking != null){
                 List<Tracking> trackingEvents = new LinkedList<Tracking>();
                 for(Integer i: tracking){
@@ -94,7 +96,9 @@ public class CreateVastNormalTwoDotZero {
                         trackingEvents.add(t);
                     }
                 }
-                linear.setTrackingEvents(trackingEvents);
+                TrackingEvents tEvents = new TrackingEvents();
+                tEvents.setTrackingEvents(trackingEvents);
+                linear.setTrackingEvents(tEvents);
             }
             if(clickurl != null){
             	/**	CustomClick customClick = new CustomClick();
@@ -140,14 +144,18 @@ public class CreateVastNormalTwoDotZero {
                 t.setEvent(VASTNonLinearTrackingEventTypes.creativeView.getName());
                 t.setStr(trackingEventUrl+"&"+TEvent.ttype+"="+TEventType.video.getName()+"&"+TEvent.tevent+"="+VASTNonLinearTrackingEventTypes.creativeView.getName());
                 trackingEvents.add(t);
-        		companion.setTrackingEvents(trackingEvents);
+                TrackingEvents tEvents = new TrackingEvents();
+                tEvents.setTrackingEvents(trackingEvents);
+        		companion.setTrackingEvents(tEvents);
         		if(clickurl != null){
         			CompanionClickThrough companionClickThrough = new CompanionClickThrough();
                 	companionClickThrough.setStr(clickurl);
         			companion.setCompanionClickThrough(companionClickThrough);
         		}
         		companionAds.add(companion);
-                creative.setCompanionAds(companionAds);
+        		CompanionAds cAds = new CompanionAds();
+        		cAds.setCompanion(companionAds);
+                creative.setCompanionAds(cAds);
         	}else{
         		List<NonLinear> nonLinearAds = new LinkedList<NonLinear>();
         		NonLinear nonLinear = new NonLinear();
@@ -171,7 +179,9 @@ public class CreateVastNormalTwoDotZero {
                             trackingEvents.add(t);
                         }
                     }
-                    nonLinear.setTrackingEvents(trackingEvents);
+                    TrackingEvents tEvents = new TrackingEvents();
+                    tEvents.setTrackingEvents(trackingEvents);
+                    nonLinear.setTrackingEvents(tEvents);
                 }
                 if(clickurl != null){
                 	NonLinearClickThrough nonLinearClickThrough = new NonLinearClickThrough();
@@ -190,7 +200,9 @@ public class CreateVastNormalTwoDotZero {
         			nonLinear.setAdParameters(adParameters);
         		 */
         		nonLinearAds.add(nonLinear);
-        		creative.setNonLinearAds(nonLinearAds);
+        		NonLinearAds nAds = new NonLinearAds();
+        		nAds.setNonLinearAd(nonLinearAds);
+        		creative.setNonLinearAds(nAds);
         	}
         }
         creatives.add(creative);
@@ -203,7 +215,9 @@ public class CreateVastNormalTwoDotZero {
     	*/
     	inline.setError(error);
     	inline.setImpression(impression);
-    	inline.setCreatives(creatives);
+    	Creatives c = new Creatives();
+    	c.setCreative(creatives);
+    	inline.setCreatives(c);
     	Ad ad = new Ad();
     	ad.setId(adId);
     	ad.setInline(inline);

@@ -204,6 +204,31 @@ public class MetadataController extends Controller{
             ArrayNode publisherOptions = MetadataAPI.adposition_list(); 
             return ok(publisherOptions);
         }
+        @SecuredAction
+        public static Result videomimes(){
+            ArrayNode publisherOptions = MetadataAPI.videomimes(); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result videoprotocols(){
+            ArrayNode publisherOptions = MetadataAPI.videoprotocols(); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result videoplaybackmethod(){
+            ArrayNode publisherOptions = MetadataAPI.videoplaybackmethod(); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result videodelivery(){
+            ArrayNode publisherOptions = MetadataAPI.videodelivery(); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result videoapi(){
+            ArrayNode publisherOptions = MetadataAPI.videoapi(); 
+            return ok(publisherOptions);
+        }
 
 		public static Result campaignforfilteringByAdvertiser(String advtList){
 			String ids[] = advtList.split(",");

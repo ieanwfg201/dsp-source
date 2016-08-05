@@ -18,7 +18,7 @@ public class Wrapper {
     @Setter@XmlElement(name="Impression")
     private Impression impression;
     @Setter@XmlElement(name="Creatives")
-    private List<Creative> creatives;
+    private Creatives creatives;
     @Setter@XmlElement(name="Extensions")
-    private List<Extension> extensions;
+    private Extensions extensions;
 }

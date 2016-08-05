@@ -1,19 +1,15 @@
 package models.publisher;
 
 import java.util.List;
-
+import java.util.LinkedList;
 import models.uiutils.IncExcList;
 import services.MetadataAPI;
-
 import com.kritter.api.entity.site.Site;
 import com.kritter.constants.APP_STORE_ID;
 import com.kritter.constants.MetadataType;
 import com.kritter.constants.NativeIconImageSize;
 import com.kritter.constants.NativeLayoutId;
 import com.kritter.constants.NativeScreenShotImageSize;
-
-import lombok.Getter;
-import lombok.Setter;
 
 public class SiteDisplayFull extends SiteDisplay{
 
@@ -179,7 +175,84 @@ public class SiteDisplayFull extends SiteDisplay{
         return site.getNative_rating_count_keyname();
     }
 
-
+    public String getIsvideo(){
+        if(site.isIs_video()){
+        	return "True";
+        }
+        return "False";
+    }
+    public List<String> getMimes(){
+    	if(site.isIs_video() ){
+    		return MetadataAPI.videomimesbyid(site.getStrmimes());
+    	}
+        return new LinkedList<String>();
+    }
+    public List<String> getProtocols(){
+    	if(site.isIs_video() ){
+    		return MetadataAPI.videoprotocols(site.getStrprotocols());
+    	}
+        return new LinkedList<String>();
+    }
+    public List<String> getPlayBack(){
+    	if(site.isIs_video() ){
+    		return MetadataAPI.videoplaybackmethod(site.getStrplaybackmethod());
+    	}
+        return new LinkedList<String>();
+    }
+    public List<String> getApi(){
+    	if(site.isIs_video() ){
+    		return MetadataAPI.videoapi(site.getStrapi());
+    	}
+        return new LinkedList<String>();
+    }
+    public List<String> getDelivery(){
+    	if(site.isIs_video() ){
+    		return MetadataAPI.videodelivery(site.getStrdelivery());
+    	}
+        return new LinkedList<String>();
+    }
+    public String getMinDurationSec(){
+    	if(site.isIs_video() && site.getMinDurationSec() != null){
+    		return site.getMinDurationSec()+"";
+    	}
+        return "";
+    }
+    public String getMaxDurationSec(){
+    	if(site.isIs_video() && site.getMaxDurationSec() != null){
+    		return site.getMaxDurationSec()+"";
+    	}
+        return "";
+    }
+    public String getWidthPixel(){
+    	if(site.isIs_video() && site.getWidthPixel() != null){
+    		return site.getWidthPixel()+"";
+    	}
+        return "";
+    }
+    public String getHeightPixel(){
+    	if(site.isIs_video() && site.getHeightPixel() != null){
+    		return site.getHeightPixel()+"";
+    	}
+        return "";
+    }
+    public String getStartDelay(){
+    	if(site.isIs_video() && site.getStartDelay() != null){
+    		return site.getStartDelay()+"";
+    	}
+        return "";
+    }
+    public String getLinearity(){
+    	if(site.isIs_video() ){
+    		return MetadataAPI.linearitybyid(site.getLinearity());
+    	}
+        return "";
+    }
+    public String getAdPos(){
+    	if(site.isIs_video() ){
+    		return MetadataAPI.videoposbyid(site.getPos());
+    	}
+        return "";
+    }
     //    
     //    public boolean isAllow_house_ads() {
     //        return allow_house_ads;

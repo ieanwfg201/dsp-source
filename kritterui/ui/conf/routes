@@ -343,6 +343,12 @@ GET     /metadata/options/adposition_list                           controllers.
 GET     /metadata/options/tier1channel                              controllers.MetadataController.tier1channel()     
 GET     /metadata/options/tier2channel/:tier1List                   controllers.MetadataController.tier2channelBytier1(tier1List:String)
 
+GET     /metadata/options/videomimes                          		controllers.MetadataController.videomimes()     
+GET     /metadata/options/videoprotocols                          	controllers.MetadataController.videoprotocols()     
+GET     /metadata/options/videoplaybackmethod                       controllers.MetadataController.videoplaybackmethod()     
+GET     /metadata/options/videodelivery                          	controllers.MetadataController.videodelivery()     
+GET     /metadata/options/videoapi                          		controllers.MetadataController.videoapi()     
+
 
 # Login page
 GET     /login                      securesocial.controllers.LoginPage.login

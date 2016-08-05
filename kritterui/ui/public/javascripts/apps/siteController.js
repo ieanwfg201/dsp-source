@@ -15,6 +15,12 @@ controller('siteController',function ($scope, $http) {
 	$scope.hygiene_list_url = "/metadata/options/hygienelist";
 	$scope.creative_attr_url= "/metadata/options/creativeattr";
 	
+	$scope.strmimes_url= "/metadata/options/videomimes";
+	$scope.strprotocols_url= "/metadata/options/videoprotocols";
+	$scope.strplaybackmethod_url= "/metadata/options/videoplaybackmethod";
+	$scope.strdelivery_url= "/metadata/options/videodelivery";
+	$scope.strapi_url= "/metadata/options/videoapi";
+	
 	$scope.id=$("#id").val();
 	$scope.guid=$("#guid").val(); 
 	$scope.pub_id = $("#pub_id").val();;
@@ -55,6 +61,17 @@ controller('siteController',function ($scope, $http) {
 	$scope.opt_in_hygiene_list_msmodel.init($scope.hygiene_list_url, 'valueArray', true);
 	$scope.creative_attr_inc_exc_msmodel = Object.create(MultiSelectModel);
 	$scope.creative_attr_inc_exc_msmodel.init($scope.creative_attr_url, 'valueArray', true);
+
+	$scope.strmimes_msmodel = Object.create(MultiSelectModel);
+	$scope.strmimes_msmodel.init($scope.strmimes_url, 'valueArray', true);
+	$scope.strprotocols_msmodel = Object.create(MultiSelectModel);
+	$scope.strprotocols_msmodel.init($scope.strprotocols_url, 'valueArray', true);
+	$scope.strplaybackmethod_msmodel = Object.create(MultiSelectModel);
+	$scope.strplaybackmethod_msmodel.init($scope.strplaybackmethod_url, 'valueArray', true);
+	$scope.strdelivery_msmodel = Object.create(MultiSelectModel);
+	$scope.strdelivery_msmodel.init($scope.strdelivery_url, 'valueArray', true);
+	$scope.strapi_msmodel = Object.create(MultiSelectModel);
+	$scope.strapi_msmodel.init($scope.strapi_url, 'valueArray', true);
 	
 	$scope.initComplete = false;
 

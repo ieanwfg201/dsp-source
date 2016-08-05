@@ -1,7 +1,5 @@
 package com.kritter.entity.vast.wrapper.two_dot_zero;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,6 +33,6 @@ public class Companion {
     @Setter@XmlElement(name="CompanionClickThrough")
     private CompanionClickThrough companionClickThrough;
     @Setter@XmlElement(name="TrackingEvents")
-    private List<Tracking> trackingEvents;
+    private TrackingEvents trackingEvents;
 
 }

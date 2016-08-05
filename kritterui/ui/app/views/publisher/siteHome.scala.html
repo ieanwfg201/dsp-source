@@ -1,4 +1,4 @@
-@(site:models.publisher.SiteDisplayFull, show_opt_in_hygiene:String, allow_passback:String, show_adcode:String, is_native_supply:String)
+@(site:models.publisher.SiteDisplayFull, show_opt_in_hygiene:String, allow_passback:String, show_adcode:String, is_native_supply:String,video_supply:String)
 @main2("Publisher Home"){@navs.navpub(site.getAccountGuid())}{@navs.breadcrumbs(site.getBreadCrumbPaths())}{
 
 	@components.containers.panel("Site Summary-"+ site.getName()){
@@ -36,19 +36,20 @@
         @if("true" == show_adcode){       
             @components.fielddisplays.textdisplay("AdCode", site.getAdCode())
         }
-        @if("true" == is_native_supply){       
-            @components.fielddisplays.textdisplay("Native Layout", site.getNativeLayout())
-            @components.fielddisplays.textdisplay("Native Title KeyName", site.getNativeTitleKeyName())
-            @components.fielddisplays.textdisplay("Native Title Max Chars", site.getNativeTitleChars())
-            @components.fielddisplays.textdisplay("Native Screenshot KeyName", site.getNativeScreenShotKeyName())
-            @components.fielddisplays.textdisplay("Native Screenshot Image Size", site.getNativeScreenShotImagesize())
-            @components.fielddisplays.textdisplay("Native Landing Url KeyName", site.getNativeLandingUrlKeyName())
-            @components.fielddisplays.textdisplay("Native CTA KeyName", site.getNativeCallToActionKeyName())
-            @components.fielddisplays.textdisplay("Native Icon KeyName", site.getNativeIconKeyName())
-            @components.fielddisplays.textdisplay("Native Icon Image Size", site.getNativeIconImagesize())
-            @components.fielddisplays.textdisplay("Native Desc KeyName", site.getNativeDescriptionKeyName())
-            @components.fielddisplays.textdisplay("Native Desc Max Chars", site.getNativeDescriptionChars())
-            @components.fielddisplays.textdisplay("Native Rating Count", site.getNativeRatingCountKeyName())
+        @if("true" == video_supply){   
+            @components.fielddisplays.textdisplay("Video Supply", site.getIsvideo())
+        	@components.fielddisplays.listdisplay("Video Mimes", site.getMimes())
+        	@components.fielddisplays.listdisplay("Video Protocols", site.getProtocols())    
+			@components.fielddisplays.listdisplay("Video PlayBack", site.getPlayBack())
+			@components.fielddisplays.listdisplay("Video Api", site.getApi())
+			@components.fielddisplays.listdisplay("Video Delivery", site.getDelivery())
+			@components.fielddisplays.textdisplay("Video Min Duration(sec)", site.getMinDurationSec())
+			@components.fielddisplays.textdisplay("Video Max Duration(sec)", site.getMaxDurationSec())
+			@components.fielddisplays.textdisplay("Video Width", site.getWidthPixel())
+			@components.fielddisplays.textdisplay("Video Height", site.getHeightPixel())
+			@components.fielddisplays.textdisplay("Video Linearity", site.getLinearity())
+			@components.fielddisplays.textdisplay("Video Pos", site.getAdPos())
+			@components.fielddisplays.textdisplay("Video StartDelay -11=Unknown ,> 0=Mid-Roll,0=Pre-Roll,-1=Generic Mid-Roll,-2=Generic Post-Roll)", site.getStartDelay())
         }
 		</div>
 	}

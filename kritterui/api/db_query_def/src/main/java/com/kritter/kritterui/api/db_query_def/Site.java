@@ -7,8 +7,8 @@ public class Site {
     		"hygiene_list,opt_in_hygiene_list,creative_attr_inc_exc,is_creative_attr_exc,site_platform_id," +
     		"status_id,last_modified,modified_by,billing_rules_json,url_exclusion,allow_house_ads,comments,floor," +
     		"is_advertiser_excluded,campaign_inc_exc_schema,nofill_backup_content,passback_type,is_richmedia_allowed,"
-    		+ "is_native,native_props) values(" +
-    		"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    		+ "is_native,native_props,is_video,video_supply_props) values(" +
+    		"?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     
     public static final String update_site = "update site set name=?,site_url=?," +
@@ -16,7 +16,8 @@ public class Site {
             "hygiene_list=?,opt_in_hygiene_list=?,creative_attr_inc_exc=?,is_creative_attr_exc=?," +
             "site_platform_id=?,status_id=?,last_modified=?,modified_by=?,billing_rules_json=?," +
             "url_exclusion=?,allow_house_ads=?,comments=?,floor=?,is_advertiser_excluded=?,campaign_inc_exc_schema=?," +
-            "nofill_backup_content=?,passback_type=?,is_richmedia_allowed=?,is_native=?,native_props=?  where id=?";
+            "nofill_backup_content=?,passback_type=?,is_richmedia_allowed=?,is_native=?,native_props=?,"
+            + "is_video=?,video_supply_props=?  where id=?";
     
     public static final String list_sites = "select * from site order by last_modified desc limit ?,?";
     

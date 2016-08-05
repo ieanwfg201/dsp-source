@@ -76,6 +76,7 @@ import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.SupplySourceTypeEnum;
 import com.kritter.constants.VASTCompanionTypes;
 import com.kritter.constants.VASTKritterTrackingEventTypes;
+import com.kritter.constants.VideoAdPos;
 import com.kritter.constants.VideoBidResponseProtocols;
 import com.kritter.constants.VideoBoxing;
 import com.kritter.constants.VideoDemandType;
@@ -194,6 +195,15 @@ public class MetadataAPI {
         } 
         return selectOptions;
     }
+    public static String linearitybyid(Integer i){
+    	if(i!= null){
+    		VideoLinearity v = VideoLinearity.getEnum(i);
+    		if(v !=null){
+    			return v.getName();
+    		}
+    	}
+    	return "";
+    }
     public static List<SelectOption> boxingallowed(){
         List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
         VideoBoxing[] types = VideoBoxing.values();
@@ -249,6 +259,31 @@ public class MetadataAPI {
         CreativeMacroQuote[] types = CreativeMacroQuote.values();
         for (CreativeMacroQuote type : types) {
             selectOptions.add(new SelectOption(type.name(),  type.getCode()+""));
+        } 
+        return selectOptions;
+    }
+    public static List<SelectOption> videopos(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        VideoAdPos[] types = VideoAdPos.values();
+        for (VideoAdPos type : types) {
+            selectOptions.add(new SelectOption(type.getName(),  type.getCode()+""));
+        } 
+        return selectOptions;
+    }
+    public static String videoposbyid(Integer i){
+    	if(i!= null){
+    		VideoAdPos v = VideoAdPos.getEnum(i);
+    		if(v !=null){
+    			return v.getName();
+    		}
+    	}
+    	return "";
+    }
+    public static List<SelectOption> videoLinearity(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        VideoLinearity[] types = VideoLinearity.values();
+        for (VideoLinearity type : types) {
+            selectOptions.add(new SelectOption(type.getName(),  type.getCode()+""));
         } 
         return selectOptions;
     }
@@ -485,6 +520,131 @@ public class MetadataAPI {
             }
         } 
         return optionNodes;
+    }
+    public static ArrayNode videomimes(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        VideoMimeTypes[] types = VideoMimeTypes.values();
+        for (VideoMimeTypes type : types) {
+        	optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode videoprotocols(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        VideoBidResponseProtocols[] types = VideoBidResponseProtocols.values();
+        for (VideoBidResponseProtocols type : types) {
+        	optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode videoplaybackmethod(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        VideoPlaybackMethods[] types = VideoPlaybackMethods.values();
+        for (VideoPlaybackMethods type : types) {
+        	optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode videodelivery(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        ContentDeliveryMethods[] types = ContentDeliveryMethods.values();
+        for (ContentDeliveryMethods type : types) {
+        	optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode videoapi(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        APIFrameworks[] types = APIFrameworks.values();
+        for (APIFrameworks type : types) {
+        	optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static List<String> videomimesbyid(String ids){
+    	List<String> ll = new LinkedList<String>();
+    	if(ids != null){
+    		String idTrim=ids.trim().replaceAll("\\[", "").replaceAll("]", "");
+    		String split[] = idTrim.split(",");
+    		for(String s:split){
+    			try{
+    				VideoMimeTypes v = VideoMimeTypes.getEnum(Integer.parseInt(s.trim()));
+    				if(v != null){
+    					ll.add(v.getMime());
+    				}
+    			}catch(Exception e){
+    			}
+    		}
+    	}
+        return ll;
+    }
+    public static List<String> videoprotocols(String ids){
+    	List<String> ll = new LinkedList<String>();
+    	if(ids != null){
+    		String idTrim=ids.trim().replaceAll("\\[", "").replaceAll("]", "");
+    		String split[] = idTrim.split(",");
+    		for(String s:split){
+    			try{
+    				VideoBidResponseProtocols v = VideoBidResponseProtocols.getEnum(Integer.parseInt(s.trim()));
+    				if(v != null){
+    					ll.add(v.getName());
+    				}
+    			}catch(Exception e){
+    			}
+    		}
+    	}
+        return ll;
+    }
+    public static List<String> videoplaybackmethod(String ids){
+    	List<String> ll = new LinkedList<String>();
+    	if(ids != null){
+    		String idTrim=ids.trim().replaceAll("\\[", "").replaceAll("]", "");
+    		String split[] = idTrim.split(",");
+    		for(String s:split){
+    			try{
+    				VideoPlaybackMethods v = VideoPlaybackMethods.getEnum(Integer.parseInt(s.trim()));
+    				if(v != null){
+    					ll.add(v.getName());
+    				}
+    			}catch(Exception e){
+    			}
+    		}
+    	}
+        return ll;
+    }
+    public static List<String> videodelivery(String ids){
+    	List<String> ll = new LinkedList<String>();
+    	if(ids != null){
+    		String idTrim=ids.trim().replaceAll("\\[", "").replaceAll("]", "");
+    		String split[] = idTrim.split(",");
+    		for(String s:split){
+    			try{
+    				ContentDeliveryMethods v = ContentDeliveryMethods.getEnum(Integer.parseInt(s.trim()));
+    				if(v != null){
+    					ll.add(v.getName());
+    				}
+    			}catch(Exception e){
+    			}
+    		}
+    	}
+        return ll;
+    }
+    public static List<String> videoapi(String ids){
+    	List<String> ll = new LinkedList<String>();
+    	if(ids != null){
+    		String idTrim=ids.trim().replaceAll("\\[", "").replaceAll("]", "");
+    		String split[] = idTrim.split(",");
+    		for(String s:split){
+    			try{
+    				APIFrameworks v = APIFrameworks.getEnum(Integer.parseInt(s.trim()));
+    				if(v != null){
+    					ll.add(v.getName());
+    				}
+    			}catch(Exception e){
+    			}
+    		}
+    	}
+        return ll;
     }
 	
 	public static <E extends Enum<E>> List<String> getValuesFromEnum(Class<E> enumClass, String ids){

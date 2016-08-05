@@ -1,6 +1,7 @@
 package com.kritter.adserving.flow.job;
 
 import com.kritter.adserving.formatting.JSONFormatter;
+import com.kritter.adserving.formatting.VASTFormatter;
 import com.kritter.adserving.formatting.XHTMLFormatter;
 import com.kritter.adserving.formatting.XMLFormatter;
 import com.kritter.entity.reqres.entity.Request;
@@ -55,6 +56,7 @@ public class ResponseFormattingJob implements Job{
     private Map<String,IBidResponseCreator> exchangeResponseCreatorMap;
     private String inventorySourceHeader;
     private SiteMetaDataCache siteMetaDataCache;
+    private VASTFormatter vastFormatter;
 
     public ResponseFormattingJob(
                                  String loggerName,
@@ -67,7 +69,8 @@ public class ResponseFormattingJob implements Job{
                                  String responseObjectKey,
                                  Map<String,IBidResponseCreator> exchangeResponseCreatorMap,
                                  String inventorySourceHeader,
-                                 SiteMetaDataCache siteMetaDataCache
+                                 SiteMetaDataCache siteMetaDataCache,
+                                 VASTFormatter vastFormatter
                                 )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -81,6 +84,7 @@ public class ResponseFormattingJob implements Job{
         this.exchangeResponseCreatorMap = exchangeResponseCreatorMap;
         this.inventorySourceHeader = inventorySourceHeader;
         this.siteMetaDataCache = siteMetaDataCache;
+        this.vastFormatter = vastFormatter;
     }
 
     @Override
@@ -300,6 +304,8 @@ public class ResponseFormattingJob implements Job{
                         responseContent = this.creativesXMLFormatter.formatCreatives(request,response);
                     else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.JSON_FORMATTER_ID))
                         responseContent = this.creativesJSONFormatter.formatCreatives(request,response);
+                    else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.VAST_FORMATTER_ID))
+                        responseContent = this.vastFormatter.formatCreatives(request,response);
                     else
                         logger.error("Unrecognized formatting option for ad units: {}" , request.getResponseFormat());
 

@@ -1,4 +1,4 @@
-@(siteForm:Form[models.entities.SiteEntity],  siteDisplay:models.publisher.SiteDisplay, show_opt_in_hygiene:String, allow_passback:String, is_native_supply:String)
+@(siteForm:Form[models.entities.SiteEntity],  siteDisplay:models.publisher.SiteDisplay, show_opt_in_hygiene:String, allow_passback:String, is_native_supply:String, video_supply:String)
 
  
 @main2("Add Inventory"){@navs.navpub(siteDisplay.getAccountGuid())} {@navs.breadcrumbs(siteDisplay.getBreadCrumbPaths())}{ 
@@ -59,6 +59,26 @@
                         @components.formElements.textinput(siteForm("native_description_keyname"), '_label ->"Description Key Name" )
                         @components.formElements.textinput(siteForm("native_description_maxchars"), '_label ->"Description Max Chars (< 100)" )
                         @components.formElements.textinput(siteForm("native_rating_count_keyname"), '_label ->"Rating Count Key Name" )
+                    </div>
+                    
+                </fieldset>
+            }
+            @if("true" == video_supply){
+                <fieldset>
+                    <legend>Video Attributes</legend>
+                    @components.formElements.selectlist2(siteForm("is_video"), "Is Video", services.MetadataAPI.noYesOptions(), '_ngSync->true)
+                    <div id="videofieldid" ng-show="is_video=='true'" ng-if="is_video=='true'">
+                    @components.formElements.multiselectlist3(siteForm("strmimes"), '_label ->"Mimes *", '_row->true)
+                    @components.formElements.multiselectlist3(siteForm("strprotocols"), '_label ->"Protocols *", '_row->true)
+                    @components.formElements.selectlist2(siteForm("linearity"), "Linearity *",services.MetadataAPI.videoLinearity() )
+                    @components.formElements.textinput(siteForm("startDelay"), '_label ->"StartDelay (Integer) (-11=Unknown ,> 0=Mid-Roll,0=Pre-Roll,-1=Generic Mid-Roll,-2=Generic Post-Roll)");
+                    @components.formElements.multiselectlist3(siteForm("strplaybackmethod"), '_label ->"PlayBack *", '_row->true)
+                    @components.formElements.textinput(siteForm("minDurationSec"), '_label ->"MinDuration in Sec")
+                    @components.formElements.textinput(siteForm("maxDurationSec"), '_label ->"MaxDuration in Sec")
+                    @components.formElements.textinput(siteForm("widthPixel"), '_label ->"Width")
+                    @components.formElements.textinput(siteForm("heightPixel"), '_label ->"Height")
+                    @components.formElements.multiselectlist3(siteForm("strdelivery"), '_label ->"Delivery", '_row->true)
+                    @components.formElements.multiselectlist3(siteForm("strapi"), '_label ->"Api", '_row->true)
                     </div>
                     
                 </fieldset>

@@ -153,6 +153,13 @@ public class Request
     @Getter @Setter
     private Float bidFloorForFilledExchangeImpressions;
 
+    /*
+    * This field is utilized to capture real time bid floor value sent by
+    * the supply , this field is applicable only for direct supply
+    * integrations and not valid for ad-exchange traffic.*/
+    @Getter @Setter
+    private Double bidFloorValueForNetworkSupply;
+
     //contains all request enrichment related error codes.
     public enum REQUEST_ENRICHMENT_ERROR_CODE
     {

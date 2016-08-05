@@ -10,6 +10,26 @@
     <name>creative_formatting</name>
     <dependencies>
         <dependency>
+            <groupId>com.kritter.entity.vast.normal.2_0</groupId>
+            <artifactId>entity_vast_normal_2_0</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.entity.vast.normal.3_0</groupId>
+            <artifactId>entity_vast_normal_3_0</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.entity.vast.wrapper.3_0</groupId>
+            <artifactId>entity_vast_wrapper_3_0</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.entity.vast.wrapper.2_0</groupId>
+            <artifactId>entity_vast_wrapper_2_0</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.entity.formatter_entity</groupId>
             <artifactId>kritter_entity_formatter_entity</artifactId>
             <version>1.0.0</version>

@@ -5,9 +5,9 @@ import java.util.Map;
 
 public enum VideoBoxing {
 
-    Unknown(0,"Unknown"),
-    BoxingNotAllowed(1,"BoxingNotAllowed"),
-    BoxingAllowed(2,"BoxingAllowed");
+    Unknown(-1,"Unknown"),
+    BoxingNotAllowed(0,"BoxingNotAllowed"),
+    BoxingAllowed(1,"BoxingAllowed");
     
     private int code;
     private String name;

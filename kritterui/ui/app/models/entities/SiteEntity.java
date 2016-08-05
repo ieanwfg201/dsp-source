@@ -6,6 +6,8 @@ import com.kritter.api.entity.site.Site;
 import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.Payout;
 import com.kritter.constants.SITE_PLATFORM;
+import com.kritter.constants.VideoAdPos;
+import com.kritter.constants.VideoLinearity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -81,7 +83,35 @@ public class SiteEntity extends Entity{
     private Integer native_description_maxchars;
     @Getter@Setter
     private String native_rating_count_keyname;
-
+    /**Video Properties Begin*/
+    private boolean is_video = false;
+    @Getter@Setter
+    private String strmimes; 
+    @Getter@Setter
+    private String strprotocols;
+	@Getter@Setter
+	private Integer linearity = VideoLinearity.LINEAR_IN_STREAM.getCode();
+	@Getter@Setter
+	private Integer startDelay;
+	@Getter@Setter
+	private String strplaybackmethod;
+    @Getter@Setter
+    private Integer minDurationSec; 
+    @Getter@Setter
+    private Integer maxDurationSec; 
+	@Getter@Setter
+	private Integer widthPixel;
+	@Getter@Setter
+	private Integer heightPixel;
+	@Getter@Setter
+	private String strdelivery;
+	@Getter@Setter
+	private Integer pos = VideoAdPos.Unknown.getCode();
+	@Getter@Setter
+	private String strapi;
+	@Getter@Setter
+	private String strcompaniontype;
+	/** Video Properties End */
     
     public int getId() {
         return id;
@@ -298,6 +328,12 @@ public class SiteEntity extends Entity{
     }
     public void setIs_native(boolean is_native) {
         this.is_native = is_native;
+    }
+    public boolean isIs_video() {
+        return is_video;
+    }
+    public void setIs_video(boolean is_video) {
+        this.is_video = is_video;
     }
 
     public Site getEntity(){

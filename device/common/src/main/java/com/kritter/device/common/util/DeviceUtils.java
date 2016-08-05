@@ -1,11 +1,8 @@
 package com.kritter.device.common.util;
 
-import com.google.common.io.Files;
 import com.kritter.constants.DeviceType;
 import com.kritter.device.common.entity.*;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
-import java.io.File;
-import java.io.IOException;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -19,6 +16,7 @@ public class DeviceUtils
 {
     public static final String FIFTYONE_DEGREES_DEVICE_TYPE_DESKTOP = "Desktop";
     public static final String FIFTYONE_DEGREES_DEVICE_TYPE_MOBILE  = "Mobile";
+    public static final String FIFTYONE_DEGREES_DEVICE_TYPE_SMARTPHONE  = "SmartPhone";
     private static final String WURFL_FILE_NAME_PREFIX = "wurfl";
     private static final String FIFTYONEDEGREES_FILE_NAME_PREFIX = "51degrees";
     private static final String UNDERSCORE = "_";
@@ -150,6 +148,8 @@ public class DeviceUtils
         if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_DESKTOP.toLowerCase())) {
             return DeviceType.DESKTOP;
         } else if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_MOBILE.toLowerCase())) {
+            return DeviceType.MOBILE;
+        }else if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_SMARTPHONE.toLowerCase())) {
             return DeviceType.MOBILE;
         }
         return null;

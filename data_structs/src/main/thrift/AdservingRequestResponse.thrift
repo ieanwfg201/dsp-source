@@ -121,6 +121,8 @@ MMA_IND_FILTER = 93,             /*MMA industry filter fail*/
 MMA_CAT_TARGET = 94,             /*MMA cat targeting fail*/ 
 ADPOSITION_MISMATCH = 95,        /*Ad Position Targeting fail*/ 
 CHANNEL_MISMATCH = 96,           /*Channel Targeting fail*/ 
+VIDEO_DEMAND_PROPS_NF= 97,       /*VideoDemandProps Absent*/
+VIDEO_SUPPLY_PROPS_NF= 98,       /*VideoSupplyProps Absent*/ 
  
 }
 

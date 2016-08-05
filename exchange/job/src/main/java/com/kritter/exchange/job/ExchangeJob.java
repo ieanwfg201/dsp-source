@@ -257,6 +257,13 @@ public class ExchangeJob implements Job
 
                 /****************************First form bid request as per the version required***********************/
                 BidRequestParentNodeDTO bidRequestParentNodeDtoTwoDotThree = null;
+                if(null == advEntity.getOpenRTBVersion())
+                {
+                    logger.error("There is no open rtb version required defined for advid: {} ,skipping calling dsp",
+                                  advEntity.getGuid());
+                    continue;
+                }
+
                 if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_3.getCode())
                 {
                     bidRequestParentNodeDtoTwoDotThree = convertRequest2_3.convert(request, this.requestConvertversion, pubEntity, this.iabCategoriesCache);
@@ -669,21 +676,35 @@ public class ExchangeJob implements Job
         Integer[] whiteListedDspIdArray = deal.getDspIdList();
         Integer[] whiteListedAdvIdArray = deal.getAdvertiserIdList();
 
+        logger.debug("Whitelisted dsp id array length is : {} " , ((null == whiteListedDspIdArray) ? 0 : whiteListedDspIdArray.length));
+        logger.debug("Whitelisted adv id array length is : {} " ,((null == whiteListedAdvIdArray) ? 0 : whiteListedAdvIdArray.length));
+
+        if(null == accountEntity.getThirdPartyDemandChannel())
+            return null;
+
         int thirdPartyDemandChannelCode = accountEntity.getThirdPartyDemandChannel().getCode();
+        logger.debug("ThirdPartyDemandChannel code is {}" ,thirdPartyDemandChannelCode);
 
         Set<String> whitelistedBuyerIds = null;
 
         if( ThirdPartyDemandChannel.MARKETPLACE_OF_DSP.getCode() == thirdPartyDemandChannelCode &&
             null != whiteListedDspIdArray )
         {
+            logger.debug("Inside marketplace of dsps , finding dsp ids whitelisted guid values");
             whitelistedBuyerIds = new HashSet<String>();
 
             for(Integer dspId : whiteListedDspIdArray)
             {
                 ThirdPartyConnectionDSPMappingEntity thirdPartyConnectionDSPMappingEntity =
-                        thirdPartyConnectionDSPMappingCache.query(dspId);
+                        thirdPartyConnectionDSPMappingCache.query(dspId.intValue());
 
-                whitelistedBuyerIds.add(thirdPartyConnectionDSPMappingEntity.getDspId());
+                logger.debug("Entry found is null: {} ", (null == thirdPartyConnectionDSPMappingEntity));
+
+                if(null != thirdPartyConnectionDSPMappingEntity)
+                {
+                    logger.debug("Dsp id found for int id: {} as : {}" , dspId,thirdPartyConnectionDSPMappingEntity.getDspId());
+                    whitelistedBuyerIds.add(thirdPartyConnectionDSPMappingEntity.getDspId());
+                }
             }
         }
         else if( ThirdPartyDemandChannel.STANDALONE_DSP_BIDDER.getCode() == thirdPartyDemandChannelCode &&
@@ -696,7 +717,11 @@ public class ExchangeJob implements Job
                 DSPAndAdvertiserMappingEntity dspAndAdvertiserMappingEntity =
                         dspAndAdvertiserMappingCache.query(advId);
 
-                whitelistedBuyerIds.add(dspAndAdvertiserMappingEntity.getAdvertiserId());
+                if(null != dspAndAdvertiserMappingEntity)
+                {
+                    logger.debug("Adv id found for int id: {} as : {}" , advId,dspAndAdvertiserMappingEntity.getAdvertiserId());
+                    whitelistedBuyerIds.add(dspAndAdvertiserMappingEntity.getAdvertiserId());
+                }
             }
         }
 

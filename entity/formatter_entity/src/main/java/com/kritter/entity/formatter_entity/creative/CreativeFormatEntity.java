@@ -2,6 +2,7 @@ package com.kritter.entity.formatter_entity.creative;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -22,6 +23,8 @@ public class CreativeFormatEntity {
     @Getter@Setter
     private String img; /** For Banner */
     @Getter@Setter
+    private Set<String> images; /** For Banner if formatter requires all images in response*/
+    @Getter@Setter
     private String type; /** For Banner|Text */
     @Getter@Setter
     private String alt; /** For Banner */
@@ -39,6 +42,8 @@ public class CreativeFormatEntity {
     private String adm; /** For RichMedia */
     @Getter@Setter
     private List<String> extImpTracker; /** For Banner */
+    @Getter @Setter
+    private Double ecpmValue;
     
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
@@ -120,6 +125,12 @@ public class CreativeFormatEntity {
                 sb.append(CDATA_PREFIX);
                 sb.append("</extcsc>");
             }
+        }
+
+        if(this.ecpmValue != null){
+            sb.append("<bp>");
+            sb.append(this.ecpmValue);
+            sb.append("</bp>");
         }
 
         sb.append("</ad>");

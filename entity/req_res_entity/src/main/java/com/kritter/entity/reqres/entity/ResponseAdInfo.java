@@ -13,6 +13,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * This class can be used to keep ad information like bid,budget,etc.
  * for an ad used in creative formatting or thrift logging.
@@ -45,6 +47,10 @@ public class ResponseAdInfo
     private Integer campaignId;
     @Getter @Setter
     private CreativeBanner creativeBanner;
+    /*The below set is used where there is requirement for sending out all images in the response,
+    * should only be applicable for network traffic and not for ad-exchanges.*/
+    @Getter @Setter
+    private List<CreativeBanner> creativeBannerSetForNetworkTraffic;
     @Getter @Setter
     private short slotId;
     @Getter @Setter

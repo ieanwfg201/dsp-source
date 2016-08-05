@@ -8,6 +8,7 @@ import java.util.Set;
 import com.kritter.constants.DemandPreference;
 import com.kritter.constants.SITE_PASSBACK_TYPE;
 import com.kritter.entity.native_props.NativeProps;
+import com.kritter.entity.video_supply_props.VideoSupplyProps;
 
 import lombok.Getter;
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
@@ -81,6 +82,10 @@ public class Site implements IUpdatableEntity<String>
     private boolean isNative = false;
     @Getter@Setter
     private NativeProps nativeProps = null;
+    @Getter@Setter
+    private boolean isVideo = false;
+    @Getter@Setter
+    private VideoSupplyProps videoSupplyProps = null;
     /**
      * Exchange related external site/app attributes.
      */
@@ -161,6 +166,9 @@ public class Site implements IUpdatableEntity<String>
         this.updateTime = siteEntityBuilder.updateTime;
         this.isNative = siteEntityBuilder.isNative;
         this.nativeProps = siteEntityBuilder.nativeProps;
+        this.isVideo = siteEntityBuilder.isVideo;
+        this.videoSupplyProps = siteEntityBuilder.videoSupplyProps;
+        this.adPosition = siteEntityBuilder.adPosition;
     }
 
     @Override
@@ -249,6 +257,8 @@ public class Site implements IUpdatableEntity<String>
         private boolean isNative = false;
         private NativeProps nativeProps = null;
         private String adPosition;
+        private boolean isVideo = false;
+        private VideoSupplyProps videoSupplyProps = null;
 
 
         public SiteEntityBuilder(Integer siteIncId,
@@ -382,6 +392,16 @@ public class Site implements IUpdatableEntity<String>
         public SiteEntityBuilder setIsRichMediaAllowed(boolean isRichMediaAllowed)
         {
             this.isRichMediaAllowed = isRichMediaAllowed;
+            return this;
+        }
+        public SiteEntityBuilder setIsVideo(boolean isVideo)
+        {
+            this.isVideo = isVideo;
+            return this;
+        }
+        public SiteEntityBuilder setVideoSupplyProps(VideoSupplyProps videoSupplyProps)
+        {
+            this.videoSupplyProps = videoSupplyProps;
             return this;
         }
 

@@ -50,6 +50,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
     private String widthParameterName;
     private String heightParameterName;
     private String richMediaParameterName;
+    private String bidFloorParameterName;
     private SiteCache siteCache;
 
     private HandsetDetectionProvider handsetDetectionProvider;
@@ -79,7 +80,8 @@ public class AggregatorRequestEnricher implements RequestEnricher
                                      ISPDetectionCache ispDetectionCache,
                                      String richMediaParameterName,
                                      String widthParameterName,
-                                     String heightParameterName
+                                     String heightParameterName,
+                                     String bidFloorParameterName
                                      )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -105,6 +107,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
         this.countryDetectionCache = countryDetectionCache;
         this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = null;
+        this.bidFloorParameterName = bidFloorParameterName;
     }
 
     public AggregatorRequestEnricher(
@@ -130,8 +133,9 @@ public class AggregatorRequestEnricher implements RequestEnricher
                                      IConnectionTypeDetectionCache connectionTypeDetectionCache,
                                      String richMediaParameterName,
                                      String widthParameterName,
-                                     String heightParameterName
-                                     )
+                                     String heightParameterName,
+                                     String bidFloorParameterName
+                                    )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.userAgentParameterName = userAgentParameterName;
@@ -156,6 +160,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
         this.countryDetectionCache = countryDetectionCache;
         this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = connectionTypeDetectionCache;
+        this.bidFloorParameterName = bidFloorParameterName;
     }
 
     @Override
@@ -206,6 +211,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
         String richMediaParameterNameValue = httpServletRequest.getParameter(this.richMediaParameterName);
         String width = httpServletRequest.getParameter(this.widthParameterName);
         String height = httpServletRequest.getParameter(this.heightParameterName);
+        String bidFloorValue = httpServletRequest.getParameter(this.bidFloorParameterName);
 
         int numberOfAds = 0;
         Integer richMediaParameterValue = null;
@@ -251,6 +257,17 @@ public class AggregatorRequestEnricher implements RequestEnricher
                          requestingLatitude , requestingLongitude);
         }
 
+        Double bidFloor = null;
+        try
+        {
+            if(null != bidFloorValue)
+                bidFloor = Double.valueOf(bidFloorValue);
+        }
+        catch (NumberFormatException nfe)
+        {
+            logger.error("BidFloor value has incorrect value: {} ",bidFloorValue);
+        }
+
         ApplicationGeneralUtils.logDebug
                 (this.logger, " AggregatorRequestEnricher, requestId: ", requestId, "," +
                               " user-agent: ", userAgent, ", Final IPAddress : ", ip,
@@ -264,7 +281,8 @@ public class AggregatorRequestEnricher implements RequestEnricher
                               ",requestingLongitude: " + requestingLongitude +
                               ",requestingWidth: " + width +
                               ",requestingHeight: " + height +
-                              ",richMediaParameterValue: " + richMediaParameterValue);
+                              ",richMediaParameterValue: " + richMediaParameterValue +
+                              ",bidFloor: " + bidFloor);
 
         request.setInvocationCodeVersion(invocationCodeVersion);
         request.setResponseFormat(responseFormat);
@@ -292,6 +310,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
         request.setRequestingLongitudeValue(requestingLongitudeValue);
         request.setRequestingLatitudeValue(requestingLatitudeValue);
         request.setRichMediaParameterValue(richMediaParameterValue);
+        request.setBidFloorValueForNetworkSupply(bidFloor);
         /*other extra parameters end.*/
 
         if( null==ip || null==invocationCodeVersion )

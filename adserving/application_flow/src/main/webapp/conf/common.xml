@@ -183,6 +183,7 @@
         <constructor-arg index="7"><ref bean="native_screenshot_cache"/></constructor-arg>
         <constructor-arg index="8"><ref bean="account_cache"/></constructor-arg>
         <constructor-arg index="9" value="ad-nofill-map"/>
+        <constructor-arg index="10"><ref bean="video_info_cache"/></constructor-arg>
     </bean>
 
     <bean id="mma_targeting_filter" class="com.kritter.adserving.shortlisting.targetingmatcher.MMATargetingFilterMatcher">
@@ -385,6 +386,7 @@
         <constructor-arg index="20" value="rm"/>
         <constructor-arg index="21" value="w"/>
         <constructor-arg index="22" value="h"/>
+        <constructor-arg index="23" value="bp"/>
     </bean>
 
     <bean id="mopub_bid_request_reader_2_3" class="com.kritter.bidreqres.reader.mopub2_3.BidRequestReaderMopub">
@@ -472,6 +474,17 @@
         <constructor-arg index="5"><ref bean="creative_slot_cache"/></constructor-arg>
         <constructor-arg index="6"><ref bean="server_config"/></constructor-arg>
     </bean>
+    
+    <bean id="vast_formatter" class="com.kritter.adserving.formatting.VASTFormatter">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="CH-UMMA-TECH-IES-KR-I-TTER"/>
+        <constructor-arg index="2" value="1"/>
+        <constructor-arg index="3"><ref bean="creative_cache"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="server_config"/></constructor-arg>
+    </bean>
+
+
     <!-- Creative formatters end. -->
 
     <!-- Handset data populator , also required for the handset detector which is defined as a cache.-->

@@ -10,6 +10,11 @@
     <name>site_entity</name>
     <dependencies>
         <dependency>
+            <groupId>com.kritter.entity.video_supply_props</groupId>
+            <artifactId>kritter_entity_video_supply_props</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.entity.native_props</groupId>
             <artifactId>kritter_entity_native_props</artifactId>
             <version>1.0.0</version>

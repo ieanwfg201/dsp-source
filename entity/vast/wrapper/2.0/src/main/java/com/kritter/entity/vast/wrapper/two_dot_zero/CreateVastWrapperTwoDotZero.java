@@ -43,7 +43,9 @@ public class CreateVastWrapperTwoDotZero {
                         trackingEvents.add(t);
                     }
                 }
-                linear.setTrackingEvents(trackingEvents);
+                TrackingEvents t = new TrackingEvents();
+                t.setTracking(trackingEvents);
+                linear.setTrackingEvents(t);
             }
             
             creative.setLinear(linear);
@@ -56,9 +58,13 @@ public class CreateVastWrapperTwoDotZero {
                 t.setEvent(VASTNonLinearTrackingEventTypes.creativeView.getName());
                 t.setStr(trackingEventUrl+"&"+TEvent.ttype+"="+TEventType.video.getName()+"&"+TEvent.tevent+"="+VASTNonLinearTrackingEventTypes.creativeView.getName());
                 trackingEvents.add(t);
-                companion.setTrackingEvents(trackingEvents);
+                TrackingEvents tEvent = new TrackingEvents();
+                tEvent.setTracking(trackingEvents);
+                companion.setTrackingEvents(tEvent);
                 companionAds.add(companion);
-                creative.setCompanionAds(companionAds);    
+                CompanionAds c = new CompanionAds();
+                c.setCompanionAd(companionAds);
+                creative.setCompanionAds(c);    
             }else{
                 NonLinearAds nonLinearAds = new NonLinearAds();
                 if(tracking != null){
@@ -72,7 +78,9 @@ public class CreateVastWrapperTwoDotZero {
                             trackingEvents.add(t);
                         }
                     }
-                    nonLinearAds.setTrackingEvents(trackingEvents);
+                    TrackingEvents t = new TrackingEvents();
+                    t.setTracking(trackingEvents);
+                    nonLinearAds.setTrackingEvents(t);
                 }
                 creative.setNonLinearAds(nonLinearAds);
             }
@@ -80,7 +88,9 @@ public class CreateVastWrapperTwoDotZero {
             
         }
         creatives.add(creative);
-        wrapper.setCreatives(creatives);
+        Creatives c = new Creatives();
+        c.setCreative(creatives);
+        wrapper.setCreatives(c);
         Error error = new Error();
         if(errorUrl != null){
             error.setStr(errorUrl+"&"+TEvent.ttype+"="+TEventType.videoerror.getName()+"&"+TEvent.tevent+"="+VideoMacros.ERRORCODE.getName());

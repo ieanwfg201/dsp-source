@@ -46,6 +46,7 @@ public class SiteController extends Controller{
 	private static String allow_passback = Play.application().configuration().getString("allow_passback");
 	private static String show_adcode = Play.application().configuration().getString("show_adcode");
 	private static String is_native_supply = Play.application().configuration().getString("is_native_supply");
+	private static String video_supply = Play.application().configuration().getString("video_supply");
 
 	public enum CRUD{
 		create, edit, delete
@@ -90,7 +91,7 @@ public class SiteController extends Controller{
 		site.setPub_id(account.getId());
 		SiteEntity siteEntity = new SiteEntity();
 		BeanUtils.copyProperties(site, siteEntity);
-		return ok(views.html.publisher.siteForm.render(siteFormModel.fill(siteEntity), new SiteDisplay(site), show_opt_in_hygiene, allow_passback,is_native_supply));
+		return ok(views.html.publisher.siteForm.render(siteFormModel.fill(siteEntity), new SiteDisplay(site), show_opt_in_hygiene, allow_passback,is_native_supply,video_supply));
 	}
 
 	@SecuredAction
@@ -100,7 +101,7 @@ public class SiteController extends Controller{
 		if(destination.nonEmpty())
 			siteEntity.setDestination(destination.get());
 		BeanUtils.copyProperties(site, siteEntity);
-		return ok(views.html.publisher.siteForm.render( siteFormModel.fill(siteEntity), new SiteDisplay(site), show_opt_in_hygiene, allow_passback,is_native_supply));
+		return ok(views.html.publisher.siteForm.render( siteFormModel.fill(siteEntity), new SiteDisplay(site), show_opt_in_hygiene, allow_passback,is_native_supply,video_supply));
 	}
 
 	@SecuredAction
@@ -109,7 +110,7 @@ public class SiteController extends Controller{
 		SiteDisplayFull siteDisplay = new SiteDisplayFull(site);
 		if(destination.nonEmpty())
 			siteDisplay.setDestination(destination.get());
-		return ok(views.html.publisher.siteHome.render( siteDisplay, show_opt_in_hygiene, allow_passback, show_adcode, is_native_supply));
+		return ok(views.html.publisher.siteHome.render( siteDisplay, show_opt_in_hygiene, allow_passback, show_adcode, is_native_supply,video_supply));
 	}
 
 
@@ -276,7 +277,7 @@ public class SiteController extends Controller{
 		if (siteForm.hasErrors()) {
 			site = new Site();
 			site.setPub_guid(guid);
-			return badRequest( views.html.publisher.siteForm.render(siteForm, new SiteDisplayFull(site), show_opt_in_hygiene, allow_passback,is_native_supply));
+			return badRequest( views.html.publisher.siteForm.render(siteForm, new SiteDisplayFull(site), show_opt_in_hygiene, allow_passback,is_native_supply,video_supply));
 		}else{
 			siteEntity = siteForm.get();
 			site = siteEntity.getEntity();
@@ -300,12 +301,12 @@ public class SiteController extends Controller{
 						else
 							return redirect(routes.PublisherController.home(site.getPub_guid()));
 					}else{
-						return badRequest( views.html.publisher.siteForm.render(siteForm, new SiteDisplayFull(site), show_opt_in_hygiene, allow_passback,is_native_supply));
+						return badRequest( views.html.publisher.siteForm.render(siteForm, new SiteDisplayFull(site), show_opt_in_hygiene, allow_passback,is_native_supply,video_supply));
 					}
 				}
 			}catch(Exception e){
 				Logger.error("Error  while saving Site:"+ e.getMessage(),e);
-                return badRequest( views.html.publisher.siteForm.render(siteForm, new SiteDisplayFull(site), show_opt_in_hygiene, allow_passback,is_native_supply));
+                return badRequest( views.html.publisher.siteForm.render(siteForm, new SiteDisplayFull(site), show_opt_in_hygiene, allow_passback,is_native_supply,video_supply));
 			}finally{
 				try {
 					if(con != null)
@@ -318,6 +319,6 @@ public class SiteController extends Controller{
 		}
 		site = new Site();
 		site.setPub_guid(guid);
-		return badRequest( views.html.publisher.siteForm.render(siteForm, new SiteDisplayFull(site), show_opt_in_hygiene, allow_passback,is_native_supply));
+		return badRequest( views.html.publisher.siteForm.render(siteForm, new SiteDisplayFull(site), show_opt_in_hygiene, allow_passback,is_native_supply,video_supply));
 	}
 }

@@ -12,6 +12,7 @@ import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.entity.native_props.NativeProps;
+import com.kritter.entity.video_supply_props.VideoSupplyProps;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
 import org.slf4j.Logger;
 import com.kritter.abstraction.cache.abstractions.AbstractDBStatsReloadableQueryableCache;
@@ -96,6 +97,19 @@ public class SiteCache extends AbstractDBStatsReloadableQueryableCache<String, S
                     }
                 }
             }
+            boolean is_video = resultSet.getBoolean("is_video");
+            String video_supply_props = resultSet.getString("video_supply_props");
+            VideoSupplyProps videoSupplyProps = null;
+            if(is_video && video_supply_props != null){
+                String video_supply_props_trim = video_supply_props.trim();
+                if(!"".equals(video_supply_props)){
+                    try{
+                    	videoSupplyProps = VideoSupplyProps.getObject(video_supply_props_trim);
+                    }catch(Exception e){
+                    
+                    }
+                }
+            }
 
             boolean excludeDefinedAdDomains = true; //!resultSet.getBoolean("allow_house_ads");
 			Timestamp lastModifiedOn = resultSet.getTimestamp("last_modified");
@@ -120,6 +134,8 @@ public class SiteCache extends AbstractDBStatsReloadableQueryableCache<String, S
                                              .setNofillBackupContent(nofillBackupContent)
                                              .setSitePassbackType(sitePassbackType)
                                              .setIsRichMediaAllowed(isRichMediaAllowed)
+                                             .setIsVideo(is_video)
+                                             .setVideoSupplyProps(videoSupplyProps)
 					                         .build();
 
 		}

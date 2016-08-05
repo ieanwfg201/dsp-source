@@ -11,6 +11,9 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.Payout;
 import com.kritter.constants.SITE_PLATFORM;
+import com.kritter.constants.VideoAdPos;
+import com.kritter.constants.VideoLinearity;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -112,6 +115,43 @@ public class Site {
     private Integer native_description_maxchars;
     @Getter@Setter
     private String native_rating_count_keyname;
+    /**Video Properties Begin*/
+    private boolean is_video = false;
+    /** mimes format [1,2] - com.kritter.constants.VideoMimeTypes*/
+    @Getter@Setter
+    private String strmimes; 
+    /** protocol format [1,2] - com.kritter.constants.VideoBidResponseProtocols*/
+    @Getter@Setter
+    private String strprotocols;
+	/**com.kritter.constants.VideoLinearity*/
+	@Getter@Setter
+	private Integer linearity = VideoLinearity.LINEAR_IN_STREAM.getCode();
+	/**com.kritter.constants.VideoStartDelay*/
+	@Getter@Setter
+	private Integer startDelay;
+	/**format [1,2] -com.kritter.constants.VideoPlaybackMethods*/
+	@Getter@Setter
+	private String strplaybackmethod;
+    @Getter@Setter
+    private Integer minDurationSec; 
+    @Getter@Setter
+    private Integer maxDurationSec; 
+	@Getter@Setter
+	private Integer widthPixel;
+	@Getter@Setter
+	private Integer heightPixel;
+	/**format [1,2] com.kritter.constants.ContentDeliveryMethods*/
+	@Getter@Setter
+	private String strdelivery;
+	/**com.kritter.constants.VideoAdPos*/
+	@Getter@Setter
+	private Integer pos = VideoAdPos.Unknown.getCode();
+	/**format [1,2] - com.kritter.constants.APIFrameworks*/
+	@Getter@Setter
+	private String strapi;
+	/**format [1,2] - com.kritter.constants.VASTCompanionTypes*/
+	@Getter@Setter
+	private String strcompaniontype;
     
     public int getId() {
         return id;
@@ -337,6 +377,12 @@ public class Site {
     }
     public void setIs_native(boolean is_native) {
         this.is_native = is_native;
+    }
+    public boolean isIs_video() {
+        return is_video;
+    }
+    public void setIs_video(boolean is_video) {
+        this.is_video = is_video;
     }
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

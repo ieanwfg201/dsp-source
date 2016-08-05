@@ -1,7 +1,5 @@
 package com.kritter.entity.vast.normal.threedotzero;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,11 +14,11 @@ public class Linear {
     @Setter@XmlElement(name="Duration")
     private Duration duration;
     @Setter@XmlElement(name="MediaFiles")
-    private List<MediaFile> mediaFiles;
+    private MediaFiles mediaFiles;
     @Setter@XmlElement(name="TrackingEvents")
-    private List<Tracking> trackingEvents;
+    private TrackingEvents trackingEvents;
     @Setter@XmlElement(name="VideoClicks")
     private VideoClicks videoClicks;
     @Setter@XmlElement(name="Icons")
-    private List<Icon> icons;
+    private Icons icons;
 }

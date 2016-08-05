@@ -52,6 +52,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>api_caller</module>
     <module>entity/native_props</module>
     <module>entity/video_props</module>
+    <module>entity/video_supply_props</module>
     <module>entity/vast/wrapper/3.0</module>
     <module>entity/vast/wrapper/2.0</module>
     <module>entity/vast/normal/3.0</module>

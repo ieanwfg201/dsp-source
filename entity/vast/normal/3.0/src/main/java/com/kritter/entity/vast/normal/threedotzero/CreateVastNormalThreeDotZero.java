@@ -83,7 +83,9 @@ public class CreateVastNormalThreeDotZero {
         		mediaFile.setApiFramework(apiFramework);
         	 */
         	mediaFiles.add(mediaFile);
-        	linear.setMediaFiles(mediaFiles);
+        	MediaFiles m = new MediaFiles();
+        	m.setMediaFile(mediaFiles);
+        	linear.setMediaFiles(m);
         	if(skipOffset != null){
         		linear.setSkipoffset(skipOffset);
         	}
@@ -98,7 +100,9 @@ public class CreateVastNormalThreeDotZero {
                         trackingEvents.add(t);
                     }
                 }
-            	linear.setTrackingEvents(trackingEvents);
+                TrackingEvents t = new TrackingEvents();
+                t.setTrackingEvent(trackingEvents);
+            	linear.setTrackingEvents(t);
             }
             if(clickurl != null){
             	ClickThrough clickThrough = new ClickThrough();
@@ -139,7 +143,9 @@ public class CreateVastNormalThreeDotZero {
                 t.setEvent(VASTNonLinearTrackingEventTypes.creativeView.getName());
                 t.setStr(trackingEventUrl+"&"+TEvent.ttype+"="+TEventType.video.getName()+"&"+TEvent.tevent+"="+VASTNonLinearTrackingEventTypes.creativeView.getName());
                 trackingEvents.add(t);
-        		companion.setTrackingEvents(trackingEvents);
+                TrackingEvents tEvents = new TrackingEvents();
+                tEvents.setTrackingEvent(trackingEvents);
+        		companion.setTrackingEvents(tEvents);
         		/**
         			companion.setAdSlotID(adSlotID);
         			companion.setApiFramework(apiFramework);
@@ -154,7 +160,9 @@ public class CreateVastNormalThreeDotZero {
         			companion.setCompanionClickTracking(companionClickTracking);
         		 */
         		companionAds.add(companion);
-        		creative.setCompanionAds(companionAds);
+        		CompanionAds c = new CompanionAds();
+        		c.setCompanion(companionAds);
+        		creative.setCompanionAds(c);
         	}else{
         		NonLinearAds nla= new NonLinearAds();
         		List<NonLinear> nonLinearAds = new LinkedList<NonLinear>(); 
@@ -200,7 +208,9 @@ public class CreateVastNormalThreeDotZero {
                             trackingEvents.add(t);
                         }
                     }
-            		nla.setTrackingEvents(trackingEvents);;
+                    TrackingEvents t = new TrackingEvents();
+                    t.setTrackingEvent(trackingEvents);
+            		nla.setTrackingEvents(t);
                 }
 
         		creative.setNonLinearAds(nla);
@@ -212,7 +222,9 @@ public class CreateVastNormalThreeDotZero {
         	creative.setCreativeExtensions(creativeExtensions);
          */
         creatives.add(creative);
-        inline.setCreatives(creatives);
+        Creatives c = new Creatives();
+        c.setCreative(creatives);		
+        inline.setCreatives(c);
         inline.setImpression(impression);
     	Ad ad = new Ad();
     	/**

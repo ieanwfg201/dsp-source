@@ -1,7 +1,5 @@
 package com.kritter.entity.vast.wrapper.three_dot_zero;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -18,7 +16,7 @@ public class Wrapper {
     @Setter@XmlElement(name="Impression")
     private Impression impression;
     @Setter@XmlElement(name="Creatives")
-    private List<Creative> creatives;
+    private Creatives creatives;
     @Setter@XmlElement(name="Extensions")
-    private List<Extension> extensions;
+    private Extensions extensions;
 }

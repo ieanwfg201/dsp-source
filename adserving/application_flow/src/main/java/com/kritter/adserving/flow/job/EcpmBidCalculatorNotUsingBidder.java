@@ -129,8 +129,23 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
                 continue;
             }
 
-            //check for if ecpm value meets site floor ...
-            if(optimizedBidValueOfAdForThisImpression <  request.getSite().getEcpmFloorValue())
+            /* Check for if ecpm value meets site's floor value provided via admin user interface.
+             * If realtime bid floor is provided by the requesting site then use that.
+             */
+            if(null != request.getBidFloorValueForNetworkSupply())
+            {
+                if(optimizedBidValueOfAdForThisImpression < request.getBidFloorValueForNetworkSupply().doubleValue())
+                {
+                    ReqLog.errorWithDebug(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,provided real time via ad request for the site: {} ,for adid : {}",
+                            optimizedBidValueOfAdForThisImpression,
+                            request.getBidFloorValueForNetworkSupply().doubleValue(),request.getSite().getId(),
+                            responseAdInfo.getAdId());
+                    finalResponseAdInfo.remove(responseAdInfo);
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(responseAdInfo.getAdId(),
+                            NoFillReason.ECPM_FLOOR_UNMET.getValue(), this.adNoFillReasonMapKey, context);
+                }
+            }
+            else if(optimizedBidValueOfAdForThisImpression <  request.getSite().getEcpmFloorValue())
             {
                 ReqLog.errorWithDebug(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,for the site {} ,for adid : {}",
                              optimizedBidValueOfAdForThisImpression,

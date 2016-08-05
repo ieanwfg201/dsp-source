@@ -12,5 +12,5 @@ public class NonLinearAds {
     @Setter@XmlElement(name="NonLinear")
     private List<NonLinear> nonLinearAds;
     @Setter@XmlElement(name="TrackingEvents")
-    private List<Tracking> trackingEvents;    
+    private TrackingEvents trackingEvents;    
 }

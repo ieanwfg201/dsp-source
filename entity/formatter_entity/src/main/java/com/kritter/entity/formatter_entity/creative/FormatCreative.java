@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -72,6 +74,21 @@ public class FormatCreative {
         }
         this.creativeArray.add(cfe);
     }
+    /*Function to include multiple banner images.*/
+    public void addBannerEntity(Set<String> images,String alt, String curl, String csc, List<String> extImpTracker){
+        CreativeFormatEntity cfe = new CreativeFormatEntity();
+        cfe.setType(CreativeFormat.BANNER.getLabel());
+        cfe.setImages(images);
+        if(alt != null){
+            cfe.setAlt(alt);
+        }
+        cfe.setCurl(curl);
+        cfe.setCsc(csc);
+        if(extImpTracker != null){
+            cfe.setExtImpTracker(extImpTracker);
+        }
+        this.creativeArray.add(cfe);
+    }
     public void addRichMediaEntity(String adm, String cscBeaconUrl){
         CreativeFormatEntity cfe = new CreativeFormatEntity();
         cfe.setType(CreativeFormat.RICHMEDIA.getLabel());
@@ -79,7 +96,50 @@ public class FormatCreative {
         cfe.setCsc(cscBeaconUrl);
         this.creativeArray.add(cfe);
     }
-    
+
+    /************************Below functions are overloaded,used to capture extra information**************************/
+    public void addTextEntity(String text, String clickUrl, String cscBeaconUrl,Double ecpmValue){
+        CreativeFormatEntity cfe = new CreativeFormatEntity();
+        cfe.setType(CreativeFormat.TEXT.getLabel());
+        cfe.setText(text);
+        cfe.setCurl(clickUrl);
+        cfe.setCsc(cscBeaconUrl);
+        cfe.setEcpmValue(ecpmValue);
+        this.creativeArray.add(cfe);
+    }
+    public void addBannerEntity(String img, Short w, Short h, String alt, String curl, String csc, List<String> extImpTracker,Double ecpmValue){
+        CreativeFormatEntity cfe = new CreativeFormatEntity();
+        cfe.setType(CreativeFormat.BANNER.getLabel());
+        cfe.setImg(img);
+        if(w != null){
+            cfe.setW(w);
+        }
+        if(h != null){
+            cfe.setH(h);
+        }
+        if(alt != null){
+            cfe.setAlt(alt);
+        }
+        cfe.setCurl(curl);
+        cfe.setCsc(csc);
+        cfe.setEcpmValue(ecpmValue);
+
+        if(extImpTracker != null){
+            cfe.setExtImpTracker(extImpTracker);
+        }
+        this.creativeArray.add(cfe);
+    }
+    public void addRichMediaEntity(String adm, String cscBeaconUrl,Double ecpmValue){
+        CreativeFormatEntity cfe = new CreativeFormatEntity();
+        cfe.setType(CreativeFormat.RICHMEDIA.getLabel());
+        cfe.setAdm(adm);
+        cfe.setCsc(cscBeaconUrl);
+        cfe.setEcpmValue(ecpmValue);
+
+        this.creativeArray.add(cfe);
+    }
+    /******************************************************************************************************************/
+
     public String writeJson(){
         String str = "[]";
         OutputStream out = new ByteArrayOutputStream();

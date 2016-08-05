@@ -80,11 +80,20 @@ public class MMATargetingFilterMatcher implements TargetingMatcher {
 				tpExt = adEntity.getTargetingProfile().getTpExt();
 			}
 			
-			HashSet<Integer> admma_tier1Filter = adExt.getMma_tier1();
-			HashSet<Integer> admma_tier2Filter = adExt.getMma_tier2();
-			boolean mma_cat_Exclude = !tpExt.isInc();
-			HashSet<Integer> mma_tier1targeting = tpExt.getMma_tier1();
-			HashSet<Integer> mma_tier2targeting = tpExt.getMma_tier2();
+			HashSet<Integer> admma_tier1Filter = null;
+			HashSet<Integer> admma_tier2Filter = null;
+			if(adExt != null){
+				admma_tier1Filter = adExt.getMma_tier1();
+				admma_tier2Filter = adExt.getMma_tier2();;
+			}
+			boolean mma_cat_Exclude = true;
+			HashSet<Integer> mma_tier1targeting = null;
+				HashSet<Integer> mma_tier2targeting = null;
+			if(tpExt != null){
+				mma_cat_Exclude = !tpExt.isInc();
+				mma_tier1targeting = tpExt.getMma_tier1();
+				mma_tier2targeting = tpExt.getMma_tier2();
+			}
 
 			/** Apply supply side industry code inclusion exclusion filter */
 			if(mmaindustrCodeExcInc != null && mmaindustrCodeExcInc.length>0){

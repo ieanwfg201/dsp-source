@@ -7,13 +7,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.Map.Entry;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.site.SiteList;
@@ -25,6 +22,7 @@ import com.kritter.constants.SITE_PASSBACK_TYPE;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.entity.native_props.NativeProps;
+import com.kritter.entity.video_supply_props.VideoSupplyProps;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
@@ -57,6 +55,44 @@ public class SiteCrud {
             }
         }
         return Payout.default_payout_percent_str;
+    }
+    private static HashSet<Integer> strArrayToHashSet(String str){
+    	if(str==null){
+    		return null;
+    	}
+    	String strTrim = str.trim().replaceAll("\\[", "").replaceAll("]", "");
+    	if(!"".equals(strTrim)){
+        	HashSet<Integer> set = new HashSet<Integer>();
+    		String split[]= strTrim.split(",");
+    		for(String splitStr:split){
+    			try{
+    				Integer i = Integer.parseInt(splitStr.trim());
+    				set.add(i);
+    			}catch(Exception e){
+    				LOG.error(e.getMessage(),e);
+    			}
+    		}
+    		if(set.size()>0){
+    			return set;
+    		}
+    	}
+    	return null;
+    }
+    private static String  hashSetToStringArray(HashSet<Integer> set){
+    	StringBuffer sBuff = new StringBuffer("[");
+    	if(set !=null && set.size()>0){
+    		boolean isFirst=true;
+    		for(Integer i:set){
+    			if(isFirst){
+    				isFirst=false;
+    			}else{
+    				sBuff.append(",");
+    			}
+    			sBuff.append(i);
+    		}
+    	}
+    	sBuff.append("]");
+    	return sBuff.toString();
     }
     public static void populate(Site site, ResultSet rset) throws SQLException{
         if(site != null && rset != null){
@@ -124,9 +160,66 @@ public class SiteCrud {
             boolean is_native = rset.getBoolean("is_native");
             site.setIs_native(is_native);
             populateNativeProps(site, rset.getString("native_props"), is_native);
+            boolean is_video = rset.getBoolean("is_video");
+            site.setIs_video(is_video);
+            populateVideoSupplyProps(site, rset.getString("video_supply_props"), is_video);
         }
     }
-    
+    private static void populateVideoSupplyProps(Site site, String video_supply_props, boolean is_video){
+    	if(site != null && video_supply_props != null && is_video){
+    		site.setIs_video(is_video);
+    		String vTrim = video_supply_props.trim();
+    		if(!"".equals(vTrim)){
+    		try{
+    			VideoSupplyProps vProps = VideoSupplyProps.getObject(video_supply_props);
+    			if(vProps!=null){
+    				if(vProps.getMimes() != null){
+    					site.setStrmimes(hashSetToStringArray(vProps.getMimes()));
+    				}
+    				if(vProps.getProtocols() != null){
+    					site.setStrprotocols(hashSetToStringArray(vProps.getProtocols()));
+    				}
+    				if(vProps.getLinearity() != null){
+    					site.setLinearity(vProps.getLinearity());
+    				}
+    				if(vProps.getStartDelay() != null){
+    					site.setStartDelay(vProps.getStartDelay());
+    				}
+    				if(vProps.getPlaybackmethod() != null){
+    					site.setStrplaybackmethod(hashSetToStringArray(vProps.getPlaybackmethod()));
+    				}
+    				if(vProps.getMinDurationSec() != null){
+    					site.setMinDurationSec(vProps.getMinDurationSec());
+    				}
+    				if(vProps.getMaxDurationSec() != null){
+    					site.setMaxDurationSec(vProps.getMaxDurationSec());
+    				}
+    				if(vProps.getWidthPixel() != null){
+    					site.setWidthPixel(vProps.getWidthPixel());
+    				}
+    				if(vProps.getHeightPixel() != null){
+    					site.setHeightPixel(vProps.getHeightPixel());
+    				}
+    				if(vProps.getDelivery() != null){
+    					site.setStrdelivery(hashSetToStringArray(vProps.getDelivery()));
+    				}
+    				if(vProps.getPos()!= null){
+    					site.setPos(vProps.getPos());
+    				}
+    				if(vProps.getApi() != null){
+    					site.setStrapi(hashSetToStringArray(vProps.getApi()));
+    				}
+    				if(vProps.getCompaniontype() != null){
+    					site.setStrcompaniontype(hashSetToStringArray(vProps.getCompaniontype()));
+    				}
+    			}
+    		}catch(Exception e){
+    			LOG.error(e.getMessage(),e);
+    		}
+    		}
+    	}
+        
+    }
     private static void populateNativeProps(Site site, String native_props, boolean is_native){
         if(is_native && native_props!= null){
             try{
@@ -252,6 +345,28 @@ public class SiteCrud {
         }
         return null;
     }
+    
+    private static String generateVideoSupplyProps(Site site){
+    	if(site==null || site.isIs_video()){
+    		VideoSupplyProps vProps= new VideoSupplyProps();
+    		vProps.setMimes(strArrayToHashSet(site.getStrmimes()));
+    		vProps.setProtocols(strArrayToHashSet(site.getStrprotocols()));
+    		vProps.setPlaybackmethod(strArrayToHashSet(site.getStrplaybackmethod()));
+    		vProps.setMinDurationSec(site.getMinDurationSec());
+    		vProps.setMaxDurationSec(site.getMaxDurationSec());
+    		vProps.setWidthPixel(site.getWidthPixel());
+    		vProps.setHeightPixel(site.getHeightPixel());
+    		vProps.setStartDelay(site.getStartDelay());
+    		vProps.setLinearity(site.getLinearity());
+    		vProps.setDelivery(strArrayToHashSet(site.getStrdelivery()));
+    		vProps.setPos(site.getPos());
+    		vProps.setApi(strArrayToHashSet(site.getStrapi()));
+    		vProps.setCompaniontype(strArrayToHashSet(site.getStrcompaniontype()));
+    		return vProps.toJson().toString();
+    	}
+    	return "";
+    }
+
     
     private static String generateAdvCampaign(Site site){
         if(site == null ){
@@ -424,6 +539,8 @@ public class SiteCrud {
             pstmt.setBoolean(28, site.isIs_richmedia_allowed());
             pstmt.setBoolean(29, site.isIs_native());
             pstmt.setString(30, generateNativeProps(site));
+            pstmt.setBoolean(31, site.isIs_video());
+            pstmt.setString(32, generateVideoSupplyProps(site));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -544,7 +661,9 @@ public class SiteCrud {
             pstmt.setBoolean(25, site.isIs_richmedia_allowed());
             pstmt.setBoolean(26, site.isIs_native());
             pstmt.setString(27, generateNativeProps(site));
-            pstmt.setInt(28, site.getId());
+            pstmt.setBoolean(28, site.isIs_video());
+            pstmt.setString(29, generateVideoSupplyProps(site));
+            pstmt.setInt(30, site.getId());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

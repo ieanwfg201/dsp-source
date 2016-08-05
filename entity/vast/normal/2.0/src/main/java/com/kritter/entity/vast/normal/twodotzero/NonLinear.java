@@ -1,7 +1,5 @@
 package com.kritter.entity.vast.normal.twodotzero;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,7 +32,7 @@ public class NonLinear {
     @Setter@XmlElement(name="HTMLResource")
     private HTMLResource hTMLResource;
     @Setter@XmlElement(name="TrackingEvents")
-    private List<Tracking> trackingEvents;
+    private TrackingEvents trackingEvents;
     @Setter@XmlElement(name="NonLinearClickThrough")
     private NonLinearClickThrough nonLinearClickThrough;
     @Setter@XmlElement(name="AdParameters")
