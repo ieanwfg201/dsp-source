@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ "$1" = "" ]; then
-    echo "Incorrect Usage: sh mma.sh <Absultue FilPATH>"
+    echo "Incorrect Usage: sh mma.sh /var/data/kritter/location/mma_categories.csv"
     echo "Example: sh mma.sh /home/rohan/testdata/mma/mma_categories.csv"
     exit
 fi
@@ -22,9 +22,10 @@ MAINCLASS=com.kritter.utils.mma_loader.MMADataLoader
 
 
 filepath=$1
-dbhost=localhost
-dbuser=root
-dbpwd=password 
+
+dbhost=10.10.80.8
+dbuser=optimad
+dbpwd=optimad@2016 
 dbname=kritter
 dbport=3306
 dbtype=MYSQL

@@ -19,9 +19,9 @@ done
 MAINCLASS=com.kritter.utils.mma_loader.SupplyDataloader
 
 filepath=$1
-dbhost=localhost
-dbuser=root
-dbpwd=password 
+dbhost=10.10.80.8
+dbuser=optimad
+dbpwd=optimad@2016 
 dbname=kritter
 dbport=3306
 dbtype=MYSQL

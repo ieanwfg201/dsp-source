@@ -23,7 +23,7 @@ min_modified_time = 0
 #Command to use for transfer#
 command = 'rsync %s --rsh="%s -p%s" %s %s --stats %s %s@%s:%s'
 #unix user name#
-username = 'ubuntu'
+username = 'optimad'
 #specifies type of transfer#
 transport_type = 'rsync'
 #Specifies destination path of transfer#

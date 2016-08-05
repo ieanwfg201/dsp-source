@@ -29,7 +29,7 @@ if [ "$3" = "" ]; then
     dbport=3306
 fi
 if [ "$4" = "" ]; then
-    dbname=kritter
+    dbname=optimad
 fi
 if [ "$5" = "" ]; then
     dbuser=root
