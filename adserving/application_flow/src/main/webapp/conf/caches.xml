@@ -616,7 +616,7 @@
    <bean id="mad_ua_file_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
-           <prop key="file_name"><![CDATA[/var/data/kritter/mad/ua.csv]]></prop>
+           <prop key="file_name"><![CDATA[/var/data/kritter/location/mad/ua.csv]]></prop>
            <prop key="refresh_interval">3600000</prop>
          </props>
       </constructor-arg>
