@@ -10,11 +10,6 @@
     <name>adserving_application_flow</name>
     <dependencies>
         <dependency>
-            <groupId>com.kritter.device</groupId>
-            <artifactId>wurfl</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.kritter.fanoutinfra.executorservice</groupId>
             <artifactId>fanoutinfra_executorservice_common</artifactId>
             <version>1.0.0</version>

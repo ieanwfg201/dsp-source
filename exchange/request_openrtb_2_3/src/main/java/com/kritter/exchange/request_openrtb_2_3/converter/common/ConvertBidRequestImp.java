@@ -3,6 +3,7 @@ package com.kritter.exchange.request_openrtb_2_3.converter.common;
 import java.util.ArrayList;
 
 
+import com.kritter.constants.BidRequestImpressionType;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO;
@@ -13,7 +14,7 @@ import com.kritter.constants.ConvertErrorEnum;
 
 public class ConvertBidRequestImp {
     public static ConvertErrorEnum convert(Request request, BidRequestParentNodeDTO bidRequest, int version,
-            AccountEntity accountEntity){
+                                           AccountEntity publisherAccountEntity,AccountEntity dspEntity){
         if(request.getRequestId() == null){
             return ConvertErrorEnum.REQID_FR_IMP_NULL; 
         }
@@ -23,27 +24,52 @@ public class ConvertBidRequestImp {
         ConvertErrorEnum convertErrorEnum = ConvertErrorEnum.HEALTHY_CONVERT;
         BidRequestImpressionDTO bidRequestImpressionDTO = new BidRequestImpressionDTO();
         bidRequestImpressionDTO.setBidRequestImpressionId(request.getRequestId());
-        if(!request.getSite().isNative()){
-            convertErrorEnum = ConvertBidRequestImpBanner.convert(request, bidRequestImpressionDTO, version,accountEntity);
-            if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
-                return convertErrorEnum;
+
+        if(null != request.getBidRequestImpressionType())
+        {
+            if(request.getBidRequestImpressionType().getCode() == BidRequestImpressionType.BANNER.getCode()){
+                convertErrorEnum = ConvertBidRequestImpBanner.convert(request, bidRequestImpressionDTO, version,publisherAccountEntity);
+                if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
+                    return convertErrorEnum;
+                }
+            }
+            if(request.getBidRequestImpressionType().getCode() == BidRequestImpressionType.NATIVE.getCode()){
+                convertErrorEnum = ConvertBidRequestImpNative.convert(request, bidRequestImpressionDTO, version,dspEntity);
+                if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
+                    return convertErrorEnum;
+                }
+            }
+            if(request.getBidRequestImpressionType().getCode() == BidRequestImpressionType.VIDEO.getCode()){
+                convertErrorEnum = ConvertBidRequestImpVideo.convert(request, bidRequestImpressionDTO, version);
+                if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
+                    return convertErrorEnum;
+                }
             }
         }
-        if(request.getSite().isNative()){
-            convertErrorEnum = ConvertBidRequestImpNative.convert(request, bidRequestImpressionDTO, version);
-            if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
-                return convertErrorEnum;
+        else
+        {
+            if (!request.getSite().isNative()) {
+                convertErrorEnum = ConvertBidRequestImpBanner.convert(request, bidRequestImpressionDTO, version, publisherAccountEntity);
+                if (convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT) {
+                    return convertErrorEnum;
+                }
             }
-        }
-        if(!request.getSite().isNative()){
-            convertErrorEnum = ConvertBidRequestImpVideo.convert(request, bidRequestImpressionDTO, version);
-            if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
-                return convertErrorEnum;
+            if (request.getSite().isNative()) {
+                convertErrorEnum = ConvertBidRequestImpNative.convert(request, bidRequestImpressionDTO, version,dspEntity);
+                if (convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT) {
+                    return convertErrorEnum;
+                }
+            }
+            if (!request.getSite().isNative()) {
+                convertErrorEnum = ConvertBidRequestImpVideo.convert(request, bidRequestImpressionDTO, version);
+                if (convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT) {
+                    return convertErrorEnum;
+                }
             }
         }
         bidRequestImpressionDTO.setIsAdInterstitial((request.isInterstitialBidRequest())? 1:0);
         bidRequestImpressionDTO.setBidFloorPrice(request.getSite().getEcpmFloorValue());
-        bidRequestImpressionDTO.setBidFloorCurrency(SupportedCurrencies.getEnum(accountEntity.getCurrency()).getName());
+        bidRequestImpressionDTO.setBidFloorCurrency(SupportedCurrencies.getEnum(publisherAccountEntity.getCurrency()).getName());
         
         bidRequestImpressionDTO.setSecure(ExchangeConstants.req_imp_secure);
         convertErrorEnum = ConvertBidRequestPMP.convert(request, bidRequestImpressionDTO, version);

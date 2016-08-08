@@ -1,5 +1,6 @@
 package com.kritter.exchange.request_openrtb_2_3.converter.common;
 
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestGeoDTO;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestDeviceDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO;
@@ -22,6 +23,15 @@ public class ConvertBidRequestDevice {
         if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
             return convertErrorEnum;
         }
+
+        /*Form geo object if country code is available*/
+        if(null != request.getCountry() && null != request.getCountry().getCountryCodeThreeLetter())
+        {
+            BidRequestGeoDTO bidRequestGeoDTO = new BidRequestGeoDTO();
+            bidRequestGeoDTO.setCountry(request.getCountry().getCountryCodeThreeLetter());
+            device.setGeoObject(bidRequestGeoDTO);
+        }
+
         bidRequest.setBidRequestDevice(device);
         return ConvertErrorEnum.HEALTHY_CONVERT;
     }

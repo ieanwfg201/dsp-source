@@ -225,6 +225,7 @@ public class ExchangeJob implements Job
             }
             int requestTimeoutMillis = pubEntity.getTimeout();
             Convert convertRequest2_3 = new Convert(this.loggerName);
+            com.kritter.exchange.request_openrtb_2_2.converter.v1.Convert convertRequest2_2 = new com.kritter.exchange.request_openrtb_2_2.converter.v1.Convert(this.loggerName);
 
              /*
               * Fetch deals applied on the requesting site.Then check for each ad if the deal is applicable or not
@@ -257,6 +258,9 @@ public class ExchangeJob implements Job
 
                 /****************************First form bid request as per the version required***********************/
                 BidRequestParentNodeDTO bidRequestParentNodeDtoTwoDotThree = null;
+                com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO
+                                          bidRequestParentNodeDtoTwoDotTwo = null;
+
                 if(null == advEntity.getOpenRTBVersion())
                 {
                     logger.error("There is no open rtb version required defined for advid: {} ,skipping calling dsp",
@@ -266,7 +270,7 @@ public class ExchangeJob implements Job
 
                 if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_3.getCode())
                 {
-                    bidRequestParentNodeDtoTwoDotThree = convertRequest2_3.convert(request, this.requestConvertversion, pubEntity, this.iabCategoriesCache);
+                    bidRequestParentNodeDtoTwoDotThree = convertRequest2_3.convert(request, this.requestConvertversion, pubEntity, this.iabCategoriesCache,advEntity);
 
                     /*Add deal object to parent bid request if applicable.*/
                     addPMPEntityToParentBidRequestVersion2_3(bidRequestParentNodeDtoTwoDotThree,dealsForSite,advEntity,responseAdInfo.getGuid());
@@ -305,6 +309,53 @@ public class ExchangeJob implements Job
 
                     bidRequestPayloadPerDSP.put(responseAdInfo.getAdvertiserGuid(),bidRequestPayload);
                     bidRequestObjectPerDSP.put(responseAdInfo.getAdvertiserGuid(),bidRequestParentNodeDtoTwoDotThree);
+                }
+                else if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_2.getCode())
+                {
+                    bidRequestParentNodeDtoTwoDotTwo = convertRequest2_2.convert(
+                                                                                 request,
+                                                                                 this.requestConvertversion,
+                                                                                 pubEntity,
+                                                                                 this.iabCategoriesCache
+                                                                                );
+
+                    /*Add deal object to parent bid request if applicable.*/
+                    addPMPEntityToParentBidRequestVersion2_2(bidRequestParentNodeDtoTwoDotTwo,dealsForSite,advEntity,responseAdInfo.getGuid());
+
+                    if (bidRequestParentNodeDtoTwoDotTwo == null) {
+                        logger.info("ExchangeJob: Request to bidRequestParentNodeDto conversion failed");
+                        if (request.isRequestForSystemDebugging()) {
+                            request.addDebugMessageForTestRequest("ExchangeJob: Request to bidRequestParentNodeDto conversion failed");
+                        }
+                        emptyExchangeAds = true;
+                        request.setNoFillReason(NoFillReason.EX_OD_REQ_CONVERT);
+                        return;
+                    }
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+                    JsonNode jsonNode = objectMapper.valueToTree(bidRequestParentNodeDtoTwoDotTwo);
+
+                    if (jsonNode == null) {
+                        logger.info("ExchangeJob: bidRequestParentNodeDto to Json Conversion failed");
+                        if (request.isRequestForSystemDebugging()) {
+                            request.addDebugMessageForTestRequest("ExchangeJob: bidRequestParentNodeDto to Json Conversion failed");
+                        }
+                        emptyExchangeAds = true;
+                        request.setNoFillReason(NoFillReason.EX_OD_REQ_SER_NULL);
+                        return;
+                    }
+
+                    String bidRequestPayload = jsonNode.toString();
+
+                    if (request.isRequestForSystemDebugging()) {
+                        request.addDebugMessageForTestRequest("BidRequest");
+                        request.addDebugMessageForTestRequest(bidRequestPayload);
+                        logger.debug(bidRequestPayload);
+                    }
+
+                    bidRequestPayloadPerDSP.put(responseAdInfo.getAdvertiserGuid(),bidRequestPayload);
+                    bidRequestObjectPerDSP.put(responseAdInfo.getAdvertiserGuid(),bidRequestParentNodeDtoTwoDotTwo);
                 }
                 /*****************************************************************************************************/
 
@@ -375,6 +426,9 @@ public class ExchangeJob implements Job
                                             new HashMap<String, com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity>();
 
             ConvertResponse convertResponse2_3 = new ConvertResponse(loggerName);
+            com.kritter.exchange.response_openrtb2_2.converter.v1.ConvertResponse convertResponse2_2 =
+                                new com.kritter.exchange.response_openrtb2_2.converter.v1.ConvertResponse(loggerName);
+
             for(String key:advResponseMap.keySet()){
 
                 AccountEntity advEntity = this.accountCache.query(key);
@@ -390,9 +444,21 @@ public class ExchangeJob implements Job
                         advBidResponseMap2_3.put(key, bidResponseEntity2_3);
                     }
                 }
+                else if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_2.getCode())
+                {
+                    com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity bidResponseEntity2_2 = convertResponse2_2.convert(advResponseMap.get(key));
+                    if(bidResponseEntity2_2 == null){
+                        logger.info("ExchangeJob: bidResponseEntity for adv {}",key);
+                        if(request.isRequestForSystemDebugging()){
+                            request.addDebugMessageForTestRequest("ExchangeJob: bidResponseEntity for adv " + key);
+                        }
+                    }else {
+                        advBidResponseMap2_2.put(key, bidResponseEntity2_2);
+                    }
+                }
             }
 
-            if(advBidResponseMap2_3.size()<1){
+            if(advBidResponseMap2_3.size()<1 && advBidResponseMap2_2.size()<1){
                 logger.info("ExchangeJob: advBidResponseMap.size()<1");
                 if(request.isRequestForSystemDebugging()){
                     request.addDebugMessageForTestRequest("ExchangeJob: advBidResponseMap.size()<1");
@@ -422,7 +488,14 @@ public class ExchangeJob implements Job
             }
 
             /*Compare and choose among the different open rtb versions' win entity the best one.*/
-            if(winEntity2_3.getWin_price() > winEntity2_2.getWin_price())
+            float price2_3 = 0.0f;
+            float price2_2 = 0.0f;
+            if(null != winEntity2_3)
+                price2_3 = winEntity2_3.getWin_price();
+            if(null != winEntity2_2)
+                price2_2 = winEntity2_2.getWin_price();
+
+            if(price2_3 > price2_2)
                 winEntity = winEntity2_3;
             else
                 winEntity = winEntity2_2;
@@ -580,6 +653,89 @@ public class ExchangeJob implements Job
         }
 
         return null;
+    }
+
+    /**
+     * This function takes input as bid request parent node for open rtb version 2.2 and
+     * set of deals applicable to requesting site, also it takes input as the advertiser
+     * account entity for the ad selected. It has input as the ad guid that this deal
+     * wants to target, using ad guid selected in the workflow, we must match if the
+     * deal targets the ad guid which has been selected in supply demand matching jobs.
+     * @param bidRequestParentNodeDTO
+     * @param deals
+     * @param accountEntity
+     * @return
+     */
+    private void addPMPEntityToParentBidRequestVersion2_2
+                                                         (
+                                                            com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO bidRequestParentNodeDTO,
+                                                            Set<PrivateMarketPlaceCacheEntity> deals,
+                                                            AccountEntity accountEntity,
+                                                            String adGuid
+                                                         )
+    {
+        if(null == deals || deals.size() <= 0)
+        {
+            logger.debug("There are no deals to be setup in the bid request inside " +
+                         "addPMPEntityToParentBidRequestVersion2_2");
+            return;
+        }
+
+        com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestPMPDTO bidRequestPMPDTO = null;
+        Set<com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestDealDTO> dealDTOs =
+                            new HashSet<com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestDealDTO>();
+
+        for(PrivateMarketPlaceCacheEntity deal : deals)
+        {
+            if(!adGuid.equalsIgnoreCase(deal.getAdGuid()))
+            {
+                logger.debug("The deal id:{} applicable for this site has ad guid: {} , which is not applicable to " +
+                        "requesting ad : {}", deal.getId(),deal.getAdGuid(),adGuid);
+                continue;
+            }
+
+            com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestDealDTO bidRequestDealDTO =
+                                    new com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestDealDTO();
+
+            bidRequestDealDTO.setDealId(deal.getId());
+
+            bidRequestDealDTO.setAuctionType(Integer.valueOf(deal.getAuctionType()));
+
+            if(null != deal.getDealCPM())
+                bidRequestDealDTO.setBidFloor(deal.getDealCPM().floatValue());
+
+            bidRequestDealDTO.setBidFloorCurrency(SupportedCurrencies.USD.getName());
+
+            String[] whiteListedBuyerSeats = fetchWhitelistedBuyerIds(deal,accountEntity);
+            if(null == whiteListedBuyerSeats)
+            {
+                logger.error("Whitelisted Buyer seat ids could not be generated or is blank, the deal: {} ," +
+                        "will not have any meaning since it will target all seats.Skipping it.",deal.getId());
+                return;
+            }
+
+            bidRequestDealDTO.setWhitelistedBuyerSeats(whiteListedBuyerSeats);
+
+            dealDTOs.add(bidRequestDealDTO);
+        }
+
+        if(null != dealDTOs && dealDTOs.size() > 0)
+        {
+            bidRequestPMPDTO = new com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestPMPDTO();
+            bidRequestPMPDTO.setPrivateAuctionDeals(dealDTOs.toArray(new com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestDealDTO[dealDTOs.size()]));
+            bidRequestPMPDTO.setPrivateAuction(1);
+
+            com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionDTO[] bidRequestImpressionDTOs = bidRequestParentNodeDTO.getBidRequestImpressionArray();
+
+            if(null != bidRequestImpressionDTOs)
+            {
+                /*Since there is only one impression we are sending so pmp is set to only one impression.*/
+                for(com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs)
+                {
+                    bidRequestImpressionDTO.setBidRequestPMPDTO(bidRequestPMPDTO);
+                }
+            }
+        }
     }
 
     /**

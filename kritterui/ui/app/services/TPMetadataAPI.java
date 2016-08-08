@@ -525,6 +525,27 @@ public class TPMetadataAPI {
         }
         return metalistToArrayNodeWithMetadata(mfields, true);
     }
+    public static ArrayNode brandList(){
+        Connection con = null;
+        List<MetaField> mfields = null;
+        try{
+            con = DB.getConnection(true);
+
+            MetaList mlist = ApiDef.get_metalist(con, MetadataType.HANDSET_MANUFACTURER, null);
+            mfields = mlist.getMetaFieldList();
+        }catch(Exception e){
+            Logger.error("Error loading brandList",e);
+        } 
+        finally{
+            try {
+                if(con != null)
+                    con.close();
+            } catch (SQLException e) { 
+                Logger.error("Unable to close connection",e);
+            } 
+        }
+        return metalistToArrayNode(mfields, true);
+    }
     public static List<SelectOption> osSelectListOption(){
         Connection con = null;
         List<MetaField> mfields = null;

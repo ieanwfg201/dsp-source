@@ -3,6 +3,7 @@ package com.kritter.exchange.request_openrtb_2_2.converter.common;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO;
 import com.kritter.common.caches.account.entity.AccountEntity;
+import com.kritter.constants.BidRequestImpressionType;
 import com.kritter.constants.ConvertErrorEnum;
 import com.kritter.constants.ExchangeConstants;
 import com.kritter.constants.SupportedCurrencies;
@@ -22,19 +23,40 @@ public class ConvertBidRequestImp {
         ConvertErrorEnum convertErrorEnum = ConvertErrorEnum.HEALTHY_CONVERT;
         BidRequestImpressionDTO bidRequestImpressionDTO = new BidRequestImpressionDTO();
         bidRequestImpressionDTO.setBidRequestImpressionId(request.getRequestId());
-        if(!request.getSite().isNative()){
-            convertErrorEnum = ConvertBidRequestImpBanner.convert(request, bidRequestImpressionDTO, version,accountEntity);
-            if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
-                return convertErrorEnum;
+
+        if(null != request.getBidRequestImpressionType())
+        {
+            if(request.getBidRequestImpressionType().getCode() == BidRequestImpressionType.BANNER.getCode()){
+                convertErrorEnum = ConvertBidRequestImpBanner.convert(request, bidRequestImpressionDTO, version,accountEntity);
+                if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
+                    return convertErrorEnum;
+                }
+            }
+            if(request.getBidRequestImpressionType().getCode() == BidRequestImpressionType.NATIVE.getCode()){
+                //TODO think of what to do here, as open rtb 2.2 does not have any native support in bidrequest.
+            }
+            if(request.getBidRequestImpressionType().getCode() == BidRequestImpressionType.VIDEO.getCode()){
+                convertErrorEnum = ConvertBidRequestImpVideo.convert(request, bidRequestImpressionDTO, version);
+                if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
+                    return convertErrorEnum;
+                }
             }
         }
-        if(request.getSite().isNative()){
-            //TODO think of what to do here, as open rtb 2.2 does not have any native support in bidrequest.
-        }
-        if(!request.getSite().isNative()){
-            convertErrorEnum = ConvertBidRequestImpVideo.convert(request, bidRequestImpressionDTO, version);
-            if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
-                return convertErrorEnum;
+        else {
+            if (!request.getSite().isNative()) {
+                convertErrorEnum = ConvertBidRequestImpBanner.convert(request, bidRequestImpressionDTO, version, accountEntity);
+                if (convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT) {
+                    return convertErrorEnum;
+                }
+            }
+            if (request.getSite().isNative()) {
+                //TODO think of what to do here, as open rtb 2.2 does not have any native support in bidrequest.
+            }
+            if (!request.getSite().isNative()) {
+                convertErrorEnum = ConvertBidRequestImpVideo.convert(request, bidRequestImpressionDTO, version);
+                if (convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT) {
+                    return convertErrorEnum;
+                }
             }
         }
         bidRequestImpressionDTO.setIsAdInterstitial((request.isInterstitialBidRequest())? 1:0);

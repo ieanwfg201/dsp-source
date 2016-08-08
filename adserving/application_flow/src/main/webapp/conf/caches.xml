@@ -173,14 +173,6 @@
             <constructor-arg index="3" value="native_screenshot_cache"/>
         </bean>
         
-        <bean id="handset_detector" class="com.kritter.device.wurfl.HandsetDetector">
-            <constructor-arg index="0" value="com.kritter.device.common.index.HandsetMakeModelSecondaryIndex"/>
-            <constructor-arg index="1"><ref bean="handset_detector_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="handset_detector"/>
-            <constructor-arg index="4"><ref bean="wurfl_files_manager"/></constructor-arg>
-        </bean>
-
 	<bean id="site_cache" class="com.kritter.common.site.cache.SiteCache">
 	    <constructor-arg index="0">
 		<list>
@@ -252,12 +244,6 @@
             <constructor-arg index="3" value="iab_categories_cache"/>
         </bean>
 
-        <bean id="connection_type_cache" class="com.kritter.maxmind.cache.ConnectionTypeDetectionCache">
-            <constructor-arg index="0" value="connection_type_cache"/>
-            <constructor-arg index="1" value="cache.logger"/>
-            <constructor-arg index="2"><ref bean="connection_type_cache_props"/></constructor-arg>
-        </bean>
-	
 	<bean id="req_logging_cache" class="com.kritter.req_logging.ReqLoggingCache">
             <constructor-arg index="0">
                 <list>
@@ -551,15 +537,6 @@
       <constructor-arg>
          <props>
            <prop key="query"><![CDATA[select * from content_categories where last_modified >= '$last_modified']]></prop>
-           <prop key="refresh_interval">3600000</prop>
-         </props>
-      </constructor-arg>
-    </bean>
-
-    <bean id="connection_type_cache_props" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="file_name"><![CDATA[/var/data/kritter/location/country/maxmind_netspeed_input.mmdb]]></prop>
            <prop key="refresh_interval">3600000</prop>
          </props>
       </constructor-arg>

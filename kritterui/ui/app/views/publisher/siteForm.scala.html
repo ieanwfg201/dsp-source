@@ -98,8 +98,8 @@
 				@components.formElements.selectlist2(siteForm("is_creative_attr_exc"), "Creative Attribute List Type", services.MetadataAPI.listTypeOptions()) 
 				@components.formElements.multiselectlist3(siteForm("creative_attr_inc_exc"), '_label -> "Allowed Creative Attributes", '_row->true)
 				
-				@components.formElements.textarea(siteForm("url_exclusion_input"), "Advertiser URL Exclusion" , true)
-				@components.formElements.hiddenfield(siteForm("url_exclusion"),"url_exclusion", true)
+				@components.formElements.textarea(siteForm("url_exclusion"), "Advertiser URL Exclusion" , true)
+				@components.formElements.hiddenfield(siteForm("url_exclusion_input"),"url_exclusion_input", true)
 				
 				@components.formElements.selectlist2(siteForm("is_advertiser_excluded"), "Advertiser - Campaign Inc/Exc", services.MetadataAPI.listTypeOptions())
                 @components.formElements.multiselectlist3(siteForm("advertiser_json_array"), '_label ->"Advertiser Inc/Exc", '_row->true)

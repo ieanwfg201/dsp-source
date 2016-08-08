@@ -149,6 +149,40 @@ public class TargetingProfileCrud {
         }
         return "{}";
     }
+    private static String generateLocationJson_from_id_list(String strIn){
+        if(strIn != null ){
+            String str = strIn.trim().replaceAll("\\[", "").replaceAll("]", "");
+            if("".equals(str) || "[]".equals(str) || "[all]".equalsIgnoreCase(str)
+            		|| "[none]".equalsIgnoreCase(str)){
+            	return "{}";
+            }
+            StringBuffer sBuff = new StringBuffer("{");
+            boolean isFirst=true;
+            String split[] = str.split(",");
+            for(String s:split){
+            	String sTrim=s.trim();
+            	if(!"".equals(sTrim)){
+            		try{
+            			Integer i = Integer.parseInt(sTrim);
+            			if(isFirst){
+            				isFirst=false;
+            			}else{
+            				sBuff.append(",");
+            			}
+            			sBuff.append("\"");
+            			sBuff.append(i);
+            			sBuff.append("\":[]");
+            		}catch(Exception e){
+            			LOG.error(e.getMessage(),e);
+            		}
+            	}
+            }
+            sBuff.append("}");
+            return sBuff.toString();
+        }
+        return "{}";
+    }
+
     public static String create_id_list(String inputStr){
         if(inputStr != null && !inputStr.trim().equals("")){
             StringBuffer sbuff = new StringBuffer("[");
@@ -564,12 +598,16 @@ public class TargetingProfileCrud {
                 }
             }
             String city_json= rset.getString("city_json");
-            if(city_json==null || "".equals(city_json.trim())){
+            if(city_json==null){
             	tp.setCity_json("[]");
             }else{
-            	tp.setCity_json(city_json.trim());
-            }
-
+            	String cityTrim = city_json.trim();
+            	if("".equals(cityTrim) || "[]".equals(cityTrim) ||"{}".equals(cityTrim)){
+            		tp.setCity_json("[]");
+            	}else{
+            		tp.setCity_json(create_id_list(cityTrim));
+            	}
+        	}
             if(useRawCountryJson)
                 tp.setCountry_json(rset.getString("country_json"));
             else
@@ -585,11 +623,16 @@ public class TargetingProfileCrud {
             tp.setName(rset.getString("name"));
             tp.setOs_json(rset.getString("os_json"));
             String state_json= rset.getString("state_json");
-            if(state_json==null || "".equals(state_json.trim())){
+            if(state_json==null){
             	tp.setState_json("[]");
             }else{
-            	tp.setState_json(state_json.trim());
-            }
+            	String stateTrim = state_json.trim();
+            	if("".equals(stateTrim) || "[]".equals(stateTrim) || "{}".equals(stateTrim)){
+            		tp.setState_json("[]");
+            	}else{
+            		tp.setState_json(create_id_list(stateTrim));
+            	}
+        	}
             tp.setStatus_id(StatusIdEnum.getEnum(rset.getInt("status_id")));
             tp.setSupply_source(SupplySourceEnum.getEnum((short)rset.getInt("supply_source")));
             tp.setSupply_source_type(SupplySourceTypeEnum.getEnum((short)rset.getInt("supply_source_type")));
@@ -1038,8 +1081,8 @@ public class TargetingProfileCrud {
             pstmt.setString(8, tp.getBrowser_json());
             pstmt.setString(9, tmp_country_json);
             pstmt.setString(10, tmp_isp_list);
-            pstmt.setString(11, generateJsonArray(tp.getState_json()));
-            pstmt.setString(12, generateJsonArray(tp.getCity_json()));
+            pstmt.setString(11, generateLocationJson_from_id_list(tp.getState_json()));
+            pstmt.setString(12, generateLocationJson_from_id_list(tp.getCity_json()));
             pstmt.setString(13, ui_to_db_file_set(tp.getZipcode_file_id_set()));
             String directsiteexcinc = generateDirectSites(tp);
             pstmt.setString(14, directsiteexcinc);
@@ -1147,8 +1190,8 @@ public class TargetingProfileCrud {
             pstmt.setString(8, tp.getBrowser_json());
             pstmt.setString(9, tmp_country_json);
             pstmt.setString(10, tmp_isp_list);
-            pstmt.setString(11, generateJsonArray(tp.getState_json()));
-            pstmt.setString(12, generateJsonArray(tp.getCity_json()));
+            pstmt.setString(11, generateLocationJson_from_id_list(tp.getState_json()));
+            pstmt.setString(12, generateLocationJson_from_id_list(tp.getCity_json()));
             pstmt.setString(13, ui_to_db_file_set(tp.getZipcode_file_id_set()));
             String directsiteexcinc = generateDirectSites(tp);
             pstmt.setString(14, directsiteexcinc);
@@ -1282,8 +1325,8 @@ public class TargetingProfileCrud {
             pstmt.setString(6, tp.getBrowser_json());
             pstmt.setString(7, tmp_country_json);
             pstmt.setString(8, tmp_isp_json);
-            pstmt.setString(9, generateJsonArray(tp.getState_json()));
-            pstmt.setString(10, generateJsonArray(tp.getCity_json()));
+            pstmt.setString(9, generateLocationJson_from_id_list(tp.getState_json()));
+            pstmt.setString(10, generateLocationJson_from_id_list(tp.getCity_json()));
             pstmt.setString(11, ui_to_db_file_set(tp.getZipcode_file_id_set()));
             String directsiteexcinc = generateDirectSites(tp);
             pstmt.setString(12, directsiteexcinc);

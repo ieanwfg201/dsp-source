@@ -18,7 +18,7 @@ public class Convert {
     }
 
     public BidRequestParentNodeDTO convert(Request request,  int version,
-            AccountEntity accountEntity, IABCategoriesCache iabCategoryCache){
+            AccountEntity publisherAccountEntity, IABCategoriesCache iabCategoryCache,AccountEntity dspEntity){
         if(request == null){
             this.logger.debug("BidRequestParentNodeDTO: Request object null");
             return null;
@@ -26,7 +26,7 @@ public class Convert {
         
         BidRequestParentNodeDTO bidRequest = new BidRequestParentNodeDTO();
         ConvertErrorEnum errorEnum = ConvertBidRequest.convert(request, bidRequest, version,
-                accountEntity, iabCategoryCache);
+                publisherAccountEntity, iabCategoryCache,dspEntity);
         if(ConvertErrorEnum.HEALTHY_CONVERT == errorEnum){
             return bidRequest;
         }

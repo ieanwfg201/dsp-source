@@ -1,5 +1,5 @@
 @(campaignForm: Form[models.entities.CampaignEntity], 
-		campaignBudgetForm: Form[models.entities.CampaignBudgetEntity], campaignDisplay:models.advertiser.CampaignDisplay)
+		campaignBudgetForm: Form[models.entities.CampaignBudgetEntity], campaignDisplay:models.advertiser.CampaignDisplay,campaign_unlimited:String)
 
 @main2("Campaign Form"){@navs.navadvt(campaignDisplay.getAccountGuid())} {@navs.breadcrumbs(campaignDisplay.getBreadCrumbPaths())}{ 
 <form id="campaignForm" action="/advertiser/campaigns/save" method="POST" ng-controller="campaignController">
@@ -19,9 +19,11 @@
 						@components.formElements.textinput(campaignForm("name"),'_label ->"Name *", '_disabled->true)
 						@components.formElements.hiddenfield(campaignForm("account_guid"))
 						@components.formElements.dateinput(campaignForm("start_date"),"Start Date *" )
+						@if("true" == campaign_unlimited) {
                         @components.formElements.selectlist("campaignUnlimitedEndDateId", 
                                     "Unlimited EndDate (Yes/No)", services.MetadataAPI.yesNoOptions(), 
-                                      "campaignUnlimitedEndDate()")						
+                                      "campaignUnlimitedEndDate()")
+						}						
 						@components.formElements.dateinput(campaignForm("end_date"),"End Date *" )
 					</div>
 				</fieldset>
@@ -32,9 +34,11 @@
 						@components.formElements.hiddenfield(campaignBudgetForm("id") )
 						@components.formElements.hiddenfield(campaignBudgetForm("campaign_id"), "campaign_id" )
 						@components.formElements.hiddenfield(campaignBudgetForm("campaign_guid"), "campaign_guid" )
+						@if("true" == campaign_unlimited) {
 						@components.formElements.selectlist("campaignUnlimitedBudgetId", 
                                     "Unlimited Budget (Yes/No)", services.MetadataAPI.yesNoOptions(), 
                                       "campaignUnlimitedBudget()")
+						}
                         @components.formElements.modelcurrencyinput(campaignBudgetForm("adv_total_budget"), "Advertiser Total Budget *" )
                         @components.formElements.modelcurrencyinput(campaignBudgetForm("internal_total_budget"), "Internal Total Budget *" )
                         @components.formElements.modelcurrencyinput(campaignBudgetForm("adv_daily_budget"), "Advertiser Daily Budget *" )

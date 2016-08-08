@@ -1,9 +1,14 @@
 package com.kritter.geo.common.entity;
 
+import com.kritter.abstraction.cache.interfaces.ISecondaryIndex;
+import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class keeps three letter country code to two letter country code mapping.
@@ -46,5 +51,22 @@ public class CountryCodesEntity implements IUpdatableEntity<String>{
     @Override
     public String getId() {
         return threeLetterCountryCode;
+    }
+
+    public static ISecondaryIndexWrapper getCountryTwoLetterCodeSecondaryIndex(CountryCodesEntity countryCodesEntity)
+    {
+        final Set<ISecondaryIndex> indexKeyList = new HashSet<ISecondaryIndex>();
+        indexKeyList.add(new CountryTwoLetterCodeSecondaryIndex(countryCodesEntity.twoLetterCountryCode));
+        return new ISecondaryIndexWrapper() {
+            @Override
+            public boolean isAllTargeted() {
+                return false;
+            }
+
+            @Override
+            public Set<ISecondaryIndex> getSecondaryIndexSet() {
+                return indexKeyList;
+            }
+        };
     }
 }

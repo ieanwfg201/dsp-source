@@ -16,7 +16,7 @@ import com.kritter.constants.ConvertErrorEnum;
 public class ConvertBidRequest {
 
     public static ConvertErrorEnum convert(Request request, BidRequestParentNodeDTO bidRequest, int version,
-            AccountEntity accountEntity, IABCategoriesCache iabCategoryCache){
+            AccountEntity publisherAccountEntity, IABCategoriesCache iabCategoryCache,AccountEntity dspEntity){
         if(request == null){
             return ConvertErrorEnum.ADSERVING_REQ_NULL; 
         }
@@ -26,13 +26,13 @@ public class ConvertBidRequest {
         if(request.getRequestId() == null){
             return ConvertErrorEnum.REQID_NULL; 
         }
-        if(accountEntity== null){
+        if(publisherAccountEntity== null){
             return ConvertErrorEnum.ACCOUNT_ENTITY_NULL; 
         }
         ConvertErrorEnum convertErrorEnum = ConvertErrorEnum.HEALTHY_CONVERT;
         bidRequest.setBidRequestId(request.getRequestId());
         
-        convertErrorEnum = ConvertBidRequestImp.convert(request, bidRequest, version, accountEntity);
+        convertErrorEnum = ConvertBidRequestImp.convert(request, bidRequest, version, publisherAccountEntity,dspEntity);
         if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
             return convertErrorEnum;
         }
@@ -84,14 +84,14 @@ public class ConvertBidRequest {
             return convertErrorEnum;
         }
         /*TODO Populate test*/
-        bidRequest.setIsBidRequestTestAndNotBillable((accountEntity.isTest()) ? 1 : 0);
+        bidRequest.setIsBidRequestTestAndNotBillable((publisherAccountEntity.isTest()) ? 1 : 0);
         bidRequest.setAuctionType(ExchangeConstants.req_auc_type);
-        bidRequest.setMaxTimeoutForBidSubmission(accountEntity.getTimeout());
+        bidRequest.setMaxTimeoutForBidSubmission(publisherAccountEntity.getTimeout());
         
         bidRequest.setAllImpressions(ExchangeConstants.req_allimps);
         ;
         String[] allowedCurrencies = new String[1];
-        allowedCurrencies[0]= SupportedCurrencies.getEnum(accountEntity.getCurrency()).getName();
+        allowedCurrencies[0]= SupportedCurrencies.getEnum(publisherAccountEntity.getCurrency()).getName();
         bidRequest.setAllowedCurrencies(allowedCurrencies);
         /*TODO populate bcat*/
         convertErrorEnum = ConvertBidRequestRegs.convert(request, bidRequest, version);

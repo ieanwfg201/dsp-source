@@ -1,5 +1,6 @@
 package controllers;
 
+import play.Play;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial.SecuredAction;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 public class MetadataController extends Controller{
 
+	private static String brandbyos = Play.application().configuration().getString("brandbyos");
 		 
 		@SecuredAction
 		public static Result carriers(String countryList){
@@ -34,8 +36,13 @@ public class MetadataController extends Controller{
 
 		@SecuredAction
 		public static Result brands(String osList){
-			ArrayNode brandOptions = TPMetadataAPI.brandList(osList); 
-			return ok(brandOptions);
+			if("true".equals(brandbyos)){
+				ArrayNode brandOptions = TPMetadataAPI.brandList(osList); 
+				return ok(brandOptions);
+			}else{
+				ArrayNode brandOptions = TPMetadataAPI.brandList(); 
+				return ok(brandOptions);
+			}
 		}
 		
 		@SecuredAction
