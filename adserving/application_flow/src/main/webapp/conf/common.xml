@@ -11,6 +11,15 @@
         <constructor-arg index="0" value="/var/data/kritter/server.properties"/>
     </bean>
 
+    <bean id="handset_detector" class="com.kritter.device.mad.MadHandsetDetector">
+        <constructor-arg index="0" value="handset_detector"/>
+        <constructor-arg index="1"><ref bean="handset_os_cache"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="handset_manufacturer_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="handset_model_cache"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="mad_ua_file_cache"/></constructor-arg>
+    </bean>
+
+
     <!-- Targeting targetingmatcher begin. -->
     <bean id="ad_category_targeting" class="com.kritter.adserving.shortlisting.targetingmatcher.AdCategoryTargetingMatcher">
         <constructor-arg index="0" value="ad_category_targeting"/>
@@ -342,8 +351,7 @@
         <constructor-arg index="14"><ref bean="handset_detector"/></constructor-arg>
         <constructor-arg index="15"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="16"><ref bean="isp_detector"/></constructor-arg>
-        <constructor-arg index="17"><ref bean="connection_type_cache"/></constructor-arg>
-        <constructor-arg index="18" value="k-uid"/>
+        <constructor-arg index="17" value="k-uid"/>
     </bean> 
 
     <bean id="aggregator_pub_request_enricher" class="com.kritter.adserving.request.enricher.AggregatorRequestEnricher">
@@ -382,11 +390,10 @@
         <constructor-arg index="16"><ref bean="handset_detector"/></constructor-arg>
         <constructor-arg index="17"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="18"><ref bean="isp_detector"/></constructor-arg>
-        <constructor-arg index="19"><ref bean="connection_type_cache"/></constructor-arg>
-        <constructor-arg index="20" value="rm"/>
-        <constructor-arg index="21" value="w"/>
-        <constructor-arg index="22" value="h"/>
-        <constructor-arg index="23" value="bp"/>
+        <constructor-arg index="19" value="rm"/>
+        <constructor-arg index="20" value="w"/>
+        <constructor-arg index="21" value="h"/>
+        <constructor-arg index="22" value="bp"/>
     </bean>
 
     <bean id="mopub_bid_request_reader_2_3" class="com.kritter.bidreqres.reader.mopub2_3.BidRequestReaderMopub">
@@ -403,7 +410,6 @@
         <constructor-arg index="5"><ref bean="mnc_mcc_data_cache"/></constructor-arg>
         <constructor-arg index="6"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="7"><ref bean="isp_detector"/></constructor-arg>
-        <constructor-arg index="8"><ref bean="connection_type_cache"/></constructor-arg>
     </bean>
 
     <bean id="rtb_exchange_request_enricher" class="com.kritter.adserving.request.enricher.RTBExchangeRequestEnricher">
@@ -610,6 +616,15 @@
         <constructor-arg index="4" value="1800000"/>
         <constructor-arg index="5"><ref bean="server_config"/></constructor-arg>
         <constructor-arg index="6" value="adserver-data-load-master-node"/> 
+    </bean>
+
+    <bean id="handset_data_populator" class="com.kritter.device.mad.MadDataPopulator">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="/var/data/kritter/location/mad/"/>
+        <constructor-arg index="2" value="300000"/>
+        <constructor-arg index="3"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="4" value="adserver-data-load-master-node"/>
+        <constructor-arg index="5"><ref bean="server_config"/></constructor-arg>
     </bean>
 
     <bean id="kritter_country_data_loader" class="com.kritter.thirdpartydata.loader.ThirdpartydataCountryDataLoader">

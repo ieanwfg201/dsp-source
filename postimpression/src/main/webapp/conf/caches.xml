@@ -35,14 +35,6 @@
             <constructor-arg index="3" value="ad_entity_cache"/>
     </bean>
 
-    <bean id="handset_detector" class="com.kritter.device.wurfl.HandsetDetector">
-            <constructor-arg index="0" value="com.kritter.device.common.index.HandsetMakeModelSecondaryIndex"/>
-            <constructor-arg index="1"><ref bean="handset_detector_cache_properties"/></constructor-arg>
-            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
-            <constructor-arg index="3" value="handset_detector"/>
-            <constructor-arg index="4"><ref bean="wurfl_files_manager"/></constructor-arg>
-    </bean>
-
     <bean id="site_cache" class="com.kritter.common.site.cache.SiteCache">
             <constructor-arg index="0">
                 <list>
@@ -89,6 +81,37 @@
             <constructor-arg index="1" value="600000"/>
     </bean>
 
+       <bean id="handset_manufacturer_cache" class="com.kritter.device.common.detector.HandsetManufacturerCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="handset_manufacturer_cache_props"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="handset_manufacturer_cache"/>
+        </bean>
+
+        <bean id="handset_os_cache" class="com.kritter.device.common.detector.HandsetOperatingSystemCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="handset_os_cache_props"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="handset_os_cache"/>
+        </bean>
+
+        <bean id="handset_model_cache" class="com.kritter.device.common.detector.HandsetModelCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="handset_model_cache_props"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="handset_model_cache"/>
+        </bean>
+
+
     <!--
     <bean id="user_recent_history_cache" class="com.kritter.nosql.user.recenthistory.UserRecentImpressionHistoryCache">
             <constructor-arg index="0" value="user_recent_history_cache"/>
@@ -107,7 +130,9 @@
                 <ref bean="ui_isp_id_cache"/>
                 <ref bean="ad_entity_cache"/>
                 <ref bean="site_cache"/>
-                <ref bean="handset_detector"/>
+                <ref bean="handset_manufacturer_cache"/>
+                <ref bean="handset_os_cache"/>
+                <ref bean="handset_model_cache"/>
                 <!--<ref bean="user_recent_history_cache"/>-->
             </list>
         </constructor-arg>
@@ -156,7 +181,33 @@
          </props>
        </constructor-arg>
    </bean>
-   
+    <bean id="handset_manufacturer_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select * from handset_manufacturer where modified_on >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+   <bean id="handset_os_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select * from handset_os where modified_on >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+   <bean id="handset_model_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select * from handset_model where modified_on >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+  
    <!--
    <bean id="user_recent_history_cache_props" class="java.util.Properties">
       <constructor-arg>
