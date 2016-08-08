@@ -58,6 +58,36 @@
             <constructor-arg index="3" value="ui_city_id_cache"/>
         </bean>
 
+       <bean id="handset_manufacturer_cache" class="com.kritter.device.common.detector.HandsetManufacturerCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="handset_manufacturer_cache_props"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="handset_manufacturer_cache"/>
+        </bean>
+
+        <bean id="handset_os_cache" class="com.kritter.device.common.detector.HandsetOperatingSystemCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="handset_os_cache_props"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="handset_os_cache"/>
+        </bean>
+
+        <bean id="handset_model_cache" class="com.kritter.device.common.detector.HandsetModelCache">
+            <constructor-arg index="0">
+                <list>
+                </list>
+            </constructor-arg>
+            <constructor-arg index="1"><ref bean="handset_model_cache_props"/></constructor-arg>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="handset_model_cache"/>
+        </bean>
+
         <bean id="mad_ua_file_cache" class="com.kritter.device.mad.MadFileCache">
                 <constructor-arg index="0" value="mad_ua_file_cache"/>
                 <constructor-arg index="1" value="cache.logger"/>
@@ -344,6 +374,9 @@
 				<ref bean="adposition_cache"/>
 				<ref bean="channel_cache"/>
 				<ref bean="mad_ua_file_cache"/>
+                <ref bean="handset_manufacturer_cache"/>
+                <ref bean="handset_os_cache"/>
+                <ref bean="handset_model_cache"/>
             </list>
         </constructor-arg>
     </bean>
@@ -621,5 +654,33 @@
          </props>
       </constructor-arg>
    </bean>
+
+   <bean id="handset_manufacturer_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select * from handset_manufacturer where modified_on >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+   <bean id="handset_os_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select * from handset_os where modified_on >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+   <bean id="handset_model_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select * from handset_model where modified_on >= '$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
 
 </beans>
