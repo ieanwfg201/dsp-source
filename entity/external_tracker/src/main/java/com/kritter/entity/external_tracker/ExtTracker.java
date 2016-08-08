@@ -8,7 +8,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,12 +29,10 @@ public class ExtTracker {
     }
     public static ExtTracker getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
     public static ExtTracker getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
         ExtTracker entity = objectMapper.readValue(str, ExtTracker.class);
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return entity;
 
     }
