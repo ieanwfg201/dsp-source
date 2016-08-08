@@ -63,7 +63,8 @@ public class CountryCodesMappingsCache extends AbstractDBStatsReloadableQueryabl
     }
 
     @Override
-    public ISecondaryIndexWrapper getSecondaryIndexKey(Class className, CountryCodesEntity entity) {
-        return null;
+    public ISecondaryIndexWrapper getSecondaryIndexKey(Class className, CountryCodesEntity entity)
+    {
+        return CountryCodesEntity.getCountryTwoLetterCodeSecondaryIndex(entity);
     }
 }

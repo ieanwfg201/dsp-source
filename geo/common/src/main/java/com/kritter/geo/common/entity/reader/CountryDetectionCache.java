@@ -3,8 +3,12 @@ package com.kritter.geo.common.entity.reader;
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.geo.common.entity.Country;
+import com.kritter.geo.common.entity.CountryCodesEntity;
+import com.kritter.geo.common.entity.CountryTwoLetterCodeSecondaryIndex;
 import com.kritter.geo.common.entity.IpRangeKeyValue;
+import com.kritter.geo.common.utils.GeoCommonUtils;
 import com.kritter.geo.common.utils.GeoDetectionUtils;
+import com.kritter.utils.databasemanager.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +43,8 @@ public class CountryDetectionCache
     private static final String COLON = ":";
 
     private static final String DELIMITER = ",";
+    private Map<String,Map<Integer,Country>> countryDataAgainstIdForAllDatasource;
+    private CountryCodesMappingsCache countryCodesMappingsCache;
 
     public CountryDetectionCache(String loggerName,
                                  Map<String,String> dataSourceWithDetectionFileMap,
@@ -104,6 +110,55 @@ public class CountryDetectionCache
                     reloadFrequencyForDetectionData,
                     reloadFrequencyForDetectionData);
         }
+    }
+
+    public CountryDetectionCache(String loggerName,
+                                 Map<String,String> dataSourceWithDetectionFileMap,
+                                 String[] dataSourceValuesForLookupInOrder,
+                                 CountryCodesMappingsCache countryCodesMappingsCache,
+                                 DatabaseManager databaseManager) throws InitializationException
+    {
+
+        this.logger = LoggerFactory.getLogger(loggerName);
+        this.dataSourceWithDetectionFileMap = dataSourceWithDetectionFileMap;
+        this.dataSourceValuesForLookupInOrder = dataSourceValuesForLookupInOrder;
+
+        this.sortedCountryArrayAgainstDataSource = new ConcurrentHashMap<String, IpRangeKeyValue[]>();
+
+        this.lastRefreshStartTimeMap = new HashMap<String, Long>();
+        //run data loading once then schedule the timer task.
+        try
+        {
+            buildDatabaseFromFile();
+        }
+        catch (RefreshException re)
+        {
+            this.logger.error("RefreshException inside CountryDetectionCache",re);
+            throw new InitializationException("RefreshException inside CountryDetectionCache",re);
+        }
+
+        try
+        {
+
+            this.countryDataAgainstIdForAllDatasource = new HashMap<String, Map<Integer, Country>>();
+
+            for (String dataSource : this.dataSourceValuesForLookupInOrder)
+            {
+                this.countryDataAgainstIdForAllDatasource.
+                        put(
+                            dataSource,
+                            GeoCommonUtils.fetchCountryDataAgainstIdFromSqlDatabaseForDataSource
+                                                    (databaseManager.getConnectionFromPool(),dataSource)
+                           );
+            }
+        }
+        catch (Exception e)
+        {
+            logger.error("Exception inside CountryDetectionCache ",e);
+            throw new InitializationException("Could not initialize country detection cache ", e);
+        }
+
+        this.countryCodesMappingsCache = countryCodesMappingsCache;
     }
 
     private void buildDatabaseFromFile() throws RefreshException
@@ -285,7 +340,40 @@ public class CountryDetectionCache
         if(null == ipRangeKeyValue)
             return null;
 
-        return new Country(ipRangeKeyValue.getEntityId(),ipRangeKeyValue.getDataSourceName());
+        Country country = new Country(ipRangeKeyValue.getEntityId(),ipRangeKeyValue.getDataSourceName());
+
+        try
+        {
+            if (null != this.countryDataAgainstIdForAllDatasource)
+            {
+                Map<Integer, Country> countryMap =
+                                this.countryDataAgainstIdForAllDatasource.get(ipRangeKeyValue.getDataSourceName());
+
+                Country countryFromDatabase = countryMap.get(ipRangeKeyValue.getEntityId());
+
+                if (null != countryFromDatabase && null != this.countryCodesMappingsCache)
+                {
+                    logger.debug("Country code fetched from database is: {} ", countryFromDatabase.getCountryCode());
+
+                    Set<String> threeLetterCodes =
+                            this.countryCodesMappingsCache.query
+                                    (new CountryTwoLetterCodeSecondaryIndex(countryFromDatabase.getCountryCode()));
+
+                    for(String code : threeLetterCodes)
+                    {
+                        logger.debug("Country three letter code fetched: {} ", code);
+                        country.setCountryCodeThreeLetter(code);
+                        break;
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            logger.error("Exception in getting three letter code for the detected country.",e);
+        }
+
+        return country;
     }
 
     /**

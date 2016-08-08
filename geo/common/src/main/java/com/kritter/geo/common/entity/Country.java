@@ -27,6 +27,8 @@ public class Country implements IUpdatableEntity<IpRangeKeyValue>
     @Getter @Setter
     private String countryCode;
     @Getter @Setter
+    private String countryCodeThreeLetter;
+    @Getter @Setter
     private String countryName;
     @Getter
     private String dataSourceName;

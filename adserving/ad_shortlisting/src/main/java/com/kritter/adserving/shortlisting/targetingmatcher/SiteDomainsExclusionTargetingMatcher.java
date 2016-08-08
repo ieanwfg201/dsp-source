@@ -10,6 +10,8 @@ import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +104,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
                 sb.append(blockedDomain);
 
                 if( blockedDomain.equalsIgnoreCase(adDomain) ||
-                        adDomain.indexOf(sb.toString()) != -1
+                		StringUtils.indexOf(sb.toString(), adDomain) != -1
                         )
                 {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),

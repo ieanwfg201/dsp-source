@@ -3,6 +3,7 @@ package com.kritter.entity.reqres.entity;
 import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.common.site.entity.Site;
+import com.kritter.constants.BidRequestImpressionType;
 import com.kritter.constants.ConnectionType;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.InternetServiceProvider;
@@ -159,6 +160,16 @@ public class Request
     * integrations and not valid for ad-exchange traffic.*/
     @Getter @Setter
     private Double bidFloorValueForNetworkSupply;
+
+    /*AdId required in native ad request for external DSPs*/
+    @Getter @Setter
+    private Map<String,Integer> adUnitIdOfExternalDSPMapForNativeBidRequest;
+
+    /*This field if available from direct publisher ad request ,
+      is used for defining what type of impression request is to be
+      constructed.*/
+    @Getter @Setter
+    private BidRequestImpressionType bidRequestImpressionType;
 
     //contains all request enrichment related error codes.
     public enum REQUEST_ENRICHMENT_ERROR_CODE

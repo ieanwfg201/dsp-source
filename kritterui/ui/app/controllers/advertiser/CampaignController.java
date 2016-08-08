@@ -15,6 +15,7 @@ import models.formbinders.MultiAdForm;
 import org.springframework.beans.BeanUtils;
 
 import play.Logger;
+import play.Play;
 import play.data.Form;
 import play.data.Form.Field;
 import play.db.DB;
@@ -44,6 +45,7 @@ public class CampaignController extends Controller{
 	static Form<CampaignEntity> campaignFormTemplate = Form.form(CampaignEntity.class); 
 	static Form<MultiAdForm> mafTemplate = Form.form(MultiAdForm.class); 
 	static Form<CampaignBudgetEntity> campaignBudgetFormTemplate = Form.form(CampaignBudgetEntity.class);
+	private static String campaign_unlimited = Play.application().configuration().getString("campaign_unlimited");
 
 	public static List<Campaign> getCampaigns(String accountGuid, StatusIdEnum status, Option<Integer> pageNo, Option<Integer> pageSize){
 		List<Campaign> campaigns = null;
@@ -163,7 +165,7 @@ public class CampaignController extends Controller{
 		campaignBudget.setCampaign_id(0);
 
 		return ok(views.html.advt.campaign.campaignForm.render(campaignFormTemplate.fill(campaign), 
-				campaignBudgetFormTemplate.fill(campaignBudget), new CampaignDisplay(campaign.getEntity())));
+				campaignBudgetFormTemplate.fill(campaignBudget), new CampaignDisplay(campaign.getEntity()),campaign_unlimited));
 	}
 
 	@SecuredAction
@@ -178,7 +180,7 @@ public class CampaignController extends Controller{
 		BeanUtils.copyProperties(campaignBudget, campaignBudgetEntity);
 		
 		return ok(views.html.advt.campaign.campaignForm.render(campaignFormTemplate.fill(campaignEntity), 
-				campaignBudgetFormTemplate.fill(campaignBudgetEntity),  new CampaignDisplay(campaign)));
+				campaignBudgetFormTemplate.fill(campaignBudgetEntity),  new CampaignDisplay(campaign),campaign_unlimited));
 	}
 
     @SecuredAction
@@ -295,7 +297,7 @@ public class CampaignController extends Controller{
 		}else{
 			campaign = getCampaign(Integer.parseInt(field.value()));
 		}		
-		return badRequest(views.html.advt.campaign.campaignForm.render(campaignForm, campaignBudgetForm,  new CampaignDisplay(campaign)));
+		return badRequest(views.html.advt.campaign.campaignForm.render(campaignForm, campaignBudgetForm,  new CampaignDisplay(campaign),campaign_unlimited));
 	}
 
 

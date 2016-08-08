@@ -145,7 +145,11 @@ public class SiteCrud {
             site.setSite_platform_id(SITE_PLATFORM.getEnum((short)rset.getInt("site_platform_id")));
             site.setSite_url(rset.getString("site_url"));
             site.setStatus_id(rset.getInt("status_id"));
-            site.setUrl_exclusion(rset.getString("url_exclusion"));
+            String url_exclusion = rset.getString("url_exclusion");
+            if(url_exclusion != null){
+            	url_exclusion = url_exclusion.trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+            }
+            site.setUrl_exclusion(url_exclusion);
             site.setIs_category_list_excluded(rset.getBoolean("is_category_list_excluded"));
             site.setIs_creative_attr_exc(rset.getBoolean("is_creative_attr_exc"));
             site.setComments(rset.getString("comments"));
@@ -458,6 +462,33 @@ public class SiteCrud {
         }
         return null;
     }
+    private static String generateUrlExclusion(String str){
+    	if(str == null){
+    		return "[]";
+    	}
+    	String strTrim = str.trim();
+    	if("".equals(strTrim)){
+    		return "[]";
+    	}
+    	StringBuffer sBuff = new StringBuffer("[");
+    	String split[] = strTrim.split(",");
+    	boolean isFirst = true;
+    	for(String s:split){
+    		String sTrim =s.trim();
+    		if(!"".equals(sTrim)){
+    			if(isFirst){
+    				isFirst=false;
+    			}else{
+    				sBuff.append(",");
+    			}
+    			sBuff.append("\"");
+    			sBuff.append(sTrim);
+    			sBuff.append("\"");
+    		}
+    	}
+    	sBuff.append("]");
+    	return sBuff.toString();
+    }
     
     public static JsonNode insert_site(Connection con, JsonNode jsonNode){
         if(jsonNode == null){
@@ -528,7 +559,7 @@ public class SiteCrud {
             pstmt.setTimestamp(17, ts);
             pstmt.setInt(18, site.getModified_by());
             pstmt.setString(19, payout_percentage_to_billing_rule_json(site.getBilling_rules_json()));
-            pstmt.setString(20, site.getUrl_exclusion());
+            pstmt.setString(20, generateUrlExclusion(site.getUrl_exclusion()));
             pstmt.setBoolean(21, site.isAllow_house_ads());
             pstmt.setString(22, site.getComments());
             pstmt.setDouble(23, site.getFloor());
@@ -650,7 +681,7 @@ public class SiteCrud {
             pstmt.setTimestamp(14, ts);
             pstmt.setInt(15, site.getModified_by());
             pstmt.setString(16, payout_percentage_to_billing_rule_json(site.getBilling_rules_json()));
-            pstmt.setString(17, site.getUrl_exclusion());
+            pstmt.setString(17, generateUrlExclusion(site.getUrl_exclusion()));
             pstmt.setBoolean(18, site.isAllow_house_ads());
             pstmt.setString(19, site.getComments());
             pstmt.setDouble(20, site.getFloor());

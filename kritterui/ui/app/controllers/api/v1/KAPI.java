@@ -765,6 +765,8 @@ public class KAPI extends Controller{
                 return ok(MetadataAPI.geographicTargetingOptionsArray());
             }else if("os".equals(metatype)){
                 return ok(TPMetadataAPI.osList());
+            }else if("brand".equals(metatype)){
+                return ok(TPMetadataAPI.brandList());
             }else if("supply_source".equals(metatype)){
                 return ok(TPMetadataAPI.supplySourceOptionsArray());
             }else if("supply_source_type".equals(metatype)){

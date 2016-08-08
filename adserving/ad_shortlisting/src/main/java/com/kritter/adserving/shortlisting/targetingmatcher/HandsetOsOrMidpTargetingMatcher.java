@@ -89,7 +89,12 @@ public class HandsetOsOrMidpTargetingMatcher implements TargetingMatcher {
                 //check if request is midp and ad targets corresponding midp version.
                 Boolean requestingHandsetIsMidp1 = handsetMasterData.getHandsetCapabilityObject().getMidp1();
                 Boolean requestingHandsetIsMidp2 = handsetMasterData.getHandsetCapabilityObject().getMidp2();
-
+                if(requestingHandsetIsMidp1 == null){
+                	requestingHandsetIsMidp1 = false;
+                }
+                if(requestingHandsetIsMidp2 == null){
+                	requestingHandsetIsMidp2 = false;
+                }
                 ReqLog.debugWithDebug(logger, request, "Handset's Midp1 value : {} ",requestingHandsetIsMidp1);
 
                 ReqLog.debugWithDebug(logger, request, "Handset's Midp2 value : {} ",requestingHandsetIsMidp2);

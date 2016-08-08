@@ -483,26 +483,7 @@
         <constructor-arg index="4"><ref bean="ad_entity_cache"/></constructor-arg>
         <constructor-arg index="5"><ref bean="server_config"/></constructor-arg>
     </bean>
-
-
     <!-- Creative formatters end. -->
-
-    <!-- Handset data populator , also required for the handset detector which is defined as a cache.-->
-    <bean id="handset_data_populator" class="com.kritter.device.wurfl.HandsetDataPopulator">
-        <constructor-arg index="0" value="adserving.application"/>
-        <constructor-arg index="1" value="500"/>
-        <constructor-arg index="2" value="/var/data/kritter/wurfl/"/>
-        <constructor-arg index="3" value="3600000"/>
-        <constructor-arg index="4"><ref bean="db-manager"/></constructor-arg>
-        <constructor-arg index="5" value="adserver-data-load-master-node"/>
-        <constructor-arg index="6"><ref bean="server_config"/></constructor-arg>
-    </bean>
-
-    <bean id="wurfl_files_manager" class="com.kritter.device.wurfl.WurflFilesManager">
-        <constructor-arg index="0" value="cache.logger"/>
-        <constructor-arg index="1" value="/var/data/kritter/wurfl/"/>
-        <constructor-arg index="2" value="1800000"/>
-    </bean>
 
     <!-- Country detector modelled as cache to reload data at configured frequency-->
     <bean id="country_detector" class="com.kritter.geo.common.entity.reader.CountryDetectionCache">
@@ -598,9 +579,6 @@
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1">
             <list>
-                <ref bean="maxmind_country_data_loader"/>
-                <ref bean="maxmind_isp_data_loader"/>
-                <ref bean="maxmind_state_city_data_loader"/>
                 <ref bean="openrtb_country_isp_data_loader"/>
                 <ref bean="kritter_country_data_loader"/>
                 <ref bean="kritter_state_data_loader"/>
@@ -609,52 +587,6 @@
         </constructor-arg>
         <constructor-arg index="2" value="adserver-data-load-master-node"/>
         <constructor-arg index="3"><ref bean="server_config"/></constructor-arg>
-    </bean>
-
-    <bean id="maxmind_state_city_data_loader" class="com.kritter.maxmind.loader.MaxMindStateCityDataLoader">
-        <constructor-arg index="0" value="adserving.application"/>
-        <constructor-arg index="1" value="maxmind"/>
-        <constructor-arg index="2" value="3600000"/>
-        <constructor-arg index="3" value="/var/data/kritter/location/country/maxmind_block_id_input.csv"/>
-        <constructor-arg index="4" value="/var/data/kritter/location/country/maxmind_state_city_input.csv"/>
-        <constructor-arg index="5" value="/var/data/kritter/location/country/maxmind_state_code_input.csv"/>
-        <constructor-arg index="6" value="/var/data/kritter/location/country/maxmind_state_city.csv"/>
-        <constructor-arg index="7" value="/var/data/kritter/location/country/maxmind_state_city_prep.csv"/>
-        <constructor-arg index="8"><ref bean="db-manager"/></constructor-arg>
-        <constructor-arg index="9" value="1000"/>
-    </bean>
- 
-    <bean id="maxmind_country_data_loader" class="com.kritter.maxmind.loader.MaxMindCountryDataLoader">
-        <constructor-arg index="0" value="adserving.application"/>
-        <constructor-arg index="1" value="maxmind"/>
-        <constructor-arg index="2" value="3600000"/>
-        <constructor-arg index="3" value="/var/data/kritter/location/country/maxmind_country_input.csv"/>
-        <constructor-arg index="4" value="/var/data/kritter/location/country/maxmind_country.csv"/>
-        <constructor-arg index="5" value="/var/data/kritter/location/country/maxmind_country_prep.csv"/>
-        <constructor-arg index="6"><ref bean="db-manager"/></constructor-arg>
-        <constructor-arg index="7" value="1000"/>        
-    </bean>
-
-    <bean id="maxmind_isp_data_loader" class="com.kritter.maxmind.loader.MaxMindISPDataLoader">
-        <constructor-arg index="0" value="adserving.application"/>
-        <constructor-arg index="1" value="maxmind"/>
-        <constructor-arg index="2" value="3600000"/>
-        <constructor-arg index="3" value="/var/data/kritter/location/country/maxmind_isp_input.csv"/>
-        <constructor-arg index="4" value="/var/data/kritter/location/country/maxmind_isp.csv"/>
-        <constructor-arg index="5" value="/var/data/kritter/location/country/maxmind_isp_prep.csv"/>
-        <constructor-arg index="6">
-            <map>
-                <entry key="maxmind" value="/var/data/kritter/location/country/maxmind_country.csv"/>
-            </map>
-        </constructor-arg>
-        <constructor-arg index="7">
-            <list>
-                <value>maxmind</value>
-            </list>
-        </constructor-arg>
-        <constructor-arg index="8" value="86400000"/>
-        <constructor-arg index="9"><ref bean="db-manager"/></constructor-arg>
-        <constructor-arg index="10" value="1000"/>        
     </bean>
 
     <bean id="openrtb_country_isp_data_loader" class="com.kritter.openrtb.loader.OpenRTBCountryISPDataLoader">
@@ -670,8 +602,8 @@
         <constructor-arg index="1"><ref bean="db-manager"/></constructor-arg>
         <constructor-arg index="2">
             <list>
-                <value>maxmind</value>
                 <value>openrtb</value>
+                <value>madhouse</value>
             </list>
         </constructor-arg>
         <constructor-arg index="3" value="1000"/>
@@ -682,7 +614,7 @@
 
     <bean id="kritter_country_data_loader" class="com.kritter.thirdpartydata.loader.ThirdpartydataCountryDataLoader">
         <constructor-arg index="0" value="adserving.application"/>
-        <constructor-arg index="1" value="kritter"/>
+        <constructor-arg index="1" value="madhouse"/>
         <constructor-arg index="2" value="3600000"/>
         <constructor-arg index="3" value="/var/data/kritter/location/country/kritter_country_input.csv"/>
         <constructor-arg index="4" value="/var/data/kritter/location/country/kritter_country.csv"/>
@@ -694,7 +626,7 @@
 
     <bean id="kritter_state_data_loader" class="com.kritter.thirdpartydata.loader.ThirdpartydataStateDataLoader">
         <constructor-arg index="0" value="adserving.application"/>
-        <constructor-arg index="1" value="kritter"/>
+        <constructor-arg index="1" value="madhouse"/>
         <constructor-arg index="2" value="3600000"/>
         <constructor-arg index="3" value="/var/data/kritter/location/country/kritter_state_input.csv"/>
         <constructor-arg index="4" value="/var/data/kritter/location/country/kritter_state.csv"/>
@@ -707,7 +639,7 @@
 
     <bean id="kritter_city_data_loader" class="com.kritter.thirdpartydata.loader.ThirdpartydataCityDataLoader">
         <constructor-arg index="0" value="adserving.application"/>
-        <constructor-arg index="1" value="kritter"/>
+        <constructor-arg index="1" value="madhouse"/>
         <constructor-arg index="2" value="3600000"/>
         <constructor-arg index="3" value="/var/data/kritter/location/country/kritter_city_input.csv"/>
         <constructor-arg index="4" value="/var/data/kritter/location/country/kritter_city.csv"/>
