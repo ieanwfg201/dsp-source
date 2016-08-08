@@ -351,8 +351,7 @@
         <constructor-arg index="14"><ref bean="handset_detector"/></constructor-arg>
         <constructor-arg index="15"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="16"><ref bean="isp_detector"/></constructor-arg>
-        <constructor-arg index="17"><ref bean="connection_type_cache"/></constructor-arg>
-        <constructor-arg index="18" value="k-uid"/>
+        <constructor-arg index="17" value="k-uid"/>
     </bean> 
 
     <bean id="aggregator_pub_request_enricher" class="com.kritter.adserving.request.enricher.AggregatorRequestEnricher">
@@ -391,11 +390,10 @@
         <constructor-arg index="16"><ref bean="handset_detector"/></constructor-arg>
         <constructor-arg index="17"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="18"><ref bean="isp_detector"/></constructor-arg>
-        <constructor-arg index="19"><ref bean="connection_type_cache"/></constructor-arg>
-        <constructor-arg index="20" value="rm"/>
-        <constructor-arg index="21" value="w"/>
-        <constructor-arg index="22" value="h"/>
-        <constructor-arg index="23" value="bp"/>
+        <constructor-arg index="19" value="rm"/>
+        <constructor-arg index="20" value="w"/>
+        <constructor-arg index="21" value="h"/>
+        <constructor-arg index="22" value="bp"/>
     </bean>
 
     <bean id="mopub_bid_request_reader_2_3" class="com.kritter.bidreqres.reader.mopub2_3.BidRequestReaderMopub">
@@ -412,7 +410,6 @@
         <constructor-arg index="5"><ref bean="mnc_mcc_data_cache"/></constructor-arg>
         <constructor-arg index="6"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="7"><ref bean="isp_detector"/></constructor-arg>
-        <constructor-arg index="8"><ref bean="connection_type_cache"/></constructor-arg>
     </bean>
 
     <bean id="rtb_exchange_request_enricher" class="com.kritter.adserving.request.enricher.RTBExchangeRequestEnricher">

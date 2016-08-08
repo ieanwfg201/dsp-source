@@ -36,7 +36,6 @@
                 <ref bean="ad_category_targeting"/>
                 <ref bean="hygiene_targeting"/>
                 <ref bean="os_targeting"/>
-                <ref bean="handset_browser_targeting"/>
                 <ref bean="site_domains_exclusion_targeting"/>
                 <ref bean="custom_ip_targeting"/>
                 <ref bean="zip_code_targeting"/>
