@@ -84,15 +84,19 @@
         </dependency>
         <dependency>
             <groupId>com.kritter.device</groupId>
-            <artifactId>wurfl</artifactId>
+            <artifactId>mad</artifactId>
             <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.kritter</groupId>
             <artifactId>geo</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
+        </dependency>
+         <dependency>
+            <groupId>com.kritter.geo</groupId>
+            <artifactId>thirdpartydata</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.kritter.common.caches</groupId>
