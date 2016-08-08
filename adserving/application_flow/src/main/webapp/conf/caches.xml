@@ -359,7 +359,6 @@
                 <ref bean="lr_csr_data_cache"/>
                 <ref bean="mnc_mcc_data_cache"/>
                 <ref bean="iab_categories_cache"/>
-                <ref bean="connection_type_cache"/>
                <!-- <ref bean="adx_geo_criteria_cache"/>-->
                 <ref bean="ssp_global_rules_cache"/>
                 <ref bean="account_cache"/>
