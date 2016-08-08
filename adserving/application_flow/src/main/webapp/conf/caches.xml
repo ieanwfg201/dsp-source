@@ -58,7 +58,12 @@
             <constructor-arg index="3" value="ui_city_id_cache"/>
         </bean>
 
-        
+        <bean id="mad_ua_file_cache" class="com.kritter.device.mad.MadFileCache">
+                <constructor-arg index="0" value="mad_ua_file_cache"/>
+                <constructor-arg index="1" value="cache.logger"/>
+                <constructor-arg index="2"><ref bean="mad_ua_file_cache_props"/></constructor-arg>
+        </bean>
+       
 	<bean id="ad_entity_cache" class="com.kritter.serving.demand.cache.AdEntityCache">
 	    <constructor-arg index="0">
 		<list> 
@@ -317,7 +322,6 @@
                 <ref bean="creative_banner_cache"/>
                 <ref bean="creative_cache"/>
                 <ref bean="site_cache"/>
-                <ref bean="handset_detector"/>
                 <ref bean="offline_bidder_data_cache"/>
                 <ref bean="ad_entity_cache"/>
                 <ref bean="campaign_cache"/>
@@ -339,6 +343,7 @@
 				<ref bean="mma_cache"/>
 				<ref bean="adposition_cache"/>
 				<ref bean="channel_cache"/>
+				<ref bean="mad_ua_file_cache"/>
             </list>
         </constructor-arg>
     </bean>
@@ -480,15 +485,6 @@
        </constructor-arg>
    </bean>
  
-   <bean id="handset_detector_cache_properties" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="refresh_interval">1800000</prop>
-           <prop key="query"><![CDATA[select * from handset_detection_data where version = ? and modified_on >= '$last_modified']]></prop>
-         </props>
-       </constructor-arg>
-   </bean>
-
    <bean id="offline_bidder_data_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -615,6 +611,15 @@
            <prop key="query"><![CDATA[select a.internalid as internalid, a.channelcode as channelcode,b.exchangeid as pubIncId from channel as a,mma_exchangename_id_mapping as b where a.exchangename = b.exchangename and (a.last_modified >= '$last_modified' or b.last_modified >= '$last_modified' ) ]]></prop>
          </props>
        </constructor-arg>
+   </bean>
+
+   <bean id="mad_ua_file_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="file_name"><![CDATA[/var/data/kritter/mad/ua.csv]]></prop>
+           <prop key="refresh_interval">3600000</prop>
+         </props>
+      </constructor-arg>
    </bean>
 
 </beans>

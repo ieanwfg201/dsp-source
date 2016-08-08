@@ -11,6 +11,15 @@
         <constructor-arg index="0" value="/var/data/kritter/server.properties"/>
     </bean>
 
+    <bean id="handset_detector" class="com.kritter.device.mad.MadHandsetDetector">
+        <constructor-arg index="0" value="handset_detector"/>
+        <constructor-arg index="1"><ref bean="handset_os_cache"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="handset_manufacturer_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="handset_model_cache"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="mad_ua_file_cache"/></constructor-arg>
+    </bean>
+
+
     <!-- Targeting targetingmatcher begin. -->
     <bean id="ad_category_targeting" class="com.kritter.adserving.shortlisting.targetingmatcher.AdCategoryTargetingMatcher">
         <constructor-arg index="0" value="ad_category_targeting"/>
