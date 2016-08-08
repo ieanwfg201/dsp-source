@@ -618,6 +618,15 @@
         <constructor-arg index="6" value="adserver-data-load-master-node"/> 
     </bean>
 
+    <bean id="handset_data_populator" class="com.kritter.device.mad.MadDataPopulator">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="/var/data/kritter/location/mad/"/>
+        <constructor-arg index="2" value="300000"/>
+        <constructor-arg index="3"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="4" value="adserver-data-load-master-node"/>
+        <constructor-arg index="5"><ref bean="server_config"/></constructor-arg>
+    </bean>
+
     <bean id="kritter_country_data_loader" class="com.kritter.thirdpartydata.loader.ThirdpartydataCountryDataLoader">
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1" value="madhouse"/>
