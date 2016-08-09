@@ -5,6 +5,7 @@ import com.kritter.geo.common.ThirdPartyDataLoader;
 import com.kritter.geo.common.entity.City;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.State;
+import com.kritter.geo.common.entity.StateUserInterfaceId;
 import com.kritter.geo.common.entity.reader.StateUserInterfaceIdCache;
 import com.kritter.geo.common.utils.GeoCommonUtils;
 import com.kritter.geo.common.utils.GeoDetectionUtils;
@@ -96,7 +97,7 @@ public class ThirdpartydataCityDataLoader implements ThirdPartyDataLoader
         prepareDatabase();
 
         this.timer = new Timer();
-        this.timerTask = new StateDataLoadingTask();
+        this.timerTask = new CityDataLoadingTask();
         this.timer.schedule(this.timerTask,reloadFrequency,reloadFrequency);
     }
 
@@ -118,6 +119,11 @@ public class ThirdpartydataCityDataLoader implements ThirdPartyDataLoader
 
     private void readCSVFileForCityDataAndPrepareSqlAndCSVDatabase() throws Exception
     {
+        /*Load state ui data once, as all state loaders would have finished by now.*/
+        this.stateUserInterfaceIdCache.refresh();
+        Collection<StateUserInterfaceId> stateUserInterfaceIds = this.stateUserInterfaceIdCache.getAllEntities();
+        logger.debug("Size of state user interface id entities is: {} ", stateUserInterfaceIds.size());
+        logger.debug("Data from state user interface id cache is : {} ", stateUserInterfaceIds);
 
         if(null == this.cityDatabaseFileFullPath)
             throw new RefreshException("ThirdpartydataCityDataFilePath provided is null, cannot proceed!");
@@ -392,9 +398,9 @@ public class ThirdpartydataCityDataLoader implements ThirdPartyDataLoader
     }
 
     /**
-     * This class is responsible for looking up for any updates in state data file.
+     * This class is responsible for looking up for any updates in city data file.
      */
-    private class StateDataLoadingTask extends TimerTask
+    private class CityDataLoadingTask extends TimerTask
     {
         private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
 
@@ -407,8 +413,8 @@ public class ThirdpartydataCityDataLoader implements ThirdPartyDataLoader
             }
             catch (Exception e)
             {
-                cacheLogger.error("Exception while loading state data inside StateDataLoadingTask in the class " +
-                        "ThirdpartydataStateDataLoader",e);
+                cacheLogger.error("Exception while loading state data inside CityDataLoadingTask in the class " +
+                                  "ThirdpartydataCityDataLoader",e);
             }
         }
     }

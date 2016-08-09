@@ -32,7 +32,7 @@ public class CountryUserInterfaceIdCache extends AbstractDBStatsReloadableQuerya
                                        DatabaseManager dbMgr,
                                        String cacheName) throws InitializationException
     {
-        super(secIndexKeyClassList, logger, props, dbMgr,true);
+        super(secIndexKeyClassList, logger, props, dbMgr);
         this.name = cacheName;
     }
 

@@ -64,46 +64,14 @@ public abstract class AbstractDBStatsReloadableQueryableCache<I, E extends IUpda
     }
 
     /**
-     * Constructor reads the queryEntities and saves a reference to the DB manager
-     * @param secIndexKeyClassList List of class for Secondary indices to be passed to super class
-     * @param log Initialized Logger
-     * @param props Properties with queryEntities information it
-     * @param dbMgr Initialized Database manager
-     * @param loadDataInsideConstructor => if required data can be loaded at construction time,
-     *                                  care should be taken not to initialize anything in the
-     *                                  classes using this constructor after call to super(),
-     *                                  as that would not be available here for processing.
+     * This constructor is used by caches where query(mysql database) parameters are required to be set.
+     * @param secIndexKeyClassList
+     * @param log
+     * @param props
+     * @param dbMgr
+     * @param queryParametersMapToSet
      * @throws InitializationException
      */
-    public AbstractDBStatsReloadableQueryableCache(List<Class> secIndexKeyClassList,
-                                                   Logger log,
-                                                   Properties props,
-                                                   DatabaseManager dbMgr,
-                                                   boolean loadDataInsideConstructor) throws InitializationException
-    {
-        super(secIndexKeyClassList, log, props);
-
-        this.logger = log;
-        // Assumption: all DB based updatable caches will have update_time column in their schema for the database table
-        query = props.getProperty("query");
-        if(StringUtils.isEmpty(query))
-            throw new InitializationException("Query for DB caches cannot be null/empty");
-
-        if(dbMgr == null)
-            throw new InitializationException("Database Manager cannot be null");
-        dbManager = dbMgr;
-
-        if(loadDataInsideConstructor)
-        {
-            //call refresh once so that data is available to cache upon initialization.
-            try {
-                refreshEntities();
-            } catch (RefreshException re) {
-                throw new InitializationException("RefreshException inside AbstractDBStatsReloadableQueryableCache ", re);
-            }
-        }
-    }
-
     public AbstractDBStatsReloadableQueryableCache(List<Class> secIndexKeyClassList,
                                                    Logger log,
                                                    Properties props,

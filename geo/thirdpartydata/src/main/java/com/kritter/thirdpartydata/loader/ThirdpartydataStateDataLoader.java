@@ -77,11 +77,6 @@ public class ThirdpartydataStateDataLoader implements ThirdPartyDataLoader
         this.countryUserInterfaceIdCache = countryUserInterfaceIdCache;
         this.batchSizeForSqlInsertion = batchSizeForSqlInsertion;
         this.LINES_TO_SKIP = LINES_TO_SKIP;
-
-        Collection<CountryUserInterfaceId> countryUserInterfaceIds = this.countryUserInterfaceIdCache.getAllEntities();
-
-        logger.debug("Size of country user interface id entities is: {} ",countryUserInterfaceIds.size());
-        logger.debug("Data from country user interface id cache is : {} ", countryUserInterfaceIds);
     }
 
     @Override
@@ -125,6 +120,13 @@ public class ThirdpartydataStateDataLoader implements ThirdPartyDataLoader
 
     private void readCSVFileForStateDataAndPrepareSqlAndCSVDatabase() throws Exception
     {
+        /*call refresh once so that we have latest data, as country data loaders would have finished by now*/
+        this.countryUserInterfaceIdCache.refresh();
+
+        Collection<CountryUserInterfaceId> countryUserInterfaceIds = this.countryUserInterfaceIdCache.getAllEntities();
+
+        logger.debug("Size of country user interface id entities is: {} ",countryUserInterfaceIds.size());
+        logger.debug("Data from country user interface id cache is : {} ", countryUserInterfaceIds);
 
         if(null == this.stateDatabaseFileFullPath)
             throw new RefreshException("ThirdpartydataStateDataFilePath provided is null, cannot proceed!");
