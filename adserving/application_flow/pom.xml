@@ -71,6 +71,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>com.kritter.adexchange</groupId>
+            <artifactId>enricher_req_cloudcross_4.4.4</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.adserving</groupId>
             <artifactId>ad_shortlisting</artifactId>
             <version>1.0.0</version>

@@ -3,12 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.kritter.geo</groupId>
-    <artifactId>common</artifactId>
+    <groupId>com.kritter.adexchange</groupId>
+    <artifactId>enricher_req_cloudcross_4.4.4</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>geo_common_module</name>
+    <name>adexchange_enricher_req_cloudcross_4.4.4</name>
     <dependencies>
+        <dependency>
+            <groupId>com.kritter.entity.native_props</groupId>
+            <artifactId>kritter_entity_native_props</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>easymock</groupId>
             <artifactId>easymock</artifactId>
@@ -16,52 +21,43 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.kritter.geo</groupId>
-            <artifactId>utils</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.kritter.abstraction</groupId>
-            <artifactId>cache-abstraction</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.13</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.13</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-	    <groupId>com.google.guava</groupId>
-	    <artifactId>guava-io</artifactId>
-	    <version>r03</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.kritter.utils</groupId>
-            <artifactId>dbutils</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.kritter.utils</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.ex_int</groupId>
+            <artifactId>ex_int_cloudcross_4_4_4</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.geo</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.adserving</groupId>
+            <artifactId>req_res_enricher</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>iab_categories</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
     <organization>
         <name>Kritter</name>
         <url>http://kritter.in</url>
     </organization>
-    
+
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
@@ -93,24 +89,9 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.5</version>
             </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>
-                            ${project.build.directory}/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-    
+
     <reporting>
         <outputDirectory>${project.artifactId}-reports</outputDirectory>
         <plugins>
@@ -127,6 +108,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changelog-plugin</artifactId>
                 <version>2.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
             </plugin>
         </plugins>
     </reporting>
