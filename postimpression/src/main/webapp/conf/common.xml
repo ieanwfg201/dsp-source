@@ -52,8 +52,6 @@
         <constructor-arg index="7" value="aimpid"/>
         <constructor-arg index="8">
             <map>
-                <entry key="010a4137-6a5c-6201-4de1-e4b49d000002"><ref bean="adx_exchange_utils"/></entry> 
-                <entry key="010a4137-6a5c-6201-534f-d8218b000032"><ref bean="rubicon_exchange_utils"/></entry> 
             </map>
         </constructor-arg>
         <constructor-arg index="9"><ref bean="site_cache"/></constructor-arg>
@@ -409,17 +407,6 @@
     <bean id="tracking_manager" class="com.kritter.tracking.common.ThirdPartyTrackingManager">
         <constructor-arg index="0" value="postimpression.application"/>
         <constructor-arg index="1" value="subid1"/>
-    </bean>
-
-    <bean id="adx_exchange_utils" class="com.google.doubleclick.AdXExchangeUtils">
-        <constructor-arg index="0" value="postimpression.application"/>
-        <constructor-arg index="1"><value><![CDATA[QvcBJ/9WwfRqGJgMrQ69xbC1d9hfh5v6bgbadRF6U5I=]]></value></constructor-arg>
-        <constructor-arg index="2"><value><![CDATA[Ohv4G5cbKiIcNREjMcfJPURgZ2glVWPgmlCprHCxSi4=]]></value></constructor-arg>
-    </bean>    
-
-    <bean id="rubicon_exchange_utils" class="com.kritter.postimpression.utils.RubiconExchangeUtils">
-        <constructor-arg index="0" value="X1ADSYYXHWTHR38Q"/>
-        <constructor-arg index="1" value="postimpression.application"/>
     </bean>
 
 </beans>
