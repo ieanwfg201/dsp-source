@@ -37,7 +37,7 @@ public class MadDataPopulator implements HandsetPopulationProvider {
 
     //constants for usage here
     public static final String PROCESSED_MAD_FILE_EXTENSION = ".done";
-    private static final String DATA_SOURCE_HANDSET = "51Degrees";
+    private static final String DATA_SOURCE_HANDSET = "mad";
     private static final String QUERY_NEW_MANUFACTURER_DATA_ROW =
             "insert into handset_manufacturer (manufacturer_name, modified_by, modified_on) values (?, ?, ?)";
     private static final String QUERY_NEW_MODEL_DATA_ROW =
