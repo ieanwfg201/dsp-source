@@ -2,7 +2,7 @@
 
         <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="20" maxIdle="5" maxWait="1000"
 
-                    name="jdbc/AdserverDatabase" password="optimad@2016" type="javax.sql.DataSource" url="jdbc:mysql://database.mad.com/optimad?useUnicode=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" username="optimad"/>
+                    name="jdbc/AdserverDatabase" password="optimad_2016" type="javax.sql.DataSource" url="jdbc:mysql://database.mad.com/optimad?useUnicode=true&amp;characterEncoding=UTF-8&amp;characterSetResults=UTF-8" username="optimad"/>
 
 
 
