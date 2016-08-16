@@ -210,6 +210,14 @@
         <constructor-arg index="4"><ref bean="adposition_cache"/></constructor-arg>
     </bean>
 
+    <bean id="frequency_cap_filter" class="com.kritter.adserving.shortlisting.targetingmatcher.FrequencyCapFilter">
+        <constructor-arg index="0" value="frequency_cap_filter"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="user_recent_history_cache"/></constructor-arg>
+        <constructor-arg index="4" value="ad-nofill-map"/>
+    </bean>
+
     <bean id="channel_targeting_filter" class="com.kritter.adserving.shortlisting.targetingmatcher.ChannelTargetingMatcher">
         <constructor-arg index="0" value="channel_targeting_filter"/>
         <constructor-arg index="1" value="adserving.application"/>
@@ -733,4 +741,14 @@
         <constructor-arg index="8" value="1000"/>
     </bean>
 
+    <bean id="user_in_memory_db" class="com.kritter.utils.nosql.common.impl.InMemoryCache">
+    </bean>
+
+    <bean id="user_aerospike_db" class="com.kritter.utils.nosql.aerospike.AerospikeNoSqlNamespaceOperations">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1" value="localhost"/>
+        <constructor-arg index="2" value="3000"/>
+        <constructor-arg index="3" value="3"/>
+        <constructor-arg index="4" value="20"/>
+    </bean>
 </beans>

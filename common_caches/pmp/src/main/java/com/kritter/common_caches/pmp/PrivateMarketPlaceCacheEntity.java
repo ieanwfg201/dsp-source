@@ -17,7 +17,7 @@ public class PrivateMarketPlaceCacheEntity extends PrivateMarketPlaceDeal implem
 
     public PrivateMarketPlaceCacheEntity(String dealId,
                                          String dealName,
-                                         String adGuid,
+                                         Integer[] adIdList,
                                          Integer[] siteIdList,
                                          String[] blockedIABCategories,
                                          String[] thirdPartyConnectionList,
@@ -31,7 +31,7 @@ public class PrivateMarketPlaceCacheEntity extends PrivateMarketPlaceDeal implem
                                          Double dealCPM,
                                          Timestamp updateTime)
     {
-        super(dealId,dealName,adGuid,siteIdList,blockedIABCategories,thirdPartyConnectionList,
+        super(dealId,dealName,adIdList,siteIdList,blockedIABCategories,thirdPartyConnectionList,
               dspIdList,advertiserIdList,whitelistedAdvertiserDomainsMap,auctionType,requestCap,
               startDate,endDate, dealCPM);
 

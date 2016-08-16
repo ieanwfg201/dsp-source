@@ -44,7 +44,7 @@ public class PrivateMarketPlaceDealCache extends AbstractDBStatsReloadableQuerya
         {
             dealId = resultSet.getString("deal_id");
             String dealName = resultSet.getString("deal_name");
-            String adGuid = resultSet.getString("ad_guid");
+            Integer[] adIdList = ResultSetHelper.getResultSetIntegerArray(resultSet,"ad_id_list");
             Integer[] siteIdList = ResultSetHelper.getResultSetIntegerArray(resultSet,"site_id_list");
             String[] blockedAdvertiserCategories = ResultSetHelper.getResultSetStringArray(resultSet,"bcat");
             String[] thirdPartyConnectionIdList = ResultSetHelper.getResultSetStringArray
@@ -74,7 +74,7 @@ public class PrivateMarketPlaceDealCache extends AbstractDBStatsReloadableQuerya
             Double dealCpm = resultSet.getDouble("deal_cpm");
             Timestamp lastModified = resultSet.getTimestamp("last_modified");
 
-            return new PrivateMarketPlaceCacheEntity(dealId, dealName, adGuid, siteIdList,blockedAdvertiserCategories,
+            return new PrivateMarketPlaceCacheEntity(dealId, dealName, adIdList, siteIdList,blockedAdvertiserCategories,
                                                      thirdPartyConnectionIdList,dspIdList,advertiserIdList,
                                                      whiteListedDomains, auctionType,requestCap,
                                                      startDate, endDate, dealCpm,lastModified);

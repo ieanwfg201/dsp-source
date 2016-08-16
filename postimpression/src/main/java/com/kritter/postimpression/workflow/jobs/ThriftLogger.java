@@ -12,6 +12,7 @@ import com.kritter.postimpression.thrift.struct.PostImpressionTerminationReason;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.constants.BEventType;
 import com.kritter.constants.ConnectionType;
+import com.kritter.constants.DefaultCurrency;
 import com.kritter.utils.common.url.URLField;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
@@ -40,7 +41,7 @@ public class ThriftLogger implements Job
     private String userAgentHeaderName;
     private String xForwardedForHeaderName;
     private String remoteAddressHeaderName;
-    private static final String AUCTION_CURRENCY = "USD";
+    private static final String AUCTION_CURRENCY = DefaultCurrency.defaultCurrency.getName();
     private static final String CONVERSION_INFO_KEY = "conv";
     private static final String REFERER_HEADER_NAME = "Referer";
 

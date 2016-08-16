@@ -6,8 +6,8 @@ import java.util.Map;
 public enum ContentDeliveryMethods {
     
     Unknown(0,"Unknown"),
-    Streaming(1,"Streaming"),
-    Progressive(2,"Progressive");
+    streaming(1,"streaming"),
+    progressive(2,"progressive");
     
     private int code;
     private String name;

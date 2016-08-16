@@ -171,8 +171,10 @@ public class VASTFormatter implements CreativesFormatter{
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0.getCode()){
                 	if(responseAdInfo.getVideoInfo() != null){
                 	StringBuffer creativeUrl = new StringBuffer(cdnBaseImageUrl);
+                	if(cdnBaseImageUrl != null && !cdnBaseImageUrl.endsWith("/")){
+                		creativeUrl.append("/");
+                	}
                     creativeUrl.append(responseAdInfo.getVideoInfo().getResource_uri());
-	
                 	return CreateVastNormalTwoDotZero.createVastNormalString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
                     		responseAdInfo.getImpressionId(),trackingUrl.toString(), request.getSite().getPublisherId(), videoProps.getLinearity(), 
                     		videoProps.getCompaniontype(), videoProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
@@ -183,6 +185,9 @@ public class VASTFormatter implements CreativesFormatter{
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0.getCode()){
                 	if(responseAdInfo.getVideoInfo() != null){
                 	StringBuffer creativeUrl = new StringBuffer(cdnBaseImageUrl);
+                	if(cdnBaseImageUrl != null && !cdnBaseImageUrl.endsWith("/")){
+                		creativeUrl.append("/");
+                	}
                     creativeUrl.append(responseAdInfo.getVideoInfo().getResource_uri());
 	
                 	return CreateVastNormalThreeDotZero.createVastNormalString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 

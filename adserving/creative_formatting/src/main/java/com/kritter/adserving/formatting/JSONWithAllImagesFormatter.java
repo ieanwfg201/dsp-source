@@ -3,6 +3,7 @@ package com.kritter.adserving.formatting;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.constants.ExternalUserIdType;
 import com.kritter.serving.demand.entity.CreativeBanner;
+import com.kritter.serving.demand.entity.CreativeSlot;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -21,9 +22,7 @@ import com.kritter.serving.demand.entity.Creative;
 import com.kritter.utils.common.ServerConfig;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class formats creatives in json format, this formatter allows to send out all images
@@ -159,10 +158,15 @@ public class JSONWithAllImagesFormatter extends JSONFormatter implements Creativ
                     extImpTracker = adEntity.getExtTracker().getImpTracker();
                 }
 
-                Set<String> allImages = new HashSet<String>();
+                Map<String,String> allImages = new HashMap<String, String>();
                 for(CreativeBanner creativeBanner :  responseAdInfo.getCreativeBannerSetForNetworkTraffic())
                 {
-                    allImages.add(creativeBanner.getResourceURI());
+                    CreativeSlot creativeSlot = creativeSlotCache.query(creativeBanner.getSlotId());
+                    String sizeFormatted = formatSize(creativeSlot.getCreativeSlotWidth(),creativeSlot.getCreativeSlotHeight());
+                    if(null == sizeFormatted)
+                        sizeFormatted = "";
+
+                    allImages.put(creativeBanner.getResourceURI(),sizeFormatted);
                 }
 
                 formatBanner(formatCreative,allImages,creative, clickUrl.toString(),cscBeaconUrl.toString(), extImpTracker);
@@ -180,15 +184,27 @@ public class JSONWithAllImagesFormatter extends JSONFormatter implements Creativ
         formatCreative.addTextEntity(creative.getText(), clickUrl.toString(), cscBeaconUrl.toString());
     }
 
-    private void formatBanner(FormatCreative formatCreative, Set<String> images, Creative creative,
+    private void formatBanner(FormatCreative formatCreative, Map<String,String> images, Creative creative,
                               String clickUrl, String cscBeaconUrl, List<String> extImpTracker) throws JSONException
     {
-        Set<String> fullPathImageSet = new HashSet<String>();
-        for(String image : images)
+        Map<String,String> fullPathImageSet = new HashMap<String,String>();
+        for(String image : images.keySet())
         {
-            fullPathImageSet.add(this.cdnBaseImageUrl + image);
+            fullPathImageSet.put(this.cdnBaseImageUrl + image,images.get(image));
         }
 
         formatCreative.addBannerEntity(fullPathImageSet,creative.getText(), clickUrl, cscBeaconUrl, extImpTracker);
+    }
+
+    public String formatSize(Short width,Short height)
+    {
+        if(null == width || null == height)
+            return null;
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(width);
+        sb.append("*");
+        sb.append(height);
+        return sb.toString();
     }
 }

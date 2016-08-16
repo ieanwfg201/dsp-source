@@ -72,11 +72,14 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>utils/ucloud_upload</module>
     <module>utils/amazon_glacier_upload</module>
     <module>utils/nosql/common</module>
+    <module>utils/nosql/aerospike</module>
+    <module>utils/nosql/user</module>
     <module>utils/cookie_sync/common</module>
     <module>utils/doubleclick/doubleclick-core</module>
     <module>utils/http_client</module>
     <module>utils/mma_loader</module>
     <module>utils/channel_loader</module>
+    <module>utils/user</module>
     <module>core/metrics</module>
     <module>core/cache-abstraction</module>
     <module>core/expression-tree</module>
@@ -156,6 +159,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>adserving/creative_formatting</module>
     <module>adserving/ad_shortlisting</module>
     <module>adserving/ad_rank_select</module>
+    <module>adserving/user</module>
     <module>adserving/application_flow</module>
     <module>tracking/common</module>
     <module>postimpression</module>

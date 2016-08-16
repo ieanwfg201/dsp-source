@@ -3,6 +3,8 @@ package com.kritter.exchange.response_openrtb2_2.converter.common;
 
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity;
 import com.kritter.constants.ConvertErrorEnum;
+import com.kritter.constants.DefaultCurrency;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +67,7 @@ public class ConvertBidResponse {
         "\"seat\": \"718\","+
         "\"group\": 0"+
     "}],"+
-    "\"cur\": \"USD\""+
+    "\"cur\": \""+DefaultCurrency.defaultCurrency.getName()+"\""+
 "}";
          System.out.println(str);
          ObjectMapper objectMapper = new ObjectMapper();

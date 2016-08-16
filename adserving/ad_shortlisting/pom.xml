@@ -22,6 +22,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.kritter.utils.nosql</groupId>
+            <artifactId>user</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.common</groupId>
             <artifactId>demand</artifactId>
             <version>1.0.0</version>

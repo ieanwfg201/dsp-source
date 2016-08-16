@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
@@ -75,7 +76,7 @@ public class FormatCreative {
         this.creativeArray.add(cfe);
     }
     /*Function to include multiple banner images.*/
-    public void addBannerEntity(Set<String> images,String alt, String curl, String csc, List<String> extImpTracker){
+    public void addBannerEntity(Map<String,String> images, String alt, String curl, String csc, List<String> extImpTracker){
         CreativeFormatEntity cfe = new CreativeFormatEntity();
         cfe.setType(CreativeFormat.BANNER.getLabel());
         cfe.setImages(images);

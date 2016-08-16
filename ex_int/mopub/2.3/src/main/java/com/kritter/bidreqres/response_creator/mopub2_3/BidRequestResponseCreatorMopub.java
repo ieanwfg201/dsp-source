@@ -17,6 +17,7 @@ import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
 import com.kritter.common.caches.iab.categories.IABCategoriesCache;
 import com.kritter.common.caches.iab.index.IABIDIndex;
 import com.kritter.constants.CreativeFormat;
+import com.kritter.constants.DefaultCurrency;
 import com.kritter.entity.creative_macro.CreativeMacro;
 import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
@@ -57,7 +58,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
     private String trackingEventUrl;
 
     //template for formatting.
-    private static final String CURRENCY = "USD";
+    private static final String CURRENCY = DefaultCurrency.defaultCurrency.getName();
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Random randomPicker = new Random();
 

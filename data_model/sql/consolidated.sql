@@ -589,47 +589,6 @@ entity_id_set TEXT NOT NULL, -- [1,2] where 1,2 refers to id column in country t
 modified_on TIMESTAMP NOT NULL
 )ENGINE=INNODB;
 
-CREATE TABLE IF NOT EXISTS state
-(
-id INTEGER PRIMARY KEY NOT NULL,
-country_id INTEGER NOT NULL,
-state_name VARCHAR(200) NOT NULL,
-modified_on TIMESTAMP NOT NULL,
-CONSTRAINT unique_state UNIQUE(country_id,state_name),
-CONSTRAINT fk_country_st FOREIGN KEY (country_id) REFERENCES country(id)
-)ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS city
-(
-id INTEGER PRIMARY KEY NOT NULL,
-state_id INTEGER NOT NULL,
-city_name VARCHAR(200) NOT NULL,
-modified_on TIMESTAMP NOT NULL,
-CONSTRAINT fk_state_city FOREIGN KEY (state_id) REFERENCES state(id),
-CONSTRAINT unique_city UNIQUE(state_id,city_name)
-)ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS latlong
-(
-id INTEGER PRIMARY KEY NOT NULL,
-city_id INTEGER NOT NULL,
-latitude DOUBLE PRECISION NOT NULL,
-longitude DOUBLE PRECISION NOT NULL,
-modified_on TIMESTAMP NOT NULL,
-CONSTRAINT fk_city_latlong FOREIGN KEY (city_id) REFERENCES city(id),
-CONSTRAINT unique_latlong UNIQUE(city_id,latitude,longitude)
-)ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS zipcode
-(
-id INTEGER PRIMARY KEY NOT NULL,
-city_id INTEGER NOT NULL,
-zipcode VARCHAR(50) NOT NULL,
-modified_on TIMESTAMP NOT NULL,
-CONSTRAINT fk_city_zipcode FOREIGN KEY (city_id) REFERENCES city(id),
-CONSTRAINT unique_zipcode UNIQUE(city_id,zipcode)
-)ENGINE=INNODB;
-
 CREATE TABLE IF NOT EXISTS isp
 (
 id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -838,11 +797,6 @@ ext_supply_domain VARCHAR(2500),
 last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 UNIQUE KEY ext_supply_pub_unique (site_inc_id,ext_supply_id) 
 )ENGINE=INNODB CHARSET=latin1; 
-
-drop table latlong;
-drop table zipcode;
-drop table city;
-drop table state;
 
 CREATE TABLE IF NOT EXISTS state
 (
@@ -1432,8 +1386,9 @@ create table pmp_deals
 (
     deal_id VARCHAR(200) UNIQUE NOT NULL PRIMARY KEY, -- nomenclature: SSP-MMYY-Numeric_Value,e.g: nativead-0716-9871344567
     deal_name VARCHAR(200) UNIQUE NOT NULL,           -- nomenclature: ATD/Buyer-dsp-publisher-placement-MMDDYY,e.g: VIVAKI-MEDIAMATH-nativehome-sports_home-071116
-    ad_guid VARCHAR(100) NOT NULL,                    -- ad.guid column,so that deal is aware where its applied via targeting,otherwise will be part of all requests.
-    site_id_list TEXT NOT NULL,                       -- This has list of site ids for which deal is applicable,e.g: ["1","2"] or can be null
+    ad_id_list TEXT NOT NULL,                         -- ad.id column values,so that deal is aware where its applied via targeting,otherwise 
+                                                      -- will be part of all requests.e.g: [1,2,3].
+    site_id_list TEXT NOT NULL,                       -- This has list of site ids for which deal is applicable,e.g: [1,2] or can be null
     bcat TEXT,                                        -- iab categories code array for list of iab categories to block.
     third_party_conn_list TEXT NOT NULL,              -- string array, with each value as an advertiser guid.
     dsp_id_list TEXT,                                 -- integer array, with each value as id from third_party_conn_dsp_mapping table.
