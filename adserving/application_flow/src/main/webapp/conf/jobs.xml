@@ -205,6 +205,7 @@
         <constructor-arg index="8">
             <map>
                 <entry key="mopub-pub-guid" value-ref="mopub_response_creator_2_3"/>
+                <entry key="cloud-cross-guid" value-ref="cloud_cross_response_creator_4_4_4"/>
             </map>
         </constructor-arg>
         <constructor-arg index="9" value="KRITTER_INVENTORY_SRC"/>
