@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidResponseEntity;
 import com.kritter.constants.ConvertErrorEnum;
+import com.kritter.constants.DefaultCurrency;
 
 public class ConvertBidResponse {
      public static ConvertEntity convert(String str, ObjectMapper objectMapper,Logger logger){
@@ -66,7 +67,7 @@ public class ConvertBidResponse {
         "\"seat\": \"718\","+
         "\"group\": 0"+
     "}],"+
-    "\"cur\": \"USD\""+
+    "\"cur\": \""+DefaultCurrency.defaultCurrency.getName()+"\""+
 "}";
          System.out.println(str);
          ObjectMapper objectMapper = new ObjectMapper();

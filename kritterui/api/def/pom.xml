@@ -90,6 +90,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <version>1.0.0</version>
     </dependency>
     <dependency>
+        <groupId>com.kritter.kritterui.api.deal</groupId>
+        <artifactId>kritter_kritterui_api_deal</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.kritterui.api.isp_mapping</groupId>
         <artifactId>kritter_kritterui_api_isp_mapping</artifactId>
         <version>1.0.0</version>

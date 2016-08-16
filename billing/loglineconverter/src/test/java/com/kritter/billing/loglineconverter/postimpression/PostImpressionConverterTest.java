@@ -7,6 +7,7 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.kritter.constants.DefaultCurrency;
 import com.kritter.postimpression.thrift.struct.PostImpressionRequestResponse;
 
 public class PostImpressionConverterTest {
@@ -19,7 +20,7 @@ public class PostImpressionConverterTest {
         PostImpressionRequestResponse pirr = new PostImpressionRequestResponse();
         pirr.setAdId(0);
         pirr.setAdvertiser_bid(0.1);
-        pirr.setAuction_currency("USD");
+        pirr.setAuction_currency(DefaultCurrency.defaultCurrency.getName());
         TSerializer ts = new TSerializer(new TBinaryProtocol.Factory());
         Base64 encoder = new Base64(0);
         String s = new String(encoder.encode(ts.serialize(pirr)));

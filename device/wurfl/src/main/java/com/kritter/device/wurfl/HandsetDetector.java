@@ -212,12 +212,13 @@ public class HandsetDetector extends AbstractDBStatsReloadableQueryableCache<Han
     //manufacturer,os, browser names come into picture, then key on incoming request data
     //could be formed as function(manufacturer_name,model_name,os_name,os_version) to uniquely
     //identify the internal handset id.
+    //Update: not required.
     @Override
     public ISecondaryIndexWrapper getSecondaryIndexKey(Class className, HandsetMasterData entity)
     {
         if(className.equals(HandsetMakeModelSecondaryIndex.class))
             return HandsetSecondaryIndexBuilder.getMakeModelSecondaryIndex(entity.getManufacturerId(),
-                                                                           entity.getModelId());
+                    entity.getModelId());
 
         return null;
     }

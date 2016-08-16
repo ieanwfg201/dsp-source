@@ -347,6 +347,7 @@ public class CreativeTargetingMatcher
                     		vNFR.getValue(), this.adNoFillReasonMapKey, context);
 
                     logger.debug("Video MisMatch : {} ", site.getSiteGuid());
+                    logger.debug("Video MisMatch Reason : {} ", vNFR);
                     continue;
                 }
                 VideoInfo videoInfo=null;

@@ -12,6 +12,13 @@
         <constructor-arg index="5" value="KRITTER_INVENTORY_SRC"/>
     </bean>
 
+    <bean id="user_id_fetch_job" class="com.kritter.adserving.user.job.UserIdFetchJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="user_id_fetch_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3"><ref bean="user_id_cache"/> </constructor-arg>
+    </bean>
+
      <bean id="ad_targeting_matcher_job" class="com.kritter.adserving.shortlisting.job.AdTargetingMatcher">
         <constructor-arg index="0" value="ad_targeting_job"/>
         <constructor-arg index="1" value="adserving.application"/>
@@ -46,6 +53,7 @@
                 <ref bean="mma_targeting_filter"/>
                 <ref bean="adposition_targeting_filter"/>
                 <ref bean="channel_targeting_filter"/>
+                <ref bean="frequency_cap_filter"/>
             </list>
         </constructor-arg>
     </bean>
@@ -265,5 +273,11 @@
         <constructor-arg index="15" value="exchange_rule_var"/>
     </bean>
 
-    
+    <bean id="user_id_update_job" class="com.kritter.adserving.user.job.UserIdUpdateJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="user_id_update_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3"><ref bean="user_id_cache"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="user_id_cache"/></constructor-arg>
+    </bean>
 </beans>

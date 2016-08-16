@@ -11,7 +11,7 @@ public class Ad {
     private String id="3.0";
     @Setter@XmlAttribute(name="sequence")
     private String sequence="1";
-    @Setter@XmlElement(name="Inline")
+    @Setter@XmlElement(name="InLine")
     private Inline inline;
 
 }

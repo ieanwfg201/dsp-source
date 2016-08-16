@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.Setter;
 
-@XmlRootElement(name="Inline")
+@XmlRootElement(name="InLine")
 public class Inline {
     @Setter@XmlElement(name="AdSystem")
     private AdSystem adSystem;

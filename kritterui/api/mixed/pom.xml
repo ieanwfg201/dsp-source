@@ -55,6 +55,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <version>1.0.0</version>
     </dependency>
     <dependency>
+        <groupId>com.kritter.kritterui.api.deal</groupId>
+        <artifactId>kritter_kritterui_api_deal</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.kritterui.api.account_budget</groupId>
         <artifactId>kritter_kritterui_api_account_budget</artifactId>
         <version>1.0.0</version>

@@ -23,8 +23,8 @@ public class PrivateMarketPlaceDeal
     private String dealName;
 
     @Getter
-    /*guid from ad table, if deal wants to run on specific targeting.cannot be null*/
-    private String adGuid;
+    /*id list from ad table, if deal wants to run on specific targeting.cannot be null.*/
+    private Integer[] adIdList;
 
     @Getter
     /*This has list of site ids for which deal is applicable,e.g: ["1","2"] or can be null*/
@@ -74,7 +74,7 @@ public class PrivateMarketPlaceDeal
 
     public PrivateMarketPlaceDeal(String dealId,
                                   String dealName,
-                                  String adGuid,
+                                  Integer[] adIdList,
                                   Integer[] siteIdList,
                                   String[] blockedIABCategories,
                                   String[] thirdPartyConnectionList,
@@ -89,7 +89,7 @@ public class PrivateMarketPlaceDeal
     {
         this.dealId = dealId;
         this.dealName = dealName;
-        this.adGuid = adGuid;
+        this.adIdList = adIdList;
         this.siteIdList = siteIdList;
         this.blockedIABCategories = blockedIABCategories;
         this.thirdPartyConnectionList = thirdPartyConnectionList;

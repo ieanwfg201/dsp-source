@@ -2,6 +2,7 @@ package com.kritter.entity.formatter_entity.creative;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
@@ -23,7 +24,7 @@ public class CreativeFormatEntity {
     @Getter@Setter
     private String img; /** For Banner */
     @Getter@Setter
-    private Set<String> images; /** For Banner if formatter requires all images in response*/
+    private Map<String,String> images; /** For Banner if formatter requires all images in response*/
     @Getter@Setter
     private String type; /** For Banner|Text */
     @Getter@Setter

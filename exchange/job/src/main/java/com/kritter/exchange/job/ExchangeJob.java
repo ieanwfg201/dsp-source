@@ -36,10 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -273,7 +270,7 @@ public class ExchangeJob implements Job
                     bidRequestParentNodeDtoTwoDotThree = convertRequest2_3.convert(request, this.requestConvertversion, pubEntity, this.iabCategoriesCache,advEntity);
 
                     /*Add deal object to parent bid request if applicable.*/
-                    addPMPEntityToParentBidRequestVersion2_3(bidRequestParentNodeDtoTwoDotThree,dealsForSite,advEntity,responseAdInfo.getGuid());
+                    addPMPEntityToParentBidRequestVersion2_3(bidRequestParentNodeDtoTwoDotThree,dealsForSite,advEntity,responseAdInfo.getAdId());
 
                     if (bidRequestParentNodeDtoTwoDotThree == null) {
                         logger.info("ExchangeJob: Request to bidRequestParentNodeDto conversion failed");
@@ -320,7 +317,7 @@ public class ExchangeJob implements Job
                                                                                 );
 
                     /*Add deal object to parent bid request if applicable.*/
-                    addPMPEntityToParentBidRequestVersion2_2(bidRequestParentNodeDtoTwoDotTwo,dealsForSite,advEntity,responseAdInfo.getGuid());
+                    addPMPEntityToParentBidRequestVersion2_2(bidRequestParentNodeDtoTwoDotTwo,dealsForSite,advEntity,responseAdInfo.getAdId());
 
                     if (bidRequestParentNodeDtoTwoDotTwo == null) {
                         logger.info("ExchangeJob: Request to bidRequestParentNodeDto conversion failed");
@@ -671,7 +668,7 @@ public class ExchangeJob implements Job
                                                             com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO bidRequestParentNodeDTO,
                                                             Set<PrivateMarketPlaceCacheEntity> deals,
                                                             AccountEntity accountEntity,
-                                                            String adGuid
+                                                            Integer adId
                                                          )
     {
         if(null == deals || deals.size() <= 0)
@@ -687,10 +684,15 @@ public class ExchangeJob implements Job
 
         for(PrivateMarketPlaceCacheEntity deal : deals)
         {
-            if(!adGuid.equalsIgnoreCase(deal.getAdGuid()))
+            Integer[] dealAdIdList = deal.getAdIdList();
+            List<Integer> dealAdIdSet = new ArrayList<Integer>();
+            if(null != dealAdIdList)
+                dealAdIdSet = Arrays.asList(dealAdIdList);
+
+            if(!dealAdIdSet.contains(adId))
             {
-                logger.debug("The deal id:{} applicable for this site has ad guid: {} , which is not applicable to " +
-                        "requesting ad : {}", deal.getId(),deal.getAdGuid(),adGuid);
+                logger.debug("The deal id:{} applicable for this site has ad id list: {} , which is not applicable to " +
+                        "requesting ad : {}", deal.getId(),dealAdIdSet,adId);
                 continue;
             }
 
@@ -704,7 +706,7 @@ public class ExchangeJob implements Job
             if(null != deal.getDealCPM())
                 bidRequestDealDTO.setBidFloor(deal.getDealCPM().floatValue());
 
-            bidRequestDealDTO.setBidFloorCurrency(SupportedCurrencies.USD.getName());
+            bidRequestDealDTO.setBidFloorCurrency(DefaultCurrency.defaultCurrency.getName());
 
             String[] whiteListedBuyerSeats = fetchWhitelistedBuyerIds(deal,accountEntity);
             if(null == whiteListedBuyerSeats)
@@ -754,7 +756,7 @@ public class ExchangeJob implements Job
                                                           BidRequestParentNodeDTO bidRequestParentNodeDTO,
                                                           Set<PrivateMarketPlaceCacheEntity> deals,
                                                           AccountEntity accountEntity,
-                                                          String adGuid
+                                                          Integer adId
                                                          )
     {
         if(null == deals || deals.size() <= 0)
@@ -769,10 +771,15 @@ public class ExchangeJob implements Job
 
         for(PrivateMarketPlaceCacheEntity deal : deals)
         {
-            if(!adGuid.equalsIgnoreCase(deal.getAdGuid()))
+            Integer[] dealAdIdList = deal.getAdIdList();
+            List<Integer> dealAdIdSet = new ArrayList<Integer>();
+            if(null != dealAdIdList)
+                dealAdIdSet = Arrays.asList(dealAdIdList);
+
+            if(!dealAdIdSet.contains(adId))
             {
-                logger.debug("The deal id:{} applicable for this site has ad guid: {} , which is not applicable to " +
-                             "requesting ad : {}", deal.getId(),deal.getAdGuid(),adGuid);
+                logger.debug("The deal id:{} applicable for this site has ad id list: {} , which is not applicable to " +
+                             "requesting ad : {}", deal.getId(),dealAdIdSet,adId);
                 continue;
             }
 
@@ -793,7 +800,7 @@ public class ExchangeJob implements Job
             if(null != deal.getDealCPM())
                 bidRequestDealDTO.setBidFloor(deal.getDealCPM().floatValue());
 
-            bidRequestDealDTO.setBidFloorCurrency(SupportedCurrencies.USD.getName());
+            bidRequestDealDTO.setBidFloorCurrency(DefaultCurrency.defaultCurrency.getName());
 
             String[] whiteListedBuyerSeats = fetchWhitelistedBuyerIds(deal,accountEntity);
             if(null == whiteListedBuyerSeats)

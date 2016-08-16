@@ -4,7 +4,9 @@ package com.kritter.kritterui.api.def;
 import java.sql.Connection;
 import java.util.List;
 
+import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
 import com.kritter.api.entity.parent_account.ParentAccount;
+import com.kritter.kritterui.api.deal.PrivateMarketPlaceDealCrud;
 import com.kritter.kritterui.api.parent_account.ParentAccountCrud;
 import org.codehaus.jackson.JsonNode;
 import com.kritter.api.entity.account.Account;
@@ -1026,4 +1028,8 @@ public class ApiDef {
         return MixedCrud.get_video_info_from_container(con, cc);
     }
 
+    public static Message insert_pmp_deal(Connection con, PrivateMarketPlaceApiEntity pmp)
+    {
+        return PrivateMarketPlaceDealCrud.insertPrivateMarketPlaceDeal(pmp,con,true);
+    }
 }

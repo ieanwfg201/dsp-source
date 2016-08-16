@@ -1,0 +1,39 @@
+@(pmpForm: Form[models.entities.DealEntity])
+@main("PMP Form"){
+<form id="pmpForm" action="/pmp/save" method="POST" ng-controller="pmpController">
+	<div class="page">
+		<section class="panel panel-default">
+			<div class="panel-heading">
+				<strong><span class="glyphicon glyphicon-th"></span>PMP Form</strong>
+			</div>
+			<div class="panel-body">
+				<div id="pmpWizard" class="vertical">
+				<fieldset>
+					<legend>PMP Fields</legend>
+					<div>
+						@components.formElements.textinput(pmpForm("dealId"),'_label -> "Deal Id *" )
+						@components.formElements.textinput(pmpForm("dealName"),'_label -> "Deal Name *" )
+                                                @components.formElements.textinput(pmpForm("thirdPartyConnectionList"),'_label -> "Third Party Connection *")
+						@components.formElements.textinput(pmpForm("adIdList"),'_label -> "Ad Id List *")
+                                                @components.formElements.multiselectlist3(pmpForm("pubIdList"), '_label ->"Publishers", '_row->true)
+                                                @components.formElements.multiselectlist3(pmpForm("siteIdList"), '_label ->"Sites *", '_row->true)
+						@components.formElements.textinput(pmpForm("blockedIABCategories"),'_label -> "Blocked IAB Categories " )
+						@components.formElements.textinput(pmpForm("dspIdList"),'_label -> "Dsp Id List " )
+                                                @components.formElements.textinput(pmpForm("advertiserIdList"),'_label -> "Advertiser Id List " )
+                                                @components.formElements.textinput(pmpForm("whitelistedAdvertiserDomainsMap"),'_label -> "Whitelisted Advertiser Domains" )
+                                                @components.formElements.textinput(pmpForm("auctionType"),'_label -> "Auction Type *" )
+                                                @components.formElements.textinput(pmpForm("requestCap"),'_label -> "RequestCap" )
+						@components.formElements.dateinput(pmpForm("startDate"),"Start Date *" )
+						@components.formElements.dateinput(pmpForm("endDate"),"End Date *" )
+                                                @components.formElements.textinput(pmpForm("dealCPM"),'_label -> "Deal CPM *" )
+					</div>
+				</fieldset>
+				</div>
+				@components.formElements.submitbutton("save", "Save")
+			</div>
+		</section>
+	</div>
+</form>
+<script src="@routes.Assets.at("javascripts/apps/pmpController.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
+}

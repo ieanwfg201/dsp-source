@@ -11,6 +11,7 @@
         <constructor-arg>
             <list>
                 <ref bean="init_job"/>
+                <ref bean="user_id_fetch_job"/>
                 <ref bean="ad_targeting_matcher_job"/>
                 <ref bean="supply_demand_matcher_job"/>
                 <ref bean="ctr_calculator_using_logistic_cache"/>
@@ -115,6 +116,7 @@
         <constructor-arg>
             <list>
                 <ref bean="thrift_logger"/>
+                <ref bean="user_id_update_job"/>
             </list>
         </constructor-arg>
     </bean>

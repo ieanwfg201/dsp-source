@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum SupportedCurrencies {
-    USD(840,"USD");
+	/*ISO 4217 code -> https://en.wikipedia.org/wiki/ISO_4217 */
+    USD(840,"USD"),
+    CNY(156,"CNY");
     private int code;
     private String name;
     private static Map<Integer, SupportedCurrencies> map = new HashMap<Integer, SupportedCurrencies>();

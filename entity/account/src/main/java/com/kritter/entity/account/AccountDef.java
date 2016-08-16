@@ -23,7 +23,7 @@ public class AccountDef
     @Getter@Setter
     public int timeout = 100;
     @Getter@Setter
-    public int currency = SupportedCurrencies.USD.getCode();
+    public int currency = DefaultCurrency.defaultCurrency.getCode();
     @Getter@Setter
     public boolean test = false;
     @Getter@Setter
