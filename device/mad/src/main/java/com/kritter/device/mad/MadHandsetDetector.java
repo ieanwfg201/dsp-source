@@ -4,7 +4,6 @@ import com.kritter.device.common.HandsetDetectionProvider;
 import com.kritter.device.common.detector.HandsetManufacturerCache;
 import com.kritter.device.common.detector.HandsetModelCache;
 import com.kritter.device.common.detector.HandsetOperatingSystemCache;
-import com.kritter.device.common.util.DeviceUtils;
 import com.kritter.device.mad.MadFileCache.HandsetInfo;
 import com.kritter.device.common.entity.*;
 import lombok.Getter;
@@ -115,7 +114,7 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
                 null, handsetCapabilities);
 
         handsetMasterData.setBot(handsetInfo.isBot());
-        handsetMasterData.setDeviceType(DeviceUtils.getDeviceTypeFrom51DegreesDeviceType(handsetInfo.getDeviceType()));
+        handsetMasterData.setDeviceType(null);
         handsetMasterData.setDeviceJavascriptCompatible(handsetInfo.isAjaxSupportJava());
         return handsetMasterData;
     }
