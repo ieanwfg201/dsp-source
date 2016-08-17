@@ -183,7 +183,7 @@ public class AdCrud {
                             if(isFirst){
                                 isFirst=false;
                             }else{
-                                sBuff.append(",");
+                                sBuff.append("\n");
                             }
                             sBuff.append(str);
                         }
@@ -196,7 +196,7 @@ public class AdCrud {
                             if(isFirst){
                                 isFirst=false;
                             }else{
-                                sBuff.append(",");
+                                sBuff.append("\n");
                             }
                             sBuff.append(str);
                         }
@@ -214,7 +214,7 @@ public class AdCrud {
         ExtTracker extTracker = new ExtTracker();
         if(ad.getExternal_imp_tracker() != null){
             String external_tracker = ad.getExternal_imp_tracker().trim();
-            String split[] = external_tracker.split(",");
+            String split[] = external_tracker.split("\n");
             boolean isFirst = true;
             List<String> extTrackerUriList = null;
             for(String str:split){
@@ -231,7 +231,7 @@ public class AdCrud {
         }
         if(ad.getExternal_click_tracker() != null){
             String external_tracker = ad.getExternal_click_tracker().trim();
-            String split[] = external_tracker.split(",");
+            String split[] = external_tracker.split("\n");
             boolean isFirst = true;
             List<String> extTrackerUriList = null;
             for(String str:split){

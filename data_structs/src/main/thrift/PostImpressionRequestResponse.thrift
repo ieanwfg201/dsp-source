@@ -160,4 +160,9 @@ struct PostImpressionRequestResponse {
 63: optional string dpidsha1,          /*Platform device ID (e.g., Android ID); hashed via SHA1.*/
 64: optional string macsha1,           /*MAC address of the device; hashed via SHA1.*/
 65: optional string macmd5,            /*MAC address of the device; hashed via MD5.*/
+66: optional i32 stateId,       /*state id(ui_targeting_state) of the end user.*/
+67: optional i32 cityId,        /*city id(ui_targeting_city) of the end user.*/
+68: optional i32 adpositionId,  /*ad position ui id*/
+69: optional i32 channelId,     /*channel internal id*/
+
 }

@@ -36,5 +36,9 @@ public class CreateBillingObject {
         if(pirr.isSetAdv_inc_id()) {billing.setAdv_inc_id(pirr.getAdv_inc_id());};
         if(pirr.isSetPub_inc_id()) {billing.setPub_inc_id(pirr.getPub_inc_id());};
         if(pirr.isSetDeviceType()) {billing.setDeviceType(pirr.getDeviceType());};
+        if(pirr.isSetStateId()) {billing.setStateId(pirr.getStateId());};
+        if(pirr.isSetCityId()) {billing.setCityId(pirr.getCityId());};
+        if(pirr.isSetChannelId()) {billing.setChannelId(pirr.getChannelId());};
+        if(pirr.isSetAdpositionId()) {billing.setAdpositionId(pirr.getAdpositionId());};
     }
 }

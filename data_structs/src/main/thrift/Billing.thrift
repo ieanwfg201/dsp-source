@@ -104,6 +104,11 @@ struct Billing {
 34: optional i32 adv_inc_id, 
 35: optional i32 pub_inc_id, 
 36: optional i16 deviceType,
+37: optional i32 stateId,       /*state id(ui_targeting_state) of the end user.*/
+38: optional i32 cityId,        /*city id(ui_targeting_city) of the end user.*/
+39: optional i32 adpositionId,  /*ad position ui id*/
+40: optional i32 channelId,     /*channel internal id*/
+
 }
 
 

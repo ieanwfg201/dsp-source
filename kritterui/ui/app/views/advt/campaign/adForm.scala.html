@@ -74,8 +74,8 @@
                             @components.formElements.textinput(adForm("time_window"), '_label ->"Time Window (1-48)" )
                         </div>
                      }		
-                        @components.formElements.textarea(adForm("external_imp_tracker"), "External Imp Tracker (for banner, comma separated)")
-                        @components.formElements.textarea(adForm("external_click_tracker"), "External Click Tracker (for banner, comma separated)")
+                        @components.formElements.textarea(adForm("external_imp_tracker"), "External Imp Tracker (for banner, each line represents one tracker)")
+                        @components.formElements.textarea(adForm("external_click_tracker"), "External Click Tracker (for banner, each line represents one tracker)")
                         @if("true" == mma_required) {
 					 @components.formElements.multiselectlist3(adForm("mma_tier_1_list"), '_label -> "MMA Industry Tier 1", '_row->true) 
                      @components.formElements.multiselectlist3(adForm("mma_tier_2_list"), '_label -> "MMA Industry Tier 2", '_row->true )
