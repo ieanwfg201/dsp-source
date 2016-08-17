@@ -5,6 +5,7 @@ import com.kritter.api.entity.deal.ThirdPartyConnectionChildId;
 import com.kritter.api.entity.deal.ThirdPartyConnectionChildIdList;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.constants.error.ErrorEnum;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
@@ -51,6 +52,24 @@ public class PrivateMarketPlaceDealCrud
 
             LOG.error("No error , Data for deal is: {} ",privateMarketPlaceDeal.toString());
 
+            String domainsWhitelisted = null;
+
+            if(null != privateMarketPlaceDeal.getWhitelistedAdvertiserDomains())
+            {
+                String[] domains = null;
+                String values[] =  privateMarketPlaceDeal.getWhitelistedAdvertiserDomains().split(",");
+                if(null != values && values.length > 0)
+                    domains = new String[values.length];
+
+                int i = 0;
+                for(String value: values)
+                {
+                    domains[i++] = value;
+                }
+                ObjectMapper o = new ObjectMapper();
+                domainsWhitelisted = o.writeValueAsString(domains);
+            }
+
             pstmt.setString(1,privateMarketPlaceDeal.getDealId());
             pstmt.setString(2, privateMarketPlaceDeal.getDealName());
             pstmt.setString(3,privateMarketPlaceDeal.getAdIdList());
@@ -59,7 +78,7 @@ public class PrivateMarketPlaceDealCrud
             pstmt.setString(6,privateMarketPlaceDeal.getThirdPartyConnectionGuid());
             pstmt.setString(7,privateMarketPlaceDeal.getDspIdList());
             pstmt.setString(8,privateMarketPlaceDeal.getAdvertiserIdList());
-            pstmt.setString(9,privateMarketPlaceDeal.getWhitelistedAdvertiserDomains());
+            pstmt.setString(9,domainsWhitelisted);
             pstmt.setShort(10,Short.valueOf(privateMarketPlaceDeal.getAuctionType()));
             pstmt.setInt(11,Integer.valueOf(privateMarketPlaceDeal.getRequestCap()));
             pstmt.setTimestamp(12,new Timestamp(privateMarketPlaceDeal.getStartDate()));

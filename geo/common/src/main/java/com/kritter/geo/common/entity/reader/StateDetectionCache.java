@@ -218,9 +218,10 @@ public class StateDetectionCache
     public State findStateForIpAddress(String ipAddress) throws Exception
     {
         // check whether its ipv4 or ipv6
-        if (null == ipAddress)
-            throw new Exception(
-                    "IPAddress received is null inside findStateForIpAddress() of StateDetectionCache");
+        if (null == ipAddress){
+                    logger.error("IPAddress received is null inside findStateForIpAddress() of StateDetectionCache");
+                    return null;
+        }
 
         IpRangeKeyValue ipRangeKeyValue = null;
 

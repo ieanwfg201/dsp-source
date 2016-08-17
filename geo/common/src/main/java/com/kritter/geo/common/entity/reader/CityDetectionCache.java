@@ -216,9 +216,10 @@ public class CityDetectionCache
     public City findCityForIpAddress(String ipAddress) throws Exception
     {
         // check whether its ipv4 or ipv6
-        if (null == ipAddress)
-            throw new Exception(
-                    "IPAddress received is null inside findCityForIpAddress() of CityDetectionCache");
+        if (null == ipAddress){
+            logger.error("IPAddress received is null inside findCityForIpAddress() of CityDetectionCache");
+            return null;
+        }
 
         IpRangeKeyValue ipRangeKeyValue = null;
 

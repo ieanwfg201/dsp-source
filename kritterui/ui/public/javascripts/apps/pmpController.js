@@ -16,7 +16,7 @@ controller('pmpController',function ($scope, $http) {
         $scope.pubIdList_msmodel = Object.create(MultiSelectModel);
         $scope.pubIdList_msmodel.init($scope.pub_url, 'valueArray', true);
 
-        $scope.site_url = "/metadata/options/targeting_direct_sites/";
+        $scope.site_url = "/metadata/options/sites/";
         $scope.siteIdList_msmodel = Object.create(MultiSelectModel);
         $scope.siteIdList_msmodel.init($scope.site_url, 'valueArray', false, true);
         $scope.pubIdList_msmodel.addDependent("siteIdList", $scope.siteIdList_msmodel);
