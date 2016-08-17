@@ -210,10 +210,15 @@ public class TargetingProfileCrud {
         return "[]";
     }
     private static String ui_to_db_file_set(String incoming){
-        if(incoming == null || incoming.equals("") || incoming.equals("[]")){
+        if(incoming == null){ 
             return "[]";
         }
-        String incomingSplit[] = incoming.split(",");
+        String incomingTrim = incoming.trim();
+        if(incomingTrim.equals("") || incomingTrim.equals("[]")){
+            return "[]";
+        }
+        
+        String incomingSplit[] = incomingTrim.split(",");
         StringBuffer sbuff = new StringBuffer("[");
         boolean isFirst = true;
         for(String str:incomingSplit){
@@ -233,7 +238,11 @@ public class TargetingProfileCrud {
         if(outgoing == null){
             return "";
         }
-        return outgoing.replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+        String outgoingTrim = outgoing.trim();
+        if("".equals(outgoingTrim)){
+        	return "";
+        }
+        return outgoingTrim.replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
     }
     private static void lat_lon_r(Targeting_profile tp, String str){
         if(tp == null || str == null ){
@@ -668,6 +677,7 @@ public class TargetingProfileCrud {
         tp.setDevice_type(rset.getString("device_type"));
         populatePMPDealJson(tp);
         populateExt(tp, rset.getString("ext"));
+        tp.setLat_lon_radius_file(db_to_ui_file_set(rset.getString("lat_lon_radius_file")));
     }
     
     private static void populateExt(Targeting_profile tp,String ext){
@@ -1112,6 +1122,7 @@ public class TargetingProfileCrud {
                 deviceType = "[]";
             pstmt.setString(33, deviceType);
             pstmt.setString(34, generateExt(tp));
+            pstmt.setString(35, ui_to_db_file_set(tp.getLat_lon_radius_file()));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -1361,7 +1372,8 @@ public class TargetingProfileCrud {
                 deviceType = "[]";
             pstmt.setString(31, deviceType);
             pstmt.setString(32, generateExt(tp));
-            pstmt.setString(33, tp.getGuid());
+            pstmt.setString(33, ui_to_db_file_set(tp.getLat_lon_radius_file()));
+            pstmt.setString(34, tp.getGuid());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

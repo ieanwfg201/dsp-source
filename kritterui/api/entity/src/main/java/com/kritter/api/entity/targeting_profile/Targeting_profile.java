@@ -68,6 +68,7 @@ public class Targeting_profile {
     /** placeholder */
     private MidpValue midp = MidpValue.ALL;
     /** optional - json array of map e.g [{"lat":2374.28175,"lon":-823.2,"r":2562.87213}]*/
+    /** @deprecated */
     private String lat_long = "";
     /** @deprecated */
     private String pub_list = "[]";
@@ -107,6 +108,8 @@ public class Targeting_profile {
     private String channel_tier_1_list = "[]";
     /** optional - json array of channel_tier2 category */
     private String channel_tier_2_list = "[]";
+    /** optional - jason array of lat lon radius files */
+    private String lat_lon_radius_file = null;
     
     @Override
 	public int hashCode() {
@@ -140,6 +143,7 @@ public class Targeting_profile {
 		result = prime * result + (is_category_list_excluded ? 1231 : 1237);
 		result = prime * result + (is_site_list_excluded ? 1231 : 1237);
 		result = prime * result + (int) (last_modified ^ (last_modified >>> 32));
+		result = prime * result + ((lat_lon_radius_file == null) ? 0 : lat_lon_radius_file.hashCode());
 		result = prime * result + ((lat_long == null) ? 0 : lat_long.hashCode());
 		result = prime * result + ((midp == null) ? 0 : midp.hashCode());
 		result = prime * result + (mma_inc_exc ? 1231 : 1237);
@@ -286,6 +290,11 @@ public class Targeting_profile {
 		if (is_site_list_excluded != other.is_site_list_excluded)
 			return false;
 		if (last_modified != other.last_modified)
+			return false;
+		if (lat_lon_radius_file == null) {
+			if (other.lat_lon_radius_file != null)
+				return false;
+		} else if (!lat_lon_radius_file.equals(other.lat_lon_radius_file))
 			return false;
 		if (lat_long == null) {
 			if (other.lat_long != null)
@@ -675,6 +684,12 @@ public class Targeting_profile {
 	}
 	public void setChannel_tier_2_list(String channel_tier_2_list) {
 		this.channel_tier_2_list = channel_tier_2_list;
+	}
+	public String getLat_lon_radius_file() {
+		return lat_lon_radius_file;
+	}
+	public void setLat_lon_radius_file(String lat_lon_radius_file) {
+		this.lat_lon_radius_file = lat_lon_radius_file;
 	}
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

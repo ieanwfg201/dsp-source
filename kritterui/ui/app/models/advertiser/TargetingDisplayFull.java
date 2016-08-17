@@ -182,4 +182,15 @@ public class TargetingDisplayFull extends TargetingDisplay{
 	public List<String> getChannelTier2(){ 
 		return MetadataAPI.getValues(MetadataType.CHANNEL_BY_IDS, tp.getChannel_tier_2_list());
 	}
+    public String getLatLonRadiusFile(){
+    	String s = tp.getLat_lon_radius_file();
+    	if(s != null){
+    		String sTrim = s.trim();
+    		if(!"".equals(sTrim)){
+    			return routes.StaticFileController.download(Option.apply(tp.getLat_lon_radius_file())).url();
+    		}
+    	}
+    	return "";
+    }
+
 }

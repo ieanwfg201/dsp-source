@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.util.List;
 
 import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
+import com.kritter.api.entity.deal.ThirdPartyConnectionChildId;
+import com.kritter.api.entity.deal.ThirdPartyConnectionChildIdList;
 import com.kritter.api.entity.parent_account.ParentAccount;
 import com.kritter.kritterui.api.deal.PrivateMarketPlaceDealCrud;
 import com.kritter.kritterui.api.parent_account.ParentAccountCrud;
@@ -158,7 +160,9 @@ public class ApiDef {
     public static AccountList listDirectPublisherByStatus(Connection con, ListEntity listEntity){
         return AccountCrud.listDirectPublisherByStatus(con, listEntity);
     }
-    
+    public static ThirdPartyConnectionChildIdList listThirdPartyConnectionDSPAdvIdList(Connection con,ThirdPartyConnectionChildId thirdPartyConnectionChildId){
+        return PrivateMarketPlaceDealCrud.getDSPAdvIdListForAdvertiserGuid(con,thirdPartyConnectionChildId);
+    }
     public static JsonNode updateAccount(Connection con, JsonNode jsonNode){
         return AccountCrud.updateAccount(con, jsonNode);
     }

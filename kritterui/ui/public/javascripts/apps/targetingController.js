@@ -126,6 +126,7 @@ controller('tpController',function ($scope, $http, $upload) {
 	$scope.channel_tier_1_list_msmodel.addDependent("channel_tier2", $scope.channel_tier_2_list_msmodel);
 
 	$scope.custom_ip_file_id_set="#";
+	$scope.lat_lon_radius_file="#";
 
 	$scope.listUpdated = false;
 
@@ -201,8 +202,18 @@ controller('tpController',function ($scope, $http, $upload) {
 				break;
 			default: 
 				break;
-		}		
+		}
+		var filePath =  $("input[name='lat_lon_radius_file']").attr("value");
+		if($scope['lat_lon_radius_file']!=""){
+					$scope['lat_lon_radius_file_preview'] = true;
+					$scope['lat_lon_radius_file_preview_url'] = "/download?file="+encodeURI(filePath);
+					var fileName = filePath.substring(filePath.lastIndexOf('/')+1);
+					$scope['lat_lon_radius_file_preview_label'] = fileName;
+		}else{
+			$scope['lat_lon_radius_file_preview'] = false;
+		}
 	}
+	
 	$scope.handleSupplySourceChange = function(){
 		switch($scope.supply_source) {
 			case "EXCHANGE": 

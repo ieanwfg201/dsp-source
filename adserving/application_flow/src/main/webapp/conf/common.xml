@@ -59,6 +59,14 @@
         <constructor-arg index="4" value="ad-nofill-map"/>
     </bean>
 
+    <bean id="lat_lon_file_targeting" class="com.kritter.adserving.shortlisting.targetingmatcher.FileBasedLatLongTargetingMatcher">
+        <constructor-arg index="0" value="lat_lon_file_targeting"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="lat_lon_file_detector"/></constructor-arg>
+        <constructor-arg index="4" value="ad-nofill-map"/>
+    </bean>
+
     <bean id="handset_browser_targeting" class="com.kritter.adserving.shortlisting.targetingmatcher.HandsetBrowserMatcher">
         <constructor-arg index="0" value="handset_browser_targeting"/>
         <constructor-arg index="1" value="adserving.application"/>
@@ -590,6 +598,14 @@
     <bean id="custom_ip_detector" class="com.kritter.geo.common.entity.reader.CustomIPFileDetectionCache">
             <constructor-arg index="0" value="cache.logger"/>
             <constructor-arg index="1" value="select custom_ip_file_id_set from ad,targeting_profile where ad.targeting_guid = targeting_profile.guid and ad.status_id = 1 and targeting_profile.status_id = 1"/>
+            <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+            <constructor-arg index="3" value="/var/data/kritter/location/"/>
+            <constructor-arg index="4" value="300000"/>
+    </bean>
+
+    <bean id="lat_lon_file_detector" class="com.kritter.geo.common.entity.reader.FileBasedLatLonDetectionCache">
+            <constructor-arg index="0" value="cache.logger"/>
+            <constructor-arg index="1" value="select lat_lon_radius_file from ad,targeting_profile where ad.targeting_guid = targeting_profile.guid and ad.status_id = 1 and targeting_profile.status_id = 1"/>
             <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="/var/data/kritter/location/"/>
             <constructor-arg index="4" value="300000"/>

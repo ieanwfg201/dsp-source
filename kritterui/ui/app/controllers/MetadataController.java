@@ -314,4 +314,16 @@ public class MetadataController extends Controller{
             ArrayNode creativeSlots = MetadataAPI.screenshotSlotsArray();
             return ok(creativeSlots); 
        }
+
+       @SecuredAction
+       public static Result third_party_demand_channel_dspid_list(String advertiserGuid){
+           ArrayNode dspidlist = MetadataAPI.thirdPartyConnectionDSPIdArray(advertiserGuid);
+           return ok(dspidlist);
+       }
+
+       @SecuredAction
+       public static Result third_party_demand_channel_advid_list(String advertiserGuid){
+           ArrayNode advidlist = MetadataAPI.thirdPartyConnectionAdvIdArray(advertiserGuid);
+           return ok(advidlist);
+       }
 }
