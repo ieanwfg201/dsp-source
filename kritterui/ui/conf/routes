@@ -348,7 +348,8 @@ GET     /metadata/options/videoprotocols                          	controllers.M
 GET     /metadata/options/videoplaybackmethod                       controllers.MetadataController.videoplaybackmethod()     
 GET     /metadata/options/videodelivery                          	controllers.MetadataController.videodelivery()     
 GET     /metadata/options/videoapi                          		controllers.MetadataController.videoapi()     
-
+GET     /metadata/options/tpdspidlist/:adv_guid                     controllers.MetadataController.third_party_demand_channel_dspid_list(adv_guid:String)
+GET     /metadata/options/tpadvidlist/:adv_guid                     controllers.MetadataController.third_party_demand_channel_advid_list(adv_guid:String)
 
 # Login page
 GET     /login                      securesocial.controllers.LoginPage.login

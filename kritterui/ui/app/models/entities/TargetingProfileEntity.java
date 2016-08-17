@@ -63,6 +63,7 @@ public class TargetingProfileEntity extends Entity{
     private String channel_tier_1_list = "[]";
     /** optional - json array of channel_tier2 category */
     private String channel_tier_2_list = "[]";
+    private String lat_lon_radius_file = null;
 
 
     public MidpValue getMidp() {
@@ -338,6 +339,12 @@ public class TargetingProfileEntity extends Entity{
 	}
 	public void setChannel_tier_2_list(String channel_tier_2_list) {
 		this.channel_tier_2_list = channel_tier_2_list;
+	}
+	public String getLat_lon_radius_file() {
+		return lat_lon_radius_file;
+	}
+	public void setLat_lon_radius_file(String lat_lon_radius_file) {
+		this.lat_lon_radius_file = lat_lon_radius_file;
 	}
 	public Targeting_profile getEntity(){
     	Targeting_profile tp = new Targeting_profile();

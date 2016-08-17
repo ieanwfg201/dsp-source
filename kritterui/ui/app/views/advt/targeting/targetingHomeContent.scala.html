@@ -1,4 +1,4 @@
-@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String, channel_required:String)
+@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String, channel_required:String,lat_lon_file:String)
 @components.fielddisplays.textdisplay("TP-Name", tp.getName()) 
 @components.fielddisplays.textdisplay("TP-Guid", tp.getGuid())
 @components.fielddisplays.textdisplay("TP-Status", tp.getStatusIdName())
@@ -15,7 +15,14 @@
 @if("" != tp.getCustomZipCodeSetString()){
     @components.fielddisplays.htmldisplay("TP-ZIPCODE") { <a href="@tp.getCustomZipCodeSetString()">download</a> }
 }
-@components.fielddisplays.listdisplay("TP-LatLongRadius", tp.getLatLong())
+@if("false" == lat_lon_file){
+	@components.fielddisplays.listdisplay("TP-LatLongRadius", tp.getLatLong())
+}
+@if("true" == lat_lon_file){
+@if("" != tp.getLatLonRadiusFile()){
+    @components.fielddisplays.htmldisplay("TP-LatLonRadiusFile") { <a href="@tp.getLatLonRadiusFile()">download</a> }
+}
+}
 @components.fielddisplays.listdisplay("TP-Browser", tp.getBrowserValues())
 @components.fielddisplays.textdisplay("TP-TabletOnly", tp.getTablet_targeting())
 @components.fielddisplays.listdisplay("TP-DeviceType", tp.getDeviceType())

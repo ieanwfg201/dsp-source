@@ -1,11 +1,15 @@
 package com.kritter.kritterui.api.deal;
 
 import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
+import com.kritter.api.entity.deal.ThirdPartyConnectionChildId;
+import com.kritter.api.entity.deal.ThirdPartyConnectionChildIdList;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.constants.error.ErrorEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class keeps methods and data required for ui creation of a deal.
@@ -52,10 +56,10 @@ public class PrivateMarketPlaceDealCrud
             pstmt.setString(3,privateMarketPlaceDeal.getAdIdList());
             pstmt.setString(4,privateMarketPlaceDeal.getSiteIdList());
             pstmt.setString(5,privateMarketPlaceDeal.getBlockedIABCategories());
-            pstmt.setString(6,privateMarketPlaceDeal.getThirdPartyConnectionList());
+            pstmt.setString(6,privateMarketPlaceDeal.getThirdPartyConnectionGuid());
             pstmt.setString(7,privateMarketPlaceDeal.getDspIdList());
             pstmt.setString(8,privateMarketPlaceDeal.getAdvertiserIdList());
-            pstmt.setString(9,privateMarketPlaceDeal.getWhitelistedAdvertiserDomainsMap());
+            pstmt.setString(9,privateMarketPlaceDeal.getWhitelistedAdvertiserDomains());
             pstmt.setShort(10,Short.valueOf(privateMarketPlaceDeal.getAuctionType()));
             pstmt.setInt(11,Integer.valueOf(privateMarketPlaceDeal.getRequestCap()));
             pstmt.setTimestamp(12,new Timestamp(privateMarketPlaceDeal.getStartDate()));
@@ -141,5 +145,82 @@ public class PrivateMarketPlaceDealCrud
                 }
             }
         }
+    }
+
+    public static ThirdPartyConnectionChildIdList getDSPAdvIdListForAdvertiserGuid(Connection con, ThirdPartyConnectionChildId thirdPartyConnectionChildId)
+    {
+        if(null == thirdPartyConnectionChildId.getFetchDSPData())
+            return null;
+
+        ThirdPartyConnectionChildIdList thirdPartyConnectionChildIdList = new ThirdPartyConnectionChildIdList();
+        List<ThirdPartyConnectionChildId> list = new ArrayList<ThirdPartyConnectionChildId>();
+
+        PreparedStatement pstmt = null;
+
+        try
+        {
+            if (thirdPartyConnectionChildId.getFetchDSPData().booleanValue())
+            {
+                pstmt = con.prepareStatement(ThirdPartyConnectionChildId.FETCH_DSP_DATA);
+                pstmt.setString(1,thirdPartyConnectionChildId.getThirdPartyConnectionGuid());
+                ResultSet rs = pstmt.executeQuery();
+                while(rs.next())
+                {
+                    Integer id = rs.getInt("id");
+                    String desc = rs.getString("description");
+                    ThirdPartyConnectionChildId element = new ThirdPartyConnectionChildId();
+                    element.setDescription(desc);
+                    element.setId(id);
+                    list.add(element);
+                }
+            }
+            else
+            {
+                pstmt = con.prepareStatement(ThirdPartyConnectionChildId.FETCH_ADV_DATA);
+                pstmt.setString(1,thirdPartyConnectionChildId.getThirdPartyConnectionGuid());
+                ResultSet rs = pstmt.executeQuery();
+                while(rs.next())
+                {
+                    Integer id = rs.getInt("id");
+                    String desc = rs.getString("description");
+                    ThirdPartyConnectionChildId element = new ThirdPartyConnectionChildId();
+                    element.setDescription(desc);
+                    element.setId(id);
+                    list.add(element);
+                }
+            }
+
+            Message message = new Message();
+            message.setError_code(ErrorEnum.NO_ERROR.getId());
+
+            thirdPartyConnectionChildIdList.setThirdPartyConnectionChildIdList(list);
+            thirdPartyConnectionChildIdList.setMsg(message);
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(),e);
+            Message message = new Message();
+            message.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            thirdPartyConnectionChildIdList.setMsg(message);
+        }
+        finally
+        {
+            if (pstmt != null)
+            {
+                try
+                {
+                    pstmt.close();
+                }
+                catch (SQLException e)
+                {
+                    LOG.error(e.getMessage(), e);
+                    Message message = new Message();
+                    message.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+                    thirdPartyConnectionChildIdList.setMsg(message);
+                }
+            }
+        }
+
+        return thirdPartyConnectionChildIdList;
     }
 }

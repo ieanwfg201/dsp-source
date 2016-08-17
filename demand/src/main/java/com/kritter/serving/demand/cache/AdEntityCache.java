@@ -127,6 +127,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
 
             String[] customIpFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet,"custom_ip_file_id_set");
             String[] zipCodeFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet,"zipcode_file_id_set");
+            String[] latLonFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet,"lat_lon_radius_file");
 
             Short supplySourceType = resultSet.getShort("supply_source_type");
             Short supplySource = resultSet.getShort("supply_source");
@@ -212,6 +213,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             targetingBuilder.setExchangeSpecificPMPDealIdInfo(pmpDealIdJson,targetingGuid);
             targetingBuilder.setDeviceTypeTargetingArray(deviceTypeArray);
             targetingBuilder.setTPExt(targetingExt);
+            targetingBuilder.setLatLonFileIdArray(latLonFileIdArray);
 
             if(retargeting != null){
                 String tmp_retargeting = retargeting.trim();

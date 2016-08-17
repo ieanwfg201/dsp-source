@@ -1,4 +1,4 @@
-@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String, state_city:String, mma_required:String,adposition_required:String,channel_required:String)
+@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String, state_city:String, mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String)
 
 @main2("Create Targeting Profile") {@navs.navadvt(tpDisplay.getAccountGuid())}{@navs.breadcrumbs(tpDisplay.getBreadCrumbPaths())}{
 
@@ -54,7 +54,14 @@
 																			'_uploadHandler -> "handleGeotargetingFileUpload($files, 'custom_ip_file_id_set')",
 																			'_fileFilter -> ".csv"  ) 
 					 </div>
-					 @components.formElements.textarea(tpForm("lat_long"), "Lat-Long and Radius in miles (CSV with each line representing lat,long,radius)")
+					 @if("true" == lat_lon_file) {
+						  @components.formElements.fileinput(tpForm("lat_lon_radius_file"), '_label ->"Upload LatLonRadius CSV File (Each line representing lat,long,radius)", 
+																			'_uploadHandler -> "handleGeotargetingFileUpload($files, 'lat_lon_radius_file')",
+																			'_fileFilter -> ".csv"  ) 
+					 }
+					 @if("false" == lat_lon_file) {
+						 @components.formElements.textarea(tpForm("lat_long"), "Lat-Long and Radius in miles (CSV with each line representing lat,long,radius)")
+					 }
 				 </fieldset>
 				 
 				 <fieldset>

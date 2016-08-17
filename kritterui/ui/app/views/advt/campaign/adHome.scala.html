@@ -1,4 +1,4 @@
-@(ad:models.advertiser.AdDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String,channel_required:String)
+@(ad:models.advertiser.AdDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String)
 @main2("Ad Home- @ad.getName()"){@navs.navadvt(ad.getAccountGuid())}{@navs.breadcrumbs(ad.getBreadCrumbPaths())}{
 
 	@components.containers.panel("Ad Summary-"+ ad.getName()){
@@ -42,7 +42,7 @@
 		} 
 		@advt.creative.creativeDisplay(ad.getCreativeDisplay())
 		
-		@advt.targeting.targetingHomeContent(ad.getTargetingFull(),retargeting_flow_enabled,mma_required,adposition_required,channel_required)
+		@advt.targeting.targetingHomeContent(ad.getTargetingFull(),retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file)
 		 
 		</div>
 	}

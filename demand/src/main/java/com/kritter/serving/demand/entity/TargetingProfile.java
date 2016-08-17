@@ -59,6 +59,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
     private final Map<String,String[]> pmpDealIdInfoMap;
     private final Short[] deviceTypeArray;
     private final TPExt tpExt;
+    private final String[] latLonFileIdArray;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public TargetingProfile(TargetingBuilder targetingBuilder)
@@ -95,6 +96,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         this.pmpDealIdInfoMap = targetingBuilder.pmpDealIdInfoMap;
         this.deviceTypeArray = targetingBuilder.deviceTypeArray;
         this.tpExt = targetingBuilder.tpExt;
+        this.latLonFileIdArray = targetingBuilder.latLonFileIdArray;
     }
 
     @Override
@@ -139,6 +141,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         private Map<String,String[]> pmpDealIdInfoMap;
         private Short[] deviceTypeArray;
         private TPExt tpExt;
+        private String[] latLonFileIdArray;
         private static final TypeReference<Map<String,String>>
                      typeReferenceForOSBrowserJSon = new TypeReference<Map<String, String>>() {};
 
@@ -363,6 +366,11 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         public TargetingBuilder setRetargeting(Retargeting retargeting)
         {
             this.retargeting = retargeting;
+            return this;
+        }
+        public TargetingBuilder setLatLonFileIdArray(String[] latLonFileIdArray)
+        {
+            this.latLonFileIdArray = latLonFileIdArray;
             return this;
         }
         public TargetingBuilder setTPExt(TPExt tpExt)

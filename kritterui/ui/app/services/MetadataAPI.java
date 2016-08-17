@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kritter.api.entity.account.Account;
 import com.kritter.api.entity.account.AccountList;
+import com.kritter.api.entity.deal.ThirdPartyConnectionChildIdList;
+import com.kritter.api.entity.deal.ThirdPartyConnectionChildId;
 import com.kritter.api.entity.account.ListEntity;
 import com.kritter.api.entity.ad.Ad;
 import com.kritter.api.entity.ad.AdList;
@@ -772,6 +774,35 @@ public class MetadataAPI {
 	    }
 	    return selectOptions;
 	}
+
+    public static List<SelectOption> getActiveDSPDemandPartner(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        Connection con = null;
+        try{
+            con = DB.getConnection(true);
+            ListEntity listEntity = new ListEntity();
+            listEntity.setAccountAPIEnum(AccountAPIEnum.list_active_advertiser_by_demandtype);
+            listEntity.setDemandType(DemandType.DSP);
+            listEntity.setStatus(StatusIdEnum.Active);
+
+            AccountList accountList = ApiDef.various_get_account(con, listEntity);
+            for (Account account : accountList.getAccount_list()) {
+                selectOptions.add(new SelectOption(account.getName(), account.getGuid()));
+            }
+        }catch(Exception e){
+            Logger.error("Error in getActiveDSPDemandPartner", e);
+        }
+        finally{
+            try {
+                if(con !=null)
+                    con.close();
+            } catch (Exception e2) {
+                Logger.error("Failed closing connection", e2);
+            }
+        }
+        return selectOptions;
+    }
+
 	public static ArrayNode tier1mmacategory(){
 		List<MetaField> mfields  = null;
 		Connection con = null;
@@ -1163,6 +1194,14 @@ public class MetadataAPI {
 		}
 		return optionNodes;
 	}
+    public static ArrayNode activeAdvertiserDSPArray(){
+        List<SelectOption> options  =  activeAccountList(Account_Type.directadvertiser);
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        for (SelectOption option : options) {
+            optionNodes.add(option.toJson());
+        }
+        return optionNodes;
+    }
 	public static ArrayNode advertiserforfiltering(){
         List<SelectOption> options  =  advertiserforfilteringAccountList(Account_Type.directadvertiser);
         ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
@@ -2237,4 +2276,129 @@ public class MetadataAPI {
 		}
 		return null;
 	}
+
+    public static ArrayNode thirdPartyConnectionDSPIdArray(String advertiserGuid){
+
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        if(advertiserGuid == null || "none".equalsIgnoreCase(advertiserGuid) || "all".equalsIgnoreCase(advertiserGuid)
+            || "[none]".equalsIgnoreCase(advertiserGuid) || "[all]".equalsIgnoreCase(advertiserGuid) || "".equals(advertiserGuid)){
+            return optionNodes;
+        }
+
+        List<SelectOption> options  =  thirdPartyConnectionDSPIdArrayValues(advertiserGuid);
+        for (SelectOption option : options) {
+            optionNodes.add(option.toJson());
+        }
+        return optionNodes;
+    }
+
+    public static List<SelectOption> thirdPartyConnectionDSPIdArrayValues(String advertiserGuid)
+    {
+        Logger.error("inside thirdPartyConnectionDSPIdArrayValues function ");
+        Connection con = null;
+        ThirdPartyConnectionChildIdList thirdPartyConnectionChildIdList = null;
+
+        List<SelectOption> options = new ArrayList<SelectOption>();
+
+        try
+        {
+            con = DB.getConnection(true);
+
+            ThirdPartyConnectionChildId thirdPartyConnectionChildId = new ThirdPartyConnectionChildId();
+            thirdPartyConnectionChildId.setFetchDSPData(Boolean.TRUE);
+            thirdPartyConnectionChildId.setThirdPartyConnectionGuid(advertiserGuid);
+
+            thirdPartyConnectionChildIdList = ApiDef.listThirdPartyConnectionDSPAdvIdList(con,thirdPartyConnectionChildId);
+
+            List<ThirdPartyConnectionChildId> values = thirdPartyConnectionChildIdList.getThirdPartyConnectionChildIdList();
+
+            for (ThirdPartyConnectionChildId value : values)
+            {
+                options.add(new SelectOption(value.getDescription(), value.getId()+""));
+            }
+
+        }
+        catch(Exception e)
+        {
+            Logger.error("Error in fetching thirdPartyConnectionDSPIdArrayValues", e);
+        }
+        finally
+        {
+            try
+            {
+                if(con != null)
+                {
+                    con.close();
+                }
+            }
+            catch (SQLException e)
+            {
+                Logger.error("Error in closing DB connection",e);
+            }
+        }
+
+        return options;
+    }
+
+    public static ArrayNode thirdPartyConnectionAdvIdArray(String advertiserGuid){
+
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        if(advertiserGuid == null || "none".equalsIgnoreCase(advertiserGuid) || "all".equalsIgnoreCase(advertiserGuid)
+                || "[none]".equalsIgnoreCase(advertiserGuid) || "[all]".equalsIgnoreCase(advertiserGuid) || "".equals(advertiserGuid)){
+            return optionNodes;
+        }
+
+        List<SelectOption> options  =  thirdPartyConnectionAdvIdArrayValues(advertiserGuid);
+        for (SelectOption option : options) {
+            optionNodes.add(option.toJson());
+        }
+        return optionNodes;
+    }
+
+    public static List<SelectOption> thirdPartyConnectionAdvIdArrayValues(String advertiserGuid)
+    {
+        Connection con = null;
+        ThirdPartyConnectionChildIdList thirdPartyConnectionChildIdList = null;
+
+        List<SelectOption> options = new ArrayList<SelectOption>();
+
+        try
+        {
+            con = DB.getConnection(true);
+
+            ThirdPartyConnectionChildId thirdPartyConnectionChildId = new ThirdPartyConnectionChildId();
+            thirdPartyConnectionChildId.setFetchDSPData(false);
+            thirdPartyConnectionChildId.setThirdPartyConnectionGuid(advertiserGuid);
+
+            thirdPartyConnectionChildIdList = ApiDef.listThirdPartyConnectionDSPAdvIdList(con,thirdPartyConnectionChildId);
+
+            List<ThirdPartyConnectionChildId> values = thirdPartyConnectionChildIdList.getThirdPartyConnectionChildIdList();
+
+            for (ThirdPartyConnectionChildId value : values)
+            {
+                options.add(new SelectOption(value.getDescription(), value.getId()+""));
+            }
+
+        }
+        catch(Exception e)
+        {
+            Logger.error("Error in fetching thirdPartyConnectionAdvIdArrayValues", e);
+        }
+        finally
+        {
+            try
+            {
+                if(con != null)
+                {
+                    con.close();
+                }
+            }
+            catch (SQLException e)
+            {
+                Logger.error("Error in closing DB connection",e);
+            }
+        }
+
+        return options;
+    }
 }

@@ -1390,10 +1390,10 @@ create table pmp_deals
                                                       -- will be part of all requests.e.g: [1,2,3].
     site_id_list TEXT NOT NULL,                       -- This has list of site ids for which deal is applicable,e.g: [1,2] or can be null
     bcat TEXT,                                        -- iab categories code array for list of iab categories to block.
-    third_party_conn_list TEXT NOT NULL,              -- string array, with each value as an advertiser guid.
+    third_party_conn_list TEXT NOT NULL,              -- string value of advertiser guid, just one value.
     dsp_id_list TEXT,                                 -- integer array, with each value as id from third_party_conn_dsp_mapping table.
     adv_id_list TEXT,                                 -- integer array, with each value as id from dsp_adv_agency_mapping table.
-    wadomain TEXT,                                    -- whitelisted domains of advertisers,Map<String,String[]> syntax json.
+    wadomain TEXT,                                    -- whitelisted domains of advertisers,array of String,String[] syntax json.
     auction_type smallint NOT NULL,                   -- possible values 1,2,3. Refer to descriptions in open rtb documents for pmp auction type.
     request_cap int unsigned,                  
     start_date TIMESTAMP NOT NULL,
@@ -1436,3 +1436,6 @@ alter table channel add column channelname varchar(128) default NULL after paren
 
 alter table site add column video_supply_props text after is_native;
 alter table site add column is_video boolean default false after video_supply_props;
+
+alter table targeting_profile add column lat_lon_radius_file TEXT after ext;
+

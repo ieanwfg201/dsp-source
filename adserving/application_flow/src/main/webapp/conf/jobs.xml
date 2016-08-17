@@ -45,15 +45,14 @@
                 <ref bean="os_targeting"/>
                 <ref bean="site_domains_exclusion_targeting"/>
                 <ref bean="custom_ip_targeting"/>
-                <ref bean="zip_code_targeting"/>
                 <ref bean="hour_of_day_targeting"/>
-                <ref bean="lat_long_targeting"/>
                 <ref bean="connection_type_targeting"/>
                 <ref bean="demand_preference_filter"/>
                 <ref bean="mma_targeting_filter"/>
                 <ref bean="adposition_targeting_filter"/>
                 <ref bean="channel_targeting_filter"/>
                 <ref bean="frequency_cap_filter"/>
+                <ref bean="lat_lon_file_targeting"/>
             </list>
         </constructor-arg>
     </bean>
