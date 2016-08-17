@@ -440,7 +440,7 @@
         <constructor-arg index="1">
             <map>
                 <entry key="mopub-pub-guid" value-ref="mopub_request_enricher_2_3"/>
-                <entry key="cloud_cross-guid" value-ref="cloud_cross_request_enricher_4_4_4"/>
+                <entry key="cloud-cross-guid" value-ref="cloud_cross_request_enricher_4_4_4"/>
             </map>
         </constructor-arg>
         <constructor-arg index="2" value="bid.req.logger"/>
