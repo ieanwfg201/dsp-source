@@ -448,6 +448,7 @@
         <constructor-arg index="1">
             <map>
                 <entry key="mopub-pub-guid" value-ref="mopub_request_enricher_2_3"/>
+                <entry key="youku" value-ref="youku_request_enricher"/>
                 <entry key="cloud-cross-guid" value-ref="cloud_cross_request_enricher_4_4_4"/>
             </map>
         </constructor-arg>
