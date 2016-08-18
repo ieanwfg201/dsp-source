@@ -80,7 +80,7 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
                     }else{
                         handSetInfo.setWirelessDevice(false);
                     }
-                    tempdataMap.put(strSplit[0], handSetInfo);
+                    tempdataMap.put(strSplit[0].toLowerCase().trim(), handSetInfo);
                 }
 
             }
