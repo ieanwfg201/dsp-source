@@ -8,3 +8,7 @@ insert into connection_type_metadata (id, name, created_on, last_modified) value
 (5, "MobiledataThreeG", NOW(), NOW())
 ON DUPLICATE KEY UPDATE id = VALUES(id);
 
+
+INSERT INTO mma_exchangename_id_mapping (exchangename, exchangeid, exchangeguid) VALUES
+('youku', '1', 'youku'),
+('tencent', '2', 'tencent');
