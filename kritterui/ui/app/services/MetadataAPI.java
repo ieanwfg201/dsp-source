@@ -955,6 +955,54 @@ public class MetadataAPI {
 		}
 		return metalistToArrayNode(mfields);
 	}
+	public static ArrayNode channelbypubids(String pubids){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaInput mi = new MetaInput();
+			if(pubids != null){
+				mi.setQuery_id_list(pubids.trim().replaceAll("\\[", "").replaceAll("]", ""));
+			}
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.CHANNEL_BY_PUBIDS, mi);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNode(mfields);
+	}
+	public static ArrayNode adpositionbypubids(String pubids){
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaInput mi = new MetaInput();
+			if(pubids != null){
+				mi.setQuery_id_list(pubids.trim().replaceAll("\\[", "").replaceAll("]", ""));
+			}
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.ADPOS_BY_PUBIDS, mi);
+			mfields = mlist.getMetaFieldList();
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return metalistToArrayNode(mfields);
+	}
 	
 	public static ArrayNode tier_1_categories(){
 		List<MetaField> mfields  = null;

@@ -56,6 +56,20 @@ public class ReportFormEntity extends BaseReportEntity{
 	public void setSites(String sites) { 
 		reportingEntity.setSiteId(stringToIdList(sites));
 	} 
+	public String getChannel() {
+		return idListToString(reportingEntity.getChannelId());
+	}
+
+	public void setChannel(String channel) { 
+		reportingEntity.setChannelId(stringToIdList(channel));
+	} 
+	public String getAdposition() {
+		return idListToString(reportingEntity.getAdpositionId());
+	}
+
+	public void setAdposition(String adposition) { 
+		reportingEntity.setAdpositionId(stringToIdList(adposition));
+	} 
     public String getExtsites() {
         return idListToString(reportingEntity.getExt_site());
     }
@@ -100,6 +114,22 @@ public class ReportFormEntity extends BaseReportEntity{
 	
 	public void setCountry(String country) { 
 		reportingEntity.setCountryId(stringToIdList(country));
+	}
+
+	public String getState() {
+		return idListToString(reportingEntity.getStateId());
+	}
+	
+	public void setState(String state) { 
+		reportingEntity.setStateId(stringToIdList(state));
+	}
+
+	public String getCity() {
+		return idListToString(reportingEntity.getCityeId());
+	}
+	
+	public void setCity(String city) { 
+		reportingEntity.setCityeId(stringToIdList(city));
 	}
 
 	public String getCarrier() {

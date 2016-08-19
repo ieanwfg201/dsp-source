@@ -13,6 +13,7 @@ import com.kritter.constants.ChartType;
 import com.kritter.constants.Frequency;
 import com.kritter.constants.ReportingDIMTypeEnum;
 import com.kritter.kumbaya.libraries.data_structs.common.AdId;
+import com.kritter.kumbaya.libraries.data_structs.common.AdpositionId;
 import com.kritter.kumbaya.libraries.data_structs.common.AdvIncId;
 import com.kritter.kumbaya.libraries.data_structs.common.AdvertiserId;
 import com.kritter.kumbaya.libraries.data_structs.common.Billedclicks;
@@ -20,6 +21,8 @@ import com.kritter.kumbaya.libraries.data_structs.common.Billedcsc;
 import com.kritter.kumbaya.libraries.data_structs.common.BrowserId;
 import com.kritter.kumbaya.libraries.data_structs.common.CPAGoal;
 import com.kritter.kumbaya.libraries.data_structs.common.CampaignId;
+import com.kritter.kumbaya.libraries.data_structs.common.ChannelId;
+import com.kritter.kumbaya.libraries.data_structs.common.CityId;
 import com.kritter.kumbaya.libraries.data_structs.common.ConnectionType;
 import com.kritter.kumbaya.libraries.data_structs.common.Conversion;
 import com.kritter.kumbaya.libraries.data_structs.common.CountryCarrierId;
@@ -41,6 +44,7 @@ import com.kritter.kumbaya.libraries.data_structs.common.PubIncId;
 import com.kritter.kumbaya.libraries.data_structs.common.PublisherId;
 import com.kritter.kumbaya.libraries.data_structs.common.SiteId;
 import com.kritter.kumbaya.libraries.data_structs.common.Site_hygiene;
+import com.kritter.kumbaya.libraries.data_structs.common.StateId;
 import com.kritter.kumbaya.libraries.data_structs.common.SupplyCost;
 import com.kritter.kumbaya.libraries.data_structs.common.Supply_source_type;
 import com.kritter.kumbaya.libraries.data_structs.common.TABLE;
@@ -95,7 +99,8 @@ public class DBQueryPlanner implements IQueryPlanner {
             resolve_none_frequency(reportingEntity);
             frequency = reportingEntity.getFrequency();
         }
-        table = HelperKumbayaQueryPlanner.getTABLE(frequency, reportingEntity.getReportingDIMTypeEnum());
+        table = HelperKumbayaQueryPlanner.getTABLE(frequency, reportingEntity.getReportingDIMTypeEnum(),
+        		reportingEntity.getReportingTableType());
         if(table == null){
             HelperKumbayaQueryPlanner.populatePlanStatus(kQueryPlanner, ErrorCode.TABLE_NOT_FOUND, ErrorCode.TABLE_NOT_FOUND.toString());
             return;
@@ -186,6 +191,22 @@ public class DBQueryPlanner implements IQueryPlanner {
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
                     reportingEntity.isReturnGuid(),entity.getDim_guid(), reportingEntity.isSiteId_clickable(), reportingEntity.isSiteId_just_filter());
+        }
+        if(reportingEntity.getChannelId() != null){
+            ChannelId entity = kReportingConfiguration.getChannelId();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getChannelId(), table_name, 
+                    entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
+                    returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
+                    false,null, reportingEntity.isChannelId_clickable(), false);
+        }
+        if(reportingEntity.getAdpositionId() != null){
+            AdpositionId entity = kReportingConfiguration.getAdpositionId();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getAdpositionId(), table_name, 
+                    entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
+                    returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
+                    false,null, reportingEntity.isAdpositionId_clickable(), false);
         }
         if(reportingEntity.getSupply_source_type() != null){
             Supply_source_type entity = kReportingConfiguration.getSupply_source_type();
@@ -280,6 +301,23 @@ public class DBQueryPlanner implements IQueryPlanner {
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
                     korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isCountryCarrierId_clickable(), false);
         }
+        if(reportingEntity.getStateId() != null){
+            StateId entity = kReportingConfiguration.getStateId();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getStateId(), table_name, 
+                    entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
+                    returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
+                    false,null, reportingEntity.isStateId_clickable(), false);
+        }
+        if(reportingEntity.getCityeId() != null){
+            CityId entity = kReportingConfiguration.getCityId();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getCityeId(), table_name, 
+                    entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
+                    returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
+                    false,null, reportingEntity.isCityId_clickable(), false);
+        }
+
         if(reportingEntity.getConnection_type() != null){
             ConnectionType entity = kReportingConfiguration.getConnectionType() ;
             aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);

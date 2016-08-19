@@ -16,6 +16,12 @@ enum TABLE{
     first_level_limited_daily = 6,
     first_level_limited_monthly = 7,
     first_level_limited_yearly = 8,    
+    ad_position_hourly = 9,
+    ad_position_daily = 10,
+    ad_position_monthly = 11,
+    channel_hourly = 12,
+    channel_daily = 13,
+    channel_monthly = 14,
 }  
 
 struct SiteId {
@@ -153,6 +159,48 @@ struct CountryCarrierId {
     7: string uiname = 'ISP NAME',
     8: string return_prefix = 'isp'
 }
+struct StateId {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'stateId',
+    3: string dim_table = 'ui_targeting_state', 
+    4: string dim_column = 'id',
+    5: string dim_column_name = 'state_name',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'State/Province',
+    8: string return_prefix = 'state'
+}
+struct CityId {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'cityId',
+    3: string dim_table = 'ui_targeting_city', 
+    4: string dim_column = 'id',
+    5: string dim_column_name = 'city_name',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'City',
+    8: string return_prefix = 'city'
+}
+struct ChannelId {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'channelId',
+    3: string dim_table = 'channel', 
+    4: string dim_column = 'internalid',
+    5: string dim_column_name = 'channelname',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'Channel',
+    8: string return_prefix = 'channel'
+}
+
+struct AdpositionId {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'adpositionId',
+    3: string dim_table = 'ad_position', 
+    4: string dim_column = 'internalid',
+    5: string dim_column_name = 'name',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'Adposition',
+    8: string return_prefix = 'adposition'
+}
+
 struct ExchangeId {
     1: TABLE fact_table = 1, 
     2: string fact_column = 'exchangeId',
@@ -480,4 +528,9 @@ struct KumbayaReportingConfiguration{
     43: PubIncId pubincId = {'fact_table':TABLE.first_level, 'fact_column':'pubId', 'dim_table':'account', 'dim_column':'id', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'Pub Name','return_prefix':'pubId'},
     44: AdvIncId advincId = {'fact_table':TABLE.first_level, 'fact_column':'advId', 'dim_table':' account', 'dim_column':'id', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'Adv Name','return_prefix':'advId'},
     45: Device_type device_type = {'fact_table':TABLE.first_level, 'fact_column':'device_type', 'dim_table':'device_type', 'dim_column':'id', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'Device Type','return_prefix':'device_type'},
+    46: StateId stateId = {'fact_table':TABLE.first_level, 'fact_column':'stateId', 'dim_table':'ui_targeting_state', 'dim_column':'id', 'dim_column_name':'state_name','member_type':MEMBERTYPE.DIMENSION,'uiname':'State/Province','return_prefix':'state'},
+    47: CityId cityId = {'fact_table':TABLE.first_level, 'fact_column':'cityId', 'dim_table':'ui_targeting_city', 'dim_column':'id', 'dim_column_name':'city_name','member_type':MEMBERTYPE.DIMENSION,'uiname':'City','return_prefix':'city'},
+    48: ChannelId channelId = {'fact_table':TABLE.first_level, 'fact_column':'channelId', 'dim_table':'channel', 'dim_column':'internalid', 'dim_column_name':'channelname','member_type':MEMBERTYPE.DIMENSION,'uiname':'Channel','return_prefix':'channel'},
+    49: AdpositionId adpositionId = {'fact_table':TABLE.first_level, 'fact_column':'adpositionId', 'dim_table':'ad_position', 'dim_column':'internalid', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'Adposition','return_prefix':'adposition'},
 }
+
