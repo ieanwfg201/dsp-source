@@ -52,7 +52,11 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
         return handsetCapabilities;
     }
 
-    public HandsetMasterData detectHandsetForUserAgent(String userAgent) throws Exception {
+    public HandsetMasterData detectHandsetForUserAgent(String userAgentIn) throws Exception {
+    	String userAgent=userAgentIn;
+    	if(userAgentIn != null){
+    		userAgent=userAgentIn.trim().toLowerCase();
+    	}
         HandsetInfo handsetInfo = madFileCache.getHandsetInfo(userAgent);
         if(handsetInfo == null) {
             logger.debug("null handset info got for user agent");
@@ -66,6 +70,7 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
         Integer manufacturerId = null;
         if(handsetManufacturerData == null) {
             logger.debug("Handset manufacturer data is null");
+            manufacturerId=-1;
         } else {
             logger.debug("Manufacturer id : {}", handsetManufacturerData.getManufacturerId());
             manufacturerId = handsetManufacturerData.getManufacturerId();
@@ -81,6 +86,7 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
                 logger.debug("OS id : {}", handsetOperatingSystemId);
             } else {
                 logger.debug("OS id is null");
+                handsetOperatingSystemId=-1;
             }
 
             if (handsetOperatingSystemData.getOperatingSystemVersionSet().contains(handsetInfo.getDeviceOsVersion())) {
@@ -101,6 +107,7 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
             HandsetModelData handsetModelData = handsetModelCache.query(key);
             if (handsetModelData == null) {
                 logger.debug("Handset model data is null");
+                modelId=-1;
             } else {
                 logger.debug("Model id : {}", handsetModelData.getModelId());
                 modelId = handsetModelData.getModelId();
@@ -110,7 +117,7 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
         HandsetCapabilities handsetCapabilities = getHandsetCapabilitiesObjectFromHandsetInfo(handsetInfo);
 
         HandsetMasterData handsetMasterData = new HandsetMasterData(manufacturerId, modelId,
-                handsetInfo.getMarketingName(), handsetOperatingSystemId, deviceOsVersion, null,
+                handsetInfo.getMarketingName(), handsetOperatingSystemId, deviceOsVersion, -1,
                 null, handsetCapabilities);
 
         handsetMasterData.setBot(handsetInfo.isBot());

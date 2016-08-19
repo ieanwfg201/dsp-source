@@ -392,12 +392,12 @@
 				<ref bean="mma_cache"/>
 				<ref bean="adposition_cache"/>
 				<ref bean="channel_cache"/>
-				<ref bean="mad_ua_file_cache"/>
                 <ref bean="handset_manufacturer_cache"/>
                 <ref bean="handset_os_cache"/>
                 <ref bean="handset_model_cache"/>
                 <ref bean="user_id_cache"/>
                 <ref bean="user_recent_history_cache"/>
+				<ref bean="mad_ua_file_cache"/>
             </list>
         </constructor-arg>
     </bean>

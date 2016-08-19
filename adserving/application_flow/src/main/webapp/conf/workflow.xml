@@ -9,6 +9,7 @@
     <import resource="jobsets.xml"/>
     <import resource="rules.xml"/>
     <import resource="caches.xml"/>
+    <import resource="exchange_integ.xml"/>
 
     <bean id="Workflow" class="com.kritter.core.workflow.Workflow">
         <constructor-arg>
