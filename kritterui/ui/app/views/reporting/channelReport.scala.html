@@ -1,0 +1,93 @@
+@(reportEntityForm:Form[models.entities.reporting.ReportFormEntity],  savedReportId:Int=0)
+@main("Channel Reporting") {
+<div class="page page-dashboard" data-ng-controller="channelController">
+
+ @components.formElements.hiddenfield(reportEntityForm("pagesize"))
+ 
+ @components.containers.panel("Channel Report"){
+			<button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">Toggle Filter Display</button>
+			<button class="btn btn-default btn-primary" ng-click="refershData()">Refresh Data</button>
+			  
+		    <div collapse="isCollapsed"> 
+		      <form id="channelConfigForm" class="navbar-form navbar-left" action="/reporting/channeldata" method="POST" ng-init='init("NETWORK", @savedReportId)'>
+		       <fieldset>
+		         @components.formElements.hiddenfield(reportEntityForm("pagesize"))
+		         @components.formElements.hiddenfield(reportEntityForm("startindex"))
+		         @components.formElements.selectlist2(reportEntityForm("frequency"),"Frequency", services.MetadataAPI.reportFrequencyOptions(),
+		                '_ngSync ->true,'_ngChange ->"changeDate()", '_classes -> "small")
+		         @components.formElements.dateinput(reportEntityForm("start_date"),"Start Date", '_stringRep->true)
+		         @components.formElements.dateinput(reportEntityForm("end_date"),"End Date", '_stringRep->true)
+
+                 @components.formElements.selectlist2(reportEntityForm("date_as_dimension"), 
+                                    "Show Time Distribution", services.MetadataAPI.noYesOptions(), '_classes -> "small")                     
+		       </fieldset>
+		       <fieldset>
+		         	@components.formElements.multiselectlist3(reportEntityForm("publishers"),'_label->"Publishers")   
+			          <span ng-show="sites_msmodel.visible">     
+			          	@components.formElements.multiselectlist3(reportEntityForm("sites"),'_label->"Sites")
+			          	@components.formElements.multiselectlist3(reportEntityForm("channel"),'_label->"Channel")
+			          </span>
+		       </fieldset>
+		       <fieldset>
+		           @components.formElements.multiselectlist3(reportEntityForm("advid"),'_label->"Advertisers")
+			          <span ng-show="campaigns_msmodel.visible">
+			          @components.formElements.multiselectlist3(reportEntityForm("campaigns"),'_label->"Campaigns")  
+			          </span>
+			          <span ng-show="ads_msmodel.visible">
+			          @components.formElements.multiselectlist3(reportEntityForm("ads"),'_label->"Ads") 
+		       </fieldset>
+		      
+		        <fieldset>
+		            @components.formElements.checkBoxWithIdWithChange(reportEntityForm("selectallmetric"),'_label->"Select All", '_ngChange ->"togglechecks()")
+		        	<legend>Direct Metrics</legend> 
+                      @components.formElements.checkBoxWithId(reportEntityForm("total_request"),'_label->"Total Request")
+			          @components.formElements.checkBoxWithId(reportEntityForm("total_impression"),'_label->"Total Impressions")
+			          @components.formElements.checkBoxWithId(reportEntityForm("total_csc"),'_label->"Total CSC")
+			          @components.formElements.checkBoxWithId(reportEntityForm("billedcsc"),'_label->"Billed CSC") 
+			          @components.formElements.checkBoxWithId(reportEntityForm("total_click"),'_label->"Total Click")
+			          @components.formElements.checkBoxWithId(reportEntityForm("billedclicks"),'_label->"Billed Clicks") 
+			          @components.formElements.checkBoxWithId(reportEntityForm("total_win"),'_label->"Total WIN")
+			          @components.formElements.checkBoxWithId(reportEntityForm("conversion"),'_label->"Conversions") 
+			          @components.formElements.checkBoxWithId(reportEntityForm("supplyCost"),'_label->"PubIncome")
+                      @components.formElements.checkBoxWithId(reportEntityForm("exchangepayout"),'_label->"Exchange Income")
+                      @components.formElements.checkBoxWithId(reportEntityForm("networkpayout"),'_label->"Network Income")
+			          @components.formElements.checkBoxWithId(reportEntityForm("demandCharges"),'_label->"Revenue")
+                      @components.formElements.checkBoxWithId(reportEntityForm("exchangerevenue"),'_label->"Exchange Revenue")
+                      @components.formElements.checkBoxWithId(reportEntityForm("networkrevenue"),'_label->"Network revenue")
+			          @components.formElements.checkBoxWithId(reportEntityForm("cpa_goal"),'_label->"CPA Revenue") 
+			          @components.formElements.checkBoxWithId(reportEntityForm("total_bidValue"),'_label->"Total Bid Amount")
+                      @components.formElements.checkBoxWithId(reportEntityForm("total_win_bidValue"),'_label->"Total Win Amount") 
+		       </fieldset>
+		       
+		        <fieldset>
+		        	<legend>Computed Metrics</legend>
+                  @components.formElements.checkBoxWithId(reportEntityForm("fr"),'_label->"FR (%)")
+                  @components.formElements.checkBoxWithId(reportEntityForm("eIPM"),'_label->"eIPM")
+                  @components.formElements.checkBoxWithId(reportEntityForm("billedEIPM"),'_label->"Billed EIPM")
+                  @components.formElements.checkBoxWithId(reportEntityForm("eIPC"),'_label->"eIPC")
+                  @components.formElements.checkBoxWithId(reportEntityForm("ctr"),'_label->"CTR (%)")
+                  @components.formElements.checkBoxWithId(reportEntityForm("rtr"),'_label->"RTR (%)")
+                  @components.formElements.checkBoxWithId(reportEntityForm("wtr"),'_label->"WTR (%)")
+                  @components.formElements.checkBoxWithId(reportEntityForm("eIPW"),'_label->"eIPW")
+                  @components.formElements.checkBoxWithId(reportEntityForm("eCPW"),'_label->"eCPW")
+                  @components.formElements.checkBoxWithId(reportEntityForm("profitmargin"),'_label->"ProfitMargin (%)")
+                  @components.formElements.checkBoxWithId(reportEntityForm("eIPA"),'_label->"eIPA")
+                  @components.formElements.checkBoxWithId(reportEntityForm("eCPA"),'_label->"eCPA") 
+		       </fieldset>
+		       <fieldset> 
+                   <legend>Others</legend>
+                      @components.formElements.selectlist2(reportEntityForm("roundoffmetric"), 
+                                    "Round Off ", services.MetadataAPI.noYesOptions())    
+                      @components.formElements.selectlist2(reportEntityForm("csvDelimiter"), 
+                                    "CSV Delimiter ", services.MetadataAPI.csvDelimiter())                        
+               </fieldset> 
+		        <button type="button" class="btn btn-default btn-primary" ng-click="refershData()">Generate Report</button>
+		        <button type="button" class="btn btn-default btn-primary" ng-click="refershCSVData()">Download as CSV</button>
+		      </form>    
+			</div>
+			@components.misc.table("tableData")
+		}  
+</div>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/reporting/channelController.js")" type="text/javascript"></script>
+}

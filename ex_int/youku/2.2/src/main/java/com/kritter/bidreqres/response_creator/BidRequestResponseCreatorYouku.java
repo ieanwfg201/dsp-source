@@ -338,7 +338,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         	impTrackerArray = new String[1+extTracker.getImpTracker().size()];
         	int i = 1;
         	for(String str:extTracker.getImpTracker()){
-        		impTrackerArray[1]=str;
+        		impTrackerArray[i]=str;
         		i++;
         	}
         }else{

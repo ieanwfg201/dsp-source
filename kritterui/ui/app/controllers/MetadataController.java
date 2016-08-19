@@ -207,6 +207,16 @@ public class MetadataController extends Controller{
             return ok(publisherOptions);
         }
         @SecuredAction
+        public static Result channelbypubids(String pubids){
+            ArrayNode publisherOptions = MetadataAPI.channelbypubids(pubids); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
+        public static Result adpositionbypubids(String pubids){
+            ArrayNode publisherOptions = MetadataAPI.adpositionbypubids(pubids); 
+            return ok(publisherOptions);
+        }
+        @SecuredAction
         public static Result adposition_list(){
             ArrayNode publisherOptions = MetadataAPI.adposition_list(); 
             return ok(publisherOptions);

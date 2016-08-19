@@ -520,10 +520,11 @@ public class CreativeTargetingMatcher
 
         if(!richMediaAdFound && !creativeFoundForRequestedSlot && null == request.getNoFillReason())
             request.setNoFillReason(NoFillReason.CREATIVE_SIZE);
-        if(!site.isNative() && !creativeFoundForRequestedSlot){
+        
+        if(site.isNative() && !creativeFoundForRequestedSlot && null == request.getNoFillReason()){
             request.setNoFillReason(NoFillReason.NATIVE_MISMATCH);
         }
-        if(!site.isVideo() && !creativeFoundForRequestedSlot){
+        if(site.isVideo() && !creativeFoundForRequestedSlot && null == request.getNoFillReason()){
             request.setNoFillReason(NoFillReason.VIDEO_MISMATCH);
         }
     }

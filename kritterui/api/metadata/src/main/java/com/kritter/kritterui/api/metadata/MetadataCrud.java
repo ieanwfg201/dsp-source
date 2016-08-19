@@ -320,6 +320,9 @@ public class MetadataCrud {
     public static JsonNode get_channel_by_ids(Connection con){
         return get_metalist(con,MetadataType.CHANNEL_BY_IDS,null).toJson();
     }
+    public static JsonNode get_channel_by_pubids(Connection con){
+        return get_metalist(con,MetadataType.CHANNEL_BY_PUBIDS,null).toJson();
+    }
 
     
     public static MetaList get_metalist(Connection con,MetadataType metadataType, MetaInput metaInput){
@@ -686,6 +689,19 @@ public class MetadataCrud {
                     }
                     pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
                             com.kritter.kritterui.api.db_query_def.Metadata.channel_by_ids, "<id>", metaInput.getQuery_id_list(), 
+                            ",", false));
+                    break;
+                case CHANNEL_BY_PUBIDS:
+                    if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())
+                    		|| "none".equalsIgnoreCase(metaInput.getQuery_id_list())
+                    		|| "all".equals(metaInput.getQuery_id_list())
+                    		|| "[all]".equals(metaInput.getQuery_id_list())
+                    		|| "[none]".equals(metaInput.getQuery_id_list())){
+                        populateEmptyMetalist(metaList);
+                        return metaList;
+                    }
+                    pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.Metadata.channel_by_pubids, "<id>", metaInput.getQuery_id_list(), 
                             ",", false));
                     break;
                 default:

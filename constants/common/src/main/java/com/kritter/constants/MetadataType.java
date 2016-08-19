@@ -65,7 +65,8 @@ public enum MetadataType {
     ADPOS_BY_PUBIDS(59,"ADPOS_BY_PUBIDS"),
     CHANNEL_TIER1_ALL(60,"CHANNEL_TIER1_ALL"),
     CHANNEL_TIER2_BY_TIER1(61,"CHANNEL_TIER2_BY_TIER1"),
-    CHANNEL_BY_IDS(62,"CHANNEL_BY_IDS");
+    CHANNEL_BY_IDS(62,"CHANNEL_BY_IDS"),
+    CHANNEL_BY_PUBIDS(63,"CHANNEL_BY_PUBIDS");
 
 
     private static Map<Integer, MetadataType> map = new HashMap<Integer, MetadataType>();

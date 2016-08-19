@@ -7,6 +7,14 @@
 				class="fa fa-caret-right"></i><span data-i18n="Dashboard"></span></a></li>
         <li><a href="/reporting/limited"><i
                 class="fa fa-caret-right"></i><span data-i18n="Limited Dimension"></span></a></li>
+	    @if("true" == Play.application().configuration().getString("channel_required") )  {
+			<li><a href="/reporting/channel"><i
+				class="fa fa-caret-right"></i><span data-i18n="Channel"></span></a></li>
+		}
+		@if("true" == Play.application().configuration().getString("adposition_required") )  {
+			<li><a href="/reporting/adposition"><i
+				class="fa fa-caret-right"></i><span data-i18n="AdPosition"></span></a></li>
+		}
 		<li><a href="/reporting/demand"><i
 				class="fa fa-caret-right"></i><span data-i18n="Demand"></span></a></li>
 		<li><a href="/reporting/supply"><i

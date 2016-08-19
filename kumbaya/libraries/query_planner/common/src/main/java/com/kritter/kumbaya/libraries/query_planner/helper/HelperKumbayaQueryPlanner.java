@@ -13,6 +13,7 @@ import com.kritter.api.entity.reporting.ReportingEntity;
 import com.kritter.constants.ChartType;
 import com.kritter.constants.Frequency;
 import com.kritter.constants.ReportingDIMTypeEnum;
+import com.kritter.constants.ReportingTableType;
 import com.kritter.kumbaya.libraries.data_structs.common.TABLE;
 import com.kritter.kumbaya.libraries.data_structs.query_planner.ColumnType;
 import com.kritter.kumbaya.libraries.data_structs.query_planner.ErrorCode;
@@ -56,50 +57,98 @@ public class HelperKumbayaQueryPlanner {
         }
     }
 
-    public static TABLE getTABLE(Frequency frequency, ReportingDIMTypeEnum reportDIMTypeEnum){
-        if(reportDIMTypeEnum == ReportingDIMTypeEnum.EXHAUSTIVE){
-            switch(frequency){
-            case TODAY:
-                return TABLE.first_level;
-            case YESTERDAY:
-                return TABLE.first_level_daily;
-            case LAST7DAYS:
-                return TABLE.first_level_daily;
-            case CURRENTMONTH:
-                return TABLE.first_level_daily;
-            case LASTMONTH:
-                return TABLE.first_level_daily;
-            case ADMIN_INTERNAL_HOURLY:
-                return TABLE.first_level;
-            case DATERANGE:
-                return TABLE.first_level_daily;
-            case MONTHLY:
-                return TABLE.first_level_monthly;
-            default:
-                return null;
-            }
-        }else{
-            switch(frequency){
-            case TODAY:
-                return TABLE.first_level_limited;
-            case YESTERDAY:
-                return TABLE.first_level_limited_daily;
-            case LAST7DAYS:
-                return TABLE.first_level_limited_daily;
-            case CURRENTMONTH:
-                return TABLE.first_level_limited_daily;
-            case LASTMONTH:
-                return TABLE.first_level_limited_daily;
-            case ADMIN_INTERNAL_HOURLY:
-                return TABLE.first_level_limited;
-            case DATERANGE:
-                return TABLE.first_level_limited_daily;
-            case MONTHLY:
-                return TABLE.first_level_limited_monthly;
-            default:
-                return null;
-            }
-        }
+    public static TABLE getTABLE(Frequency frequency, ReportingDIMTypeEnum reportDIMTypeEnum,
+    		ReportingTableType reportingDTableType){
+    	if(reportingDTableType == ReportingTableType.FIRSTLEVEL){
+    		if(reportDIMTypeEnum == ReportingDIMTypeEnum.EXHAUSTIVE){
+    			switch(frequency){
+    			case TODAY:
+    				return TABLE.first_level;
+    			case YESTERDAY:
+    				return TABLE.first_level_daily;
+    			case LAST7DAYS:
+    				return TABLE.first_level_daily;
+    			case CURRENTMONTH:
+    				return TABLE.first_level_daily;
+    			case LASTMONTH:
+    				return TABLE.first_level_daily;
+    			case ADMIN_INTERNAL_HOURLY:
+    				return TABLE.first_level;
+    			case DATERANGE:
+    				return TABLE.first_level_daily;
+    			case MONTHLY:
+    				return TABLE.first_level_monthly;
+    			default:
+    				return null;
+    			}
+    		}else{
+    			switch(frequency){
+    			case TODAY:
+    				return TABLE.first_level_limited;
+    			case YESTERDAY:
+    				return TABLE.first_level_limited_daily;
+    			case LAST7DAYS:
+    				return TABLE.first_level_limited_daily;
+    			case CURRENTMONTH:
+    				return TABLE.first_level_limited_daily;
+    			case LASTMONTH:
+    				return TABLE.first_level_limited_daily;
+    			case ADMIN_INTERNAL_HOURLY:
+    				return TABLE.first_level_limited;
+    			case DATERANGE:
+    				return TABLE.first_level_limited_daily;
+    			case MONTHLY:
+    				return TABLE.first_level_limited_monthly;
+    			default:
+    				return null;
+    			}
+    		}
+    	}else if(reportingDTableType == ReportingTableType.CHANNEL){
+    		switch(frequency){
+    		case TODAY:
+    			return TABLE.channel_hourly;
+    		case YESTERDAY:
+    			return TABLE.channel_daily;
+    		case LAST7DAYS:
+    			return TABLE.channel_daily;
+    		case CURRENTMONTH:
+    			return TABLE.channel_daily;
+    		case LASTMONTH:
+    			return TABLE.channel_daily;
+    		case ADMIN_INTERNAL_HOURLY:
+    			return TABLE.channel_hourly;
+    		case DATERANGE:
+    			return TABLE.channel_daily;
+    		case MONTHLY:
+    			return TABLE.channel_monthly;
+    		default:
+    			return null;
+    		}    		
+    	}else if(reportingDTableType == ReportingTableType.ADPOSITION){
+    		switch(frequency){
+    		case TODAY:
+    			return TABLE.ad_position_hourly;
+    		case YESTERDAY:
+    			return TABLE.ad_position_daily;
+    		case LAST7DAYS:
+    			return TABLE.ad_position_daily;
+    		case CURRENTMONTH:
+    			return TABLE.ad_position_daily;
+    		case LASTMONTH:
+    			return TABLE.ad_position_daily;
+    		case ADMIN_INTERNAL_HOURLY:
+    			return TABLE.ad_position_hourly;
+    		case DATERANGE:
+    			return TABLE.ad_position_daily;
+    		case MONTHLY:
+    			return TABLE.ad_position_monthly;
+    		default:
+    			return null;
+    		}    		
+    	}else{
+    		return null;
+    	}
+
     }
 
 

@@ -12,556 +12,14 @@ import com.kritter.constants.ChartType;
 import com.kritter.constants.Frequency;
 import com.kritter.constants.PageConstants;
 import com.kritter.constants.ReportingDIMTypeEnum;
+import com.kritter.constants.ReportingTableType;
 
 public class ReportingEntity {
     
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((adId == null) ? 0 : adId.hashCode());
-        result = prime * result + (adId_clickable ? 1231 : 1237);
-        result = prime * result + (adId_just_filter ? 1231 : 1237);
-        result = prime * result + ((advId == null) ? 0 : advId.hashCode());
-        result = prime * result + (advId_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((advertiserId == null) ? 0 : advertiserId.hashCode());
-        result = prime * result + (advertiserId_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((bidderModelId == null) ? 0 : bidderModelId.hashCode());
-        result = prime * result + (billedECPC ? 1231 : 1237);
-        result = prime * result + billedECPC_order_sequence;
-        result = prime * result + (billedECPM ? 1231 : 1237);
-        result = prime * result + billedECPM_order_sequence;
-        result = prime * result + (billedEIPM ? 1231 : 1237);
-        result = prime * result + billedEIPM_order_sequence;
-        result = prime * result + (billedclicks ? 1231 : 1237);
-        result = prime * result + billedclicks_order_sequence;
-        result = prime * result + (billedcsc ? 1231 : 1237);
-        result = prime * result + billedcsc_order_sequence;
-        result = prime * result
-                + ((browserId == null) ? 0 : browserId.hashCode());
-        result = prime * result + (browserId_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((campaignId == null) ? 0 : campaignId.hashCode());
-        result = prime * result + (campaignId_clickable ? 1231 : 1237);
-        result = prime * result + (campaignId_just_filter ? 1231 : 1237);
-        result = prime * result
-                + ((chartType == null) ? 0 : chartType.hashCode());
-        result = prime * result + (clicksr ? 1231 : 1237);
-        result = prime * result + clicksr_order_sequence;
-        result = prime * result
-                + ((connection_type == null) ? 0 : connection_type.hashCode());
-        result = prime * result + (connection_type_clickable ? 1231 : 1237);
-        result = prime * result + (conversion ? 1231 : 1237);
-        result = prime * result + conversion_order_sequence;
-        result = prime * result + ((countryCarrierId == null) ? 0
-                : countryCarrierId.hashCode());
-        result = prime * result + (countryCarrierId_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((countryId == null) ? 0 : countryId.hashCode());
-        result = prime * result + (countryId_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((countryRegionId == null) ? 0 : countryRegionId.hashCode());
-        result = prime * result + (cpa_goal ? 1231 : 1237);
-        result = prime * result + cpa_goal_order_sequence;
-        result = prime * result
-                + ((creativeId == null) ? 0 : creativeId.hashCode());
-        result = prime * result
-                + ((csvDelimiter == null) ? 0 : csvDelimiter.hashCode());
-        result = prime * result + (ctr ? 1231 : 1237);
-        result = prime * result + ctr_order_sequence;
-        result = prime * result + (date_as_dimension ? 1231 : 1237);
-        result = prime * result
-                + ((date_format == null) ? 0 : date_format.hashCode());
-        result = prime * result + (demandCharges ? 1231 : 1237);
-        result = prime * result + demandCharges_order_sequence;
-        result = prime * result
-                + ((deviceId == null) ? 0 : deviceId.hashCode());
-        result = prime * result + ((deviceManufacturerId == null) ? 0
-                : deviceManufacturerId.hashCode());
-        result = prime * result
-                + (deviceManufacturerId_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((deviceModelId == null) ? 0 : deviceModelId.hashCode());
-        result = prime * result
-                + ((deviceOsId == null) ? 0 : deviceOsId.hashCode());
-        result = prime * result + (deviceOsId_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((device_type == null) ? 0 : device_type.hashCode());
-        result = prime * result + (device_type_clickable ? 1231 : 1237);
-        result = prime * result + (eCPA ? 1231 : 1237);
-        result = prime * result + eCPA_order_sequence;
-        result = prime * result + (eCPC ? 1231 : 1237);
-        result = prime * result + eCPC_order_sequence;
-        result = prime * result + (eCPW ? 1231 : 1237);
-        result = prime * result + eCPW_order_sequence;
-        result = prime * result + (eIPA ? 1231 : 1237);
-        result = prime * result + eIPA_order_sequence;
-        result = prime * result + (eIPC ? 1231 : 1237);
-        result = prime * result + eIPC_order_sequence;
-        result = prime * result + (eIPM ? 1231 : 1237);
-        result = prime * result + eIPM_order_sequence;
-        result = prime * result + (eIPW ? 1231 : 1237);
-        result = prime * result + eIPW_order_sequence;
-        result = prime * result + (earning ? 1231 : 1237);
-        result = prime * result + earning_order_sequence;
-        result = prime * result + (ecpm ? 1231 : 1237);
-        result = prime * result + ecpm_order_sequence;
-        result = prime * result
-                + ((end_date_format == null) ? 0 : end_date_format.hashCode());
-        result = prime * result
-                + ((end_time_str == null) ? 0 : end_time_str.hashCode());
-        result = prime * result
-                + ((exchangeId == null) ? 0 : exchangeId.hashCode());
-        result = prime * result + (exchangepayout ? 1231 : 1237);
-        result = prime * result + exchangepayout_order_sequence;
-        result = prime * result + (exchangerevenue ? 1231 : 1237);
-        result = prime * result + exchangerevenue_order_sequence;
-        result = prime * result
-                + ((extSiteId == null) ? 0 : extSiteId.hashCode());
-        result = prime * result
-                + ((ext_site == null) ? 0 : ext_site.hashCode());
-        result = prime * result + (ext_site_clickable ? 1231 : 1237);
-        result = prime * result + (fr ? 1231 : 1237);
-        result = prime * result + fr_order_sequence;
-        result = prime * result
-                + ((frequency == null) ? 0 : frequency.hashCode());
-        result = prime * result + (networkpayout ? 1231 : 1237);
-        result = prime * result + networkpayout_order_sequence;
-        result = prime * result + (networkrevenue ? 1231 : 1237);
-        result = prime * result + networkrevenue_order_sequence;
-        result = prime * result
-                + ((nofillReason == null) ? 0 : nofillReason.hashCode());
-        result = prime * result + (order_by_desc ? 1231 : 1237);
-        result = prime * result + pagesize;
-        result = prime * result + (profitmargin ? 1231 : 1237);
-        result = prime * result + profitmargin_order_sequence;
-        result = prime * result + ((pubId == null) ? 0 : pubId.hashCode());
-        result = prime * result + (pubId_clickable ? 1231 : 1237);
-        result = prime * result + ((reportingDIMTypeEnum == null) ? 0
-                : reportingDIMTypeEnum.hashCode());
-        result = prime * result + (returnAdGuid ? 1231 : 1237);
-        result = prime * result + (returnGuid ? 1231 : 1237);
-        result = prime * result + (rollup ? 1231 : 1237);
-        result = prime * result + (roundoffmetric ? 1231 : 1237);
-        result = prime * result + roundoffmetriclength;
-        result = prime * result + (rtr ? 1231 : 1237);
-        result = prime * result + rtr_order_sequence;
-        result = prime * result + (selectallmetric ? 1231 : 1237);
-        result = prime * result + ((siteId == null) ? 0 : siteId.hashCode());
-        result = prime * result + (siteId_clickable ? 1231 : 1237);
-        result = prime * result + (siteId_just_filter ? 1231 : 1237);
-        result = prime * result
-                + ((site_hygiene == null) ? 0 : site_hygiene.hashCode());
-        result = prime * result + (site_hygiene_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((start_time_str == null) ? 0 : start_time_str.hashCode());
-        result = prime * result + startindex;
-        result = prime * result + (supplyCost ? 1231 : 1237);
-        result = prime * result + supplyCost_order_sequence;
-        result = prime * result + ((supply_source_type == null) ? 0
-                : supply_source_type.hashCode());
-        result = prime * result + (supply_source_type_clickable ? 1231 : 1237);
-        result = prime * result
-                + ((timezone == null) ? 0 : timezone.hashCode());
-        result = prime * result + top_n;
-        result = prime * result + top_n_for_last_x_hours;
-        result = prime * result + (total_bidValue ? 1231 : 1237);
-        result = prime * result + total_bidValue_order_sequence;
-        result = prime * result + (total_click ? 1231 : 1237);
-        result = prime * result + total_click_order_sequence;
-        result = prime * result + (total_csc ? 1231 : 1237);
-        result = prime * result + total_csc_order_sequence;
-        result = prime * result + (total_event_type ? 1231 : 1237);
-        result = prime * result + total_event_type_order_sequence;
-        result = prime * result + (total_impression ? 1231 : 1237);
-        result = prime * result + total_impression_order_sequence;
-        result = prime * result + (total_request ? 1231 : 1237);
-        result = prime * result + total_request_order_sequence;
-        result = prime * result + (total_win ? 1231 : 1237);
-        result = prime * result + (total_win_bidValue ? 1231 : 1237);
-        result = prime * result + total_win_bidValue_order_sequence;
-        result = prime * result + total_win_order_sequence;
-        result = prime * result + (wtr ? 1231 : 1237);
-        result = prime * result + wtr_order_sequence;
-        return result;
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ReportingEntity other = (ReportingEntity) obj;
-        if (adId == null) {
-            if (other.adId != null)
-                return false;
-        } else if (!adId.equals(other.adId))
-            return false;
-        if (adId_clickable != other.adId_clickable)
-            return false;
-        if (adId_just_filter != other.adId_just_filter)
-            return false;
-        if (advId == null) {
-            if (other.advId != null)
-                return false;
-        } else if (!advId.equals(other.advId))
-            return false;
-        if (advId_clickable != other.advId_clickable)
-            return false;
-        if (advertiserId == null) {
-            if (other.advertiserId != null)
-                return false;
-        } else if (!advertiserId.equals(other.advertiserId))
-            return false;
-        if (advertiserId_clickable != other.advertiserId_clickable)
-            return false;
-        if (bidderModelId == null) {
-            if (other.bidderModelId != null)
-                return false;
-        } else if (!bidderModelId.equals(other.bidderModelId))
-            return false;
-        if (billedECPC != other.billedECPC)
-            return false;
-        if (billedECPC_order_sequence != other.billedECPC_order_sequence)
-            return false;
-        if (billedECPM != other.billedECPM)
-            return false;
-        if (billedECPM_order_sequence != other.billedECPM_order_sequence)
-            return false;
-        if (billedEIPM != other.billedEIPM)
-            return false;
-        if (billedEIPM_order_sequence != other.billedEIPM_order_sequence)
-            return false;
-        if (billedclicks != other.billedclicks)
-            return false;
-        if (billedclicks_order_sequence != other.billedclicks_order_sequence)
-            return false;
-        if (billedcsc != other.billedcsc)
-            return false;
-        if (billedcsc_order_sequence != other.billedcsc_order_sequence)
-            return false;
-        if (browserId == null) {
-            if (other.browserId != null)
-                return false;
-        } else if (!browserId.equals(other.browserId))
-            return false;
-        if (browserId_clickable != other.browserId_clickable)
-            return false;
-        if (campaignId == null) {
-            if (other.campaignId != null)
-                return false;
-        } else if (!campaignId.equals(other.campaignId))
-            return false;
-        if (campaignId_clickable != other.campaignId_clickable)
-            return false;
-        if (campaignId_just_filter != other.campaignId_just_filter)
-            return false;
-        if (chartType != other.chartType)
-            return false;
-        if (clicksr != other.clicksr)
-            return false;
-        if (clicksr_order_sequence != other.clicksr_order_sequence)
-            return false;
-        if (connection_type == null) {
-            if (other.connection_type != null)
-                return false;
-        } else if (!connection_type.equals(other.connection_type))
-            return false;
-        if (connection_type_clickable != other.connection_type_clickable)
-            return false;
-        if (conversion != other.conversion)
-            return false;
-        if (conversion_order_sequence != other.conversion_order_sequence)
-            return false;
-        if (countryCarrierId == null) {
-            if (other.countryCarrierId != null)
-                return false;
-        } else if (!countryCarrierId.equals(other.countryCarrierId))
-            return false;
-        if (countryCarrierId_clickable != other.countryCarrierId_clickable)
-            return false;
-        if (countryId == null) {
-            if (other.countryId != null)
-                return false;
-        } else if (!countryId.equals(other.countryId))
-            return false;
-        if (countryId_clickable != other.countryId_clickable)
-            return false;
-        if (countryRegionId == null) {
-            if (other.countryRegionId != null)
-                return false;
-        } else if (!countryRegionId.equals(other.countryRegionId))
-            return false;
-        if (cpa_goal != other.cpa_goal)
-            return false;
-        if (cpa_goal_order_sequence != other.cpa_goal_order_sequence)
-            return false;
-        if (creativeId == null) {
-            if (other.creativeId != null)
-                return false;
-        } else if (!creativeId.equals(other.creativeId))
-            return false;
-        if (csvDelimiter == null) {
-            if (other.csvDelimiter != null)
-                return false;
-        } else if (!csvDelimiter.equals(other.csvDelimiter))
-            return false;
-        if (ctr != other.ctr)
-            return false;
-        if (ctr_order_sequence != other.ctr_order_sequence)
-            return false;
-        if (date_as_dimension != other.date_as_dimension)
-            return false;
-        if (date_format == null) {
-            if (other.date_format != null)
-                return false;
-        } else if (!date_format.equals(other.date_format))
-            return false;
-        if (demandCharges != other.demandCharges)
-            return false;
-        if (demandCharges_order_sequence != other.demandCharges_order_sequence)
-            return false;
-        if (deviceId == null) {
-            if (other.deviceId != null)
-                return false;
-        } else if (!deviceId.equals(other.deviceId))
-            return false;
-        if (deviceManufacturerId == null) {
-            if (other.deviceManufacturerId != null)
-                return false;
-        } else if (!deviceManufacturerId.equals(other.deviceManufacturerId))
-            return false;
-        if (deviceManufacturerId_clickable != other.deviceManufacturerId_clickable)
-            return false;
-        if (deviceModelId == null) {
-            if (other.deviceModelId != null)
-                return false;
-        } else if (!deviceModelId.equals(other.deviceModelId))
-            return false;
-        if (deviceOsId == null) {
-            if (other.deviceOsId != null)
-                return false;
-        } else if (!deviceOsId.equals(other.deviceOsId))
-            return false;
-        if (deviceOsId_clickable != other.deviceOsId_clickable)
-            return false;
-        if (device_type == null) {
-            if (other.device_type != null)
-                return false;
-        } else if (!device_type.equals(other.device_type))
-            return false;
-        if (device_type_clickable != other.device_type_clickable)
-            return false;
-        if (eCPA != other.eCPA)
-            return false;
-        if (eCPA_order_sequence != other.eCPA_order_sequence)
-            return false;
-        if (eCPC != other.eCPC)
-            return false;
-        if (eCPC_order_sequence != other.eCPC_order_sequence)
-            return false;
-        if (eCPW != other.eCPW)
-            return false;
-        if (eCPW_order_sequence != other.eCPW_order_sequence)
-            return false;
-        if (eIPA != other.eIPA)
-            return false;
-        if (eIPA_order_sequence != other.eIPA_order_sequence)
-            return false;
-        if (eIPC != other.eIPC)
-            return false;
-        if (eIPC_order_sequence != other.eIPC_order_sequence)
-            return false;
-        if (eIPM != other.eIPM)
-            return false;
-        if (eIPM_order_sequence != other.eIPM_order_sequence)
-            return false;
-        if (eIPW != other.eIPW)
-            return false;
-        if (eIPW_order_sequence != other.eIPW_order_sequence)
-            return false;
-        if (earning != other.earning)
-            return false;
-        if (earning_order_sequence != other.earning_order_sequence)
-            return false;
-        if (ecpm != other.ecpm)
-            return false;
-        if (ecpm_order_sequence != other.ecpm_order_sequence)
-            return false;
-        if (end_date_format == null) {
-            if (other.end_date_format != null)
-                return false;
-        } else if (!end_date_format.equals(other.end_date_format))
-            return false;
-        if (end_time_str == null) {
-            if (other.end_time_str != null)
-                return false;
-        } else if (!end_time_str.equals(other.end_time_str))
-            return false;
-        if (exchangeId == null) {
-            if (other.exchangeId != null)
-                return false;
-        } else if (!exchangeId.equals(other.exchangeId))
-            return false;
-        if (exchangepayout != other.exchangepayout)
-            return false;
-        if (exchangepayout_order_sequence != other.exchangepayout_order_sequence)
-            return false;
-        if (exchangerevenue != other.exchangerevenue)
-            return false;
-        if (exchangerevenue_order_sequence != other.exchangerevenue_order_sequence)
-            return false;
-        if (extSiteId == null) {
-            if (other.extSiteId != null)
-                return false;
-        } else if (!extSiteId.equals(other.extSiteId))
-            return false;
-        if (ext_site == null) {
-            if (other.ext_site != null)
-                return false;
-        } else if (!ext_site.equals(other.ext_site))
-            return false;
-        if (ext_site_clickable != other.ext_site_clickable)
-            return false;
-        if (fr != other.fr)
-            return false;
-        if (fr_order_sequence != other.fr_order_sequence)
-            return false;
-        if (frequency != other.frequency)
-            return false;
-        if (networkpayout != other.networkpayout)
-            return false;
-        if (networkpayout_order_sequence != other.networkpayout_order_sequence)
-            return false;
-        if (networkrevenue != other.networkrevenue)
-            return false;
-        if (networkrevenue_order_sequence != other.networkrevenue_order_sequence)
-            return false;
-        if (nofillReason == null) {
-            if (other.nofillReason != null)
-                return false;
-        } else if (!nofillReason.equals(other.nofillReason))
-            return false;
-        if (order_by_desc != other.order_by_desc)
-            return false;
-        if (pagesize != other.pagesize)
-            return false;
-        if (profitmargin != other.profitmargin)
-            return false;
-        if (profitmargin_order_sequence != other.profitmargin_order_sequence)
-            return false;
-        if (pubId == null) {
-            if (other.pubId != null)
-                return false;
-        } else if (!pubId.equals(other.pubId))
-            return false;
-        if (pubId_clickable != other.pubId_clickable)
-            return false;
-        if (reportingDIMTypeEnum != other.reportingDIMTypeEnum)
-            return false;
-        if (returnAdGuid != other.returnAdGuid)
-            return false;
-        if (returnGuid != other.returnGuid)
-            return false;
-        if (rollup != other.rollup)
-            return false;
-        if (roundoffmetric != other.roundoffmetric)
-            return false;
-        if (roundoffmetriclength != other.roundoffmetriclength)
-            return false;
-        if (rtr != other.rtr)
-            return false;
-        if (rtr_order_sequence != other.rtr_order_sequence)
-            return false;
-        if (selectallmetric != other.selectallmetric)
-            return false;
-        if (siteId == null) {
-            if (other.siteId != null)
-                return false;
-        } else if (!siteId.equals(other.siteId))
-            return false;
-        if (siteId_clickable != other.siteId_clickable)
-            return false;
-        if (siteId_just_filter != other.siteId_just_filter)
-            return false;
-        if (site_hygiene == null) {
-            if (other.site_hygiene != null)
-                return false;
-        } else if (!site_hygiene.equals(other.site_hygiene))
-            return false;
-        if (site_hygiene_clickable != other.site_hygiene_clickable)
-            return false;
-        if (start_time_str == null) {
-            if (other.start_time_str != null)
-                return false;
-        } else if (!start_time_str.equals(other.start_time_str))
-            return false;
-        if (startindex != other.startindex)
-            return false;
-        if (supplyCost != other.supplyCost)
-            return false;
-        if (supplyCost_order_sequence != other.supplyCost_order_sequence)
-            return false;
-        if (supply_source_type == null) {
-            if (other.supply_source_type != null)
-                return false;
-        } else if (!supply_source_type.equals(other.supply_source_type))
-            return false;
-        if (supply_source_type_clickable != other.supply_source_type_clickable)
-            return false;
-        if (timezone == null) {
-            if (other.timezone != null)
-                return false;
-        } else if (!timezone.equals(other.timezone))
-            return false;
-        if (top_n != other.top_n)
-            return false;
-        if (top_n_for_last_x_hours != other.top_n_for_last_x_hours)
-            return false;
-        if (total_bidValue != other.total_bidValue)
-            return false;
-        if (total_bidValue_order_sequence != other.total_bidValue_order_sequence)
-            return false;
-        if (total_click != other.total_click)
-            return false;
-        if (total_click_order_sequence != other.total_click_order_sequence)
-            return false;
-        if (total_csc != other.total_csc)
-            return false;
-        if (total_csc_order_sequence != other.total_csc_order_sequence)
-            return false;
-        if (total_event_type != other.total_event_type)
-            return false;
-        if (total_event_type_order_sequence != other.total_event_type_order_sequence)
-            return false;
-        if (total_impression != other.total_impression)
-            return false;
-        if (total_impression_order_sequence != other.total_impression_order_sequence)
-            return false;
-        if (total_request != other.total_request)
-            return false;
-        if (total_request_order_sequence != other.total_request_order_sequence)
-            return false;
-        if (total_win != other.total_win)
-            return false;
-        if (total_win_bidValue != other.total_win_bidValue)
-            return false;
-        if (total_win_bidValue_order_sequence != other.total_win_bidValue_order_sequence)
-            return false;
-        if (total_win_order_sequence != other.total_win_order_sequence)
-            return false;
-        if (wtr != other.wtr)
-            return false;
-        if (wtr_order_sequence != other.wtr_order_sequence)
-            return false;
-        return true;
-    }
     /** mandatory */
     private ReportingDIMTypeEnum reportingDIMTypeEnum = ReportingDIMTypeEnum.EXHAUSTIVE; 
+    /** mandatory */
+    private ReportingTableType reportingTableType = ReportingTableType.FIRSTLEVEL; 
     /** mandatory - YYYY-MM-DD HH:00:00 format */
     private String start_time_str = null; 
     /** mandatory - YYYY-MM-DD HH:00:00 format */
@@ -571,37 +29,45 @@ public class ReportingEntity {
     /** mandatory - default */
     private String date_format = "yyyy-MM-dd HH:00:0";
     /** default */
-    private String end_date_format = "yyyy-MM-dd 23:59:59";
+	private String end_date_format = "yyyy-MM-dd 23:59:59";
     /** mandatory - true if report to be split by date*/
     private boolean date_as_dimension = false;
     /** mandatory - @see com.kritter.constants.Frequency */
-    private Frequency frequency = Frequency.YESTERDAY;
+	private Frequency frequency = Frequency.YESTERDAY;
     /** mandatory - default TABLE - @see com.kritter.constants.ChartType */
-    private ChartType chartType = ChartType.TABLE;
+	private ChartType chartType = ChartType.TABLE;
     
     /*DERIVED DIMENSION*/
     /** mandatory - default null - null means not required, empty list means all required, integer-pubid element in list signifies filters */
-    private List<Integer> pubId = null; 
+	private List<Integer> pubId = null; 
     /** mandatory - default false - used by hierarchical reporting */
-    private boolean pubId_clickable = false;
+	private boolean pubId_clickable = false;
     /** mandatory - default null - null means not required, empty list means all required, String @see com.kritter.constants.HygieneCategory element in list signifies filters */
-    private List<String> site_hygiene = null;
+	private List<String> site_hygiene = null;
     /** mandatory - default false - used by hierarchical reporting */
-    private boolean site_hygiene_clickable = false;
+	private boolean site_hygiene_clickable = false;
     /** mandatory - default null - null means not required, empty list means all required, String - advertiser guid element in list signifies filters */
-    private List<String> advertiserId = null;
+	private List<String> advertiserId = null;
     /** mandatory - default false - used by Admin hierarchical reporting */
-    private boolean advertiserId_clickable = false;
+	private boolean advertiserId_clickable = false;
     /** mandatory - default null - null means not required, empty list means all required, String - advertiser guid element in list signifies filters */
-    private List<Integer> advId = null;
+	private List<Integer> advId = null;
     /** mandatory - default false - used by Admin hierarchical reporting */
-    private boolean advId_clickable = false;
+	private boolean advId_clickable = false;
     
     /*ACTUAL AVAILABLE DIMENSION*/
     /** mandatory - default null - null means not required, empty list means all required, integer - siteId element in list signifies filters */
-    private List<Integer> siteId = null; 
+	private List<Integer> siteId = null; 
     /** mandatory - default false - used by hierarchical reporting */
-    private boolean siteId_clickable = false;
+	private boolean siteId_clickable = false;
+    /** mandatory - default null - null means not required, empty list means all required, integer - siteId element in list signifies filters */
+    private List<Integer> channelId = null; 
+    /** mandatory - default false - used by hierarchical reporting */
+    private boolean channelId_clickable = false;
+    /** mandatory - default null - null means not required, empty list means all required, integer - siteId element in list signifies filters */
+    private List<Integer> adpositionId = null; 
+    /** mandatory - default false - used by hierarchical reporting */
+    private boolean adpositionId_clickable = false;
     /** mandatory - set true if list to be used only as filter */
     private boolean siteId_just_filter = false;
     /** mandatory - default null - null means not required, empty list means all required, integer - external site element in list signifies filters */
@@ -647,6 +113,14 @@ public class ReportingEntity {
     private List<Integer> countryCarrierId = null; 
     /** mandatory - default false - used by  hierarchical reporting */
     private boolean countryCarrierId_clickable = false;
+    /** mandatory - default null - null means not required, empty list means all required, integer - country id element in list signifies filters */
+    private List<Integer> stateId = null; 
+    /** mandatory - default false - used by  hierarchical reporting */
+    private boolean stateId_clickable = false;
+    private List<Integer> cityeId = null; 
+    /** mandatory - default false - used by  hierarchical reporting */
+    private boolean cityId_clickable = false;
+
     /** mandatory - default null - null means not required, empty list means all required, integer - connection typeid @see com.kritter.constants.ConnectionType element in list signifies filters */
     private List<Integer> connection_type = null; 
     /** mandatory - default false - used by  hierarchical reporting */
@@ -842,48 +316,6 @@ public class ReportingEntity {
     /** set true when Total is required in downloads */
     private boolean rollup = false;
     
-    public List<Integer> getDevice_type() {
-        return device_type;
-    }
-    public void setDevice_type(List<Integer> device_type) {
-        this.device_type = device_type;
-    }
-    public boolean isDevice_type_clickable() {
-        return device_type_clickable;
-    }
-    public void setDevice_type_clickable(boolean device_type_clickable) {
-        this.device_type_clickable = device_type_clickable;
-    }
-    public List<Integer> getSiteId() {
-        return siteId;
-    }
-    public void setSiteId(List<Integer> siteId) {
-        this.siteId = siteId;
-    }
-    public List<String> getDeviceId() {
-        return deviceId;
-    }
-    public void setDeviceId(List<String> deviceId) {
-        this.deviceId = deviceId;
-    }
-    public List<Integer> getDeviceManufacturerId() {
-        return deviceManufacturerId;
-    }
-    public void setDeviceManufacturerId(List<Integer> deviceManufacturerId) {
-        this.deviceManufacturerId = deviceManufacturerId;
-    }
-    public List<Integer> getDeviceModelId() {
-        return deviceModelId;
-    }
-    public void setDeviceModelId(List<Integer> deviceModelId) {
-        this.deviceModelId = deviceModelId;
-    }
-    public List<Integer> getDeviceOsId() {
-        return deviceOsId;
-    }
-    public void setDeviceOsId(List<Integer> deviceOsId) {
-        this.deviceOsId = deviceOsId;
-    }
     public List<Integer> getCountryId() {
         return countryId;
     }
@@ -919,24 +351,6 @@ public class ReportingEntity {
     }
     public void setCreativeId(List<Integer> creativeId) {
         this.creativeId = creativeId;
-    }
-    public List<Integer> getAdId() {
-        return adId;
-    }
-    public void setAdId(List<Integer> adId) {
-        this.adId = adId;
-    }
-    public List<Integer> getCampaignId() {
-        return campaignId;
-    }
-    public void setCampaignId(List<Integer> campaignId) {
-        this.campaignId = campaignId;
-    }
-    public List<String> getAdvertiserId() {
-        return advertiserId;
-    }
-    public void setAdvertiserId(List<String> advertiserId) {
-        this.advertiserId = advertiserId;
     }
     public List<Integer> getBidderModelId() {
         return bidderModelId;
@@ -1039,18 +453,6 @@ public class ReportingEntity {
     }
     public void setFr(boolean fr) {
         this.fr = fr;
-    }
-    public Frequency getFrequency() {
-        return frequency;
-    }
-    public void setFrequency(Frequency frequency) {
-        this.frequency = frequency;
-    }
-    public List<Integer> getPubId() {
-        return pubId;
-    }
-    public void setPubId(List<Integer> pubId) {
-        this.pubId = pubId;
     }
     public int getStartindex() {
         return startindex;
@@ -1169,42 +571,6 @@ public class ReportingEntity {
     public void setTop_n_for_last_x_hours(int top_n_for_last_x_hours) {
         this.top_n_for_last_x_hours = top_n_for_last_x_hours;
     }
-    public boolean isDate_as_dimension() {
-        return date_as_dimension;
-    }
-    public void setDate_as_dimension(boolean date_as_dimension) {
-        this.date_as_dimension = date_as_dimension;
-    }
-    public ChartType getChartType() {
-        return chartType;
-    }
-    public void setChartType(ChartType chartType) {
-        this.chartType = chartType;
-    }
-    public String getStart_time_str() {
-        return start_time_str;
-    }
-    public void setStart_time_str(String start_time_str) {
-        this.start_time_str = start_time_str;
-    }
-    public String getEnd_time_str() {
-        return end_time_str;
-    }
-    public void setEnd_time_str(String end_time_str) {
-        this.end_time_str = end_time_str;
-    }
-    public String getTimezone() {
-        return timezone;
-    }
-    public void setTimezone(String timezone) {
-        this.timezone = timezone;
-    }
-    public String getDate_format() {
-        return date_format;
-    }
-    public void setDate_format(String date_format) {
-        this.date_format = date_format;
-    }
     public boolean iseIPC() {
         return eIPC;
     }
@@ -1295,53 +661,11 @@ public class ReportingEntity {
     public void setReturnGuid(boolean returnGuid) {
         this.returnGuid = returnGuid;
     }
-    public String getEnd_date_format() {
-        return end_date_format;
-    }
-    public void setEnd_date_format(String end_date_format) {
-        this.end_date_format = end_date_format;
-    }
     public boolean isCountryId_clickable() {
         return countryId_clickable;
     }
     public void setCountryId_clickable(boolean countryId_clickable) {
         this.countryId_clickable = countryId_clickable;
-    }
-    public boolean isPubId_clickable() {
-        return pubId_clickable;
-    }
-    public void setPubId_clickable(boolean pubId_clickable) {
-        this.pubId_clickable = pubId_clickable;
-    }
-    public boolean isAdvertiserId_clickable() {
-        return advertiserId_clickable;
-    }
-    public void setAdvertiserId_clickable(boolean advertiserId_clickable) {
-        this.advertiserId_clickable = advertiserId_clickable;
-    }
-    public boolean isSiteId_clickable() {
-        return siteId_clickable;
-    }
-    public void setSiteId_clickable(boolean siteId_clickable) {
-        this.siteId_clickable = siteId_clickable;
-    }
-    public boolean isCampaignId_clickable() {
-        return campaignId_clickable;
-    }
-    public void setCampaignId_clickable(boolean campaignId_clickable) {
-        this.campaignId_clickable = campaignId_clickable;
-    }
-    public boolean isAdId_clickable() {
-        return adId_clickable;
-    }
-    public void setAdId_clickable(boolean adId_clickable) {
-        this.adId_clickable = adId_clickable;
-    }
-    public boolean isDeviceOsId_clickable() {
-        return deviceOsId_clickable;
-    }
-    public void setDeviceOsId_clickable(boolean deviceOsId_clickable) {
-        this.deviceOsId_clickable = deviceOsId_clickable;
     }
     public boolean isCountryCarrierId_clickable() {
         return countryCarrierId_clickable;
@@ -1444,13 +768,6 @@ public class ReportingEntity {
     }
     public void setBrowserId(List<Integer> browserId) {
         this.browserId = browserId;
-    }
-    public boolean isDeviceManufacturerId_clickable() {
-        return deviceManufacturerId_clickable;
-    }
-    public void setDeviceManufacturerId_clickable(
-            boolean deviceManufacturerId_clickable) {
-        this.deviceManufacturerId_clickable = deviceManufacturerId_clickable;
     }
     public boolean isCpa_goal() {
         return cpa_goal;
@@ -1572,42 +889,6 @@ public class ReportingEntity {
     public void setBilledEIPM_order_sequence(int billedEIPM_order_sequence) {
         this.billedEIPM_order_sequence = billedEIPM_order_sequence;
     }
-    public List<Integer> getSupply_source_type() {
-        return supply_source_type;
-    }
-    public void setSupply_source_type(List<Integer> supply_source_type) {
-        this.supply_source_type = supply_source_type;
-    }
-    public boolean isSupply_source_type_clickable() {
-        return supply_source_type_clickable;
-    }
-    public void setSupply_source_type_clickable(boolean supply_source_type_clickable) {
-        this.supply_source_type_clickable = supply_source_type_clickable;
-    }
-    public boolean isSite_hygiene_clickable() {
-        return site_hygiene_clickable;
-    }
-    public void setSite_hygiene_clickable(boolean site_hygiene_clickable) {
-        this.site_hygiene_clickable = site_hygiene_clickable;
-    }
-    public List<String> getSite_hygiene() {
-        return site_hygiene;
-    }
-    public void setSite_hygiene(List<String> site_hygiene) {
-        this.site_hygiene = site_hygiene;
-    }
-    public List<Integer> getExt_site() {
-        return ext_site;
-    }
-    public void setExt_site(List<Integer> ext_site) {
-        this.ext_site = ext_site;
-    }
-    public boolean isExt_site_clickable() {
-        return ext_site_clickable;
-    }
-    public void setExt_site_clickable(boolean ext_site_clickable) {
-        this.ext_site_clickable = ext_site_clickable;
-    }
     public List<Integer> getConnection_type() {
         return connection_type;
     }
@@ -1623,46 +904,292 @@ public class ReportingEntity {
     public boolean isSelectallmetric() {
         return selectallmetric;
     }
-    public ReportingDIMTypeEnum getReportingDIMTypeEnum() {
-        return reportingDIMTypeEnum;
-    }
-    public void setReportingDIMTypeEnum(ReportingDIMTypeEnum reportingDIMTypeEnum) {
-        this.reportingDIMTypeEnum = reportingDIMTypeEnum;
-    }
-    public List<Integer> getAdvId() {
-        return advId;
-    }
-    public void setAdvId(List<Integer> advId) {
-        this.advId = advId;
-    }
-    public boolean isAdvId_clickable() {
-        return advId_clickable;
-    }
-    public void setAdvId_clickable(boolean advId_clickable) {
-        this.advId_clickable = advId_clickable;
-    }
     public void setSelectallmetric(boolean selectallmetric) {
         this.selectallmetric = selectallmetric;
     }
-    public boolean isSiteId_just_filter() {
-        return siteId_just_filter;
-    }
-    public void setSiteId_just_filter(boolean siteId_just_filter) {
-        this.siteId_just_filter = siteId_just_filter;
-    }
-    public boolean isAdId_just_filter() {
-        return adId_just_filter;
-    }
-    public void setAdId_just_filter(boolean adId_just_filter) {
-        this.adId_just_filter = adId_just_filter;
-    }
-    public boolean isCampaignId_just_filter() {
-        return campaignId_just_filter;
-    }
-    public void setCampaignId_just_filter(boolean campaignId_just_filter) {
-        this.campaignId_just_filter = campaignId_just_filter;
-    }
-    public JsonNode toJson(){
+    public ReportingDIMTypeEnum getReportingDIMTypeEnum() {
+		return reportingDIMTypeEnum;
+	}
+	public void setReportingDIMTypeEnum(ReportingDIMTypeEnum reportingDIMTypeEnum) {
+		this.reportingDIMTypeEnum = reportingDIMTypeEnum;
+	}
+	public ReportingTableType getReportingTableType() {
+		return reportingTableType;
+	}
+	public void setReportingTableType(ReportingTableType reportingTableType) {
+		this.reportingTableType = reportingTableType;
+	}
+	public String getStart_time_str() {
+		return start_time_str;
+	}
+	public void setStart_time_str(String start_time_str) {
+		this.start_time_str = start_time_str;
+	}
+	public String getEnd_time_str() {
+		return end_time_str;
+	}
+	public void setEnd_time_str(String end_time_str) {
+		this.end_time_str = end_time_str;
+	}
+	public String getTimezone() {
+		return timezone;
+	}
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
+	}
+	public String getDate_format() {
+		return date_format;
+	}
+	public void setDate_format(String date_format) {
+		this.date_format = date_format;
+	}
+	public String getEnd_date_format() {
+		return end_date_format;
+	}
+	public void setEnd_date_format(String end_date_format) {
+		this.end_date_format = end_date_format;
+	}
+	public boolean isDate_as_dimension() {
+		return date_as_dimension;
+	}
+	public void setDate_as_dimension(boolean date_as_dimension) {
+		this.date_as_dimension = date_as_dimension;
+	}
+	public Frequency getFrequency() {
+		return frequency;
+	}
+	public void setFrequency(Frequency frequency) {
+		this.frequency = frequency;
+	}
+	public ChartType getChartType() {
+		return chartType;
+	}
+	public void setChartType(ChartType chartType) {
+		this.chartType = chartType;
+	}
+	public List<Integer> getPubId() {
+		return pubId;
+	}
+	public void setPubId(List<Integer> pubId) {
+		this.pubId = pubId;
+	}
+	public boolean isPubId_clickable() {
+		return pubId_clickable;
+	}
+	public void setPubId_clickable(boolean pubId_clickable) {
+		this.pubId_clickable = pubId_clickable;
+	}
+	public List<String> getSite_hygiene() {
+		return site_hygiene;
+	}
+	public void setSite_hygiene(List<String> site_hygiene) {
+		this.site_hygiene = site_hygiene;
+	}
+	public boolean isSite_hygiene_clickable() {
+		return site_hygiene_clickable;
+	}
+	public void setSite_hygiene_clickable(boolean site_hygiene_clickable) {
+		this.site_hygiene_clickable = site_hygiene_clickable;
+	}
+	public List<String> getAdvertiserId() {
+		return advertiserId;
+	}
+	public void setAdvertiserId(List<String> advertiserId) {
+		this.advertiserId = advertiserId;
+	}
+	public boolean isAdvertiserId_clickable() {
+		return advertiserId_clickable;
+	}
+	public void setAdvertiserId_clickable(boolean advertiserId_clickable) {
+		this.advertiserId_clickable = advertiserId_clickable;
+	}
+	public List<Integer> getAdvId() {
+		return advId;
+	}
+	public void setAdvId(List<Integer> advId) {
+		this.advId = advId;
+	}
+	public boolean isAdvId_clickable() {
+		return advId_clickable;
+	}
+	public void setAdvId_clickable(boolean advId_clickable) {
+		this.advId_clickable = advId_clickable;
+	}
+	public List<Integer> getSiteId() {
+		return siteId;
+	}
+	public void setSiteId(List<Integer> siteId) {
+		this.siteId = siteId;
+	}
+	public boolean isSiteId_clickable() {
+		return siteId_clickable;
+	}
+	public void setSiteId_clickable(boolean siteId_clickable) {
+		this.siteId_clickable = siteId_clickable;
+	}
+	public List<Integer> getChannelId() {
+		return channelId;
+	}
+	public void setChannelId(List<Integer> channelId) {
+		this.channelId = channelId;
+	}
+	public boolean isChannelId_clickable() {
+		return channelId_clickable;
+	}
+	public void setChannelId_clickable(boolean channelId_clickable) {
+		this.channelId_clickable = channelId_clickable;
+	}
+	public List<Integer> getAdpositionId() {
+		return adpositionId;
+	}
+	public void setAdpositionId(List<Integer> adpositionId) {
+		this.adpositionId = adpositionId;
+	}
+	public boolean isAdpositionId_clickable() {
+		return adpositionId_clickable;
+	}
+	public void setAdpositionId_clickable(boolean adpositionId_clickable) {
+		this.adpositionId_clickable = adpositionId_clickable;
+	}
+	public boolean isSiteId_just_filter() {
+		return siteId_just_filter;
+	}
+	public void setSiteId_just_filter(boolean siteId_just_filter) {
+		this.siteId_just_filter = siteId_just_filter;
+	}
+	public List<Integer> getExt_site() {
+		return ext_site;
+	}
+	public void setExt_site(List<Integer> ext_site) {
+		this.ext_site = ext_site;
+	}
+	public boolean isExt_site_clickable() {
+		return ext_site_clickable;
+	}
+	public void setExt_site_clickable(boolean ext_site_clickable) {
+		this.ext_site_clickable = ext_site_clickable;
+	}
+	public List<Integer> getSupply_source_type() {
+		return supply_source_type;
+	}
+	public void setSupply_source_type(List<Integer> supply_source_type) {
+		this.supply_source_type = supply_source_type;
+	}
+	public boolean isSupply_source_type_clickable() {
+		return supply_source_type_clickable;
+	}
+	public void setSupply_source_type_clickable(boolean supply_source_type_clickable) {
+		this.supply_source_type_clickable = supply_source_type_clickable;
+	}
+	public List<Integer> getDevice_type() {
+		return device_type;
+	}
+	public void setDevice_type(List<Integer> device_type) {
+		this.device_type = device_type;
+	}
+	public boolean isDevice_type_clickable() {
+		return device_type_clickable;
+	}
+	public void setDevice_type_clickable(boolean device_type_clickable) {
+		this.device_type_clickable = device_type_clickable;
+	}
+	public List<Integer> getCampaignId() {
+		return campaignId;
+	}
+	public void setCampaignId(List<Integer> campaignId) {
+		this.campaignId = campaignId;
+	}
+	public boolean isCampaignId_clickable() {
+		return campaignId_clickable;
+	}
+	public void setCampaignId_clickable(boolean campaignId_clickable) {
+		this.campaignId_clickable = campaignId_clickable;
+	}
+	public boolean isCampaignId_just_filter() {
+		return campaignId_just_filter;
+	}
+	public void setCampaignId_just_filter(boolean campaignId_just_filter) {
+		this.campaignId_just_filter = campaignId_just_filter;
+	}
+	public List<Integer> getAdId() {
+		return adId;
+	}
+	public void setAdId(List<Integer> adId) {
+		this.adId = adId;
+	}
+	public boolean isAdId_clickable() {
+		return adId_clickable;
+	}
+	public void setAdId_clickable(boolean adId_clickable) {
+		this.adId_clickable = adId_clickable;
+	}
+	public boolean isAdId_just_filter() {
+		return adId_just_filter;
+	}
+	public void setAdId_just_filter(boolean adId_just_filter) {
+		this.adId_just_filter = adId_just_filter;
+	}
+	public List<String> getDeviceId() {
+		return deviceId;
+	}
+	public void setDeviceId(List<String> deviceId) {
+		this.deviceId = deviceId;
+	}
+	public List<Integer> getDeviceManufacturerId() {
+		return deviceManufacturerId;
+	}
+	public void setDeviceManufacturerId(List<Integer> deviceManufacturerId) {
+		this.deviceManufacturerId = deviceManufacturerId;
+	}
+	public boolean isDeviceManufacturerId_clickable() {
+		return deviceManufacturerId_clickable;
+	}
+	public void setDeviceManufacturerId_clickable(boolean deviceManufacturerId_clickable) {
+		this.deviceManufacturerId_clickable = deviceManufacturerId_clickable;
+	}
+	public List<Integer> getDeviceModelId() {
+		return deviceModelId;
+	}
+	public void setDeviceModelId(List<Integer> deviceModelId) {
+		this.deviceModelId = deviceModelId;
+	}
+	public List<Integer> getDeviceOsId() {
+		return deviceOsId;
+	}
+	public void setDeviceOsId(List<Integer> deviceOsId) {
+		this.deviceOsId = deviceOsId;
+	}
+	public boolean isDeviceOsId_clickable() {
+		return deviceOsId_clickable;
+	}
+	public void setDeviceOsId_clickable(boolean deviceOsId_clickable) {
+		this.deviceOsId_clickable = deviceOsId_clickable;
+	}
+	public List<Integer> getStateId() {
+		return stateId;
+	}
+	public void setStateId(List<Integer> stateId) {
+		this.stateId = stateId;
+	}
+	public boolean isStateId_clickable() {
+		return stateId_clickable;
+	}
+	public void setStateId_clickable(boolean stateId_clickable) {
+		this.stateId_clickable = stateId_clickable;
+	}
+	public List<Integer> getCityeId() {
+		return cityeId;
+	}
+	public void setCityeId(List<Integer> cityeId) {
+		this.cityeId = cityeId;
+	}
+	public boolean isCityId_clickable() {
+		return cityId_clickable;
+	}
+	public void setCityId_clickable(boolean cityId_clickable) {
+		this.cityId_clickable = cityId_clickable;
+	}
+	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
@@ -1673,4 +1200,559 @@ public class ReportingEntity {
         return entity;
 
     }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((adId == null) ? 0 : adId.hashCode());
+		result = prime * result + (adId_clickable ? 1231 : 1237);
+		result = prime * result + (adId_just_filter ? 1231 : 1237);
+		result = prime * result + ((adpositionId == null) ? 0 : adpositionId.hashCode());
+		result = prime * result + (adpositionId_clickable ? 1231 : 1237);
+		result = prime * result + ((advId == null) ? 0 : advId.hashCode());
+		result = prime * result + (advId_clickable ? 1231 : 1237);
+		result = prime * result + ((advertiserId == null) ? 0 : advertiserId.hashCode());
+		result = prime * result + (advertiserId_clickable ? 1231 : 1237);
+		result = prime * result + ((bidderModelId == null) ? 0 : bidderModelId.hashCode());
+		result = prime * result + (billedECPC ? 1231 : 1237);
+		result = prime * result + billedECPC_order_sequence;
+		result = prime * result + (billedECPM ? 1231 : 1237);
+		result = prime * result + billedECPM_order_sequence;
+		result = prime * result + (billedEIPM ? 1231 : 1237);
+		result = prime * result + billedEIPM_order_sequence;
+		result = prime * result + (billedclicks ? 1231 : 1237);
+		result = prime * result + billedclicks_order_sequence;
+		result = prime * result + (billedcsc ? 1231 : 1237);
+		result = prime * result + billedcsc_order_sequence;
+		result = prime * result + ((browserId == null) ? 0 : browserId.hashCode());
+		result = prime * result + (browserId_clickable ? 1231 : 1237);
+		result = prime * result + ((campaignId == null) ? 0 : campaignId.hashCode());
+		result = prime * result + (campaignId_clickable ? 1231 : 1237);
+		result = prime * result + (campaignId_just_filter ? 1231 : 1237);
+		result = prime * result + ((channelId == null) ? 0 : channelId.hashCode());
+		result = prime * result + (channelId_clickable ? 1231 : 1237);
+		result = prime * result + ((chartType == null) ? 0 : chartType.hashCode());
+		result = prime * result + (cityId_clickable ? 1231 : 1237);
+		result = prime * result + ((cityeId == null) ? 0 : cityeId.hashCode());
+		result = prime * result + (clicksr ? 1231 : 1237);
+		result = prime * result + clicksr_order_sequence;
+		result = prime * result + ((connection_type == null) ? 0 : connection_type.hashCode());
+		result = prime * result + (connection_type_clickable ? 1231 : 1237);
+		result = prime * result + (conversion ? 1231 : 1237);
+		result = prime * result + conversion_order_sequence;
+		result = prime * result + ((countryCarrierId == null) ? 0 : countryCarrierId.hashCode());
+		result = prime * result + (countryCarrierId_clickable ? 1231 : 1237);
+		result = prime * result + ((countryId == null) ? 0 : countryId.hashCode());
+		result = prime * result + (countryId_clickable ? 1231 : 1237);
+		result = prime * result + ((countryRegionId == null) ? 0 : countryRegionId.hashCode());
+		result = prime * result + (cpa_goal ? 1231 : 1237);
+		result = prime * result + cpa_goal_order_sequence;
+		result = prime * result + ((creativeId == null) ? 0 : creativeId.hashCode());
+		result = prime * result + ((csvDelimiter == null) ? 0 : csvDelimiter.hashCode());
+		result = prime * result + (ctr ? 1231 : 1237);
+		result = prime * result + ctr_order_sequence;
+		result = prime * result + (date_as_dimension ? 1231 : 1237);
+		result = prime * result + ((date_format == null) ? 0 : date_format.hashCode());
+		result = prime * result + (demandCharges ? 1231 : 1237);
+		result = prime * result + demandCharges_order_sequence;
+		result = prime * result + ((deviceId == null) ? 0 : deviceId.hashCode());
+		result = prime * result + ((deviceManufacturerId == null) ? 0 : deviceManufacturerId.hashCode());
+		result = prime * result + (deviceManufacturerId_clickable ? 1231 : 1237);
+		result = prime * result + ((deviceModelId == null) ? 0 : deviceModelId.hashCode());
+		result = prime * result + ((deviceOsId == null) ? 0 : deviceOsId.hashCode());
+		result = prime * result + (deviceOsId_clickable ? 1231 : 1237);
+		result = prime * result + ((device_type == null) ? 0 : device_type.hashCode());
+		result = prime * result + (device_type_clickable ? 1231 : 1237);
+		result = prime * result + (eCPA ? 1231 : 1237);
+		result = prime * result + eCPA_order_sequence;
+		result = prime * result + (eCPC ? 1231 : 1237);
+		result = prime * result + eCPC_order_sequence;
+		result = prime * result + (eCPW ? 1231 : 1237);
+		result = prime * result + eCPW_order_sequence;
+		result = prime * result + (eIPA ? 1231 : 1237);
+		result = prime * result + eIPA_order_sequence;
+		result = prime * result + (eIPC ? 1231 : 1237);
+		result = prime * result + eIPC_order_sequence;
+		result = prime * result + (eIPM ? 1231 : 1237);
+		result = prime * result + eIPM_order_sequence;
+		result = prime * result + (eIPW ? 1231 : 1237);
+		result = prime * result + eIPW_order_sequence;
+		result = prime * result + (earning ? 1231 : 1237);
+		result = prime * result + earning_order_sequence;
+		result = prime * result + (ecpm ? 1231 : 1237);
+		result = prime * result + ecpm_order_sequence;
+		result = prime * result + ((end_date_format == null) ? 0 : end_date_format.hashCode());
+		result = prime * result + ((end_time_str == null) ? 0 : end_time_str.hashCode());
+		result = prime * result + ((exchangeId == null) ? 0 : exchangeId.hashCode());
+		result = prime * result + (exchangepayout ? 1231 : 1237);
+		result = prime * result + exchangepayout_order_sequence;
+		result = prime * result + (exchangerevenue ? 1231 : 1237);
+		result = prime * result + exchangerevenue_order_sequence;
+		result = prime * result + ((extSiteId == null) ? 0 : extSiteId.hashCode());
+		result = prime * result + ((ext_site == null) ? 0 : ext_site.hashCode());
+		result = prime * result + (ext_site_clickable ? 1231 : 1237);
+		result = prime * result + (fr ? 1231 : 1237);
+		result = prime * result + fr_order_sequence;
+		result = prime * result + ((frequency == null) ? 0 : frequency.hashCode());
+		result = prime * result + (networkpayout ? 1231 : 1237);
+		result = prime * result + networkpayout_order_sequence;
+		result = prime * result + (networkrevenue ? 1231 : 1237);
+		result = prime * result + networkrevenue_order_sequence;
+		result = prime * result + ((nofillReason == null) ? 0 : nofillReason.hashCode());
+		result = prime * result + (order_by_desc ? 1231 : 1237);
+		result = prime * result + pagesize;
+		result = prime * result + (profitmargin ? 1231 : 1237);
+		result = prime * result + profitmargin_order_sequence;
+		result = prime * result + ((pubId == null) ? 0 : pubId.hashCode());
+		result = prime * result + (pubId_clickable ? 1231 : 1237);
+		result = prime * result + ((reportingDIMTypeEnum == null) ? 0 : reportingDIMTypeEnum.hashCode());
+		result = prime * result + ((reportingTableType == null) ? 0 : reportingTableType.hashCode());
+		result = prime * result + (returnAdGuid ? 1231 : 1237);
+		result = prime * result + (returnGuid ? 1231 : 1237);
+		result = prime * result + (rollup ? 1231 : 1237);
+		result = prime * result + (roundoffmetric ? 1231 : 1237);
+		result = prime * result + roundoffmetriclength;
+		result = prime * result + (rtr ? 1231 : 1237);
+		result = prime * result + rtr_order_sequence;
+		result = prime * result + (selectallmetric ? 1231 : 1237);
+		result = prime * result + ((siteId == null) ? 0 : siteId.hashCode());
+		result = prime * result + (siteId_clickable ? 1231 : 1237);
+		result = prime * result + (siteId_just_filter ? 1231 : 1237);
+		result = prime * result + ((site_hygiene == null) ? 0 : site_hygiene.hashCode());
+		result = prime * result + (site_hygiene_clickable ? 1231 : 1237);
+		result = prime * result + ((start_time_str == null) ? 0 : start_time_str.hashCode());
+		result = prime * result + startindex;
+		result = prime * result + ((stateId == null) ? 0 : stateId.hashCode());
+		result = prime * result + (stateId_clickable ? 1231 : 1237);
+		result = prime * result + (supplyCost ? 1231 : 1237);
+		result = prime * result + supplyCost_order_sequence;
+		result = prime * result + ((supply_source_type == null) ? 0 : supply_source_type.hashCode());
+		result = prime * result + (supply_source_type_clickable ? 1231 : 1237);
+		result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
+		result = prime * result + top_n;
+		result = prime * result + top_n_for_last_x_hours;
+		result = prime * result + (total_bidValue ? 1231 : 1237);
+		result = prime * result + total_bidValue_order_sequence;
+		result = prime * result + (total_click ? 1231 : 1237);
+		result = prime * result + total_click_order_sequence;
+		result = prime * result + (total_csc ? 1231 : 1237);
+		result = prime * result + total_csc_order_sequence;
+		result = prime * result + (total_event_type ? 1231 : 1237);
+		result = prime * result + total_event_type_order_sequence;
+		result = prime * result + (total_impression ? 1231 : 1237);
+		result = prime * result + total_impression_order_sequence;
+		result = prime * result + (total_request ? 1231 : 1237);
+		result = prime * result + total_request_order_sequence;
+		result = prime * result + (total_win ? 1231 : 1237);
+		result = prime * result + (total_win_bidValue ? 1231 : 1237);
+		result = prime * result + total_win_bidValue_order_sequence;
+		result = prime * result + total_win_order_sequence;
+		result = prime * result + (wtr ? 1231 : 1237);
+		result = prime * result + wtr_order_sequence;
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReportingEntity other = (ReportingEntity) obj;
+		if (adId == null) {
+			if (other.adId != null)
+				return false;
+		} else if (!adId.equals(other.adId))
+			return false;
+		if (adId_clickable != other.adId_clickable)
+			return false;
+		if (adId_just_filter != other.adId_just_filter)
+			return false;
+		if (adpositionId == null) {
+			if (other.adpositionId != null)
+				return false;
+		} else if (!adpositionId.equals(other.adpositionId))
+			return false;
+		if (adpositionId_clickable != other.adpositionId_clickable)
+			return false;
+		if (advId == null) {
+			if (other.advId != null)
+				return false;
+		} else if (!advId.equals(other.advId))
+			return false;
+		if (advId_clickable != other.advId_clickable)
+			return false;
+		if (advertiserId == null) {
+			if (other.advertiserId != null)
+				return false;
+		} else if (!advertiserId.equals(other.advertiserId))
+			return false;
+		if (advertiserId_clickable != other.advertiserId_clickable)
+			return false;
+		if (bidderModelId == null) {
+			if (other.bidderModelId != null)
+				return false;
+		} else if (!bidderModelId.equals(other.bidderModelId))
+			return false;
+		if (billedECPC != other.billedECPC)
+			return false;
+		if (billedECPC_order_sequence != other.billedECPC_order_sequence)
+			return false;
+		if (billedECPM != other.billedECPM)
+			return false;
+		if (billedECPM_order_sequence != other.billedECPM_order_sequence)
+			return false;
+		if (billedEIPM != other.billedEIPM)
+			return false;
+		if (billedEIPM_order_sequence != other.billedEIPM_order_sequence)
+			return false;
+		if (billedclicks != other.billedclicks)
+			return false;
+		if (billedclicks_order_sequence != other.billedclicks_order_sequence)
+			return false;
+		if (billedcsc != other.billedcsc)
+			return false;
+		if (billedcsc_order_sequence != other.billedcsc_order_sequence)
+			return false;
+		if (browserId == null) {
+			if (other.browserId != null)
+				return false;
+		} else if (!browserId.equals(other.browserId))
+			return false;
+		if (browserId_clickable != other.browserId_clickable)
+			return false;
+		if (campaignId == null) {
+			if (other.campaignId != null)
+				return false;
+		} else if (!campaignId.equals(other.campaignId))
+			return false;
+		if (campaignId_clickable != other.campaignId_clickable)
+			return false;
+		if (campaignId_just_filter != other.campaignId_just_filter)
+			return false;
+		if (channelId == null) {
+			if (other.channelId != null)
+				return false;
+		} else if (!channelId.equals(other.channelId))
+			return false;
+		if (channelId_clickable != other.channelId_clickable)
+			return false;
+		if (chartType != other.chartType)
+			return false;
+		if (cityId_clickable != other.cityId_clickable)
+			return false;
+		if (cityeId == null) {
+			if (other.cityeId != null)
+				return false;
+		} else if (!cityeId.equals(other.cityeId))
+			return false;
+		if (clicksr != other.clicksr)
+			return false;
+		if (clicksr_order_sequence != other.clicksr_order_sequence)
+			return false;
+		if (connection_type == null) {
+			if (other.connection_type != null)
+				return false;
+		} else if (!connection_type.equals(other.connection_type))
+			return false;
+		if (connection_type_clickable != other.connection_type_clickable)
+			return false;
+		if (conversion != other.conversion)
+			return false;
+		if (conversion_order_sequence != other.conversion_order_sequence)
+			return false;
+		if (countryCarrierId == null) {
+			if (other.countryCarrierId != null)
+				return false;
+		} else if (!countryCarrierId.equals(other.countryCarrierId))
+			return false;
+		if (countryCarrierId_clickable != other.countryCarrierId_clickable)
+			return false;
+		if (countryId == null) {
+			if (other.countryId != null)
+				return false;
+		} else if (!countryId.equals(other.countryId))
+			return false;
+		if (countryId_clickable != other.countryId_clickable)
+			return false;
+		if (countryRegionId == null) {
+			if (other.countryRegionId != null)
+				return false;
+		} else if (!countryRegionId.equals(other.countryRegionId))
+			return false;
+		if (cpa_goal != other.cpa_goal)
+			return false;
+		if (cpa_goal_order_sequence != other.cpa_goal_order_sequence)
+			return false;
+		if (creativeId == null) {
+			if (other.creativeId != null)
+				return false;
+		} else if (!creativeId.equals(other.creativeId))
+			return false;
+		if (csvDelimiter == null) {
+			if (other.csvDelimiter != null)
+				return false;
+		} else if (!csvDelimiter.equals(other.csvDelimiter))
+			return false;
+		if (ctr != other.ctr)
+			return false;
+		if (ctr_order_sequence != other.ctr_order_sequence)
+			return false;
+		if (date_as_dimension != other.date_as_dimension)
+			return false;
+		if (date_format == null) {
+			if (other.date_format != null)
+				return false;
+		} else if (!date_format.equals(other.date_format))
+			return false;
+		if (demandCharges != other.demandCharges)
+			return false;
+		if (demandCharges_order_sequence != other.demandCharges_order_sequence)
+			return false;
+		if (deviceId == null) {
+			if (other.deviceId != null)
+				return false;
+		} else if (!deviceId.equals(other.deviceId))
+			return false;
+		if (deviceManufacturerId == null) {
+			if (other.deviceManufacturerId != null)
+				return false;
+		} else if (!deviceManufacturerId.equals(other.deviceManufacturerId))
+			return false;
+		if (deviceManufacturerId_clickable != other.deviceManufacturerId_clickable)
+			return false;
+		if (deviceModelId == null) {
+			if (other.deviceModelId != null)
+				return false;
+		} else if (!deviceModelId.equals(other.deviceModelId))
+			return false;
+		if (deviceOsId == null) {
+			if (other.deviceOsId != null)
+				return false;
+		} else if (!deviceOsId.equals(other.deviceOsId))
+			return false;
+		if (deviceOsId_clickable != other.deviceOsId_clickable)
+			return false;
+		if (device_type == null) {
+			if (other.device_type != null)
+				return false;
+		} else if (!device_type.equals(other.device_type))
+			return false;
+		if (device_type_clickable != other.device_type_clickable)
+			return false;
+		if (eCPA != other.eCPA)
+			return false;
+		if (eCPA_order_sequence != other.eCPA_order_sequence)
+			return false;
+		if (eCPC != other.eCPC)
+			return false;
+		if (eCPC_order_sequence != other.eCPC_order_sequence)
+			return false;
+		if (eCPW != other.eCPW)
+			return false;
+		if (eCPW_order_sequence != other.eCPW_order_sequence)
+			return false;
+		if (eIPA != other.eIPA)
+			return false;
+		if (eIPA_order_sequence != other.eIPA_order_sequence)
+			return false;
+		if (eIPC != other.eIPC)
+			return false;
+		if (eIPC_order_sequence != other.eIPC_order_sequence)
+			return false;
+		if (eIPM != other.eIPM)
+			return false;
+		if (eIPM_order_sequence != other.eIPM_order_sequence)
+			return false;
+		if (eIPW != other.eIPW)
+			return false;
+		if (eIPW_order_sequence != other.eIPW_order_sequence)
+			return false;
+		if (earning != other.earning)
+			return false;
+		if (earning_order_sequence != other.earning_order_sequence)
+			return false;
+		if (ecpm != other.ecpm)
+			return false;
+		if (ecpm_order_sequence != other.ecpm_order_sequence)
+			return false;
+		if (end_date_format == null) {
+			if (other.end_date_format != null)
+				return false;
+		} else if (!end_date_format.equals(other.end_date_format))
+			return false;
+		if (end_time_str == null) {
+			if (other.end_time_str != null)
+				return false;
+		} else if (!end_time_str.equals(other.end_time_str))
+			return false;
+		if (exchangeId == null) {
+			if (other.exchangeId != null)
+				return false;
+		} else if (!exchangeId.equals(other.exchangeId))
+			return false;
+		if (exchangepayout != other.exchangepayout)
+			return false;
+		if (exchangepayout_order_sequence != other.exchangepayout_order_sequence)
+			return false;
+		if (exchangerevenue != other.exchangerevenue)
+			return false;
+		if (exchangerevenue_order_sequence != other.exchangerevenue_order_sequence)
+			return false;
+		if (extSiteId == null) {
+			if (other.extSiteId != null)
+				return false;
+		} else if (!extSiteId.equals(other.extSiteId))
+			return false;
+		if (ext_site == null) {
+			if (other.ext_site != null)
+				return false;
+		} else if (!ext_site.equals(other.ext_site))
+			return false;
+		if (ext_site_clickable != other.ext_site_clickable)
+			return false;
+		if (fr != other.fr)
+			return false;
+		if (fr_order_sequence != other.fr_order_sequence)
+			return false;
+		if (frequency != other.frequency)
+			return false;
+		if (networkpayout != other.networkpayout)
+			return false;
+		if (networkpayout_order_sequence != other.networkpayout_order_sequence)
+			return false;
+		if (networkrevenue != other.networkrevenue)
+			return false;
+		if (networkrevenue_order_sequence != other.networkrevenue_order_sequence)
+			return false;
+		if (nofillReason == null) {
+			if (other.nofillReason != null)
+				return false;
+		} else if (!nofillReason.equals(other.nofillReason))
+			return false;
+		if (order_by_desc != other.order_by_desc)
+			return false;
+		if (pagesize != other.pagesize)
+			return false;
+		if (profitmargin != other.profitmargin)
+			return false;
+		if (profitmargin_order_sequence != other.profitmargin_order_sequence)
+			return false;
+		if (pubId == null) {
+			if (other.pubId != null)
+				return false;
+		} else if (!pubId.equals(other.pubId))
+			return false;
+		if (pubId_clickable != other.pubId_clickable)
+			return false;
+		if (reportingDIMTypeEnum != other.reportingDIMTypeEnum)
+			return false;
+		if (reportingTableType != other.reportingTableType)
+			return false;
+		if (returnAdGuid != other.returnAdGuid)
+			return false;
+		if (returnGuid != other.returnGuid)
+			return false;
+		if (rollup != other.rollup)
+			return false;
+		if (roundoffmetric != other.roundoffmetric)
+			return false;
+		if (roundoffmetriclength != other.roundoffmetriclength)
+			return false;
+		if (rtr != other.rtr)
+			return false;
+		if (rtr_order_sequence != other.rtr_order_sequence)
+			return false;
+		if (selectallmetric != other.selectallmetric)
+			return false;
+		if (siteId == null) {
+			if (other.siteId != null)
+				return false;
+		} else if (!siteId.equals(other.siteId))
+			return false;
+		if (siteId_clickable != other.siteId_clickable)
+			return false;
+		if (siteId_just_filter != other.siteId_just_filter)
+			return false;
+		if (site_hygiene == null) {
+			if (other.site_hygiene != null)
+				return false;
+		} else if (!site_hygiene.equals(other.site_hygiene))
+			return false;
+		if (site_hygiene_clickable != other.site_hygiene_clickable)
+			return false;
+		if (start_time_str == null) {
+			if (other.start_time_str != null)
+				return false;
+		} else if (!start_time_str.equals(other.start_time_str))
+			return false;
+		if (startindex != other.startindex)
+			return false;
+		if (stateId == null) {
+			if (other.stateId != null)
+				return false;
+		} else if (!stateId.equals(other.stateId))
+			return false;
+		if (stateId_clickable != other.stateId_clickable)
+			return false;
+		if (supplyCost != other.supplyCost)
+			return false;
+		if (supplyCost_order_sequence != other.supplyCost_order_sequence)
+			return false;
+		if (supply_source_type == null) {
+			if (other.supply_source_type != null)
+				return false;
+		} else if (!supply_source_type.equals(other.supply_source_type))
+			return false;
+		if (supply_source_type_clickable != other.supply_source_type_clickable)
+			return false;
+		if (timezone == null) {
+			if (other.timezone != null)
+				return false;
+		} else if (!timezone.equals(other.timezone))
+			return false;
+		if (top_n != other.top_n)
+			return false;
+		if (top_n_for_last_x_hours != other.top_n_for_last_x_hours)
+			return false;
+		if (total_bidValue != other.total_bidValue)
+			return false;
+		if (total_bidValue_order_sequence != other.total_bidValue_order_sequence)
+			return false;
+		if (total_click != other.total_click)
+			return false;
+		if (total_click_order_sequence != other.total_click_order_sequence)
+			return false;
+		if (total_csc != other.total_csc)
+			return false;
+		if (total_csc_order_sequence != other.total_csc_order_sequence)
+			return false;
+		if (total_event_type != other.total_event_type)
+			return false;
+		if (total_event_type_order_sequence != other.total_event_type_order_sequence)
+			return false;
+		if (total_impression != other.total_impression)
+			return false;
+		if (total_impression_order_sequence != other.total_impression_order_sequence)
+			return false;
+		if (total_request != other.total_request)
+			return false;
+		if (total_request_order_sequence != other.total_request_order_sequence)
+			return false;
+		if (total_win != other.total_win)
+			return false;
+		if (total_win_bidValue != other.total_win_bidValue)
+			return false;
+		if (total_win_bidValue_order_sequence != other.total_win_bidValue_order_sequence)
+			return false;
+		if (total_win_order_sequence != other.total_win_order_sequence)
+			return false;
+		if (wtr != other.wtr)
+			return false;
+		if (wtr_order_sequence != other.wtr_order_sequence)
+			return false;
+		return true;
+	}
+    
  }

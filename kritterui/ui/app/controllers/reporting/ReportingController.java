@@ -41,6 +41,7 @@ import com.kritter.api.entity.saved_query.SavedQueryListEntity;
 import com.kritter.constants.Frequency;
 import com.kritter.constants.PageConstants;
 import com.kritter.constants.ReportingDIMTypeEnum;
+import com.kritter.constants.ReportingTableType;
 import com.kritter.constants.SavedQueryEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.kritterui.api.def.ApiDef;
@@ -74,7 +75,16 @@ public class ReportingController extends Controller{
 	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
 	        return ok(views.html.reporting.limitedReport.render(reportConfigForm.fill(rfe), 0, allow_wifi, ext_site_report_seperate));
 	}
-
+	@SecuredAction
+    public static Result channelReport(){
+	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
+	        return ok(views.html.reporting.channelReport.render(reportConfigForm.fill(rfe), 0));
+	}
+	@SecuredAction
+    public static Result adpositionReport(){
+	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
+	        return ok(views.html.reporting.adpositionReport.render(reportConfigForm.fill(rfe), 0));
+	}
 	@SecuredAction
 	public static Result demandReport(){
 		ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
@@ -438,27 +448,40 @@ public class ReportingController extends Controller{
 		}
 	}
 	public static Result limitedreportDataCSV(){
-        return reportDataCSV(null,true);
+        return reportDataCSV(null,true,ReportingTableType.FIRSTLEVEL);
     }
 	public static Result reportDataCSV(){
-	    return reportDataCSV(null,false);
+	    return reportDataCSV(null,false,ReportingTableType.FIRSTLEVEL);
 	}
-	public static Result reportDataCSV(String hierarchyType, boolean isLimited){
+	public static Result reportDataCSV(String hierarchyType, boolean isLimited,ReportingTableType rTT){
         String pre  = "public/";
         String post = "reporting/download/csv/"+SingletonUUIDGenerator.getSingletonUUIDGenerator().generateUniversallyUniqueIdentifier().toString()+".csv";
 	    File file = new File(pre+post).getAbsoluteFile();
-	    reportData(false, true, file.getAbsolutePath(), hierarchyType,isLimited);
+	    reportData(false, true, file.getAbsolutePath(), hierarchyType,isLimited,rTT);
         ObjectNode result = Json.newObject();
         result.put("downloadurl", controllers.routes.StaticFileController.download(Option.apply(post)).url());
         return ok(result);
 	}
 	public static Result reportData(){
-	    return reportData(false, false, null, null,false);
+	    return reportData(false, false, null, null,false,ReportingTableType.FIRSTLEVEL);
 	}
-    public static Result limitedreportData(){
-        return reportData(false, false, null, null,true);
+    public static Result channelreportData(){
+        return reportData(false, false, null, null,true,ReportingTableType.CHANNEL);
     }
-	public static Result reportData(boolean returnWithId, boolean exportAsCsv, String absoluteFileName, String hierarchyType, boolean isLimited){
+	public static Result channelreportDataCSV(){
+        return reportDataCSV(null,true,ReportingTableType.CHANNEL);
+    }
+    public static Result adpositionreportData(){
+        return reportData(false, false, null, null,true,ReportingTableType.ADPOSITION);
+    }
+	public static Result adpositionreportDataCSV(){
+        return reportDataCSV(null,true,ReportingTableType.ADPOSITION);
+    }
+    public static Result limitedreportData(){
+        return reportData(false, false, null, null,true,ReportingTableType.FIRSTLEVEL);
+    }
+	public static Result reportData(boolean returnWithId, boolean exportAsCsv, String absoluteFileName, String hierarchyType, boolean isLimited,
+			ReportingTableType reportTableType){
 		JsonNode result = new ObjectNode(JsonNodeFactory.instance);
 		Form<ReportFormEntity> filledFilterForm = reportConfigForm.bindFromRequest();
 		Connection con = null;
@@ -482,6 +505,9 @@ public class ReportingController extends Controller{
 				    reportingEntity.setReportingDIMTypeEnum(ReportingDIMTypeEnum.LIMITED);
 				}
 				reportingEntity.setTimezone(timezoneid);
+				if(reportTableType != null){
+					reportingEntity.setReportingTableType(reportTableType);
+				}
 				org.codehaus.jackson.JsonNode data = ApiDef.get_data(con, reportingEntity, returnWithId, exportAsCsv, absoluteFileName);
             	if(data != null){
             	    ObjectMapper objectMapper = new ObjectMapper(); 
@@ -618,15 +644,15 @@ public class ReportingController extends Controller{
         return ok(views.html.reporting.hierarchical.global.render(reportConfigForm.fill(rfe)));
     }
     public static Result hierarchyGlobalData(){
-        return reportData(false, false, null, "GLOBAL",false);
+        return reportData(false, false, null, "GLOBAL",false,ReportingTableType.FIRSTLEVEL);
     }
     public static Result hierarchyGlobalDataCSV(){
-        return reportDataCSV("GLOBAL",false);
+        return reportDataCSV("GLOBAL",false,ReportingTableType.FIRSTLEVEL);
     }
     public static Result limitedhierarchyGlobalData(){
-        return reportData(false, false, null, "GLOBAL",true);
+        return reportData(false, false, null, "GLOBAL",true,ReportingTableType.FIRSTLEVEL);
     }
     public static Result limitedhierarchyGlobalDataCSV(){
-        return reportDataCSV("GLOBAL",true);
+        return reportDataCSV("GLOBAL",true,ReportingTableType.FIRSTLEVEL);
     }
 }
