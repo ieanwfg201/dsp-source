@@ -35,6 +35,10 @@ processing_time=${11}
 exttableupload=${13}
 exttablename=${14}
 limitedtablename=${15}
+adpositionpath=${2}/adposition_daily/part-*
+adpostiontablename="ad_position_daily"
+channelpath=${2}/channel_daily/part-*
+channeltablename="channel_daily"
 
 if [ "$13" = "true" ]; then
     echo 'java  -cp "$CLASSPATH" $MAINCLASS ${extfilepath} ${exttablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
@@ -47,6 +51,16 @@ java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost
 
 echo 'java  -cp "$CLASSPATH" $MAINCLASS ${limitedfilepath} ${limitedtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
 java  -cp "$CLASSPATH" $MAINCLASS ${limitedfilepath} ${limitedtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+
+if [ "$16" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${adpositionpath} ${adpostiontablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${adpositionpath} ${adpostiontablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+fi
+
+if [ "$17" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${channelpath} ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${channelpath} ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+fi
 
 
 exit $?

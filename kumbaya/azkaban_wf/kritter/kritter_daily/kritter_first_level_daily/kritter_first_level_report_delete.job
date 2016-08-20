@@ -2,4 +2,4 @@
 type=command
 dependencies=kritter_dashboard_delete
 
-command=sh kritter_first_level_report_delete.sh ${daily_report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${daily_retention} ${exttableupload} ${exttablename} ${limitedtablename} ${limiteddaily_retention} ${tracking_event_daily_table}
+command=sh kritter_first_level_report_delete.sh ${daily_report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${daily_retention} ${exttableupload} ${exttablename} ${limitedtablename} ${limiteddaily_retention} ${tracking_event_daily_table} ${adposition} ${channel}

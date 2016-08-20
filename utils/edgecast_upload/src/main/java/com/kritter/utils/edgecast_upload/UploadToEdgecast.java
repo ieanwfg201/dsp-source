@@ -9,7 +9,6 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 
-import sun.net.ftp.FtpLoginException;
 
 public class UploadToEdgecast {
     private static Logger m_logger = Logger.getLogger(UploadToEdgecast.class);
@@ -29,14 +28,14 @@ public class UploadToEdgecast {
             if (!FTPReply.isPositiveCompletion(replyCode)) {
 
                 System.out.println("FTP server refused connection.");
-                throw new FtpLoginException("FTP server refused connection.");
+                throw new Exception("FTP server refused connection.");
 
             }
             boolean logged = ftpClient.login(username, password);
             if (!logged) {
                 ftpClient.disconnect();
                 System.out.println("Could not login to the server.");
-                throw new FtpLoginException("Could not login to the server.");
+                throw new Exception("Could not login to the server.");
             }
             ftpClient.enterLocalPassiveMode();
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);

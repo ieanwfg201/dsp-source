@@ -100,6 +100,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/winner</module>
     <module>entity/creative_macro</module>
     <module>entity/common</module>
+    <module>entity/freqcap_entity</module>
     <module>entity/ad_stats</module>
     <module>entity/req_res_entity</module>
     <module>entity/user</module>
