@@ -22,10 +22,12 @@ input_file=${3}-*/first_level/part*
 limited_input_file=${3}-*/limited_first_level/part*
 ext_site_input_file=${3}-*/first_level_ext_site/part*
 ext_input_file=${3}-*/externalsite.gz/part*
+adposition_file=${3}-*/adposition_hourly/part*
+channel_file=${3}-*/channel_hourly/part*
 echo "##########################################################################################################"
-echo "${2}/bin/pig -x local -f src/main/pig/rollup_first_level.pig  --param INPUT_FILES='${input_file}' --param EXT_INP_FILES='${ext_input_file}' --param OUTPUT='${4}' --param rolluptype='${5}' --param EXT_SITE_INPUT_FILES='${ext_site_input_file}' --param PROCESS_TIME='${6}' --param LIMITED_INPUT_FILES='${limited_input_file}'"
+echo "${2}/bin/pig -x local -f src/main/pig/rollup_first_level.pig  --param INPUT_FILES='${input_file}' --param EXT_INP_FILES='${ext_input_file}' --param OUTPUT='${4}' --param rolluptype='${5}' --param EXT_SITE_INPUT_FILES='${ext_site_input_file}' --param PROCESS_TIME='${6}' --param LIMITED_INPUT_FILES='${limited_input_file}' --param ADPOSITION_FILES='${adposition_file}' --param CHANNEL_FILES='${channel_file}'"
 
-exec ${2}/bin/pig -x local -f src/main/pig/rollup_first_level.pig  --param INPUT_FILES=${input_file} --param EXT_INP_FILES=${ext_input_file} --param OUTPUT=${4} --param rolluptype=${5} --param EXT_SITE_INPUT_FILES=${ext_site_input_file} --param LIMITED_INPUT_FILES=${limited_input_file} --param PROCESS_TIME="${6}"
+exec ${2}/bin/pig -x local -f src/main/pig/rollup_first_level.pig  --param INPUT_FILES=${input_file} --param EXT_INP_FILES=${ext_input_file} --param OUTPUT=${4} --param rolluptype=${5} --param EXT_SITE_INPUT_FILES=${ext_site_input_file} --param LIMITED_INPUT_FILES=${limited_input_file} --param ADPOSITION_FILES=${adposition_file} --param CHANNEL_FILES=${channel_file} --param PROCESS_TIME="${6}" 
 
 
 

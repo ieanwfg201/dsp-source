@@ -30,11 +30,24 @@ exttablename=${11}
 limitedtablename=${12}
 limitedhours=${13}
 tracking_event_daily_table=${14}
+adpostiontablename="ad_position_daily"
+channeltablename="channel_daily"
 
 if [ "$10" = "true" ]; then
     echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${exttablename} ${hours}'
     java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${exttablename} ${hours}
 fi
+
+if [ "$15" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${adpostiontablename} ${hours}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${adpostiontablename} ${hours}
+fi
+
+if [ "$16" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${channeltablename} ${hours}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${channeltablename} ${hours}
+fi
+
 
 echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tracking_event_daily_table} ${limitedhours}'
 java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tracking_event_daily_table} ${limitedhours}

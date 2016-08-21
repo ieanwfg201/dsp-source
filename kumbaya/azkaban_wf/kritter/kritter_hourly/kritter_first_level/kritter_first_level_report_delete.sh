@@ -28,12 +28,23 @@ hours=${9}
 exttableupload=${10}
 exttablename=${11}
 limitedtablename=${12}
+adpositiontablename="ad_position_hourly"
+channeltablename="channel_hourly"
 
 if [ "$10" = "true" ]; then
     echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${exttablename} ${hours}'
     java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${exttablename} ${hours}
 fi
 
+if [ "$13" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${adpositiontablename} ${hours}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${adpositiontablename} ${hours}
+fi
+
+if [ "$14" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${channeltablename} ${hours}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${channeltablename} ${hours}
+fi
 
 echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hours}'
 
