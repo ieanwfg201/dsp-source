@@ -38,8 +38,7 @@ import java.util.*;
 /**
  * This class enriches valuemaker request to enable DSP for choosing right ads.
  */
-public class VamRequestEnricher implements RTBExchangeRequestReader
-{
+public class VamRequestEnricher implements RTBExchangeRequestReader {
     private Logger logger;
     private String auctioneerId;
     private UUIDGenerator uuidGenerator;
