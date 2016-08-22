@@ -1,0 +1,614 @@
+// Copyright 2014 ValueMaker Inc, All Rights Reserved.
+//本文档为ValueMaker用来请求广告信息的协议文档。
+//
+package RTB;
+message VamRequest {
+  // 由VAM生成的唯一的ID号，作为整个竞价通路的校验标志。
+  required string id = 1;
+
+  //最大延迟时间，默认值120ms。
+  optional int32 t_max = 2;
+  
+  // ----------------用户信息-----------------------------------
+  // This section lists information that we know about the user.
+
+  //vam用户的id号
+  optional string cookie = 3;
+  
+  //第三方名称
+  enum THIRDNAME{
+    YOUKU = 1;      //优酷
+  }
+  optional THIRDNAME third_id = 32;
+  //第三方cookie值,根据third_id的值不同表征cookie所属三方
+  optional string third_cookie = 33;
+
+  //vam的cookie的版本号
+  optional uint32 cookie_version = 4;
+
+  //DSP托管的cookie_id值。若DSP要求vm做cookiemapping则该字段有值
+  optional string hosted_match_data = 27;
+
+  //vam所种cookie的存在时长。(新增)
+  optional int32 cookie_age_seconds = 5;
+
+  //用户所在时区
+  optional string timezone_offset = 6;
+
+  //-----------------设备信息----------------------
+  //用户浏览器的UA信息
+  optional string user_agent = 8;
+
+  //用户是否设置dnt标示
+  optional bool dnt = 9;
+
+  //用户IP地址
+  optional string ip = 10;
+
+  //浏览器语言类型
+  optional string language = 11;
+
+  //用户的设备类型
+  enum DEVICETYPE{
+    PC = 1;
+    MOBILE = 2;
+    PAD = 3;
+    SMART_TV = 4;
+  }
+  optional DEVICETYPE device_type = 12;
+
+  //-------------媒体信息---------------------
+  //媒体ID在VAM的ID号
+  optional int32 media_id = 13;
+
+  //媒体网站域名
+  optional string domain = 14;
+
+  //当前流量产生的具体页面Url
+  optional string page = 15;
+
+  //页面行业信息分类，参见媒体页面类型分类
+  repeated int32 vertical = 22;
+
+  //页面内容分类的版本号
+  optional int32 vertical_version = 23;
+
+  //http请求header中的referer信息
+  optional string referer = 28;
+  
+  //-----------------用户数据、媒体数据以及三方检测数据
+  enum DATASOURCE
+  {
+    VAM = 1;       //vamaker系统
+    ADMASTER = 2;  //admaster系统
+  }
+  
+  //表征用户数据源来自哪些系统,data_source值与DATASOURCE枚举值相关,如1表示只有VAM系统的数据源,2表示只有Admaster数据源,3表示有VAM和ADMASTER数据源供参考。目前该字段值为2
+  optional int32 data_source = 29; 
+
+  //用户属性特点（新增）
+  repeated string user_character = 7;
+
+  message Admaster_data {
+    optional string order = 1;    //订单编号
+    optional float relevance = 2; //[0~1]
+    optional float threshold = 3; //(0~1)
+  }
+  repeated Admaster_data admaster_data = 30; //size为0说明该用户所有订单相关系数均小于阈值,即无有效订单
+
+  message PmpInfo {
+    optional int32  deal_id      = 1;  //deal id值
+    optional int32  prefer_price  = 2;  //首选交易价格,单位是分
+    optional int32  premium_price = 3;  //溢价价格,单位是分
+  }
+  repeated PmpInfo pmp_info = 31; //pmp相关信息
+
+	//表征流量来源，1或者不传表示万流客，2表示accuen
+  optional int32 media_source = 35;
+  
+  //--------------------------Display广告------------------------
+  message Display {
+    //广告的曝光编号,从1开始
+    required int32 id = 1;
+    
+    //广告位ID
+    optional int32 adspace_id = 2; 
+    
+    //底价(单位为分)
+    optional int32 bidfloor = 3;
+    
+    //广告位所处页面第几屏信息
+    enum SCREEN
+    {
+      FIRST=1;
+      SECOND=2;
+      THIRD=3;
+      OTHER=4;
+    }
+    optional SCREEN screen_level = 4;
+    
+    //广告位宽高
+    optional int32 width = 5;
+    optional int32 height = 6;
+
+    //允许的广告展示格式
+    enum ADFORMAT
+    {
+        STATIC_PIC = 1;
+        DYNAMIC_PIC = 2;
+        SWF = 3;
+        TXT = 4;
+    }
+    repeated ADFORMAT adformat = 7;
+    
+    //广告位类型
+    enum ADFORM
+    {
+        BANNER = 1;
+        POPUP = 2;
+        PC_CLIENT = 3;
+        VIDEO_PAUSE = 4;    //专指的用html技术实现的视频暂停
+    }
+    optional ADFORM adform = 8;
+    
+    //媒体屏蔽创意所属行业
+    repeated int32 excluded_cat = 9;
+
+    //媒体的域名屏蔽
+    repeated string excluded_adv = 10;
+  }
+  repeated Display display = 26;  
+
+  //-------------------Video------------------------------------------
+  message Video {
+    //广告位ID
+    optional int32 adspace_id = 1; 
+    
+    //底价(单位为分)
+    optional int32 bidfloor = 2;
+    
+    enum Linearity
+    {
+        LINEAR_IN_STREAM = 1;   //linear
+        NO_LINEAR_OVERLAY = 2;  //non-linear
+    } 
+    required Linearity linear = 3 [default = LINEAR_IN_STREAM];
+    
+    enum PROTOCOL
+    {
+        VAST_1_0 = 1;
+        VAST_2_0 = 2;
+        VAST_3_0 = 3;
+        VAST_1_0_WRAPPER = 4;
+        VAST_2_0_WRAPPER = 5;
+        VAST_3_0_WRAPPER = 6;
+    }
+    required PROTOCOL vam_protocol = 4 [default = VAST_3_0];
+    
+    optional int32 width = 5;
+    optional int32 height = 6;
+    
+    required int32 max_duration = 7;
+    required int32 min_duration = 8;
+    
+    //VAM广告形式，0-前贴片/1-中贴片/2-后贴片/3-角标/4-overlay/99-其他。
+    required int32 video_adform = 9;
+
+    //MIME类型,VAM目前为固定值"video/x-flv"
+    repeated string mimes = 10;
+   
+    //媒体支持视频格式类型
+    enum ADFORMAT
+    {
+        STATIC_PIC = 1;
+        DYNAMIC_PIC = 2;
+        SWF = 3;
+        FLV = 5;
+        MP4 = 6;
+    }
+    repeated ADFORMAT video_adformat = 11;
+    
+    //视频包含的关键字，需要由媒体主动发送。
+    optional string keyword = 12;
+    
+    //媒体屏蔽创意所属行业
+    repeated int32 excluded_cat = 13;
+
+    //媒体的域名屏蔽
+    repeated string excluded_adv = 14;
+
+    enum ADTECH                     // 视频技术
+    {
+        FLASH = 1;
+        HTML5 = 2;
+    }
+    optional ADTECH  ad_tech     = 15;
+
+    message YoukuExt {
+        optional string title  = 1;
+        optional string channel = 2;
+        optional string cs = 3;
+    }
+    optional YoukuExt youkuext = 16;
+  }
+  optional Video vam_video = 25;
+  
+  //-------------------Mobile------------------------------------------
+  message Mobile {
+
+    //广告位ID
+    optional int32 adspace_id = 1; 
+    
+    //底价(单位为分)
+    optional int32 bidfloor = 2;
+
+    //设备品牌(小写),如：samsung,nokia
+    optional string brand = 3;
+
+    //设备型号(首字母大写),如:N70, Galaxy
+    optional string model = 4;
+
+    //操作系统,0-其他,1-android，2-ios
+    optional int32 os = 5;
+
+    //操作系统版本,如4.5,9.0
+    optional string os_version = 6;
+    
+    //os为1时，imei mac aid aaid不同时为空
+    //os为2时，mac idfa OpenUDID不同时为空
+    //设备IMEI号
+    optional string imei = 7;
+    
+    //终端网卡MAC地址去除冒号分隔符，比如：C8AA21024952
+    optional string mac = 8;
+    
+    //用户终端的AndroidID
+    optional string aid = 9;
+    
+    //Android Advertiser ID
+    optional string aaid = 10;
+    
+    //Apple's identifier for advertising
+    optional string IDFA = 11;
+    
+    //iOS终端设备的OpenUDID
+    optional string OpenUDID = 12;
+
+    //流量源
+    //0-未识别,1-APP,2-手机浏览器,3-deeplink
+    optional int32 source = 13;
+
+    //app如果是ios应用，则该字段为app的ID号,
+    //如果是android应用,该字段为app的package名称。
+    //只有在流量源是app时该字段有值
+    optional string pgn = 14;
+	  
+	  //应用名称
+    optional string app_name = 15;
+    
+    //设备分辨率,宽
+    optional int32 screen_width = 16;
+
+    //设备分辨率,高
+    optional int32 screen_height = 17;
+
+    //设备网络环境
+    //0-未识别, 1-wifi, 2-2g, 3-3g, 4-4g
+    optional int32 network = 18;
+
+    //设备运营商
+    //0-未识别, 1-移动,2-联通,3-电信
+    optional int32 operate_id = 19;
+
+    message Point {
+      //经度
+      optional float latitude = 1;
+      //纬度
+      optional float longitude = 2;
+    }
+    //设备所在地点
+    optional Point corner = 20;
+
+    //广告位能否全屏显示，True为能，False为不能
+    optional bool full_screen = 21;
+
+    enum LOCATION_OF_SCREEN{
+      TOP = 1;   //顶部
+      MID = 2;   //中间
+      BTM = 3;   //屏尾
+    }
+    //广告位所在屏幕位置
+    optional LOCATION_OF_SCREEN ad_location = 22;
+
+    //app的行业分类id，使用google&apple行业分类标准。参见链接：https://developers.google.com/adwords/api/docs/appendix/mobileappcategories
+    optional int32 app_category = 23;
+
+    //广告位类型
+    //1-web硬广，2-app硬广，3-app开屏，4-app插屏，5-app信息流。
+    //该字段以后有可能扩展类型，请留意。
+    optional int32 adform = 24;
+    
+    //MD5加密的手机号，出于隐私考虑，不直接接收手机号
+    optional string mpn = 25;
+    
+    //性别，如果App可以获得用户性别
+    //0-未知,1-男性,2-女性
+    optional int32 gender = 26; 
+    
+    //生日，如果App可以获取到用户生日YYYY[MMDD]
+    optional int32 bd = 27;
+    
+    //广告位宽高
+    optional int32 width = 28;
+    optional int32 height = 29;
+    
+    //允许的广告展示格式
+    enum ADFORMAT
+    {
+        STATIC_PIC = 1;
+        DYNAMIC_PIC = 2;
+        TXT = 4;
+    }
+    repeated ADFORMAT adformat = 30;
+        
+    //广告位所处页面第几屏信息
+    enum SCREEN
+    {
+      FIRST=1;
+      SECOND=2;
+      THIRD=3;
+      OTHER=4;
+    }
+    optional SCREEN screen_level = 31;
+  }
+  optional Mobile vam_mobile = 34;
+
+
+  //-------------------Mobile Video------------------------------------------
+  message Mobile_Video {
+
+    //广告位ID
+    optional int32 adspace_id = 1; 
+    
+    //底价(单位为分)
+    optional int32 bidfloor = 2;
+
+    //设备品牌(小写),如：samsung,nokia
+    optional string brand = 3;
+
+    //设备型号(首字母大写),如:N70, Galaxy
+    optional string model = 4;
+
+    //操作系统,0-其他,1-android，2-ios
+    optional int32 os = 5;
+
+    //操作系统版本,如4.5,9.0
+    optional string os_version = 6;
+    
+    //os为1时，imei mac aid aaid不同时为空
+    //os为2时，mac idfa OpenUDID不同时为空
+    //设备IMEI号
+    optional string imei = 7;
+    
+    //终端网卡MAC地址去除冒号分隔符，比如：C8AA21024952
+    optional string mac = 8;
+    
+    //用户终端的AndroidID
+    optional string aid = 9;
+    
+    //Android Advertiser ID
+    optional string aaid = 10;
+    
+    //Apple's identifier for advertising
+    optional string IDFA = 11;
+    
+    //iOS终端设备的OpenUDID
+    optional string OpenUDID = 12;
+
+    //流量源
+    //0-未识别,1-APP,2-手机浏览器,3-deeplink
+    optional int32 source = 13;
+
+    //app如果是ios应用，则该字段为app的ID号,
+    //如果是android应用,该字段为app的package名称。
+    //只有在流量源是app时该字段有值
+    optional string pgn = 14;
+	  
+	  //应用名称
+    optional string app_name = 15;
+    
+    //设备分辨率,宽
+    optional int32 screen_width = 16;
+
+    //设备分辨率,高
+    optional int32 screen_height = 17;
+
+    //设备网络环境
+    //0-未识别, 1-wifi, 2-2g, 3-3g, 4-4g
+    optional int32 network = 18;
+
+    //设备运营商
+    //0-未识别, 1-移动,2-联通,3-电信
+    optional int32 operate_id = 19;
+
+    message Point {
+      //经度
+      optional float latitude = 1;
+      //纬度
+      optional float longitude = 2;
+    }
+    //设备所在地点
+    optional Point corner = 20;
+    
+    //MD5加密的手机号，出于隐私考虑，不直接接收手机号
+    optional string mpn = 25;
+    
+    //性别，如果App可以获得用户性别
+    //0-未知,1-男性,2-女性
+    optional int32 gender = 26; 
+    
+    //生日，如果App可以获取到用户生日YYYY[MMDD]
+    optional int32 bd = 27;
+    
+    //广告位宽高
+    optional int32 width = 28;
+    optional int32 height = 29;
+    
+    //允许的广告展示格式
+    enum ADFORMAT
+    {
+        STATIC_PIC = 1;
+        DYNAMIC_PIC = 2;
+        SWF = 3;
+        TXT = 4;
+        FLV = 5;
+        MP4 = 6;
+        OGG = 7;
+        WebM = 8;
+    }
+    repeated ADFORMAT adformat = 30;
+    
+    enum Linearity
+    {
+        LINEAR_IN_STREAM = 1;   //linear
+        NO_LINEAR_OVERLAY = 2;  //non-linear
+    } 
+    required Linearity linear = 31 [default = LINEAR_IN_STREAM];
+    
+    enum PROTOCOL
+    {
+        VAST_1_0 = 1;
+        VAST_2_0 = 2;
+        VAST_3_0 = 3;
+        VAST_1_0_WRAPPER = 4;
+        VAST_2_0_WRAPPER = 5;
+        VAST_3_0_WRAPPER = 6;
+    }
+    required PROTOCOL vam_protocol = 32 [default = VAST_3_0];
+    
+    required int32 max_duration = 33;
+    required int32 min_duration = 34;
+    
+    //VAM广告形式，0-前贴片/1-中贴片/2-后贴片/3-角标/4-overlay/99-其他。
+    required int32 video_adform = 35;
+
+    //MIME类型,VAM目前为固定值"video/x-flv"
+    repeated string mimes = 36;
+    
+    //视频包含的关键字，需要由媒体主动发送。
+    optional string keyword = 37;
+    
+    //媒体屏蔽创意所属行业
+    repeated int32 excluded_cat = 38;
+
+    //媒体的域名屏蔽
+    repeated string excluded_adv = 39;
+  }
+  optional Mobile_Video vam_mobile_video = 36;
+}
+
+// RESPONSE是竞价方收到广告请求时返回给vam的响应信息，该信息中包含了竞价信息和展示广告的相关信息
+
+message VamResponse {
+    //与REQUEST中的id一致，否则会被认为无效。
+    required string id = 1;
+
+    message Bid {
+        //由竞价方提供的创意ID号，每个创意必须有一个创意ID号，每个创意ID号只能绑定给一个创意。
+        required string crid = 1;
+
+        //出价价格，请使用整形，如：1.29元请填写129.
+        required int32 price = 2;
+
+        //广告的id编号，与广告请求中的display.id相同，视频时，该字段不填。
+        optional int32 id = 3;
+        
+        //display_bidding, video_bidding设置注意事项：
+        //1. video_bidding 用于竞价视频类广告位
+        //2. display_bidding 用于竞价展示类广告位
+        //3. display_bidding包含动态创意竞价和静态创意竞价，通过html_snippet是否赋值判断,赋值时认为是动态创意，没有赋值认为静态创意
+        //4. 竞价方根据广告请求类型和自身支持情况选择竞价类型，有且只能设置一个
+        //5. 对于展示类广告位竞价，VAM优先判断竞价方是否使用动态创意竞价（html_snippet有值），如果没有，则认为竞价方使用静态创意竞价
+
+
+        //VideoInfo只在竞价视频广告时使用，只有在广告请求中标示本次广告请求的是视频广告时该字段才有效。
+        message Video {
+                //点击监测Url
+                repeated string click_urls = 1;
+                //曝光监测Url
+                repeated string show_urls = 2;
+                //events是指用户触发的events的事件，events类别详见vam对接文档。
+                message Event {
+                        //evet的名字
+                        optional string event_name = 1;
+                        //event监测地址
+                        optional string track_url = 2;
+                        //在progress事件种使用offset值
+                        optional string offset = 3;
+                };
+                repeated Event events = 3;
+        };
+        optional Video video_bidding = 4;
+
+        //DisplayInfo只在竞价展示广告时使用，只有在广告请求中标示本次广告请求的是展示广告时该字段才有效。
+        message Display {
+            //目标跳转页的主域名。
+            repeated string adomain = 1;
+            //HTML代码片段,html_snippet,该类代码片段将被放在网页上以展示广告。
+            optional string html_snippet = 2;
+            //创意格式
+            enum FORMAT {
+                    STATIC_PIC = 1;
+                    DYNAMIC_PIC = 2;
+                    SWF = 3;
+                    TXT = 4;
+            }
+            optional FORMAT fmt = 3;
+        
+            //创意的行业分类
+            optional int32 category = 5;
+    
+            //曝光监测url
+            optional string show_url = 6;
+            
+            //点击检测url
+            optional string click_url = 7;
+        };
+        optional Display display_bidding = 5;
+        
+        //Mobile只在竞价移动广告时使用,只有在广告请求中标示本次广告请求的是移动广告时该字段才有效。
+        message Mobile {
+          //曝光监测url
+          repeated string show_urls = 1;
+
+          //点击监测url
+          repeated string click_urls = 2;
+        }
+        optional Mobile mobile_bidding = 12;
+
+        // Mobile Video    
+        optional Video mobile_video_bidding = 13;
+        
+        //广告主名称，目前该字段暂时没用
+        repeated string advertiser_name = 6;
+        
+        //DEAL_ID
+        optional int32 deal_id = 7;
+
+        //winnotice_url
+        optional string winnotice_url = 8;
+
+        //广告代理机构agencies.txt,目前该字段暂时没用
+        optional int32 agency_id = 9;
+        
+        //cookiemapping 1打开 0取消
+        optional int32 cmflag = 10;
+
+        //dsp自定义宏，用于替换${VAM_EXTDATA}
+        optional string extdata = 11;
+    }
+    repeated Bid bid = 2;
+
+    //固定值为CNY，可以考虑不要
+    optional string cur = 3;
+}
