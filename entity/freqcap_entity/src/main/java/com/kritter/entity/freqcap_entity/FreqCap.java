@@ -1,8 +1,6 @@
 package com.kritter.entity.freqcap_entity;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +10,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-
 import com.kritter.constants.FreqEventType;
 
 import lombok.EqualsAndHashCode;
@@ -41,12 +38,12 @@ public class FreqCap {
         return entity;
 
     }
-   /* public static void main(String args[]){
+    /*public static void main(String args[]){
     	FreqCap fc = new FreqCap();
     	System.out.println(fc.toJson().toString());
     	Set<FreqDef> f = new HashSet<FreqDef>();
     	FreqDef  fd = new FreqDef();
-    	fd.setFDuration(FreqDuration.LIFE);
+    	fd.setDuration(FreqDuration.LIFE);
     	fd.setCount(20);
     	f.add(fd);
     	Map<FreqEventType, Set<FreqDef>> map = new HashMap<FreqEventType, Set<FreqDef>>();

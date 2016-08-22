@@ -125,6 +125,42 @@ public class CampaignDisplay extends EntityDisplay{
 		Option<String> none = Option.empty();
 		return routes.AdController.createAd(campaign.getId(), none, none, none).url();
 	}
+	public String getFreqCapDisplay(){
+		if(campaign.isIs_frequency_capped()){
+			StringBuffer sbuff = new StringBuffer("");
+			if(campaign.isClick_freq_cap()){
+				sbuff.append("CLICK -> FreqPeruser: ");
+				sbuff.append(campaign.getClick_freq_cap_count());
+				
+				if(campaign.getClick_freq_cap_type() ==1){
+					sbuff.append(" FreqType: Life ");
+				}else{
+					sbuff.append(" FreqType: ByHour Duration:");
+					sbuff.append(campaign.getClick_freq_time_window());
+				}
+			}
+			if(campaign.isImp_freq_cap()){
+				sbuff.append(" Imp -> FreqPeruser: ");
+				sbuff.append(campaign.getImp_freq_cap_count());
+				
+				if(campaign.getImp_freq_cap_type() ==1){
+					sbuff.append(" FreqType: Life ");
+				}else{
+					sbuff.append(" FreqType: ByHour Duration:");
+					sbuff.append(campaign.getImp_freq_time_window());
+				}
+			}
+			return sbuff.toString();
+		}
+		return "Not Enabled";
+	}
+	public String isFreqCap(){
+	    if(campaign.isIs_frequency_capped()){
+	        return "True";
+	    }
+	    return "False";
+	}
+
 
 	public ArrayList<Path> getBreadCrumbPaths() { 
 		AccountDisplay accountDisplay = new AdvertiserDisplay(account);
@@ -132,10 +168,4 @@ public class CampaignDisplay extends EntityDisplay{
 		paths.add(new Path(getName(), getViewUrl()));
 		return paths;
 	}
-
-
-
-
-
-
 }

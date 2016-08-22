@@ -1,4 +1,4 @@
-@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String, channel_required:String,lat_lon_file:String)
+@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String, channel_required:String,lat_lon_file:String,deviceid_targeting:String)
 @components.fielddisplays.textdisplay("TP-Name", tp.getName()) 
 @components.fielddisplays.textdisplay("TP-Guid", tp.getGuid())
 @components.fielddisplays.textdisplay("TP-Status", tp.getStatusIdName())
@@ -41,6 +41,11 @@
 @components.fielddisplays.textdisplay("TP-Supply Source", tp.getSupply_source_name())
 @if("true" == retargeting_flow_enabled){
     @components.fielddisplays.listdisplay("TP-RetargetingSegment", tp.getRetargetingSegment())
+}
+@if("true" == deviceid_targeting){
+@if("" != tp.getDeviceidfile()){
+    @components.fielddisplays.htmldisplay("TP-Deviceidfile") { <a href="@tp.getDeviceidfile()">download</a> }
+}
 }
 @components.fielddisplays.listdisplay("TP-PMP-Exchange", tp.getPmpExchangeValues())
 @components.fielddisplays.textdisplay("TP-PMP-DealIds", tp.getPmpDeal())

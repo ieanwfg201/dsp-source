@@ -127,6 +127,7 @@ controller('tpController',function ($scope, $http, $upload) {
 
 	$scope.custom_ip_file_id_set="#";
 	$scope.lat_lon_radius_file="#";
+	$scope.deviceid_file="#";
 
 	$scope.listUpdated = false;
 
@@ -211,6 +212,15 @@ controller('tpController',function ($scope, $http, $upload) {
 					$scope['lat_lon_radius_file_preview_label'] = fileName;
 		}else{
 			$scope['lat_lon_radius_file_preview'] = false;
+		}
+		var filePath =  $("input[name='deviceid_file']").attr("value");
+		if($scope['deviceid_file']!=""){
+					$scope['deviceid_file_preview'] = true;
+					$scope['deviceid_file_preview_url'] = "/download?file="+encodeURI(filePath);
+					var fileName = filePath.substring(filePath.lastIndexOf('/')+1);
+					$scope['deviceid_file_preview_label'] = fileName;
+		}else{
+			$scope['deviceid_file_preview'] = false;
 		}
 	}
 	

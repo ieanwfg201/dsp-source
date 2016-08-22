@@ -70,8 +70,21 @@
                         @components.formElements.selectlist2(adForm("is_frequency_capped"), "Frequency Cap Enabled", 
                         services.MetadataAPI.freqCapOptions(), '_ngSync->true)
                         <div id="userfreqcapid" ng-show="is_frequency_capped=='true'" ng-if="is_frequency_capped=='true'">
-                            @components.formElements.textinput(adForm("frequency_cap"), '_label ->"Ad Freq Cap per User" )
-                            @components.formElements.textinput(adForm("time_window"), '_label ->"Time Window (1-48)" )
+                        	@components.formElements.selectlist2(adForm("imp_freq_cap"), "Imp FreqCap", 
+                        		services.MetadataAPI.freqCapOptions(), '_ngSync->true)
+                        	<div id="impfreqcapid" ng-show="imp_freq_cap=='true'" ng-if="imp_freq_cap=='true'">
+								@components.formElements.textinput(adForm("imp_freq_cap_count"), '_label ->"Ad Imp FreqCap per User*" )
+								@components.formElements.selectlist2(adForm("imp_freq_cap_type"),"Imp Freq Cap Type *", services.MetadataAPI.freqduration())
+                            	@components.formElements.textinput(adForm("imp_freq_time_window"), '_label ->"Imp Time Window (1-48, 24=1Day, -1=LIFE)" )
+                        		
+							</div>
+                        	@components.formElements.selectlist2(adForm("click_freq_cap"), "Click FreqCap", 
+                        		services.MetadataAPI.freqCapOptions(), '_ngSync->true)
+                        	<div id="click_freq_cap" ng-show="click_freq_cap=='true'" ng-if="click_freq_cap=='true'">
+								@components.formElements.textinput(adForm("click_freq_cap_count"), '_label ->"Ad Clk FreqCap per User*" )
+								@components.formElements.selectlist2(adForm("click_freq_cap_type"),"Clk Freq Cap Type *", services.MetadataAPI.freqduration())
+                            	@components.formElements.textinput(adForm("click_freq_time_window"), '_label ->"Clk Time Window (1-48, 24=1Day, -1=LIFE)" )
+							</div>
                         </div>
                      }		
                         @components.formElements.textarea(adForm("external_imp_tracker"), "External Imp Tracker (for banner, each line represents one tracker)")

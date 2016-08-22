@@ -64,13 +64,21 @@ public class TargetingProfileEntity extends Entity{
     /** optional - json array of channel_tier2 category */
     private String channel_tier_2_list = "[]";
     private String lat_lon_radius_file = null;
-
+    private String deviceid_file = null;
+    private String file_prefix_path = null;
+    private int id;
 
     public MidpValue getMidp() {
         return midp;
     }
     public void setMidp(MidpValue midp) {
         this.midp = midp;
+    }
+    public int getId() {
+        return id; 
+    }
+    public void setId(int id) {
+        this.id = id;
     }
     public String getGuid() {
         return guid; 
@@ -346,6 +354,19 @@ public class TargetingProfileEntity extends Entity{
 	public void setLat_lon_radius_file(String lat_lon_radius_file) {
 		this.lat_lon_radius_file = lat_lon_radius_file;
 	}
+    public String getDeviceid_file() {
+		return deviceid_file;
+	}
+	public void setDeviceid_file(String deviceid_file) {
+		this.deviceid_file = deviceid_file;
+	}
+    public String getFile_prefix_path() {
+		return file_prefix_path;
+	}
+	public void setFile_prefix_path(String file_prefix_path) {
+		this.file_prefix_path = file_prefix_path;
+	}
+
 	public Targeting_profile getEntity(){
     	Targeting_profile tp = new Targeting_profile();
     	BeanUtils.copyProperties(this, tp);

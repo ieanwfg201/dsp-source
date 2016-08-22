@@ -67,6 +67,8 @@ public class TargetingProfileController extends Controller{
 	private static String adposition_required = Play.application().configuration().getString("adposition_required");
 	private static String channel_required = Play.application().configuration().getString("channel_required");
 	private static String lat_lon_file = Play.application().configuration().getString("lat_lon_file");
+	private static String deviceid_targeting = Play.application().configuration().getString("deviceid_targeting");
+	private static String file_prefix_path = Play.application().configuration().getString("file_prefix_path");
 	
 	private static Targeting_profile getTargetingProfile(String guid, String accountGuid){
 		Connection con = null;
@@ -106,7 +108,7 @@ public class TargetingProfileController extends Controller{
 		BeanUtils.copyProperties(tp, tpe);
 		if(destination.nonEmpty())
 			tpe.setDestination(destination.get());
-		return ok(targetingform.render( tpFormTemplate.fill(tpe) , new TargetingDisplay(tp), rhs,show_midp_ui, accountGuid, allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file));
+		return ok(targetingform.render( tpFormTemplate.fill(tpe) , new TargetingDisplay(tp), rhs,show_midp_ui, accountGuid, allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
 	}
 
 	@SecuredAction
@@ -115,7 +117,7 @@ public class TargetingProfileController extends Controller{
 		TargetingProfileEntity tpe = new TargetingProfileEntity();
 		BeanUtils.copyProperties(tp, tpe);
 		if(tp!= null)
-			return ok(targetingform.render(tpFormTemplate.fill(tpe), new TargetingDisplay(tp),rhs,show_midp_ui, tpe.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file));
+			return ok(targetingform.render(tpFormTemplate.fill(tpe), new TargetingDisplay(tp),rhs,show_midp_ui, tpe.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
 		else
 			return badRequest();
 	}
@@ -128,7 +130,7 @@ public class TargetingProfileController extends Controller{
 		TargetingProfileEntity tpe = new TargetingProfileEntity();
 		BeanUtils.copyProperties(tp, tpe);
 		if(tp!= null)
-			return ok(views.html.advt.targeting.targetingHome.render(new TargetingDisplayFull(tp),retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file));
+			return ok(views.html.advt.targeting.targetingHome.render(new TargetingDisplayFull(tp),retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
 		else
 			return badRequest();
 	}
@@ -172,6 +174,7 @@ public class TargetingProfileController extends Controller{
 				
 				Message msg = null;
 				if(tpe.getGuid() != ""){
+					tp.setFile_prefix_path(file_prefix_path);
 					msg = ApiDef.update_targeting_profile(con, tp);
 					String approve_ad_again_on_tp_update = Play.application().configuration().getString("approve_ad_again_on_tp_update");
 					if(approve_ad_again_on_tp_update != null && "true".equals(approve_ad_again_on_tp_update)){
@@ -181,6 +184,7 @@ public class TargetingProfileController extends Controller{
 					    ApiDef.change_status_ad(con, adListEntity);
 					}
 				}else{
+					tp.setFile_prefix_path(file_prefix_path);
 					msg = ApiDef.insert_targeting_profile(con, tp);
 				}
 				 
@@ -194,7 +198,7 @@ public class TargetingProfileController extends Controller{
 				}
 					
 				else
-					return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs, show_midp_ui, tp.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file));
+					return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs, show_midp_ui, tp.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
 			} catch (Exception e) {
 				Logger.error("Error while saving Targeting profile TargetingProfileController",e);
 			}
@@ -216,7 +220,7 @@ public class TargetingProfileController extends Controller{
 		    tp = new Targeting_profile();
 		    tp.setAccount_guid(accountGuid);
 		}
-		return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs,show_midp_ui, tp.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file));
+		return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs,show_midp_ui, tp.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
 	}
 
 

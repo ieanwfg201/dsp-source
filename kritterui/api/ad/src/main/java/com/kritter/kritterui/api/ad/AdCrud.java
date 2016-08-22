@@ -7,9 +7,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -21,12 +24,16 @@ import com.kritter.api.entity.ad.AdList;
 import com.kritter.api.entity.ad.AdListEntity;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.constants.CategoryTier;
+import com.kritter.constants.FreqDuration;
+import com.kritter.constants.FreqEventType;
 import com.kritter.constants.MarketPlace;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.constants.tracking_partner.TrackingPartner;
 import com.kritter.entity.ad_ext.AdExt;
 import com.kritter.entity.external_tracker.ExtTracker;
+import com.kritter.entity.freqcap_entity.FreqCap;
+import com.kritter.entity.freqcap_entity.FreqDef;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
@@ -79,15 +86,115 @@ public class AdCrud {
             if(adv_domain != null){
                 ad.setAdv_domain(adv_domain.replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"",""));
             }
-            ad.setIs_frequency_capped(rset.getBoolean("is_frequency_capped"));
+            boolean is_frequency_capped = rset.getBoolean("is_frequency_capped");
+            ad.setIs_frequency_capped(is_frequency_capped);
             ad.setFrequency_cap(rset.getInt("frequency_cap"));
             ad.setTime_window(rset.getInt("time_window"));
             ad.setBidtype(rset.getInt("bidtype"));
             populateExternalTracker(ad, rset.getString("external_tracker"));
             populateExt(ad, rset.getString("ext"));
+            populateFreqCap(ad, rset.getString("freqcap_json"));
         }
     }
-    
+    private static void populateFreqCap(Ad ad,String freqcap){
+    	if(freqcap == null || ad == null){
+    		return;
+    	}
+    	if(!ad.isIs_frequency_capped()){
+    		return;
+    	}
+    	String freqcapTrim = freqcap.trim();
+    	if("".equals(freqcapTrim)){
+    		return;
+    	}
+    	try{
+    		FreqCap freqCapObj = FreqCap.getObject(freqcapTrim);
+    		if(freqCapObj != null && freqCapObj.getFDef()!=null){
+    			Set<FreqDef> clickDef = freqCapObj.getFDef().get(FreqEventType.CLK);
+    			if(clickDef != null){
+    				ad.setClick_freq_cap(true);
+    				for(FreqDef f:clickDef){
+    					switch(f.getDuration()){
+    					case LIFE:
+    						ad.setClick_freq_cap_type(FreqDuration.LIFE.getCode());
+    						ad.setClick_freq_cap_count(f.getCount());
+    						break;
+    					case BYHOUR:
+    						ad.setClick_freq_cap_type(FreqDuration.BYHOUR.getCode());
+    						ad.setClick_freq_cap_count(f.getCount());
+    						ad.setClick_freq_time_window(f.getHour());
+    					default:
+    						break;
+    					}
+    				}
+    				Set<FreqDef> impDef = freqCapObj.getFDef().get(FreqEventType.IMP);
+    				if(impDef != null){
+    					ad.setImp_freq_cap(true);
+    					for(FreqDef f:impDef){
+    						switch(f.getDuration()){
+    						case LIFE:
+    							ad.setImp_freq_cap_type(FreqDuration.LIFE.getCode());
+    							ad.setImp_freq_cap_count(f.getCount());
+    							ad.setImp_freq_time_window(-1);
+    							break;
+    						case BYHOUR:
+    							ad.setImp_freq_cap_type(FreqDuration.BYHOUR.getCode());
+    							ad.setImp_freq_cap_count(f.getCount());
+    							ad.setImp_freq_time_window(f.getHour());
+    							break;
+    						default:
+    							break;
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}catch(Exception e){
+    		LOG.error(e.getMessage(),e);
+    	}
+    }
+    private static String generateFreqCap(Ad ad){
+    	if(ad==null || !ad.isIs_frequency_capped()){
+    		return "{}";
+    	}
+    	FreqCap f = new FreqCap();
+    	Map<FreqEventType, Set<FreqDef>> map = new HashMap<FreqEventType, Set<FreqDef>>();
+    	if(ad.isClick_freq_cap()){
+    		Set<FreqDef> set = new HashSet<FreqDef>();
+    		FreqDef fdef= new FreqDef();
+    		
+    		FreqDuration fDur = FreqDuration.getEnum(ad.getClick_freq_cap_type());
+    		if(fDur==null){
+    			fDur=FreqDuration.BYHOUR;
+    		}
+    		fdef.setDuration(fDur);
+    		int count = ad.getClick_freq_cap_count();
+    		fdef.setCount(count);
+    		if(fDur != FreqDuration.LIFE){
+    			fdef.setHour(ad.getClick_freq_time_window());
+    		}
+    		set.add(fdef);
+    		map.put(FreqEventType.CLK, set);
+    	}
+    	if(ad.isImp_freq_cap()){
+    		Set<FreqDef> set = new HashSet<FreqDef>();
+    		FreqDef fdef= new FreqDef();
+    		FreqDuration fDur = FreqDuration.getEnum(ad.getImp_freq_cap_type());
+    		if(fDur==null){
+    			fDur=FreqDuration.BYHOUR;
+    		}
+    		fdef.setDuration(fDur);
+    		int count = ad.getImp_freq_cap_count();
+    		fdef.setCount(count);
+    		if(fDur != FreqDuration.LIFE){
+    			fdef.setHour(ad.getImp_freq_time_window());
+    		}
+    		set.add(fdef);
+    		map.put(FreqEventType.IMP, set);
+    	}
+    	f.setFDef(map);
+    	return f.toJson().toString();
+    }
     private static void populateExt(Ad ad,String ext){
     	if(ext == null){
     		return;
@@ -418,6 +525,7 @@ public class AdCrud {
             pstmt.setInt(24, ad.getBidtype());
             pstmt.setString(25, generateExternalTracker(ad));
             pstmt.setString(26, generateExt(ad));
+            pstmt.setString(27, generateFreqCap(ad));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -665,7 +773,8 @@ public class AdCrud {
             pstmt.setInt(22, ad.getBidtype());
             pstmt.setString(23, generateExternalTracker(ad));
             pstmt.setString(24, generateExt(ad));
-            pstmt.setInt(25, ad.getId());
+            pstmt.setString(25, generateFreqCap(ad));
+            pstmt.setInt(26, ad.getId());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

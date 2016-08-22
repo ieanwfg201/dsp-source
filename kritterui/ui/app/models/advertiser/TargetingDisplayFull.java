@@ -192,5 +192,15 @@ public class TargetingDisplayFull extends TargetingDisplay{
     	}
     	return "";
     }
+    public String getDeviceidfile(){
+    	String s = tp.getDeviceid_file();
+    	if(s != null){
+    		String sTrim = s.trim();
+    		if(!"".equals(sTrim)){
+    			return routes.StaticFileController.download(Option.apply(s)).url();
+    		}
+    	}
+    	return "";
+    }
 
 }
