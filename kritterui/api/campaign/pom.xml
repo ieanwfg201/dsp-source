@@ -10,6 +10,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritterui_api_campaign</name>
   <dependencies>
     <dependency>
+        <groupId>com.kritter.entity.freqcap_entity</groupId>
+        <artifactId>kritter_entity_freqcap_entity</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.utils</groupId>
         <artifactId>uuid</artifactId>
         <version>1.0</version>

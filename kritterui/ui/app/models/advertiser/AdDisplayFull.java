@@ -77,4 +77,33 @@ public class AdDisplayFull extends AdDisplay{
 	public String getExternalclicktracker(){
 	    return ad.getExternal_click_tracker();
 	}
+	public String getFreqCapDisplay(){
+		if(ad.isIs_frequency_capped()){
+			StringBuffer sbuff = new StringBuffer("");
+			if(ad.isClick_freq_cap()){
+				sbuff.append("CLICK -> FreqPeruser: ");
+				sbuff.append(ad.getClick_freq_cap_count());
+				
+				if(ad.getClick_freq_cap_type() ==1){
+					sbuff.append(" FreqType: Life ");
+				}else{
+					sbuff.append(" FreqType: ByHour Duration:");
+					sbuff.append(ad.getClick_freq_time_window());
+				}
+			}
+			if(ad.isImp_freq_cap()){
+				sbuff.append(" Imp -> FreqPeruser: ");
+				sbuff.append(ad.getImp_freq_cap_count());
+				
+				if(ad.getImp_freq_cap_type() ==1){
+					sbuff.append(" FreqType: Life ");
+				}else{
+					sbuff.append(" FreqType: ByHour Duration:");
+					sbuff.append(ad.getImp_freq_time_window());
+				}
+			}
+			return sbuff.toString();
+		}
+		return "Not Enabled";
+	}
 }

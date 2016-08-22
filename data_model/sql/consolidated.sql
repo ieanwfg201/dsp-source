@@ -1438,4 +1438,14 @@ alter table site add column video_supply_props text after is_native;
 alter table site add column is_video boolean default false after video_supply_props;
 
 alter table targeting_profile add column lat_lon_radius_file TEXT after ext;
+alter table targeting_profile add column deviceid_file TEXT after lat_lon_radius_file;
 
+START TRANSACTION;
+ALTER TABLE `targeting_profile` drop PRIMARY KEY;
+ALTER TABLE `targeting_profile` ADD CONSTRAINT `uq_targeting_profile_guid` UNIQUE(`guid`);
+ALTER TABLE `targeting_profile` ADD column `id` INTEGER NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY `id`(`id`);
+COMMIT;
+
+alter table ad add column freqcap_json TEXT after ext;
+alter table campaign add column freqcap_json TEXT after last_modified;
+alter table campaign add column is_frequency_capped BOOLEAN default FALSE after last_modified;

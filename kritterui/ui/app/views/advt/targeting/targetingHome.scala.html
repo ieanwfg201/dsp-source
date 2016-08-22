@@ -1,10 +1,10 @@
-@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String)
+@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String,deviceid_targeting:String)
 
 @main2("Targeting Home") {@navs.navadvt(tp.getAccountGuid())}{@navs.breadcrumbs(tp.getBreadCrumbPaths())}{
 
     @components.containers.panel("Targeting Summary-"+ tp.getName()){
         <div>
-            @advt.targeting.targetingHomeContent(tp,retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file)
+            @advt.targeting.targetingHomeContent(tp,retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting)
        </div>
     }
 }

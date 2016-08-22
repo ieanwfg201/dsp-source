@@ -13,7 +13,6 @@ import com.kritter.api.entity.account.Account;
 import com.kritter.api.entity.ad.Ad;
 import com.kritter.api.entity.campaign.Campaign;
 import com.kritter.constants.StatusIdEnum;
-import com.kritter.constants.UserConstant;
 
 import controllers.advertiser.CampaignController;
 import controllers.advertiser.routes;

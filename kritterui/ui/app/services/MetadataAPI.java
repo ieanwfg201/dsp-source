@@ -57,6 +57,7 @@ import com.kritter.constants.DemandPreference;
 import com.kritter.constants.DemandType;
 import com.kritter.constants.DeviceType;
 import com.kritter.constants.Ext_siteEnum;
+import com.kritter.constants.FreqDuration;
 import com.kritter.constants.Frequency;
 import com.kritter.constants.Geo_Targeting_type;
 import com.kritter.constants.HygieneCategory;
@@ -408,6 +409,14 @@ public class MetadataAPI {
             if(!pt.name().startsWith("SSP_WATERFALL_PASSBACK")){
                 selectOptions.add(new SelectOption(pt.name(),  pt.getCode()+""));
             }
+        } 
+        return selectOptions;
+    }
+    public static List<SelectOption> freqduration(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        FreqDuration[] types = FreqDuration.values();
+        for (FreqDuration pt : types) {
+        	selectOptions.add(new SelectOption(pt.name(),  pt.getCode()+""));
         } 
         return selectOptions;
     }

@@ -6,8 +6,10 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.kritter.constants.BidType;
+import com.kritter.constants.FreqDuration;
 import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.MarketPlace;
 import com.kritter.constants.StatusIdEnum;
@@ -79,7 +81,15 @@ public class Ad {
     private String mma_tier_1_list = "[]";
     /** optional - json array of mma_tier2 category */
     private String mma_tier_2_list = "[]";
-
+    
+    private boolean click_freq_cap = false;
+    private int click_freq_cap_type = FreqDuration.BYHOUR.getCode();
+    private int click_freq_cap_count = UserConstant.frequency_cap_default;
+    private int click_freq_time_window = UserConstant.frequency_cap_time_window_default;
+    private boolean imp_freq_cap = false;
+    private int imp_freq_cap_type = FreqDuration.BYHOUR.getCode();
+    private int imp_freq_cap_count = UserConstant.frequency_cap_default;
+    private int imp_freq_time_window = UserConstant.frequency_cap_time_window_default;
     @Override
 	public int hashCode() {
 		final int prime = 31;
@@ -94,6 +104,10 @@ public class Ad {
 		result = prime * result + campaign_id;
 		result = prime * result + ((categories_tier_1_list == null) ? 0 : categories_tier_1_list.hashCode());
 		result = prime * result + ((categories_tier_2_list == null) ? 0 : categories_tier_2_list.hashCode());
+		result = prime * result + (click_freq_cap ? 1231 : 1237);
+		result = prime * result + click_freq_cap_count;
+		result = prime * result + click_freq_cap_type;
+		result = prime * result + click_freq_time_window;
 		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		temp = Double.doubleToLongBits(cpa_goal);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -106,6 +120,10 @@ public class Ad {
 		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
 		result = prime * result + ((hygiene_list == null) ? 0 : hygiene_list.hashCode());
 		result = prime * result + id;
+		result = prime * result + (imp_freq_cap ? 1231 : 1237);
+		result = prime * result + imp_freq_cap_count;
+		result = prime * result + imp_freq_cap_type;
+		result = prime * result + imp_freq_time_window;
 		temp = Double.doubleToLongBits(internal_max_bid);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + (is_frequency_capped ? 1231 : 1237);
@@ -163,6 +181,14 @@ public class Ad {
 				return false;
 		} else if (!categories_tier_2_list.equals(other.categories_tier_2_list))
 			return false;
+		if (click_freq_cap != other.click_freq_cap)
+			return false;
+		if (click_freq_cap_count != other.click_freq_cap_count)
+			return false;
+		if (click_freq_cap_type != other.click_freq_cap_type)
+			return false;
+		if (click_freq_time_window != other.click_freq_time_window)
+			return false;
 		if (comment == null) {
 			if (other.comment != null)
 				return false;
@@ -202,6 +228,14 @@ public class Ad {
 		} else if (!hygiene_list.equals(other.hygiene_list))
 			return false;
 		if (id != other.id)
+			return false;
+		if (imp_freq_cap != other.imp_freq_cap)
+			return false;
+		if (imp_freq_cap_count != other.imp_freq_cap_count)
+			return false;
+		if (imp_freq_cap_type != other.imp_freq_cap_type)
+			return false;
+		if (imp_freq_time_window != other.imp_freq_time_window)
 			return false;
 		if (Double.doubleToLongBits(internal_max_bid) != Double.doubleToLongBits(other.internal_max_bid))
 			return false;
@@ -251,7 +285,55 @@ public class Ad {
 			return false;
 		return true;
 	}
-    public int getId() {
+	public boolean isClick_freq_cap() {
+		return click_freq_cap;
+	}
+	public void setClick_freq_cap(boolean click_freq_cap) {
+		this.click_freq_cap = click_freq_cap;
+	}
+	public int getClick_freq_cap_type() {
+		return click_freq_cap_type;
+	}
+	public void setClick_freq_cap_type(int click_freq_cap_type) {
+		this.click_freq_cap_type = click_freq_cap_type;
+	}
+	public int getClick_freq_cap_count() {
+		return click_freq_cap_count;
+	}
+	public void setClick_freq_cap_count(int click_freq_cap_count) {
+		this.click_freq_cap_count = click_freq_cap_count;
+	}
+	public int getClick_freq_time_window() {
+		return click_freq_time_window;
+	}
+	public void setClick_freq_time_window(int click_freq_time_window) {
+		this.click_freq_time_window = click_freq_time_window;
+	}
+	public boolean isImp_freq_cap() {
+		return imp_freq_cap;
+	}
+	public void setImp_freq_cap(boolean imp_freq_cap) {
+		this.imp_freq_cap = imp_freq_cap;
+	}
+	public int getImp_freq_cap_type() {
+		return imp_freq_cap_type;
+	}
+	public void setImp_freq_cap_type(int imp_freq_cap_type) {
+		this.imp_freq_cap_type = imp_freq_cap_type;
+	}
+	public int getImp_freq_cap_count() {
+		return imp_freq_cap_count;
+	}
+	public void setImp_freq_cap_count(int imp_freq_cap_count) {
+		this.imp_freq_cap_count = imp_freq_cap_count;
+	}
+	public int getImp_freq_time_window() {
+		return imp_freq_time_window;
+	}
+	public void setImp_freq_time_window(int imp_freq_time_window) {
+		this.imp_freq_time_window = imp_freq_time_window;
+	}
+	public int getId() {
         return id;
     }
     public void setId(int id) {
@@ -455,11 +537,13 @@ public class Ad {
 	}
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static Ad getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         Ad entity = objectMapper.readValue(str, Ad.class);
         return entity;
 
