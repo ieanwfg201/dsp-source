@@ -6,8 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -19,8 +23,12 @@ import com.kritter.api.entity.campaign.CampaignList;
 import com.kritter.api.entity.campaign.CampaignListEntity;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.constants.Budget;
+import com.kritter.constants.FreqDuration;
+import com.kritter.constants.FreqEventType;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
+import com.kritter.entity.freqcap_entity.FreqCap;
+import com.kritter.entity.freqcap_entity.FreqDef;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
@@ -91,8 +99,110 @@ public class CampaignCrud {
             }
             
         }
+        campaign.setIs_frequency_capped(rset.getBoolean("is_frequency_capped"));
+        populateFreqCap(campaign, rset.getString("freqcap_json"));
         return campaign;
     }
+    private static void populateFreqCap(Campaign campaign,String freqcap){
+    	if(freqcap == null || campaign == null){
+    		return;
+    	}
+    	if(!campaign.isIs_frequency_capped()){
+    		return;
+    	}
+    	String freqcapTrim = freqcap.trim();
+    	if("".equals(freqcapTrim)){
+    		return;
+    	}
+    	try{
+    		FreqCap freqCapObj = FreqCap.getObject(freqcapTrim);
+    		if(freqCapObj != null && freqCapObj.getFDef()!=null){
+    			Set<FreqDef> clickDef = freqCapObj.getFDef().get(FreqEventType.CLK);
+    			if(clickDef != null){
+    				campaign.setClick_freq_cap(true);
+    				for(FreqDef f:clickDef){
+    					switch(f.getDuration()){
+    					case LIFE:
+    						campaign.setClick_freq_cap_type(FreqDuration.LIFE.getCode());
+    						campaign.setClick_freq_cap_count(f.getCount());
+    						break;
+    					case BYHOUR:
+    						campaign.setClick_freq_cap_type(FreqDuration.BYHOUR.getCode());
+    						campaign.setClick_freq_cap_count(f.getCount());
+    						campaign.setClick_freq_time_window(f.getHour());
+    					default:
+    						break;
+    					}
+    				}
+    				Set<FreqDef> impDef = freqCapObj.getFDef().get(FreqEventType.IMP);
+    				if(impDef != null){
+    					campaign.setImp_freq_cap(true);
+    					for(FreqDef f:impDef){
+    						switch(f.getDuration()){
+    						case LIFE:
+    							campaign.setImp_freq_cap_type(FreqDuration.LIFE.getCode());
+    							campaign.setImp_freq_cap_count(f.getCount());
+    							campaign.setImp_freq_time_window(-1);
+    							break;
+    						case BYHOUR:
+    							campaign.setImp_freq_cap_type(FreqDuration.BYHOUR.getCode());
+    							campaign.setImp_freq_cap_count(f.getCount());
+    							campaign.setImp_freq_time_window(f.getHour());
+    							break;
+    						default:
+    							break;
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}catch(Exception e){
+    		LOG.error(e.getMessage(),e);
+    	}
+    }
+    private static String generateFreqCap(Campaign campaign){
+    	if(campaign==null || !campaign.isIs_frequency_capped()){
+    		return "{}";
+    	}
+    	FreqCap f = new FreqCap();
+    	Map<FreqEventType, Set<FreqDef>> map = new HashMap<FreqEventType, Set<FreqDef>>();
+    	if(campaign.isClick_freq_cap()){
+    		Set<FreqDef> set = new HashSet<FreqDef>();
+    		FreqDef fdef= new FreqDef();
+    		
+    		FreqDuration fDur = FreqDuration.getEnum(campaign.getClick_freq_cap_type());
+    		if(fDur==null){
+    			fDur=FreqDuration.BYHOUR;
+    		}
+    		fdef.setDuration(fDur);
+    		int count = campaign.getClick_freq_cap_count();
+    		fdef.setCount(count);
+    		if(fDur != FreqDuration.LIFE){
+    			fdef.setHour(campaign.getClick_freq_time_window());
+    		}
+    		set.add(fdef);
+    		map.put(FreqEventType.CLK, set);
+    	}
+    	if(campaign.isImp_freq_cap()){
+    		Set<FreqDef> set = new HashSet<FreqDef>();
+    		FreqDef fdef= new FreqDef();
+    		FreqDuration fDur = FreqDuration.getEnum(campaign.getImp_freq_cap_type());
+    		if(fDur==null){
+    			fDur=FreqDuration.BYHOUR;
+    		}
+    		fdef.setDuration(fDur);
+    		int count = campaign.getImp_freq_cap_count();
+    		fdef.setCount(count);
+    		if(fDur != FreqDuration.LIFE){
+    			fdef.setHour(campaign.getImp_freq_time_window());
+    		}
+    		set.add(fdef);
+    		map.put(FreqEventType.IMP, set);
+    	}
+    	f.setFDef(map);
+    	return f.toJson().toString();
+    }
+
     
     public static JsonNode insert_campaign(Connection con, JsonNode jsonNode){
         if(jsonNode == null){
@@ -151,6 +261,8 @@ public class CampaignCrud {
             pstmt.setTimestamp(7, new Timestamp((new Date()).getTime()));
             pstmt.setInt(8,campaign.getModified_by());
             pstmt.setTimestamp(9, new Timestamp((new Date()).getTime()));
+            pstmt.setBoolean(10, campaign.isIs_frequency_capped());
+            pstmt.setString(11, generateFreqCap(campaign));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -254,8 +366,10 @@ public class CampaignCrud {
             pstmt.setTimestamp(4, new Timestamp(campaign.getEnd_date()));
             pstmt.setInt(5,campaign.getModified_by());
             pstmt.setTimestamp(6, new Timestamp(now.getTime()));
-            pstmt.setInt(7, campaign.getId());
-            pstmt.setString(8, campaign.getAccount_guid());
+            pstmt.setBoolean(7, campaign.isIs_frequency_capped());
+            pstmt.setString(8, generateFreqCap(campaign));
+            pstmt.setInt(9, campaign.getId());
+            pstmt.setString(10, campaign.getAccount_guid());
             
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){

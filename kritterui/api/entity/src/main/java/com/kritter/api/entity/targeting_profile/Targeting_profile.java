@@ -6,6 +6,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.kritter.constants.Geo_Targeting_type;
 import com.kritter.constants.MidpValue;
@@ -110,8 +111,13 @@ public class Targeting_profile {
     private String channel_tier_2_list = "[]";
     /** optional - jason array of lat lon radius files */
     private String lat_lon_radius_file = null;
+    /** optional - jason array of deviceid files */
+    private String deviceid_file = null;
+    private String file_prefix_path = null;
+    private int id ;
     
-    @Override
+    
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -133,6 +139,7 @@ public class Targeting_profile {
 		result = prime * result + (int) (created_on ^ (created_on >>> 32));
 		result = prime * result + ((custom_ip_file_id_set == null) ? 0 : custom_ip_file_id_set.hashCode());
 		result = prime * result + ((device_type == null) ? 0 : device_type.hashCode());
+		result = prime * result + ((deviceid_file == null) ? 0 : deviceid_file.hashCode());
 		result = prime * result + ((direct_supply_inc_exc == null) ? 0 : direct_supply_inc_exc.hashCode());
 		result = prime * result + ((exchange_list == null) ? 0 : exchange_list.hashCode());
 		result = prime * result + ((exchange_supply_inc_exc == null) ? 0 : exchange_supply_inc_exc.hashCode());
@@ -252,6 +259,11 @@ public class Targeting_profile {
 			if (other.device_type != null)
 				return false;
 		} else if (!device_type.equals(other.device_type))
+			return false;
+		if (deviceid_file == null) {
+			if (other.deviceid_file != null)
+				return false;
+		} else if (!deviceid_file.equals(other.deviceid_file))
 			return false;
 		if (direct_supply_inc_exc == null) {
 			if (other.direct_supply_inc_exc != null)
@@ -387,7 +399,26 @@ public class Targeting_profile {
 			return false;
 		return true;
 	}
-    public String getGuid() {
+    public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getFile_prefix_path() {
+		return file_prefix_path;
+	}
+	public void setFile_prefix_path(String file_prefix_path) {
+		this.file_prefix_path = file_prefix_path;
+	}
+
+    public String getDeviceid_file() {
+		return deviceid_file;
+	}
+	public void setDeviceid_file(String deviceid_file) {
+		this.deviceid_file = deviceid_file;
+	}
+	public String getGuid() {
         return guid;
     }
     public void setGuid(String guid) {
@@ -693,11 +724,13 @@ public class Targeting_profile {
 	}
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static Targeting_profile getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         Targeting_profile entity = objectMapper.readValue(str, Targeting_profile.class);
         return entity;
 

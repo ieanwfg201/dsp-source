@@ -47,6 +47,7 @@ public class AdController extends Controller{
 	private static String adposition_required = Play.application().configuration().getString("adposition_required");
 	private static String channel_required = Play.application().configuration().getString("channel_required");
 	private static String lat_lon_file = Play.application().configuration().getString("lat_lon_file");
+	private static String deviceid_targeting = Play.application().configuration().getString("deviceid_targeting");
 
 	@SecuredAction
 	public static Result createAd(  int campaignId, Option<String> formId,
@@ -101,7 +102,7 @@ public class AdController extends Controller{
 		AdDisplayFull adDisplay = new AdDisplayFull(ad);
 		if(destination.nonEmpty())
 			adDisplay.setDestination(destination.get());
-		return ok(views.html.advt.campaign.adHome.render(adDisplay,retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file));
+		return ok(views.html.advt.campaign.adHome.render(adDisplay,retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
 	}
 
 	@SecuredAction

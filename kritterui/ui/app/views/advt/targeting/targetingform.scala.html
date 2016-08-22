@@ -1,4 +1,4 @@
-@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String, state_city:String, mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String)
+@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String, state_city:String, mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String,deviceid_targeting:String)
 
 @main2("Create Targeting Profile") {@navs.navadvt(tpDisplay.getAccountGuid())}{@navs.breadcrumbs(tpDisplay.getBreadCrumbPaths())}{
 
@@ -9,7 +9,8 @@
 <div class="panel-body">
 }
 	@components.containers.panel("Targeting Profile Form"){
-		<form id="tpForm" action="/advertiser/targeting-profiles/save" method="POST" ng-init='setAccount("@account_guid")'>	
+		<form id="tpForm" action="/advertiser/targeting-profiles/save" method="POST" ng-init='setAccount("@account_guid")'>
+				 @components.formElements.hiddenfield(tpForm("id"))	
     			 @components.formElements.hiddenfield(tpForm("guid"))
     			 @components.formElements.hiddenfield(tpForm("status_id"))
     			 @components.formElements.hiddenfield(tpForm("account_guid"))
@@ -153,6 +154,14 @@
                      <legend>Retargeting</legend>
                      @components.formElements.multiselectlist3(tpForm("retargeting"), '_label ->"Retargeting (Select Exact Segment and not ALL)", '_row->true) 
                  </fieldset>
+                }
+                @if("true" == deviceid_targeting){
+                  <fieldset>
+                     <legend>Deviceid Targeting</legend>
+                     @components.formElements.fileinput(tpForm("deviceid_file"), '_label ->"Upload Deviceid File", 
+																			'_uploadHandler -> "handleGeotargetingFileUpload($files, 'deviceid_file')",
+																			'_fileFilter -> ".csv"  ) 
+                  </fieldset>
                 }
                 @if("true" == mma_required){
 				 <fieldset>

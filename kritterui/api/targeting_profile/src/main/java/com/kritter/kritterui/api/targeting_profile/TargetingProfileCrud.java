@@ -1,5 +1,6 @@
 package com.kritter.kritterui.api.targeting_profile;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -233,6 +234,80 @@ public class TargetingProfileCrud {
         }
         sbuff.append("]");
         return sbuff.toString();
+    }
+    private static boolean checkRename(String incoming){
+    	if(incoming == null){ 
+            return false;
+        }
+        String incomingTrim = incoming.trim().replaceAll("]", "").replaceAll("\\[", "");
+        if(incomingTrim.equals("")){
+            return false;
+        }
+        String incomingSplit[] = incomingTrim.split(",");
+        if(incomingSplit.length>0){
+            for(String str:incomingSplit){
+            	String sTrim = str.trim();
+            	if(!"".equals(sTrim)){
+            		String filePathSplit[] = sTrim.split("/");
+            		if(filePathSplit.length>1){
+            			String fName=filePathSplit[filePathSplit.length-1].trim();
+            			if(!"".equals(fName) && !fName.startsWith("tpuidincexc")){
+            				return true;
+            			}
+            		}	
+            	}
+            }        	
+        }
+    	return false;
+    	
+    }
+    private static String renameDeviceidfile(String incoming,String accountGuid,String pathPrefix,int tpId){
+        if(incoming == null || pathPrefix==null || accountGuid==null ){ 
+            return incoming;
+        }
+        String incomingTrim = incoming.trim().replaceAll("]", "").replaceAll("\\[", "");
+        if(incomingTrim.equals("")){
+            return incomingTrim;
+        }
+        String incomingSplit[] = incomingTrim.split(",");
+        StringBuffer  outGoingBuff = new StringBuffer("[");
+        boolean isFirst=true;
+        for(String str:incomingSplit){
+        	String sTrim = str.trim();
+        	if(!"".equals(sTrim)){
+        		String filePathSplit[] = sTrim.split("/");
+        		if(filePathSplit.length>1){
+        			String fName=filePathSplit[filePathSplit.length-1].trim();
+        			if(isFirst){
+        				isFirst=false;
+        			}else{
+        				outGoingBuff.append(",");
+        			}
+        			if(!"".equals(fName) && !fName.startsWith("tpuidincexc")){
+        				try{
+        					File f = new File(pathPrefix+"/targeting/geo/deviceid_file/"+accountGuid+"/"+fName);
+        					if(f.exists()){
+        						String pathSuffix = "/targeting/geo/deviceid_file/"+accountGuid+"/"+"tpuidincexc_"+fName.substring(0, fName.indexOf("csv")-1)+"_"+tpId+"_"+(new Date()).getTime()+".csv";
+        						String fNewPath = pathPrefix+pathSuffix;
+        						File fNew = new File(fNewPath);
+        						f.renameTo(fNew);
+                				outGoingBuff.append("\"");
+                				outGoingBuff.append(pathSuffix);
+                				outGoingBuff.append("\"");
+        					}
+        				}catch(Exception e){
+        					LOG.error(e.getMessage(),e);
+        				}
+        			}else{
+        				outGoingBuff.append("\"");
+        				outGoingBuff.append(sTrim);
+        				outGoingBuff.append("\"");
+        			}
+        		}
+        	}
+        }
+        outGoingBuff.append("]");
+        return outGoingBuff.toString();
     }
     private static String db_to_ui_file_set(String outgoing){
         if(outgoing == null){
@@ -678,6 +753,8 @@ public class TargetingProfileCrud {
         populatePMPDealJson(tp);
         populateExt(tp, rset.getString("ext"));
         tp.setLat_lon_radius_file(db_to_ui_file_set(rset.getString("lat_lon_radius_file")));
+        tp.setDeviceid_file(db_to_ui_file_set(rset.getString("deviceid_file")));
+        tp.setId(rset.getInt("id"));
     }
     
     private static void populateExt(Targeting_profile tp,String ext){
@@ -1078,7 +1155,7 @@ public class TargetingProfileCrud {
             }
             String tmp_country_json = create_country_entity_list_from_country_ids(tp.getCountry_json(), con);
             String tmp_isp_list = create_isp_entity_list_from_ids(tp.getCarrier_json(), con);
-            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.insert_targeting_profile);
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.insert_targeting_profile,PreparedStatement.RETURN_GENERATED_KEYS);
             String guid = SingletonUUIDGenerator.getSingletonUUIDGenerator().generateUniversallyUniqueIdentifier().toString();
             tp.setGuid(guid);
             pstmt.setString(1, tp.getGuid());
@@ -1123,6 +1200,7 @@ public class TargetingProfileCrud {
             pstmt.setString(33, deviceType);
             pstmt.setString(34, generateExt(tp));
             pstmt.setString(35, ui_to_db_file_set(tp.getLat_lon_radius_file()));
+            pstmt.setString(36, ui_to_db_file_set(tp.getDeviceid_file()));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -1133,10 +1211,20 @@ public class TargetingProfileCrud {
                 msg.setMsg(ErrorEnum.TARGETING_PROFILE_NOT_INSERTED.getName());
                 return msg;
             }
+            ResultSet keyResultSet = pstmt.getGeneratedKeys();
+            int db_id = -1;
+            if (keyResultSet.next()) {
+                db_id = keyResultSet.getInt(1);
+            }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.NO_ERROR.getId());
             msg.setMsg(ErrorEnum.NO_ERROR.getName());
             msg.setId(guid);
+            msg.setId(db_id+"");
+            if(checkRename(tp.getDeviceid_file())){
+            	tp.setId(db_id);
+            	update_targeting_profile_using_provided_country_json(con, tp, true, false);
+            }
             return msg;
         }catch(Exception e){
             LOG.error(e.getMessage(),e);
@@ -1373,7 +1461,8 @@ public class TargetingProfileCrud {
             pstmt.setString(31, deviceType);
             pstmt.setString(32, generateExt(tp));
             pstmt.setString(33, ui_to_db_file_set(tp.getLat_lon_radius_file()));
-            pstmt.setString(34, tp.getGuid());
+            pstmt.setString(34, renameDeviceidfile(tp.getDeviceid_file(), tp.getAccount_guid(), tp.getFile_prefix_path(),tp.getId() ));
+            pstmt.setString(35, tp.getGuid());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

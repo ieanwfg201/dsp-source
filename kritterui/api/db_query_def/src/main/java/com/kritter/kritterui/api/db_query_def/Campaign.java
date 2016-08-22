@@ -2,10 +2,10 @@ package com.kritter.kritterui.api.db_query_def;
 
 public class Campaign {
     public static final String insert_campaign = "insert into campaign(id,guid,name,account_guid,status_id," +
-    		"start_date,end_date,created_on,modified_by,last_modified) values(null,?,?,?,?,?,?,?,?,?)";
+    		"start_date,end_date,created_on,modified_by,last_modified,is_frequency_capped,freqcap_json) values(null,?,?,?,?,?,?,?,?,?,?,?)";
     
     public static final String update_campaign = "update campaign set name=?,status_id=?," +
-            "start_date=?,end_date=?,modified_by=?,last_modified=?  where id=? and account_guid=?";
+            "start_date=?,end_date=?,modified_by=?,last_modified=?,is_frequency_capped=?,freqcap_json=?  where id=? and account_guid=?";
     
     public static final String get_campaign_of_account = "select * from campaign where id=? and account_guid = ?";
     
@@ -17,12 +17,14 @@ public class Campaign {
 
     public static final String list_campaign_by_account_ids =  "select  c.id as id, c.guid as guid, c.name as name, " +
     		"c.account_guid as account_guid, c.status_id as status_id, c.start_date as start_date, c.end_date as " +
-    		"end_date,c.created_on as created_on,c.modified_by as modified_by, c.last_modified as last_modified " +
+    		"end_date,c.created_on as created_on,c.modified_by as modified_by, c.last_modified as last_modified,"
+    		+ "c.is_frequency_capped as is_frequency_capped,c.freqcap_json as freqcap_json " +
     		"from campaign as c,account as a where c.account_guid=a.guid and a.id in (<id>)  order by c.last_modified desc limit  ?,?";
     
     public static final String list_campaign_by_account_ids_with_account_id =  "select  c.id as id, c.guid as guid, c.name as name, " +
             "c.account_guid as account_guid, a.id as account_id, c.status_id as status_id, c.start_date as start_date, c.end_date as " +
-            "end_date,c.created_on as created_on,c.modified_by as modified_by, c.last_modified as last_modified " +
+            "end_date,c.created_on as created_on,c.modified_by as modified_by, c.last_modified as last_modified,"
+            + "c.is_frequency_capped as is_frequency_capped,c.freqcap_json as freqcap_json " +
             "from campaign as c,account as a where c.account_guid=a.guid and a.id in (<id>)  order by c.last_modified desc limit  ?,?";
 
     public static final String list_campaign_of_all_accounts = "select * from campaign order by last_modified desc limit ?,?";
@@ -34,7 +36,7 @@ public class Campaign {
     public static final String list_all_non_expired_campaign_of_account = 
             "select a.id as id, a.guid as guid, a.name as name, a.account_guid as account_guid, " +
     		"a.status_id as status_id, a.start_date as start_date, a.end_date as end_date,a.created_on as created_on, a.modified_by as modified_by," +
-    		" a.last_modified as last_modified,b.internal_total_budget as internal_total_budget," +
+    		" a.last_modified as last_modified,a.is_frequency_capped as is_frequency_capped,a.freqcap_json as freqcap_json,b.internal_total_budget as internal_total_budget," +
     		"b.adv_total_budget as adv_total_budget,b.internal_total_burn as internal_total_burn," +
     		"b.adv_total_burn as adv_total_burn," +
     		"b.internal_daily_budget as internal_daily_budget,b.adv_daily_budget as adv_daily_budget," +

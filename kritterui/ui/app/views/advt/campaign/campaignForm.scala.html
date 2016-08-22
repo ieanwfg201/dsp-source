@@ -1,5 +1,5 @@
 @(campaignForm: Form[models.entities.CampaignEntity], 
-		campaignBudgetForm: Form[models.entities.CampaignBudgetEntity], campaignDisplay:models.advertiser.CampaignDisplay,campaign_unlimited:String)
+		campaignBudgetForm: Form[models.entities.CampaignBudgetEntity], campaignDisplay:models.advertiser.CampaignDisplay,campaign_unlimited:String,user_flow_enabled:String)
 
 @main2("Campaign Form"){@navs.navadvt(campaignDisplay.getAccountGuid())} {@navs.breadcrumbs(campaignDisplay.getBreadCrumbPaths())}{ 
 <form id="campaignForm" action="/advertiser/campaigns/save" method="POST" ng-controller="campaignController">
@@ -45,6 +45,31 @@
 						@components.formElements.modelcurrencyinput(campaignBudgetForm("internal_daily_budget"), "Internal Daily Budget *" )
 					</div>
 				</fieldset>
+				@if("true" == user_flow_enabled) {
+					<fieldset>
+						<legend>Freq Caps</legend>
+                        @components.formElements.selectlist2(campaignForm("is_frequency_capped"), "Frequency Cap Enabled", 
+                        services.MetadataAPI.freqCapOptions(), '_ngSync->true)
+                        <div id="userfreqcapid" ng-show="is_frequency_capped=='true'" ng-if="is_frequency_capped=='true'">
+                        	@components.formElements.selectlist2(campaignForm("imp_freq_cap"), "Imp FreqCap", 
+                        		services.MetadataAPI.freqCapOptions(), '_ngSync->true)
+                        	<div id="impfreqcapid" ng-show="imp_freq_cap=='true'" ng-if="imp_freq_cap=='true'">
+								@components.formElements.textinput(campaignForm("imp_freq_cap_count"), '_label ->"Ad Imp FreqCap per User*" )
+								@components.formElements.selectlist2(campaignForm("imp_freq_cap_type"),"Imp Freq Cap Type *", services.MetadataAPI.freqduration())
+                            	@components.formElements.textinput(campaignForm("imp_freq_time_window"), '_label ->"Imp Time Window (1-48, 24=1Day, -1=LIFE)" )
+                        		
+							</div>
+                        	@components.formElements.selectlist2(campaignForm("click_freq_cap"), "Click FreqCap", 
+                        		services.MetadataAPI.freqCapOptions(), '_ngSync->true)
+                        	<div id="click_freq_cap" ng-show="click_freq_cap=='true'" ng-if="click_freq_cap=='true'">
+								@components.formElements.textinput(campaignForm("click_freq_cap_count"), '_label ->"Ad Clk FreqCap per User*" )
+								@components.formElements.selectlist2(campaignForm("click_freq_cap_type"),"Clk Freq Cap Type *", services.MetadataAPI.freqduration())
+                            	@components.formElements.textinput(campaignForm("click_freq_time_window"), '_label ->"Clk Time Window (1-48, 24=1Day, -1=LIFE)" )
+							</div>
+                        </div>
+                        </fieldset>
+                     }		
+				
 				</div>
 				@components.formElements.submitbutton("save", "Save")
 			</div>

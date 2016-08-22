@@ -71,6 +71,7 @@ import controllers.advertiser.TargetingProfileController;
 
 public class KAPI extends Controller{
 	private static String timezoneid = Play.application().configuration().getString("timezoneid");
+	private static String file_prefix_path = Play.application().configuration().getString("file_prefix_path");
     public static Result reporting(){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
@@ -538,10 +539,12 @@ public class KAPI extends Controller{
             con = DB.getConnection();
             if("create".equals(actionType)){
                 Targeting_profile entity = Targeting_profile.getObject(jsonNode.toString());
+                entity.setFile_prefix_path(file_prefix_path);
                 Message msg  = ApiDef.insert_targeting_profile(con, entity);
                 return ok(msg.toJson().toString());
             }else if("edit".equals(actionType)){
                 Targeting_profile entity = Targeting_profile.getObject(jsonNode.toString());
+                entity.setFile_prefix_path(file_prefix_path);
                 Message msg  = ApiDef.update_targeting_profile(con, entity);
                 return ok(msg.toJson().toString());
             }else if("get".equals(actionType)){
