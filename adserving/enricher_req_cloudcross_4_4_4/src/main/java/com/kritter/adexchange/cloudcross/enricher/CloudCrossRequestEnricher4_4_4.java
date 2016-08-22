@@ -95,7 +95,7 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
         {
             StringWriter stringWriter = new StringWriter();
 
-            logger.debug("Request Method inside validateAndEnrichRequest of MoPubRequestEnricher is {} ",
+            logger.debug("Request Method inside validateAndEnrichRequest of CloudCrossRequestEnricher is {} ",
                     httpServletRequest.getMethod());
 
             String encodingToUse = httpServletRequest.getCharacterEncoding();
@@ -114,7 +114,7 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             String bidRequestPayLoadReceived = stringWriter.toString();
 
             if (StringUtils.isEmpty(bidRequestPayLoadReceived)) {
-                logger.error("The bidrequest payload received from CloudCross RTB Exchange is null inside validateAndEnrichRequest of MoPubRequestEnricher,cannot enrich bid request...");
+                logger.error("The bidrequest payload received from CloudCross RTB Exchange is null inside validateAndEnrichRequest of CloudCrossRequestEnricher,cannot enrich bid request...");
                 return null;
             }
 
@@ -182,17 +182,17 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             }
 
             if (null == userAgent)
-                throw new Exception("User Agent absent in bidrequest inside MoPubRequestEnricher, cannot proceed....");
+                throw new Exception("User Agent absent in bidrequest inside CloudCrossRequestEnricher, cannot proceed....");
 
             HandsetMasterData handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
 
             if (null == handsetMasterData) {
-                this.logger.error("Device detection failed inside MoPubRequestEnricher, can not proceed further");
+                this.logger.error("Device detection failed inside CloudCrossRequestEnricher, can not proceed further");
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_UNDETECTED);
                 return request;
             }
             if (handsetMasterData.isBot()) {
-                this.logger.error("Device detected is BOT inside MoPubRequestEnricher, can not proceed further");
+                this.logger.error("Device detected is BOT inside CloudCrossRequestEnricher, can not proceed further");
                 request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
                 return request;
             }
@@ -219,8 +219,8 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             /******************************************* ip extraction and connection type detection*********************/
             String ip = cloudCrossBidRequestDeviceDTO.getIpV4AddressClosestToDevice();
             if (null == ip) {
-                logger.error("Country and InternetServiceProvider could not be detected inside MoPubRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
-                throw new Exception("Country and InternetServiceProvider could not be detected inside MoPubRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
+                logger.error("Country and InternetServiceProvider could not be detected inside CloudCrossRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
+                throw new Exception("Country and InternetServiceProvider could not be detected inside CloudCrossRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
             }
 
             request.setIpAddressUsedForDetection(ip);
@@ -319,7 +319,7 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             sitePlatform = SITE_PLATFORM.APP.getPlatform();
             applicationId = cloudCrossBidRequestAppDTO.getApplicationIdOnExchange();
         } else {
-            logger.error("Site/App not found in request, site/app both not present inside MoPubRequestEnricher...aborting request....");
+            logger.error("Site/App not found in request, site/app both not present inside CloudCrossRequestEnricher...aborting request....");
             return null;
         }
         if (null != contentCategoriesSiteApp) {
@@ -448,7 +448,7 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
         try {
             country = this.countryDetectionCache.findCountryForIpAddress(ip);
         } catch (Exception e) {
-            logger.error("Exception inside MoPubRequestEnricher in fetching country ", e);
+            logger.error("Exception inside CloudCrossRequestEnricher in fetching country ", e);
         }
 
         return country;
@@ -460,7 +460,7 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
         try {
             internetServiceProvider = this.ispDetectionCache.fetchISPForIpAddress(ip);
         } catch (Exception e) {
-            logger.error("Exception inside MoPubRequestEnricher in fetching isp ", e);
+            logger.error("Exception inside CloudCrossRequestEnricher in fetching isp ", e);
         }
 
         return internetServiceProvider;
