@@ -152,6 +152,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>adserving/youku_req_res_enricher</module>
     <module>adserving/tencent_req_enricher</module>
     <module>adserving/adexchange_req_enricher</module>
+    <module>adserving/valuemaker_req_enricher</module>
     <module>adserving/req_res_enricher</module>
     <module>adserving/ctr_prediction</module>
     <module>adserving/csr_prediction</module>
