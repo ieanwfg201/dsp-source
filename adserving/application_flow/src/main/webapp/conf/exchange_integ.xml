@@ -30,4 +30,32 @@
     </bean>
     <!-- Youku exchange beans end   -->
 
+    <!-- Valuemaker exchange beans begin -->
+    <bean id="valuemaker_bidrequest_reader" class="com.kritter.valuemaker.reader_v20160817.reader.VamBidRequestReader">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="valuemaker"/>
+    </bean>
+    <bean id="valuemaker_request_enricher" class="com.kritter.adserving.valuemaker.req.enricher.VamRequestEnricher">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="valuemaker"/>
+        <constructor-arg index="2"><ref bean="valuemaker_bidrequest_reader"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="site_cache"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="handset_detector"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="iab_categories_cache"/></constructor-arg>
+        <constructor-arg index="6"><ref bean="mnc_mcc_data_cache"/></constructor-arg>
+        <constructor-arg index="7"><ref bean="country_detector"/></constructor-arg>
+        <constructor-arg index="8"><ref bean="isp_detector"/></constructor-arg>
+        <constructor-arg index="9"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="10" value=""/>
+    </bean>
+
+    <bean id="valuemaker_response_creator" class="com.kritter.valuemaker.reader_v20160817.response_creator.VamBidResponseCreator">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1"><ref bean="server_config"/></constructor-arg>
+        <constructor-arg index="2" value="CH-UMMA-TECH-IES-KR-I-TTER"/>
+        <constructor-arg index="3" value="1"/>
+        <constructor-arg index="4"><ref bean="ad_entity_cache"/></constructor-arg>
+    </bean>
+    <!-- Valuemaker exchange beans end   -->
+
 </beans>

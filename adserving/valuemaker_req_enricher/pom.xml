@@ -49,9 +49,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-                <groupId>com.kritter.ex_int.valuemaker</groupId>
-                <artifactId>reader_v20160817</artifactId>
-                <version>1.0.0</version>
+            <groupId>com.kritter.ex_int.valuemaker</groupId>
+            <artifactId>reader_v20160817</artifactId>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
