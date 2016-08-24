@@ -5,6 +5,7 @@ import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
+import com.kritter.constants.InclusionExclusionType;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
 import com.kritter.constants.StatusIdEnum;
@@ -73,6 +74,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             Long lastModified = resultSet.getTimestamp("ad_last_modified").getTime();
 
             //now get targeting profile data.
+            Integer targetingId = resultSet.getInt("targeting_profile_id");
             String targetingGuid = resultSet.getString("targeting_profile_guid");
             String accountId = resultSet.getString("account_guid");
             Integer accountIncId = resultSet.getInt("account_id");
@@ -89,6 +91,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             targetedCarriers.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("carrier_json"));
 
             TargetingProfileLocationEntity targetedStates = new TargetingProfileLocationEntity();
+            targetedStates.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("state_json"));
 
             try
             {
@@ -109,6 +112,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             {
                 logger.error("Exception in reading city json for adid: {} ", id,e);
             }
+            targetedCities.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("city_json"));
 
             //TODO change zipcode as file list ids and then check for matching.
             Integer[] targetedZipCodes= null;//ResultSetHelper.getResultSetIntegerArray(resultSet,"zipcode_list");
@@ -159,6 +163,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             String retargeting = resultSet.getString("retargeting");
             String pmpDealIdJson = resultSet.getString("pmp_deal_json");
             Short[] deviceTypeArray = ResultSetHelper.getResultSetShortArray(resultSet,"device_type");
+            int userIdInclusionExclusion = resultSet.getInt("user_id_inc_exc");
             int impressionCap = resultSet.getInt("impression_cap");
             int impressionsAccrued = resultSet.getInt("impressions_accrued");
             int bidtype = resultSet.getInt("bidtype");
@@ -185,7 +190,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             }
             
             TargetingProfile.TargetingBuilder targetingBuilder = new
-                    TargetingProfile.TargetingBuilder(targetingGuid,accountId,false,profileLastModified);
+                TargetingProfile.TargetingBuilder(targetingId, targetingGuid, accountId, false, profileLastModified);
             targetingBuilder.setTargetedBrands(targetedHandsetManufacturers);
             targetingBuilder.setTargetedModels(targetedHandsetModels);
             targetingBuilder.setTargetedOSJson(targetedOsJson);
@@ -214,6 +219,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             targetingBuilder.setDeviceTypeTargetingArray(deviceTypeArray);
             targetingBuilder.setTPExt(targetingExt);
             targetingBuilder.setLatLonFileIdArray(latLonFileIdArray);
+            targetingBuilder.setUserIdInclusionExclusionType(InclusionExclusionType.getEnum(userIdInclusionExclusion));
 
             if(retargeting != null){
                 String tmp_retargeting = retargeting.trim();
@@ -255,7 +261,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
         {
             addToErrorMap(id, "Exception while processing AdEntityCache entry: " + id);
             logger.error("Exception thrown while processing AdEntityCache Entry",e);
-            throw new RefreshException("Exception thrown while processing AdEntityCache Entry"+id, e);
+            throw new RefreshException("Exception thrown while processing AdEntityCache Entry "+id, e);
         }
     }
 

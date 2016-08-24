@@ -226,6 +226,14 @@
         <constructor-arg index="4" value="ad-nofill-map"/>
     </bean>
 
+    <bean id="user_id_inc_exc_filter" class="com.kritter.adserving.shortlisting.targetingmatcher.UserIdIncExcFilter">
+        <constructor-arg index="0" value="user_id_inc_exc_filter"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="user_inc_exc_cache"/></constructor-arg>
+        <constructor-arg index="4" value="ad-nofill-map"/>
+    </bean>
+
     <bean id="channel_targeting_filter" class="com.kritter.adserving.shortlisting.targetingmatcher.ChannelTargetingMatcher">
         <constructor-arg index="0" value="channel_targeting_filter"/>
         <constructor-arg index="1" value="adserving.application"/>

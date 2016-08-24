@@ -2,23 +2,33 @@ package com.kritter.constants;
 
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Enum signifying the different user id types in the system. Could be device id, exchange consumer id, cookie id,
  * etc.
  */
 public enum ExternalUserIdType {
-    SHA1_DEVICE_ID("didsha1", false),
-    MD5_DEVICE_ID("didmd5", false),
-    SHA1_DEVICE_PLATFORM_ID("dpidsha1", false),
-    MD5_DEVICE_PLATFORM_ID("dpidmd5", false),
-    IFA_USER_ID("ifa", false),
-    MAC_SHA1_DEVICE_ID("macsha1", false),
-    MAC_MD5_DEVICE_ID("macmd5", false),
-    COOKIE_ID("cid", false),
-    EXCHANGE_CONSUMER_ID("id", true),
-    BUYER_USER_ID("buyeruid", true),
-    AGGREGATOR_USER_ID("auid", true);
-
+    SHA1_DEVICE_ID("didsha1", false), /*Hardware device ID (e.g., IMEI); hashed via SHA1.*/
+    MD5_DEVICE_ID("didmd5", false),   /*Hardware device ID (e.g., IMEI); hashed via MD5.*/
+    SHA1_DEVICE_PLATFORM_ID("dpidsha1", false), /*Platform device ID (e.g., Android ID); hashed via SHA1*/
+    MD5_DEVICE_PLATFORM_ID("dpidmd5", false),   /*Platform device ID (e.g., Android ID); hashed via MD5.*/
+    IFA_USER_ID("ifa", false), /*ID sanctioned for advertiser use in the clear (i.e., not hashed).*/
+    MAC_SHA1_DEVICE_ID("macsha1", false), /*MAC address of the device; hashed via SHA1.*/
+    MAC_MD5_DEVICE_ID("macmd5", false), /*MAC address of the device; hashed via MD5.*/
+    COOKIE_ID("cid", false), /*Kritters Cookie ID*/
+    EXCHANGE_CONSUMER_ID("id", true), /*Exchange-specific ID for the user. At least one of id or buyerid is recommended.*/
+    BUYER_USER_ID("buyeruid", true), /*Buyer-specific ID for the user as mapped by the exchange for the buyer. At least one of buyerid or id is recommended*/
+    AGGREGATOR_USER_ID("auid", true), /*If aggregator gives user*/
+    DEVICE_PLATFORM_ID("dpid", true), /*Platform device ID (e.g., Android ID); Clear Text*/
+    DEVICE_ID("did", true), /*Hardware device ID (e.g., IMEI);Clear Text*/
+    MAC("mac", true), /*MAC address of the device; Clear Text*/
+    UDID("udid", true), /*udid*/
+	OPENUDID("oudid", true), /*OpenUdid*/
+	AAID("aaid", true) /*aaid*/
+	;
+	
     @Getter
     private String typeName;
     /**
@@ -30,5 +40,16 @@ public enum ExternalUserIdType {
     private ExternalUserIdType(String typeName, boolean sourceRequired) {
         this.typeName = typeName;
         this.sourceRequired = sourceRequired;
+    }
+
+    private static Map<String, ExternalUserIdType> nameTypeMap = new HashMap<String, ExternalUserIdType>();
+    static {
+        for(ExternalUserIdType userIdType : ExternalUserIdType.values()) {
+            nameTypeMap.put(userIdType.typeName, userIdType);
+        }
+    }
+
+    public static ExternalUserIdType getEnum(String name) {
+        return nameTypeMap.get(name);
     }
 }

@@ -10,5 +10,5 @@ ON DUPLICATE KEY UPDATE id = VALUES(id);
 
 
 INSERT INTO mma_exchangename_id_mapping (exchangename, exchangeid, exchangeguid) VALUES
-('youku', '1', 'youku'),
-('tencent', '2', 'tencent');
+('youku', (select id from account where guid='youku'), 'youku'),
+('tencent', (select id from account where guid='tencent'), 'tencent');

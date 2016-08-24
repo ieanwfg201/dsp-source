@@ -775,3 +775,13 @@ ON DUPLICATE KEY UPDATE id = VALUES(id);
 insert into formats_attributes_mapping(creative_formats_id, creative_attributes_id, modified_by) values
 (4,72, 1)
 ON DUPLICATE KEY UPDATE creative_formats_id = VALUES(creative_formats_id);
+
+insert into marketplace (id,pricing,description,modified_by,created_on,last_modified,is_deprecated) values
+(-1,'NF','No Ad Found for Request',1,now(),now(),false)
+ON DUPLICATE KEY UPDATE id = VALUES(id);
+
+insert into inclusion_exclusion_type (id, name) values
+(0, "None"),
+(1, "Inclusion"),
+(2, "Exclusion")
+ON DUPLICATE KEY UPDATE id = VALUES(id);

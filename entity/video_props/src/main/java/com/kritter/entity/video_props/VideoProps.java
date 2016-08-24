@@ -1,12 +1,14 @@
 package com.kritter.entity.video_props;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.kritter.constants.APIFrameworks;
 import com.kritter.constants.ContentDeliveryMethods;
@@ -32,6 +34,10 @@ public class VideoProps {
     private int videoDemandType = VideoDemandType.VastTagUrl.getCode();
     @Getter@Setter
     private String vastTagUrl = null;
+    @Getter@Setter
+    private Set<Integer> vast_tag_macro = null;
+    @Getter@Setter
+    private Integer vast_tag_macro_quote = 0;
     @Getter@Setter
     private int mime = VideoMimeTypes.MPEG4.getCode();
     @Getter@Setter
@@ -72,11 +78,13 @@ public class VideoProps {
     
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static VideoProps getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
     public static VideoProps getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

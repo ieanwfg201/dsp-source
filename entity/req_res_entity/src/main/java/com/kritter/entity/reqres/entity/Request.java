@@ -170,6 +170,9 @@ public class Request
       constructed.*/
     @Getter @Setter
     private BidRequestImpressionType bidRequestImpressionType;
+    @Getter @Setter
+    private Boolean doNotTrack;
+
 
     //contains all request enrichment related error codes.
     public enum REQUEST_ENRICHMENT_ERROR_CODE

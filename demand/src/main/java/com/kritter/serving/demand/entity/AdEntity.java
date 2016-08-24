@@ -5,6 +5,7 @@ import com.kritter.constants.MarketPlace;
 import com.kritter.entity.ad_ext.AdExt;
 import com.kritter.entity.external_tracker.ExtTracker;
 
+import com.kritter.entity.freqcap_entity.FreqCap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -56,7 +57,8 @@ public class AdEntity implements IUpdatableEntity<Integer>
     private ExtTracker extTracker;
     private boolean isRetargeted=false;
     private AdExt adExt;
-    
+    private FreqCap frequencyCap;
+
     public AdEntity(AdEntityBuilder adEntityBuilder)
     {
         this.adIncId = adEntityBuilder.adIncId;
@@ -89,6 +91,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         this.extTracker = adEntityBuilder.extTracker;
         this.isRetargeted = adEntityBuilder.isRetargeted;
         this.adExt = adEntityBuilder.adExt;
+        this.frequencyCap = adEntityBuilder.frequencyCap;
     }
 
     @Override
@@ -131,6 +134,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         private ExtTracker extTracker;
         private boolean isRetargeted = false;
         private AdExt adExt;
+        private FreqCap frequencyCap;
         
         public AdEntityBuilder(Integer adIncId,
                                String adGuid,
@@ -213,6 +217,11 @@ public class AdEntity implements IUpdatableEntity<Integer>
         public AdEntityBuilder setAdExt(AdExt adExt)
         {
             this.adExt = adExt;
+            return this;
+        }
+
+        public AdEntityBuilder setFrequencyCap(String frequencyCap) throws Exception {
+            this.frequencyCap = FreqCap.getObject(frequencyCap);
             return this;
         }
 

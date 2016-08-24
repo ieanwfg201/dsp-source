@@ -122,8 +122,8 @@ MMA_CAT_TARGET = 94,             /*MMA cat targeting fail*/
 ADPOSITION_MISMATCH = 95,        /*Ad Position Targeting fail*/ 
 CHANNEL_MISMATCH = 96,           /*Channel Targeting fail*/ 
 VIDEO_DEMAND_PROPS_NF= 97,       /*VideoDemandProps Absent*/
-VIDEO_SUPPLY_PROPS_NF= 98,       /*VideoSupplyProps Absent*/ 
- 
+VIDEO_SUPPLY_PROPS_NF= 98,       /*VideoSupplyProps Absent*/
+USER_ID_INC_EXC_FILTER = 99,     /*User Id Inclusion/Exclusion filter applied*/
 }
 
 /**
@@ -158,6 +158,7 @@ struct Impression {
 8: optional i16 slotId,
 9: optional i32 adv_inc_id, /*advertiser integer id from mysql,always populated*/
 10: optional double predictedCTR, /*predicted ctr for this ad*/
+11: optional i16 marketplace,   /*marketplace*/
 /*NOTE ANY CHANGE IN IMPRESSION OBJECT requires change in first_level.pig in KUMBAYA */
 }
 

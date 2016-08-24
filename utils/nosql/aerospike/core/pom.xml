@@ -6,7 +6,7 @@
   <groupId>com.kritter.utils.nosql</groupId>
   <artifactId>aerospike</artifactId>
   <version>1.0</version>
-  <name>common-utils-aws-dynamo_db</name>
+  <name>kritter-aerospike-core</name>
   <url>http://maven.apache.org</url>
 
   <dependencies>

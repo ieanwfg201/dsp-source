@@ -28,7 +28,21 @@ public enum ADTagMacros {
     DEVICE_ID(21,"{{DEVICE_ID}}","\\{\\{DEVICE_ID\\}\\}"),
     CLICK_URL(22,"[CLICK_URL]","\\[CLICK_URL]"),
     SECURE_CLICK_URL(23,"[SECURE_CLICK_URL]","\\[SECURE_CLICK_URL]"),
-    RANDOM(24,"RANDOM","RANDOM");
+    RANDOM(24,"RANDOM","RANDOM"),
+    CACHEBUSTER(25,"{{CACHEBUSTER}}","\\{\\{CACHEBUSTER\\}\\}"),
+    PUB_GUID(26,"{{PUB_GUID}}","\\{\\{PUB_GUID\\}\\}"),
+    DO_NOT_TRACK(27,"{{DO_NOT_TRACK}}","\\{\\{DO_NOT_TRACK\\}\\}"),
+    REFERER(28,"{{REFERER}}","\\{\\{REFERER\\}\\}"),
+    IMEI(29,"{{IMEI}}","\\{\\{IMEI\\}\\}"),
+    IMEIMD5(30,"{{IMEIMD5}}","\\{\\{IMEIMD5\\}\\}"),
+    MAC(31,"{{MAC}}","\\{\\{MAC\\}\\}"),
+    IDFA(32,"{{IDFA}}","\\{\\{IDFA\\}\\}"),
+    AAID(33,"{{AAID}}","\\{\\{AAID\\}\\}"),
+    OpenUDID(34,"{{OpenUDID}}","\\{\\{OpenUDID\\}\\}"),
+    AndroidID(35,"{{AndroidID}}","\\{\\{AndroidID\\}\\}"),
+    AndroidIDMD5(36,"{{AndroidIDMD5}}","\\{\\{AndroidIDMD5\\}\\}"),
+    UDID(37,"{{UDID}}","\\{\\{UDID\\}\\}")
+    ;
     
     private int code;
     private String name;

@@ -1449,3 +1449,15 @@ COMMIT;
 alter table ad add column freqcap_json TEXT after ext;
 alter table campaign add column freqcap_json TEXT after last_modified;
 alter table campaign add column is_frequency_capped BOOLEAN default FALSE after last_modified;
+
+alter table creative_container add column comment  TEXT  after video_props;
+
+CREATE TABLE IF NOT EXISTS `inclusion_exclusion_type`
+(
+    `id` SMALLINT NOT NULL PRIMARY KEY,
+    `name` varchar(30) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+ALTER TABLE `targeting_profile` ADD COLUMN `user_id_inc_exc` SMALLINT NOT NULL AFTER `device_type`;
+ALTER TABLE `targeting_profile` ADD CONSTRAINT `fk_user_id_inc_exc` FOREIGN KEY (`user_id_inc_exc`) REFERENCES inclusion_exclusion_type(id);
+ALTER TABLE `targeting_profile` ADD COLUMN `user_id_file` TEXT AFTER `user_id_inc_exc`;

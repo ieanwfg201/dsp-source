@@ -1,6 +1,7 @@
 package com.kritter.serving.demand.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
+import com.kritter.constants.InclusionExclusionType;
 import com.kritter.constants.MidpValue;
 import com.kritter.entity.targeting_profile.column.Retargeting;
 import com.kritter.entity.targeting_profile.column.TPExt;
@@ -12,6 +13,7 @@ import lombok.ToString;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -24,7 +26,7 @@ import java.util.*;
 @EqualsAndHashCode(of = {"targetingGuid"})
 
 public class TargetingProfile implements IUpdatableEntity<String>{
-
+    private final Integer targetingId;
     private final String targetingGuid;
     private final String accountId;
 
@@ -60,10 +62,12 @@ public class TargetingProfile implements IUpdatableEntity<String>{
     private final Short[] deviceTypeArray;
     private final TPExt tpExt;
     private final String[] latLonFileIdArray;
+    private final InclusionExclusionType userIdInclusionExclusionType;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public TargetingProfile(TargetingBuilder targetingBuilder)
     {
+        this.targetingId = targetingBuilder.targetingId;
         this.targetingGuid = targetingBuilder.targetingGuid;
         this.accountId = targetingBuilder.accountId;
         this.targetedBrands = targetingBuilder.targetedBrands;
@@ -97,6 +101,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         this.deviceTypeArray = targetingBuilder.deviceTypeArray;
         this.tpExt = targetingBuilder.tpExt;
         this.latLonFileIdArray = targetingBuilder.latLonFileIdArray;
+        this.userIdInclusionExclusionType = targetingBuilder.userIdInclusionExclusionType;
     }
 
     @Override
@@ -107,6 +112,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
 
     public static class TargetingBuilder
     {
+        private final Integer targetingId;
         private final String targetingGuid;
         private final String accountId;
 
@@ -142,6 +148,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         private Short[] deviceTypeArray;
         private TPExt tpExt;
         private String[] latLonFileIdArray;
+        private InclusionExclusionType userIdInclusionExclusionType;
         private static final TypeReference<Map<String,String>>
                      typeReferenceForOSBrowserJSon = new TypeReference<Map<String, String>>() {};
 
@@ -152,9 +159,10 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         private static final TypeReference<Map<String,String[]>> typeReferenceForPMPDealId =
                 new TypeReference<Map<String,String[]>>() {};
 
-        public TargetingBuilder(String targetingGuid,String accountId,
+        public TargetingBuilder(Integer targetingId, String targetingGuid, String accountId,
                                 boolean isMarkedForDeletion,Long updateTime)
         {
+            this.targetingId = targetingId;
             this.targetingGuid = targetingGuid;
             this.accountId = accountId;
             this.isMarkedForDeletion = isMarkedForDeletion;
@@ -376,6 +384,11 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         public TargetingBuilder setTPExt(TPExt tpExt)
         {
             this.tpExt = tpExt;
+            return this;
+        }
+
+        public TargetingBuilder setUserIdInclusionExclusionType(InclusionExclusionType userIdInclusionExclusionType) {
+            this.userIdInclusionExclusionType = userIdInclusionExclusionType;
             return this;
         }
 
