@@ -250,7 +250,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         	bidResponseBidYoukuDTO.setDealId(responseAdInfo.getDealId());
         }
         bidResponseBidYoukuDTO.setCreativeId(responseAdInfo.getGuid()+":"+creative.getCreativeGuid());
-        bidResponseBidYoukuDTO.setPrice(responseAdInfo.getEcpmValue().floatValue());
+        bidResponseBidYoukuDTO.setPrice(responseAdInfo.getEcpmValue().floatValue()*100); /*Converting to fen*/
         /*******************************Done preparing bid response bid object.********************************/
 
         return bidResponseBidYoukuDTO;
