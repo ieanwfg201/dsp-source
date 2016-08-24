@@ -254,9 +254,11 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
             if(requestingUserId != null) {
                 externalUserIds.add(new ExternalUserId(ExternalUserIdType.COOKIE_ID, request.getInventorySource(),
                         requestingUserId));
-            }
 
-            logger.debug("Cookie :{} received from end user and set as one of externalUserIds", requestingUserId);
+                logger.debug("Cookie :{} received from end user and set as one of externalUserIds", requestingUserId);
+            } else {
+                logger.debug("Cookie not received in the request. External user ids empty");
+            }
 
             //set user agent to request object.
             request.setUserAgent(userAgent);

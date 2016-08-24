@@ -2,6 +2,7 @@ package com.kritter.entity.external_tracker;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -21,7 +22,15 @@ public class ExtTracker {
     @Getter@Setter
     private List<String> impTracker;
     @Getter@Setter
+    private Set<Integer> impMacro;
+    @Getter@Setter
+    private Integer impMacroQuote;
+    @Getter@Setter
     private List<String> clickTracker;
+    @Getter@Setter
+    private Set<Integer> clickMacro;
+    @Getter@Setter
+    private Integer clickMacroQuote;
     
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

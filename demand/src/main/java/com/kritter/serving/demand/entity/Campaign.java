@@ -1,6 +1,7 @@
 package com.kritter.serving.demand.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
+import com.kritter.entity.freqcap_entity.FreqCap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -28,6 +29,7 @@ public class Campaign implements IUpdatableEntity<Integer>
     private final Double campaignAdvertiserTotalRemainingBudget;
     private final Double accountTotalBudgetRemaining;
     private final Double accountAdvertiserTotalBudgetRemaining;
+    private final FreqCap frequencyCap;
 
     private final boolean markedForDeletion;
     private final Long modificationTime;
@@ -46,6 +48,7 @@ public class Campaign implements IUpdatableEntity<Integer>
         this.campaignAdvertiserDailyRemainingBudget = campaignBuilder.campaignAdvertiserDailyRemainingBudget;
         this.campaignAdvertiserTotalRemainingBudget = campaignBuilder.campaignAdvertiserTotalRemainingBudget;
         this.accountAdvertiserTotalBudgetRemaining = campaignBuilder.accountAdvertiserTotalBudgetRemaining;
+        this.frequencyCap = campaignBuilder.frequencyCap;
         this.markedForDeletion = campaignBuilder.isMarkedForDeletion;
         this.modificationTime = campaignBuilder.updateTime;
     }
@@ -70,6 +73,7 @@ public class Campaign implements IUpdatableEntity<Integer>
         private final Double campaignAdvertiserTotalRemainingBudget;
         private final Double accountTotalBudgetRemaining;
         private final Double accountAdvertiserTotalBudgetRemaining;
+        private FreqCap frequencyCap;
 
         private boolean isMarkedForDeletion;
         private Long updateTime;
@@ -99,6 +103,11 @@ public class Campaign implements IUpdatableEntity<Integer>
             this.accountAdvertiserTotalBudgetRemaining = accountAdvertiserTotalBudgetRemaining;
             this.isMarkedForDeletion = isMarkedForDeletion;
             this.updateTime = updateTime;
+        }
+
+        public CampaignBuilder setFrequencyCap(String frequencyCap) throws Exception {
+            this.frequencyCap = FreqCap.getObject(frequencyCap);
+            return this;
         }
 
         public Campaign build()

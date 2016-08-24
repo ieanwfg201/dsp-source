@@ -87,7 +87,7 @@ public class TestAerospikeNoSqlNamespaceOperations
     private class TestTable implements NoSqlNamespaceTable
     {
         /*aerospike default namespace that comes with the installation*/
-        private static final String namespace = "test";
+        private static final String namespace = "user";
         private static final String tableName = "test_table";
         @Getter @Setter
         private String exchangeId;

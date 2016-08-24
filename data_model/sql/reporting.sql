@@ -857,3 +857,7 @@ CREATE TABLE `ad_no_fill_reason_daily` (
 ALTER TABLE ad_no_fill_reason_daily ADD INDEX ad_no_fill_reason_daily_ad_id(ad_id);
 ALTER TABLE ad_no_fill_reason_daily ADD INDEX ad_no_fill_reason_daily_request_time(request_time);
 
+ALTER table first_level_limited add column marketplace int  default -1 after billedcsc;
+ALTER table first_level_limited_daily add column marketplace int  default -1 after billedcsc;
+ALTER table first_level_limited_monthly add column marketplace int  default -1 after billedcsc;
+ALTER table first_level_limited_yearly add column marketplace int  default -1 after billedcsc;

@@ -1,0 +1,3 @@
+#user_id_upload.job
+type=command
+command=sh user_id_upload.sh ${user_id_upload_code_path} ${log4j_properties_path} ${input_dir} ${processed_dir} ${logger_name} ${namespace_name} ${table_name} ${primary_key_name} ${attribute_name} ${cache_name} ${cache_logger_name} ${aerospike_host} ${aerospike_port} ${max_retries} ${timeout} ${aerospike_logger_name}
