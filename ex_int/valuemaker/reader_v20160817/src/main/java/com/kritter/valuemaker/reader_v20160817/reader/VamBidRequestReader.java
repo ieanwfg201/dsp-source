@@ -1,12 +1,11 @@
 package com.kritter.valuemaker.reader_v20160817.reader;
 
+import RTB.VamRealtimeBidding;
 import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.exception.BidRequestException;
 import com.kritter.bidrequest.reader.IBidRequestReader;
 import com.kritter.valuemaker.reader_v20160817.converter.request.ConvertRequest;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
-import RTB.VamRealtimeBidding.VamRequest;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,15 +39,8 @@ public class VamBidRequestReader implements IBidRequestReader
         if(null == vamRequestInputStream)
             return null;
 
-        VamRequest.Builder vamBidRequestBuilder = VamRequest.newBuilder();
-
-        byte[] rawBytes = IOUtils.toByteArray(vamRequestInputStream);
-        Base64 base64Encoder = new Base64(0);
-        bidRequestLogger.debug(new String(base64Encoder.encode(rawBytes)));
-
-        vamBidRequestBuilder  = vamBidRequestBuilder.mergeFrom(rawBytes);
-        VamRequest request = vamBidRequestBuilder.build();
-        return ConvertRequest.convert(request);
+        VamRealtimeBidding.VamRequest bidRequest = VamRealtimeBidding.VamRequest.parseFrom(IOUtils.toByteArray(vamRequestInputStream));
+        return ConvertRequest.convert(bidRequest);
     }
 
     @Override

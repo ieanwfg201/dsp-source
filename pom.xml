@@ -119,6 +119,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>ex_int/mopub/2.3</module>
     <module>ex_int/tencent</module>
     <module>ex_int/youku/2.2</module>
+    <module>ex_int/valuemaker</module>
     <module>geo/utils</module>
     <module>geo/common</module>
     <module>geo/maxmind</module>
