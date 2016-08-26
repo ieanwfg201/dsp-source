@@ -9,7 +9,7 @@
 	</div>
 	<div class="col-sm-9">
 	<div class="input-group">
-          <span class="input-group-addon">$</span>
+          <span class="input-group-addon"> </span>
           <input type="number" class="form-control" id="@field.name()" ng-model='@{field.name()+"_obj"}' ng-init='initCurrency("@{field.name()}", "@field.value()")' name="@field.name()"	value="@field.value()" min="0" max="1000000" step="any" > 
           <span class="help-inline">@elements.errors(elements.lang).mkString(", ")</span>
       	  <span class="help-block hidden showonhover">@elements.infos(elements.lang).mkString(", ")</span>  
