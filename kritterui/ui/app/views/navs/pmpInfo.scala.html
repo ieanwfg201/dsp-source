@@ -1,0 +1,12 @@
+@(display:models.pmp.display.PMPDisplay)
+@main2("PMP Deal Home"){@navs.navadvt(display.getDealId())}{@navs.breadcrumbs(display.getBreadCrumbPaths())}{
+
+@components.containers.panel("PMP Deal Info"){
+<div> 
+        @components.fielddisplays.textdisplay("Deal Id", display.getDealId())
+        @components.fielddisplays.textdisplay("Deal Name", display.getDealName())
+        @components.fielddisplays.textdisplay("Ad List", display.getAdIdList())
+</div>
+}
+<script src="@routes.Assets.at("javascripts/apps/pmpController.js")" type="text/javascript"></script>
+}

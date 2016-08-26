@@ -130,6 +130,8 @@
                         	services.MetadataAPI.videoDemandType(), '_ngSync ->true, '_ngChange ->"updateVideoDemandType()", '_numeric->true)
 					<div ng-show="showVideoWrapperForm" ng-if="showVideoWrapperForm">
                         @components.formElements.textinput(creativeForm("vastTagUrl"), '_label ->"Vast Tag Url")
+                        @components.formElements.multiselectlist3(creativeForm("vastTagMacro"), '_label ->"MACROS (for replacement)" , '_row->true)
+                        @components.formElements.selectlist2(creativeForm("vastTagMacroQuote"), "Macros (Quoted) ",services.MetadataAPI.creativeMacroQuote() )
                         @components.formElements.selectlist2(creativeForm("protocol"), "Protocol (2.0->2.0 Wrapper) ",services.MetadataAPI.wrapperprotocol() )
 					</div>
                         @components.formElements.selectlist2(creativeForm("mime"), "Mime",services.MetadataAPI.mime() )

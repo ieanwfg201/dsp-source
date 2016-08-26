@@ -186,10 +186,6 @@ public class ThriftLogger implements Job
 
             //set bidder model id
             postImpressionRequestResponse.setBidderModelId(request.getBidderModelId());
-            //set marketplace value
-            if(null != request.getAdEntity())
-                postImpressionRequestResponse.setMarketplace_id
-                            ((short)request.getAdEntity().getMarketPlace().getCode());
 
             /*set advertiser and publisher integer id from mysql if available*/
             postImpressionRequestResponse.setAdv_inc_id(-1);
@@ -318,6 +314,36 @@ public class ThriftLogger implements Job
                 URLField macmd5 = urlFieldMap.get(URLField.MAC_ADDRESS_MD5.getCode());
                 if(null != macmd5 && null != macmd5.getUrlFieldProperties().getFieldValue())
                     postImpressionRequestResponse.setMacmd5((String)macmd5.getUrlFieldProperties().getFieldValue());
+
+                URLField state = urlFieldMap.get(URLField.STATE_ID.getCode());
+                if(null != state && null != state.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setStateId((Integer) state.getUrlFieldProperties().getFieldValue());
+                else
+                    postImpressionRequestResponse.setStateId(-1);
+
+                URLField city = urlFieldMap.get(URLField.CITY_ID.getCode());
+                if(null != city && null != city.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setCityId((Integer) city.getUrlFieldProperties().getFieldValue());
+                else
+                    postImpressionRequestResponse.setCityId(-1);
+
+                URLField adPosition = urlFieldMap.get(URLField.AD_POSITION.getCode());
+                if(null != adPosition && null != adPosition.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setAdpositionId((Integer) adPosition.getUrlFieldProperties().getFieldValue());
+                else
+                    postImpressionRequestResponse.setAdpositionId(-1);
+
+                URLField channel = urlFieldMap.get(URLField.CHANNEL_ID.getCode());
+                if(null != channel && null != channel.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setChannelId((Integer) channel.getUrlFieldProperties().getFieldValue());
+                else
+                    postImpressionRequestResponse.setChannelId(-1);
+
+                URLField marketplace = urlFieldMap.get(URLField.MARKETPLACE.getCode());
+                if(null != marketplace && null != marketplace.getUrlFieldProperties().getFieldValue())
+                    postImpressionRequestResponse.setMarketplace_id((Short) marketplace.getUrlFieldProperties().getFieldValue());
+                else
+                    postImpressionRequestResponse.setMarketplace_id((short)-1);
             }
             /**********************************Done setting url fields from adserving*****************************/
 

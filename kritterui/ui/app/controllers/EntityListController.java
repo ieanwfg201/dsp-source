@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.List;
 
+import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
 import models.EntityList;
 import models.EntityListFilter;
 import models.accounts.displays.AdvertiserDisplay;
@@ -13,6 +14,7 @@ import models.advertiser.RetargetingSegmentDisplay;
 import models.advertiser.TargetingDisplay;
 import models.entities.isp_mapping.Isp_mappingDisplay;
 import models.iddefinition.IddefinitionDisplay;
+import models.pmp.display.PMPDisplay;
 import models.publisher.Ext_siteDisplay;
 import models.publisher.SiteDisplay;
 import play.Logger;
@@ -94,6 +96,10 @@ public class EntityListController extends Controller{
                     entityList = EntityListDataService.listData(entityListFilter, new RetargetingSegment()); 
                     populateRetargetingSegment(itemList,(List<RetargetingSegment>) entityList.getEntityList()); 
                     break;
+				case pmp_deal:
+					entityList = EntityListDataService.listData(entityListFilter, new PrivateMarketPlaceApiEntity());
+					populatePMPDeals(itemList,(List<PrivateMarketPlaceApiEntity>) entityList.getEntityList());
+					break;
                 	
 				default:
 					break;
@@ -169,4 +175,10 @@ public class EntityListController extends Controller{
             entityArray.addPOJO(objectMapper.valueToTree(new RetargetingSegmentDisplay(retargetingSegment)));
         }
     }
+
+	private static void populatePMPDeals(ArrayNode entityArray, List<PrivateMarketPlaceApiEntity> pmpDealList){
+		for (PrivateMarketPlaceApiEntity entity : pmpDealList) {
+			entityArray.addPOJO(objectMapper.valueToTree(new PMPDisplay(entity)));
+		}
+	}
 }

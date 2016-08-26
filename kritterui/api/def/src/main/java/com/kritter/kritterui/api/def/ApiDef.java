@@ -4,9 +4,7 @@ package com.kritter.kritterui.api.def;
 import java.sql.Connection;
 import java.util.List;
 
-import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
-import com.kritter.api.entity.deal.ThirdPartyConnectionChildId;
-import com.kritter.api.entity.deal.ThirdPartyConnectionChildIdList;
+import com.kritter.api.entity.deal.*;
 import com.kritter.api.entity.parent_account.ParentAccount;
 import com.kritter.kritterui.api.deal.PrivateMarketPlaceDealCrud;
 import com.kritter.kritterui.api.parent_account.ParentAccountCrud;
@@ -1035,5 +1033,17 @@ public class ApiDef {
     public static Message insert_pmp_deal(Connection con, PrivateMarketPlaceApiEntity pmp)
     {
         return PrivateMarketPlaceDealCrud.insertPrivateMarketPlaceDeal(pmp,con,true);
+    }
+
+    public static PMPMessagePair get_PMP_deal_By_Guid(Connection con, PrivateMarketPlaceApiEntity privateMarketPlaceApiEntity){
+        return PrivateMarketPlaceDealCrud.get_PMP_Deal_By_Guid(con, privateMarketPlaceApiEntity);
+    }
+
+    public static List<PMPMessagePair> get_PMP_deals(Connection con){
+        return PrivateMarketPlaceDealCrud.get_PMP_Deals(con);
+    }
+
+    public static PMPList get_PMP_deals_list(Connection con,PMPListEntity pmpListEntity){
+        return PrivateMarketPlaceDealCrud.get_PMPList(con,pmpListEntity);
     }
 }

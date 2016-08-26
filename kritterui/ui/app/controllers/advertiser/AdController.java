@@ -297,6 +297,11 @@ public class AdController extends Controller{
     			con = DB.getConnection();
 	    		AdWorkFlowEntity adWfEntity = filledForm.get();
 		    	Ad ad = DataAPI.getAd(adWfEntity.getAdId());
+		    	if(adWfEntity.getComment()!=null){
+		    		ad.setComment(adWfEntity.getComment());
+		    	}else{
+		    		ad.setComment("");
+		    	}
 			    ad.setModified_by(1);
     			switch(Actions.valueOf(adWfEntity.getAction())){		
 	    		case Approve: 

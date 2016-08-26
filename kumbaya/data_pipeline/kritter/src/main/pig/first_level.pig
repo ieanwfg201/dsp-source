@@ -47,7 +47,8 @@ raw_data = load '$INPUT_FILES' using TextLoader() as (record:chararray);
        --           bidValue: double,
        --           slotId: int,
        --           adv_inc_id: int,
-       --           predictedCTR: double
+       --           predictedCTR: double,
+       --           marketplace: int
        --         )
        --       },
        --       urlExtraParameters: map[
@@ -66,8 +67,7 @@ raw_data = load '$INPUT_FILES' using TextLoader() as (record:chararray);
        --       endUserlatitudeValue: double,
        --       endUserlongitudeValue: double,
        --       endUserIdentificationObject: (
-       --         uniqueUserId: chararray,
-       --         buyerUid: chararray
+       --         uniqueUserId: chararray
        --       ),
        --       reqSlotIds: {
        --         t: (
@@ -84,7 +84,7 @@ raw_data = load '$INPUT_FILES' using TextLoader() as (record:chararray);
        --       ext_supply_attr_internal_id: int,
        --       connectionTypeId: int,
        --       direct_nofill_passback: int,
-       --       pub_inc_id: int
+       --       pub_inc_id: int,
        --       dpNoFill: chararray,
        --       externalUserIds: {
        --         t: (
@@ -122,8 +122,8 @@ proj_data = FOREACH decoded_data GENERATE AdservingRequestResponse.terminationRe
     AdservingRequestResponse.deviceModelId as deviceModelId, AdservingRequestResponse.deviceOsId as deviceOsId, 
     AdservingRequestResponse.countryId as countryId, AdservingRequestResponse.countryCarrierId as countryCarrierId, 
     AdservingRequestResponse.countryRegionId as countryRegionId, AdservingRequestResponse.exchangeId as exchangeId, 
-    FLATTEN(com.kritter.kumbaya.libraries.pigudf.ExtractFromBagOfTupleAdserving(AdservingRequestResponse.impressions , -1, '-1', -1, -1 , -1, '-1', 0.0, -1,-1, 0.0, 1, 0))
-     as (version:int,impressionId:chararray,creativeId:int,adId:int,campaignId:int,advertiserId:chararray,bidValue:double, slotid:int, adv_inc_id:int, predictedCTR:double, total_request:int, total_impression:int), 
+    FLATTEN(com.kritter.kumbaya.libraries.pigudf.ExtractFromBagOfTupleAdserving(AdservingRequestResponse.impressions , -1, '-1', -1, -1 , -1, '-1', 0.0, -1,-1, 0.0, -11, 1, 0))
+     as (version:int,impressionId:chararray,creativeId:int,adId:int,campaignId:int,advertiserId:chararray,bidValue:double, slotid:int, adv_inc_id:int, predictedCTR:double, marketplace:int, total_request:int, total_impression:int), 
      AdservingRequestResponse.selectedSiteCategoryId as selectedSiteCategoryId, AdservingRequestResponse.time as epochtime,
      AdservingRequestResponse.bidderModelId as bidderModelId, AdservingRequestResponse.nofillReason as nofillReason,
     AdservingRequestResponse.browserId as browserId, AdservingRequestResponse.supply_source_type as supply_source_type,
@@ -146,7 +146,7 @@ supply_proj_data = FOREACH filter_data GENERATE com.kritter.kumbaya.libraries.pi
     exchangeId as exchangeId,total_request as total_request, total_impression as total_impression, bidValue as total_bidValue, 
     0 as total_click, 0 as total_csc, 0 as total_win, 0.0 as total_win_amount, supply_source_type ;
 
-group_data = GROUP filter_data BY (time, inventorySource, siteId, deviceId, deviceManufacturerId, deviceModelId, deviceOsId, countryId, countryCarrierId, countryRegionId, exchangeId, creativeId, adId, campaignId, advertiserId, bidderModelId, nofillReason,browserId,supply_source_type,ext_supply_attr_internal_id,connectionTypeId, adv_inc_id, pub_inc_id,stateId,cityId,adpositionId,channelId);
+group_data = GROUP filter_data BY (time, inventorySource, siteId, deviceId, deviceManufacturerId, deviceModelId, deviceOsId, countryId, countryCarrierId, countryRegionId, exchangeId, creativeId, adId, campaignId, advertiserId, bidderModelId, nofillReason,browserId,supply_source_type,ext_supply_attr_internal_id,connectionTypeId, adv_inc_id, pub_inc_id,stateId,cityId,adpositionId,channelId,marketplace);
 
 flatten_group_data = FOREACH group_data {
             GENERATE FLATTEN(group),
@@ -165,7 +165,8 @@ group_data_gen = FOREACH flatten_group_data GENERATE '$PROCESS_TIME' as process_
     total_bidValue as total_bidValue, 0 as total_click, 0 as total_win, 0.0 as total_win_bidValue, 0 as total_csc, 0 as total_event_type, 
     0.0 as demandCharges, 0.0 as supplyCost, 0.0 as earning , 0 as conversion, 0.0 as bidprice_to_exchange,group::browserId as browserId,0.0 as cpa_goal,
     0.0 as exchangepayout, 0.0 as exchangerevenue, 0.0 as networkpayout, 0.0 as networkrevenue, 0 as billedclicks, 0 as billedcsc,group::supply_source_type as supply_source_type, group::ext_supply_attr_internal_id as ext_supply_attr_internal_id, group::connectionTypeId as connectionTypeId, group::adv_inc_id as adv_inc_id, 
-    group::pub_inc_id as pub_inc_id, group::stateId as stateId,group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId;
+    group::pub_inc_id as pub_inc_id, group::stateId as stateId,group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId,
+    group::marketplace as marketplace;
 
 
 DEFINE PostImpThriftBytesToTupleDef com.twitter.elephantbird.pig.piggybank.ThriftBytesToTuple('com.kritter.postimpression.thrift.struct.PostImpressionRequestResponse');
@@ -226,7 +227,7 @@ post_imp_raw_data = load '$POST_IMP_INPUT_FILES' using TextLoader() as (record:c
        --       connectionTypeId: int,
        --       referer: chararray,
        --       adv_inc_id: int,
-       --       pub_inc_id: int
+       --       pub_inc_id: int,
        --       tevent: chararray,
        --       teventtype: chararray,
        --       deviceType: int,
@@ -272,13 +273,13 @@ post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE PostImpressionReques
     PostImpressionRequestResponse.connectionTypeId as connectionTypeId, PostImpressionRequestResponse.adv_inc_id as adv_inc_id, 
     PostImpressionRequestResponse.pub_inc_id as pub_inc_id, PostImpressionRequestResponse.stateId as stateId,
     PostImpressionRequestResponse.cityId as cityId, PostImpressionRequestResponse.adpositionId as adpositionId,
-    PostImpressionRequestResponse.channelId as channelId;
+    PostImpressionRequestResponse.channelId as channelId, PostImpressionRequestResponse.marketplace_id as marketplace;
 
 post_imp_filter_data =  FILTER post_imp_proj_data BY terminationReason == 'HEALTHY_REQUEST';
 
 supply_post_imp_proj_data = FOREACH post_imp_filter_data GENERATE com.kritter.kumbaya.libraries.pigudf.EpochToDateStrFifteenMin(epochTime * 1000, '$tz') as time, selectedSiteCategoryId as selectedSiteCategoryId , countryId as countryId, countryCarrierId as countryCarrierId, countryRegionId as countryRegionId, deviceManufacturerId as deviceManufacturerId, deviceOsId as deviceOsId, exchangeId as exchangeId, 0 as total_request, 0 as total_impression, 0 as total_bidValue, total_click as total_click, total_csc as total_csc, total_win as total_win, total_win_bidValue as total_win_amount, supply_source_type;
 
-post_imp_group_data = GROUP post_imp_filter_data BY (time, siteId, deviceId, countryId, adId, exchangeId, event_type, countryCarrierId, countryRegionId, deviceManufacturerId, deviceOsId, bidderModelId, nofillReason, campaignId, browserId, supply_source_type, ext_supply_attr_internal_id,connectionTypeId, adv_inc_id, pub_inc_id,stateId,cityId,adpositionId,channelId);
+post_imp_group_data = GROUP post_imp_filter_data BY (time, siteId, deviceId, countryId, adId, exchangeId, event_type, countryCarrierId, countryRegionId, deviceManufacturerId, deviceOsId, bidderModelId, nofillReason, campaignId, browserId, supply_source_type, ext_supply_attr_internal_id,connectionTypeId, adv_inc_id, pub_inc_id,stateId,cityId,adpositionId,channelId,marketplace);
 
 post_imp_flatten_group_data = FOREACH post_imp_group_data {
             GENERATE FLATTEN(group),
@@ -304,7 +305,7 @@ post_imp_group_data_gen = FOREACH post_imp_flatten_group_data GENERATE '$PROCESS
     0.0 as exchangepayout, 0.0 as exchangerevenue, 0.0 as networkpayout, 0.0 as networkrevenue, 0 as billedclicks, 0 as billedcsc,
     group::supply_source_type as supply_source_type, group::ext_supply_attr_internal_id as ext_supply_attr_internal_id,
     group::connectionTypeId as connectionTypeId, group::adv_inc_id as adv_inc_id, group::pub_inc_id as pub_inc_id, group::stateId as stateId,
-    group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId;
+    group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId,group::marketplace as marketplace;
 
 
 DEFINE BillingThriftBytesToTupleDef com.twitter.elephantbird.pig.piggybank.ThriftBytesToTuple('com.kritter.postimpression.thrift.struct.Billing');
@@ -344,12 +345,13 @@ billing_raw_data = load '$BILLING_INPUT_FILES' using TextLoader() as (record:cha
        --       ext_supply_attr_internal_id: int,
        --       connectionTypeId: int,
        --       adv_inc_id: int,
-       --       pub_inc_id: int
+       --       pub_inc_id: int,
        --       deviceType: int,
        --       stateId: int,
        --       cityId: int,
        --       adpositionId: int,
-       --       channelId: int
+       --       channelId: int,
+       --       marketplace: int
        --     )
 
 billing_decoded = FOREACH billing_raw_data GENERATE FLATTEN(com.kritter.kumbaya.libraries.pigudf.B64Decode(record));
@@ -367,11 +369,11 @@ billing_proj_data = FOREACH billing_decoded_data GENERATE Billing.status as term
     Billing.networkpayout as networkpayout,Billing.networkrevenue as networkrevenue, (int)org.apache.pig.piggybank.evaluation.decode.Decode(Billing.billingType, 'CPC', '1', '0') as billedclicks, (int)org.apache.pig.piggybank.evaluation.decode.Decode(Billing.billingType, 'CPM', '1', 'INTEXCWIN', '1', 'BEVENT_CSCWIN_DEM','1', '0') as billedcsc,
     Billing.supply_source_type as supply_source_type, Billing.ext_supply_attr_internal_id as ext_supply_attr_internal_id,
     Billing.connectionTypeId as connectionTypeId, Billing.adv_inc_id as adv_inc_id, Billing.pub_inc_id as pub_inc_id,
-    Billing.stateId as stateId, Billing.cityId as cityId, Billing.adpositionId as adpositionId, Billing.channelId as channelId;
+    Billing.stateId as stateId, Billing.cityId as cityId, Billing.adpositionId as adpositionId, Billing.channelId as channelId, Billing.marketplace as marketplace;
 
 billing_filter_data = FILTER billing_proj_data BY terminationReason == 'HEALTHY_REQUEST';
 
-billing_group_data = GROUP billing_filter_data BY (time, siteId, deviceId, countryId, adId, exchangeId, countryCarrierId, countryRegionId, deviceManufacturerId, deviceOsId, creativeId, campaignId, advertiserId, bidderModelId, nofillReason, browserId, supply_source_type,ext_supply_attr_internal_id,connectionTypeId, adv_inc_id, pub_inc_id,stateId, cityId, adpositionId, channelId);
+billing_group_data = GROUP billing_filter_data BY (time, siteId, deviceId, countryId, adId, exchangeId, countryCarrierId, countryRegionId, deviceManufacturerId, deviceOsId, creativeId, campaignId, advertiserId, bidderModelId, nofillReason, browserId, supply_source_type,ext_supply_attr_internal_id,connectionTypeId, adv_inc_id, pub_inc_id,stateId, cityId, adpositionId, channelId,marketplace);
 
 billing_flatten_group_data = FOREACH billing_group_data {
             GENERATE FLATTEN(group),
@@ -395,7 +397,7 @@ billing_group_data_gen = FOREACH billing_flatten_group_data GENERATE '$PROCESS_T
     0 as total_request, 0 as total_impression, 0.0 as total_bidValue, 0 as total_click, 0 as total_win, 0.0 as total_win_bidValue, 
     0 as total_csc, 0 as total_event_type, demandCharges as demandCharges, supplyCost as supplyCost, earning as earning, 0 as conversion, 0.0 as bidprice_to_exchange,
     group::browserId as browserId, 0.0 as cpa_goal, exchangepayout as exchangepayout, exchangerevenue as exchangerevenue, networkpayout as networkpayout, networkrevenue as networkrevenue, billedclicks as billedclicks, billedcsc as billedcsc, group::supply_source_type as supply_source_type, group::ext_supply_attr_internal_id as ext_supply_attr_internal_id, group::connectionTypeId as connectionTypeId, group::adv_inc_id as adv_inc_id, group::pub_inc_id as pub_inc_id,
-    group::stateId as stateId, group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId;
+    group::stateId as stateId, group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId,group::marketplace as marketplace;
 
 
 union_adserv_postimp = UNION group_data_gen, post_imp_group_data_gen, billing_group_data_gen;
@@ -430,7 +432,7 @@ union_group_flatten_store = FOREACH union_group_flatten GENERATE group::process_
 
 STORE union_group_flatten_store INTO '$OUTPUT/first_level' USING PigStorage('');
 
-first_level_limited_group = GROUP union_adserv_postimp BY (process_time, time, pub_inc_id, siteId, deviceManufacturerId, deviceOsId, countryId, countryCarrierId, adId, campaignId, adv_inc_id);
+first_level_limited_group = GROUP union_adserv_postimp BY (process_time, time, pub_inc_id, siteId, deviceManufacturerId, deviceOsId, countryId, countryCarrierId, adId, campaignId, adv_inc_id,marketplace);
 
 first_level_limited_group_gen = FOREACH first_level_limited_group {
         GENERATE FLATTEN(group),
@@ -455,7 +457,7 @@ first_level_limited_group_gen = FOREACH first_level_limited_group {
         SUM(union_adserv_postimp.billedcsc) as billedcsc;
     }
 
-first_level_limited_group_store = FOREACH first_level_limited_group_gen GENERATE group::process_time, group::time, group::pub_inc_id, group::siteId, group::deviceManufacturerId, group::deviceOsId, group::countryId, group::countryCarrierId, group::adId, group::campaignId, group::adv_inc_id, total_request, total_impression, total_bidValue, total_click, total_win, total_win_bidValue, total_csc, demandCharges, supplyCost, earning, conversion, bidprice_to_exchange, cpa_goal, exchangepayout, exchangerevenue, networkpayout, networkrevenue,billedclicks,billedcsc;
+first_level_limited_group_store = FOREACH first_level_limited_group_gen GENERATE group::process_time, group::time, group::pub_inc_id, group::siteId, group::deviceManufacturerId, group::deviceOsId, group::countryId, group::countryCarrierId, group::adId, group::campaignId, group::adv_inc_id, total_request, total_impression, total_bidValue, total_click, total_win, total_win_bidValue, total_csc, demandCharges, supplyCost, earning, conversion, bidprice_to_exchange, cpa_goal, exchangepayout, exchangerevenue, networkpayout, networkrevenue,billedclicks,billedcsc,group::marketplace;
 
 STORE first_level_limited_group_store INTO '$OUTPUT/limited_first_level' USING PigStorage('');
 

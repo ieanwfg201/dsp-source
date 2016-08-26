@@ -105,6 +105,10 @@ public class CreativeDisplay extends EntityDisplay{
     public int getId(){
         return cc.getId();
     }
+    public String getComment(){
+    	return cc.getComment();
+    }
+
     
 	public List<Path> getBreadCrumbPaths() {
 		List<Path> paths = new CreativeListDisplay(account).getBreadCrumbPaths();

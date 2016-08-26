@@ -76,7 +76,11 @@ public class Ad {
     private int time_window = UserConstant.frequency_cap_time_window_default;
     private int bidtype = BidType.AUTO.getCode();
     private String external_imp_tracker = "";
+    private String impMacro = "[]";
+    private int impMacroQuote = 0;
     private String external_click_tracker = "";
+    private String clickMacro = "[]";
+    private int clickMacroQuote = 0;
     /** optional - json array of mma tier1 category */
     private String mma_tier_1_list = "[]";
     /** optional - json array of mma_tier2 category */
@@ -104,6 +108,8 @@ public class Ad {
 		result = prime * result + campaign_id;
 		result = prime * result + ((categories_tier_1_list == null) ? 0 : categories_tier_1_list.hashCode());
 		result = prime * result + ((categories_tier_2_list == null) ? 0 : categories_tier_2_list.hashCode());
+		result = prime * result + ((clickMacro == null) ? 0 : clickMacro.hashCode());
+		result = prime * result + clickMacroQuote;
 		result = prime * result + (click_freq_cap ? 1231 : 1237);
 		result = prime * result + click_freq_cap_count;
 		result = prime * result + click_freq_cap_type;
@@ -120,6 +126,8 @@ public class Ad {
 		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
 		result = prime * result + ((hygiene_list == null) ? 0 : hygiene_list.hashCode());
 		result = prime * result + id;
+		result = prime * result + ((impMacro == null) ? 0 : impMacro.hashCode());
+		result = prime * result + impMacroQuote;
 		result = prime * result + (imp_freq_cap ? 1231 : 1237);
 		result = prime * result + imp_freq_cap_count;
 		result = prime * result + imp_freq_cap_type;
@@ -181,6 +189,13 @@ public class Ad {
 				return false;
 		} else if (!categories_tier_2_list.equals(other.categories_tier_2_list))
 			return false;
+		if (clickMacro == null) {
+			if (other.clickMacro != null)
+				return false;
+		} else if (!clickMacro.equals(other.clickMacro))
+			return false;
+		if (clickMacroQuote != other.clickMacroQuote)
+			return false;
 		if (click_freq_cap != other.click_freq_cap)
 			return false;
 		if (click_freq_cap_count != other.click_freq_cap_count)
@@ -228,6 +243,13 @@ public class Ad {
 		} else if (!hygiene_list.equals(other.hygiene_list))
 			return false;
 		if (id != other.id)
+			return false;
+		if (impMacro == null) {
+			if (other.impMacro != null)
+				return false;
+		} else if (!impMacro.equals(other.impMacro))
+			return false;
+		if (impMacroQuote != other.impMacroQuote)
 			return false;
 		if (imp_freq_cap != other.imp_freq_cap)
 			return false;
@@ -284,6 +306,30 @@ public class Ad {
 		if (tracking_partner != other.tracking_partner)
 			return false;
 		return true;
+	}
+	public String getImpMacro() {
+		return impMacro;
+	}
+	public void setImpMacro(String impMacro) {
+		this.impMacro = impMacro;
+	}
+	public int getImpMacroQuote() {
+		return impMacroQuote;
+	}
+	public void setImpMacroQuote(int impMacroQuote) {
+		this.impMacroQuote = impMacroQuote;
+	}
+	public String getClickMacro() {
+		return clickMacro;
+	}
+	public void setClickMacro(String clickMacro) {
+		this.clickMacro = clickMacro;
+	}
+	public int getClickMacroQuote() {
+		return clickMacroQuote;
+	}
+	public void setClickMacroQuote(int clickMacroQuote) {
+		this.clickMacroQuote = clickMacroQuote;
 	}
 	public boolean isClick_freq_cap() {
 		return click_freq_cap;

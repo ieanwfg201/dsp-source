@@ -24,6 +24,10 @@ public class ApplicationGeneralUtils
         public static final Short DEFAULT_SELECTED_SITE_CATEGORY_ID = -1;
         public static final Integer DEFAULT_INTERNAL_ID_FOR_EXTERNAL_SUPPLY_ATTRIBUTES = -1;
         public static final Integer DEFAULT_ADPOSITION_ID = -1;
+        public static final Integer DEFAULT_CHANNEL_ID = -1;
+        public static final short DEFAULT_MARKETPLACE_ID = -1;
+        public static final int DEFAULT_STATE_ID = -1;
+        public static final int DEFAULT_CITY_ID = -1;
         public static final String OS_TARGETING_VERSION_SEPARATOR = "-";
         public static final String URI_PATH_SEPARATOR = "/";
         private static final String BID_SEPARATOR = ",";

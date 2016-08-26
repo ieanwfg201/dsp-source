@@ -37,6 +37,7 @@ import com.kritter.kumbaya.libraries.data_structs.common.ExchangePayout;
 import com.kritter.kumbaya.libraries.data_structs.common.ExchangeRevenue;
 import com.kritter.kumbaya.libraries.data_structs.common.Ext_site;
 import com.kritter.kumbaya.libraries.data_structs.common.KumbayaReportingConfiguration;
+import com.kritter.kumbaya.libraries.data_structs.common.Marketplace;
 import com.kritter.kumbaya.libraries.data_structs.common.NetworkPayout;
 import com.kritter.kumbaya.libraries.data_structs.common.NetworkRevenue;
 import com.kritter.kumbaya.libraries.data_structs.common.NofillReason;
@@ -239,6 +240,14 @@ public class DBQueryPlanner implements IQueryPlanner {
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname()
                     , reportingEntity.isReturnAdGuid(), "guid", reportingEntity.isAdId_clickable(), reportingEntity.isAdId_just_filter());
+        }
+        if(reportingEntity.getMarketplace() != null){
+            Marketplace entity = kReportingConfiguration.getMarketplace();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getMarketplace(), table_name, 
+                    entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
+                    returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname()
+                    , false, null, reportingEntity.isMarketplace_clickable(), false);
         }
         if(reportingEntity.getDeviceId() != null){
             

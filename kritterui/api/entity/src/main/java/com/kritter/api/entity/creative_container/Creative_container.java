@@ -18,7 +18,6 @@ import com.kritter.constants.VideoLinearity;
 import com.kritter.constants.VideoMaxExtended;
 import com.kritter.constants.VideoMimeTypes;
 import com.kritter.constants.VideoPlaybackMethods;
-import com.kritter.constants.VideoStartDelay;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -78,6 +77,10 @@ public class Creative_container {
     @Getter@Setter
     private String vastTagUrl = null;
     @Getter@Setter
+    private String vastTagMacro = "[]";
+    @Getter@Setter
+    private int vastTagMacroQuote = 0;
+    @Getter@Setter
     private int mime = VideoMimeTypes.MPEG4.getCode();
     @Getter@Setter
     private int duration = -1;
@@ -109,6 +112,8 @@ public class Creative_container {
     private String trackingStr="[]";
     @Getter@Setter
     private String direct_videos;
+    @Getter@Setter
+    private String comment;
 
     @Override
 	public int hashCode() {

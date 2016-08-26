@@ -149,7 +149,6 @@ public class ThriftLogger implements Job {
                     externalUserIdStrings.add(externalUserId.toString());
             }
             adservingRequestResponse.setExternalUserIds(externalUserIdStrings);
-
             TerminationReason terminationReason = fetchTerminationReason(request);
 
             if(null != terminationReason)
@@ -224,10 +223,16 @@ public class ThriftLogger implements Job {
                 adservingRequestResponse.setDs_city(request.getDataSourceNameUsedForCityDetection());
             if(null != request.getCountryUserInterfaceId())
                 adservingRequestResponse.setCountryId(request.getCountryUserInterfaceId());
-            if(null != request.getStateUserInterfaceId())
+            if(null != request.getStateUserInterfaceId()){
                 adservingRequestResponse.setStateId(request.getStateUserInterfaceId());
-            if(null != request.getCityUserInterfaceId())
+            }else{
+            	adservingRequestResponse.setStateId(ApplicationGeneralUtils.DEFAULT_STATE_ID);
+            }
+            if(null != request.getCityUserInterfaceId()){
                 adservingRequestResponse.setCityId(request.getCityUserInterfaceId());
+            }else{
+            	adservingRequestResponse.setCityId(ApplicationGeneralUtils.DEFAULT_CITY_ID);
+            }
             if(null != request.getCarrierUserInterfaceId())
                 adservingRequestResponse.setCountryCarrierId(request.getCarrierUserInterfaceId());
             /*********************************************************************************************************/
@@ -304,6 +309,7 @@ public class ThriftLogger implements Job {
                     impression.setSlotId(responseAdInfo.getSlotId());
                     impression.setAdv_inc_id(adEntity.getAccountId());
                     impression.setPredictedCTR(responseAdInfo.getCtrValue());
+                    impression.setMarketplace((short)adEntity.getMarketPlace().getCode());
 
                     //set bid value from bidder if available
                     if(null != responseAdInfo.getEcpmValue())
@@ -359,7 +365,7 @@ public class ThriftLogger implements Job {
                     impression.setSlotId(responseAdInfo.getSlotId());
                     impression.setAdv_inc_id(adEntity.getAccountId());
                     impression.setPredictedCTR(responseAdInfo.getCtrValue());
-
+                    impression.setMarketplace((short)adEntity.getMarketPlace().getCode());
                     adservingRequestResponse.addToImpressions(impression);
                     isRequestAFill = true;
 
@@ -468,6 +474,8 @@ public class ThriftLogger implements Job {
             }
             if(request.getSite() != null && request.getSite().getChannelInternalId() != null){
             	adservingRequestResponse.setChannelId(request.getSite().getChannelInternalId() );
+            }else{
+            	adservingRequestResponse.setChannelId(ApplicationGeneralUtils.DEFAULT_CHANNEL_ID);
             }
             
             try

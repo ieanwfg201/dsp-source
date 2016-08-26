@@ -13,7 +13,7 @@
 	<div infinite-scroll='nextPage()' infinite-scroll-disabled='creativeListData.isLoading' infinite-scroll-distance='1'>
 			<table tr-ng-grid="" class="table-condensed" items="creativeListData.filteredData"   
 			 					selected-items="creativeListData.selections" 
-			 					fields="['select', 'accountName', 'name',  'status', 'format',  'action']" 
+			 					fields="['select', 'accountName', 'name',  'status', 'format', 'comment',  'action']" 
 			 					selection-mode="MultiRow"
 			 					enable-filtering="creativeListData.enableFilter"
 			 					enable-sorting="creativeListData.enableSorting" 
@@ -32,7 +32,8 @@
                         <th field-name="accountName" display-name="Advertiser" enable-sorting="true" enable-filtering="true" >  </th>
 			            <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
 			            <th field-name="status" display-name="Status" enable-sorting="true"  enable-filtering="true">  </th>
-			            <th field-name="format" display-name="Format" enable-sorting="true"  enable-filtering="false">  </th> 
+			            <th field-name="format" display-name="Format" enable-sorting="true"  enable-filtering="false">  </th>
+			            <th field-name="comment" display-name="Comment">  </th> 
 			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
 			        </tr>  
 			    </thead> 

@@ -329,6 +329,7 @@ GET     /metadata/options/tier2categories                           controllers.
 GET     /metadata/options/device_type                               controllers.MetadataController.device_type()
 GET     /metadata/options/state/:countryList       				    controllers.MetadataController.state(countryList:String)
 GET     /metadata/options/city/:stateList       				    controllers.MetadataController.city(stateList:String)
+GET     /metadata/options/marketplace       				        controllers.MetadataController.marketplace()
 
 
 GET		/metadata/options/hygienelist   						controllers.MetadataController.hygienelist()
@@ -396,3 +397,7 @@ GET    /advertiser/:account_guid/retargetingsegment/list       controllers.retar
 #PMP
 GET    /pmp/default                                            controllers.deal.DealController.getDealForm()
 POST   /pmp/save                                               controllers.deal.DealController.save()
+GET    /pmp/:deal_guid/info                                    controllers.deal.DealController.info(deal_guid: String)
+GET    /pmp/deals                                              controllers.deal.DealController.PMPListView()
+GET    /pmp/add                                                controllers.deal.DealController.add()
+GET    /pmp/:deal_guid/add                                     controllers.deal.DealController.edit(deal_guid: String)

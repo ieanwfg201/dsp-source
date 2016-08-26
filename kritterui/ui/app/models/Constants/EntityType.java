@@ -11,6 +11,7 @@ public enum EntityType {
 	extsite,
 	ispMapping,
 	iddefinition,
-	retargeting_segment
+	retargeting_segment,
+	pmp_deal
 
 }

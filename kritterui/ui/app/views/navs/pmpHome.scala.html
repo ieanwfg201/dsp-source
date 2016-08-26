@@ -1,0 +1,55 @@
+@(display:models.pmp.display.PMPDisplay)
+@main("PMP Home"){
+
+@components.containers.panel("PMP Deals"){
+<div class="well" ng-controller="pmpController">
+
+	<div class="btn-group">
+		 <a href="@{ display.addPMPUrl()}" class="btn btn-primary   active" role="button">Create New PMP Deal</a> 	
+	</div>
+
+		<div infinite-scroll='nextPage()' infinite-scroll-disabled='pmpListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="pmpListData.filteredData"   
+			 					selected-items="pmpListData.selections" 
+			 					fields="['name','createdOn',  'action']" 
+			 					selection-mode="SingleRow"
+			 					enable-filtering="pmpListData.enableFilter"
+			 					enable-sorting="pmpListData.enableSorting" 
+			 					order-by="pmpListData.orderBy"
+			 					order-by-reverse="pmpListData.orderByReverse" 
+			 					page-items="pmpListData.itemsPerPage"  
+			 					total-items="pmpListData.totalItems"
+			 					current-page="pmpListData.currentPage" 
+			 					on-data-required="pmpListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+			            <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="created" display-name="Created" enable-sorting="true"  enable-filtering="false">  </th>
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr> 
+		    			<td field-name="name"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.name}}</a></td> 
+			                <td field-name="action" > 
+			                <a href="{{gridItem.editUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Edit PMP Deal">
+			                	<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							</a>
+							<a href="{{gridItem.viewUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="View Deal">
+			                	<i class="fa fa-eye"></i>
+							</a> 
+			            </td>
+			        </tr>
+			    </tbody>
+			</table> 
+		</div> 
+	
+ </div>
+
+}
+
+
+
+<script src="@routes.Assets.at("javascripts/apps/pmpController.js")" type="text/javascript"></script>
+}

@@ -3,6 +3,7 @@ package com.kritter.ex_int.video_admarkup;
 import java.net.URLEncoder;
 
 import org.slf4j.Logger;
+
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.constants.ContentDeliveryMethods;
 import com.kritter.constants.CreativeFormat;
@@ -17,6 +18,7 @@ import com.kritter.entity.vast.wrapper.three_dot_zero.CreateVastWrapper;
 import com.kritter.entity.vast.wrapper.two_dot_zero.CreateVastWrapperTwoDotZero;
 import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.entity.video_props.VideoProps;
+import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.entity.Creative;
 
@@ -31,7 +33,8 @@ public class VideoAdMarkUp {
             String postImpressionBaseWinApiUrl, String notificationUrlSuffix, 
             String notificationUrlBidderBidPriceMacro, String postImpressionBaseCSCUrl, 
             String cdnBaseImageUrl, String trackingEventUrl,
-            String impressionExtra, String beventBaseUrl
+            String impressionExtra, String beventBaseUrl,
+            String macroPostImpressionBaseClickUrl
     )throws BidResponseException{
 
         String clickUri = CreativeFormatterUtils.prepareClickUri
@@ -103,8 +106,11 @@ public class VideoAdMarkUp {
         creativeUrl.append(videoInfo.getResource_uri());
 
         if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()){
+        	String macroTagUrl = RichMediaAdMarkUp.adTagMacroReplace(videProps.getVastTagUrl(), request, responseAdInfo, response, 
+        			"",macroPostImpressionBaseClickUrl, videProps.getVast_tag_macro(), videProps.getVast_tag_macro_quote());
+
             String vastStr = CreateVastWrapper.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
-                    responseAdInfo.getImpressionId(), videProps.getVastTagUrl(), 
+                    responseAdInfo.getImpressionId(), macroTagUrl, 
                     trackingUrl.toString(), request.getSite().getPublisherId(), 
                     videProps.getLinearity(), videProps.getCompaniontype(), videProps.getTracking(), 
                     trackingUrl.toString(), logger);
@@ -126,8 +132,11 @@ public class VideoAdMarkUp {
                 }
             }
         }else if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0_WRAPPER.getCode()){
+        	String macroTagUrl = RichMediaAdMarkUp.adTagMacroReplace(videProps.getVastTagUrl(), request, responseAdInfo, response, 
+        			"",macroPostImpressionBaseClickUrl, videProps.getVast_tag_macro(), videProps.getVast_tag_macro_quote());
+
             String vastStr = CreateVastWrapperTwoDotZero.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
-                    responseAdInfo.getImpressionId(), videProps.getVastTagUrl(), 
+                    responseAdInfo.getImpressionId(), macroTagUrl, 
                     trackingUrl.toString(), request.getSite().getPublisherId(), 
                     videProps.getLinearity(), videProps.getCompaniontype(), videProps.getTracking(), 
                     trackingUrl.toString(), logger);

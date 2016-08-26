@@ -134,6 +134,9 @@ public class Site implements IUpdatableEntity<String>
 
     private boolean isMarkedForDeletion;
     private final Timestamp updateTime;
+    @Getter@Setter
+    private String referer = null;
+
 
     public Site(SiteEntityBuilder siteEntityBuilder)
     {

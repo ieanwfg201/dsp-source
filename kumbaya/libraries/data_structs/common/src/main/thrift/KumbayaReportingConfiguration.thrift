@@ -179,6 +179,16 @@ struct CityId {
     7: string uiname = 'City',
     8: string return_prefix = 'city'
 }
+struct Marketplace {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'marketplace',
+    3: string dim_table = 'marketplace', 
+    4: string dim_column = 'id',
+    5: string dim_column_name = 'pricing',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'Marketplace',
+    8: string return_prefix = 'marketplace'
+}
 struct ChannelId {
     1: TABLE fact_table = 1, 
     2: string fact_column = 'channelId',
@@ -532,5 +542,6 @@ struct KumbayaReportingConfiguration{
     47: CityId cityId = {'fact_table':TABLE.first_level, 'fact_column':'cityId', 'dim_table':'ui_targeting_city', 'dim_column':'id', 'dim_column_name':'city_name','member_type':MEMBERTYPE.DIMENSION,'uiname':'City','return_prefix':'city'},
     48: ChannelId channelId = {'fact_table':TABLE.first_level, 'fact_column':'channelId', 'dim_table':'channel', 'dim_column':'internalid', 'dim_column_name':'channelname','member_type':MEMBERTYPE.DIMENSION,'uiname':'Channel','return_prefix':'channel'},
     49: AdpositionId adpositionId = {'fact_table':TABLE.first_level, 'fact_column':'adpositionId', 'dim_table':'ad_position', 'dim_column':'internalid', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'Adposition','return_prefix':'adposition'},
+    50: Marketplace marketplace = {'fact_table':TABLE.first_level, 'fact_column':'marketplace', 'dim_table':'marketplace', 'dim_column':'id', 'dim_column_name':'pricing','member_type':MEMBERTYPE.DIMENSION,'uiname':'Marketplace','return_prefix':'marketplace'},
 }
 
