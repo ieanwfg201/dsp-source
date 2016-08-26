@@ -412,7 +412,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
                 logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
-                cdnBaseImageUrl, trackingEventUrl, null, null);
+                cdnBaseImageUrl, trackingEventUrl, null, null, macroPostImpressionBaseClickUrl);
     }
 
     private static class EcpmValueComparator implements Comparator<ResponseAdInfo> {
