@@ -247,6 +247,30 @@ public class URLFieldFactory
                 urlField.getUrlFieldProperties().setFieldValue(fieldValue);
                 fieldMap.put(element.getCode(),urlField);
             }
+
+            else if(element.getUrlFieldProperties().getUrlFieldType().getCode() == URLFieldType.INTEGER.getCode())
+            {
+                int fieldValue = URLFieldUtils.fetchIntegerFromByteArray(storageBytes);
+                URLField urlField = URLField.getEnum(element.getCode());
+                urlField.getUrlFieldProperties().setFieldValue(fieldValue);
+                fieldMap.put(element.getCode(),urlField);
+            }
+
+            else if(element.getUrlFieldProperties().getUrlFieldType().getCode() == URLFieldType.SHORT.getCode())
+            {
+                short fieldValue = URLFieldUtils.fetchShortFromByteArray(storageBytes);
+                URLField urlField = URLField.getEnum(element.getCode());
+                urlField.getUrlFieldProperties().setFieldValue(fieldValue);
+                fieldMap.put(element.getCode(),urlField);
+            }
+
+            else if(element.getUrlFieldProperties().getUrlFieldType().getCode() == URLFieldType.LONG.getCode())
+            {
+                long fieldValue = URLFieldUtils.fetchLongFromByteArray(storageBytes);
+                URLField urlField = URLField.getEnum(element.getCode());
+                urlField.getUrlFieldProperties().setFieldValue(fieldValue);
+                fieldMap.put(element.getCode(),urlField);
+            }
         }
 
         return fieldMap;
@@ -275,10 +299,30 @@ public class URLFieldFactory
         bid.getUrlFieldProperties().setFieldValue(bidValue);
         urlFieldFactory.stackFieldForStorage(bid);
 
+        URLField state = URLField.STATE_ID;
+        state.getUrlFieldProperties().setFieldValue(1234);
+        urlFieldFactory.stackFieldForStorage(state);
+
+        URLField city = URLField.CITY_ID;
+        city.getUrlFieldProperties().setFieldValue(911);
+        urlFieldFactory.stackFieldForStorage(city);
+
+        URLField adp = URLField.AD_POSITION;
+        adp.getUrlFieldProperties().setFieldValue(99999999);
+        urlFieldFactory.stackFieldForStorage(adp);
+
+        URLField channel = URLField.CHANNEL_ID;
+        channel.getUrlFieldProperties().setFieldValue(78123);
+        urlFieldFactory.stackFieldForStorage(channel);
+
+        URLField mark = URLField.MARKETPLACE;
+        mark.getUrlFieldProperties().setFieldValue((short)3);
+        urlFieldFactory.stackFieldForStorage(mark);
+
         String generatedField = urlFieldFactory.generate();
         System.out.println(generatedField);
 
-        URLFieldFactory urlFieldFactory1 = new URLFieldFactory("PiqqfgYgMzVDMzQwRjM2RTkwMjhCQTNERThENjlEMjQ5N0JFRDEDKWlkOjM6NzNmZWMzNzMtNTA3OC00NjM3LTgyNTQtOTA4ODk1ZGViODA4ASlpZDozOjczZmVjMzczLTUwNzgtNDYzNy04MjU0LTkwODg5NWRlYjgwOAIFMTI3MzQ");
+        URLFieldFactory urlFieldFactory1 = new URLFieldFactory(generatedField);
 
         Map<Short,URLField> map = urlFieldFactory1.decodeFields();
         System.out.println(map.size());
@@ -310,5 +354,19 @@ public class URLFieldFactory
         if(null != map.get(URLField.MAC_ADDRESS_SHA1.getCode()))
             System.out.println("macsha1: " + map.get(URLField.MAC_ADDRESS_SHA1.getCode()).getUrlFieldProperties().getFieldValue());
 
+        if(null != map.get(URLField.STATE_ID.getCode()))
+            System.out.println("state: " + map.get(URLField.STATE_ID.getCode()).getUrlFieldProperties().getFieldValue());
+
+        if(null != map.get(URLField.CITY_ID.getCode()))
+            System.out.println("city: " + map.get(URLField.CITY_ID.getCode()).getUrlFieldProperties().getFieldValue());
+
+        if(null != map.get(URLField.AD_POSITION.getCode()))
+            System.out.println("adposi: " + map.get(URLField.AD_POSITION.getCode()).getUrlFieldProperties().getFieldValue());
+
+        if(null != map.get(URLField.CHANNEL_ID.getCode()))
+            System.out.println("channel: " + map.get(URLField.CHANNEL_ID.getCode()).getUrlFieldProperties().getFieldValue());
+
+        if(null != map.get(URLField.MARKETPLACE.getCode()))
+            System.out.println("mark: " + map.get(URLField.MARKETPLACE.getCode()).getUrlFieldProperties().getFieldValue());
     }
 }

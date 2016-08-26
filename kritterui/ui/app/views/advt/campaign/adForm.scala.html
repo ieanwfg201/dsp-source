@@ -88,7 +88,13 @@
                         </div>
                      }		
                         @components.formElements.textarea(adForm("external_imp_tracker"), "External Imp Tracker (for banner, each line represents one tracker)")
+                        @components.formElements.multiselectlist3(adForm("impMacro"), '_label ->"ImpMACROS (for replacement)" , '_row->true)
+                        @components.formElements.selectlist2(adForm("impMacroQuote"), "ImpMacros (Quoted) ",services.MetadataAPI.creativeMacroQuote() )
                         @components.formElements.textarea(adForm("external_click_tracker"), "External Click Tracker (for banner, each line represents one tracker)")
+                        @components.formElements.multiselectlist3(adForm("clickMacro"), '_label ->"MACROS (for replacement)" , '_row->true)
+                        @components.formElements.selectlist2(adForm("clickMacroQuote"), "Macros (Quoted) ",services.MetadataAPI.creativeMacroQuote() )
+                        
+                        
                         @if("true" == mma_required) {
 					 @components.formElements.multiselectlist3(adForm("mma_tier_1_list"), '_label -> "MMA Industry Tier 1", '_row->true) 
                      @components.formElements.multiselectlist3(adForm("mma_tier_2_list"), '_label -> "MMA Industry Tier 2", '_row->true )

@@ -251,6 +251,12 @@ public class ReportFormEntity extends BaseReportEntity{
     public void setNofillReason(String nofillReason) { 
         reportingEntity.setNofillReason(stringToStringIdList(nofillReason));
     }
-
+	public String getMarketplace() {
+		return idListToString(reportingEntity.getMarketplace());
+	}
+	
+	public void setMarketplace(String marketplace) { 
+		reportingEntity.setMarketplace(stringToIdList(marketplace));
+	}
 
 }

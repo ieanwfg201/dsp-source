@@ -14,6 +14,8 @@ import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
 import com.kritter.utils.common.AdNoFillStatsUtils;
+import com.kritter.utils.common.url.URLField;
+import com.kritter.utils.common.url.URLFieldProcessingException;
 import com.kritter.utils.entity.TargetingProfileLocationEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +108,18 @@ public class CityTargetingMatcher implements TargetingMatcher
         if (null != cityUserInterfaceId)
         {
             request.setCityUserInterfaceId(cityUserInterfaceId.getCityUserInterfaceId());
+
+            try
+            {
+                URLField urlField = URLField.CITY_ID;
+                urlField.getUrlFieldProperties().setFieldValue(cityUserInterfaceId.getCityUserInterfaceId());
+                request.getUrlFieldFactory().stackFieldForStorage(urlField);
+            }
+            catch (URLFieldProcessingException urfpe)
+            {
+                logger.error("URLFieldProcessingException inside CityTargetingMatcher ", urfpe);
+            }
+
             logger.debug("City user interface id detected is: {} ", cityUserInterfaceId.getCityUserInterfaceId());
             ReqLog.requestDebug(request,"City user interface id detected is: " +
                                 cityUserInterfaceId.getCityUserInterfaceId());

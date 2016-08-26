@@ -1,5 +1,6 @@
 package com.kritter.formatterutil;
 
+import com.kritter.common.site.entity.Site;
 import com.kritter.constants.DeviceType;
 import com.kritter.constants.ExternalUserIdType;
 import com.kritter.device.common.entity.HandsetMasterData;
@@ -59,6 +60,19 @@ public class CreativeFormatterUtils
         String impressionId = ApplicationGeneralUtils
                                                 .generateImpressionId(request.getRequestId(),
                                                         responseAdInfo.getAdId());
+
+        /*Set marketplace value for transfer to postimpression*/
+        try
+        {
+            URLField urlField = URLField.MARKETPLACE;
+            short value = (short)responseAdInfo.getMarketPlace().getCode();
+            urlField.getUrlFieldProperties().setFieldValue(value);
+            request.getUrlFieldFactory().stackFieldForStorage(urlField);
+        }
+        catch (URLFieldProcessingException urfpe)
+        {
+            logger.error("URLFieldProcessingException inside CreativeFormatterUtils ", urfpe);
+        }
 
         if(null == bidderModelId)
         {
@@ -247,6 +261,30 @@ public class CreativeFormatterUtils
         if(null != request.getGeneratedInformationForPostimpression())
             return request.getGeneratedInformationForPostimpression();
 
+        try
+        {
+            URLField urlField = URLField.AD_POSITION;
+            if(null != request.getSite().getAdPositionUiId())
+                urlField.getUrlFieldProperties().setFieldValue(request.getSite().getAdPositionUiId());
+            request.getUrlFieldFactory().stackFieldForStorage(urlField);
+        }
+        catch (URLFieldProcessingException urfpe)
+        {
+            logger.error("URLFieldProcessingException inside CreativeFormatterUtils ", urfpe);
+        }
+
+        try
+        {
+            URLField urlField = URLField.CHANNEL_ID;
+            if(null != request.getSite().getChannelInternalId())
+                urlField.getUrlFieldProperties().setFieldValue(request.getSite().getChannelInternalId());
+            request.getUrlFieldFactory().stackFieldForStorage(urlField);
+        }
+        catch (URLFieldProcessingException urfpe)
+        {
+            logger.error("URLFieldProcessingException inside CreativeFormatterUtils ", urfpe);
+        }
+
         Set<ExternalUserId> externalUserIdSet = request.getExternalUserIds();
 
         String exchangeUserId = null;
@@ -261,11 +299,13 @@ public class CreativeFormatterUtils
 
         if(null != exchangeUserId)
         {
-            try {
+            try
+            {
                 URLField exchangeUserIdField = URLField.EXCHANGE_USER_ID;
                 exchangeUserIdField.getUrlFieldProperties().setFieldValue(exchangeUserId);
                 request.getUrlFieldFactory().stackFieldForStorage(exchangeUserIdField);
-            }catch (URLFieldProcessingException e)
+            }
+            catch (URLFieldProcessingException e)
             {
                 logger.error("URLFieldProcessingException inside CreativeFormatterUtils for exchange user id",e);
             }
@@ -273,11 +313,13 @@ public class CreativeFormatterUtils
 
         if(null != request.getUserId())
         {
-            try{
-            URLField kritterUserIdField = URLField.KRITTER_USER_ID;
-            kritterUserIdField.getUrlFieldProperties().setFieldValue(request.getUserId());
-            request.getUrlFieldFactory().stackFieldForStorage(kritterUserIdField);
-            }catch (URLFieldProcessingException e)
+            try
+            {
+                URLField kritterUserIdField = URLField.KRITTER_USER_ID;
+                kritterUserIdField.getUrlFieldProperties().setFieldValue(request.getUserId());
+                request.getUrlFieldFactory().stackFieldForStorage(kritterUserIdField);
+            }
+            catch (URLFieldProcessingException e)
             {
                 logger.error("URLFieldProcessingException inside CreativeFormatterUtils for kritter user id",e);
             }
@@ -285,12 +327,13 @@ public class CreativeFormatterUtils
 
         if(null != request.getSite().getExternalSupplyId())
         {
-            try{
+            try
+            {
                 URLField externalSiteIdField = URLField.EXTERNAL_SITE_ID;
                 externalSiteIdField.getUrlFieldProperties().setFieldValue(request.getSite().getExternalSupplyId());
                 request.getUrlFieldFactory().stackFieldForStorage(externalSiteIdField);
-
-            }catch (URLFieldProcessingException e)
+            }
+            catch (URLFieldProcessingException e)
             {
                 logger.error("URLFieldProcessingException inside CreativeFormatterUtils for external site id",e);
             }
@@ -298,11 +341,13 @@ public class CreativeFormatterUtils
 
         if(null != request.getBidFloorForFilledExchangeImpressions());
         {
-            try{
-            URLField bidFloorField = URLField.BID_FLOOR;
-            bidFloorField.getUrlFieldProperties().setFieldValue(request.getBidFloorForFilledExchangeImpressions());
-            request.getUrlFieldFactory().stackFieldForStorage(bidFloorField);
-            }catch (URLFieldProcessingException e)
+            try
+            {
+                URLField bidFloorField = URLField.BID_FLOOR;
+                bidFloorField.getUrlFieldProperties().setFieldValue(request.getBidFloorForFilledExchangeImpressions());
+                request.getUrlFieldFactory().stackFieldForStorage(bidFloorField);
+            }
+            catch (URLFieldProcessingException e)
             {
                 logger.error("URLFieldProcessingException inside CreativeFormatterUtils for bidfloor value ",e);
             }
@@ -314,6 +359,7 @@ public class CreativeFormatterUtils
             request.setGeneratedInformationForPostimpression(fieldGenerated);
             return fieldGenerated;
         }
+
         return null;
     }
 }

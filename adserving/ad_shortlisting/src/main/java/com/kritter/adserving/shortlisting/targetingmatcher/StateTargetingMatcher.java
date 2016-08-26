@@ -14,6 +14,8 @@ import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
 import com.kritter.utils.common.AdNoFillStatsUtils;
+import com.kritter.utils.common.url.URLField;
+import com.kritter.utils.common.url.URLFieldProcessingException;
 import com.kritter.utils.entity.TargetingProfileLocationEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +111,18 @@ public class StateTargetingMatcher implements TargetingMatcher
         if(null != stateUserInterfaceId)
         {
             request.setStateUserInterfaceId(stateUserInterfaceId.getStateUserInterfaceId());
+
+            try
+            {
+                URLField urlField = URLField.STATE_ID;
+                urlField.getUrlFieldProperties().setFieldValue(stateUserInterfaceId.getStateUserInterfaceId());
+                request.getUrlFieldFactory().stackFieldForStorage(urlField);
+            }
+            catch (URLFieldProcessingException urfpe)
+            {
+                logger.error("URLFieldProcessingException inside StateTargetingMatcher ", urfpe);
+            }
+
             logger.debug("State user interface id detected is: {} ", stateUserInterfaceId.getStateUserInterfaceId());
             ReqLog.requestDebug(request,"State user interface id detected is: " +
                                          stateUserInterfaceId.getStateUserInterfaceId());

@@ -45,6 +45,10 @@
 @if(creativeDisplay.isVideoFormat()){
     @components.fielddisplays.textdisplay("Video DemandType", creativeDisplay.getVideoDemandType())
     @components.fielddisplays.textdisplay("Video VastTagUrl", creativeDisplay.getVastTagUrl())
+    <code ng-non-bindable>  
+    @components.fielddisplays.listdisplay("Video VastTag Macro", creativeDisplay.getVastTagmacro())
+    </code>
+	@components.fielddisplays.textdisplay("Vide VastTag Quote", creativeDisplay.getVastTagquote())
     @components.fielddisplays.textdisplay("Video Mime", creativeDisplay.getMime())
     @components.fielddisplays.intdisplay("Video Duration", creativeDisplay.getDuration())
     @components.fielddisplays.textdisplay("Video Protocol", creativeDisplay.getProtocol())

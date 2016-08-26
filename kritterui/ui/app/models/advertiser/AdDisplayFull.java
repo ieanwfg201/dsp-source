@@ -7,6 +7,7 @@ import com.kritter.api.entity.ad.Ad;
 import com.kritter.api.entity.creative_container.Creative_container;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.BidType;
+import com.kritter.constants.CreativeMacroQuote;
 import com.kritter.constants.MetadataType;
 
 public class AdDisplayFull extends AdDisplay{
@@ -106,4 +107,25 @@ public class AdDisplayFull extends AdDisplay{
 		}
 		return "Not Enabled";
 	}
+    public List<String> getClickMacro() {
+        return MetadataAPI.getCreativeMacroByName(ad.getClickMacro());
+    }
+    public String getClickMacroquote(){
+        CreativeMacroQuote c = CreativeMacroQuote.getEnum(ad.getClickMacroQuote());
+        if(c != null){
+            return c.getName();
+        }
+        return "";
+    }
+    public List<String> getImpMacro() {
+        return MetadataAPI.getCreativeMacroByName(ad.getImpMacro());
+    }
+    public String getImpMacroquote(){
+        CreativeMacroQuote c = CreativeMacroQuote.getEnum(ad.getImpMacroQuote());
+        if(c != null){
+            return c.getName();
+        }
+        return "";
+    }
+
 }

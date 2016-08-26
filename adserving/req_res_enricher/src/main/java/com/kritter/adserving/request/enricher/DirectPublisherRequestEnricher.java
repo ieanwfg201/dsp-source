@@ -159,6 +159,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         if(null==userAgentFromRequest || null==remoteAddress || null==siteId)
         {
             request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.REQUEST_MALFORMED);
+            logger.error("User Agent / remote address or site id is missing , terming request as malformed.");
             return request;
         }
 

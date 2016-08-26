@@ -6,8 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -67,6 +70,7 @@ public class CreativeContainerCrud {
           cc.setText(rset.getString("text"));
           cc.setStatus_id(StatusIdEnum.getEnum(rset.getInt("status_id")));
           cc.setExt_resource_url(rset.getString("ext_resource_url"));
+          cc.setComment(rset.getString("comment"));
           String native_demand_props =  rset.getString("native_demand_props");
           if(native_demand_props != null){
               String native_demand_props_trim = native_demand_props.trim();
@@ -155,6 +159,24 @@ public class CreativeContainerCrud {
                               sbuff.append("]");
                               cc.setTrackingStr(sbuff.toString());
                           }
+                          Set<Integer> set = videoProps.getVast_tag_macro();
+                          if(set != null){
+                              StringBuffer sbuff = new StringBuffer("[");
+                              boolean isFirst=true;
+                              for(Integer i:set){
+                                  if(isFirst){
+                                      isFirst=false;
+                                  }else{
+                                      sbuff.append(",");
+                                  }
+                                  sbuff.append(i);
+                              }
+                              sbuff.append("]");
+                              cc.setVastTagMacro(sbuff.toString());
+                          }
+                          if(videoProps.getVast_tag_macro_quote() != null){
+                        	  cc.setVastTagMacroQuote(videoProps.getVast_tag_macro_quote());
+                          }
                           cc.setDirect_videos(arrayToString(videoProps.getVideo_info()));
                       }
                   }catch(Exception e){
@@ -197,6 +219,29 @@ public class CreativeContainerCrud {
             String strSplit[] = strNew.split(",");
             if(strSplit.length>0){
                 List<Integer> ll = new LinkedList<Integer>();
+                for(String s:strSplit){
+                    ll.add(Integer.parseInt(s));
+                }
+                return ll;
+            }
+            return null;
+        }catch(Exception e){
+            return null;
+        }
+    }
+    private static Set<Integer> stringtoset(String str){
+        try{
+            if(str==null){
+                return null;
+            }
+            String strTrim = str.trim();
+            if("".equals(strTrim)){
+                return null;
+            }
+            String strNew = strTrim.replaceAll("\\[", "").replaceAll("]", "");
+            String strSplit[] = strNew.split(",");
+            if(strSplit.length>0){
+                Set<Integer> ll = new HashSet<Integer>();
                 for(String s:strSplit){
                     ll.add(Integer.parseInt(s));
                 }
@@ -257,7 +302,11 @@ public class CreativeContainerCrud {
             vp.setTracking(l.toArray(new Integer[l.size()]));
         }
         vp.setVideo_info(stringtoarray(cc.getDirect_videos()));
-        
+        Set<Integer> s = stringtoset(cc.getVastTagMacro());
+        if(s != null){
+            vp.setVast_tag_macro(s);
+        }
+        vp.setVast_tag_macro_quote(cc.getVastTagMacroQuote());
         return vp.toJson().toString();
     }
     public static String generateCreativeMacros(Creative_container cc){
@@ -416,6 +465,7 @@ public class CreativeContainerCrud {
             pstmt.setString(13, generateNativeDemandProps(cc));
             pstmt.setString(14, generateCreativeMacros(cc));
             pstmt.setString(15, generateVideoProps(cc));
+            pstmt.setString(16, cc.getComment());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -526,7 +576,8 @@ public class CreativeContainerCrud {
             pstmt.setString(11, generateNativeDemandProps(cc));
             pstmt.setString(12, generateCreativeMacros(cc));
             pstmt.setString(13, generateVideoProps(cc));
-            pstmt.setInt(14, cc.getId());
+            pstmt.setString(14, cc.getComment());
+            pstmt.setInt(15, cc.getId());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -616,13 +667,15 @@ public class CreativeContainerCrud {
             case update_status:
                 pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Creative_container.update_status);
                 pstmt.setInt(1, cc.getStatus_id().getCode());
-                pstmt.setInt(2, cc.getId());
+                pstmt.setString(2, cc.getComment());
+                pstmt.setInt(3, cc.getId());
                 break;
             case update_multiple_status:
                 pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
                         com.kritter.kritterui.api.db_query_def.Creative_container.update_multiple_status, "<id>", cc.getId_list(), 
                         ",", false));
                 pstmt.setInt(1, cc.getStatus_id().getCode());
+                pstmt.setString(2, cc.getComment());
                break;
             default:
                 break;

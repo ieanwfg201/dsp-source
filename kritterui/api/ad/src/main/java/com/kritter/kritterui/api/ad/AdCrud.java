@@ -309,6 +309,43 @@ public class AdCrud {
                         }
                         ad.setExternal_click_tracker(sBuff.toString());
                     }
+                    Set<Integer> set = extTracker.getImpMacro();
+                    if(set != null){
+                        StringBuffer sbuff = new StringBuffer("[");
+                        boolean isFirst=true;
+                        for(Integer i:set){
+                            if(isFirst){
+                                isFirst=false;
+                            }else{
+                                sbuff.append(",");
+                            }
+                            sbuff.append(i);
+                        }
+                        sbuff.append("]");
+                        ad.setImpMacro(sbuff.toString());
+                    }
+                    if(extTracker.getImpMacroQuote() != null){
+                  	  ad.setImpMacroQuote(extTracker.getImpMacroQuote());
+                    }
+                    Set<Integer> clickSet = extTracker.getClickMacro();
+                    if(clickSet != null){
+                        StringBuffer sbuff = new StringBuffer("[");
+                        boolean isFirst=true;
+                        for(Integer i:clickSet){
+                            if(isFirst){
+                                isFirst=false;
+                            }else{
+                                sbuff.append(",");
+                            }
+                            sbuff.append(i);
+                        }
+                        sbuff.append("]");
+                        ad.setClickMacro(sbuff.toString());
+                    }
+                    if(extTracker.getClickMacroQuote() != null){
+                  	  ad.setClickMacroQuote(extTracker.getClickMacroQuote());
+                    }
+
                 }
             }
         }
@@ -335,6 +372,11 @@ public class AdCrud {
                 }
             }
             extTracker.setImpTracker(extTrackerUriList);
+            Set<Integer> s = stringtoset(ad.getImpMacro());
+            if(s != null){
+            	extTracker.setImpMacro(s);
+                extTracker.setImpMacroQuote(ad.getImpMacroQuote());
+            }
         }
         if(ad.getExternal_click_tracker() != null){
             String external_tracker = ad.getExternal_click_tracker().trim();
@@ -352,8 +394,36 @@ public class AdCrud {
                 }
             }
             extTracker.setClickTracker(extTrackerUriList);
+            Set<Integer> s = stringtoset(ad.getClickMacro());
+            if(s != null){
+            	extTracker.setClickMacro(s);
+                extTracker.setClickMacroQuote(ad.getClickMacroQuote());
+            }
         }
         return extTracker.toJson().toString();
+    }
+    private static Set<Integer> stringtoset(String str){
+        try{
+            if(str==null){
+                return null;
+            }
+            String strTrim = str.trim();
+            if("".equals(strTrim)){
+                return null;
+            }
+            String strNew = strTrim.replaceAll("\\[", "").replaceAll("]", "");
+            String strSplit[] = strNew.split(",");
+            if(strSplit.length>0){
+                Set<Integer> ll = new HashSet<Integer>();
+                for(String s:strSplit){
+                    ll.add(Integer.parseInt(s));
+                }
+                return ll;
+            }
+            return null;
+        }catch(Exception e){
+            return null;
+        }
     }
 
     public static List<Ad> geAdByCampaignGuid(String adGuid,Connection connection)

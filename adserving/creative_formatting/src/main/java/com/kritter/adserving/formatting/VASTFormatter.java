@@ -12,9 +12,12 @@ import com.kritter.constants.VideoMimeTypes;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.kritter.entity.creative_macro.CreativeMacro;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
+import com.kritter.adserving.formatting.macro.AdTagMacroReplace;
 import com.kritter.constants.ContentDeliveryMethods;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.serving.demand.cache.AdEntityCache;
@@ -41,6 +44,7 @@ public class VASTFormatter implements CreativesFormatter{
 	private AdEntityCache adEntityCache;
 	private String loggerName;
 	private String trackingEventUrl;
+	private String macroPostImpressionBaseClickUrl;
 	public VASTFormatter(
                          String loggerName,
                          String secretKey,
@@ -59,6 +63,7 @@ public class VASTFormatter implements CreativesFormatter{
 		this.creativeCache = creativeCache;
 		this.adEntityCache = adEntityCache;
 		this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+		this.macroPostImpressionBaseClickUrl=serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
 	}
 
 	@Override
@@ -199,15 +204,19 @@ public class VASTFormatter implements CreativesFormatter{
                 	}
                 }
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()){
+                	String macroTagUrl = AdTagMacroReplace.adTagMacroReplace(videoProps.getVastTagUrl(), request, responseAdInfo, response, 
+                			macroPostImpressionBaseClickUrl, videoProps.getVast_tag_macro(), videoProps.getVast_tag_macro_quote());
                 	return CreateVastWrapper.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
-                            responseAdInfo.getImpressionId(), videoProps.getVastTagUrl(), 
+                            responseAdInfo.getImpressionId(), macroTagUrl, 
                             trackingUrl.toString(), request.getSite().getPublisherId(), 
                             videoProps.getLinearity(), videoProps.getCompaniontype(), videoProps.getTracking(), 
                             trackingUrl.toString(), logger);
                 }
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0_WRAPPER.getCode()){
+                	String macroTagUrl = AdTagMacroReplace.adTagMacroReplace(videoProps.getVastTagUrl(), request, responseAdInfo, response, 
+                			macroPostImpressionBaseClickUrl, videoProps.getVast_tag_macro(), videoProps.getVast_tag_macro_quote());
                 	return CreateVastWrapperTwoDotZero.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
-                            responseAdInfo.getImpressionId(), videoProps.getVastTagUrl(), 
+                            responseAdInfo.getImpressionId(), macroTagUrl, 
                             trackingUrl.toString(), request.getSite().getPublisherId(), 
                             videoProps.getLinearity(), videoProps.getCompaniontype(), videoProps.getTracking(), 
                             trackingUrl.toString(), logger);

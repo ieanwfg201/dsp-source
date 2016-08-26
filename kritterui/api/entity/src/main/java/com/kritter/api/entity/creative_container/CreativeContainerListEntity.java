@@ -26,53 +26,64 @@ public class CreativeContainerListEntity {
     private StatusIdEnum status_id = StatusIdEnum.Pending;
     /** optional - depends on ccenum - json array of creative container ids etc */
     private String id_list = "";
+    private String comment = "";
     
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((account_guid == null) ? 0 : account_guid.hashCode());
+		result = prime * result + ((ccenum == null) ? 0 : ccenum.hashCode());
+		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
+		result = prime * result + id;
+		result = prime * result + ((id_list == null) ? 0 : id_list.hashCode());
+		result = prime * result + page_no;
+		result = prime * result + page_size;
+		result = prime * result + ((status_id == null) ? 0 : status_id.hashCode());
+		return result;
+	}
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((account_guid == null) ? 0 : account_guid.hashCode());
-        result = prime * result + ((ccenum == null) ? 0 : ccenum.hashCode());
-        result = prime * result + id;
-        result = prime * result + ((id_list == null) ? 0 : id_list.hashCode());
-        result = prime * result + page_no;
-        result = prime * result + page_size;
-        result = prime * result
-                + ((status_id == null) ? 0 : status_id.hashCode());
-        return result;
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CreativeContainerListEntity other = (CreativeContainerListEntity) obj;
-        if (account_guid == null) {
-            if (other.account_guid != null)
-                return false;
-        } else if (!account_guid.equals(other.account_guid))
-            return false;
-        if (ccenum != other.ccenum)
-            return false;
-        if (id != other.id)
-            return false;
-        if (id_list == null) {
-            if (other.id_list != null)
-                return false;
-        } else if (!id_list.equals(other.id_list))
-            return false;
-        if (page_no != other.page_no)
-            return false;
-        if (page_size != other.page_size)
-            return false;
-        if (status_id != other.status_id)
-            return false;
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CreativeContainerListEntity other = (CreativeContainerListEntity) obj;
+		if (account_guid == null) {
+			if (other.account_guid != null)
+				return false;
+		} else if (!account_guid.equals(other.account_guid))
+			return false;
+		if (ccenum != other.ccenum)
+			return false;
+		if (comment == null) {
+			if (other.comment != null)
+				return false;
+		} else if (!comment.equals(other.comment))
+			return false;
+		if (id != other.id)
+			return false;
+		if (id_list == null) {
+			if (other.id_list != null)
+				return false;
+		} else if (!id_list.equals(other.id_list))
+			return false;
+		if (page_no != other.page_no)
+			return false;
+		if (page_size != other.page_size)
+			return false;
+		if (status_id != other.status_id)
+			return false;
+		return true;
+	}
+    public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
     public int getId() {
         return id;
     }

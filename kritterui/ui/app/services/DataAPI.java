@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kritter.api.entity.deal.PMPMessagePair;
+import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
 import models.formelements.SelectOption;
 import play.Logger;
 import play.db.DB;
@@ -286,7 +288,79 @@ public class DataAPI {
 		}
 		return account;
 	}
-	
+
+	public static PrivateMarketPlaceApiEntity getPMPDealByGuid(String pmpGuid){
+		PrivateMarketPlaceApiEntity privateMarketPlaceApiEntity = new PrivateMarketPlaceApiEntity();
+		if(pmpGuid !=null){
+			privateMarketPlaceApiEntity.setDealId(pmpGuid);
+
+			Connection dbConnection = null;
+			try{
+				dbConnection = DB.getConnection();
+				PMPMessagePair actMsgPair = ApiDef.get_PMP_deal_By_Guid(dbConnection, privateMarketPlaceApiEntity);
+				Message msg = actMsgPair.getMsg();
+				if(msg.getError_code()==0){
+					privateMarketPlaceApiEntity = actMsgPair.getPrivateMarketPlaceApiEntity();
+				}else
+					privateMarketPlaceApiEntity = null;
+			}catch (Exception e) {
+				Logger.debug("Error while requesting PMP object");
+			}
+			finally{
+				try {
+					if(dbConnection != null)
+						dbConnection.close();
+
+				} catch (SQLException e) {
+					Logger.debug("Error while closing DB Connection.", e);
+				}
+			}
+		}
+		return privateMarketPlaceApiEntity;
+	}
+
+	public static List<PrivateMarketPlaceApiEntity> getPMPDeals()
+	{
+		Connection dbConnection = null;
+		List<PrivateMarketPlaceApiEntity> privateMarketPlaceApiEntityList = new ArrayList<PrivateMarketPlaceApiEntity>();
+
+		try
+		{
+			dbConnection = DB.getConnection();
+			List<PMPMessagePair> actMsgPair = ApiDef.get_PMP_deals(dbConnection);
+
+			if(null != actMsgPair)
+			{
+
+				for (PMPMessagePair pmpMessagePair : actMsgPair)
+				{
+					Message msg = pmpMessagePair.getMsg();
+
+					if (msg.getError_code() == 0)
+						privateMarketPlaceApiEntityList.add(pmpMessagePair.getPrivateMarketPlaceApiEntity());
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			Logger.debug("Error while requesting PMP objects");
+		}
+		finally
+		{
+			try
+			{
+				if(dbConnection != null)
+					dbConnection.close();
+			}
+			catch (SQLException e)
+			{
+				Logger.debug("Error while closing DB Connection.", e);
+			}
+		}
+
+		return privateMarketPlaceApiEntityList;
+	}
+
 	public static List<Targeting_profile> getTPs(String accountGuid, Option<Integer> pageNo, Option<Integer> pageSize){
 		List<Targeting_profile> tpList = null;
 		Connection con = null;

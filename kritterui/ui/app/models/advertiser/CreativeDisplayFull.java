@@ -184,6 +184,16 @@ public class CreativeDisplayFull extends CreativeDisplay{
         }
         return "";
     }
+    public List<String> getVastTagmacro() {
+        return MetadataAPI.getCreativeMacroByName(cc.getVastTagMacro());
+    }
+    public String getVastTagquote(){
+        CreativeMacroQuote c = CreativeMacroQuote.getEnum(cc.getVastTagMacroQuote());
+        if(c != null){
+            return c.getName();
+        }
+        return "";
+    }
 /**
                         @components.formElements.selectlist2(creativeForm("companiontype"), "",services.MetadataAPI.companiontype() )
 

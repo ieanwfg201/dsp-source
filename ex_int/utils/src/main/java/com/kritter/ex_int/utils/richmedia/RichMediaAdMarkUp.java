@@ -18,6 +18,9 @@ import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class RichMediaAdMarkUp {
@@ -126,7 +129,22 @@ public class RichMediaAdMarkUp {
 
               return richmediaResponse;
           }
-      
+    public static String adTagMacroReplace(String str,Request request,
+            ResponseAdInfo responseAdInfo, Response response, String appCategory, String macroClickUrl,Set<Integer> macroSet,Integer quote){
+    	CreativeMacro creativeMacro = new CreativeMacro();
+    	if(macroSet != null){
+    		if(quote != null){
+    		creativeMacro.setQuote(quote);
+    		}
+    		if(macroSet != null){
+    			LinkedList<Integer> l = new LinkedList<Integer>();
+    			l.addAll(macroSet);
+    			creativeMacro.setMacroIds(l);
+    		}
+    	}
+    	return adTagMacroReplace(str, creativeMacro, request, responseAdInfo, response,appCategory, macroClickUrl);
+
+    	}      
       public static String adTagMacroReplace(String str, CreativeMacro creativeMacro, Request request,
               ResponseAdInfo responseAdInfo, Response response, String appCategory, String macroClickUrl){
           if(creativeMacro == null || creativeMacro.getMacroIds() == null || creativeMacro.getMacroIds().size() < 1){
@@ -135,6 +153,8 @@ public class RichMediaAdMarkUp {
           String quote = CreativeMacroQuote.getEnum(creativeMacro.getQuote()).getName();
           String defaultReplace = quote+defaultReplaceOrig+quote;
           String strTemp = str;
+          Map<ExternalUserIdType, String> useridMap =null;
+          boolean userIdPopulated = false;
           for(Integer i: creativeMacro.getMacroIds()){
               ADTagMacros adTagMacro = ADTagMacros.getEnum(i);
               if(adTagMacro != null){
@@ -301,6 +321,166 @@ public class RichMediaAdMarkUp {
                           String a = quote+System.nanoTime()+quote;
                           strTemp = strTemp.replaceAll(ADTagMacros.RANDOM.getDesc(),a);
                           break;
+                      case CACHEBUSTER:
+                          String b = quote+System.nanoTime()+quote;
+                          strTemp = strTemp.replaceAll(ADTagMacros.CACHEBUSTER.getDesc(),b);
+                          break;
+                      case PUB_GUID:
+                          if(request.getSite() != null && request.getSite().getPublisherId() != null){
+                              strTemp = strTemp.replaceAll(ADTagMacros.PUB_GUID.getDesc(),quote+request.getSite().getPublisherId()+quote);
+                          }else{
+                              strTemp = strTemp.replaceAll(ADTagMacros.PUB_GUID.getDesc(),defaultReplace);
+                          }
+                      	break;
+                      case DO_NOT_TRACK:
+                          if(request.getDoNotTrack() != null && request.getDoNotTrack()){
+                              strTemp = strTemp.replaceAll(ADTagMacros.DO_NOT_TRACK.getDesc(),quote+"True"+quote);
+                          }else{
+                              strTemp = strTemp.replaceAll(ADTagMacros.DO_NOT_TRACK.getDesc(),defaultReplace);
+                          }
+                      	break;
+                      case REFERER:
+                          if(request.getSite() != null && request.getSite().getReferer() != null){
+                              strTemp = strTemp.replaceAll(ADTagMacros.REFERER.getDesc(),quote+request.getSite().getReferer()+quote);
+                          }else{
+                              strTemp = strTemp.replaceAll(ADTagMacros.REFERER.getDesc(),defaultReplace);
+                          }
+                      	break;
+                      case IMEI:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.DEVICE_ID) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.IMEI.getDesc(),quote+useridMap.get(ExternalUserIdType.DEVICE_ID)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.IMEI.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.IMEI.getDesc(),defaultReplace);
+                      	}
+                      	break;
+                      case IMEIMD5:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.MD5_DEVICE_ID) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.IMEIMD5.getDesc(),quote+useridMap.get(ExternalUserIdType.MD5_DEVICE_ID)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.IMEIMD5.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.IMEIMD5.getDesc(),defaultReplace);
+                      	}
+                      	break;
+                      case MAC:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.MAC) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.MAC.getDesc(),quote+useridMap.get(ExternalUserIdType.MAC)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.MAC.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.MAC.getDesc(),defaultReplace);
+                      	}
+                      	break;
+                      case IDFA:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.IFA_USER_ID) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.IDFA.getDesc(),quote+useridMap.get(ExternalUserIdType.IFA_USER_ID)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.IDFA.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.IDFA.getDesc(),defaultReplace);
+                      	}
+                      	break;
+                      case AAID:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.AAID) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.AAID.getDesc(),quote+useridMap.get(ExternalUserIdType.AAID)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.AAID.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.AAID.getDesc(),defaultReplace);
+                      	}
+                      	break;
+                      case OpenUDID:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.OPENUDID) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.OpenUDID.getDesc(),quote+useridMap.get(ExternalUserIdType.OPENUDID)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.OpenUDID.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.OpenUDID.getDesc(),defaultReplace);
+                      	}
+                      	break;
+                      case AndroidID:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.DEVICE_PLATFORM_ID) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.AndroidID.getDesc(),quote+useridMap.get(ExternalUserIdType.DEVICE_PLATFORM_ID)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.AndroidID.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.AndroidID.getDesc(),defaultReplace);
+                      	}
+                      	break;
+                      case AndroidIDMD5:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.MD5_DEVICE_PLATFORM_ID) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.AndroidIDMD5.getDesc(),quote+useridMap.get(ExternalUserIdType.MD5_DEVICE_PLATFORM_ID)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.AndroidIDMD5.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.AndroidIDMD5.getDesc(),defaultReplace);
+                      	}
+                      	break;
+                      case UDID:
+                      	if(!userIdPopulated){
+                      		useridMap=getUserId(request.getExternalUserIds());
+                      		userIdPopulated=true;
+                      	}
+                      	if(useridMap != null){
+                      		if(useridMap.get(ExternalUserIdType.UDID) != null){
+                      			strTemp = strTemp.replaceAll(ADTagMacros.UDID.getDesc(),quote+useridMap.get(ExternalUserIdType.UDID)+quote);
+                      		}else{
+                      			strTemp = strTemp.replaceAll(ADTagMacros.UDID.getDesc(),defaultReplace);
+                      		}
+                      	}else{
+                      		strTemp = strTemp.replaceAll(ADTagMacros.UDID.getDesc(),defaultReplace);
+                      	}
+                      	break;
                       default:
                           break;
                   }
@@ -308,5 +488,16 @@ public class RichMediaAdMarkUp {
           }
           return strTemp;
       }
-
+      private static Map<ExternalUserIdType, String> getUserId(Set<ExternalUserId> userIds){
+      	if(userIds != null && userIds.size()>0){
+      		Map<ExternalUserIdType, String>  map= new HashMap<ExternalUserIdType, String>();
+      		for(ExternalUserId user:userIds){
+      			if(user != null && user.getIdType() != null){
+      				map.put(user.getIdType(), user.getUserId());
+      			}
+      		}
+      		return  map;
+      	}
+      	return null;
+      }
 }

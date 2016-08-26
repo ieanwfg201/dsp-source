@@ -38,6 +38,11 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
     $scope.creative_macro= $("#creative_macro").val();;
     $scope.creative_macro_msmodel = Object.create(MultiSelectModel);  
     $scope.creative_macro_msmodel.init($scope.creative_macro_url, 'valueArray', true);
+
+    $scope.vastTagMacro_url = "/advertiser/creatives/metadata/creativemacros";
+    $scope.vastTagMacro= $("#vastTagMacro").val();;
+    $scope.vastTagMacro_msmodel = Object.create(MultiSelectModel);  
+    $scope.vastTagMacro_msmodel.init($scope.vastTagMacro_url, 'valueArray', true);
     
     $scope.trackingStr_url = "/advertiser/creatives/metadata/videotracking";
     $scope.trackingStr= $("#trackingStr").val();;
