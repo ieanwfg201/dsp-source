@@ -12,6 +12,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.kritter.ex_int.utils</groupId>
+            <artifactId>ex_int_utils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.entity.vast.normal.3_0</groupId>
             <artifactId>entity_vast_normal_3_0</artifactId>
             <version>1.0.0</version>

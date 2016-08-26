@@ -32,7 +32,15 @@
         }
         
         @components.fielddisplays.textdisplay("AD-ExternalImpTracker", ad.getExternalimptracker())
+		<code ng-non-bindable>  
+    		@components.fielddisplays.listdisplay("Ad Imp Macro", ad.getImpMacro())
+    	</code>
+        @components.fielddisplays.textdisplay("Ad Imp Macro Quote", ad.getImpMacroquote())
         @components.fielddisplays.textdisplay("AD-ExternalClickTracker", ad.getExternalclicktracker())
+        <code ng-non-bindable>  
+    		@components.fielddisplays.listdisplay("Ad Click Macro", ad.getClickMacro())
+    	</code>
+        @components.fielddisplays.textdisplay("Ad Click Macro Quote", ad.getClickMacroquote())
         @if("true" == mma_required){
 			@components.fielddisplays.listdisplay("AD-MMAIndustry Tier 1", ad.getMMATier1())
 		

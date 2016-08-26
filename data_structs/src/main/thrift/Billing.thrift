@@ -108,7 +108,7 @@ struct Billing {
 38: optional i32 cityId,        /*city id(ui_targeting_city) of the end user.*/
 39: optional i32 adpositionId,  /*ad position ui id*/
 40: optional i32 channelId,     /*channel internal id*/
-
+41: optional i16 marketplace,   /*marketplace*/
 }
 
 

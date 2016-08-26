@@ -54,7 +54,7 @@
                         	@components.formElements.selectlist2(campaignForm("imp_freq_cap"), "Imp FreqCap", 
                         		services.MetadataAPI.freqCapOptions(), '_ngSync->true)
                         	<div id="impfreqcapid" ng-show="imp_freq_cap=='true'" ng-if="imp_freq_cap=='true'">
-								@components.formElements.textinput(campaignForm("imp_freq_cap_count"), '_label ->"Ad Imp FreqCap per User*" )
+								@components.formElements.textinput(campaignForm("imp_freq_cap_count"), '_label ->"Click Imp FreqCap per User*" )
 								@components.formElements.selectlist2(campaignForm("imp_freq_cap_type"),"Imp Freq Cap Type *", services.MetadataAPI.freqduration())
                             	@components.formElements.textinput(campaignForm("imp_freq_time_window"), '_label ->"Imp Time Window (1-48, 24=1Day, -1=LIFE)" )
                         		
@@ -62,7 +62,7 @@
                         	@components.formElements.selectlist2(campaignForm("click_freq_cap"), "Click FreqCap", 
                         		services.MetadataAPI.freqCapOptions(), '_ngSync->true)
                         	<div id="click_freq_cap" ng-show="click_freq_cap=='true'" ng-if="click_freq_cap=='true'">
-								@components.formElements.textinput(campaignForm("click_freq_cap_count"), '_label ->"Ad Clk FreqCap per User*" )
+								@components.formElements.textinput(campaignForm("click_freq_cap_count"), '_label ->"Click FreqCap per User*" )
 								@components.formElements.selectlist2(campaignForm("click_freq_cap_type"),"Clk Freq Cap Type *", services.MetadataAPI.freqduration())
                             	@components.formElements.textinput(campaignForm("click_freq_time_window"), '_label ->"Clk Time Window (1-48, 24=1Day, -1=LIFE)" )
 							</div>

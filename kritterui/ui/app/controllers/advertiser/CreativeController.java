@@ -1150,6 +1150,12 @@ public class CreativeController extends Controller {
                 CreativeWorkFlowEntity creativeWfEntity = filledForm.get();
                 CreativeContainerListEntity cc = new CreativeContainerListEntity();
                 cc.setId(creativeWfEntity.getCreativeId());
+		    	if(creativeWfEntity.getComment()!=null){
+		    		cc.setComment(creativeWfEntity.getComment());
+		    	}else{
+		    		cc.setComment("");
+		    	}
+
                 switch(Actions.valueOf(creativeWfEntity.getAction())){        
                 case Approve: 
                     cc.setCcenum(CreativeContainerAPIEnum.update_status);

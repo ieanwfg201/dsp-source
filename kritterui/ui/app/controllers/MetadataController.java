@@ -28,6 +28,10 @@ public class MetadataController extends Controller{
 			return ok(stateOptions);
 		}
 		@SecuredAction
+		public static Result marketplace(){
+			return ok(MetadataAPI.marketPlacesArray());
+		}
+		@SecuredAction
 		public static Result city(String stateList){
 			ArrayNode cityOptions = new ArrayNode(JsonNodeFactory.instance); 
 			cityOptions = TPMetadataAPI.cityList(stateList); 

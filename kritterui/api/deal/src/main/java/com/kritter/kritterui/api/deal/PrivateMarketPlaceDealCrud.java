@@ -1,15 +1,15 @@
 package com.kritter.kritterui.api.deal;
 
-import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
-import com.kritter.api.entity.deal.ThirdPartyConnectionChildId;
-import com.kritter.api.entity.deal.ThirdPartyConnectionChildIdList;
+import com.kritter.api.entity.deal.*;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.constants.error.ErrorEnum;
+import com.kritter.kritterui.api.db_query_def.PrivateMarketPlaceDeal;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -242,4 +242,202 @@ public class PrivateMarketPlaceDealCrud
 
         return thirdPartyConnectionChildIdList;
     }
+
+    public static PMPMessagePair get_PMP_Deal_By_Guid(Connection con, PrivateMarketPlaceApiEntity privateMarketPlaceApiEntity){
+        if(con == null){
+            PMPMessagePair amp = new PMPMessagePair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            amp.setMsg(msg);
+            return amp;
+        }
+        if(privateMarketPlaceApiEntity == null){
+            PMPMessagePair amp = new PMPMessagePair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_2.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_2.getName());
+            amp.setMsg(msg);
+            return amp;
+        }
+        PreparedStatement pstmt = null;
+        try{
+            pstmt = con.prepareStatement(PrivateMarketPlaceDeal.GET_DEAL_BY_GUID);
+            pstmt.setString(1, privateMarketPlaceApiEntity.getDealId());
+
+            ResultSet rset = pstmt.executeQuery();
+            if(rset.next()){
+                PMPMessagePair amp = new PMPMessagePair();
+                Message msg = new Message();
+                msg.setError_code(ErrorEnum.NO_ERROR.getId());
+                msg.setMsg(ErrorEnum.NO_ERROR.getName());
+                populatePMP(privateMarketPlaceApiEntity, rset);
+                amp.setPrivateMarketPlaceApiEntity(privateMarketPlaceApiEntity);
+                amp.setMsg(msg);
+                return amp;
+            }
+            PMPMessagePair amp = new PMPMessagePair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.USERIDINCORRECT.getId());
+            msg.setMsg(ErrorEnum.USERIDINCORRECT.getName());
+            amp.setMsg(msg);
+            return amp;
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            PMPMessagePair amp = new PMPMessagePair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
+            amp.setMsg(msg);
+            return amp;
+        }finally{
+            if(pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+        }
+    }
+
+    public static List<PMPMessagePair> get_PMP_Deals(Connection con){
+
+        List<PMPMessagePair> list = new ArrayList<PMPMessagePair>();
+        if(con == null){
+            PMPMessagePair amp = new PMPMessagePair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            amp.setMsg(msg);
+            list.add(amp);
+            return list;
+        }
+
+        PreparedStatement pstmt = null;
+        try{
+            pstmt = con.prepareStatement(PrivateMarketPlaceDeal.GET_DEALS);
+            PrivateMarketPlaceApiEntity privateMarketPlaceApiEntity = new PrivateMarketPlaceApiEntity();
+            ResultSet rset = pstmt.executeQuery();
+            if(rset.next()){
+                PMPMessagePair amp = new PMPMessagePair();
+                Message msg = new Message();
+                msg.setError_code(ErrorEnum.NO_ERROR.getId());
+                msg.setMsg(ErrorEnum.NO_ERROR.getName());
+                populatePMP(privateMarketPlaceApiEntity, rset);
+                amp.setPrivateMarketPlaceApiEntity(privateMarketPlaceApiEntity);
+                amp.setMsg(msg);
+                list.add(amp);
+            }
+
+            if(list.size() <= 0) {
+                PMPMessagePair amp = new PMPMessagePair();
+                Message msg = new Message();
+                msg.setError_code(ErrorEnum.USERIDINCORRECT.getId());
+                msg.setMsg(ErrorEnum.USERIDINCORRECT.getName());
+                amp.setMsg(msg);
+                list.add(amp);
+            }
+
+            return list;
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            PMPMessagePair amp = new PMPMessagePair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
+            amp.setMsg(msg);
+            list.add(amp);
+            return list;
+        }finally{
+            if(pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+        }
+    }
+
+    public static PMPList get_PMPList(Connection con,PMPListEntity pmpListEntity){
+
+        if(con == null){
+            PMPList pmplist = new PMPList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            pmplist.setMsg(msg);
+            return pmplist;
+        }
+        if(pmpListEntity == null){
+            PMPList pmplist = new PMPList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.PMP_DEAL_LIST_NULL.getId());
+            msg.setMsg(ErrorEnum.PMP_DEAL_LIST_NULL.getName());
+            pmplist.setMsg(msg);
+            return pmplist;
+        }
+        PreparedStatement pstmt = null;
+        try{
+
+            pstmt = con.prepareStatement(PrivateMarketPlaceDeal.GET_DEALS);
+
+            ResultSet rset = pstmt.executeQuery();
+            PMPList pmplist = new PMPList();
+            List<PrivateMarketPlaceApiEntity> deals = new LinkedList<PrivateMarketPlaceApiEntity>();
+            while(rset.next()){
+                PrivateMarketPlaceApiEntity deal = new PrivateMarketPlaceApiEntity();
+                populatePMP(deal, rset);
+                deals.add(deal);
+            }
+            pmplist.setPMP_list(deals);
+            Message msg = new Message();
+            if(deals.size()>0){
+                msg.setError_code(ErrorEnum.NO_ERROR.getId());
+                msg.setMsg(ErrorEnum.NO_ERROR.getName());
+            }
+
+            pmplist.setMsg(msg);
+            return pmplist;
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            PMPList pmplist = new PMPList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
+            pmplist.setMsg(msg);
+            return pmplist;
+        }finally{
+            if(pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+        }
+    }
+
+    private static void populatePMP(PrivateMarketPlaceApiEntity privateMarketPlaceApiEntity,ResultSet resultSet) throws Exception
+    {
+        if(null != privateMarketPlaceApiEntity && null != resultSet)
+        {
+            privateMarketPlaceApiEntity.setDealId(resultSet.getString("deal_id"));
+            privateMarketPlaceApiEntity.setDealName(resultSet.getString("deal_name"));
+            privateMarketPlaceApiEntity.setAdIdList(resultSet.getString("ad_id_list"));
+            privateMarketPlaceApiEntity.setSiteIdList(resultSet.getString("site_id_list"));
+            privateMarketPlaceApiEntity.setBlockedIABCategories(resultSet.getString("bcat"));
+            privateMarketPlaceApiEntity.setThirdPartyConnectionGuid(resultSet.getString("third_party_conn_list"));
+            privateMarketPlaceApiEntity.setDspIdList(resultSet.getString("dsp_id_list"));
+            privateMarketPlaceApiEntity.setAdvertiserIdList(resultSet.getString("adv_id_list"));
+            privateMarketPlaceApiEntity.setWhitelistedAdvertiserDomains(resultSet.getString("wadomain"));
+            privateMarketPlaceApiEntity.setAuctionType(String.valueOf(resultSet.getShort("auction_type")));
+            privateMarketPlaceApiEntity.setRequestCap(String.valueOf(resultSet.getInt("request_cap")));
+            privateMarketPlaceApiEntity.setStartDate((resultSet.getTimestamp("start_date")).getTime());
+            privateMarketPlaceApiEntity.setStartDate((resultSet.getTimestamp("end_date")).getTime());
+            privateMarketPlaceApiEntity.setDealCPM(String.valueOf(resultSet.getDouble("deal_cpm")));
+        }
+    }
+
 }

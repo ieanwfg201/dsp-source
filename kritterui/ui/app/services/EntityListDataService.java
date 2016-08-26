@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kritter.api.entity.deal.PMPList;
+import com.kritter.api.entity.deal.PMPListEntity;
+import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
 import models.EntityList;
 import models.EntityListFilter;
 import models.Constants.PageType;
@@ -287,6 +290,23 @@ public class EntityListDataService {
                         entityList = new EntityList<RetargetingSegment>(new ArrayList<RetargetingSegment>(), 0);
                     }
                     break;
+
+				case pmp_deal:
+					PMPListEntity pmpListEntity = new PMPListEntity();
+					pmpListEntity.setPage_no(PageConstants.start_index);
+					pmpListEntity.setPage_size(listDataFilter.getPageSize());
+					PMPList pmpList = ApiDef.get_PMP_deals_list(con,pmpListEntity);
+
+					if(pmpList.getMsg().getError_code()==0)
+					{
+						entityList = new EntityList<PrivateMarketPlaceApiEntity>(pmpList.getPMP_list(), pmpList.getPMP_list().size());
+					}
+					else
+					{
+						entityList = new EntityList<PrivateMarketPlaceApiEntity>(new ArrayList<PrivateMarketPlaceApiEntity>(), 0);
+					}
+					break;
+
 				default:
 					break;
 			}

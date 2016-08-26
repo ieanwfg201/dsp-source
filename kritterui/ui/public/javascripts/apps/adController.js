@@ -26,6 +26,15 @@ angular.module('app.ui.form.ctrls', [ 'multi-select' ]).
 		$scope.mma_tier_2_list_msmodel.init($scope.mma_tier2_url, 'valueArray', true);
 		$scope.mma_tier_1_list_msmodel.addDependent("mma_tier2", $scope.mma_tier_2_list_msmodel);
     	
+    	$scope.impMacro_url = "/advertiser/creatives/metadata/creativemacros";
+    	$scope.impMacro= $("#impMacro").val();;
+    	$scope.impMacro_msmodel = Object.create(MultiSelectModel);  
+    	$scope.impMacro_msmodel.init($scope.impMacro_url, 'valueArray', true);
+    	
+    	$scope.clickMacro_url = "/advertiser/creatives/metadata/creativemacros";
+    	$scope.clickMacro= $("#clickMacro").val();;
+    	$scope.clickMacro_msmodel = Object.create(MultiSelectModel);  
+    	$scope.clickMacro_msmodel.init($scope.clickMacro_url, 'valueArray', true);
         
         $scope.selectedHygiene = [];
         $scope.tier1selectedCategories = [];

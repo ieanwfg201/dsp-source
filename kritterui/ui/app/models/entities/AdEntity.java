@@ -60,7 +60,11 @@ public class AdEntity extends Entity{
     private int time_window = UserConstant.frequency_cap_time_window_default;
     private int bidtype = 0;
     private String external_imp_tracker = "";
+    private String impMacro = "[]";
+    private int impMacroQuote = 0;
     private String external_click_tracker = "";
+    private String clickMacro = "[]";
+    private int clickMacroQuote = 0;
     private String mma_tier_1_list = "[]";
     private String mma_tier_2_list = "[]";
     private boolean click_freq_cap = false;
@@ -354,6 +358,30 @@ public class AdEntity extends Entity{
 	}
 	public void setImp_freq_time_window(int imp_freq_time_window) {
 		this.imp_freq_time_window = imp_freq_time_window;
+	}
+	public String getImpMacro() {
+		return impMacro;
+	}
+	public void setImpMacro(String impMacro) {
+		this.impMacro = impMacro;
+	}
+	public int getImpMacroQuote() {
+		return impMacroQuote;
+	}
+	public void setImpMacroQuote(int impMacroQuote) {
+		this.impMacroQuote = impMacroQuote;
+	}
+	public String getClickMacro() {
+		return clickMacro;
+	}
+	public void setClickMacro(String clickMacro) {
+		this.clickMacro = clickMacro;
+	}
+	public int getClickMacroQuote() {
+		return clickMacroQuote;
+	}
+	public void setClickMacroQuote(int clickMacroQuote) {
+		this.clickMacroQuote = clickMacroQuote;
 	}
 
     public Ad getEntity(){

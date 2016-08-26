@@ -40,5 +40,6 @@ public class CreateBillingObject {
         if(pirr.isSetCityId()) {billing.setCityId(pirr.getCityId());};
         if(pirr.isSetChannelId()) {billing.setChannelId(pirr.getChannelId());};
         if(pirr.isSetAdpositionId()) {billing.setAdpositionId(pirr.getAdpositionId());};
+        if(pirr.isSetMarketplace_id()) {billing.setMarketplace(pirr.getMarketplace_id());};
     }
 }

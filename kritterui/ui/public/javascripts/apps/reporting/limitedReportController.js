@@ -136,6 +136,7 @@ controller('limitedReportController',function ($scope, $http, ngTableParams, $mo
 	$scope.carrier_url = "/metadata/options/carriers/";
 	$scope.brand_url = "/metadata/options/brands/";
 	$scope.os_url = "/metadata/options/operating-systems";
+	$scope.marketplace_url = "/metadata/options/marketplace";
 	
 	function pad0(a) {
 		if( a < 10){
@@ -259,6 +260,9 @@ controller('limitedReportController',function ($scope, $http, ngTableParams, $mo
 	$scope.brand_msmodel.init($scope.brand_url, 'valueArray', true, true);
 	$scope.os_msmodel.addDependent("brands", $scope.brand_msmodel);
 	
+	$scope.marketplace_msmodel = Object.create(MultiSelectModel);
+	$scope.marketplace_msmodel.init($scope.marketplace_url, 'valueArray', true, true);
+
 	$scope.initMS = function(field, value){
 		$scope[field+"_msmodel"].setInitValue(value); 
 	}

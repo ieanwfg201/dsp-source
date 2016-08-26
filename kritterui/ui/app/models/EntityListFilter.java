@@ -26,6 +26,8 @@ public class EntityListFilter {
 	private int exchangeId;
 	
 	private String osId;
+
+	private String dealGuid;
 	
 	private PageType pageType = PageType.none;
 	
@@ -125,6 +127,10 @@ public class EntityListFilter {
     public String getIds() {
         return ids;
     }
+
+	public void setDealGuid(String dealGuid){this.dealGuid = dealGuid;}
+
+	public String getDealGuid(){return this.dealGuid;}
 
     public void setIds(String ids) {
         this.ids = ids;
