@@ -127,27 +127,27 @@ public class AdCrud {
     						break;
     					}
     				}
-    				Set<FreqDef> impDef = freqCapObj.getFDef().get(FreqEventType.IMP);
-    				if(impDef != null){
-    					ad.setImp_freq_cap(true);
-    					for(FreqDef f:impDef){
-    						switch(f.getDuration()){
-    						case LIFE:
-    							ad.setImp_freq_cap_type(FreqDuration.LIFE.getCode());
-    							ad.setImp_freq_cap_count(f.getCount());
-    							ad.setImp_freq_time_window(-1);
-    							break;
-    						case BYHOUR:
-    							ad.setImp_freq_cap_type(FreqDuration.BYHOUR.getCode());
-    							ad.setImp_freq_cap_count(f.getCount());
-    							ad.setImp_freq_time_window(f.getHour());
-    							break;
-    						default:
-    							break;
-    						}
-    					}
-    				}
     			}
+				Set<FreqDef> impDef = freqCapObj.getFDef().get(FreqEventType.IMP);
+				if(impDef != null){
+					ad.setImp_freq_cap(true);
+					for(FreqDef f:impDef){
+						switch(f.getDuration()){
+						case LIFE:
+							ad.setImp_freq_cap_type(FreqDuration.LIFE.getCode());
+							ad.setImp_freq_cap_count(f.getCount());
+							ad.setImp_freq_time_window(-1);
+							break;
+						case BYHOUR:
+							ad.setImp_freq_cap_type(FreqDuration.BYHOUR.getCode());
+							ad.setImp_freq_cap_count(f.getCount());
+							ad.setImp_freq_time_window(f.getHour());
+							break;
+						default:
+							break;
+						}
+					}
+				}
     		}
     	}catch(Exception e){
     		LOG.error(e.getMessage(),e);
