@@ -12,6 +12,7 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.user.userid.ExternalUserId;
+import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.entity.Creative;
 import com.kritter.utils.common.ApplicationGeneralUtils;
@@ -24,7 +25,7 @@ public class BannerAdMarkUp {
             String notificationUrlSuffix, String notificationUrlBidderBidPriceMacro,
             String postImpressionBaseCSCUrl, String cdnBaseImageUrl,
             boolean templateWithWin, ExtTracker extTracker, StringBuffer winNotificationURLBuffer,
-            String extraClikUrlSuffix
+            String extraClikUrlSuffix,String macroPostImpressionBaseClickUrl
             ) throws BidResponseException{
 
         String clickUri = CreativeFormatterUtils.prepareClickUri
@@ -44,6 +45,9 @@ public class BannerAdMarkUp {
 
         StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
         clickUrl.append(clickUri);
+        StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
+        macroClickUrl.append(clickUri);
+
         if(extraClikUrlSuffix != null){
         	if(clickUri.contains("?")){
         		clickUrl.append("&");
@@ -131,7 +135,8 @@ public class BannerAdMarkUp {
             StringBuffer sBuff = new StringBuffer("");
             for(String str:extTracker.getImpTracker()){
                 sBuff.append("<img src=\"");
-                sBuff.append(str);
+                sBuff.append(MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, 
+                		"", macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), ""));
                 sBuff.append("\" style=\"display: none;\"/>");
             }
             htmlBannerResponse=htmlBannerResponse+sBuff.toString();

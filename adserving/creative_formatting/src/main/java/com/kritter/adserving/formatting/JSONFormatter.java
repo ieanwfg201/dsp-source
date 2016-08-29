@@ -11,6 +11,7 @@ import com.kritter.entity.formatter_entity.creative.FormatCreative;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
+import com.kritter.adserving.formatting.macro.AdTagMacroReplace;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.cache.CreativeCache;
@@ -38,6 +39,7 @@ public class JSONFormatter implements CreativesFormatter{
 	private AdEntityCache adEntityCache;
 	private CreativeSlotCache creativeSlotCache;
 	private String loggerName;
+	private String macroPostImpressionBaseClickUrl;
 	public JSONFormatter(
                          String loggerName,
                          String secretKey,
@@ -57,6 +59,7 @@ public class JSONFormatter implements CreativesFormatter{
 		this.creativeCache = creativeCache;
 		this.adEntityCache = adEntityCache;
 		this.creativeSlotCache = creativeSlotCache;
+		this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
 	}
 
 	@Override
@@ -109,6 +112,9 @@ public class JSONFormatter implements CreativesFormatter{
 			StringBuffer clickUrl = new StringBuffer();
             clickUrl.append(this.postImpressionBaseClickUrl);
             clickUrl.append(clickUri);
+            StringBuffer macroClickUrl = new StringBuffer(this.macroPostImpressionBaseClickUrl);
+            macroClickUrl.append(clickUri);
+
 
 			StringBuffer cscBeaconUrl = new StringBuffer();
             cscBeaconUrl.append(this.postImpressionBaseCSCUrl);
@@ -154,7 +160,8 @@ public class JSONFormatter implements CreativesFormatter{
                 CreativeSlot creativeSlot = this.creativeSlotCache.query(responseAdInfo.getCreativeBanner().getSlotId());
                 List<String> extImpTracker = null;
                 if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getImpTracker() != null){
-                    extImpTracker = adEntity.getExtTracker().getImpTracker();
+                    extImpTracker = AdTagMacroReplace.adTagMacroReplace(adEntity.getExtTracker().getImpTracker(), request, 
+                    		responseAdInfo, response, macroClickUrl.toString(), adEntity.getExtTracker().getImpMacro(), adEntity.getExtTracker().getImpMacroQuote());
                 }
                 formatBanner(formatCreative, responseAdInfo, creative, creativeSlot, clickUrl.toString(), 
                         cscBeaconUrl.toString(), extImpTracker);

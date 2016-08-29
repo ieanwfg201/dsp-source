@@ -13,7 +13,6 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.kritter.entity.creative_macro.CreativeMacro;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
@@ -118,6 +117,8 @@ public class VASTFormatter implements CreativesFormatter{
 			StringBuffer cscBeaconUrl = new StringBuffer();
             cscBeaconUrl.append(this.postImpressionBaseCSCUrl);
             cscBeaconUrl.append(clickUri);
+            StringBuffer macroClickUrl = new StringBuffer(this.macroPostImpressionBaseClickUrl);
+            macroClickUrl.append(clickUri);
 
             /**modify csc url to have bid-switch exchangeId as a parameter for usage in post-impression server************/
             logger.debug("Going to modify CSC URL if request has user ids available, for kritterUserId:{} ",
@@ -157,7 +158,8 @@ public class VASTFormatter implements CreativesFormatter{
                 }
                 List<String> extImpTracker = null;
                 if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getImpTracker() != null){
-                    extImpTracker = adEntity.getExtTracker().getImpTracker();
+                    extImpTracker = AdTagMacroReplace.adTagMacroReplace(adEntity.getExtTracker().getImpTracker(), request, 
+                    		responseAdInfo, response, macroClickUrl.toString(), adEntity.getExtTracker().getImpMacro(), adEntity.getExtTracker().getImpMacroQuote());
                 }
                 VideoProps videoProps = responseAdInfo.getVideoProps();
                 String bitRateStr = null;

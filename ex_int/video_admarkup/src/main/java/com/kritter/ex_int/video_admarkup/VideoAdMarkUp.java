@@ -18,7 +18,7 @@ import com.kritter.entity.vast.wrapper.three_dot_zero.CreateVastWrapper;
 import com.kritter.entity.vast.wrapper.two_dot_zero.CreateVastWrapperTwoDotZero;
 import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.entity.video_props.VideoProps;
-import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
+import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.entity.Creative;
 
@@ -106,8 +106,9 @@ public class VideoAdMarkUp {
         creativeUrl.append(videoInfo.getResource_uri());
 
         if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()){
-        	String macroTagUrl = RichMediaAdMarkUp.adTagMacroReplace(videProps.getVastTagUrl(), request, responseAdInfo, response, 
-        			"",macroPostImpressionBaseClickUrl, videProps.getVast_tag_macro(), videProps.getVast_tag_macro_quote());
+        	String macroTagUrl = MarkUpHelper.adTagMacroReplace(videProps.getVastTagUrl(), request, responseAdInfo, response, 
+        			"",macroPostImpressionBaseClickUrl, videProps.getVast_tag_macro(), videProps.getVast_tag_macro_quote(),
+        			"");
 
             String vastStr = CreateVastWrapper.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
                     responseAdInfo.getImpressionId(), macroTagUrl, 
@@ -132,8 +133,8 @@ public class VideoAdMarkUp {
                 }
             }
         }else if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0_WRAPPER.getCode()){
-        	String macroTagUrl = RichMediaAdMarkUp.adTagMacroReplace(videProps.getVastTagUrl(), request, responseAdInfo, response, 
-        			"",macroPostImpressionBaseClickUrl, videProps.getVast_tag_macro(), videProps.getVast_tag_macro_quote());
+        	String macroTagUrl = MarkUpHelper.adTagMacroReplace(videProps.getVastTagUrl(), request, responseAdInfo, response, 
+        			"",macroPostImpressionBaseClickUrl, videProps.getVast_tag_macro(), videProps.getVast_tag_macro_quote(),"");
 
             String vastStr = CreateVastWrapperTwoDotZero.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
                     responseAdInfo.getImpressionId(), macroTagUrl, 

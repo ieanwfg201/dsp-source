@@ -1461,3 +1461,4 @@ CREATE TABLE IF NOT EXISTS `inclusion_exclusion_type`
 ALTER TABLE `targeting_profile` ADD COLUMN `user_id_inc_exc` SMALLINT NOT NULL AFTER `device_type`;
 ALTER TABLE `targeting_profile` ADD CONSTRAINT `fk_user_id_inc_exc` FOREIGN KEY (`user_id_inc_exc`) REFERENCES inclusion_exclusion_type(id);
 ALTER TABLE `targeting_profile` ADD COLUMN `user_id_file` TEXT AFTER `user_id_inc_exc`;
+ALTER TABLE `targeting_profile` CHANGE `user_id_inc_exc` `user_id_inc_exc` SMALLINT NOT NULL DEFAULT 0; 

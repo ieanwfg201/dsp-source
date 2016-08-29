@@ -2,6 +2,7 @@ package com.kritter.adserving.formatting.macro;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +19,32 @@ import com.kritter.entity.user.userid.ExternalUserId;
 public class AdTagMacroReplace {
     
     private static final String defaultReplaceOrig = "";
+    public static List<String> adTagMacroReplace(List<String> list,Request request,
+            ResponseAdInfo responseAdInfo, Response response, String macroClickUrl,Set<Integer> macroSet,Integer quote){
+    	if(list==null || list.size()<1){
+    		return null;
+    	}
+    	CreativeMacro creativeMacro = new CreativeMacro();
+    	if(macroSet != null){
+    		if(quote != null){
+    		creativeMacro.setQuote(quote);
+    		}
+    		if(macroSet != null){
+    			LinkedList<Integer> l = new LinkedList<Integer>();
+    			l.addAll(macroSet);
+    			creativeMacro.setMacroIds(l);
+    		}
+    	}
+    	LinkedList<String> newList = new LinkedList<String>();
+    	for(String str:list){
+    		String s = adTagMacroReplace(str, creativeMacro, request, responseAdInfo, response, macroClickUrl);
+    		if(s !=null){
+    			newList.add(s);
+    		}
+    	}
+    	return newList;
+    }
+
     public static String adTagMacroReplace(String str,Request request,
             ResponseAdInfo responseAdInfo, Response response, String macroClickUrl,Set<Integer> macroSet,Integer quote){
     	CreativeMacro creativeMacro = new CreativeMacro();
@@ -33,6 +60,7 @@ public class AdTagMacroReplace {
     	}
     	return adTagMacroReplace(str, creativeMacro, request, responseAdInfo, response, macroClickUrl);
     }
+
     public static String adTagMacroReplace(String str, CreativeMacro creativeMacro, Request request,
             ResponseAdInfo responseAdInfo, Response response, String macroClickUrl){
         if(creativeMacro == null || creativeMacro.getMacroIds() == null || creativeMacro.getMacroIds().size() < 1){

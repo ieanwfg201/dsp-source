@@ -163,7 +163,8 @@ public class XHTMLFormatter implements CreativesFormatter
                 creativeImageUrl.append(responseAdInfo.getCreativeBanner().getResourceURI());
                 List<String> extImpTracker = null;
                 if(adEntity.getExtTracker() != null && adEntity.getExtTracker().getImpTracker() != null){
-                    extImpTracker = adEntity.getExtTracker().getImpTracker();
+                    extImpTracker = AdTagMacroReplace.adTagMacroReplace(adEntity.getExtTracker().getImpTracker(), request, 
+                    		responseAdInfo, response, macroClickUrl.toString(), adEntity.getExtTracker().getImpMacro(), adEntity.getExtTracker().getImpMacroQuote());
                 }
                 fCreative.addBannerEntity(creativeImageUrl.toString(), null, null, creative.getText(), 
                         clickUrl.toString(), cscBeaconUrl.toString(),extImpTracker);

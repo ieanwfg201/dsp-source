@@ -648,7 +648,7 @@
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select internalid as internalid, pubIncId as pubIncId, adposid as adposid from ad_position where last_modified >= '$last_modified']]></prop>
+           <prop key="query"><![CDATA[select internalid as internalid, pubIncId as pubIncId, adposid as adposid from ad_position, last_modified as last_modified  where last_modified >= '$last_modified']]></prop>
          </props>
        </constructor-arg>
    </bean>
@@ -657,7 +657,7 @@
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select a.internalid as internalid, a.channelcode as channelcode,b.exchangeid as pubIncId,a.last_modified as last_modified from channel as a,mma_exchangename_id_mapping as b where a.exchangename = b.exchangename and (a.last_modified >= '$last_modified' or b.last_modified >= '$last_modified' ) ]]></prop>
+           <prop key="query"><![CDATA[select a.internalid as internalid, a.channelcode as channelcode,b.exchangeid as pubIncId,a.last_modified as last_modified  from channel as a,mma_exchangename_id_mapping as b where a.exchangename = b.exchangename and (a.last_modified >= '$last_modified' or b.last_modified >= '$last_modified' ) ]]></prop>
          </props>
        </constructor-arg>
    </bean>
