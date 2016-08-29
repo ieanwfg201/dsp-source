@@ -8,6 +8,7 @@ import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
 import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
+import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.constants.ExternalUserIdType;
@@ -282,6 +283,8 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
 
         StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
         clickUrl.append(clickUri);
+        StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
+        macroClickUrl.append(clickUri);
         /*********prepare win notification url , also include bidder price.****************/
         winNotificationURLBuffer.append(postImpressionBaseWinApiUrl);
         winNotificationURLBuffer.append(clickUri);
@@ -338,7 +341,8 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         	impTrackerArray = new String[1+extTracker.getImpTracker().size()];
         	int i = 1;
         	for(String str:extTracker.getImpTracker()){
-        		impTrackerArray[i]=str;
+        		impTrackerArray[i]=MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, "", 
+        				macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), "");
         		i++;
         	}
         }else{
@@ -374,6 +378,8 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
 
     	StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
     	clickUrl.append(clickUri);
+        StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
+        macroClickUrl.append(clickUri);
     	/*********prepare win notification url , also include bidder price.****************/
     	winNotificationURLBuffer.append(postImpressionBaseWinApiUrl);
     	winNotificationURLBuffer.append(clickUri);
@@ -437,7 +443,8 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     		impTrackerArray = new String[1+extTracker.getImpTracker().size()];
     		int i = 1;
     		for(String str:extTracker.getImpTracker()){
-    			impTrackerArray[1]=str;
+    			impTrackerArray[1]=MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, "", 
+        				macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), "");;
     			i++;
     		}
     	}else{
