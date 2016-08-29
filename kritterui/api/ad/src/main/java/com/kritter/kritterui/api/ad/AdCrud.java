@@ -118,6 +118,7 @@ public class AdCrud {
     					case LIFE:
     						ad.setClick_freq_cap_type(FreqDuration.LIFE.getCode());
     						ad.setClick_freq_cap_count(f.getCount());
+    						ad.setClick_freq_time_window(-1);
     						break;
     					case BYHOUR:
     						ad.setClick_freq_cap_type(FreqDuration.BYHOUR.getCode());
