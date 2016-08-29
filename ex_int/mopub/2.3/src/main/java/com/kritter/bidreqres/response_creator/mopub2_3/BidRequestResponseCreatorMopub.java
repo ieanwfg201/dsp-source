@@ -430,7 +430,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         return BannerAdMarkUp.prepare(logger, request, response, responseAdInfo, urlVersion, secretKey, 
                 postImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
                 notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker,
-                winNotificationURLBuffer, null);
+                winNotificationURLBuffer, null, this.macroPostImpressionBaseClickUrl);
     }
     
     private String prepareVideoAdMarkup(
