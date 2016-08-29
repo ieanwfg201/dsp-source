@@ -648,7 +648,7 @@
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select internalid as internalid, pubIncId as pubIncId, adposid as adposid from ad_position, last_modified as last_modified  where last_modified >= '$last_modified']]></prop>
+           <prop key="query"><![CDATA[select internalid as internalid, pubIncId as pubIncId, adposid as adposid, last_modified as last_modified  from ad_position where last_modified >= '$last_modified']]></prop>
          </props>
        </constructor-arg>
    </bean>
