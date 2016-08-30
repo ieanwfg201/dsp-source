@@ -125,6 +125,7 @@ public class CampaignCrud {
     					case LIFE:
     						campaign.setClick_freq_cap_type(FreqDuration.LIFE.getCode());
     						campaign.setClick_freq_cap_count(f.getCount());
+    						campaign.setClick_freq_time_window(-1);
     						break;
     					case BYHOUR:
     						campaign.setClick_freq_cap_type(FreqDuration.BYHOUR.getCode());

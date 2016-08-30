@@ -9,6 +9,11 @@ public class PrivateMarketPlaceDeal
             "site_id_list,bcat,third_party_conn_list,dsp_id_list,adv_id_list,wadomain,auction_type,request_cap," +
             "start_date,end_date,deal_cpm,last_modified) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
+    public static final String UPDATE_DEAL = "update pmp_deals set deal_name = ?,ad_id_list = ?," +
+            "site_id_list = ?,bcat = ?,third_party_conn_list = ?,dsp_id_list = ?,adv_id_list = ?," +
+            "wadomain = ?,auction_type = ?,request_cap = ?," +
+            "start_date = ?,end_date = ?,deal_cpm = ?,last_modified = ? where deal_id = ?";
+
     public static final String GET_DEAL_BY_GUID = "select * from pmp_deals where deal_id = ?";
 
     public static final String GET_DEALS = "select * from pmp_deals";

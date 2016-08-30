@@ -2,10 +2,9 @@ package services;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
+import com.kritter.constants.*;
 import models.formelements.SelectOption;
 import play.Logger;
 import play.Play;
@@ -38,54 +37,6 @@ import com.kritter.api.entity.retargeting_segment.RetargetingSegmentList;
 import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.site.SiteList;
 import com.kritter.api.entity.site.SiteListEntity;
-import com.kritter.constants.ADTagMacros;
-import com.kritter.constants.APIFrameworks;
-import com.kritter.constants.APP_STORE_ID;
-import com.kritter.constants.AccountAPIEnum;
-import com.kritter.constants.AccountRejection;
-import com.kritter.constants.Account_Type;
-import com.kritter.constants.AdAPIEnum;
-import com.kritter.constants.AlgoModel;
-import com.kritter.constants.AlgoModelType;
-import com.kritter.constants.BidType;
-import com.kritter.constants.CampaignQueryEnum;
-import com.kritter.constants.ConnectionType;
-import com.kritter.constants.ContentDeliveryMethods;
-import com.kritter.constants.CreativeFormat;
-import com.kritter.constants.CreativeMacroQuote;
-import com.kritter.constants.DemandPreference;
-import com.kritter.constants.DemandType;
-import com.kritter.constants.DeviceType;
-import com.kritter.constants.Ext_siteEnum;
-import com.kritter.constants.FreqDuration;
-import com.kritter.constants.Frequency;
-import com.kritter.constants.Geo_Targeting_type;
-import com.kritter.constants.HygieneCategory;
-import com.kritter.constants.INVENTORY_SOURCE;
-import com.kritter.constants.IddefinitionEnum;
-import com.kritter.constants.IddefinitionType;
-import com.kritter.constants.MarketPlace;
-import com.kritter.constants.MetadataType;
-import com.kritter.constants.NativeIconImageSize;
-import com.kritter.constants.NativeLayoutId;
-import com.kritter.constants.NativeScreenShotImageSize;
-import com.kritter.constants.PageConstants;
-import com.kritter.constants.RetargetingSegmentEnum;
-import com.kritter.constants.SITE_PASSBACK_CONTENT_TYPE;
-import com.kritter.constants.SITE_PASSBACK_TYPE;
-import com.kritter.constants.SITE_PLATFORM;
-import com.kritter.constants.SiteRejection;
-import com.kritter.constants.StatusIdEnum;
-import com.kritter.constants.SupplySourceTypeEnum;
-import com.kritter.constants.VASTCompanionTypes;
-import com.kritter.constants.VASTKritterTrackingEventTypes;
-import com.kritter.constants.VideoAdPos;
-import com.kritter.constants.VideoBidResponseProtocols;
-import com.kritter.constants.VideoBoxing;
-import com.kritter.constants.VideoDemandType;
-import com.kritter.constants.VideoLinearity;
-import com.kritter.constants.VideoMimeTypes;
-import com.kritter.constants.VideoPlaybackMethods;
 import com.kritter.constants.tracking_partner.TrackingPartner;
 import com.kritter.entity.demand_props.DemandProps;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
@@ -2457,5 +2408,149 @@ public class MetadataAPI {
         }
 
         return options;
+    }
+
+    public static String fetchDSPsForExternalConnectionWithGivenIds(String advertiserGuid,Integer[] dspIds)
+    {
+        Connection con = null;
+
+        List<Integer> dspIdList = new ArrayList<Integer>();
+        if(null != dspIds)
+            dspIdList = Arrays.asList(dspIds);
+
+        Set<String> values = new HashSet<String>();
+
+        try
+        {
+
+            ThirdPartyConnectionChildId thirdPartyConnectionChildId = new ThirdPartyConnectionChildId();
+            thirdPartyConnectionChildId.setFetchDSPData(true);
+            thirdPartyConnectionChildId.setThirdPartyConnectionGuid(advertiserGuid);
+            con = DB.getConnection(true);
+            ThirdPartyConnectionChildIdList thirdPartyConnectionChildIdList = ApiDef.listThirdPartyConnectionDSPAdvIdList(con, thirdPartyConnectionChildId);
+            if(null != thirdPartyConnectionChildIdList)
+            {
+                List<ThirdPartyConnectionChildId> list = thirdPartyConnectionChildIdList.getThirdPartyConnectionChildIdList();
+                for(ThirdPartyConnectionChildId element : list)
+                {
+                    if(dspIdList.size() > 0 && dspIdList.contains(element.getId()))
+                        values.add(element.getDescription());
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            Logger.error("Error in fetching fetchDSPs", e);
+        }
+        finally
+        {
+            try
+            {
+                if(con != null)
+                {
+                    con.close();
+                }
+            }
+            catch (SQLException e)
+            {
+                Logger.error("Error in closing DB connection",e);
+            }
+        }
+
+        return values.toString();
+    }
+
+    public static String fetchAdvsForExternalConnectionWithGivenIds(String advertiserGuid,Integer[] advIds)
+    {
+        Connection con = null;
+        List<Integer> advIdList = new ArrayList<Integer>();
+        if(null != advIds)
+            advIdList = Arrays.asList(advIds);
+
+        Set<String> values = new HashSet<String>();
+        try {
+
+            ThirdPartyConnectionChildId thirdPartyConnectionChildId = new ThirdPartyConnectionChildId();
+            thirdPartyConnectionChildId.setFetchDSPData(false);
+            thirdPartyConnectionChildId.setThirdPartyConnectionGuid(advertiserGuid);
+            con = DB.getConnection(true);
+            ThirdPartyConnectionChildIdList thirdPartyConnectionChildIdList = ApiDef.listThirdPartyConnectionDSPAdvIdList(con, thirdPartyConnectionChildId);
+            if(null != thirdPartyConnectionChildIdList)
+            {
+                List<ThirdPartyConnectionChildId> list = thirdPartyConnectionChildIdList.getThirdPartyConnectionChildIdList();
+                for(ThirdPartyConnectionChildId element : list)
+                {
+                    if(advIdList.size() > 0 && advIdList.contains(element.getId()))
+                        values.add(element.getDescription());
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            Logger.error("Error in fetching fetchDSPs", e);
+        }
+        finally
+        {
+            try
+            {
+                if(con != null)
+                {
+                    con.close();
+                }
+            }
+            catch (SQLException e)
+            {
+                Logger.error("Error in closing DB connection",e);
+            }
+        }
+
+        return values.toString();
+    }
+
+    public static String fetchIABCategoriesByIds(Integer[] ids)
+    {
+        Connection con = null;
+
+        try {
+            con = DB.getConnection(true);
+            if(null != ids && ids.length > 0)
+                return  ApiDef.getCategoriesById(con,ids).toString();
+        }
+        catch(Exception e)
+        {
+            Logger.error("Error in fetching fetchDSPs", e);
+        }
+        finally
+        {
+            try
+            {
+                if(con != null)
+                {
+                    con.close();
+                }
+            }
+            catch (SQLException e)
+            {
+                Logger.error("Error in closing DB connection",e);
+            }
+        }
+
+        return null;
+    }
+
+    public static List<SelectOption> fetchAuctionTypes()
+    {
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        try
+        {
+            selectOptions.add(new SelectOption("FIRST_PRICE_AUCTION", String.valueOf(AuctionType.FIRST_PRICE_AUCTION)));
+            selectOptions.add(new SelectOption("SECOND_PRICE_AUCTION", String.valueOf(AuctionType.SECOND_PRICE_AUCTION)));
+            selectOptions.add(new SelectOption("FIXED_PRICE", String.valueOf(AuctionType.FIXED_PRICE)));
+        }
+        catch(Exception e){
+            Logger.error("Error in fetchAuctionTypes", e);
+        }
+
+        return selectOptions;
     }
 }

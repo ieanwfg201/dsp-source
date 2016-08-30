@@ -22,6 +22,7 @@ enum TABLE{
     channel_hourly = 12,
     channel_daily = 13,
     channel_monthly = 14,
+    fast_path = 15,
 }  
 
 struct SiteId {

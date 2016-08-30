@@ -1,0 +1,4 @@
+#fast_path_delete.job
+type=command
+dependencies=fast_path_upload
+command=sh fast_path_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hourlyhour} 

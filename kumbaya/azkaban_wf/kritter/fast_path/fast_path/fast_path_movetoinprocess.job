@@ -1,0 +1,6 @@
+# fats_path_movetoinprocess.job
+
+type=command
+dependencies=fast_path_init
+command=mkdir -p ${postimp_readytoprocess_path}/"${process_time_dir}"
+command.1=sh fast_path_movetoinprocess.sh ${postimp_input_path} ${postimp_readytoprocess_path}/"${process_time_dir}"  "${process_time}" "${process_time_dir}" "${kritter_first_level_code_path}"

@@ -105,8 +105,10 @@ public class Campaign implements IUpdatableEntity<Integer>
             this.updateTime = updateTime;
         }
 
-        public CampaignBuilder setFrequencyCap(String frequencyCap) throws Exception {
-            this.frequencyCap = FreqCap.getObject(frequencyCap);
+        public CampaignBuilder setFrequencyCap(String frequencyCapStr) throws Exception {
+            if(frequencyCapStr != null && !frequencyCapStr.isEmpty()) {
+                this.frequencyCap = FreqCap.getObject(frequencyCapStr);
+            }
             return this;
         }
 

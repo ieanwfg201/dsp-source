@@ -54,5 +54,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="41"><ref bean="user_id_cache"/></constructor-arg>
         <constructor-arg index="42"><ref bean="nofrdp_event_url_reader"/></constructor-arg>
         <constructor-arg index="43"><ref bean="nofrdp_enricher_fraud_processor"/></constructor-arg>
+        <constructor-arg index="44"><ref bean="user_lifetime_ad_imp_cache"/></constructor-arg>
+        <constructor-arg index="45"><ref bean="user_lifetime_ad_click_cache"/></constructor-arg>
     </bean>
 </beans>

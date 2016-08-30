@@ -4,10 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.kritter.kritterui.api.db_query_def.Metadata;
 import org.codehaus.jackson.JsonNode;
@@ -115,7 +112,48 @@ public class MetadataCrud {
     public static JsonNode get_category_by_id(Connection con){
         return get_metalist(con,MetadataType.CATEGORY_BY_ID,null).toJson();
     }
-    
+    public static Set<String> get_iab_categories_by_id(Connection con,Integer[] ids){
+        MetaInput metaInput = new MetaInput();
+        StringBuffer sb = new StringBuffer();
+        for(Integer id:ids)
+        {
+            sb.append(id);
+            sb.append(",");
+        }
+        sb = sb.deleteCharAt(sb.length()-1);
+        metaInput.setQuery_id_list(sb.toString());
+
+        MetaList metaList = get_metalist(con,MetadataType.CATEGORY_BY_ID,metaInput);
+        Set<String> idSet = new HashSet<String>();
+
+        if(null != metaList)
+        {
+            List <MetaField> fields = metaList.getMetaFieldList();
+
+            for(MetaField metaField : fields)
+            {
+                idSet.add(metaField.getName());
+            }
+
+            return idSet;
+        }
+
+        return idSet;
+    }
+    public static JsonNode get_category_by_id(Connection con,Integer[] ids){
+        MetaInput metaInput = new MetaInput();
+        StringBuffer sb = new StringBuffer();
+        for(Integer id:ids)
+        {
+            sb.append(id);
+            sb.append(",");
+        }
+
+        sb = sb.deleteCharAt(sb.length()-1);
+        metaInput.setQuery_id_list(sb.toString());
+
+        return get_metalist(con,MetadataType.CATEGORY_BY_ID,metaInput).toJson();
+    }
     public static JsonNode get_app_store_id(Connection con){
         return get_metalist(con,MetadataType.APP_STORE_ID,null).toJson();
     }

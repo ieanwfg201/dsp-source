@@ -3,10 +3,12 @@ package services;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import com.kritter.api.entity.deal.PMPMessagePair;
 import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
+import com.kritter.api.entity.site.Site;
 import models.formelements.SelectOption;
 import play.Logger;
 import play.db.DB;
@@ -734,5 +736,32 @@ public class DataAPI {
         }
         return campaignOptions;
     }
-    
+
+	public static String fetchSiteName(Integer id)
+	{
+		Connection con = null;
+
+		try {
+			con = DB.getConnection();
+			if(null != id) {
+				Site site = ApiDef.get_site_by_inc_id(con, id.intValue());
+				if(null != site)
+					return site.getName();
+			}
+		}
+		catch(Exception e){
+			play.Logger.error(e.getMessage()+".Error fetching  site list in DataApi",e);
+		}
+		finally{
+			try {
+				if(con != null){
+					con.close();
+				}
+			} catch (SQLException e) {
+				Logger.error("Error closing DB connection in fetchSiteNames of DataApi",e);
+			}
+		}
+
+		return null;
+	}
 }
