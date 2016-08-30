@@ -968,6 +968,50 @@ public class SiteCrud {
         return site;
     }
 
+    public static Site get_site(Connection con, Integer siteIncId)
+    {
+        if(con == null || null == siteIncId)
+            return null;
+
+        PreparedStatement pstmt = null;
+        Site site = null;
+        try
+        {
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Site.get_Site_Inc_id);
+            pstmt.setInt(1, siteIncId);
+
+            ResultSet rset = pstmt.executeQuery();
+
+            while(rset.next())
+            {
+                site = new Site();
+                populate(site, rset);
+            }
+
+        }
+        catch(Exception e)
+        {
+            LOG.error(e.getMessage(),e);
+            return null;
+        }
+        finally
+        {
+            if(pstmt != null)
+            {
+                try
+                {
+                    pstmt.close();
+                }
+                catch (SQLException e)
+                {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+        }
+
+        return site;
+    }
+
     public static List<Site> get_site_by_pub_guid(Connection con, String pubGuid)
     {
         if(con == null || null == pubGuid)

@@ -52,7 +52,7 @@ public class DealController extends Controller
         Form<DealFormEntity> dealForm  = dealFormTemplate.bindFromRequest();
         PrivateMarketPlaceApiEntity pmp = null;
 
-        if(!dealForm.hasErrors())
+        if(!"cancel".equals(dealForm.data().get("action")) && !dealForm.hasErrors())
         {
             Connection con = null;
 
@@ -62,7 +62,11 @@ public class DealController extends Controller
                 DealFormEntity deal = dealForm.get();
                 pmp = deal.getEntity();
                 Message msg = null;
-                msg = ApiDef.insert_pmp_deal(con, pmp);
+
+                if(deal.isEdit == 1)
+                    msg = ApiDef.update_pmp_deal(con,pmp);
+                else
+                    msg = ApiDef.insert_pmp_deal(con, pmp);
 
                 if(msg.getError_code() != 0)
                     return badRequest();
@@ -95,6 +99,7 @@ public class DealController extends Controller
     public static Result edit(   String pmpId )
     {
         PrivateMarketPlaceApiEntity deal = DataAPI.getPMPDealByGuid(pmpId);
+        deal.setIsEdit(1);
         DealFormEntity dealEntity = new DealFormEntity();
         BeanUtils.copyProperties(deal, dealEntity);
 

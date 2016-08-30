@@ -220,8 +220,10 @@ public class AdEntity implements IUpdatableEntity<Integer>
             return this;
         }
 
-        public AdEntityBuilder setFrequencyCap(String frequencyCap) throws Exception {
-            this.frequencyCap = FreqCap.getObject(frequencyCap);
+        public AdEntityBuilder setFrequencyCap(String frequencyCapStr) throws Exception {
+            if(frequencyCapStr != null && !frequencyCapStr.isEmpty()) {
+                this.frequencyCap = FreqCap.getObject(frequencyCapStr);
+            }
             return this;
         }
 

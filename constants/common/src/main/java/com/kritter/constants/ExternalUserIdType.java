@@ -25,10 +25,9 @@ public enum ExternalUserIdType {
     DEVICE_ID("did", true), /*Hardware device ID (e.g., IMEI);Clear Text*/
     MAC("mac", true), /*MAC address of the device; Clear Text*/
     UDID("udid", true), /*udid*/
-	OPENUDID("oudid", true), /*OpenUdid*/
-	AAID("aaid", true) /*aaid*/
-	;
-	
+    OPENUDID("oudid", true), /*OpenUdid*/
+    AAID("aaid", true) /*aaid*/;
+
     @Getter
     private String typeName;
     /**

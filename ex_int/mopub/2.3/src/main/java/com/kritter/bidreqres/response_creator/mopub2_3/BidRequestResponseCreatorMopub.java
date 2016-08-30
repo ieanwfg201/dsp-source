@@ -277,6 +277,12 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                     adEntity.getAdIncId(), adEntity.getLandingUrl());
             return null;
         }
+
+        if(responseAdInfo.getCreative().getExternalResourceURL() != null)
+        {
+            bidResponseBidMopubDTO.setSampleImageUrl(responseAdInfo.getCreative().getExternalResourceURL());
+        }
+
         bidResponseBidMopubDTO.setAdvertiserDomains(advertiserDomain);
         bidResponseBidMopubDTO.setBidId(responseAdInfo.getImpressionId());
         bidResponseBidMopubDTO.setRequestImpressionId(bidRequestImpressionId);
@@ -342,8 +348,9 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                 extraTrackingSize = adEntity.getExtTracker().getImpTracker().size();
             }
         }
-        String impTrackers[] = new String[1+extraTrackingSize];
+        String impTrackers[] = new String[2+extraTrackingSize];
         impTrackers[0] = fetchImpressionTrackerSameAsCSC(request,responseAdInfo,response);
+        impTrackers[1] = winNotificationURLBuffer.toString();
         if(extraTrackingSize>0){
             int count =1;
             for(String str:adEntity.getExtTracker().getImpTracker()){
@@ -397,17 +404,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                                                     Response response
                                                   ) throws BidResponseException
     {
-        String clickUri = CreativeFormatterUtils.prepareClickUri
-                (
-                        this.logger,
-                        request,
-                        responseAdInfo,
-                        response.getBidderModelId(),
-                        urlVersion,
-                        request.getInventorySource(),
-                        response.getSelectedSiteCategoryId(),
-                        this.secretKey
-                );
+        String clickUri = responseAdInfo.getCommonURIForPostImpression();
 
         if (null == clickUri)
             throw new BidResponseException("Click URI could not be formed using different attributes like " +

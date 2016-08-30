@@ -1,0 +1,5 @@
+# fast_path_pig.job
+
+type=command
+dependencies=fast_path_movetoinprocess
+command=sh fast_path_pig.sh '${kritter_first_level_code_path}' '${pig_home}' "${postimp_readytoprocess_path}"/"${process_time_dir}" '${OUTPUT}'/'${process_time_dir}' '${thrift_jar_path}' '${process_time}' '${process_time_dir}' '${tz}'

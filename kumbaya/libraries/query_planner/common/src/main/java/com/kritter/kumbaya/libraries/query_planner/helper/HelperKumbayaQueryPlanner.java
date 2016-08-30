@@ -145,6 +145,8 @@ public class HelperKumbayaQueryPlanner {
     		default:
     			return null;
     		}    		
+    	}else if(reportingDTableType == ReportingTableType.FASTPATH){
+    		return TABLE.fast_path;
     	}else{
     		return null;
     	}

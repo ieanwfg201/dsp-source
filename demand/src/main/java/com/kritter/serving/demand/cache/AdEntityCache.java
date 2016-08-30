@@ -168,6 +168,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             int impressionsAccrued = resultSet.getInt("impressions_accrued");
             int bidtype = resultSet.getInt("bidtype");
             String external_tracker = resultSet.getString("external_tracker");
+            String frequencyCapStr = resultSet.getString("freqcap_json");
             ExtTracker extTracker = null;
             if(external_tracker != null && !"".equals(external_tracker.trim())){
                 extTracker= ExtTracker.getObject(external_tracker.trim());
@@ -255,6 +256,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
                                                .setCpaGoal(cpaGoal)
                                                .setAdvertiserDomain(advertiserDomains)
                                                .setAdExt(adExt)
+                                               .setFrequencyCap(frequencyCapStr)
                                                .build();
         }
         catch(Exception e)

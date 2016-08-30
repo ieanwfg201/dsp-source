@@ -3,6 +3,7 @@ package com.kritter.kritterui.api.def;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Set;
 
 import com.kritter.api.entity.deal.*;
 import com.kritter.api.entity.parent_account.ParentAccount;
@@ -353,6 +354,10 @@ public class ApiDef {
     public static List<Site> get_site_list_by_pub_guid(Connection con, String pubGuid){
         return SiteCrud.get_site_by_pub_guid(con, pubGuid);
     }
+    public static Site get_site_by_inc_id(Connection con, Integer id){
+        return SiteCrud.get_site(con, id);
+    }
+
     public static JsonNode approve_site(Connection con, JsonNode jsonNode){
         return SiteCrud.approve_site(con, jsonNode);
     }
@@ -645,6 +650,14 @@ public class ApiDef {
     public static JsonNode get_category_by_id(Connection con){
         return MetadataCrud.get_category_by_id(con);
     }
+    public static JsonNode get_category_by_id_list(Connection con,Integer[] ids){
+        return MetadataCrud.get_category_by_id(con,ids);
+    }
+    public static Set<String> getCategoriesById(Connection connection, Integer[] ids)
+    {
+        return MetadataCrud.get_iab_categories_by_id(connection,ids);
+    }
+
     public static JsonNode get_app_store_id(Connection con){
         return MetadataCrud.get_app_store_id(con);
     }
@@ -1033,6 +1046,11 @@ public class ApiDef {
     public static Message insert_pmp_deal(Connection con, PrivateMarketPlaceApiEntity pmp)
     {
         return PrivateMarketPlaceDealCrud.insertPrivateMarketPlaceDeal(pmp,con,true);
+    }
+
+    public static Message update_pmp_deal(Connection con, PrivateMarketPlaceApiEntity pmp)
+    {
+        return PrivateMarketPlaceDealCrud.updatePrivateMarketPlaceDeal(pmp,con,true);
     }
 
     public static PMPMessagePair get_PMP_deal_By_Guid(Connection con, PrivateMarketPlaceApiEntity privateMarketPlaceApiEntity){

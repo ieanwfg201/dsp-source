@@ -58,14 +58,8 @@ IMPRESSION = 1,
 CLICK = 2,
 }
 
-struct LifetimeAdHistory {
+struct LifetimeDemandHistory {
 1: byte version = 1,
-2: optional map<i32, i64> adEventCount,
-3: optional EventType eventType,
-}
-
-struct LifetimeCampaignHistory {
-1: byte version = 1,
-2: optional map<i32, i64> campaignEventCount,
+2: optional map<i32, i64> demandEventCount,
 3: optional EventType eventType,
 }
