@@ -1,11 +1,21 @@
 package models.pmp.display;
 
+import com.kritter.api.entity.account.Account;
+import com.kritter.api.entity.ad.Ad;
+import com.kritter.kritterui.api.def.ApiDef;
+import org.codehaus.jackson.map.ObjectMapper;
 import models.uiutils.Path;
 import scala.Option;
 import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
 
 import controllers.deal.routes;
+import services.DataAPI;
+import services.MetadataAPI;
+
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class PMPDisplay
@@ -50,15 +60,164 @@ public class PMPDisplay
         return this.privateMarketPlaceApiEntity.getDealId();
     }
 
-    public String getAdIdList()
+    public String thirdPartyConnection()
     {
-        return this.privateMarketPlaceApiEntity.getAdIdList();
+        Account account = DataAPI.getAccountByGuid(this.privateMarketPlaceApiEntity.getThirdPartyConnectionGuid());
+        return account.getName();
+
     }
 
+    public String getDSPList()
+    {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Integer[] ids = null;
+
+        try
+        {
+            ids = objectMapper.readValue(privateMarketPlaceApiEntity.getDspIdList(), Integer[].class);
+        }
+        catch (Exception e)
+        {
+        }
+
+        return MetadataAPI.fetchDSPsForExternalConnectionWithGivenIds(this.privateMarketPlaceApiEntity.getThirdPartyConnectionGuid(),ids);
+    }
+
+    public String getAdvertiserList()
+    {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Integer[] ids = null;
+
+        try
+        {
+            ids = objectMapper.readValue(privateMarketPlaceApiEntity.getAdvertiserIdList(), Integer[].class);
+        }
+        catch (Exception e)
+        {
+        }
+        return MetadataAPI.fetchAdvsForExternalConnectionWithGivenIds(this.privateMarketPlaceApiEntity.getThirdPartyConnectionGuid(),ids);
+
+    }
+
+    public String getAdIdList()
+    {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Set<String> adNames = new HashSet();
+        if(null != privateMarketPlaceApiEntity.getAdIdList())
+        {
+            try
+            {
+                Integer[] adIds = objectMapper.readValue(privateMarketPlaceApiEntity.getAdIdList(), Integer[].class);
+                if(null != adIds)
+                {
+                    for(Integer id : adIds)
+                    {
+                        Ad ad = DataAPI.getAd(id.intValue());
+                        adNames.add(ad.getName());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+        return adNames.toString();
+    }
+
+    public String siteList()
+    {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Set<String> siteNames = new HashSet<String>();
+        if(null != privateMarketPlaceApiEntity.getSiteIdList())
+        {
+            try
+            {
+                Integer[] siteIds = objectMapper.readValue(privateMarketPlaceApiEntity.getSiteIdList(), Integer[].class);
+                if(null != siteIds)
+                {
+                    for(Integer id : siteIds)
+                    {
+                        String name = DataAPI.fetchSiteName(id);
+                        siteNames.add(name);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+        return siteNames.toString();    }
+
+    public String categoryList()
+    {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        if(null != privateMarketPlaceApiEntity.getBlockedIABCategories()) {
+            try {
+                Integer[] ids = objectMapper.readValue(privateMarketPlaceApiEntity.getBlockedIABCategories(), Integer[].class);
+                if (null != ids) {
+                    return MetadataAPI.fetchIABCategoriesByIds(ids);
+                }
+            } catch (Exception e)
+            {
+
+            }
+        }
+
+        return "";
+    }
+
+    public String domains()
+    {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            if (null != this.privateMarketPlaceApiEntity.getWhitelistedAdvertiserDomains()) {
+                String[] values = objectMapper.readValue(this.privateMarketPlaceApiEntity.getWhitelistedAdvertiserDomains(), String[].class);
+                StringBuffer sb = new StringBuffer();
+                for (String value : values) {
+                    sb.append(value);
+                    sb.append(",");
+                }
+
+                sb = sb.deleteCharAt(sb.length() - 1);
+                return sb.toString();
+            }
+        }
+        catch (Exception e)
+        {
+        }
+
+        return "";
+    }
+
+    public String auctionType()
+    {
+        return this.privateMarketPlaceApiEntity.getAuctionType();
+    }
+
+    public String requestCap()
+    {
+        return this.privateMarketPlaceApiEntity.getRequestCap();
+    }
+
+    public String startDate()
+    {
+        return new Timestamp(this.privateMarketPlaceApiEntity.getStartDate()).toString();
+    }
+
+    public String endDate()
+    {
+        return new Timestamp(this.privateMarketPlaceApiEntity.getEndDate()).toString();
+    }
+
+    public String dealCpm()
+    {
+        return this.privateMarketPlaceApiEntity.getDealCPM();
+    }
 
     public void setDestination(String destination){
         this.destinationUrl = destination;
     }
-
 }
 

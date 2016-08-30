@@ -50,7 +50,7 @@ public class PrivateMarketPlaceDealCrud
 
             pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.PrivateMarketPlaceDeal.INSERT_NEW_DEAL, PreparedStatement.RETURN_GENERATED_KEYS);
 
-            LOG.error("No error , Data for deal is: {} ",privateMarketPlaceDeal.toString());
+            LOG.error("No error , Data for deal insert is: {} ",privateMarketPlaceDeal.toString());
 
             String domainsWhitelisted = null;
 
@@ -92,6 +92,8 @@ public class PrivateMarketPlaceDealCrud
             {
                 con.commit();
             }
+
+            LOG.error("Return code for deal insert is: {} " , returnCode );
 
             if(returnCode == 0)
             {
@@ -165,6 +167,156 @@ public class PrivateMarketPlaceDealCrud
             }
         }
     }
+
+    public static Message updatePrivateMarketPlaceDeal(PrivateMarketPlaceApiEntity privateMarketPlaceDeal, Connection con, boolean createTransaction)
+    {
+        if(con == null)
+        {
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            return msg;
+        }
+
+        if(null == privateMarketPlaceDeal)
+        {
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.PMP_DEAL_NULL.getId());
+            msg.setMsg(ErrorEnum.PMP_DEAL_NULL.getName());
+            return msg;
+        }
+
+        PreparedStatement pstmt = null;
+        boolean autoCommitFlag = false;
+
+        try
+        {
+            if(createTransaction)
+            {
+                autoCommitFlag = con.getAutoCommit();
+                con.setAutoCommit(false);
+            }
+
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.PrivateMarketPlaceDeal.UPDATE_DEAL, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            LOG.error("No error , Data for deal update is: {} ",privateMarketPlaceDeal.toString());
+
+            String domainsWhitelisted = null;
+
+            if(null != privateMarketPlaceDeal.getWhitelistedAdvertiserDomains())
+            {
+                String[] domains = null;
+                String values[] =  privateMarketPlaceDeal.getWhitelistedAdvertiserDomains().split(",");
+                if(null != values && values.length > 0)
+                    domains = new String[values.length];
+
+                int i = 0;
+                for(String value: values)
+                {
+                    domains[i++] = value;
+                }
+                ObjectMapper o = new ObjectMapper();
+                domainsWhitelisted = o.writeValueAsString(domains);
+            }
+
+            pstmt.setString(1, privateMarketPlaceDeal.getDealName());
+            pstmt.setString(2,privateMarketPlaceDeal.getAdIdList());
+            pstmt.setString(3,privateMarketPlaceDeal.getSiteIdList());
+            pstmt.setString(4,privateMarketPlaceDeal.getBlockedIABCategories());
+            pstmt.setString(5,privateMarketPlaceDeal.getThirdPartyConnectionGuid());
+            pstmt.setString(6,privateMarketPlaceDeal.getDspIdList());
+            pstmt.setString(7,privateMarketPlaceDeal.getAdvertiserIdList());
+            pstmt.setString(8,domainsWhitelisted);
+            pstmt.setShort(9,Short.valueOf(privateMarketPlaceDeal.getAuctionType()));
+            pstmt.setInt(10,Integer.valueOf(privateMarketPlaceDeal.getRequestCap()));
+            pstmt.setTimestamp(11,new Timestamp(privateMarketPlaceDeal.getStartDate()));
+            pstmt.setTimestamp(12,new Timestamp(privateMarketPlaceDeal.getEndDate()));
+            pstmt.setDouble(13,Double.valueOf(privateMarketPlaceDeal.getDealCPM()));
+            pstmt.setTimestamp(14,new Timestamp(System.currentTimeMillis()));
+            pstmt.setString(15,privateMarketPlaceDeal.getDealId());
+
+            int returnCode = pstmt.executeUpdate();
+
+            if(createTransaction)
+            {
+                con.commit();
+            }
+
+            LOG.error("Return code for deal update is: {} " , returnCode );
+
+            if(returnCode == 0)
+            {
+                Message msg = new Message();
+                msg.setError_code(ErrorEnum.PMP_DEAL_NOT_INSERTED.getId());
+                msg.setMsg(ErrorEnum.PMP_DEAL_NOT_INSERTED.getName());
+                return msg;
+            }
+
+            ResultSet keyResultSet = pstmt.getGeneratedKeys();
+            int db_id = -1;
+
+            if (keyResultSet.next())
+            {
+                db_id = keyResultSet.getInt(1);
+            }
+
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.NO_ERROR.getId());
+            msg.setMsg(ErrorEnum.NO_ERROR.getName());
+            msg.setId(db_id+"");
+            return msg;
+
+        }
+        catch(Exception e)
+        {
+            LOG.error(e.getMessage(),e);
+
+            if(createTransaction)
+            {
+                try
+                {
+                    con.rollback();
+                }
+                catch (SQLException e1)
+                {
+                    LOG.error(e1.getMessage(),e1);
+                }
+            }
+
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
+            return msg;
+
+        }
+        finally
+        {
+            if(pstmt != null)
+            {
+                try
+                {
+                    pstmt.close();
+                }
+                catch (SQLException e)
+                {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+
+            if(createTransaction)
+            {
+                try
+                {
+                    con.setAutoCommit(autoCommitFlag);
+                }
+                catch (SQLException e1)
+                {
+                    LOG.error(e1.getMessage(),e1);
+                }
+            }
+        }
+    }
+
 
     public static ThirdPartyConnectionChildIdList getDSPAdvIdListForAdvertiserGuid(Connection con, ThirdPartyConnectionChildId thirdPartyConnectionChildId)
     {
@@ -435,7 +587,7 @@ public class PrivateMarketPlaceDealCrud
             privateMarketPlaceApiEntity.setAuctionType(String.valueOf(resultSet.getShort("auction_type")));
             privateMarketPlaceApiEntity.setRequestCap(String.valueOf(resultSet.getInt("request_cap")));
             privateMarketPlaceApiEntity.setStartDate((resultSet.getTimestamp("start_date")).getTime());
-            privateMarketPlaceApiEntity.setStartDate((resultSet.getTimestamp("end_date")).getTime());
+            privateMarketPlaceApiEntity.setEndDate((resultSet.getTimestamp("end_date")).getTime());
             privateMarketPlaceApiEntity.setDealCPM(String.valueOf(resultSet.getDouble("deal_cpm")));
         }
     }

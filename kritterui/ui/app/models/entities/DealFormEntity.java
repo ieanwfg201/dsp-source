@@ -173,4 +173,6 @@ public class DealFormEntity extends DealEntity
     {
         super.setDealCPM(dealCPM);
     }
+
+    public int isEdit = 0;
 }

@@ -11,6 +11,7 @@
 				<fieldset>
 					<legend>PMP Fields</legend>
 					<div>
+                                                @components.formElements.hiddenfield(pmpForm("isEdit"))
 						@components.formElements.textinput(pmpForm("dealId"),'_label -> "Deal Id *" )
 						@components.formElements.textinput(pmpForm("dealName"),'_label -> "Deal Name *" )
                                                 @components.formElements.selectlist2(pmpForm("thirdPartyConnectionGuid"), "External Demand *",services.MetadataAPI.getActiveDSPDemandPartner(), '_ngSync ->true, '_ngChange ->"updateCampaignsAndExternalData()")
@@ -22,7 +23,7 @@
 						@components.formElements.multiselectlist3(pmpForm("dspIdList"),'_label -> "DSP List ", '_row->true)
                                                 @components.formElements.multiselectlist3(pmpForm("advertiserIdList"),'_label -> "Advertiser List ", '_row->true)
                                                 @components.formElements.textinput(pmpForm("whitelistedAdvertiserDomains"),'_label -> "Advertiser Domains Whitelist CSV" )
-                                                @components.formElements.textinput(pmpForm("auctionType"),'_label -> "Auction Type *" )
+                                                @components.formElements.selectlist2(pmpForm("auctionType"), "Auction Type *",services.MetadataAPI.fetchAuctionTypes(),'_ngSync ->true)
                                                 @components.formElements.textinput(pmpForm("requestCap"),'_label -> "RequestCap" )
 						@components.formElements.dateinput(pmpForm("startDate"),"Start Date *" )
 						@components.formElements.dateinput(pmpForm("endDate"),"End Date *" )
@@ -31,6 +32,7 @@
 				</fieldset>
 				</div>
 				@components.formElements.submitbutton("save", "Save")
+                                @components.formElements.submitbutton("cancel", "Cancel")
 			</div>
 		</section>
 	</div>

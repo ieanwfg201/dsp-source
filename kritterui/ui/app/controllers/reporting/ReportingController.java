@@ -81,6 +81,11 @@ public class ReportingController extends Controller{
 	        return ok(views.html.reporting.channelReport.render(reportConfigForm.fill(rfe), 0));
 	}
 	@SecuredAction
+    public static Result fastpathReport(){
+	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
+	        return ok(views.html.reporting.fastpathReport.render(reportConfigForm.fill(rfe), 0));
+	}
+	@SecuredAction
     public static Result adpositionReport(){
 	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
 	        return ok(views.html.reporting.adpositionReport.render(reportConfigForm.fill(rfe), 0));
@@ -470,6 +475,12 @@ public class ReportingController extends Controller{
     }
 	public static Result channelreportDataCSV(){
         return reportDataCSV(null,true,ReportingTableType.CHANNEL);
+    }
+    public static Result fastpathreportData(){
+        return reportData(false, false, null, null,true,ReportingTableType.FASTPATH);
+    }
+	public static Result fastpathreportDataCSV(){
+        return reportDataCSV(null,true,ReportingTableType.FASTPATH);
     }
     public static Result adpositionreportData(){
         return reportData(false, false, null, null,true,ReportingTableType.ADPOSITION);

@@ -20,6 +20,7 @@ import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
 import com.kritter.entity.user.userid.InternalUserIdCreator;
 import com.kritter.entity.user.userid.UserIdUpdator;
+import com.kritter.nosql.user.recenthistory.UserLifetimeDemandHistoryCache;
 import com.kritter.postimpression.enricher_fraud.*;
 import com.kritter.postimpression.entity.Request;
 import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
@@ -44,11 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * This class processes different post impression events available such
@@ -112,6 +109,8 @@ public class EventURLProcessorJob implements Job
     private UserIdUpdator userIdUpdator;
     private NOFraudParamUrlReader nofraudParamUrlReader;
     private NoFraudParamEnricherAndFraudProcessor nofraudParamEnricherAndFraudProcessor;
+    private UserLifetimeDemandHistoryCache adLifetimeImpHistoryCache;
+    private UserLifetimeDemandHistoryCache adLifetimeClickHistoryCache;
 
     public EventURLProcessorJob(
             String name,
@@ -157,7 +156,9 @@ public class EventURLProcessorJob implements Job
             UserSegmentProvider userSegmentProvider,
             UserIdUpdator userIdUpdator,
             NOFraudParamUrlReader nofraudParamUrlReader,
-            NoFraudParamEnricherAndFraudProcessor nofraudParamEnricherAndFraudProcessor
+            NoFraudParamEnricherAndFraudProcessor nofraudParamEnricherAndFraudProcessor,
+            UserLifetimeDemandHistoryCache adLifetimeImpHistoryCache,
+            UserLifetimeDemandHistoryCache adLifetimeClickHistoryCache
             )
     {
         this.name = name;
@@ -206,7 +207,8 @@ public class EventURLProcessorJob implements Job
         this.userIdUpdator = userIdUpdator;
         this.nofraudParamUrlReader = nofraudParamUrlReader;
         this.nofraudParamEnricherAndFraudProcessor = nofraudParamEnricherAndFraudProcessor;
-
+        this.adLifetimeImpHistoryCache = adLifetimeImpHistoryCache;
+        this.adLifetimeClickHistoryCache = adLifetimeClickHistoryCache;
     }
 
     @Override
@@ -438,10 +440,20 @@ public class EventURLProcessorJob implements Job
 
                 PostImpressionUtils.redirectUserToLandingPage(landingPageUrl,
                         (HttpServletResponse) context.getValue(Workflow.CONTEXT_RESPONSE_KEY));
+
+                if(null != kritterInternalUserId &&
+                        null != adLifetimeImpHistoryCache) {
+                    Map<Integer, Integer> adImpCount = new HashMap<Integer, Integer>();
+                    adImpCount.put(postImpressionRequest.getAdId(), 1);
+                    adLifetimeClickHistoryCache.updateUserHistory(kritterInternalUserId, adImpCount);
+                }
             }
             catch (IOException e){
 
                 logger.error("IOException inside EventURLProcessorJob ",e);
+            }
+            catch (Exception e) {
+                logger.error("Exception inside EventURLProcessorJob", e);
             }
         }else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
                 PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.MACRO_CLICK
@@ -637,6 +649,15 @@ public class EventURLProcessorJob implements Job
 
                     logger.debug("RecentImpressionHistory updated for kritterUserId:{} for adId: {} ",
                                  kritterInternalUserId, postImpressionRequest.getAdId());
+                }
+
+                if(null != kritterInternalUserId &&
+                        onlineFraudReason.getFraudReasonValue().equalsIgnoreCase(
+                                ONLINE_FRAUD_REASON.HEALTHY_REQUEST.getFraudReasonValue())
+                        && null != adLifetimeImpHistoryCache) {
+                    Map<Integer, Integer> adImpCount = new HashMap<Integer, Integer>();
+                    adImpCount.put(postImpressionRequest.getAdId(), 1);
+                    adLifetimeImpHistoryCache.updateUserHistory(kritterInternalUserId, adImpCount);
                 }
 
             }

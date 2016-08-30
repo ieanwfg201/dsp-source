@@ -54,6 +54,8 @@
                 <ref bean="frequency_cap_filter"/>
                 <ref bean="lat_lon_file_targeting"/>
                 <ref bean="user_id_inc_exc_filter"/>
+                <ref bean="lifetime_ad_imp_filter"/>
+                <ref bean="lifetime_ad_click_filter"/>
             </list>
         </constructor-arg>
     </bean>

@@ -15,6 +15,10 @@
 			<li><a href="/reporting/adposition"><i
 				class="fa fa-caret-right"></i><span data-i18n="AdPosition"></span></a></li>
 		}
+		@if("true" == Play.application().configuration().getString("fast_path") )  {
+			<li><a href="/reporting/fastpath"><i
+				class="fa fa-caret-right"></i><span data-i18n="FastPath"></span></a></li>
+		}
 		<li><a href="/reporting/demand"><i
 				class="fa fa-caret-right"></i><span data-i18n="Demand"></span></a></li>
 		<li><a href="/reporting/supply"><i

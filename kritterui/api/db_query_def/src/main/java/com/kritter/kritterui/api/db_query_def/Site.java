@@ -39,6 +39,8 @@ public class Site {
 
     public static final String get_Site_Guid = "select * from site where guid= ?";
 
+    public static final String get_Site_Inc_id = "select * from site where id= ?";
+
     public static final String get_Site_by_pub_guid = "select * from site where pub_guid = ?";
 
     public static final String approve_site = "update site set status_id=1,last_modified=? where id=?";

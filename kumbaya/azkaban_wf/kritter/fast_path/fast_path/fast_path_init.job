@@ -1,0 +1,4 @@
+# fast_path_init.job
+
+type=command
+command=sh fast_path_init.sh
