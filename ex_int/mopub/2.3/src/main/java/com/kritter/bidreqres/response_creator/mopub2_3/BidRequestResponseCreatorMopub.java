@@ -338,8 +338,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         bidResponseBidMopubDTO.setPrice(responseAdInfo.getEcpmValue().floatValue());
 
         /***prepare nurl ,win notification url.impression tracker****/
-
-        bidResponseBidMopubDTO.setWinNotificationUrl(winNotificationURLBuffer.toString());
+        //bidResponseBidMopubDTO.setWinNotificationUrl(winNotificationURLBuffer.toString());
 
         BidResponseBidExtMopubDTO bidResponseBidExtMopubDTO = new BidResponseBidExtMopubDTO();
         int extraTrackingSize=0;

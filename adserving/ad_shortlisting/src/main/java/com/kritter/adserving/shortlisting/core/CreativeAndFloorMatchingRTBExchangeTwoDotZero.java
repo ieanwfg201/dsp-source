@@ -296,6 +296,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                 /************************Creative attributes check ends here******************************************/
 
                 CreativeBanner creativeBannerToUse = null;
+                CreativeSlot creativeSlotToUse = null;
                 //first sort banner uri ids on size and then use.
                 List<CreativeBanner> creativeBannerList = new ArrayList<CreativeBanner>();
                 Integer bannerUriIds[] = null;
@@ -455,6 +456,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                                     bannerId,bidRequestImpressionDTO.getBidRequestImpressionId());
 
                             creativeBannerToUse = creativeBanner;
+                            creativeSlotToUse = creativeSlot;
                             sizeCheckForBanner = true;
                             creativeFoundForRequestedSlot = true;
                             break;
@@ -465,6 +467,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                                     bannerId,bidRequestImpressionDTO.getBidRequestImpressionId());
 
                             creativeBannerToUse = creativeBanner;
+                            creativeSlotToUse = creativeSlot;
                             sizeCheckForBanner = true;
                             creativeFoundForRequestedSlot = true;
                             responseAdInfo.setRequestingWidthForWhichCreativeFound(width);
@@ -479,6 +482,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                                     bannerId,bidRequestImpressionDTO.getBidRequestImpressionId());
 
                             creativeBannerToUse = creativeBanner;
+                            creativeSlotToUse = creativeSlot;
                             sizeCheckForBanner = true;
                             creativeFoundForRequestedSlot = true;
                             responseAdInfo.setRequestingWidthForWhichCreativeFound(width);
@@ -546,6 +550,8 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
                     // Banner allowed. Check further
                     creativeBannerToUse = creativeBannerCache.query(bannerUriIds[0]);
+                    CreativeSlot creativeSlot = creativeSlotCache.query(creativeBannerToUse.getSlotId());
+                    responseAdInfo.setCreativeSlot(creativeSlot);
                     creativeFoundForRequestedSlot = true;
                 }
 
@@ -603,7 +609,10 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
                     responseAdInfo.setCreativeBanner(creativeBannerToUse);
                     if(null != creativeBannerToUse)
+                    {
                         responseAdInfo.setSlotId(creativeBannerToUse.getSlotId());
+                        responseAdInfo.setCreativeSlot(creativeSlotToUse);
+                    }
 
                     response.addResponseAdInfoAgainstBidRequestImpressionId
                             (

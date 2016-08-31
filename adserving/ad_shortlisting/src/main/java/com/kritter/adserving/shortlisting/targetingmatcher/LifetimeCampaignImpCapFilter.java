@@ -27,4 +27,9 @@ public class LifetimeCampaignImpCapFilter extends LifetimeCampaignCapFilter {
     public FreqEventType getEventType() {
         return FreqEventType.IMP;
     }
+
+    @Override
+    public NoFillReason getNoFillReason() {
+        return noFillReason;
+    }
 }

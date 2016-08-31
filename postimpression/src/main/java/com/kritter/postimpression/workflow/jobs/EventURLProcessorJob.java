@@ -1,37 +1,36 @@
 package com.kritter.postimpression.workflow.jobs;
 
+import com.kritter.constants.*;
+import com.kritter.entity.freqcap_entity.FreqCap;
+import com.kritter.entity.freqcap_entity.FreqDef;
+import com.kritter.entity.user.recenthistory.LifetimeDemandHistoryProvider;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.entity.user.userid.UserIdProvider;
 import com.kritter.entity.user.usersegment.UserSegmentProvider;
 import com.kritter.fanoutinfra.apiclient.common.KHttpClient;
 import com.kritter.fanoutinfra.apiclient.ning.NingClient;
 import com.kritter.fanoutinfra.executorservice.common.KExecutor;
-import com.kritter.constants.DeviceType;
-import com.kritter.constants.ExternalUserIdType;
 import com.kritter.entity.user.recenthistory.RecentHistoryProvider;
 import com.kritter.common.site.entity.Site;
-import com.kritter.constants.ConnectionType;
-import com.kritter.constants.INVENTORY_SOURCE;
-import com.kritter.constants.NoFraudPostImpEvents;
-import com.kritter.constants.UserConstant;
 import com.kritter.constants.tracking_partner.TrackingPartner;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.entity.user.userid.InternalUserIdCreator;
 import com.kritter.entity.user.userid.UserIdUpdator;
-import com.kritter.nosql.user.recenthistory.UserLifetimeDemandHistoryCache;
 import com.kritter.postimpression.enricher_fraud.*;
 import com.kritter.postimpression.entity.Request;
 import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.urlreader.impl.*;
 import com.kritter.postimpression.utils.PostImpressionUtils;
+import com.kritter.serving.demand.cache.CampaignCache;
 import com.kritter.serving.demand.entity.AdEntity;
+import com.kritter.serving.demand.entity.Campaign;
 import com.kritter.tracking.common.ThirdPartyTrackingManager;
 import com.kritter.tracking.common.entity.ThirdPartyTrackingData;
 import com.kritter.postimpression.utils.MacroUtils;
 import com.kritter.user.thrift.struct.ImpressionEvent;
+import com.kritter.user.thrift.struct.LifetimeDemandHistory;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ConversionUrlData;
 import com.kritter.utils.common.url.URLField;
@@ -109,8 +108,11 @@ public class EventURLProcessorJob implements Job
     private UserIdUpdator userIdUpdator;
     private NOFraudParamUrlReader nofraudParamUrlReader;
     private NoFraudParamEnricherAndFraudProcessor nofraudParamEnricherAndFraudProcessor;
-    private UserLifetimeDemandHistoryCache adLifetimeImpHistoryCache;
-    private UserLifetimeDemandHistoryCache adLifetimeClickHistoryCache;
+    private LifetimeDemandHistoryProvider adLifetimeImpHistoryCache;
+    private LifetimeDemandHistoryProvider adLifetimeClickHistoryCache;
+    private CampaignCache campaignCache;
+    private LifetimeDemandHistoryProvider campaignLifetimeImpHistoryCache;
+    private LifetimeDemandHistoryProvider campaignLifetimeClickHistoryCache;
 
     public EventURLProcessorJob(
             String name,
@@ -157,8 +159,11 @@ public class EventURLProcessorJob implements Job
             UserIdUpdator userIdUpdator,
             NOFraudParamUrlReader nofraudParamUrlReader,
             NoFraudParamEnricherAndFraudProcessor nofraudParamEnricherAndFraudProcessor,
-            UserLifetimeDemandHistoryCache adLifetimeImpHistoryCache,
-            UserLifetimeDemandHistoryCache adLifetimeClickHistoryCache
+            LifetimeDemandHistoryProvider adLifetimeImpHistoryCache,
+            LifetimeDemandHistoryProvider adLifetimeClickHistoryCache,
+            CampaignCache campaignCache,
+            LifetimeDemandHistoryProvider campaignLifetimeImpHistoryCache,
+            LifetimeDemandHistoryProvider campaignLifetimeClickHistoryCache
             )
     {
         this.name = name;
@@ -209,6 +214,9 @@ public class EventURLProcessorJob implements Job
         this.nofraudParamEnricherAndFraudProcessor = nofraudParamEnricherAndFraudProcessor;
         this.adLifetimeImpHistoryCache = adLifetimeImpHistoryCache;
         this.adLifetimeClickHistoryCache = adLifetimeClickHistoryCache;
+        this.campaignCache = campaignCache;
+        this.campaignLifetimeImpHistoryCache = campaignLifetimeImpHistoryCache;
+        this.campaignLifetimeClickHistoryCache = campaignLifetimeClickHistoryCache;
     }
 
     @Override
@@ -441,11 +449,60 @@ public class EventURLProcessorJob implements Job
                 PostImpressionUtils.redirectUserToLandingPage(landingPageUrl,
                         (HttpServletResponse) context.getValue(Workflow.CONTEXT_RESPONSE_KEY));
 
-                if(null != kritterInternalUserId &&
-                        null != adLifetimeImpHistoryCache) {
-                    Map<Integer, Integer> adImpCount = new HashMap<Integer, Integer>();
-                    adImpCount.put(postImpressionRequest.getAdId(), 1);
-                    adLifetimeClickHistoryCache.updateUserHistory(kritterInternalUserId, adImpCount);
+                if(null != kritterInternalUserId && null != adLifetimeClickHistoryCache) {
+                    Map<Integer, Integer> adClickCount = new HashMap<Integer, Integer>();
+                    logger.debug("User id is not null and ad life time click history cache also not null.");
+                    AdEntity adEntity = postImpressionRequest.getAdEntity();
+                    if(adEntity.getFrequencyCap() != null) {
+                        FreqCap freqCap = adEntity.getFrequencyCap();
+                        if(freqCap.getFDef() != null && freqCap.getFDef().containsKey(FreqEventType.CLK)) {
+                            Set<FreqDef> freqDefs = freqCap.getFDef().get(FreqEventType.CLK);
+                            boolean hasLifetimeCap = false;
+                            for(FreqDef freqDef : freqDefs) {
+                                if(freqDef.getDuration() == FreqDuration.LIFE) {
+                                    logger.debug("Ad id : {} has lifetime click frequency cap.", adEntity.getId());
+                                    hasLifetimeCap = true;
+                                    break;
+                                }
+                            }
+                            if(hasLifetimeCap) {
+                                adClickCount.put(postImpressionRequest.getAdId(), 1);
+                                logger.debug("Updating click count for ad id : {} for user id : {}.", adEntity.getId(),
+                                        kritterInternalUserId);
+                                adLifetimeClickHistoryCache.updateUserHistory(kritterInternalUserId, adClickCount);
+                            }
+                        }
+                    }
+                }
+
+                if(null != kritterInternalUserId && null != campaignLifetimeClickHistoryCache) {
+                    logger.debug("User id is not null and campaign life time click history cache also not null.");
+                    Map<Integer, Integer> campaignClickCount = new HashMap<Integer, Integer>();
+                    AdEntity adEntity = postImpressionRequest.getAdEntity();
+                    Campaign campaign = campaignCache.query(adEntity.getCampaignIncId());
+                    if(campaign != null && campaign.getFrequencyCap() != null) {
+                        FreqCap freqCap = campaign.getFrequencyCap();
+                        if(freqCap.getFDef() != null && freqCap.getFDef().containsKey(FreqEventType.CLK)) {
+                            Set<FreqDef> freqDefs = freqCap.getFDef().get(FreqEventType.CLK);
+                            boolean hasLifetimeCap = false;
+                            for(FreqDef freqDef : freqDefs) {
+                                if(freqDef.getDuration() == FreqDuration.LIFE) {
+                                    logger.debug("Campaign id : {} has lifetime click frequency cap.",
+                                            campaign.getId());
+                                    hasLifetimeCap = true;
+                                    break;
+                                }
+                            }
+                            if(hasLifetimeCap) {
+                                campaignClickCount.put(campaign.getId(), 1);
+                                logger.debug("Updating click count for campaign id : {} for user id : {}.",
+                                        campaign.getId(),
+                                        kritterInternalUserId);
+                                campaignLifetimeClickHistoryCache.updateUserHistory(kritterInternalUserId,
+                                        campaignClickCount);
+                            }
+                        }
+                    }
                 }
             }
             catch (IOException e){
@@ -655,11 +712,63 @@ public class EventURLProcessorJob implements Job
                         onlineFraudReason.getFraudReasonValue().equalsIgnoreCase(
                                 ONLINE_FRAUD_REASON.HEALTHY_REQUEST.getFraudReasonValue())
                         && null != adLifetimeImpHistoryCache) {
+                    logger.debug("User id is not null and ad life time impression history cache also not null.");
                     Map<Integer, Integer> adImpCount = new HashMap<Integer, Integer>();
-                    adImpCount.put(postImpressionRequest.getAdId(), 1);
-                    adLifetimeImpHistoryCache.updateUserHistory(kritterInternalUserId, adImpCount);
+                    AdEntity adEntity = postImpressionRequest.getAdEntity();
+                    if(adEntity.getFrequencyCap() != null) {
+                        FreqCap freqCap = adEntity.getFrequencyCap();
+                        if(freqCap.getFDef() != null && freqCap.getFDef().containsKey(FreqEventType.IMP)) {
+                            Set<FreqDef> freqDefs = freqCap.getFDef().get(FreqEventType.IMP);
+                            boolean hasLifetimeCap = false;
+                            for(FreqDef freqDef : freqDefs) {
+                                if(freqDef.getDuration() == FreqDuration.LIFE) {
+                                    logger.debug("Ad id : {} has lifetime impression frequency cap.", adEntity.getId());
+                                    hasLifetimeCap = true;
+                                    break;
+                                }
+                            }
+                            if(hasLifetimeCap) {
+                                logger.debug("Updating impression count for ad id : {} for user id : {}.", adEntity.getId(),
+                                        kritterInternalUserId);
+                                adImpCount.put(postImpressionRequest.getAdId(), 1);
+                                adLifetimeImpHistoryCache.updateUserHistory(kritterInternalUserId, adImpCount);
+                            }
+                        }
+                    }
                 }
 
+                if(null != kritterInternalUserId &&
+                        onlineFraudReason.getFraudReasonValue().equalsIgnoreCase(
+                                ONLINE_FRAUD_REASON.HEALTHY_REQUEST.getFraudReasonValue())
+                        && null != campaignLifetimeImpHistoryCache) {
+                    logger.debug("User id is not null and campaign life time impression history cache also not null.");
+                    Map<Integer, Integer> campaignImpCount = new HashMap<Integer, Integer>();
+                    AdEntity adEntity = postImpressionRequest.getAdEntity();
+                    Campaign campaign = campaignCache.query(adEntity.getCampaignIncId());
+                    if (campaign != null && campaign.getFrequencyCap() != null) {
+                        FreqCap freqCap = campaign.getFrequencyCap();
+                        if (freqCap.getFDef() != null && freqCap.getFDef().containsKey(FreqEventType.IMP)) {
+                            Set<FreqDef> freqDefs = freqCap.getFDef().get(FreqEventType.IMP);
+                            boolean hasLifetimeCap = false;
+                            for (FreqDef freqDef : freqDefs) {
+                                if (freqDef.getDuration() == FreqDuration.LIFE) {
+                                    logger.debug("Campaign id : {} has lifetime impression frequency cap.",
+                                            campaign.getId());
+                                    hasLifetimeCap = true;
+                                    break;
+                                }
+                            }
+                            if (hasLifetimeCap) {
+                                logger.debug("Updating impression count for campaign id : {} for user id : {}.",
+                                        campaign.getId(),
+                                        kritterInternalUserId);
+                                campaignImpCount.put(campaign.getCampaignIncId(), 1);
+                                campaignLifetimeImpHistoryCache.updateUserHistory(kritterInternalUserId,
+                                        campaignImpCount);
+                            }
+                        }
+                    }
+                }
             }
             catch(Exception e)
             {

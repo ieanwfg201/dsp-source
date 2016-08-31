@@ -28,8 +28,8 @@ public class LifetimeCapUtils {
             AdEntity adEntity = adEntityCache.query(adId);
             FreqCap freqCap = adEntity.getFrequencyCap();
             boolean isCapped = false;
-            if(freqCap.getFDef().containsKey(eventType)) {
-                Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(FreqEventType.IMP);
+            if(freqCap != null && freqCap.getFDef() != null && freqCap.getFDef().containsKey(eventType)) {
+                Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(eventType);
                 for(FreqDef def : frequencyDefinition) {
                     if(def.getDuration() == FreqDuration.LIFE) {
                         isCapped = true;
@@ -59,8 +59,8 @@ public class LifetimeCapUtils {
             AdEntity adEntity = adEntityCache.query(adId);
             FreqCap freqCap = adEntity.getFrequencyCap();
             boolean isCapped = false;
-            if(freqCap.getFDef().containsKey(eventType)) {
-                Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(FreqEventType.IMP);
+            if(freqCap != null && freqCap.getFDef() != null && freqCap.getFDef().containsKey(eventType)) {
+                Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(eventType);
                 for(FreqDef def : frequencyDefinition) {
                     if(def.getDuration() == FreqDuration.LIFE) {
                         isCapped = true;
@@ -95,8 +95,8 @@ public class LifetimeCapUtils {
             Campaign campaign = campaignCache.query(campaignId);
             FreqCap freqCap = campaign.getFrequencyCap();
             boolean isCapped = false;
-            if(freqCap.getFDef().containsKey(eventType)) {
-                Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(FreqEventType.IMP);
+            if(freqCap != null && freqCap.getFDef() != null && freqCap.getFDef().containsKey(eventType)) {
+                Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(eventType);
                 for(FreqDef def : frequencyDefinition) {
                     if(def.getDuration() == FreqDuration.LIFE) {
                         isCapped = true;
@@ -131,8 +131,8 @@ public class LifetimeCapUtils {
             Campaign campaign = campaignCache.query(campaignId);
             FreqCap freqCap = campaign.getFrequencyCap();
             boolean isCapped = false;
-            if(freqCap.getFDef().containsKey(eventType)) {
-                Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(FreqEventType.IMP);
+            if(freqCap != null && freqCap.getFDef() != null && freqCap.getFDef().containsKey(eventType)) {
+                Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(eventType);
                 for(FreqDef def : frequencyDefinition) {
                     if(def.getDuration() == FreqDuration.LIFE) {
                         isCapped = true;
