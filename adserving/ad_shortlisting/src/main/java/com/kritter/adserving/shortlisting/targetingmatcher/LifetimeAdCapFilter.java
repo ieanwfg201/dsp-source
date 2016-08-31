@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class LifetimeAdCapFilter implements TargetingMatcher {
-    private static final NoFillReason noFillReason = NoFillReason.FREQUENCY_CAP;
-
     @Getter
     private String name;
     private Logger logger;
@@ -61,7 +59,7 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
         if(kritterUserId == null || null == lifetimeAdHistoryProvider) {
             Set<Integer> cappedAds = LifetimeCapUtils.getCappedAds(this.adEntityCache, adIdSet, getEventType());
             for(int adId : cappedAds) {
-                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, getNoFillReason().getValue(),
                         this.adNoFillReasonMapKey, context);
             }
 
@@ -76,7 +74,7 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
             Set<Integer> shortlistedAdIdSet = LifetimeCapUtils.getNonCappedAds(this.adEntityCache, adIdSet,
                     getEventType());
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
-                request.setNoFillReason(noFillReason);
+                request.setNoFillReason(getNoFillReason());
             return shortlistedAdIdSet;
         }
 
@@ -100,7 +98,7 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
                 int frequencyCapCount = -1;
                 // Get the capped ad and see if the cap has already been hit. If yes, drop the ad
                 FreqCap freqCap = adEntity.getFrequencyCap();
-                if(freqCap.getFDef().containsKey(getEventType())) {
+                if(freqCap != null && freqCap.getFDef() != null && freqCap.getFDef().containsKey(getEventType())) {
                     Set<FreqDef> frequencyDefinition = freqCap.getFDef().get(getEventType());
                     for(FreqDef def : frequencyDefinition) {
                         if(def.getDuration() == FreqDuration.LIFE) {
@@ -129,7 +127,7 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
                         if(currentCount > frequencyCapCount) {
                             ReqLog.debugWithDebug(logger, request, "Lifetime impression cap has been hit for ad id : " +
                                     "{}. Dropped the ad.", adId);
-                            AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                            AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, getNoFillReason().getValue(),
                                     this.adNoFillReasonMapKey, context);
                         } else{
                             ReqLog.debugWithDebug(logger, request, "Lifetime impression cap has not been hit. Adding " +
@@ -149,14 +147,14 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
 
             Set<Integer> cappedAds = LifetimeCapUtils.getCappedAds(this.adEntityCache, adIdSet, getEventType());
             for(Integer adId : cappedAds) {
-                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, getNoFillReason().getValue(),
                         this.adNoFillReasonMapKey, context);
             }
 
             Set<Integer> shortlistedAdIdSet = LifetimeCapUtils.getNonCappedAds(this.adEntityCache, adIdSet,
                     getEventType());
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
-                request.setNoFillReason(noFillReason);
+                request.setNoFillReason(getNoFillReason());
             return shortlistedAdIdSet;
         }
 
@@ -164,4 +162,6 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
     }
 
     public abstract FreqEventType getEventType();
+
+    public abstract NoFillReason getNoFillReason();
 }

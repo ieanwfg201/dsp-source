@@ -27,4 +27,9 @@ public class LifetimeCampaignClickCapFilter extends LifetimeCampaignCapFilter {
     public FreqEventType getEventType() {
         return FreqEventType.CLK;
     }
+
+    @Override
+    public NoFillReason getNoFillReason() {
+        return noFillReason;
+    }
 }
