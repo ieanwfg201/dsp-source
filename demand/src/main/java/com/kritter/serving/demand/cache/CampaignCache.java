@@ -70,6 +70,7 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
             Integer statusId = resultSet.getInt("status_id");
             boolean isMarkedForDeletion = false;
             String frequencyCapStr = resultSet.getString("freqcap_json");
+            logger.debug("Frequency cap json is : {}", frequencyCapStr);
             Double campaignPayout = resultSet.getDouble("campaign_payout_exchange_payout");
             if(!(statusId == StatusIdEnum.Active.getCode()))
                 isMarkedForDeletion = true;
