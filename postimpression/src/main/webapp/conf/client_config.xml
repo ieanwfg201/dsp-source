@@ -56,5 +56,8 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="43"><ref bean="nofrdp_enricher_fraud_processor"/></constructor-arg>
         <constructor-arg index="44"><ref bean="user_lifetime_ad_imp_cache"/></constructor-arg>
         <constructor-arg index="45"><ref bean="user_lifetime_ad_click_cache"/></constructor-arg>
+        <constructor-arg index="46"><ref bean="campaign_cache"/></constructor-arg>
+        <constructor-arg index="47"><ref bean="user_lifetime_campaign_imp_cache"/></constructor-arg>
+        <constructor-arg index="48"><ref bean="user_lifetime_campaign_click_cache"/></constructor-arg>
     </bean>
 </beans>
