@@ -213,6 +213,7 @@
             <map>
                 <entry key="mopub-pub-guid" value-ref="mopub_response_creator_2_3"/>
                 <entry key="youku" value-ref="youku_response_creator"/>
+                <entry key="valuemaker" value-ref="valuemaker_response_creator"/>
             </map>
         </constructor-arg>
         <constructor-arg index="9" value="KRITTER_INVENTORY_SRC"/>
