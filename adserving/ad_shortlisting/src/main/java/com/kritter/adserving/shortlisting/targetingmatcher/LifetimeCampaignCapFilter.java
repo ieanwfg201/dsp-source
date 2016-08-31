@@ -136,7 +136,7 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
                         long currentCount = history.demandEventCount.get(campaignId);
                         ReqLog.debugWithDebug(logger, request, "Life time impression count for user id : {}, ad id" +
                                 " : {}, campaign id : {} = {}", adId, kritterUserId, campaignId, currentCount);
-                        if(currentCount > frequencyCapCount) {
+                        if(currentCount >= frequencyCapCount) {
                             ReqLog.debugWithDebug(logger, request, "Lifetime impression cap has been hit for ad id : " +
                                     "{}, campaign id : {}. Dropped the ad.", adId, campaignId);
                             AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, getNoFillReason().getValue(),
