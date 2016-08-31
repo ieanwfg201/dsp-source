@@ -11,4 +11,4 @@ echo "Starting in $SLEEP seconds..."
 sleep $SLEEP
 
 
-python ${DAEMON} ${CONF}
+exec setuidgid optimad python ${DAEMON} ${CONF}
