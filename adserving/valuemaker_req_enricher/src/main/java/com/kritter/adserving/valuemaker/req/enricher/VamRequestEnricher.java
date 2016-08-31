@@ -79,19 +79,22 @@ public class VamRequestEnricher implements RTBExchangeRequestReader
                                             boolean logBidRequest,
                                             String publisherId) throws Exception {
 
-        Request request = new Request(requestId, INVENTORY_SOURCE.RTB_EXCHANGE);
+        Request request=null;
+        try {
+             request = new Request(requestId, INVENTORY_SOURCE.RTB_EXCHANGE);
 
         /*For valuemaker exchange the response body has to be written inside its own response creator adaptor*/
-        request.setWriteResponseInsideExchangeAdaptor(true);
+            request.setWriteResponseInsideExchangeAdaptor(true);
 
-        VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = this.vamBidRequestReader.
-                readAndConvertBidRequestPayLoadToOpenRTB_2_3(httpServletRequest.getInputStream());
+            VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = this.vamBidRequestReader.
+                    readAndConvertBidRequestPayLoadToOpenRTB_2_3(httpServletRequest.getInputStream());
 
-        String uniqueInternalBidRequestId = uuidGenerator.generateUniversallyUniqueIdentifier().toString();
-        IBidRequest bidRequestVam = new BidRequestVam(auctioneerId,
-                uniqueInternalBidRequestId,
-                vamBidRequestParentNodeDTO);
-        request.setBidRequest(bidRequestVam);
+            String uniqueInternalBidRequestId = uuidGenerator.generateUniversallyUniqueIdentifier().toString();
+            IBidRequest bidRequestVam = new BidRequestVam(auctioneerId,
+                    uniqueInternalBidRequestId,
+                    vamBidRequestParentNodeDTO);
+            request.setBidRequest(bidRequestVam);
+
 
         /**
          * Set site object, generally there will be only one site for valuemaker(any exchange for that matter).
@@ -174,6 +177,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader
 
         request.setIpAddressUsedForDetection(ip);
 
+            // TODO
         request.setConnectionType(ConnectionType.UNKNOWN);
         /************************Location detection completes,country,isp,connectiontype******************************/
 
@@ -231,7 +235,9 @@ public class VamRequestEnricher implements RTBExchangeRequestReader
         /***************************Set extra available parameters*********************************************/
         populateRequestObjectForExtraParameters(vamBidRequestParentNodeDTO,request);
         /******************************************************************************************************/
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return request;
     }
 

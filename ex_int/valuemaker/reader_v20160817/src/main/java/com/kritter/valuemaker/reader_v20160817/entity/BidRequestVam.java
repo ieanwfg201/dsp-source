@@ -3,6 +3,7 @@ package com.kritter.valuemaker.reader_v20160817.entity;
 import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.constants.OpenRTBVersion;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This class represents the top level valuemaker bid request object to be used by bidder
@@ -18,7 +19,7 @@ public class BidRequestVam implements IBidRequest
     private String auctioneerId;
     private String uniqueInternalBidRequestId;
 
-    @Getter
+    @Getter @Setter
     private VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO;
 
     public BidRequestVam(

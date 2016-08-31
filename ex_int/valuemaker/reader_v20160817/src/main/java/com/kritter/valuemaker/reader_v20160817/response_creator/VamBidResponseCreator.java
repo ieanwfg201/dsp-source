@@ -57,9 +57,9 @@ public class VamBidResponseCreator implements IBidResponseCreator
     }
 
     private void writeEmptyResponse(OutputStream outputStream,int totalProcessingTime) throws IOException {
-        RTB.VamRealtimeBidding.VamResponse.Builder vamResponseBuilder = RTB.VamRealtimeBidding.VamResponse.newBuilder();
-        RTB.VamRealtimeBidding.VamResponse response = vamResponseBuilder.build();
-        response.writeTo(outputStream);
+//        RTB.VamRealtimeBidding.VamResponse.Builder vamResponseBuilder = RTB.VamRealtimeBidding.VamResponse.newBuilder();
+//        RTB.VamRealtimeBidding.VamResponse response = vamResponseBuilder.build();
+//        response.writeTo(outputStream);
         outputStream.close();
     }
 
@@ -77,14 +77,14 @@ public class VamBidResponseCreator implements IBidResponseCreator
         if(null == impressionIdsToRespondFor)
             logger.debug("There is no impression ids to respond for inside VamBidResponseCreator");
         Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
-        BidRequestVam bidRequestVam = (BidRequestVam)request.getBidRequest();
-
-        VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = bidRequestVam.getVamBidRequestParentNodeDTO();
-        Map<String,BidRequestImpressionDTO> bidRequestImpressionDTOMap = new HashMap<String, BidRequestImpressionDTO>();
-        for (BidRequestImpressionDTO bidRequestImpressionDTO:vamBidRequestParentNodeDTO.getBidRequestImpressionArray())
-        {
-            bidRequestImpressionDTOMap.put(bidRequestImpressionDTO.getBidRequestImpressionId(),bidRequestImpressionDTO);
-        }
+//
+//        BidRequestVam bidRequestVam = (BidRequestVam)request.getBidRequest();
+//        VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = bidRequestVam.getVamBidRequestParentNodeDTO();
+//        Map<String,BidRequestImpressionDTO> bidRequestImpressionDTOMap = new HashMap<String, BidRequestImpressionDTO>();
+//        for (BidRequestImpressionDTO bidRequestImpressionDTO:vamBidRequestParentNodeDTO.getBidRequestImpressionArray())
+//        {
+//            bidRequestImpressionDTOMap.put(bidRequestImpressionDTO.getBidRequestImpressionId(),bidRequestImpressionDTO);
+//        }
         /*****************The impression ids received above are the integer ids sent by valuemaker exchange.*****************/
         for(String impressionId : impressionIdsToRespondFor)
         {

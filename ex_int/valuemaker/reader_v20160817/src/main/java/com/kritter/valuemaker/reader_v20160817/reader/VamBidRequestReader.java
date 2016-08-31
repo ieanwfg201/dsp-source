@@ -39,7 +39,13 @@ public class VamBidRequestReader implements IBidRequestReader
         if(null == vamRequestInputStream)
             return null;
 
-        VamRealtimeBidding.VamRequest bidRequest = VamRealtimeBidding.VamRequest.parseFrom(IOUtils.toByteArray(vamRequestInputStream));
+        VamRealtimeBidding.VamRequest bidRequest=null;
+        try{
+            bidRequest = VamRealtimeBidding.VamRequest.parseFrom(IOUtils.toByteArray(vamRequestInputStream));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         return ConvertRequest.convert(bidRequest);
     }
 
