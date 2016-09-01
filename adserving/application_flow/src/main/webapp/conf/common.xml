@@ -3,7 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="db-manager" class="com.kritter.utils.databasemanager.DatabaseManager">
+    <bean id="db-manager" class="com.kritter.utils.databasemanager.DatabaseManager"> 
         <constructor-arg index="0" value="jdbc/AdserverDatabase"/>
     </bean>
 
@@ -344,7 +344,7 @@
         <constructor-arg index="4"><ref bean="state_detector"/></constructor-arg>
         <constructor-arg index="5"><ref bean="ui_state_id_cache"/></constructor-arg>
     </bean>
-
+    
     <bean id="city_targeting" class="com.kritter.adserving.shortlisting.targetingmatcher.CityTargetingMatcher">
         <constructor-arg index="0" value="city_targeting_matcher"/>
         <constructor-arg index="1" value="adserving.application"/>
@@ -392,7 +392,7 @@
         <constructor-arg index="15"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="16"><ref bean="isp_detector"/></constructor-arg>
         <constructor-arg index="17" value="k-uid"/>
-    </bean>
+    </bean> 
 
     <bean id="aggregator_pub_request_enricher" class="com.kritter.adserving.request.enricher.AggregatorRequestEnricher">
         <constructor-arg index="0" value="adserving.application"/>
@@ -474,6 +474,7 @@
                 <entry key="mopub-pub-guid" value-ref="mopub_request_enricher_2_3"/>
                 <entry key="youku" value-ref="youku_request_enricher"/>
                 <entry key="cloud-cross-guid" value-ref="cloud_cross_request_enricher_4_4_4"/>
+                <entry key="valuemaker" value-ref="valuemaker_request_enricher"/>
             </map>
         </constructor-arg>
         <constructor-arg index="2" value="bid.req.logger"/>
@@ -547,7 +548,7 @@
         <constructor-arg index="5"><ref bean="creative_slot_cache"/></constructor-arg>
         <constructor-arg index="6"><ref bean="server_config"/></constructor-arg>
     </bean>
-
+    
     <bean id="vast_formatter" class="com.kritter.adserving.formatting.VASTFormatter">
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1" value="CH-UMMA-TECH-IES-KR-I-TTER"/>
@@ -573,7 +574,7 @@
             </constructor-arg>
             <constructor-arg index="3" value="1800000"/>
     </bean>
-
+ 
     <!-- ISP detector modelled as cache to reload data at configured frequency-->
     <bean id="isp_detector" class="com.kritter.geo.common.entity.reader.ISPDetectionCache">
             <constructor-arg index="0" value="cache.logger"/>
@@ -646,7 +647,7 @@
             <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="3600000"/>
     </bean>
-
+    
     <bean id="zip_code_file_cache" class="com.kritter.geo.common.entity.reader.ZipCodeFileDataCache">
             <constructor-arg index="0" value="cache.logger"/>
             <constructor-arg index="1" value="select zipcode_file_id_set from ad,targeting_profile where ad.targeting_guid = targeting_profile.guid and ad.status_id = 1 and targeting_profile.status_id = 1"/>
@@ -740,7 +741,7 @@
         <constructor-arg index="9" value="0"/>
     </bean>
 
-    <!-- Other beans for ecpm calculation, online bidder and ranking -->
+    <!-- Other beans for ecpm calculation, online bidder and ranking -->    
     <bean id="basic_real_time_bidder" class="com.kritter.bidder.online.bidcalculator.BasicRealTimeBidder">
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1"><ref bean="offline_bidder_data_cache"/></constructor-arg>
@@ -764,7 +765,7 @@
         <!--Number of ads to select, keeping upto max 3-->
         <constructor-arg index="1" value="1"/>
     </bean>
-
+     
     <bean id="synchronous_http_client" class="com.kritter.utils.http_client.SynchronousHttpClient">
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1" value="20"/>

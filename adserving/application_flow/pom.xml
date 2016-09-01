@@ -81,6 +81,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>com.kritter.adexchange</groupId>
+            <artifactId>valuemaker_req_enricher</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.adserving</groupId>
             <artifactId>ad_shortlisting</artifactId>
             <version>1.0.0</version>
