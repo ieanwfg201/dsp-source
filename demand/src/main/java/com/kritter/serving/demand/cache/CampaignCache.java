@@ -69,6 +69,8 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
             int impressionsAccrued = resultSet.getInt("impressions_accrued");
             Integer statusId = resultSet.getInt("status_id");
             boolean isMarkedForDeletion = false;
+            String frequencyCapStr = resultSet.getString("freqcap_json");
+            logger.debug("Frequency cap json is : {}", frequencyCapStr);
             Double campaignPayout = resultSet.getDouble("campaign_payout_exchange_payout");
             if(!(statusId == StatusIdEnum.Active.getCode()))
                 isMarkedForDeletion = true;
@@ -97,7 +99,9 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
                                                 accountBalance,
                                                 accountAdvTotalBudget,
                                                 isMarkedForDeletion,
-                                                updateTime).build();
+                                                updateTime)
+                    .setFrequencyCap(frequencyCapStr)
+                    .build();
         }
         catch(Exception e)
         {

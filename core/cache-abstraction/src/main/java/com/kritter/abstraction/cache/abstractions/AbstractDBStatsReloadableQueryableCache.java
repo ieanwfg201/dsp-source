@@ -104,7 +104,8 @@ public abstract class AbstractDBStatsReloadableQueryableCache<I, E extends IUpda
     @Override
     protected synchronized void refreshEntities() throws RefreshException
     {
-        super.getLogger().debug("Inside refreshEntities() of AbstractDBStatsReloadableQueryableCache class.");
+        super.getLogger().debug("Inside refreshEntities() of AbstractDBStatsReloadableQueryableCache class. Bean " +
+                "name : {}", getName());
         Connection conn = null;
         try
         {

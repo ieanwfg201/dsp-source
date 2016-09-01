@@ -25,4 +25,9 @@ public class LifetimeAdImpCapFilter extends LifetimeAdCapFilter {
     public FreqEventType getEventType() {
         return FreqEventType.IMP;
     }
+
+    @Override
+    public NoFillReason getNoFillReason() {
+        return noFillReason;
+    }
 }

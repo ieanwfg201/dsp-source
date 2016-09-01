@@ -57,6 +57,9 @@ public class CreativeFormatterUtils
                                          Short selectedSiteCategoryId,
                                          String secretKeyForHash, boolean noHash)
     {
+        if(null != responseAdInfo.getCommonURIForPostImpression())
+            return responseAdInfo.getCommonURIForPostImpression();
+
         String impressionId = ApplicationGeneralUtils
                                                 .generateImpressionId(request.getRequestId(),
                                                         responseAdInfo.getAdId());
