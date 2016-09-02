@@ -56,7 +56,7 @@ public class BidRequestReaderCloudCross implements IBidRequestReader {
             throw new BidRequestException("IOException inside convertBidRequestJsonToBusinessObject ", e);
         }
 
-        String uniqueInternalBidRequestId = uuidGenerator.generateUniversallyUniqueIdentifier().toString();
+        String uniqueInternalBidRequestId = "6";
 
         logger.debug("IBidRequest prepared inside BidRequestReaderCloudCross with bidRequestId: {} ," +
                         "uniqueInternalBidRequestId: {} ",
