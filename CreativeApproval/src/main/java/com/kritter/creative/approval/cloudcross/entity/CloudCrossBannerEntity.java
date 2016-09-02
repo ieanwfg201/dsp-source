@@ -3,7 +3,7 @@ package com.kritter.creative.approval.cloudcross.entity;
 /**
  * Created by hamlin on 16-7-31.
  */
-public class CloudCrossBanner {
+public class CloudCrossBannerEntity {
     private Integer bannerId;
     private Integer advertiserId;//必须 Integer 对应 DSP 系统的广告主 ID
     private String path;//path 必须 String 创意 URL

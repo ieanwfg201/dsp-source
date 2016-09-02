@@ -1,6 +1,7 @@
 package com.kritter.creative.approval.cloudcross;
 
 import com.kritter.creative.approval.cloudcross.abstracts.CloudCrossInterface;
+import com.kritter.creative.approval.cloudcross.entity.CloudCrossAdvertiserEntity;
 import com.kritter.creative.approval.cloudcross.entity.CloudCrossState;
 import com.kritter.creative.approval.cloudcross.entity.CloudCrossResponse;
 import org.codehaus.jackson.type.JavaType;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by hamlin on 16-7-29.
  */
-public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertiser> {
+public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertiserEntity> {
 
     public static String ADVERTISER_ADD_URL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/add" + CREATIVE_DSPID_TOKEN;
     public static String ADVERTISER_UPDATE_URL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/update" + CREATIVE_DSPID_TOKEN;
@@ -20,7 +21,7 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
     public static String ADVERTISER_GET_ALL_BANNERIDS_STATE = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/queryState" + CREATIVE_DSPID_TOKEN;
 
     @Override
-    public CloudCrossResponse add(CloudCrossAdvertiser cloudCrossAdvertiser) {
+    public CloudCrossResponse add(CloudCrossAdvertiserEntity cloudCrossAdvertiser) {
         try {
             return MAPPER.readValue(getCloudCrossResponse(ADVERTISER_ADD_URL, MAPPER.writeValueAsString(cloudCrossAdvertiser)), CloudCrossResponse.class);
         } catch (Exception e) {
@@ -30,7 +31,7 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
     }
 
     @Override
-    public CloudCrossResponse update(CloudCrossAdvertiser cloudCrossAdvertiser) {
+    public CloudCrossResponse update(CloudCrossAdvertiserEntity cloudCrossAdvertiser) {
         try {
             return MAPPER.readValue(getCloudCrossResponse(ADVERTISER_UPDATE_URL, MAPPER.writeValueAsString(cloudCrossAdvertiser)), CloudCrossResponse.class);
         } catch (IOException e) {

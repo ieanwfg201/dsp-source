@@ -1,7 +1,7 @@
 package com.kritter.creative.approval.cloudcross;
 
 import com.kritter.creative.approval.cloudcross.abstracts.CloudCrossInterface;
-import com.kritter.creative.approval.cloudcross.entity.CloudCrossBanner;
+import com.kritter.creative.approval.cloudcross.entity.CloudCrossBannerEntity;
 import com.kritter.creative.approval.cloudcross.entity.CloudCrossState;
 import com.kritter.creative.approval.cloudcross.entity.CloudCrossResponse;
 import org.codehaus.jackson.type.JavaType;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by hamlin on 16-7-29.
  */
-public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBanner> {
+public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEntity> {
     public static String CREATIVE_ADD_URL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-banner/add" + CREATIVE_DSPID_TOKEN;
     public static String CREATIVE_UPDATE_URL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-banner/update" + CREATIVE_DSPID_TOKEN;
     public static String CREATIVE_GET_ALL_BY_ADVERTISERIDS = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-banner/getAll" + CREATIVE_DSPID_TOKEN;
@@ -20,7 +20,7 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBanner> {
     public static String CREATIVE_GET_ALL_BANNERIDS_STATE = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-banner/queryState" + CREATIVE_DSPID_TOKEN;
 
     @Override
-    public CloudCrossResponse add(CloudCrossBanner banner) {
+    public CloudCrossResponse add(CloudCrossBannerEntity banner) {
         try {
             return MAPPER.readValue(getCloudCrossResponse(CREATIVE_ADD_URL, MAPPER.writeValueAsString(banner)), CloudCrossResponse.class);
         } catch (Exception e) {
@@ -30,7 +30,7 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBanner> {
     }
 
     @Override
-    public CloudCrossResponse update(CloudCrossBanner banner) {
+    public CloudCrossResponse update(CloudCrossBannerEntity banner) {
         try {
             return MAPPER.readValue(getCloudCrossResponse(CREATIVE_UPDATE_URL, MAPPER.writeValueAsString(banner)), CloudCrossResponse.class);
         } catch (IOException e) {
