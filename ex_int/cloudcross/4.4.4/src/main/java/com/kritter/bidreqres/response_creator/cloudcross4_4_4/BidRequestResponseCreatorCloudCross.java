@@ -3,6 +3,7 @@ package com.kritter.bidreqres.response_creator.cloudcross4_4_4;
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
 import com.kritter.bidreqres.entity.cloudcross4_4_4.*;
 import com.kritter.bidrequest.entity.IBidResponse;
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionBannerObjectDTO;
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.bidrequest.response_creator.IBidResponseCreator;
 import com.kritter.common.caches.iab.categories.IABCategoriesCache;
@@ -116,8 +117,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
 
         BidResponseCloudCrossDTO bidResponseCloudCrossDTO = new BidResponseCloudCrossDTO();
         bidResponseCloudCrossDTO.setBidderGeneratedUniqueId(bidRequestCloudCross.getUniqueInternalRequestId());
-        bidResponseCloudCrossDTO.setBidRequestId(bidRequestCloudCross.getUniqueBidRequestIdentifierForAuctioneer());
-        bidResponseCloudCrossDTO.setCurrency(CURRENCY);
+        bidResponseCloudCrossDTO.setBidRequestId(bidRequestCloudCross.getCloudCrossBidRequestParentNodeDTO().getBidRequestId());
 
         //only one seat bid object...
         BidResponseSeatBidCloudCrossDTO[] bidResponseSeatBidCloudCrossArray = new BidResponseSeatBidCloudCrossDTO[1];
@@ -212,37 +212,39 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         StringBuffer winNotificationURLBuffer = new StringBuffer();
         BidResponseBidCloudCrossDTO bidResponseBidCloudCrossDTO = new BidResponseBidCloudCrossDTO();
         bidResponseBidCloudCrossDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
+
         Creative creative = responseAdInfo.getCreative();
 
         if (creative.getCreativeFormat().equals(CreativeFormat.BANNER))
-            bidResponseBidCloudCrossDTO.setAdMarkup(
-                    prepareBannerHTMLAdMarkup(
-                            request,
-                            responseAdInfo,
-                            response, adEntity.getExtTracker(),
-                            winNotificationURLBuffer
-                    )
-            );
-        else if (creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
-            bidResponseBidCloudCrossDTO.setAdMarkup(
-                    prepareRichmediaAdMarkup(
-                            request,
-                            responseAdInfo,
-                            response,
-                            winNotificationURLBuffer,
-                            creative.getCreative_macro(),
-                            adEntity.getExtTracker()
-                    )
-            );
-        else if (creative.getCreativeFormat().equals(CreativeFormat.VIDEO))
-            bidResponseBidCloudCrossDTO.setAdMarkup(
-                    prepareVideoAdMarkup(
-                            request,
-                            responseAdInfo,
-                            response,
-                            winNotificationURLBuffer
-                    )
-            );
+            bidResponseBidCloudCrossDTO.setAdMarkup(responseAdInfo.getCreativeBanner().getResourceURI());
+//        bidResponseBidCloudCrossDTO.setAdMarkup(
+//                prepareBannerHTMLAdMarkup(
+//                        request,
+//                        responseAdInfo,
+//                        response, adEntity.getExtTracker(),
+//                        winNotificationURLBuffer
+//                )
+//        );
+//        else if (creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
+//            bidResponseBidCloudCrossDTO.setAdMarkup(
+//                    prepareRichmediaAdMarkup(
+//                            request,
+//                            responseAdInfo,
+//                            response,
+//                            winNotificationURLBuffer,
+//                            creative.getCreative_macro(),
+//                            adEntity.getExtTracker()
+//                    )
+//            );
+//        else if (creative.getCreativeFormat().equals(CreativeFormat.VIDEO))
+//            bidResponseBidCloudCrossDTO.setAdMarkup(
+//                    prepareVideoAdMarkup(
+//                            request,
+//                            responseAdInfo,
+//                            response,
+//                            winNotificationURLBuffer
+//                    )
+//            );
 
 
         String advertiserDomain[] = null;
@@ -262,7 +264,10 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         bidResponseBidCloudCrossDTO.setBidId(responseAdInfo.getImpressionId());
         bidResponseBidCloudCrossDTO.setRequestImpressionId(bidRequestImpressionId);
         bidResponseBidCloudCrossDTO.setCampaignId(String.valueOf(adEntity.getCampaignIncId()));
-
+        BidRequestCloudCross bidRequestCloudCross = (BidRequestCloudCross) request.getBidRequest();
+        CloudCrossBidRequestImpressionDTO impressionDTO = bidRequestCloudCross.getCloudCrossBidRequestParentNodeDTO().getCloudCrossBidRequestImpressionDTOs()[0];
+        BidRequestImpressionBannerObjectDTO bannerObject = impressionDTO.getBidRequestImpressionBannerObject();
+        bidResponseBidCloudCrossDTO.setCasize(Integer.toString(bannerObject.getBannerWidthInPixels()) + "*" + Integer.toString(bannerObject.getBannerHeightInPixels()));
         Integer[] creativeAttributes = fetchIntegerArrayFromShortArray(creative.getCreativeAttributes());
         if (null == creativeAttributes) {
             logger.error("Creative Attributes could not be found using adId:{} and landingURL:{} ",
@@ -270,7 +275,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
             return null;
         }
 
-        bidResponseBidCloudCrossDTO.setCreativeAttributes(creativeAttributes);
+//        bidResponseBidCloudCrossDTO.setCreativeAttributes(creativeAttributes);
         bidResponseBidCloudCrossDTO.setCreativeId(creative.getCreativeGuid());
         String[] iabCategories = null;
         try {
@@ -308,6 +313,21 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
 
         bidResponseBidCloudCrossDTO.setWinNotificationUrl(winNotificationURLBuffer.toString());
 
+        String clickUri = CreativeFormatterUtils.prepareClickUri
+                (
+                        logger,
+                        request,
+                        responseAdInfo,
+                        response.getBidderModelId(),
+                        urlVersion,
+                        request.getInventorySource(),
+                        response.getSelectedSiteCategoryId(),
+                        secretKey
+                );
+        StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
+        clickUrl.append(clickUri);
+        bidResponseBidCloudCrossDTO.setAdurl(clickUrl.toString());
+//        bidResponseBidCloudCrossDTO.setCasize();
         BidResponseBidExtCloudCrossDTO bidResponseBidExtCloudCrossDTO = new BidResponseBidExtCloudCrossDTO();
         int extraTrackingSize = 0;
         if (adEntity.getExtTracker() != null) {
