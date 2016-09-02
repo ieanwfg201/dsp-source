@@ -17,7 +17,7 @@ import java.util.List;
 public abstract class CloudCrossInterface<T> {
     public static ObjectMapper MAPPER = new ObjectMapper();
 
-    public static String CREATIVE_DSPID_TOKEN = "?dspId=1&token=fed3fx6e5a2c8r";
+    public static String CREATIVE_DSPID_TOKEN = "?dspId=6&token=qaw6hu8x1d7m5k";
 
 
     public static String buildBody(List<String> ids, String key) {
