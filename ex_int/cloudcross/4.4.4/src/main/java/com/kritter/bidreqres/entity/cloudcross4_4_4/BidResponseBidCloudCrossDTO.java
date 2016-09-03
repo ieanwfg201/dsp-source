@@ -19,4 +19,10 @@ public class BidResponseBidCloudCrossDTO extends BidResponseBidEntity {
     @JsonProperty("casize")
     @Setter
     private String casize;
+    @JsonProperty("iurl")
+    @Setter
+    private List<String> sampleImageUrl;
+    @JsonProperty("adomain")
+    @Setter
+    private String advertiserDomains;
 }

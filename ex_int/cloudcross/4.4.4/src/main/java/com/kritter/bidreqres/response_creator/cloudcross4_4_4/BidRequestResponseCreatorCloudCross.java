@@ -206,47 +206,46 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
                     responseAdInfo.getAdId());
             return null;
         }
-
+        String clickUri = CreativeFormatterUtils.prepareClickUri
+                (
+                        logger,
+                        request,
+                        responseAdInfo,
+                        response.getBidderModelId(),
+                        urlVersion,
+                        request.getInventorySource(),
+                        response.getSelectedSiteCategoryId(),
+                        secretKey
+                );
 
         /********************Prepare bid object and set it into bid response object.********************************/
         StringBuffer winNotificationURLBuffer = new StringBuffer();
         BidResponseBidCloudCrossDTO bidResponseBidCloudCrossDTO = new BidResponseBidCloudCrossDTO();
+        // id 必须 string 投标对象唯⼀ID(DSPID_广告 ID)
+        bidResponseBidCloudCrossDTO.setBidId(responseAdInfo.getImpressionId());
+//        impid 必须 string 对应的曝光 ID
+        bidResponseBidCloudCrossDTO.setRequestImpressionId(bidRequestImpressionId);
+//        price 必须 integer 竞投价格,单位为人民币分
+        bidResponseBidCloudCrossDTO.setPrice(responseAdInfo.getEcpmValue().floatValue());
+//        curl 可选 [string] 点击监测地址
+//        点击监播是通过imp的重定向
+//        adid 可选 string 在竞价方胜出时引用广告 id
         bidResponseBidCloudCrossDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
-
-        Creative creative = responseAdInfo.getCreative();
-
-        if (creative.getCreativeFormat().equals(CreativeFormat.BANNER))
-            bidResponseBidCloudCrossDTO.setAdMarkup(responseAdInfo.getCreativeBanner().getResourceURI());
-//        bidResponseBidCloudCrossDTO.setAdMarkup(
-//                prepareBannerHTMLAdMarkup(
-//                        request,
-//                        responseAdInfo,
-//                        response, adEntity.getExtTracker(),
-//                        winNotificationURLBuffer
-//                )
-//        );
-//        else if (creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
-//            bidResponseBidCloudCrossDTO.setAdMarkup(
-//                    prepareRichmediaAdMarkup(
-//                            request,
-//                            responseAdInfo,
-//                            response,
-//                            winNotificationURLBuffer,
-//                            creative.getCreative_macro(),
-//                            adEntity.getExtTracker()
-//                    )
-//            );
-//        else if (creative.getCreativeFormat().equals(CreativeFormat.VIDEO))
-//            bidResponseBidCloudCrossDTO.setAdMarkup(
-//                    prepareVideoAdMarkup(
-//                            request,
-//                            responseAdInfo,
-//                            response,
-//                            winNotificationURLBuffer
-//                    )
-//            );
-
-
+//        nurl 必须 string 竞价成功后通知 url
+        winNotificationURLBuffer.append(postImpressionBaseWinApiUrl);
+        winNotificationURLBuffer.append(clickUri);
+        String suffixToAdd = notificationUrlSuffix;
+        suffixToAdd = suffixToAdd.replace(
+                notificationUrlBidderBidPriceMacro,
+                String.valueOf(responseAdInfo.getEcpmValue())
+        );
+        winNotificationURLBuffer.append(suffixToAdd);
+        bidResponseBidCloudCrossDTO.setWinNotificationUrl(winNotificationURLBuffer.toString());
+//        adm 必须 string 广告物料 URL（素材 URL 地址）
+        StringBuilder creativeUrl = new StringBuilder();
+        creativeUrl = creativeUrl.append(cdnBaseImageUrl).append(responseAdInfo.getCreativeBanner().getResourceURI());
+        bidResponseBidCloudCrossDTO.setAdMarkup(creativeUrl.toString());
+//        adomain 可选 string 广告主顶层或者主域名
         String advertiserDomain[] = null;
         if (null != adEntity.getAdvertiserDomains() && adEntity.getAdvertiserDomains().length > 0)
             advertiserDomain = adEntity.getAdvertiserDomains();
@@ -260,23 +259,23 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
                     adEntity.getAdIncId(), adEntity.getLandingUrl());
             return null;
         }
-        bidResponseBidCloudCrossDTO.setAdvertiserDomains(advertiserDomain);
-        bidResponseBidCloudCrossDTO.setBidId(responseAdInfo.getImpressionId());
-        bidResponseBidCloudCrossDTO.setRequestImpressionId(bidRequestImpressionId);
+        bidResponseBidCloudCrossDTO.setAdvertiserDomains(advertiserDomain[0]);
+//        iurl 可选 [string] 曝光监测地址
+        StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
+        cscBeaconUrl.append(clickUri);
+        List<String> iurls = new ArrayList<String>();
+        iurls.add(cscBeaconUrl.toString());
+        bidResponseBidCloudCrossDTO.setSampleImageUrl(iurls);
+//        cid 可选 string 投放 id
         bidResponseBidCloudCrossDTO.setCampaignId(String.valueOf(adEntity.getCampaignIncId()));
-        BidRequestCloudCross bidRequestCloudCross = (BidRequestCloudCross) request.getBidRequest();
-        CloudCrossBidRequestImpressionDTO impressionDTO = bidRequestCloudCross.getCloudCrossBidRequestParentNodeDTO().getCloudCrossBidRequestImpressionDTOs()[0];
-        BidRequestImpressionBannerObjectDTO bannerObject = impressionDTO.getBidRequestImpressionBannerObject();
-        bidResponseBidCloudCrossDTO.setCasize(Integer.toString(bannerObject.getBannerWidthInPixels()) + "*" + Integer.toString(bannerObject.getBannerHeightInPixels()));
-        Integer[] creativeAttributes = fetchIntegerArrayFromShortArray(creative.getCreativeAttributes());
-        if (null == creativeAttributes) {
-            logger.error("Creative Attributes could not be found using adId:{} and landingURL:{} ",
-                    adEntity.getAdIncId(), adEntity.getLandingUrl());
-            return null;
-        }
-
-//        bidResponseBidCloudCrossDTO.setCreativeAttributes(creativeAttributes);
+//        crid 可选 string 创意 id
+        Creative creative = responseAdInfo.getCreative();
         bidResponseBidCloudCrossDTO.setCreativeId(creative.getCreativeGuid());
+//        adurl 可选 string 广告点击跳转链接，可以支持重定向
+        StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
+        clickUrl.append(clickUri);
+        bidResponseBidCloudCrossDTO.setAdurl(clickUrl.toString());
+//        cat 可选 int 创意行业分类
         String[] iabCategories = null;
         try {
             Short[] iabCategoriesInternalCodes = adEntity.getCategoriesArray();
@@ -298,73 +297,11 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
 
         if (null != iabCategories)
             bidResponseBidCloudCrossDTO.setCreativeCategories(iabCategories);
-
-        StringBuffer creativeImageUrl = new StringBuffer(this.cdnBaseImageUrl);
-
-        /*If the creative is banner then set its resource URL to the bid response*/
-        if (null != responseAdInfo.getCreativeBanner()) {
-            creativeImageUrl.append(responseAdInfo.getCreativeBanner().getResourceURI());
-            bidResponseBidCloudCrossDTO.setSampleImageUrl(creativeImageUrl.toString());
-        }
-
-        bidResponseBidCloudCrossDTO.setPrice(responseAdInfo.getEcpmValue().floatValue());
-
-        /***prepare nurl ,win notification url.impression tracker****/
-
-        bidResponseBidCloudCrossDTO.setWinNotificationUrl(winNotificationURLBuffer.toString());
-
-        String clickUri = CreativeFormatterUtils.prepareClickUri
-                (
-                        logger,
-                        request,
-                        responseAdInfo,
-                        response.getBidderModelId(),
-                        urlVersion,
-                        request.getInventorySource(),
-                        response.getSelectedSiteCategoryId(),
-                        secretKey
-                );
-        StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
-        clickUrl.append(clickUri);
-        bidResponseBidCloudCrossDTO.setAdurl(clickUrl.toString());
-//        bidResponseBidCloudCrossDTO.setCasize();
-        BidResponseBidExtCloudCrossDTO bidResponseBidExtCloudCrossDTO = new BidResponseBidExtCloudCrossDTO();
-        int extraTrackingSize = 0;
-        if (adEntity.getExtTracker() != null) {
-            if (adEntity.getExtTracker().getImpTracker() != null && adEntity.getExtTracker().getImpTracker().size() > 0) {
-                extraTrackingSize = adEntity.getExtTracker().getImpTracker().size();
-            }
-        }
-        String impTrackers[] = new String[1 + extraTrackingSize];
-        impTrackers[0] = fetchImpressionTrackerSameAsCSC(request, responseAdInfo, response);
-        if (extraTrackingSize > 0) {
-            int count = 1;
-            for (String str : adEntity.getExtTracker().getImpTracker()) {
-                impTrackers[count] = str;
-                count++;
-            }
-        }
-        bidResponseBidExtCloudCrossDTO.setImptrackers(impTrackers);
-        if (creative.getCreativeFormat() != null && CreativeFormat.VIDEO == creative.getCreativeFormat()) {
-            VideoProps videoProps = creative.getVideoProps();
-            if (videoProps != null) {
-                VideoBidResponseProtocols videoprotocol = VideoBidResponseProtocols.getEnum(videoProps.getProtocol());
-                if (videoprotocol != null) {
-                    if (videoprotocol == VideoBidResponseProtocols.VAST_2_0_WRAPPER) {
-                        bidResponseBidExtCloudCrossDTO.setCrtype("VAST 2.0");
-                    } else if (videoprotocol == VideoBidResponseProtocols.VAST_3_0_WRAPPER) {
-                        bidResponseBidExtCloudCrossDTO.setCrtype("VAST 3.0");
-                    }
-                }
-            }
-            bidResponseBidExtCloudCrossDTO.setDuration(videoProps.getDuration() + "");
-            Integer[] videoCreativeAttribute = new Integer[1];
-            videoCreativeAttribute[0] = 6;
-            bidResponseBidCloudCrossDTO.setCreativeAttributes(videoCreativeAttribute);
-        }
-        bidResponseBidCloudCrossDTO.setExtensionObject(bidResponseBidExtCloudCrossDTO);
-        /*******************************Done preparing bid response bid object.********************************/
-
+//        casize 可选 string 广告尺寸
+        BidRequestCloudCross bidRequestCloudCross = (BidRequestCloudCross) request.getBidRequest();
+        CloudCrossBidRequestImpressionDTO impressionDTO = bidRequestCloudCross.getCloudCrossBidRequestParentNodeDTO().getCloudCrossBidRequestImpressionDTOs()[0];
+        BidRequestImpressionBannerObjectDTO bannerObject = impressionDTO.getBidRequestImpressionBannerObject();
+        bidResponseBidCloudCrossDTO.setCasize(Integer.toString(bannerObject.getBannerWidthInPixels()) + "*" + Integer.toString(bannerObject.getBannerHeightInPixels()));
         return bidResponseBidCloudCrossDTO;
     }
 

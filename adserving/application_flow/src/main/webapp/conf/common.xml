@@ -787,9 +787,9 @@
 
     <bean id="user_aerospike_db" class="com.kritter.utils.nosql.aerospike.AerospikeNoSqlNamespaceOperations">
         <constructor-arg index="0" value="postimpression.application"/>
-        <constructor-arg index="1" value="aerospike.mad.com"/>
+        <constructor-arg index="1" value="aerospike.txshell.com"/>
         <constructor-arg index="2" value="3000"/>
         <constructor-arg index="3" value="3"/>
-        <constructor-arg index="4" value="20"/>
+        <constructor-arg index="4" value="200"/>
     </bean>
 </beans>
