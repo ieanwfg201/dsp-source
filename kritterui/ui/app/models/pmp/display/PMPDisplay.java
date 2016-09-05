@@ -2,6 +2,8 @@ package models.pmp.display;
 
 import com.kritter.api.entity.account.Account;
 import com.kritter.api.entity.ad.Ad;
+import com.kritter.api.entity.campaign.Campaign;
+import com.kritter.constants.StatusIdEnum;
 import com.kritter.kritterui.api.def.ApiDef;
 import org.codehaus.jackson.map.ObjectMapper;
 import models.uiutils.Path;
@@ -99,6 +101,31 @@ public class PMPDisplay
 
     }
 
+    public String getCampaignIdList()
+    {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Set<String> campaignNames = new HashSet();
+        if(null != privateMarketPlaceApiEntity.getCampaignIdList())
+        {
+            try
+            {
+                Integer[] campaignIds = objectMapper.readValue(privateMarketPlaceApiEntity.getCampaignIdList(), Integer[].class);
+                if(null != campaignIds)
+                {
+                    for(Integer id : campaignIds)
+                    {
+                        Campaign campaign = DataAPI.getCampaign(id.intValue());
+                        campaignNames.add(campaign.getName());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+        return campaignNames.toString();
+    }
+
     public String getAdIdList()
     {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -124,6 +151,32 @@ public class PMPDisplay
         return adNames.toString();
     }
 
+    public String publisherList()
+    {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Set<String> publisherNames = new HashSet<String>();
+        if(null != privateMarketPlaceApiEntity.getPubIdList())
+        {
+            try
+            {
+                Integer[] pubIds = objectMapper.readValue(privateMarketPlaceApiEntity.getPubIdList(), Integer[].class);
+                if(null != pubIds)
+                {
+                    for(Integer id : pubIds)
+                    {
+                        Account account = DataAPI.getAccountById(id.intValue());
+                        publisherNames.add(account.getName());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+        return publisherNames.toString();
+    }
+
     public String siteList()
     {
 
@@ -147,7 +200,8 @@ public class PMPDisplay
             {
             }
         }
-        return siteNames.toString();    }
+        return siteNames.toString();
+    }
 
     public String categoryList()
     {
@@ -218,6 +272,16 @@ public class PMPDisplay
 
     public void setDestination(String destination){
         this.destinationUrl = destination;
+    }
+
+    public String getStatusValue()
+    {
+        if(this.privateMarketPlaceApiEntity.getStatus() == (short)StatusIdEnum.Active.getCode())
+            return "ACTIVE";
+        if(this.privateMarketPlaceApiEntity.getStatus() == (short)StatusIdEnum.Paused.getCode())
+            return "PAUSED";
+
+        return "INACTIVE";
     }
 }
 

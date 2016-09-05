@@ -4,7 +4,7 @@ public class ExchangeConstants {
     public static final int req_imp_secure = 0;
     public static final int req_allimps = 0;
     public static final int req_auc_type = 2;
-    public static final float offset = 0.0001f;
+    public static final float offset = 0.01f;
     public static final String winMacroAuctionId = "\\$\\{AUCTION\\_ID\\}";
     public static final String winMacroAuctionBidId = "\\$\\{AUCTION\\_BID\\_ID\\}";
     public static final String winMacroAuctionImpId = "\\$\\{AUCTION\\_IMP\\_ID\\}";

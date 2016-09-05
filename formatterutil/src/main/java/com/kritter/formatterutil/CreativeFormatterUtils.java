@@ -254,6 +254,8 @@ public class CreativeFormatterUtils
             sb.append(adservingInformationForPostimpressionTransport);
         }
 
+        responseAdInfo.setCommonURIForPostImpression(sb.toString());
+        
         return sb.toString();
     }
 

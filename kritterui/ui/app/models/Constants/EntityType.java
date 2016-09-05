@@ -12,6 +12,7 @@ public enum EntityType {
 	ispMapping,
 	iddefinition,
 	retargeting_segment,
-	pmp_deal
+	pmp_deal,
+	adxbasedexchangesmetadata
 
 }

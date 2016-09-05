@@ -17,6 +17,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 
 import play.Logger;
+import play.Play;
 import play.data.Form;
 import play.db.DB;
 import play.libs.Json;
@@ -46,6 +47,7 @@ public class AccountsController extends Controller{
 
 	static Form<AccountEntity> accountFormData = Form.form(AccountEntity.class);
 	static Form<AccountWorkflowEntity> accountWorkflowFormData = Form.form(AccountWorkflowEntity.class);
+	private static String adx_based_exchanges = Play.application().configuration().getString("adx_based_exchanges");
 
 	public static Account getAccount(String userId){
 		Account account = new Account();
@@ -82,7 +84,7 @@ public class AccountsController extends Controller{
 		account.setStatus(StatusIdEnum.Active);
 		try {
 			account.setType_id(Account_Type.valueOf(accountType));
-			return ok(views.html.accounts.accountForm.render(accountFormData.fill(account), new AccountDisplay(account.getEntity()))); 
+			return ok(views.html.accounts.accountForm.render(accountFormData.fill(account), new AccountDisplay(account.getEntity()),adx_based_exchanges)); 
 		} catch (Exception e) {
 			return badRequest("Invalid account type specified");
 		}
@@ -96,9 +98,9 @@ public class AccountsController extends Controller{
 		accountEntity.setPassword("");
 		if(account != null){  
 			if(account.getType_id()== Account_Type.directadvertiser)
-				return ok(views.html.accounts.accountForm.render(accountFormData.fill(accountEntity),  new AdvertiserDisplay(account))); 
+				return ok(views.html.accounts.accountForm.render(accountFormData.fill(accountEntity),  new AdvertiserDisplay(account),adx_based_exchanges)); 
 			else
-				return ok(views.html.accounts.accountForm.render(accountFormData.fill(accountEntity),  new PublisherDisplay(account)));
+				return ok(views.html.accounts.accountForm.render(accountFormData.fill(accountEntity),  new PublisherDisplay(account),adx_based_exchanges));
 		}
 		else
 			return ok("Invalid user id supplied");
@@ -159,7 +161,7 @@ public class AccountsController extends Controller{
 		AccountEntity accountEntity  = null;
 		Form<AccountEntity> filledForm = accountFormData.bindFromRequest(); 
 		if(filledForm.hasErrors()){
-			return ok(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account))); 
+			return ok(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
 		} 
 
 		accountEntity = filledForm.get();
@@ -178,7 +180,7 @@ public class AccountsController extends Controller{
 				account.setPassword(BCrypt.hashpw(account.getPassword(), BCrypt.gensalt()));
 			else{
 				filledForm.reject("password", "Password and Verify Password donot match");
-				return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account))); 
+				return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
 			}
 
 		}else  {
@@ -198,7 +200,7 @@ public class AccountsController extends Controller{
 				account.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
 			}else if(! "".equals(password)&& !password.equals(confirmPassword)  ){
 				filledForm.reject("verifyPassword", "Password and Verify Password donot match");
-				return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account))); 
+				return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
 			} 
 		}
 
@@ -228,7 +230,7 @@ public class AccountsController extends Controller{
 				        filledForm.reject("email", msg.getMsg());
 				    }
 					
-					return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account))); 
+					return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
 				} 
 			}catch(Exception e){
 				Logger.error("Error  while saving Account:"+ e.getMessage(),e);
@@ -241,7 +243,7 @@ public class AccountsController extends Controller{
                      Logger.error(e.getMessage(),e);
 				}
 			}
-		return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account))); 
+		return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
 	}
 
 	@SecuredAction

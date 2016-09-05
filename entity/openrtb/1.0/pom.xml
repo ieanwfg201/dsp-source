@@ -4,13 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.kritter.ex_int</groupId>
-    <artifactId>ex_int_openrtb_2_1</artifactId>
+    <groupId>com.kritter.entity</groupId>
+    <artifactId>entity_openrtb_1_0</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>openrtb_2_1</name>
+    <name>openrtb_1_0</name>
 
     <dependencies>
+        <dependency>
+            <groupId>com.kritter.entity.common</groupId>
+            <artifactId>entity_common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>easymock</groupId>
             <artifactId>easymock</artifactId>
@@ -30,16 +35,10 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>0.11.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-          <scope>test</scope>
-          <version>6.8.5</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+            <version>6.8.5</version>
         </dependency>
     </dependencies>
     <organization>

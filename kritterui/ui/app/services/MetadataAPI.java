@@ -734,6 +734,29 @@ public class MetadataAPI {
 	    }
 	    return selectOptions;
 	}
+	public static List<SelectOption> getAdxBasedExchangesMetadata(){
+	    List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+	    Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.ADX_BASED_EXCHANGES_METATADATA, null);
+			List<MetaField> mfields  = mlist.getMetaFieldList();
+			for(MetaField m:mfields){
+				selectOptions.add(new SelectOption(m.getName(), m.getId()+""));
+			}
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+	    return selectOptions;
+	}
 
     public static List<SelectOption> getActiveDSPDemandPartner(){
         List<SelectOption>  selectOptions = new ArrayList<SelectOption>();

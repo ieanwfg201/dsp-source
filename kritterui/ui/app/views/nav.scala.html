@@ -1,3 +1,4 @@
+@import play.Play
 <div id="nav-wrapper">
     <ul id="nav"
         data-ng-controller="NavCtrl"
@@ -9,7 +10,10 @@
 		</li>
         @navs.accounts()
         @navs.insertionorders() 
-        @navs.operations() 
+        @navs.operations()
+        @if("true" == Play.application().configuration().getString("adx_based_exchanges") )  {
+        	@navs.adxbasedexchanges()
+		} 
         @navs.reporting()
         @navs.testpages()
         @navs.logpages()

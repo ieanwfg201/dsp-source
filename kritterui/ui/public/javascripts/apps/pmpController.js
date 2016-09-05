@@ -8,17 +8,6 @@ controller('pmpController',function ($scope, $http) {
         $scope.totalItems = 500;
         $scope.pmpList = {}
 
-        $scope.init = function(){
-                var path = $.url().attr('path');
-                var pathComps = path.split("/");
-                $scope.guid = pathComps[2];
-                $scope.pmpListData =  Object.create(TableModel);
-                $scope.pmpListData.init("/entitylist" );
-                $scope.pmpListData.setFilterAttribute("entityType", "pmp_deal" );
-        }
-
-        $scope.init();
-	
 	$scope.initDate = function(field, dateval){
 		if(dateval == 0){
 			$scope[field+"_dateobj"] = new Date();
@@ -49,7 +38,7 @@ controller('pmpController',function ($scope, $http) {
         $scope.advertiserIdList_msmodel.init("/metadata/options/tpadvidlist/none", 'valueArray', true, true);
 
         //select campaigns using advertiser guid.Only one value but input comes as an array of csv,e.g: adv1,adv2 but here its just adv1
-        $scope.thirdPartyConnectionGuid = "none";
+        //$scope.thirdPartyConnectionGuid = "none";
         $scope.updateCampaignsAndExternalData= function()
         {
             if($scope.thirdPartyConnectionGuid != "")
@@ -59,7 +48,7 @@ controller('pmpController',function ($scope, $http) {
                 $scope.advertiserIdList_msmodel.setUrl("/metadata/options/tpadvidlist/"+$scope.thirdPartyConnectionGuid);
             }
         }
-        
+
         //select ads based on what campaigns are selected, campaignid input comes as 1,2,3. array of integers.
         $scope.ads_url = "/metadata/options/ads/";
         $scope.adIdList_msmodel = Object.create(MultiSelectModel);
@@ -70,5 +59,18 @@ controller('pmpController',function ($scope, $http) {
         $scope.tier1categories_url = "/metadata/options/tier1categories";
         $scope.blockedIABCategories_msmodel = Object.create(MultiSelectModel);
         $scope.blockedIABCategories_msmodel.init($scope.tier1categories_url, 'valueArray', true,true);
+
+        $scope.init = function(){
+                var path = $.url().attr('path');
+                var pathComps = path.split("/");
+                $scope.guid = pathComps[2];
+                $scope.pmpListData =  Object.create(TableModel);
+                $scope.pmpListData.init("/entitylist" );
+                $scope.pmpListData.setFilterAttribute("entityType", "pmp_deal" );
+                $scope.thirdPartyConnectionGuid = $("#thirdPartyConnectionGuid").val();
+                $scope.updateCampaignsAndExternalData();
+        }
+
+        $scope.init();
 });
 

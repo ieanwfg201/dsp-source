@@ -4,7 +4,7 @@
 	
 		<table tr-ng-grid="" items="pmpData.filteredData"   
 	 					selected-items="pmpData.selections" 
-	 					fields="['dealId', 'dealName', 'action']" 
+	 					fields="['dealId', 'dealName', 'statusValue', 'action']" 
 	 					selection-mode="SingleRow"
 	 					enable-filtering="pmpData.enableFilter" 
 	 					order-by="pmpData.orderBy" 
@@ -18,16 +18,26 @@
 		        <tr>
 		            <th field-name="dealId" display-name="Deal Id" enable-sorting="true" enable-filtering="true" >  </th>
 		            <th field-name="dealName" display-name="Deal Name" enable-sorting="true" enable-filtering="true" >  </th>
+		            <th field-name="statusValue" display-name="Status" enable-sorting="true" enable-filtering="true" >  </th>
 		            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
 		        </tr>  
 		    </thead> 
 		    <tbody>
 	    		<tr> 
                                 <td field-name="dealId"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.dealId}}</a></td>
-	    			<td field-name="dealName"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.dealName}}</a></td> 
-		            <td field-name="action" >
-		                <a href="{{gridItem.editUrl}}" class="btn btn-primary   active" role="button">Edit</a>
-		            </td>
+	    			<td field-name="dealName"  >  <a href="{{gridItem.viewUrl}}" >{{gridItem.dealName}}</a></td>
+	    			<td field-name="statusValue"  ><a href="{{gridItem.viewUrl}}" >{{gridItem.statusValue}}</a></td>
+		                <td field-name="action" >
+		                    <a href="{{gridItem.editUrl}}" class="btn btn-primary   active" role="button">Edit</a>
+                                    <div class="btn-group pull-right">
+                                         <button class="btn btn-success  active" ng-click="updateDeal(gridItem.dealId,'START')">
+                                                        <span class="glyphicon glyphicon-play" aria-hidden="true">Start</span>
+                                         </button>
+                                         <button class="btn btn-danger  active" ng-click="updateDeal(gridItem.dealId,'PAUSE')">
+                                                        <span class="glyphicon glyphicon-pause" aria-hidden="true">Pause</span>
+                                         </button>
+                                    </div>
+		                </td>
 		        </tr>
 		    </tbody>
 		</table>
