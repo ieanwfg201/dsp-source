@@ -90,7 +90,37 @@ public class DataAPI {
 		}
 		return campaignBudget;
 	}
-	
+
+	public static Campaign getCampaign(int campaignId)
+	{
+		Connection con = null;
+		Campaign campaign = null;
+
+		try
+		{
+			con = DB.getConnection();
+			campaign= ApiDef.get_campaign(con, campaignId);
+		}
+		catch(Exception e)
+		{
+			play.Logger.error(e.getMessage()+".Error fetching campaign for campaign with id = " + campaignId, e);
+		}
+		finally
+		{
+			try
+			{
+				if(con != null)
+					con.close();
+			}
+			catch (SQLException e)
+			{
+				Logger.error("Error closing DB connection in getCampaign in CampaignCOntroller",e);
+			}
+		}
+
+		return campaign;
+	}
+
 	public static List<SelectOption> getTargetingOptions(String accountGuid){
 		List<SelectOption> targetingOptions = new ArrayList<SelectOption>();;
 	 
@@ -289,6 +319,36 @@ public class DataAPI {
 			}
 		}
 		return account;
+	}
+
+	public static Account getAccountById(int accountId)
+	{
+		Connection dbConnection = null;
+
+		try
+		{
+			dbConnection = DB.getConnection();
+			Account account = ApiDef.get_Account_By_Id(dbConnection, accountId);
+			return account;
+		}
+		catch (Exception e)
+		{
+			Logger.debug("Error while requesting account object for id: " + accountId);
+		}
+		finally
+		{
+			try
+			{
+				if(dbConnection != null)
+					dbConnection.close();
+			}
+			catch (SQLException e)
+			{
+				Logger.debug("Error while closing DB Connection.", e);
+			}
+		}
+
+		return null;
 	}
 
 	public static PrivateMarketPlaceApiEntity getPMPDealByGuid(String pmpGuid){

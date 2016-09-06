@@ -10,13 +10,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritter_entity_winner</name>
   <dependencies>
     <dependency>
-        <groupId>com.kritter.ex_int</groupId>
-        <artifactId>ex_int_openrtb_2_3</artifactId>
+        <groupId>com.kritter.entity</groupId>
+        <artifactId>entity_openrtb_2_3</artifactId>
         <version>1.0.0</version>
     </dependency>
     <dependency>
-        <groupId>com.kritter.ex_int</groupId>
-        <artifactId>ex_int_openrtb_2_2</artifactId>
+        <groupId>com.kritter.entity</groupId>
+        <artifactId>entity_openrtb_2_2</artifactId>
         <version>1.0.0</version>
     </dependency>
     <dependency>

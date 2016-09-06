@@ -101,6 +101,7 @@ public class AccountCrud {
             account.setDemandpreference(rset.getInt("demandpreference"));
             account.setQps(rset.getInt("qps"));
             account.setTimeout(rset.getInt("timeout"));
+            account.setAdxbased(rset.getBoolean("adxbased"));
             String demandProps = rset.getString("demand_props");
             if(demandProps != null){
                 String demandPropsTrim = demandProps.trim();
@@ -337,6 +338,7 @@ public class AccountCrud {
             pstmt.setString(39, account.getBilling_name());
             pstmt.setString(40, account.getBilling_email());
             pstmt.setString(41, account.getExt());
+            pstmt.setBoolean(42, account.isAdxbased());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -893,7 +895,8 @@ public class AccountCrud {
             pstmt.setString(36, account.getBilling_name());
             pstmt.setString(37, account.getBilling_email());
             pstmt.setString(38, account.getExt());
-            pstmt.setInt(39, account.getId());
+            pstmt.setBoolean(39, account.isAdxbased());
+            pstmt.setInt(40, account.getId());
 
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
@@ -1063,6 +1066,17 @@ public class AccountCrud {
         }
     }
 
+    public static Account get_Account_By_Id(Connection con, int id){
+        try{
+            Account account = new Account();
+            account.setId(id);
+            return get_Account_By_Id(con, account).getAccount();
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            return null;
+        }
+    }
+
     public static AccountMsgPair get_Account_By_Guid(Connection con,Account account){
         if(con == null){
             AccountMsgPair amp = new AccountMsgPair();
@@ -1119,6 +1133,64 @@ public class AccountCrud {
             }
         }
     }
+
+    public static AccountMsgPair get_Account_By_Id(Connection con,Account account){
+        if(con == null){
+            AccountMsgPair amp = new AccountMsgPair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            amp.setMsg(msg);
+            return amp;
+        }
+        if(account == null){
+            AccountMsgPair amp = new AccountMsgPair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_2.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_2.getName());
+            amp.setMsg(msg);
+            return amp;
+        }
+        PreparedStatement pstmt = null;
+        try{
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Account.get_Account_By_Id);
+            pstmt.setInt(1, account.getId());
+            ResultSet rset = pstmt.executeQuery();
+            if(rset.next()){
+                AccountMsgPair amp = new AccountMsgPair();
+                Message msg = new Message();
+                msg.setError_code(ErrorEnum.NO_ERROR.getId());
+                msg.setMsg(ErrorEnum.NO_ERROR.getName());
+                populateAccount(account, rset);
+                amp.setAccount(account);
+                amp.setMsg(msg);
+                return amp;
+            }
+            AccountMsgPair amp = new AccountMsgPair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.USERIDINCORRECT.getId());
+            msg.setMsg(ErrorEnum.USERIDINCORRECT.getName());
+            amp.setMsg(msg);
+            return amp;
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            AccountMsgPair amp = new AccountMsgPair();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
+            amp.setMsg(msg);
+            return amp;
+        }finally{
+            if(pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+        }
+    }
+
     public static JsonNode updateStatus(Connection con, JsonNode jsonNode) {
         if(jsonNode == null){
             Message msg = new Message();

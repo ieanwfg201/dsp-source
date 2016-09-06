@@ -21,6 +21,8 @@ import com.kritter.api.entity.account_budget.Account_budget;
 import com.kritter.api.entity.ad.Ad;
 import com.kritter.api.entity.ad.AdList;
 import com.kritter.api.entity.ad.AdListEntity;
+import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadatList;
+import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadataListEntity;
 import com.kritter.api.entity.campaign.Campaign;
 import com.kritter.api.entity.campaign.CampaignList;
 import com.kritter.api.entity.campaign.CampaignListEntity;
@@ -71,6 +73,7 @@ import com.kritter.api.entity.video_info.VideoInfoList;
 import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.MetadataType;
 import com.kritter.entity.ad_stats.AdStats;
+import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.algomodel.AlgoModelEntity;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
@@ -82,6 +85,7 @@ import com.kritter.kritterui.api.account.AccountCrud;
 import com.kritter.kritterui.api.account_budget.Account_Budget_Crud;
 import com.kritter.kritterui.api.ad.AdCrud;
 import com.kritter.kritterui.api.ad_stats.AdStatsCrud;
+import com.kritter.kritterui.api.adxbasedexchanges_metadata.AdxBasedExchangesMetadataCrud;
 import com.kritter.kritterui.api.algo_models.AlgoModelCrud;
 import com.kritter.kritterui.api.campaign.CampaignCrud;
 import com.kritter.kritterui.api.campaign_budget.CampaignBudgetCrud;
@@ -191,6 +195,9 @@ public class ApiDef {
     }
     public static AccountMsgPair get_Account_By_Guid(Connection con, Account account){
         return AccountCrud.get_Account_By_Guid(con, account);
+    }
+    public static Account get_Account_By_Id(Connection con, int id){
+        return AccountCrud.get_Account_By_Id(con, id);
     }
     public static JsonNode get_Account_By_Guid_Apikey(Connection con, JsonNode jsonNode){
         return AccountCrud.get_Account_By_Guid_Apikey(con, jsonNode);
@@ -452,6 +459,9 @@ public class ApiDef {
     }
     public static Campaign get_campaign(Connection con, String campaignGuid){
         return CampaignCrud.get_campaign(con, campaignGuid);
+    }
+    public static Campaign get_campaign(Connection con, int campaignId){
+        return CampaignCrud.get_campaign(con, campaignId);
     }
     
     /*Campaign Budget API*/
@@ -754,6 +764,9 @@ public class ApiDef {
     public static JsonNode get_channel_by_ids(Connection con){
         return get_metalist(con,MetadataType.MMA_CATEGORY_BY_IDS,null).toJson();
     }
+    public static JsonNode get_adx_based_exchabges_metadata_not_created(Connection con){
+        return get_metalist(con,MetadataType.ADX_BASED_EXCHANGES_METATADATA,null).toJson();
+    }
     
     /* LOG API */
     
@@ -1043,6 +1056,7 @@ public class ApiDef {
         return MixedCrud.get_video_info_from_container(con, cc);
     }
 
+    /* PMP APIS */
     public static Message insert_pmp_deal(Connection con, PrivateMarketPlaceApiEntity pmp)
     {
         return PrivateMarketPlaceDealCrud.insertPrivateMarketPlaceDeal(pmp,con,true);
@@ -1051,6 +1065,11 @@ public class ApiDef {
     public static Message update_pmp_deal(Connection con, PrivateMarketPlaceApiEntity pmp)
     {
         return PrivateMarketPlaceDealCrud.updatePrivateMarketPlaceDeal(pmp,con,true);
+    }
+
+    public static Message change_status_pmp_deal(Connection con, String dealGuid, String status)
+    {
+        return PrivateMarketPlaceDealCrud.updatePrivateMarketPlaceDealForStatus(dealGuid,con, true, status);
     }
 
     public static PMPMessagePair get_PMP_deal_By_Guid(Connection con, PrivateMarketPlaceApiEntity privateMarketPlaceApiEntity){
@@ -1064,4 +1083,25 @@ public class ApiDef {
     public static PMPList get_PMP_deals_list(Connection con,PMPListEntity pmpListEntity){
         return PrivateMarketPlaceDealCrud.get_PMPList(con,pmpListEntity);
     }
+    /* ADXBASEDEXCHANGES METADATA APIS */
+    
+    public static JsonNode insert_adbasedexchanges_metadata(Connection con, JsonNode jsonNode){
+        return AdxBasedExchangesMetadataCrud.insert_adbasedexchanges_metadata(con, jsonNode);
+    }    
+    public static Message insert_adbasedexchanges_metadata(Connection con, AdxBasedExchangesMetadata adxBased){
+        return AdxBasedExchangesMetadataCrud.insert_adbasedexchanges_metadata(con, adxBased, true);
+    }
+    public static JsonNode update_adbasedexchanges_metadata(Connection con, JsonNode jsonNode){
+        return AdxBasedExchangesMetadataCrud.update_adbasedexchanges_metadata(con, jsonNode);
+    }    
+    public static Message update_adbasedexchanges_metadata(Connection con, AdxBasedExchangesMetadata adxBased){
+        return AdxBasedExchangesMetadataCrud.update_adbasedexchanges_metadata(con, adxBased, true);
+    }
+    public static JsonNode various_get_adbasedexchanges_metadata(Connection con, JsonNode jsonNode){
+        return AdxBasedExchangesMetadataCrud.various_get_adbasedexchanges_metadata(con, jsonNode);
+    }
+    public static AdxBasedExchangesMetadatList various_get_adbasedexchanges_metadata(Connection con, AdxBasedExchangesMetadataListEntity adxBased){
+        return AdxBasedExchangesMetadataCrud.various_get_adbasedexchanges_metadata(con, adxBased);
+    }
+
 }

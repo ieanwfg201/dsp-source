@@ -30,7 +30,6 @@ import com.kritter.tracking.common.ThirdPartyTrackingManager;
 import com.kritter.tracking.common.entity.ThirdPartyTrackingData;
 import com.kritter.postimpression.utils.MacroUtils;
 import com.kritter.user.thrift.struct.ImpressionEvent;
-import com.kritter.user.thrift.struct.LifetimeDemandHistory;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ConversionUrlData;
 import com.kritter.utils.common.url.URLField;

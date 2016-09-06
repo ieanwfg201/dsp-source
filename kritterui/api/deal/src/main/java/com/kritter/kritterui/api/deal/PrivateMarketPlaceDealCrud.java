@@ -2,6 +2,7 @@ package com.kritter.kritterui.api.deal;
 
 import com.kritter.api.entity.deal.*;
 import com.kritter.api.entity.response.msg.Message;
+import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.kritterui.api.db_query_def.PrivateMarketPlaceDeal;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -52,9 +53,10 @@ public class PrivateMarketPlaceDealCrud
 
             LOG.error("No error , Data for deal insert is: {} ",privateMarketPlaceDeal.toString());
 
-            String domainsWhitelisted = null;
+            String domainsWhitelisted = privateMarketPlaceDeal.getWhitelistedAdvertiserDomains();
 
-            if(null != privateMarketPlaceDeal.getWhitelistedAdvertiserDomains())
+            if(null != privateMarketPlaceDeal.getWhitelistedAdvertiserDomains() &&
+               !privateMarketPlaceDeal.getWhitelistedAdvertiserDomains().startsWith("["))
             {
                 String[] domains = null;
                 String values[] =  privateMarketPlaceDeal.getWhitelistedAdvertiserDomains().split(",");
@@ -72,19 +74,22 @@ public class PrivateMarketPlaceDealCrud
 
             pstmt.setString(1,privateMarketPlaceDeal.getDealId());
             pstmt.setString(2, privateMarketPlaceDeal.getDealName());
-            pstmt.setString(3,privateMarketPlaceDeal.getAdIdList());
-            pstmt.setString(4,privateMarketPlaceDeal.getSiteIdList());
-            pstmt.setString(5,privateMarketPlaceDeal.getBlockedIABCategories());
-            pstmt.setString(6,privateMarketPlaceDeal.getThirdPartyConnectionGuid());
-            pstmt.setString(7,privateMarketPlaceDeal.getDspIdList());
-            pstmt.setString(8,privateMarketPlaceDeal.getAdvertiserIdList());
-            pstmt.setString(9,domainsWhitelisted);
-            pstmt.setShort(10,Short.valueOf(privateMarketPlaceDeal.getAuctionType()));
-            pstmt.setInt(11,Integer.valueOf(privateMarketPlaceDeal.getRequestCap()));
-            pstmt.setTimestamp(12,new Timestamp(privateMarketPlaceDeal.getStartDate()));
-            pstmt.setTimestamp(13,new Timestamp(privateMarketPlaceDeal.getEndDate()));
-            pstmt.setDouble(14,Double.valueOf(privateMarketPlaceDeal.getDealCPM()));
-            pstmt.setTimestamp(15,new Timestamp(System.currentTimeMillis()));
+            pstmt.setString(3,privateMarketPlaceDeal.getCampaignIdList());
+            pstmt.setString(4,privateMarketPlaceDeal.getAdIdList());
+            pstmt.setString(5,privateMarketPlaceDeal.getCampaignIdList());
+            pstmt.setString(6,privateMarketPlaceDeal.getSiteIdList());
+            pstmt.setString(7,privateMarketPlaceDeal.getBlockedIABCategories());
+            pstmt.setString(8,privateMarketPlaceDeal.getThirdPartyConnectionGuid());
+            pstmt.setString(9,privateMarketPlaceDeal.getDspIdList());
+            pstmt.setString(10,privateMarketPlaceDeal.getAdvertiserIdList());
+            pstmt.setString(11,domainsWhitelisted);
+            pstmt.setShort(12,Short.valueOf(privateMarketPlaceDeal.getAuctionType()));
+            pstmt.setInt(13,Integer.valueOf(privateMarketPlaceDeal.getRequestCap()));
+            pstmt.setTimestamp(14,new Timestamp(privateMarketPlaceDeal.getStartDate()));
+            pstmt.setTimestamp(15,new Timestamp(privateMarketPlaceDeal.getEndDate()));
+            pstmt.setDouble(16,Double.valueOf(privateMarketPlaceDeal.getDealCPM()));
+            pstmt.setTimestamp(17,new Timestamp(System.currentTimeMillis()));
+            pstmt.setShort(18,privateMarketPlaceDeal.getStatus());
 
             int returnCode = pstmt.executeUpdate();
 
@@ -201,9 +206,10 @@ public class PrivateMarketPlaceDealCrud
 
             LOG.error("No error , Data for deal update is: {} ",privateMarketPlaceDeal.toString());
 
-            String domainsWhitelisted = null;
+            String domainsWhitelisted = privateMarketPlaceDeal.getWhitelistedAdvertiserDomains();
 
-            if(null != privateMarketPlaceDeal.getWhitelistedAdvertiserDomains())
+            if(null != privateMarketPlaceDeal.getWhitelistedAdvertiserDomains() &&
+               !privateMarketPlaceDeal.getWhitelistedAdvertiserDomains().startsWith("["))
             {
                 String[] domains = null;
                 String values[] =  privateMarketPlaceDeal.getWhitelistedAdvertiserDomains().split(",");
@@ -220,20 +226,23 @@ public class PrivateMarketPlaceDealCrud
             }
 
             pstmt.setString(1, privateMarketPlaceDeal.getDealName());
-            pstmt.setString(2,privateMarketPlaceDeal.getAdIdList());
-            pstmt.setString(3,privateMarketPlaceDeal.getSiteIdList());
-            pstmt.setString(4,privateMarketPlaceDeal.getBlockedIABCategories());
-            pstmt.setString(5,privateMarketPlaceDeal.getThirdPartyConnectionGuid());
-            pstmt.setString(6,privateMarketPlaceDeal.getDspIdList());
-            pstmt.setString(7,privateMarketPlaceDeal.getAdvertiserIdList());
-            pstmt.setString(8,domainsWhitelisted);
-            pstmt.setShort(9,Short.valueOf(privateMarketPlaceDeal.getAuctionType()));
-            pstmt.setInt(10,Integer.valueOf(privateMarketPlaceDeal.getRequestCap()));
-            pstmt.setTimestamp(11,new Timestamp(privateMarketPlaceDeal.getStartDate()));
-            pstmt.setTimestamp(12,new Timestamp(privateMarketPlaceDeal.getEndDate()));
-            pstmt.setDouble(13,Double.valueOf(privateMarketPlaceDeal.getDealCPM()));
-            pstmt.setTimestamp(14,new Timestamp(System.currentTimeMillis()));
-            pstmt.setString(15,privateMarketPlaceDeal.getDealId());
+            pstmt.setString(2,privateMarketPlaceDeal.getCampaignIdList());
+            pstmt.setString(3,privateMarketPlaceDeal.getAdIdList());
+            pstmt.setString(4,privateMarketPlaceDeal.getPubIdList());
+            pstmt.setString(5,privateMarketPlaceDeal.getSiteIdList());
+            pstmt.setString(6,privateMarketPlaceDeal.getBlockedIABCategories());
+            pstmt.setString(7,privateMarketPlaceDeal.getThirdPartyConnectionGuid());
+            pstmt.setString(8,privateMarketPlaceDeal.getDspIdList());
+            pstmt.setString(9,privateMarketPlaceDeal.getAdvertiserIdList());
+            pstmt.setString(10,domainsWhitelisted);
+            pstmt.setShort(11,Short.valueOf(privateMarketPlaceDeal.getAuctionType()));
+            pstmt.setInt(12,Integer.valueOf(privateMarketPlaceDeal.getRequestCap()));
+            pstmt.setTimestamp(13,new Timestamp(privateMarketPlaceDeal.getStartDate()));
+            pstmt.setTimestamp(14,new Timestamp(privateMarketPlaceDeal.getEndDate()));
+            pstmt.setDouble(15,Double.valueOf(privateMarketPlaceDeal.getDealCPM()));
+            pstmt.setTimestamp(16,new Timestamp(System.currentTimeMillis()));
+            pstmt.setShort(17,privateMarketPlaceDeal.getStatus());
+            pstmt.setString(18,privateMarketPlaceDeal.getDealId());
 
             int returnCode = pstmt.executeUpdate();
 
@@ -317,6 +326,127 @@ public class PrivateMarketPlaceDealCrud
         }
     }
 
+    public static Message updatePrivateMarketPlaceDealForStatus(String dealGuid, Connection con, boolean createTransaction,String status)
+    {
+        if(con == null)
+        {
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            return msg;
+        }
+
+        if(null == dealGuid)
+        {
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.PMP_DEAL_NULL.getId());
+            msg.setMsg(ErrorEnum.PMP_DEAL_NULL.getName());
+            return msg;
+        }
+
+        PreparedStatement pstmt = null;
+        boolean autoCommitFlag = false;
+
+        try
+        {
+            if(createTransaction)
+            {
+                autoCommitFlag = con.getAutoCommit();
+                con.setAutoCommit(false);
+            }
+
+            pstmt = con.prepareStatement(PrivateMarketPlaceDeal.UPDATE_DEAL_STATUS, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            LOG.error("No error , Data for deal update is: {} ",dealGuid);
+
+            if(status.equalsIgnoreCase("START"))
+                pstmt.setShort(1, (short)StatusIdEnum.Active.getCode());
+            else if(status.equalsIgnoreCase("PAUSE"))
+                pstmt.setShort(1, (short)StatusIdEnum.Paused.getCode());
+
+            pstmt.setString(2,dealGuid);
+
+            int returnCode = pstmt.executeUpdate();
+
+            if(createTransaction)
+            {
+                con.commit();
+            }
+
+            LOG.error("Return code for deal update is: {} " , returnCode );
+
+            if(returnCode == 0)
+            {
+                Message msg = new Message();
+                msg.setError_code(ErrorEnum.PMP_DEAL_NOT_INSERTED.getId());
+                msg.setMsg(ErrorEnum.PMP_DEAL_NOT_INSERTED.getName());
+                return msg;
+            }
+
+            ResultSet keyResultSet = pstmt.getGeneratedKeys();
+            int db_id = -1;
+
+            if (keyResultSet.next())
+            {
+                db_id = keyResultSet.getInt(1);
+            }
+
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.NO_ERROR.getId());
+            msg.setMsg(ErrorEnum.NO_ERROR.getName());
+            msg.setId(db_id+"");
+            return msg;
+
+        }
+        catch(Exception e)
+        {
+            LOG.error(e.getMessage(),e);
+
+            if(createTransaction)
+            {
+                try
+                {
+                    con.rollback();
+                }
+                catch (SQLException e1)
+                {
+                    LOG.error(e1.getMessage(),e1);
+                }
+            }
+
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
+            return msg;
+
+        }
+        finally
+        {
+            if(pstmt != null)
+            {
+                try
+                {
+                    pstmt.close();
+                }
+                catch (SQLException e)
+                {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+
+            if(createTransaction)
+            {
+                try
+                {
+                    con.setAutoCommit(autoCommitFlag);
+                }
+                catch (SQLException e1)
+                {
+                    LOG.error(e1.getMessage(),e1);
+                }
+            }
+        }
+    }
 
     public static ThirdPartyConnectionChildIdList getDSPAdvIdListForAdvertiserGuid(Connection con, ThirdPartyConnectionChildId thirdPartyConnectionChildId)
     {
@@ -577,7 +707,9 @@ public class PrivateMarketPlaceDealCrud
         {
             privateMarketPlaceApiEntity.setDealId(resultSet.getString("deal_id"));
             privateMarketPlaceApiEntity.setDealName(resultSet.getString("deal_name"));
+            privateMarketPlaceApiEntity.setCampaignIdList(resultSet.getString("campaign_id_list"));
             privateMarketPlaceApiEntity.setAdIdList(resultSet.getString("ad_id_list"));
+            privateMarketPlaceApiEntity.setPubIdList(resultSet.getString("pub_id_list"));
             privateMarketPlaceApiEntity.setSiteIdList(resultSet.getString("site_id_list"));
             privateMarketPlaceApiEntity.setBlockedIABCategories(resultSet.getString("bcat"));
             privateMarketPlaceApiEntity.setThirdPartyConnectionGuid(resultSet.getString("third_party_conn_list"));
@@ -589,6 +721,7 @@ public class PrivateMarketPlaceDealCrud
             privateMarketPlaceApiEntity.setStartDate((resultSet.getTimestamp("start_date")).getTime());
             privateMarketPlaceApiEntity.setEndDate((resultSet.getTimestamp("end_date")).getTime());
             privateMarketPlaceApiEntity.setDealCPM(String.valueOf(resultSet.getDouble("deal_cpm")));
+            privateMarketPlaceApiEntity.setStatus(resultSet.getShort("status_id"));
         }
     }
 

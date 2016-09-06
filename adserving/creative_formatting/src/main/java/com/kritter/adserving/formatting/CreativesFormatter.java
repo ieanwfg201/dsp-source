@@ -15,8 +15,8 @@ public interface CreativesFormatter
     public static final String CREATIVE_CSC_BEACON   = "$CREATIVE_CSC_BEACON";
     public static final String CREATIVE_ALT_TEXT     = "$CREATIVE_ALT_TEXT";
     public static final String CREATIVE_TYPE         = "$CREATIVE_TYPE";
-    public static final String CREATIVE_IMAGE_WIDTH  = "$CREATIVE_IMAGE_WIDTH";
-    public static final String CREATIVE_IMAGE_HEIGHT = "$CREATIVE_IMAGE_HEIGHT";
+    public static final String CREATIVE_IMAGE_WIDTH  = "$CREATIVE_WIDTH";
+    public static final String CREATIVE_IMAGE_HEIGHT = "$CREATIVE_HEIGHT";
     public static final String RICHMEDIA_PAYLOAD     = "$RICHMEDIA_PAYLOAD";
     public static final String WIN_NOTIFICATION_URL  = "$WIN_NOTIFICATION_URL";
 

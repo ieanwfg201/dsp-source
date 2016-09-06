@@ -1,4 +1,4 @@
-@(accountForm: Form[models.entities.AccountEntity], display:models.accounts.displays.AccountDisplay)
+@(accountForm: Form[models.entities.AccountEntity], display:models.accounts.displays.AccountDisplay, adx_based_exchanges:String)
 
  
 @main2("New Account Form"){@nav()}{@navs.breadcrumbs(display.getBreadCrumbPaths())} {
@@ -24,6 +24,10 @@
                 <fieldset ng-show="showPaymentOptions" ng-if="showPaymentOptions">
                     <legend>Inventory Source</legend>
                     @components.formElements.selectlist2(accountForm("inventory_source"), "Inventory Source", services.MetadataAPI.getInvSource()  )
+                    @if("true" == adx_based_exchanges) {
+                    	@components.formElements.selectlist2(accountForm("adxbased"), "AdxBasedRTBExchange", 
+                    			services.MetadataAPI.noYesOptions())
+					}
                 </fieldset>
                 <fieldset ng-show="showAdvOptions" ng-if="showAdvOptions">
                     @components.formElements.selectlist2(accountForm("demandtype"), "Demand Type", services.MetadataAPI.getDemandType(), '_ngSync->true)

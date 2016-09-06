@@ -51,7 +51,7 @@ public class DealEntity
     /* Array with each value as id from dsp_adv_agency_mapping table.*/
     private String advertiserIdList="[]";
 
-    @Getter @Setter
+    @Setter @Getter
     /*
      * Whitelisted advertiser domains for the mentioned third party connection.
      */
@@ -72,6 +72,12 @@ public class DealEntity
 
     @Getter @Setter
     private String dealCPM;
+
+    @Getter @Setter
+    private short status;
+
+    @Getter @Setter
+    private String statusValue;
 
     public PrivateMarketPlaceApiEntity getEntity(){
         PrivateMarketPlaceApiEntity pmp = new PrivateMarketPlaceApiEntity();

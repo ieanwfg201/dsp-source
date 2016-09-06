@@ -5,8 +5,11 @@
 <div> 
         @components.fielddisplays.textdisplay("Deal Id", display.getDealId())
         @components.fielddisplays.textdisplay("Deal Name", display.getDealName())
-        @components.fielddisplays.textdisplay("Ad List", display.getAdIdList())
         @components.fielddisplays.textdisplay("Third Party Connection", display.thirdPartyConnection())
+        @components.fielddisplays.textdisplay("Campaign List",display.getCampaignIdList())
+        @components.fielddisplays.textdisplay("Ad List", display.getAdIdList())
+        @components.fielddisplays.textdisplay("Publisher List", display.publisherList())
+        @components.fielddisplays.textdisplay("Site List", display.siteList())
         @components.fielddisplays.textdisplay("DSP List", display.getDSPList())
         @components.fielddisplays.textdisplay("Advertiser List", display.getAdvertiserList())
         @components.fielddisplays.textdisplay("IAB Blocked Category List", display.categoryList())
@@ -16,6 +19,7 @@
         @components.fielddisplays.textdisplay("Start Date", display.startDate())
         @components.fielddisplays.textdisplay("End Date", display.endDate())
         @components.fielddisplays.textdisplay("Deal Floor CPM", display.dealCpm())
+        @components.fielddisplays.textdisplay("Status", display.getStatusValue())
 </div>
 }
 <script src="@routes.Assets.at("javascripts/apps/pmpController.js")" type="text/javascript"></script>

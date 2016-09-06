@@ -1,7 +1,6 @@
 package models.entities;
 
-import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
-
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Form entity for deal.
@@ -106,6 +105,8 @@ public class DealFormEntity extends DealEntity
 
     public String getWhitelistedAdvertiserDomains()
     {
+        if("[\"\"]".equalsIgnoreCase(super.getWhitelistedAdvertiserDomains()))
+            return "";
         return super.getWhitelistedAdvertiserDomains();
     }
 
@@ -173,6 +174,14 @@ public class DealFormEntity extends DealEntity
     {
         super.setDealCPM(dealCPM);
     }
+
+    public short getStatus() {return super.getStatus();}
+
+    public void setStatus(short status) {super.setStatus(status);}
+
+    public String getStatusValue(){return super.getStatusValue();}
+
+    public void setStatusValue(String status){super.setStatusValue(status);}
 
     public int isEdit = 0;
 }

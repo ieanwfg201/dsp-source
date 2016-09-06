@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import models.Constants.Actions;
 import models.entities.DealFormEntity;
+import models.formbinders.AdWorkFlowEntity;
 import models.pmp.display.PMPDisplay;
 import org.springframework.beans.BeanUtils;
 
@@ -92,7 +93,7 @@ public class DealController extends Controller
 
         }
 
-        return PMPListView();
+        return info(pmp.getDealId());
     }
 
     @SecuredAction
@@ -195,5 +196,56 @@ public class DealController extends Controller
         BeanUtils.copyProperties(deal, dealEntity);
 
         return ok(views.html.navs.pmp.render(dealFormTemplate.fill(dealEntity)));
+    }
+
+    @SecuredAction
+    public static Result updateDeal(String action, String dealGuid)
+    {
+        ObjectNode response = Json.newObject();
+        Connection con = null;
+        try{
+            if(action != null && dealGuid != null)
+            {
+
+                con = DB.getConnection();
+                if("START".equals(action))
+                {
+                    ApiDef.change_status_pmp_deal(con, dealGuid,"START");
+                    response.put("message", "start done");return ok(response);
+                }
+                else if("PAUSE".equals(action))
+                {
+                    ApiDef.change_status_pmp_deal(con, dealGuid,"PAUSE");
+                    response.put("message", "pause done");return ok(response);
+                }
+                else
+                {
+                    response.put("message", "action : not present");return badRequest(response);
+                }
+            }
+            else
+            {
+                response.put("message", "action or ids : null");return badRequest(response);
+            }
+        }
+        catch(Exception e)
+        {
+            play.Logger.error(e.getMessage(),e);
+            response.put("message", "action or ids : null");return badRequest(response);
+        }
+        finally
+        {
+            try
+            {
+                if(con != null)
+                {
+                    con.close();
+                }
+            }
+            catch (SQLException e)
+            {
+                play.Logger.error(e.getMessage(),e);
+            }
+        }
     }
 }
