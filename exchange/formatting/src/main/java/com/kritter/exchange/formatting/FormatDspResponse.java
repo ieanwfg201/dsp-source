@@ -67,7 +67,7 @@ public class FormatDspResponse {
                 if(imptracker == null){
                     String newImpTracker[] = new String[2];
                     newImpTracker[0] = winUrl;
-                    newImpTracker[1]=internalWinUrl + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price();
+                    newImpTracker[1]=internalWinUrl + internalFieldURI + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price();
                     entity.setImptrackers(newImpTracker);
                 }else{
                     String newImpTracker[] = new String[imptracker.length+2];
@@ -78,7 +78,7 @@ public class FormatDspResponse {
                     }
                     newImpTracker[i] = winUrl;
                     i++;
-                    newImpTracker[i]=internalWinUrl + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price();
+                    newImpTracker[i]=internalWinUrl + internalFieldURI + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price();
                     entity.setImptrackers(newImpTracker);
                 }
                 JsonNode jsonNode = objectMapper.valueToTree(entity);
@@ -153,7 +153,7 @@ public class FormatDspResponse {
                 if(imptracker == null){
                     String newImpTracker[] = new String[2];
                     newImpTracker[0] = winUrl;
-                    newImpTracker[1]=internalWinUrl + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price();
+                    newImpTracker[1]=internalWinUrl + internalFieldURI + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price();
                     entity.setImptrackers(newImpTracker);
                 }else{
                     String newImpTracker[] = new String[imptracker.length+2];
@@ -164,7 +164,7 @@ public class FormatDspResponse {
                     }
                     newImpTracker[i] = winUrl;
                     i++;
-                    newImpTracker[i]=internalWinUrl+internalFieldURI + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price();
+                    newImpTracker[i]=internalWinUrl + internalFieldURI + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price();
                     entity.setImptrackers(newImpTracker);
                 }
                 JsonNode jsonNode = objectMapper.valueToTree(entity);
@@ -180,7 +180,8 @@ public class FormatDspResponse {
             sBuff.append("\" style=\"display: none;\" />");
             sBuff.append("<img src=\"");
             sBuff.append(internalWinUrl+internalFieldURI);
-            sBuff.append("?wp=");
+            sBuff.append((internalFieldURI.contains("?") ? "&" : "?"));
+            sBuff.append("wp=");
             sBuff.append(winEntity.getWin_price());
             sBuff.append("\" style=\"display: none;\" />");
         }
