@@ -13,6 +13,6 @@ public enum EntityType {
 	iddefinition,
 	retargeting_segment,
 	pmp_deal,
-	adxbasedexchangesmetadata
-
+	adxbasedexchangesmetadata,
+	adpositionget
 }

@@ -1,5 +1,6 @@
 package models;
 
+import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.StatusIdEnum;
 
 import models.Constants.EntityType;
@@ -30,6 +31,8 @@ public class EntityListFilter {
 	private String dealGuid;
 	
 	private PageType pageType = PageType.none;
+	
+	private AdxBasedExchangesStates adxstates;
 	
 	/** Created getiddefinition */
 	private String ids;
@@ -151,6 +154,13 @@ public class EntityListFilter {
     public void setGet_type(int get_type) {
         this.get_type = get_type;
     }
+	public AdxBasedExchangesStates getAdxstates() {
+		return adxstates;
+	}
+
+	public void setAdxstates(AdxBasedExchangesStates adxstates) {
+		this.adxstates = adxstates;
+	}
 
 
 }

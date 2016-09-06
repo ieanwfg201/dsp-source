@@ -1,0 +1,56 @@
+@main("Adposition Get"){
+
+@components.containers.panel("Adposition Get"){
+<div ng-controller="adpositiongetController">
+    <div class="btn-group pull-right">
+                     <button class="btn btn-success  active" ng-click="updateMultipleAdPositoionGet('SUBMITTED')">
+                            <span class="glyphicon glyphicon-pause" aria-hidden="true">Submit Adpositions To Get
+                     </button>
+        </div> 		<div infinite-scroll='nextPage()' infinite-scroll-disabled='adpositiongetListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="adpositiongetListData.filteredData"   
+			 					selected-items="adpositiongetListData.selections" 
+			 					fields="['select', 'exchangeName',  'adxstatus', 'message','lastmodified',  'action']" 
+			 					selection-mode="MultiRow"
+			 					enable-filtering="adpositiongetListData.enableFilter"
+			 					enable-sorting="adpositiongetListData.enableSorting" 
+			 					order-by="adpositiongetListData.orderBy"
+			 					order-by-reverse="adpositiongetListData.orderByReverse" 
+			 					page-items="adpositiongetListData.itemsPerPage"  
+			 					total-items="adpositiongetListData.totalItems"
+			 					current-page="adpositiongetListData.currentPage" 
+			 					on-data-required="adpositiongetListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+                        <th field-name="exchangeName" display-name="Exchange Name" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="adxstatus" display-name="Status" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="message" display-name="Message">  </th>
+                        <th field-name="lastmodified" display-name="Last modified" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr>
+		    			<td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="adListData.isItemChecked(gridItem)" ></td>
+		    		
+			            <td field-name="action" > 
+					                <button ng-show="gridItem.submit" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="Submit" ng-click="updateAdPositoionGet(gridItem.id,'SUBMITTED')">
+					                					<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+					                </button>
+					                <button ng-show="gridItem.new" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="BringinQueue" ng-click="updateAdPositoionGetNew(gridItem.id,'READYTOSUBMIT')">
+					                					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+					                </button>
+			            </td>
+			           
+			        </tr>
+			    </tbody>
+			</table> 
+		</div>
+</div>
+
+}
+
+
+
+<script src="@routes.Assets.at("javascripts/apps/adxbasedexchanges/adpositiongetController.js")" type="text/javascript"></script>
+}
