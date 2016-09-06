@@ -18,6 +18,7 @@ import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
 import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
+import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.cache.AdEntityCache;
@@ -227,7 +228,21 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         bidResponseBidCloudCrossDTO.setRequestImpressionId(bidRequestImpressionId);
 //        price 必须 integer 竞投价格,单位为人民币分
         bidResponseBidCloudCrossDTO.setPrice(responseAdInfo.getEcpmValue().floatValue());
-//        curl 可选 [string] 点击监测地址
+//        curl 可选 [string] 点击监测地址 这里处理第三方的监播地址
+        StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
+        macroClickUrl.append(clickUri);
+        List<String> clkTracker = new ArrayList<String>();
+        ExtTracker extTracker = adEntity.getExtTracker();
+        List<String> extClickTracker = null;
+        if (extTracker != null)
+            extClickTracker = extTracker.getClickTracker();
+        if (extTracker != null && extClickTracker != null) {
+            for (String str : extClickTracker) {
+                clkTracker.add(MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, "",
+                        macroClickUrl.toString(), extTracker.getClickMacro(), extTracker.getClickMacroQuote(), ""));
+            }
+        }
+        bidResponseBidCloudCrossDTO.setCurl(clkTracker);
 //        点击监播是通过imp的重定向
 //        adid 可选 string 在竞价方胜出时引用广告 id
         bidResponseBidCloudCrossDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
@@ -261,11 +276,20 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         }
         bidResponseBidCloudCrossDTO.setAdvertiserDomains(advertiserDomain[0]);
 //        iurl 可选 [string] 曝光监测地址
+        List<String> impTracker = new ArrayList<String>();
+        List<String> extImpTracker = null;
+        if (extTracker != null)
+            extImpTracker = extTracker.getImpTracker();
+        if (extTracker != null && extImpTracker != null) {
+            for (String str : extImpTracker) {
+                impTracker.add(MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, "",
+                        macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), ""));
+            }
+        }
         StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
         cscBeaconUrl.append(clickUri);
-        List<String> iurls = new ArrayList<String>();
-        iurls.add(cscBeaconUrl.toString());
-        bidResponseBidCloudCrossDTO.setSampleImageUrl(iurls);
+        impTracker.add(cscBeaconUrl.toString());
+        bidResponseBidCloudCrossDTO.setSampleImageUrl(impTracker);
 //        cid 可选 string 投放 id
         bidResponseBidCloudCrossDTO.setCampaignId(String.valueOf(adEntity.getCampaignIncId()));
 //        crid 可选 string 创意 id
