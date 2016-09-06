@@ -22,6 +22,8 @@ import com.kritter.api.entity.retargeting_segment.RetargetingSegmentList;
 import com.kritter.api.entity.ad.Ad;
 import com.kritter.api.entity.ad.AdList;
 import com.kritter.api.entity.ad.AdListEntity;
+import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadatList;
+import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadataListEntity;
 import com.kritter.api.entity.campaign.Campaign;
 import com.kritter.api.entity.campaign.CampaignList;
 import com.kritter.api.entity.campaign.CampaignListEntity;
@@ -45,6 +47,7 @@ import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.AdAPIEnum;
+import com.kritter.constants.AdxBasedExchangesMetadataQueryEnum;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.CreativeContainerAPIEnum;
 import com.kritter.constants.Ext_siteEnum;
@@ -55,6 +58,7 @@ import com.kritter.constants.PageConstants;
 import com.kritter.constants.RetargetingSegmentEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
+import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.kritterui.api.def.ApiDef;
 
@@ -306,6 +310,18 @@ public class EntityListDataService {
 						entityList = new EntityList<PrivateMarketPlaceApiEntity>(new ArrayList<PrivateMarketPlaceApiEntity>(), 0);
 					}
 					break;
+                case adxbasedexchangesmetadata:
+                    AdxBasedExchangesMetadataListEntity adxBasedEntity = new AdxBasedExchangesMetadataListEntity();
+                    adxBasedEntity.setQueryEnum(AdxBasedExchangesMetadataQueryEnum.get_all);
+                    AdxBasedExchangesMetadatList adxBasedEntityList = null;
+                    adxBasedEntityList = ApiDef.various_get_adbasedexchanges_metadata(con, adxBasedEntity);
+                    if(adxBasedEntityList.getMsg().getError_code()==0){ 
+                        entityList = new EntityList<AdxBasedExchangesMetadata>(adxBasedEntityList.getEntity_list(), 
+                        		adxBasedEntityList.getEntity_list().size()); 
+                    }else{
+                        entityList = new EntityList<AdxBasedExchangesMetadata>(new ArrayList<AdxBasedExchangesMetadata>(), 0);
+                    }
+                    break;
 
 				default:
 					break;

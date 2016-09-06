@@ -24,6 +24,7 @@ public class SecondPriceAuction implements KAuction {
         String winKey = null;
         float firstPrice = 0.0f;
         float secondPrice = 0.0f;
+
         for(String key:bidderResponses.keySet()){
             BidResponseEntity entity = bidderResponses.get(key);
             if(ValidateBidResponse.validate(entity, request)){
@@ -45,7 +46,13 @@ public class SecondPriceAuction implements KAuction {
             WinEntity winEntity =  new WinEntity();
             winEntity.setAdvId(winKey);
             winEntity.setWinnerBidResponse2_3(bidderResponses.get(winKey));
-            winEntity.setWin_price(secondPrice+ExchangeConstants.offset);
+            if(bidderResponses.size() == 1)
+            {
+                float winPrice = (float)request.getSite().getEcpmFloorValue() + ExchangeConstants.offset;
+                winEntity.setWin_price(winPrice);
+            }
+            else
+                winEntity.setWin_price(secondPrice+ExchangeConstants.offset);
             return winEntity;
         }
         return null;
@@ -82,7 +89,15 @@ public class SecondPriceAuction implements KAuction {
             WinEntity winEntity =  new WinEntity();
             winEntity.setAdvId(winKey);
             winEntity.setWinnerBidResponse2_2(bidderResponses.get(winKey));
-            winEntity.setWin_price(secondPrice+ExchangeConstants.offset);
+
+            if(bidderResponses.size() == 1)
+            {
+                float winPrice = (float)request.getSite().getEcpmFloorValue() + ExchangeConstants.offset;
+                winEntity.setWin_price(winPrice);
+            }
+            else
+                winEntity.setWin_price(secondPrice+ExchangeConstants.offset);
+
             return winEntity;
         }
         return null;

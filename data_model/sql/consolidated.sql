@@ -1461,4 +1461,9 @@ CREATE TABLE IF NOT EXISTS `inclusion_exclusion_type`
 ALTER TABLE `targeting_profile` ADD COLUMN `user_id_inc_exc` SMALLINT NOT NULL AFTER `device_type`;
 ALTER TABLE `targeting_profile` ADD CONSTRAINT `fk_user_id_inc_exc` FOREIGN KEY (`user_id_inc_exc`) REFERENCES inclusion_exclusion_type(id);
 ALTER TABLE `targeting_profile` ADD COLUMN `user_id_file` TEXT AFTER `user_id_inc_exc`;
-ALTER TABLE `targeting_profile` CHANGE `user_id_inc_exc` `user_id_inc_exc` SMALLINT NOT NULL DEFAULT 0; 
+ALTER TABLE `targeting_profile` CHANGE `user_id_inc_exc` `user_id_inc_exc` SMALLINT NOT NULL DEFAULT 0;
+ALTER TABLE pmp_deals ADD COLUMN campaign_id_list TEXT NOT NULL AFTER deal_name;
+ALTER TABLE pmp_deals ADD COLUMN pub_id_list TEXT NOT NULL AFTER ad_id_list;
+ALTER TABLE pmp_deals ADD COLUMN status_id smallint(6) NOT NULL DEFAULT 2;
+
+alter table account add column adxbased boolean default false after open_rtb_ver_required;

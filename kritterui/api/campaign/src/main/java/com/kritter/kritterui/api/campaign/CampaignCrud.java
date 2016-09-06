@@ -485,6 +485,47 @@ public class CampaignCrud {
         return null;
     }
 
+    public static Campaign get_campaign(Connection con, int campaignId)
+    {
+        if(con == null || campaignId <= 0)
+            return null;
+
+        PreparedStatement pstmt = null;
+        try
+        {
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Campaign.get_campaign_by_id);
+            pstmt.setInt(1, campaignId);
+
+            ResultSet rset = pstmt.executeQuery();
+
+            while (rset.next())
+            {
+                return populate(rset, true, false, false);
+            }
+        }
+        catch(Exception e)
+        {
+            LOG.error(e.getMessage(),e);
+            return null;
+        }
+        finally
+        {
+            if(pstmt != null)
+            {
+                try
+                {
+                    pstmt.close();
+                }
+                catch (SQLException e)
+                {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static CampaignList list_campaign(Connection con, CampaignListEntity campaignlistEntity){
         if(con == null){
             CampaignList campaignlist = new CampaignList();

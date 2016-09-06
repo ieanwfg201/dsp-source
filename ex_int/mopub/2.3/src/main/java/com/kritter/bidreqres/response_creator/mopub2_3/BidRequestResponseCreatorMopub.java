@@ -347,9 +347,9 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                 extraTrackingSize = adEntity.getExtTracker().getImpTracker().size();
             }
         }
-        String impTrackers[] = new String[2+extraTrackingSize];
-        impTrackers[0] = fetchImpressionTrackerSameAsCSC(request,responseAdInfo,response);
-        impTrackers[1] = winNotificationURLBuffer.toString();
+        String impTrackers[] = new String[1+extraTrackingSize];
+        //impTrackers[0] = fetchImpressionTrackerSameAsCSC(request,responseAdInfo,response);
+        impTrackers[0] = winNotificationURLBuffer.toString();
         if(extraTrackingSize>0){
             int count =1;
             for(String str:adEntity.getExtTracker().getImpTracker()){

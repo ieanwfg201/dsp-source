@@ -52,36 +52,10 @@ public class PrivateMarketPlaceApiEntity
     /* Array with each value as id from dsp_adv_agency_mapping table.*/
     private String advertiserIdList="[]";
 
-    @Setter
+    @Setter @Getter
     /* Array of whitelisted domains
      */
     private String whitelistedAdvertiserDomains;
-
-    public String getWhitelistedAdvertiserDomains()
-    {
-        try
-        {
-            ObjectMapper objectMapper = new ObjectMapper();
-            if (null != whitelistedAdvertiserDomains)
-            {
-                String[] values = objectMapper.readValue(whitelistedAdvertiserDomains, String[].class);
-                StringBuffer sb = new StringBuffer();
-                for (String value : values)
-                {
-                    sb.append(value);
-                    sb.append(",");
-                }
-
-                sb = sb.deleteCharAt(sb.length() - 1);
-                return sb.toString();
-            }
-        }
-        catch (Exception e)
-        {
-        }
-
-        return "";
-    }
 
     @Getter @Setter
     /*possible values 1,2,3. Refer to descriptions in open rtb documents for pmp auction type.*/
@@ -98,6 +72,12 @@ public class PrivateMarketPlaceApiEntity
 
     @Getter @Setter
     private String dealCPM;
+
+    @Getter @Setter
+    private short status;
+
+    @Getter @Setter
+    private String statusValue;
 
     @Getter @Setter
     private int isEdit = 0;

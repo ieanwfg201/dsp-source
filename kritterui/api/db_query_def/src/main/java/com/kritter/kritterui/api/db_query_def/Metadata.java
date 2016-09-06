@@ -78,5 +78,6 @@ public class Metadata {
     		"where tier=2 and parentcode in (select channelcode from channel where internalid in (<id>))";
     public static final String channel_by_ids = "select internalid as id, CONCAT(exchangename,'-',channelname) as name from channel where internalid in (<id>)";
     public static final String channel_by_pubids = "select a.internalid as id, CONCAT(b.exchangename,'-',a.channelname) as name from channel as a, mma_exchangename_id_mapping as b where a.exchangename=b.exchangename and b.exchangeid in (<id>)";
+    public static final String adxbasedexchanges_metadata = " select id as id,name as name from account where inventory_source=2 ";
    
 }

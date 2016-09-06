@@ -86,5 +86,11 @@ public class AccountDisplay extends EntityDisplay{
 		trails.add(new Path(getAccountName(), getViewUrl()));
 		return trails;
 	}
+	public String getAdxbased(){
+		if(account.isAdxbased()){
+			return "True";
+		}
+		return "False";
+	}
 
 }

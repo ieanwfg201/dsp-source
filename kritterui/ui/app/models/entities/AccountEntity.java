@@ -71,6 +71,7 @@ public class AccountEntity {
     private String billing_name = "";
     private String billing_email="";
     private String ext="";
+    private boolean adxbased=false;
 
 
     public String getDemand_url() {
@@ -328,6 +329,13 @@ public class AccountEntity {
     public void setExt(String ext) {
         this.ext = ext;
     }
+    public boolean isAdxbased() {
+        return adxbased;
+    }
+    public void setAdxbased(boolean adxbased) {
+        this.adxbased = adxbased;
+    }
+
     public Account getEntity(){
     	Account account = new Account();
     	BeanUtils.copyProperties(this, account);

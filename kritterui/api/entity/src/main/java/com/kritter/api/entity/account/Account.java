@@ -108,6 +108,14 @@ public class Account {
     private String billing_email="";
     @Getter@Setter
     private String ext="";
+    private boolean adxbased=false;
+    
+    public boolean isAdxbased() {
+        return adxbased;
+    }
+    public void setAdxbased(boolean adxbased) {
+        this.adxbased = adxbased;
+    }
     public String getPaypal_id() {
         return paypal_id;
     }

@@ -12,6 +12,7 @@ import models.advertiser.CampaignDisplay;
 import models.advertiser.CreativeDisplay;
 import models.advertiser.RetargetingSegmentDisplay;
 import models.advertiser.TargetingDisplay;
+import models.entities.adxbasedexchanges.AdxBasedExchangesMetadataDisplay;
 import models.entities.isp_mapping.Isp_mappingDisplay;
 import models.iddefinition.IddefinitionDisplay;
 import models.pmp.display.PMPDisplay;
@@ -37,6 +38,7 @@ import com.kritter.api.entity.isp_mapping.Isp_mapping;
 import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.Account_Type;
+import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 
 public class EntityListController extends Controller{
@@ -100,7 +102,10 @@ public class EntityListController extends Controller{
 					entityList = EntityListDataService.listData(entityListFilter, new PrivateMarketPlaceApiEntity());
 					populatePMPDeals(itemList,(List<PrivateMarketPlaceApiEntity>) entityList.getEntityList());
 					break;
-                	
+				case adxbasedexchangesmetadata:
+					entityList = EntityListDataService.listData(entityListFilter, new AdxBasedExchangesMetadata());
+					populateAdxBasedExchangesMetadata(itemList,(List<AdxBasedExchangesMetadata>) entityList.getEntityList());
+					break;
 				default:
 					break;
 				}
@@ -181,4 +186,9 @@ public class EntityListController extends Controller{
 			entityArray.addPOJO(objectMapper.valueToTree(new PMPDisplay(entity)));
 		}
 	}
+    private static void populateAdxBasedExchangesMetadata(ArrayNode entityArray, List<AdxBasedExchangesMetadata> adxBasedList){
+        for (AdxBasedExchangesMetadata adxBased : adxBasedList) { 
+            entityArray.addPOJO(objectMapper.valueToTree(new AdxBasedExchangesMetadataDisplay(adxBased)));
+        }
+    }
 }

@@ -361,6 +361,10 @@ public class MetadataCrud {
     public static JsonNode get_channel_by_pubids(Connection con){
         return get_metalist(con,MetadataType.CHANNEL_BY_PUBIDS,null).toJson();
     }
+    public static JsonNode get_adx_based_exchabges_metadata(Connection con){
+        return get_metalist(con,MetadataType.ADX_BASED_EXCHANGES_METATADATA,null).toJson();
+    }
+
 
     
     public static MetaList get_metalist(Connection con,MetadataType metadataType, MetaInput metaInput){
@@ -399,6 +403,9 @@ public class MetadataCrud {
                     pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
                             com.kritter.kritterui.api.db_query_def.Metadata.get_category_by_id, "<id>", metaInput.getQuery_id_list(), 
                             ",", false));
+                    break;
+                case ADX_BASED_EXCHANGES_METATADATA:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.adxbasedexchanges_metadata);
                     break;
                 case APP_STORE_ID:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.get_app_store_id);
