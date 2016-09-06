@@ -21,6 +21,8 @@ import com.kritter.api.entity.account_budget.Account_budget;
 import com.kritter.api.entity.ad.Ad;
 import com.kritter.api.entity.ad.AdList;
 import com.kritter.api.entity.ad.AdListEntity;
+import com.kritter.api.entity.adpositionget.AdpositionGetList;
+import com.kritter.api.entity.adpositionget.AdpositionGetListEntity;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadatList;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadataListEntity;
 import com.kritter.api.entity.campaign.Campaign;
@@ -73,6 +75,7 @@ import com.kritter.api.entity.video_info.VideoInfoList;
 import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.MetadataType;
 import com.kritter.entity.ad_stats.AdStats;
+import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.algomodel.AlgoModelEntity;
 import com.kritter.entity.native_props.demand.NativeIcon;
@@ -85,6 +88,7 @@ import com.kritter.kritterui.api.account.AccountCrud;
 import com.kritter.kritterui.api.account_budget.Account_Budget_Crud;
 import com.kritter.kritterui.api.ad.AdCrud;
 import com.kritter.kritterui.api.ad_stats.AdStatsCrud;
+import com.kritter.kritterui.api.adxbasedexchanges_metadata.AdpositionGetCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.AdxBasedExchangesMetadataCrud;
 import com.kritter.kritterui.api.algo_models.AlgoModelCrud;
 import com.kritter.kritterui.api.campaign.CampaignCrud;
@@ -767,6 +771,19 @@ public class ApiDef {
     public static JsonNode get_adx_based_exchabges_metadata_not_created(Connection con){
         return get_metalist(con,MetadataType.ADX_BASED_EXCHANGES_METATADATA,null).toJson();
     }
+    public static JsonNode adpositionget_adxbasedexchanges(Connection con){
+        return get_metalist(con,MetadataType.ADPOSITIONGET_ADXBASEDEXCHNAGES,null).toJson();
+    }
+    public static JsonNode advertiserupload_adxbasedexchanges(Connection con){
+        return get_metalist(con,MetadataType.ADVERTISERUPLOAD_ADXBASEDEXCHNAGES,null).toJson();
+    }
+    public static JsonNode bannerupload_adxbasedexchanges(Connection con){
+        return get_metalist(con,MetadataType.BANNERUPLOAD_ADXBASEDEXCHNAGES,null).toJson();
+    }
+    public static JsonNode videoupload_adxbasedexchanges(Connection con){
+        return get_metalist(con,MetadataType.VIDEOUPLOAD_ADXBASEDEXCHNAGES,null).toJson();
+    }
+
     
     /* LOG API */
     
@@ -1102,6 +1119,32 @@ public class ApiDef {
     }
     public static AdxBasedExchangesMetadatList various_get_adbasedexchanges_metadata(Connection con, AdxBasedExchangesMetadataListEntity adxBased){
         return AdxBasedExchangesMetadataCrud.various_get_adbasedexchanges_metadata(con, adxBased);
+    }
+    /* ADPOSTION GET APIS */
+    
+    public static JsonNode insert_adposition_get(Connection con, JsonNode jsonNode){
+        return AdpositionGetCrud.insert_adposition_get(con, jsonNode);
+    }    
+    public static Message insert_adposition_get(Connection con, AdPositionGet entity){
+        return AdpositionGetCrud.insert_adposition_get(con, entity, true);
+    }
+    public static JsonNode update_adposition_get(Connection con, JsonNode jsonNode){
+        return AdpositionGetCrud.update_adposition_get(con, jsonNode);
+    }    
+    public static Message update_adposition_get(Connection con, AdPositionGet entity){
+        return AdpositionGetCrud.update_adposition_get(con, entity, true);
+    }
+    public static JsonNode various_adposition_get(Connection con, JsonNode jsonNode){
+        return AdpositionGetCrud.various_adposition_get(con, jsonNode);
+    }
+    public static AdpositionGetList various_adposition_get(Connection con, AdpositionGetListEntity entity){
+        return AdpositionGetCrud.various_adposition_get(con, entity);
+    }
+    public static JsonNode update_adposition_get_status_by_pubincids(Connection con, JsonNode jsonNode){
+        return AdpositionGetCrud.update_adposition_get_status_by_pubincids(con, jsonNode);
+    }    
+    public static Message update_adposition_get_status_by_pubincids(Connection con, AdpositionGetListEntity entity){
+        return AdpositionGetCrud.update_adposition_get_status_by_pubincids(con, entity, true);
     }
 
 }
