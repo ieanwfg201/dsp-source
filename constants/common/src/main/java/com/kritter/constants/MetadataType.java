@@ -84,9 +84,9 @@ public enum MetadataType {
     private int code;
     private String name;
 
-    private ErrorEnum(int id,String name)
+    MetadataType(int id,String name)
     {
-        this.id = id;
+        this.code = id;
         this.name = name;
     }
 
@@ -97,6 +97,10 @@ public enum MetadataType {
 
     public int getId()
     {
-        return this.id;
+        return this.code;
+    }
+    public static MetadataType getEnum(int i)
+    {
+        return map.get(i);
     }
 }
