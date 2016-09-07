@@ -58,7 +58,7 @@ public class ConvertResponse {
             }
 
             vamBidBuilder.setMobileBidding(mobileBuilder);
-        } else if (vamRequest.hasVamVideo()) {
+        } else if (vamRequest.hasVamVideo() || vamRequest.hasVamMobileVideo()) {
             VamRealtimeBidding.VamResponse.Bid.Video.Builder videoBuilder = VamRealtimeBidding.VamResponse.Bid.Video.newBuilder();
             videoBuilder.addClickUrls(clk_url);
             if (clkTracker != null && clkTracker.size() > 0) {
@@ -69,12 +69,18 @@ public class ConvertResponse {
             if (impTracker != null && impTracker.size() > 0) {
                 videoBuilder.addAllShowUrls(impTracker);
             }
-            //TODO EVENT
-            vamBidBuilder.setVideoBidding(videoBuilder);
-        } else if (vamRequest.hasVamMobileVideo()) {
-            //TODO 没有mobilevideo
-        }
 
+            //TODO
+            VamRealtimeBidding.VamResponse.Bid.Video.Event.Builder eventBuilder = VamRealtimeBidding.VamResponse.Bid.Video.Event.newBuilder();
+            eventBuilder.setEventName("");
+            eventBuilder.setTrackUrl("");
+            eventBuilder.setOffset("");
+
+            videoBuilder.addEvents(eventBuilder);
+            vamBidBuilder.setVideoBidding(videoBuilder);
+        } else {
+            return null;
+        }
         vamResponseBuilder.addBid(vamBidBuilder);
         return vamResponseBuilder.build();
     }

@@ -2,6 +2,7 @@ package com.kritter.valuemaker.reader_v20160817.converter.request;
 
 import RTB.VamRealtimeBidding.VamRequest;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
+import com.kritter.utils.uuid.mac.UUIDGenerator;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 
 import java.util.List;
@@ -17,7 +18,8 @@ public class ConvertRequest {
         }
 
         BidRequestImpressionDTO bidRequestImpressionDTO = new BidRequestImpressionDTO();
-        bidRequestImpressionDTO.setBidRequestImpressionId("123456");//TODO
+        UUIDGenerator uuidGenerator= new UUIDGenerator();
+        bidRequestImpressionDTO.setBidRequestImpressionId(uuidGenerator.generateUniversallyUniqueIdentifier().toString());
 
         BidRequestPMPDTO bidRequestPMPDTO = new BidRequestPMPDTO();
         BidRequestDealDTO bidRequestDealDTO = new BidRequestDealDTO();
