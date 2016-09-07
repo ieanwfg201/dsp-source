@@ -23,5 +23,18 @@ CREATE TABLE `adposition_get` (
 ) ENGINE=InnoDB;
 
 
+CREATE TABLE `banner_upload` (
+  `internalid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pubIncId` int(11) NOT NULL,
+  `adxbasedexhangesstatus` int(11) default 1,
+  `advIncId` int(11) NOT NULL,
+  `campaignId` int(11) NOT NULL,
+  `adId` int(11) NOT NULL,
+  `bannerId` int(11) NOT NULL,
+  `message` text,
+  `info` text,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`internalid`)
+) ENGINE=InnoDB;
 
 

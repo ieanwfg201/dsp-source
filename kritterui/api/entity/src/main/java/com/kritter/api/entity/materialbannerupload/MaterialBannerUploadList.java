@@ -1,6 +1,7 @@
-package com.kritter.entity.freqcap_entity;
+package com.kritter.api.entity.materialbannerupload;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -8,8 +9,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-
-import com.kritter.constants.FreqDuration;
+import com.kritter.api.entity.response.msg.Message;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,13 +18,13 @@ import lombok.Setter;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @EqualsAndHashCode
-public class FreqDef {
+public class MaterialBannerUploadList {
+    /** @see com.kritter.api.entity.response.msg.Message */
 	@Getter@Setter
-	private FreqDuration duration;
+    private Message msg = null;
+    /** @see com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner */
 	@Getter@Setter
-	private Integer hour;
-	@Getter@Setter
-	private Integer count;
+    private List<MaterialUploadBanner> entity_list = null;
 	
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
@@ -31,15 +32,15 @@ public class FreqDef {
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
-    public static FreqDef getObject(String str) throws JsonParseException, JsonMappingException, IOException{
+    public static MaterialBannerUploadList getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
-    public static FreqDef getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
-    	FreqDef entity = objectMapper.readValue(str, FreqDef.class);
+    public static MaterialBannerUploadList getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
+    	MaterialBannerUploadList entity = objectMapper.readValue(str, MaterialBannerUploadList.class);
         return entity;
 
     }
-
+ 
 }
