@@ -18,8 +18,6 @@ public class BidRequestVam implements IBidRequest
      */
     private String auctioneerId;
     private String uniqueInternalBidRequestId;
-
-    @Getter @Setter
     private VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO;
 
     public BidRequestVam(

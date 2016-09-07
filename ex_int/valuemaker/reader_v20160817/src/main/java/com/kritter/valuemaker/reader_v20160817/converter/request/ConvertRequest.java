@@ -4,16 +4,42 @@ import RTB.VamRealtimeBidding.VamRequest;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 
+import java.util.List;
+
 public class ConvertRequest {
 
     static VamBidRequestParentNodeDTO openrtbRequest = new VamBidRequestParentNodeDTO();
 
     public static VamBidRequestParentNodeDTO convert(VamRequest request) {
 
-
         if (request == null) {
             return null;
         }
+
+        BidRequestImpressionDTO bidRequestImpressionDTO = new BidRequestImpressionDTO();
+        bidRequestImpressionDTO.setBidRequestImpressionId("123456");//TODO
+
+        BidRequestPMPDTO bidRequestPMPDTO = new BidRequestPMPDTO();
+        BidRequestDealDTO bidRequestDealDTO = new BidRequestDealDTO();
+        bidRequestPMPDTO.setPrivateAuctionDeals(new BidRequestDealDTO[]{bidRequestDealDTO});
+        bidRequestImpressionDTO.setBidRequestPMPDTO(bidRequestPMPDTO);
+
+        openrtbRequest.setBidRequestImpressionArray(new BidRequestImpressionDTO[]{bidRequestImpressionDTO});
+
+
+        BidRequestSiteDTO bidRequestSiteDTO = new BidRequestSiteDTO();
+        openrtbRequest.setBidRequestSite(bidRequestSiteDTO);
+
+        BidRequestAppDTO bidRequestAppDTO = new BidRequestAppDTO();
+        openrtbRequest.setBidRequestApp(bidRequestAppDTO);
+
+        BidRequestDeviceDTO bidRequestDeviceDTO = new BidRequestDeviceDTO();
+        openrtbRequest.setBidRequestDevice(bidRequestDeviceDTO);
+
+        BidRequestUserDTO bidRequestUserDTO = new BidRequestUserDTO();
+        openrtbRequest.setBidRequestUser(bidRequestUserDTO);
+
+
         if (request.hasId()) {
             openrtbRequest.setBidRequestId(request.getId());
         }
@@ -21,432 +47,563 @@ public class ConvertRequest {
             openrtbRequest.setMaxTimeoutForBidSubmission(request.getTMax());
         }
 
-
-        if (request.getVamMobile() != null && request.getVamVideo().getExcludedAdvList() != null && request.getVamVideo().getExcludedAdvList().size() > 0) {
-            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest((String[]) request.getVamVideo().getExcludedAdvList().toArray(new String[request.getVamVideo().getExcludedAdvCount()]));
+        if (request.hasCookie()) {
+            openrtbRequest.getBidRequestUser().setConsumerCustomData(request.getCookie());
         }
-        if (request.getDisplayCount() > 0 && request.getDisplay(0).getExcludedAdvList() != null && request.getDisplay(0).getExcludedAdvList().size() > 0) {
-            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest((String[]) request.getDisplay(0).getExcludedAdvList().toArray(new String[request.getDisplay(0).getExcludedAdvCount()]));
-        }
-        if (request.getVamMobileVideo() != null && request.getVamMobileVideo().getExcludedAdvList() != null && request.getVamMobileVideo().getExcludedAdvList().size() > 0) {
-            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest((String[]) request.getVamMobileVideo().getExcludedAdvList().toArray(new String[request.getVamMobileVideo().getExcludedAdvCount()]));
+        if (request.hasUserAgent()) {
+            openrtbRequest.getBidRequestDevice().setDeviceUserAgent(request.getUserAgent());
         }
 
-        site(request);
-        device(request);
-        user(request);
-        impressionList(request);
-        app(request);
+        if (request.hasDnt()) {
+            if (request.getDnt()) {
+                openrtbRequest.getBidRequestDevice().setDoNotTrackDevice(1);
+            } else {
+                openrtbRequest.getBidRequestDevice().setDoNotTrackDevice(0);
+            }
+        }
+
+        if (request.hasIp()) {
+            openrtbRequest.getBidRequestDevice().setIpV4AddressClosestToDevice(request.getIp());
+        }
+
+        if (request.hasLanguage()) {
+            openrtbRequest.getBidRequestDevice().setBrowserLanguage(request.getLanguage());
+        }
+
+        if (request.hasDeviceType()) {
+            switch (request.getDeviceType().getNumber()) {
+                case 1:
+                    openrtbRequest.getBidRequestDevice().setDeviceType(2);
+                case 2:
+                    openrtbRequest.getBidRequestDevice().setDeviceType(1);
+                case 3:
+                    openrtbRequest.getBidRequestDevice().setDeviceType(1);
+                case 4:
+                    openrtbRequest.getBidRequestDevice().setDeviceType(3);
+            }
+        }
+
+
+        if (request.hasMediaId()) {
+            openrtbRequest.getBidRequestSite().setSiteIdOnExchange(request.getDomain());
+        }
+        if (request.hasDomain()) {
+            openrtbRequest.getBidRequestSite().setSiteDomain(request.getDomain());
+        }
+        if (request.hasPage()) {
+            openrtbRequest.getBidRequestSite().setSitePageURL(request.getPage());
+        }
+        if (request.hasReferer()) {
+            openrtbRequest.getBidRequestSite().setRefererURL(request.getReferer());
+        }
+
+
+        //vertical,data_source,data_source,premium_price
+
+        if (request.getPmpInfoCount() > 0 && request.getPmpInfo(0) != null) {
+            openrtbRequest.getBidRequestImpressionArray()[0].getBidRequestPMPDTO().setPrivateAuction(0);
+            VamRequest.PmpInfo pmpInfo = request.getPmpInfo(0);
+            if (pmpInfo.hasDealId()) {
+                openrtbRequest.getBidRequestImpressionArray()[0].getBidRequestPMPDTO().getPrivateAuctionDeals()[0].setDealId(String.valueOf(pmpInfo.getDealId()));
+            }
+            if (pmpInfo.hasPreferPrice()) {
+                openrtbRequest.getBidRequestImpressionArray()[0].getBidRequestPMPDTO().getPrivateAuctionDeals()[0].setBidFloor((float) pmpInfo.getPreferPrice() / 100);
+            }
+        }
+
+
+        if (request.getDisplayCount() > 0 && request.getDisplay(0) != null) {
+            display(openrtbRequest, request.getDisplay(0));
+        } else if (request.hasVamVideo()) {
+            video(openrtbRequest, request.getVamVideo());
+        } else if (request.hasVamMobile()) {
+            mobile(openrtbRequest, request.getVamMobile());
+        } else if (request.hasVamMobileVideo()) {
+            mobileVideo(openrtbRequest, request.getVamMobileVideo());
+        } else {
+            return openrtbRequest;
+        }
+
+
+        openrtbRequest.setExtensionObject(request);
 
         return openrtbRequest;
     }
 
-    public static void site(VamRequest request) {
-        BidRequestSiteDTO site = new BidRequestSiteDTO();
-        if (request.hasDomain()) {
-            site.setSiteDomain(request.getDomain());
+    private static void display(VamBidRequestParentNodeDTO openrtbRequest, VamRequest.Display display) {
+        openrtbRequest.setAppOrSite("site");
+        BidRequestImpressionDTO impressionDTO = openrtbRequest.getBidRequestImpressionArray()[0];
+        BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = new BidRequestImpressionBannerObjectDTO();
+        if (display.hasAdspaceId()) {
+            impressionDTO.setAdTagOrPlacementId(String.valueOf(display.getAdspaceId()));
         }
-        if (request.hasPage()) {
-            site.setSitePageURL(request.getPage());
+        if (display.hasBidfloor()) {
+            impressionDTO.setBidFloorPrice((double) display.getBidfloor() / 100);
         }
-        if (request.getVamVideo().hasKeyword()) {
-            site.setSiteKeywordsCSV(request.getVamVideo().getKeyword());
+        //screen_level
+        //id固定为1
+        if (display.hasWidth()) {
+            bidRequestImpressionBannerObjectDTO.setBannerWidthInPixels(display.getWidth());
         }
-        openrtbRequest.setBidRequestSite(site);
+        if (display.hasHeight()) {
+            bidRequestImpressionBannerObjectDTO.setBannerHeightInPixels(display.getHeight());
+        }
+        //adformat
+
+//        adform
+
+        if (display.getExcludedCatCount() > 0) {
+            List<Integer> excluded_cat = display.getExcludedCatList();
+            Short[] battr = new Short[excluded_cat.size()];
+            for (int i = 0; i < excluded_cat.size(); i++) {
+                battr[i] = excluded_cat.get(i).shortValue();
+            }
+            bidRequestImpressionBannerObjectDTO.setBlockedCreativeAttributes(battr);
+        }
+
+        if (display.getExcludedAdvCount() > 0) {
+            String[] excluded_adv = new String[]{};
+            excluded_adv = display.getExcludedAdvList().toArray(excluded_adv);
+            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
+        }
+
+        impressionDTO.setBidRequestImpressionBannerObject(bidRequestImpressionBannerObjectDTO);
+
     }
 
-    public static void device(VamRequest request) {
-        BidRequestDeviceDTO device = new BidRequestDeviceDTO();
-        if (request.hasUserAgent()) {
-            device.setDeviceUserAgent(request.getUserAgent());
+    private static void mobile(VamBidRequestParentNodeDTO openrtbRequest, VamRequest.Mobile mobile) {
+        openrtbRequest.setAppOrSite("app");
+        BidRequestImpressionDTO impressionDTO = openrtbRequest.getBidRequestImpressionArray()[0];
+        BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = new BidRequestImpressionBannerObjectDTO();
+        if (mobile.hasAdspaceId()) {
+            impressionDTO.setAdTagOrPlacementId(String.valueOf(mobile.getAdspaceId()));
         }
-        if (request.hasDnt()) {
-            if (request.getDnt()) {
-                device.setDoNotTrackDevice(0);
-            } else {
-                device.setDoNotTrackDevice(1);
-            }
+        if (mobile.hasBidfloor()) {
+            impressionDTO.setBidFloorPrice((double) mobile.getBidfloor() / 100);
         }
-        if (request.hasIp()) {
-            device.setIpV4AddressClosestToDevice(request.getIp());
+        if (mobile.hasWidth()) {
+            bidRequestImpressionBannerObjectDTO.setBannerWidthInPixels(mobile.getWidth());
         }
-        if (request.hasLanguage()) {
-            device.setBrowserLanguage(request.getLanguage());
+        if (mobile.hasHeight()) {
+            bidRequestImpressionBannerObjectDTO.setBannerHeightInPixels(mobile.getHeight());
         }
-        if (request.hasDeviceType()) {
-            switch (request.getDeviceType().getNumber()) {
+        //adformat
+
+        if (mobile.hasBrand()) {
+            openrtbRequest.getBidRequestDevice().setDeviceManufacturer(mobile.getBrand());
+        }
+        if (mobile.hasModel()) {
+            openrtbRequest.getBidRequestDevice().setDeviceModel(mobile.getModel());
+        }
+
+        if (mobile.hasOs()) {
+            switch (mobile.getOs()) {
                 case 0:
-                    device.setDeviceType(2);
-                    break;
+                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Other");
                 case 1:
-                    device.setDeviceType(1);
-                    break;
+                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("iOS");
                 case 2:
-                    device.setDeviceType(5);
-                    break;
+                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Android");
+                default:
+                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Other");
+            }
+        }
+        if (mobile.hasOsVersion()) {
+            openrtbRequest.getBidRequestDevice().setDeviceOperatingSystemVersion(mobile.getOsVersion());
+        }
+
+
+        if (mobile.hasImei()) {
+            openrtbRequest.getBidRequestDevice().setMD5HashedDeviceId(mobile.getImei());
+        }
+
+        if (mobile.hasMac()) {
+            openrtbRequest.getBidRequestDevice().setHashedMD5MacAddressOfDevice(mobile.getMac());
+        }
+        if (mobile.hasAid()) {
+            openrtbRequest.getBidRequestDevice().setMD5HashedDevicePlatformId(mobile.getAid());
+        }
+        //aaid
+
+        if (mobile.hasIDFA()) {
+            openrtbRequest.getBidRequestDevice().setIfa(mobile.getIDFA());
+        }
+        //OpenUDID
+        //source
+        if (mobile.hasPgn()) {
+            openrtbRequest.getBidRequestApp().setApplicationBundleName(mobile.getPgn());
+        }
+        if (mobile.hasAppName()) {
+            openrtbRequest.getBidRequestApp().setApplicationName(mobile.getAppName());
+        }
+
+        if (mobile.hasScreenWidth()) {
+            openrtbRequest.getBidRequestDevice().setDevicePhysicalWidthInPixels(mobile.getScreenWidth());
+        }
+        if (mobile.hasScreenHeight()) {
+            openrtbRequest.getBidRequestDevice().setDevicePhysicalHeightInPixels(mobile.getScreenHeight());
+        }
+
+        if (mobile.hasNetwork()) {
+            switch (mobile.getNetwork()) {
+                case 0:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(0);
+                case 1:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(2);
+                case 2:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(4);
                 case 3:
-                    device.setDeviceType(3);
-                    break;
+                    openrtbRequest.getBidRequestDevice().setConnectionType(5);
+                case 4:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(6);
+                default:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(0);
             }
         }
 
-        if (request.hasVamMobile()) {
-            if (request.getVamMobile().hasBrand()) {
-                device.setDeviceManufacturer(request.getVamMobile().getBrand());
-            }
-            if (request.getVamMobile().hasModel()) {
-                device.setDeviceModel(request.getVamMobile().getModel());
-            }
-            if (request.getVamMobile().hasOs()) {
-                if (request.getVamMobile().getOs() == 1) {
-                    device.setDeviceOperatingSystem("android");
-                } else if (request.getVamMobile().getOs() == 2) {
-                    device.setDeviceOperatingSystem("ios");
-                } else {
-                    device.setDeviceOperatingSystem("other");
-                }
-
-            }
-            if (request.getVamMobile().hasOsVersion()) {
-                device.setDeviceOperatingSystemVersion(request.getVamMobile().getOsVersion());
-            }
-            if (request.getVamMobile().hasImei()) {
-                device.setMD5HashedDeviceId(request.getVamMobile().getImei());
-            }
-            if (request.getVamMobile().hasMac()) {
-                device.setHashedMD5MacAddressOfDevice(request.getVamMobile().getMac());
-            }
-            if (request.getVamMobile().hasAid()) {
-                device.setMD5HashedDevicePlatformId(request.getVamMobile().getAid());
-            }
-            if (request.getVamMobile().hasIDFA()) {
-                device.setIfa(request.getVamMobile().getIDFA());
-            }
-            if (request.getVamMobile().hasScreenWidth()) {
-                device.setDevicePhysicalWidthInPixels(request.getVamMobile().getScreenWidth());
-            }
-            if (request.getVamMobile().hasScreenHeight()) {
-                device.setDevicePhysicalHeightInPixels(request.getVamMobile().getScreenHeight());
-            }
-            if (request.getVamMobile().hasNetwork()) {
-                device.setConnectionType(request.getVamMobile().getNetwork());
-            }
-            if (request.getVamMobile().hasOperateId()) {
-                switch (request.getVamMobile().getOperateId()) {
-                    case 0:
-                        device.setCarrier("UNKNOWN");
-                    case 1:
-                        device.setCarrier("Mobile");
-                    case 2:
-                        device.setCarrier("Unicom");
-                    case 3:
-                        device.setCarrier("Telecom");
-                }
+        //TODO 字母是否这么写
+        if (mobile.hasOperateId()) {
+            switch (mobile.getOperateId()) {
+                case 0:
+                    openrtbRequest.getBidRequestDevice().setCarrier("UNKNOWN");
+                case 1:
+                    openrtbRequest.getBidRequestDevice().setCarrier("Mobile");
+                case 2:
+                    openrtbRequest.getBidRequestDevice().setCarrier("Unicom");
+                case 3:
+                    openrtbRequest.getBidRequestDevice().setCarrier("Telecom");
+                default:
+                    openrtbRequest.getBidRequestDevice().setCarrier("UNKNOWN");
             }
         }
 
-        if (request.hasVamMobileVideo()) {
-            if (request.getVamMobileVideo().hasBrand()) {
-                device.setDeviceManufacturer(request.getVamMobileVideo().getBrand());
+        if (mobile.hasCorner()) {
+            BidRequestGeoDTO bidRequestGeoDTO = new BidRequestGeoDTO();
+            if (mobile.getCorner().hasLatitude()) {
+                bidRequestGeoDTO.setGeoLatitude(mobile.getCorner().getLatitude());
             }
-            if (request.getVamMobileVideo().hasModel()) {
-                device.setDeviceModel(request.getVamMobileVideo().getModel());
+            if (mobile.getCorner().hasLongitude()) {
+                bidRequestGeoDTO.setGeoLongitude(mobile.getCorner().getLongitude());
             }
-            if (request.getVamMobileVideo().hasOs()) {
-                if (request.getVamMobileVideo().getOs() == 1) {
-                    device.setDeviceOperatingSystem("android");
-                } else if (request.getVamMobileVideo().getOs() == 2) {
-                    device.setDeviceOperatingSystem("ios");
-                } else {
-                    device.setDeviceOperatingSystem("other");
-                }
-            }
-            if (request.getVamMobileVideo().hasOsVersion()) {
-                device.setDeviceOperatingSystemVersion(request.getVamMobileVideo().getOsVersion());
-            }
-            if (request.getVamMobileVideo().hasImei()) {
-                device.setMD5HashedDeviceId(request.getVamMobileVideo().getImei());
-            }
-            if (request.getVamMobileVideo().hasMac()) {
-                device.setHashedMD5MacAddressOfDevice(request.getVamMobileVideo().getMac());
-            }
-            if (request.getVamMobileVideo().hasAid()) {
-                device.setMD5HashedDevicePlatformId(request.getVamMobileVideo().getAid());
-            }
-            if (request.getVamMobileVideo().hasIDFA()) {
-                device.setIfa(request.getVamMobileVideo().getIDFA());
-            }
-            if (request.getVamMobileVideo().hasScreenWidth()) {
-                device.setDevicePhysicalWidthInPixels(request.getVamMobileVideo().getScreenWidth());
-            }
-            if (request.getVamMobileVideo().hasScreenHeight()) {
-                device.setDevicePhysicalHeightInPixels(request.getVamMobileVideo().getScreenHeight());
-            }
-            if (request.getVamMobileVideo().hasNetwork()) {
-                device.setConnectionType(request.getVamMobileVideo().getNetwork());
-            }
-            if (request.getVamMobileVideo().hasOperateId()) {
-                switch (request.getVamMobileVideo().getOperateId()) {
-                    case 0:
-                        device.setCarrier("UNKNOWN");
-                    case 1:
-                        device.setCarrier("Mobile");
-                    case 2:
-                        device.setCarrier("Unicom");
-                    case 3:
-                        device.setCarrier("Telecom");
-                }
-            }
+            openrtbRequest.getBidRequestDevice().setGeoObject(bidRequestGeoDTO);
         }
 
-        openrtbRequest.setBidRequestDevice(device);
+        if (mobile.hasFullScreen()) {
+            if (mobile.getFullScreen()) {
+                impressionDTO.setIsAdInterstitial(1);
+            } else {
+                impressionDTO.setIsAdInterstitial(0);
+            }
+        }
+        //ad_location
+        //TODO code需要转换
+        if (mobile.hasAppCategory()) {
+//            openrtbRequest.getBidRequestApp().setContentCategoriesApplication();
+        }
+        //adform
+        //mpn
+        if (mobile.hasGender()) {
+            switch (mobile.getGender()) {
+                case 0:
+                    openrtbRequest.getBidRequestUser().setGender("O");
+                case 1:
+                    openrtbRequest.getBidRequestUser().setGender("M");
+                case 2:
+                    openrtbRequest.getBidRequestUser().setGender("F");
+                default:
+                    openrtbRequest.getBidRequestUser().setGender("O");
+
+            }
+        }
+        if (mobile.hasBd()) {
+            openrtbRequest.getBidRequestUser().setYearOfBirth(mobile.getBd());
+        }
+        //screen_level
+
+        impressionDTO.setBidRequestImpressionBannerObject(bidRequestImpressionBannerObjectDTO);
+
     }
 
-    public static void user(VamRequest request) {
-        BidRequestUserDTO user = new BidRequestUserDTO();
-        if (request.hasCookie()) {
-            user.setConsumerCustomData(request.getCookie());
+    private static void video(VamBidRequestParentNodeDTO openrtbRequest, VamRequest.Video video) {
+        openrtbRequest.setAppOrSite("site");
+        BidRequestImpressionDTO impressionDTO = openrtbRequest.getBidRequestImpressionArray()[0];
+        BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = new BidRequestImpressionVideoObjectDTO();
+        if (video.hasAdspaceId()) {
+            impressionDTO.setAdTagOrPlacementId(String.valueOf(video.getAdspaceId()));
+        }
+        if (video.hasBidfloor()) {
+            impressionDTO.setBidFloorPrice((double) video.getBidfloor() / 100);
         }
 
-        if (request.hasVamMobile()) {
-            if (request.getVamMobile().hasGender()) {
-                if (request.getVamMobile().getGender() == 1) {
-                    user.setGender("M");
-                } else if (request.getVamMobile().getGender() == 2) {
-                    user.setGender("F");
-                } else {
-                    user.setGender("O");
-                }
-            }
-            if (request.getVamMobile().hasBd()) {
-                user.setYearOfBirth(request.getVamMobile().getBd());
+        if (video.hasLinear()) {
+            if (video.getLinear().getNumber() == 1) {
+                bidRequestImpressionVideoObjectDTO.setIsVideoLinear(1);
+            } else {
+                bidRequestImpressionVideoObjectDTO.setIsVideoLinear(2);
             }
         }
 
-        if (request.hasVamMobileVideo()) {
-            if (request.getVamMobileVideo().hasGender()) {
-                if (request.getVamMobileVideo().getGender() == 1) {
-                    user.setGender("M");
-                } else if (request.getVamMobileVideo().getGender() == 2) {
-                    user.setGender("F");
-                } else {
-                    user.setGender("O");
-                }
-            }
-            if (request.getVamMobileVideo().hasBd()) {
-                user.setYearOfBirth(request.getVamMobileVideo().getBd());
+        if (video.hasVamProtocol()) {
+            Integer[] number = {video.getVamProtocol().getNumber()};
+            bidRequestImpressionVideoObjectDTO.setVideoBidResponseProtocol(number);
+        }
+
+        if (video.hasWidth()) {
+            bidRequestImpressionVideoObjectDTO.setWidthVideoPlayerInPixels(video.getWidth());
+        }
+        if (video.hasHeight()) {
+            bidRequestImpressionVideoObjectDTO.setHeightVideoPlayerInPixels(video.getHeight());
+        }
+        if (video.hasMaxDuration()) {
+            bidRequestImpressionVideoObjectDTO.setMaxDurationOfVideo(video.getMaxDuration());
+        }
+        if (video.hasMinDuration()) {
+            bidRequestImpressionVideoObjectDTO.setMinimumDurationOfVideo(video.getMinDuration());
+        }
+
+        if (video.hasVideoAdform()) {
+            switch (video.getVideoAdform()) {
+                case 0:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(0);
+                case 1:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(-1);
+                case 2:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(-2);
+                case 4:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(1);
+                default:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(1);
+
             }
         }
 
-        if (request != null) {
-            user.setBidRequestGeo(userGeo(request));
+        if (video.getMimesCount() > 0) {
+            String[] mimeTypes = new String[]{};
+            mimeTypes = video.getMimesList().toArray(mimeTypes);
+            bidRequestImpressionVideoObjectDTO.setMimeTypesSupported(mimeTypes);
+        }
+//        video_adformat
+        if (video.hasKeyword()) {
+            openrtbRequest.getBidRequestApp().setAppKeywordsCSV(video.getKeyword());
+        }
+        if (video.getExcludedCatCount() > 0) {
+            List<Integer> excluded_cat = video.getExcludedCatList();
+            Integer[] battr = new Integer[excluded_cat.size()];
+            for (int i = 0; i < excluded_cat.size(); i++) {
+                battr[i] = excluded_cat.get(i);
+            }
+            bidRequestImpressionVideoObjectDTO.setBlockedCreativeAttributes(battr);
         }
 
-        openrtbRequest.setBidRequestUser(user);
+        if (video.getExcludedAdvCount() > 0) {
+            String[] excluded_adv = new String[]{};
+            excluded_adv = video.getExcludedAdvList().toArray(excluded_adv);
+            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
+        }
+//        ad_tech
+        impressionDTO.setBidRequestImpressionVideoObject(bidRequestImpressionVideoObjectDTO);
+
     }
 
-    public static void impressionList(VamRequest request) {
-        BidRequestImpressionDTO[] bidRequestImpressionArray = new BidRequestImpressionDTO[1];
-        BidRequestImpressionDTO bidRequestImpression = new BidRequestImpressionDTO();
+    private static void mobileVideo(VamBidRequestParentNodeDTO openrtbRequest, VamRequest.Mobile_Video mobileVideo) {
+        openrtbRequest.setAppOrSite("app");
+        BidRequestImpressionDTO impressionDTO = openrtbRequest.getBidRequestImpressionArray()[0];
+        BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = new BidRequestImpressionVideoObjectDTO();
+        if (mobileVideo.hasAdspaceId()) {
+            impressionDTO.setAdTagOrPlacementId(String.valueOf(mobileVideo.getAdspaceId()));
+        }
+        if (mobileVideo.hasBidfloor()) {
+            impressionDTO.setBidFloorPrice((double) mobileVideo.getBidfloor() / 100);
+        }
+        //adformat
 
-        if (request.hasVamVideo()) {
-            if (request.getVamVideo().hasAdspaceId()) {
-                bidRequestImpression.setAdTagOrPlacementId(request.getVamVideo().getAdspaceId() + "");
+        if (mobileVideo.hasBrand()) {
+            openrtbRequest.getBidRequestDevice().setDeviceManufacturer(mobileVideo.getBrand());
+        }
+        if (mobileVideo.hasModel()) {
+            openrtbRequest.getBidRequestDevice().setDeviceModel(mobileVideo.getModel());
+        }
+
+        if (mobileVideo.hasOs()) {
+            switch (mobileVideo.getOs()) {
+                case 0:
+                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                case 1:
+                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("iOS");
+                case 2:
+                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Android");
+                default:
+                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Other");
             }
-            if (request.getVamVideo().hasBidfloor()) {
-                bidRequestImpression.setBidFloorPrice((double) request.getVamVideo().getBidfloor());
+        }
+        if (mobileVideo.hasOsVersion()) {
+            openrtbRequest.getBidRequestDevice().setDeviceOperatingSystemVersion(mobileVideo.getOsVersion());
+        }
+
+        if (mobileVideo.hasImei()) {
+            openrtbRequest.getBidRequestDevice().setMD5HashedDeviceId(mobileVideo.getImei());
+        }
+
+        if (mobileVideo.hasMac()) {
+            openrtbRequest.getBidRequestDevice().setHashedMD5MacAddressOfDevice(mobileVideo.getMac());
+        }
+        if (mobileVideo.hasAid()) {
+            openrtbRequest.getBidRequestDevice().setMD5HashedDevicePlatformId(mobileVideo.getAid());
+        }
+        //aaid
+
+        if (mobileVideo.hasIDFA()) {
+            openrtbRequest.getBidRequestDevice().setIfa(mobileVideo.getIDFA());
+        }
+        //OpenUDID
+        //source
+        if (mobileVideo.hasPgn()) {
+            openrtbRequest.getBidRequestApp().setApplicationBundleName(mobileVideo.getPgn());
+        }
+        if (mobileVideo.hasAppName()) {
+            openrtbRequest.getBidRequestApp().setApplicationName(mobileVideo.getAppName());
+        }
+
+        if (mobileVideo.hasScreenWidth()) {
+            openrtbRequest.getBidRequestDevice().setDevicePhysicalWidthInPixels(mobileVideo.getScreenWidth());
+        }
+        if (mobileVideo.hasScreenHeight()) {
+            openrtbRequest.getBidRequestDevice().setDevicePhysicalHeightInPixels(mobileVideo.getScreenHeight());
+        }
+
+        if (mobileVideo.hasNetwork()) {
+            switch (mobileVideo.getNetwork()) {
+                case 0:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(0);
+                case 1:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(2);
+                case 2:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(4);
+                case 3:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(5);
+                case 4:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(6);
+                default:
+                    openrtbRequest.getBidRequestDevice().setConnectionType(0);
             }
         }
 
-        if (request.hasVamMobile()) {
-            if (request.getVamMobile().hasAdspaceId()) {
-                bidRequestImpression.setAdTagOrPlacementId(request.getVamMobile().getAdspaceId() + "");
-            }
-
-            if (request.getVamMobile().hasBidfloor()) {
-                bidRequestImpression.setBidFloorPrice((double) request.getVamMobile().getBidfloor());
-            }
-            if (request.getVamMobile().hasFullScreen()) {
-                if (request.getVamMobile().getFullScreen()) {
-                    bidRequestImpression.setIsAdInterstitial(1);
-                } else {
-                    bidRequestImpression.setIsAdInterstitial(0);
-                }
-            }
-        }
-
-        if (request.hasVamMobileVideo()) {
-            if (request.getVamMobileVideo().hasAdspaceId()) {
-                bidRequestImpression.setAdTagOrPlacementId(request.getVamMobileVideo().getAdspaceId() + "");
-            }
-            if (request.getVamMobileVideo().hasBidfloor()) {
-                bidRequestImpression.setBidFloorPrice((double) request.getVamMobileVideo().getBidfloor());
+        //TODO 字母是否这么写
+        if (mobileVideo.hasOperateId()) {
+            switch (mobileVideo.getOperateId()) {
+                case 0:
+                    openrtbRequest.getBidRequestDevice().setCarrier("UNKNOWN");
+                case 1:
+                    openrtbRequest.getBidRequestDevice().setCarrier("Mobile");
+                case 2:
+                    openrtbRequest.getBidRequestDevice().setCarrier("Unicom");
+                case 3:
+                    openrtbRequest.getBidRequestDevice().setCarrier("Telecom");
+                default:
+                    openrtbRequest.getBidRequestDevice().setCarrier("UNKNOWN");
             }
         }
 
-        if (request.getDisplayCount() > 0) {
-            if (request.getDisplay(0).hasAdspaceId()) {
-                bidRequestImpression.setAdTagOrPlacementId(request.getDisplay(0).getAdspaceId() + "");
+        if (mobileVideo.hasCorner()) {
+            BidRequestGeoDTO bidRequestGeoDTO = new BidRequestGeoDTO();
+            if (mobileVideo.getCorner().hasLatitude()) {
+                bidRequestGeoDTO.setGeoLatitude(mobileVideo.getCorner().getLatitude());
             }
-            if (request.getDisplay(0).hasBidfloor()) {
-                bidRequestImpression.setBidFloorPrice((double) request.getDisplay(0).getBidfloor());
+            if (mobileVideo.getCorner().hasLongitude()) {
+                bidRequestGeoDTO.setGeoLongitude(mobileVideo.getCorner().getLongitude());
+            }
+            openrtbRequest.getBidRequestDevice().setGeoObject(bidRequestGeoDTO);
+        }
+        //mpn
+
+        if (mobileVideo.hasGender()) {
+            switch (mobileVideo.getGender()) {
+                case 0:
+                    openrtbRequest.getBidRequestUser().setGender("O");
+                case 1:
+                    openrtbRequest.getBidRequestUser().setGender("M");
+                case 2:
+                    openrtbRequest.getBidRequestUser().setGender("F");
+                default:
+                    openrtbRequest.getBidRequestUser().setGender("O");
+
+            }
+        }
+        if (mobileVideo.hasBd()) {
+            openrtbRequest.getBidRequestUser().setYearOfBirth(mobileVideo.getBd());
+        }
+
+        if (mobileVideo.hasLinear()) {
+            if (mobileVideo.getLinear().getNumber() == 1) {
+                bidRequestImpressionVideoObjectDTO.setIsVideoLinear(1);
+            } else {
+                bidRequestImpressionVideoObjectDTO.setIsVideoLinear(2);
             }
         }
 
-        if (request != null) {
-            bidRequestImpression.setBidRequestImpressionVideoObject(impressionVideo(request));
+        if (mobileVideo.hasVamProtocol()) {
+            Integer[] number = {mobileVideo.getVamProtocol().getNumber()};
+            bidRequestImpressionVideoObjectDTO.setVideoBidResponseProtocol(number);
         }
-        if (request != null) {
-            bidRequestImpression.setBidRequestImpressionBannerObject(impressionBanner(request));
+
+        if (mobileVideo.hasWidth()) {
+            bidRequestImpressionVideoObjectDTO.setWidthVideoPlayerInPixels(mobileVideo.getWidth());
         }
-        bidRequestImpressionArray[0] = bidRequestImpression;
-        openrtbRequest.setBidRequestImpressionArray(bidRequestImpressionArray);
+        if (mobileVideo.hasHeight()) {
+            bidRequestImpressionVideoObjectDTO.setHeightVideoPlayerInPixels(mobileVideo.getHeight());
+        }
+        if (mobileVideo.hasMaxDuration()) {
+            bidRequestImpressionVideoObjectDTO.setMaxDurationOfVideo(mobileVideo.getMaxDuration());
+        }
+        if (mobileVideo.hasMinDuration()) {
+            bidRequestImpressionVideoObjectDTO.setMinimumDurationOfVideo(mobileVideo.getMinDuration());
+        }
+
+        if (mobileVideo.hasVideoAdform()) {
+            switch (mobileVideo.getVideoAdform()) {
+                case 0:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(0);
+                case 1:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(-1);
+                case 2:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(-2);
+                case 4:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(1);
+                default:
+                    bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(1);
+
+            }
+        }
+
+        if (mobileVideo.getMimesCount() > 0) {
+            String[] mimeTypes = new String[]{};
+            mimeTypes = mobileVideo.getMimesList().toArray(mimeTypes);
+            bidRequestImpressionVideoObjectDTO.setMimeTypesSupported(mimeTypes);
+        }
+
+        // adformat
+
+        if (mobileVideo.hasKeyword()) {
+            openrtbRequest.getBidRequestApp().setAppKeywordsCSV(mobileVideo.getKeyword());
+        }
+
+        if (mobileVideo.getExcludedCatCount() > 0) {
+            List<Integer> excluded_cat = mobileVideo.getExcludedCatList();
+            Integer[] battr = new Integer[excluded_cat.size()];
+            for (int i = 0; i < excluded_cat.size(); i++) {
+                battr[i] = excluded_cat.get(i);
+            }
+            bidRequestImpressionVideoObjectDTO.setBlockedCreativeAttributes(battr);
+        }
+
+        if (mobileVideo.getExcludedAdvCount() > 0) {
+            String[] excluded_adv = new String[]{};
+            excluded_adv = mobileVideo.getExcludedAdvList().toArray(excluded_adv);
+            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
+        }
+        impressionDTO.setBidRequestImpressionVideoObject(bidRequestImpressionVideoObjectDTO);
+
     }
 
-    public static void app(VamRequest request) {
-        BidRequestAppDTO app = new BidRequestAppDTO();
-        if (request.hasVamMobile()) {
-            if (request.getVamMobile().hasPgn()) {
-                app.setApplicationBundleName(request.getVamMobile().getPgn());
-            }
-            if (request.getVamMobile().hasAppName()) {
-                app.setApplicationName(request.getVamMobile().getAppName());
-            }
-        }
-        if (request.hasVamMobileVideo()) {
-            if (request.getVamMobileVideo().hasPgn()) {
-                app.setApplicationBundleName(request.getVamMobileVideo().getPgn());
-            }
-            if (request.getVamMobileVideo().hasAppName()) {
-                app.setApplicationName(request.getVamMobileVideo().getAppName());
-            }
-            if (request.getVamMobileVideo().hasKeyword()) {
-                app.setAppKeywordsCSV(request.getVamMobileVideo().getKeyword());
-            }
-        }
-
-        openrtbRequest.setBidRequestApp(app);
-    }
-
-    public static BidRequestImpressionVideoObjectDTO impressionVideo(VamRequest request) {
-        BidRequestImpressionVideoObjectDTO video = new BidRequestImpressionVideoObjectDTO();
-
-        if (request.hasVamMobile()) {
-            if (request.getVamVideo().hasLinear()) {
-                if (request.getVamVideo().getLinear().getNumber() == 0) {
-                    video.setIsVideoLinear(1);
-                } else {
-                    video.setIsVideoLinear(2);
-                }
-            }
-            if (request.getVamVideo().hasVamProtocol()) {
-                Integer[] number = {request.getVamVideo().getVamProtocol().getNumber() + 1};
-                video.setVideoBidResponseProtocol(number);
-            }
-            if (request.getVamVideo().hasWidth()) {
-                video.setWidthVideoPlayerInPixels(request.getVamVideo().getWidth());
-            }
-            if (request.getVamVideo().hasHeight()) {
-                video.setHeightVideoPlayerInPixels(request.getVamVideo().getHeight());
-            }
-            if (request.getVamVideo().hasMaxDuration()) {
-                video.setMaxDurationOfVideo(request.getVamVideo().getMaxDuration());
-            }
-            if (request.getVamVideo().hasMinDuration()) {
-                video.setMinimumDurationOfVideo(request.getVamVideo().getMinDuration());
-            }
-            if (request.getVamVideo().hasVideoAdform()) {
-                video.setStartDelayInSeconds(request.getVamVideo().getVideoAdform());
-            }
-        }
-
-        if (request.hasVamMobileVideo()) {
-            if (request.getVamMobileVideo().hasLinear()) {
-                if (request.getVamMobileVideo().getLinear().getNumber() == 0) {
-                    video.setIsVideoLinear(1);
-                } else {
-                    video.setIsVideoLinear(2);
-                }
-            }
-            if (request.getVamMobileVideo().hasVamProtocol()) {
-                Integer[] number = {request.getVamMobileVideo().getVamProtocol().getNumber() + 1};
-                video.setVideoBidResponseProtocol(number);
-            }
-            if (request.getVamMobileVideo().hasWidth()) {
-                video.setWidthVideoPlayerInPixels(request.getVamMobileVideo().getWidth());
-            }
-            if (request.getVamMobileVideo().hasHeight()) {
-                video.setHeightVideoPlayerInPixels(request.getVamMobileVideo().getHeight());
-            }
-            if (request.getVamMobileVideo().hasMaxDuration()) {
-                video.setMaxDurationOfVideo(request.getVamMobileVideo().getMaxDuration());
-            }
-            if (request.getVamMobileVideo().hasMinDuration()) {
-                video.setMinimumDurationOfVideo(request.getVamMobileVideo().getMinDuration());
-            }
-            if (request.getVamMobileVideo().hasVideoAdform()) {
-                video.setStartDelayInSeconds(request.getVamMobileVideo().getVideoAdform());
-            }
-            if (request.getVamVideo().getMimesList() != null && request.getVamVideo().getMimesList().size() > 0) {
-                video.setMimeTypesSupported((String[]) request.getVamVideo().getMimesList().toArray(new String[request.getVamVideo().getMimesCount()]));
-            }
-            if (request.getVamMobileVideo().getMimesList() != null && request.getVamMobileVideo().getMimesList().size() > 0) {
-                video.setMimeTypesSupported((String[]) request.getVamMobileVideo().getMimesList().toArray(new String[request.getVamMobileVideo().getMimesCount()]));
-            }
-            if (request.getVamVideo().getExcludedCatList() != null && request.getVamVideo().getExcludedCatList().size() > 0) {
-                video.setBlockedCreativeAttributes((Integer[]) request.getVamVideo().getExcludedCatList().toArray(new Integer[request.getVamVideo().getExcludedCatCount()]));
-            }
-            if (request.getVamMobileVideo().getExcludedCatList() != null && request.getVamMobileVideo().getExcludedCatList().size() > 0) {
-                video.setBlockedCreativeAttributes((Integer[]) request.getVamMobileVideo().getExcludedCatList().toArray(new Integer[request.getVamMobileVideo().getExcludedCatCount()]));
-            }
-        }
-
-        return video;
-    }
-
-    public static BidRequestImpressionBannerObjectDTO impressionBanner(VamRequest request) {
-        BidRequestImpressionBannerObjectDTO banner = new BidRequestImpressionBannerObjectDTO();
-        if (request.getDisplayCount() > 0) {
-            if (request.getDisplay(0).hasHeight()) {
-                banner.setBannerHeightInPixels(request.getDisplay(0).getHeight());
-            }
-            if (request.getDisplay(0).hasWidth()) {
-                banner.setBannerWidthInPixels(request.getDisplay(0).getWidth());
-            }
-        }
-
-        if (request.hasVamMobile()) {
-            if (request.getVamMobile().hasHeight()) {
-                banner.setBannerHeightInPixels(request.getVamMobile().getHeight());
-            }
-            if (request.getVamMobile().hasWidth()) {
-                banner.setBannerWidthInPixels(request.getVamMobile().getWidth());
-            }
-        }
-
-        return banner;
-    }
-
-    public static BidRequestGeoDTO userGeo(VamRequest request) {
-        BidRequestGeoDTO geo = new BidRequestGeoDTO();
-        if (request.hasVamMobile()) {
-            if (request.getVamMobile().getCorner().hasLatitude()) {
-                geo.setGeoLatitude(request.getVamMobile().getCorner().getLatitude());
-            }
-            if (request.getVamMobile().getCorner().hasLongitude()) {
-                geo.setGeoLongitude(request.getVamMobile().getCorner().getLongitude());
-            }
-        }
-        if (request.hasVamMobileVideo()) {
-            if (request.getVamMobileVideo().getCorner().hasLatitude()) {
-                geo.setGeoLatitude(request.getVamMobileVideo().getCorner().getLatitude());
-            }
-            if (request.getVamMobileVideo().getCorner().hasLongitude()) {
-                geo.setGeoLongitude(request.getVamMobileVideo().getCorner().getLongitude());
-            }
-        }
-
-        return geo;
-    }
 
 }
