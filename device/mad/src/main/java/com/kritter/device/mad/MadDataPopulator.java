@@ -46,7 +46,7 @@ public class MadDataPopulator implements HandsetPopulationProvider {
     private static final String QUERY_NEW_OS_DATA_ROW =
             "insert into handset_os (os_name, os_versions, modified_by, modified_on) values (?, ?, ?, ?)";
     private static final String QUERY_UPDATE_OS_ID_VERSION = "update handset_os set os_versions = ? where os_id = " +
-            "(select id from handset_os where os_name = ?)";
+            "(select os_id from handset_os where os_name = ?)";
 
     private Logger logger;
     private String madFilesDirectory;
