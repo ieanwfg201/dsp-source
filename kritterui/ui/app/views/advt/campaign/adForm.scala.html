@@ -87,10 +87,14 @@
 							</div>
                         </div>
                      }		
-                        @components.formElements.textarea(adForm("external_imp_tracker"), "External Imp Tracker (for banner, each line represents one tracker)")
+                        <code ng-non-bindable>
+                        @components.formElements.textarea(adForm("external_imp_tracker"), "ExtImpTracker(each line represents one tracker)")
+                        </code>
                         @components.formElements.multiselectlist3(adForm("impMacro"), '_label ->"ImpMACROS (for replacement)" , '_row->true)
                         @components.formElements.selectlist2(adForm("impMacroQuote"), "ImpMacros (Quoted) ",services.MetadataAPI.creativeMacroQuote() )
-                        @components.formElements.textarea(adForm("external_click_tracker"), "External Click Tracker (for banner, each line represents one tracker)")
+                        <code ng-non-bindable>
+                        @components.formElements.textarea(adForm("external_click_tracker"), "ExtClickTracker(each line represents one tracker)")
+                        </code>
                         @components.formElements.multiselectlist3(adForm("clickMacro"), '_label ->"MACROS (for replacement)" , '_row->true)
                         @components.formElements.selectlist2(adForm("clickMacroQuote"), "Macros (Quoted) ",services.MetadataAPI.creativeMacroQuote() )
                         

@@ -1,11 +1,8 @@
 package com.kritter.constants;
 
-import lombok.ToString;
-
 import java.util.HashMap;
 import java.util.Map;
 
-@ToString
 public enum FreqEventType {
     CLK(1,"CLK"),
     IMP(2,"IMP");
