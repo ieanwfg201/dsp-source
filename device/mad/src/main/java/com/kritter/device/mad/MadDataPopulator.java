@@ -259,7 +259,8 @@ public class MadDataPopulator implements HandsetPopulationProvider {
                 preparedStatement = connection.prepareStatement(QUERY_UPDATE_OS_ID_VERSION);
                 preparedStatement.setString(1, ResultSetHelper.prepareStringArrayForMySQLInsertion(
                         handsetOperatingSystemData.getOperatingSystemVersions()));
-                preparedStatement.execute();
+                preparedStatement.setString(2, handsetOperatingSystemData.getOperatingSystemName().toLowerCase());
+                preparedStatement.executeUpdate();
             } catch (SQLException sqle) {
                 logger.error("Error in prepared statement while populating new os {}", sqle);
                 throw sqle;
