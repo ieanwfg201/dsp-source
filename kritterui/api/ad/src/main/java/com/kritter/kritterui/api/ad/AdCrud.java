@@ -124,6 +124,11 @@ public class AdCrud {
     						ad.setClick_freq_cap_type(FreqDuration.BYHOUR.getCode());
     						ad.setClick_freq_cap_count(f.getCount());
     						ad.setClick_freq_time_window(f.getHour());
+    						break;
+    					case BYDAY:
+    						ad.setClick_freq_cap_type(FreqDuration.BYDAY.getCode());
+    						ad.setClick_freq_cap_count(f.getCount());
+    						ad.setClick_freq_time_window(24);
     					default:
     						break;
     					}
@@ -143,6 +148,11 @@ public class AdCrud {
 							ad.setImp_freq_cap_type(FreqDuration.BYHOUR.getCode());
 							ad.setImp_freq_cap_count(f.getCount());
 							ad.setImp_freq_time_window(f.getHour());
+							break;
+						case BYDAY:
+							ad.setImp_freq_cap_type(FreqDuration.BYDAY.getCode());
+							ad.setImp_freq_cap_count(f.getCount());
+							ad.setImp_freq_time_window(24);
 							break;
 						default:
 							break;
@@ -174,6 +184,9 @@ public class AdCrud {
     		if(fDur != FreqDuration.LIFE){
     			fdef.setHour(ad.getClick_freq_time_window());
     		}
+    		if(fDur == FreqDuration.BYDAY){
+    			fdef.setHour(24);
+    		}
     		set.add(fdef);
     		map.put(FreqEventType.CLK, set);
     	}
@@ -189,6 +202,9 @@ public class AdCrud {
     		fdef.setCount(count);
     		if(fDur != FreqDuration.LIFE){
     			fdef.setHour(ad.getImp_freq_time_window());
+    		}
+    		if(fDur == FreqDuration.BYDAY){
+    			fdef.setHour(24);
     		}
     		set.add(fdef);
     		map.put(FreqEventType.IMP, set);
