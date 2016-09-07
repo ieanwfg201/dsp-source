@@ -398,10 +398,14 @@ POST   /advertiser/retargetingsegment/save                     controllers.retar
 GET    /advertiser/:account_guid/retargetingsegment/list       controllers.retargeting_segment.RetargetingSegmentController.list(account_guid:String)
 
 #ADX BASED EXCHANGES
-GET   /adxbasedexchanges/metadata/add						   controllers.adxbasedexchanges.CreateMetadataController.add()
-POST  /adxbasedexchanges/metadata/save						   controllers.adxbasedexchanges.CreateMetadataController.save()
-GET   /adxbasedexchanges/metadata/edit/:id                     controllers.adxbasedexchanges.CreateMetadataController.edit(id: Int)
-GET   /adxbasedexchanges/metadata/list						   controllers.adxbasedexchanges.CreateMetadataController.list()
+GET   /adxbasedexchanges/metadata/add						   		controllers.adxbasedexchanges.CreateMetadataController.add()
+POST  /adxbasedexchanges/metadata/save						   		controllers.adxbasedexchanges.CreateMetadataController.save()
+GET   /adxbasedexchanges/metadata/edit/:id                     		controllers.adxbasedexchanges.CreateMetadataController.edit(id: Int)
+GET   /adxbasedexchanges/metadata/list						   		controllers.adxbasedexchanges.CreateMetadataController.list()
+GET   /adxbasedexchanges/adpositionget/list						    controllers.adxbasedexchanges.AdPositionGetController.list()
+GET   /adxbasedexchanges/adpositionget/updatesingle/:id/:action     controllers.adxbasedexchanges.AdPositionGetController.updatesingle(id:Int, action:String)
+GET   /adxbasedexchanges/adpositionget/updatemultiple/:action     	controllers.adxbasedexchanges.AdPositionGetController.updatemultiple(action:String, ids: Option[String])
+GET   /adxbasedexchanges/adpositionget/insertnew/:id/:action        controllers.adxbasedexchanges.AdPositionGetController.insertnew(id:Int, action:String)
 
 
 

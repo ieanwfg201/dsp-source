@@ -337,8 +337,8 @@ public class AdxBasedExchangesMetadataCrud {
                 msg.setError_code(ErrorEnum.NO_ERROR.getId());
                 msg.setMsg(ErrorEnum.NO_ERROR.getName());
             }else{
-                msg.setError_code(ErrorEnum.CAMPAIGN_NOT_FOUND.getId());
-                msg.setMsg(ErrorEnum.CAMPAIGN_NOT_FOUND.getName());
+                msg.setError_code(ErrorEnum.ADX_BASED_NF.getId());
+                msg.setMsg(ErrorEnum.ADX_BASED_NF.getName());
             }
             returnEntity.setMsg(msg);
             return returnEntity;

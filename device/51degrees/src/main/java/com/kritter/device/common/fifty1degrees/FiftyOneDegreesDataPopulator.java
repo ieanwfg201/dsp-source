@@ -263,7 +263,8 @@ public class FiftyOneDegreesDataPopulator implements HandsetPopulationProvider {
                 preparedStatement = connection.prepareStatement(QUERY_UPDATE_OS_ID_VERSION);
                 preparedStatement.setString(1, ResultSetHelper.prepareStringArrayForMySQLInsertion(
                         handsetOperatingSystemData.getOperatingSystemVersions()));
-                preparedStatement.execute();
+                preparedStatement.setString(2, handsetOperatingSystemData.getOperatingSystemName().toLowerCase());
+                preparedStatement.executeUpdate();
             } catch (SQLException sqle) {
                 logger.error("Error in prepared statement while populating new os {}", sqle);
                 throw sqle;
@@ -301,7 +302,8 @@ public class FiftyOneDegreesDataPopulator implements HandsetPopulationProvider {
                 preparedStatement = connection.prepareStatement(QUERY_UPDATE_BROWSER_ID_VERSION);
                 preparedStatement.setString(1, ResultSetHelper.prepareStringArrayForMySQLInsertion(
                         handsetBrowserData.getBrowserVersions()));
-                preparedStatement.execute();
+                preparedStatement.setInt(2, handsetBrowserData.getBrowserId());
+                preparedStatement.executeUpdate();
             } catch (SQLException sqle) {
                 logger.error("Error in prepared statement while populating new browser {}", sqle);
                 throw sqle;

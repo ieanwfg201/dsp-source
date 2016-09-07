@@ -22,6 +22,8 @@ import com.kritter.api.entity.retargeting_segment.RetargetingSegmentList;
 import com.kritter.api.entity.ad.Ad;
 import com.kritter.api.entity.ad.AdList;
 import com.kritter.api.entity.ad.AdListEntity;
+import com.kritter.api.entity.adpositionget.AdpositionGetList;
+import com.kritter.api.entity.adpositionget.AdpositionGetListEntity;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadatList;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadataListEntity;
 import com.kritter.api.entity.campaign.Campaign;
@@ -47,6 +49,7 @@ import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.AdAPIEnum;
+import com.kritter.constants.AdpositionGetQueryEnum;
 import com.kritter.constants.AdxBasedExchangesMetadataQueryEnum;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.CreativeContainerAPIEnum;
@@ -58,6 +61,7 @@ import com.kritter.constants.PageConstants;
 import com.kritter.constants.RetargetingSegmentEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
+import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.kritterui.api.def.ApiDef;
@@ -322,7 +326,17 @@ public class EntityListDataService {
                         entityList = new EntityList<AdxBasedExchangesMetadata>(new ArrayList<AdxBasedExchangesMetadata>(), 0);
                     }
                     break;
-
+                case adpositionget:
+                		AdpositionGetListEntity adpositionListEntity = new AdpositionGetListEntity();
+                		adpositionListEntity.setQueryEnum(AdpositionGetQueryEnum.list_adposition_get);
+                		AdpositionGetList adpositionGetList = null;
+                		adpositionGetList = ApiDef.various_adposition_get(con, adpositionListEntity);
+                        if(adpositionGetList.getMsg().getError_code()==0){ 
+                            entityList = new EntityList<AdPositionGet>(adpositionGetList.getEntity_list(), 
+                            		adpositionGetList.getEntity_list().size()); 
+                        }else{
+                            entityList = new EntityList<AdPositionGet>(new ArrayList<AdPositionGet>(), 0);
+                        }
 				default:
 					break;
 			}

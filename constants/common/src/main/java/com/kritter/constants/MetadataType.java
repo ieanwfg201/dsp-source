@@ -67,7 +67,11 @@ public enum MetadataType {
     CHANNEL_TIER2_BY_TIER1(61,"CHANNEL_TIER2_BY_TIER1"),
     CHANNEL_BY_IDS(62,"CHANNEL_BY_IDS"),
     CHANNEL_BY_PUBIDS(63,"CHANNEL_BY_PUBIDS"),
-    ADX_BASED_EXCHANGES_METATADATA(64,"ADX_BASED_EXCHANGES_METATADATA");
+    ADX_BASED_EXCHANGES_METATADATA(64,"ADX_BASED_EXCHANGES_METATADATA"),
+    ADPOSITIONGET_ADXBASEDEXCHNAGES(65,"ADPOSITIONGET_ADXBASEDEXCHNAGES"),
+    ADVERTISERUPLOAD_ADXBASEDEXCHNAGES(66,"ADVERTISERUPLOAD_ADXBASEDEXCHNAGES"),
+    BANNERUPLOAD_ADXBASEDEXCHNAGES(67,"BANNERUPLOAD_ADXBASEDEXCHNAGES"),
+    VIDEOUPLOAD_ADXBASEDEXCHNAGES(68,"BANNERUPLOAD_ADXBASEDEXCHNAGES");
 
 
     private static Map<Integer, MetadataType> map = new HashMap<Integer, MetadataType>();
@@ -80,9 +84,10 @@ public enum MetadataType {
     private int code;
     private String name;
 
-    private MetadataType(int code,String name)
+    MetadataType(int id,String name)
     {
-        this.code = code;
+        this.code = id;
+        this.name = name;
     }
 
     public String getName()
@@ -90,7 +95,7 @@ public enum MetadataType {
         return this.name;
     }
 
-    public int getCode()
+    public int getId()
     {
         return this.code;
     }

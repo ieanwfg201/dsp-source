@@ -364,9 +364,19 @@ public class MetadataCrud {
     public static JsonNode get_adx_based_exchabges_metadata(Connection con){
         return get_metalist(con,MetadataType.ADX_BASED_EXCHANGES_METATADATA,null).toJson();
     }
+    public static JsonNode adpositionget_adxbasedexchanges(Connection con){
+        return get_metalist(con,MetadataType.ADPOSITIONGET_ADXBASEDEXCHNAGES,null).toJson();
+    }
+    public static JsonNode advertiserupload_adxbasedexchanges(Connection con){
+        return get_metalist(con,MetadataType.ADVERTISERUPLOAD_ADXBASEDEXCHNAGES,null).toJson();
+    }
+    public static JsonNode bannerupload_adxbasedexchanges(Connection con){
+        return get_metalist(con,MetadataType.BANNERUPLOAD_ADXBASEDEXCHNAGES,null).toJson();
+    }
+    public static JsonNode videoupload_adxbasedexchanges(Connection con){
+        return get_metalist(con,MetadataType.VIDEOUPLOAD_ADXBASEDEXCHNAGES,null).toJson();
+    }
 
-
-    
     public static MetaList get_metalist(Connection con,MetadataType metadataType, MetaInput metaInput){
 
         if(con == null){
@@ -406,6 +416,18 @@ public class MetadataCrud {
                     break;
                 case ADX_BASED_EXCHANGES_METATADATA:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.adxbasedexchanges_metadata);
+                    break;
+                case ADPOSITIONGET_ADXBASEDEXCHNAGES:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.adpositionget_adxbasedexchanges);
+                    break;
+                case ADVERTISERUPLOAD_ADXBASEDEXCHNAGES:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.advertiserupload_adxbasedexchanges);
+                    break;
+                case BANNERUPLOAD_ADXBASEDEXCHNAGES:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.bannerupload_adxbasedexchanges);
+                    break;
+                case VIDEOUPLOAD_ADXBASEDEXCHNAGES:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.videoupload_adxbasedexchanges);
                     break;
                 case APP_STORE_ID:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.get_app_store_id);
