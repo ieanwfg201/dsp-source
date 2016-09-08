@@ -6,6 +6,15 @@ package com.kritter.creative.approval.cloudcross.entity;
 public class CloudCrossResponse {
     private Integer status;
     private Success success;
+    private CloudCrossError error;
+
+    public CloudCrossError getError() {
+        return error;
+    }
+
+    public void setError(CloudCrossError error) {
+        this.error = error;
+    }
 
     public Integer getStatus() {
         return status;

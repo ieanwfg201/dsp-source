@@ -1,20 +1,20 @@
 package com.kritter.creative.approval.cloudcross.abstracts;
 
-import com.kritter.creative.approval.cloudcross.entity.CloudCrossState;
-import com.kritter.creative.approval.cloudcross.entity.CloudCrossResponse;
+import com.kritter.creative.approval.cloudcross.entity.*;
 import com.kritter.utils.http_client.SynchronousHttpClient;
 import com.kritter.utils.http_client.entity.HttpRequest;
 import com.kritter.utils.http_client.entity.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by hamlin on 16-7-31.
  */
 @SuppressWarnings("unused")
-public abstract class CloudCrossInterface<T> {
+public abstract class CloudCrossInterface<T,E,W> {
     public static ObjectMapper MAPPER = new ObjectMapper();
 
     public static String CREATIVE_DSPID_TOKEN = "?dspId=6&token=qaw6hu8x1d7m5k";
@@ -39,11 +39,11 @@ public abstract class CloudCrossInterface<T> {
         return synchronousHttpClient.fetchResponseFromThirdPartyServer(request);
     }
 
-    public abstract CloudCrossResponse add(T t);
+    public abstract List<CloudCrossResponse> add(ArrayList<T> entity);
 
-    public abstract CloudCrossResponse update(T t);
+    public abstract List<CloudCrossResponse> update(ArrayList<T> entity);
 
-    public abstract CloudCrossResponse getAllByIds(List<String> ids);
+    public abstract List<E> queryByIds(List<String> ids,boolean isByBannerId);
 
-    public abstract List<CloudCrossState> getAllState(List<String> ids);
+    public abstract List<W> getStateByIds(List<String> ids);
 }
