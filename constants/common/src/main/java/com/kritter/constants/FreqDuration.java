@@ -8,7 +8,8 @@ import java.util.Map;
 @ToString
 public enum FreqDuration {
     LIFE(1,"LIFE"),
-        BYHOUR(2,"BYHOUR"),;
+    BYHOUR(2,"BYHOUR"),
+    BYDAY(3,"BYDAY");
 
     private int code;
     private String name;

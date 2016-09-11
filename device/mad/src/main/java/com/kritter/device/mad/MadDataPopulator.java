@@ -46,7 +46,7 @@ public class MadDataPopulator implements HandsetPopulationProvider {
     private static final String QUERY_NEW_OS_DATA_ROW =
             "insert into handset_os (os_name, os_versions, modified_by, modified_on) values (?, ?, ?, ?)";
     private static final String QUERY_UPDATE_OS_ID_VERSION = "update handset_os set os_versions = ? where os_id = " +
-            "(select id from handset_os where os_name = ?)";
+            "?";
 
     private Logger logger;
     private String madFilesDirectory;
@@ -259,7 +259,7 @@ public class MadDataPopulator implements HandsetPopulationProvider {
                 preparedStatement = connection.prepareStatement(QUERY_UPDATE_OS_ID_VERSION);
                 preparedStatement.setString(1, ResultSetHelper.prepareStringArrayForMySQLInsertion(
                         handsetOperatingSystemData.getOperatingSystemVersions()));
-                preparedStatement.setString(2, handsetOperatingSystemData.getOperatingSystemName().toLowerCase());
+                preparedStatement.setInt(2, handsetOperatingSystemData.getOperatingSystemId());
                 preparedStatement.executeUpdate();
             } catch (SQLException sqle) {
                 logger.error("Error in prepared statement while populating new os {}", sqle);

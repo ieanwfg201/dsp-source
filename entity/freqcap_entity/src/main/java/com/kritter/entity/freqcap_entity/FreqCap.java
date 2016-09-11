@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.ToString;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -19,7 +18,6 @@ import lombok.Setter;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @EqualsAndHashCode
-@ToString
 public class FreqCap {
 	@Getter@Setter
 	private Map<FreqEventType, Set<FreqDef>> fDef;
