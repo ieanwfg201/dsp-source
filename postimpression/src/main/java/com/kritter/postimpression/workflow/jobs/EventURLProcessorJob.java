@@ -4,6 +4,7 @@ import com.kritter.constants.*;
 import com.kritter.entity.freqcap_entity.FreqCap;
 import com.kritter.entity.freqcap_entity.FreqDef;
 import com.kritter.entity.user.recenthistory.LifetimeDemandHistoryProvider;
+import com.kritter.entity.user.recenthistory.RecentClickHistoryProvider;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.entity.user.userid.UserIdProvider;
 import com.kritter.entity.user.usersegment.UserSegmentProvider;
@@ -29,6 +30,7 @@ import com.kritter.serving.demand.entity.Campaign;
 import com.kritter.tracking.common.ThirdPartyTrackingManager;
 import com.kritter.tracking.common.entity.ThirdPartyTrackingData;
 import com.kritter.postimpression.utils.MacroUtils;
+import com.kritter.user.thrift.struct.ClickEvent;
 import com.kritter.user.thrift.struct.ImpressionEvent;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ConversionUrlData;
@@ -112,6 +114,7 @@ public class EventURLProcessorJob implements Job
     private CampaignCache campaignCache;
     private LifetimeDemandHistoryProvider campaignLifetimeImpHistoryCache;
     private LifetimeDemandHistoryProvider campaignLifetimeClickHistoryCache;
+    private RecentClickHistoryProvider recentClickHistoryProvider;
 
     public EventURLProcessorJob(
             String name,
@@ -162,7 +165,8 @@ public class EventURLProcessorJob implements Job
             LifetimeDemandHistoryProvider adLifetimeClickHistoryCache,
             CampaignCache campaignCache,
             LifetimeDemandHistoryProvider campaignLifetimeImpHistoryCache,
-            LifetimeDemandHistoryProvider campaignLifetimeClickHistoryCache
+            LifetimeDemandHistoryProvider campaignLifetimeClickHistoryCache,
+            RecentClickHistoryProvider recentClickHistoryProvider
             )
     {
         this.name = name;
@@ -216,6 +220,7 @@ public class EventURLProcessorJob implements Job
         this.campaignCache = campaignCache;
         this.campaignLifetimeImpHistoryCache = campaignLifetimeImpHistoryCache;
         this.campaignLifetimeClickHistoryCache = campaignLifetimeClickHistoryCache;
+        this.recentClickHistoryProvider = recentClickHistoryProvider;
     }
 
     @Override
@@ -447,6 +452,20 @@ public class EventURLProcessorJob implements Job
 
                 PostImpressionUtils.redirectUserToLandingPage(landingPageUrl,
                         (HttpServletResponse) context.getValue(Workflow.CONTEXT_RESPONSE_KEY));
+
+                if(null != kritterInternalUserId && null != recentClickHistoryProvider) {
+                    SortedSet<ClickEvent> clickEvents = new TreeSet<ClickEvent>();
+
+                    ClickEvent clickEvent = new ClickEvent();
+                    clickEvent.setAdId(postImpressionRequest.getAdId());
+                    clickEvent.setTimestamp(System.currentTimeMillis());
+                    clickEvents.add(clickEvent);
+
+                    recentClickHistoryProvider.updateClickHistory(kritterInternalUserId, clickEvents);
+
+                    logger.debug("Recent click history updated for kritterUserId:{} for adId: {} ",
+                            kritterInternalUserId, postImpressionRequest.getAdId());
+                }
 
                 if(null != kritterInternalUserId && null != adLifetimeClickHistoryCache) {
                     Map<Integer, Integer> adClickCount = new HashMap<Integer, Integer>();

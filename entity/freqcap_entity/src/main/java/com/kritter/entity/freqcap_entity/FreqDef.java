@@ -24,22 +24,23 @@ public class FreqDef {
 	private Integer hour;
 	@Getter@Setter
 	private Integer count;
-	
+
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
+
     public static FreqDef getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
+
     public static FreqDef getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
     	FreqDef entity = objectMapper.readValue(str, FreqDef.class);
         return entity;
 
     }
-
 }

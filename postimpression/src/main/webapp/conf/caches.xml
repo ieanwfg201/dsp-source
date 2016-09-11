@@ -188,6 +188,15 @@
         <constructor-arg index="4"><ref bean="user_lifetime_campaign_click_cache_props"/></constructor-arg>
     </bean>
 
+    <bean id="user_recent_click_history_cache" class="com.kritter.nosql.user.recenthistory.UserRecentClickHistoryCache">
+        <constructor-arg index="0" value="user_recent_click_history_cache"/>
+        <constructor-arg index="1" value="cache.logger"/>
+        <constructor-arg index="2" value="1000"/>
+        <constructor-arg index="3" value="1"/>
+        <constructor-arg index="4"><ref bean="user_aerospike_db"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="user_recent_click_history_cache_props"/></constructor-arg>
+    </bean>
+
     <bean id="cachePool" class="com.kritter.abstraction.cache.entities.CachePool">
         <constructor-arg>
             <list>
@@ -205,6 +214,7 @@
                 <ref bean="user_lifetime_ad_click_cache"/>
                 <ref bean="user_lifetime_campaign_imp_cache"/>
                 <ref bean="user_lifetime_campaign_click_cache"/>
+                <ref bean="user_recent_click_history_cache"/>
                 <!--<ref bean="user_recent_history_cache"/>-->
             </list>
         </constructor-arg>
@@ -321,6 +331,17 @@
          </props>
       </constructor-arg>
     </bean>
+
+    <bean id="user_recent_click_history_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="namespace"><![CDATA[user]]></prop>
+           <prop key="table_name"><![CDATA[user_recent_clk_history]]></prop>
+           <prop key="primary_key_name"><![CDATA[user_id]]></prop>
+           <prop key="attribute_name_click_history"><![CDATA[clk_history]]></prop>
+         </props>
+      </constructor-arg>
+   </bean>
 
     <bean id="user_lifetime_ad_imp_cache_props" class="java.util.Properties">
       <constructor-arg>
