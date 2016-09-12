@@ -13,7 +13,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @EqualsAndHashCode
-public class MaterialUploadBanner
+public class MaterialUploadVideo
 {
 
     @Getter@Setter
@@ -45,7 +45,7 @@ public class MaterialUploadBanner
     @Getter@Setter
     private Integer creativeStatus;
     @Getter@Setter
-    private Integer bannerId;
+    private Integer videoInfoId;
     @Getter@Setter
     private String message = "";
     @Getter@Setter
@@ -61,13 +61,13 @@ public class MaterialUploadBanner
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
-    public static MaterialUploadBanner getObject(String str) throws JsonParseException, JsonMappingException, IOException{
+    public static MaterialUploadVideo getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
-    public static MaterialUploadBanner getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
-        MaterialUploadBanner entity = objectMapper.readValue(str, MaterialUploadBanner.class);
+    public static MaterialUploadVideo getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
+        MaterialUploadVideo entity = objectMapper.readValue(str, MaterialUploadVideo.class);
         return entity;
 
     }

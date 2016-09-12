@@ -3,6 +3,7 @@ package controllers.adxbasedexchanges;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import play.data.Form;
 import play.db.DB;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -11,17 +12,24 @@ import scala.Option;
 import securesocial.core.java.SecureSocial.SecuredAction;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.kritter.api.entity.adpositionget.AdpositionGetListEntity;
+import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadListEntity;
 import com.kritter.constants.AdxBasedExchangesStates;
-import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.kritterui.api.def.ApiDef;
 
-public class AdPositionGetController extends Controller{
+import models.entities.adxbasedexchanges.MaterialUploadExchangeFormEntity;
+
+public class MaterialVideoUploadController extends Controller{
 	
-	@SecuredAction
-	public static Result list(){ 
-		return ok(views.html.adxbasedexchanges.adpositionget.render());
-	}
+    @SecuredAction
+    public static Result list(Option<String> exchange){
+        Form<MaterialUploadExchangeFormEntity> materialUploadExchangesFormEntityData = Form.form(MaterialUploadExchangeFormEntity.class);
+        MaterialUploadExchangeFormEntity materialUploadExchangesFormEntity  = new MaterialUploadExchangeFormEntity();
+
+        if(!exchange.isEmpty()){
+        	materialUploadExchangesFormEntity.setExchange(exchange.get());
+        }
+        return ok(views.html.adxbasedexchanges.videoupload.render(materialUploadExchangesFormEntityData.fill(materialUploadExchangesFormEntity)));
+    }
 
 	@SecuredAction
 	public static Result updatemultiple(String action, Option<String> ids){
@@ -37,10 +45,10 @@ public class AdPositionGetController extends Controller{
 	            con = DB.getConnection();
 	            if(AdxBasedExchangesStates.SUBMITTED.getName().equals(action)){
 	            	
-	                AdpositionGetListEntity aListEntity = new AdpositionGetListEntity();
+	            	MaterialVideoUploadListEntity aListEntity = new MaterialVideoUploadListEntity();
 	                aListEntity.setAdxstate(AdxBasedExchangesStates.SUBMITTED);
 	                aListEntity.setId_list(idfinal);
-	                ApiDef.update_adposition_get_status_by_pubincids(con, aListEntity);
+	                ApiDef.update_material_video_status(con, aListEntity);
 	                response.put("message", "start dne");return ok(response);
 	            }else{
 	                response.put("message", "action : not present");return badRequest(response);
@@ -69,48 +77,10 @@ public class AdPositionGetController extends Controller{
 	        if(action != null){
 	            con = DB.getConnection();
 	            if(AdxBasedExchangesStates.SUBMITTED.getName().equals(action)){
-	                AdpositionGetListEntity aListEntity = new AdpositionGetListEntity();
+	            	MaterialVideoUploadListEntity aListEntity = new MaterialVideoUploadListEntity();
 	                aListEntity.setAdxstate(AdxBasedExchangesStates.SUBMITTED);
 	                aListEntity.setId_list(id+"");
-	                ApiDef.update_adposition_get_status_by_pubincids(con, aListEntity);
-	                response.put("message", "start dne");return ok(response);
-	            }else if(AdxBasedExchangesStates.READYTOSUBMIT.getName().equals(action)){
-	                AdpositionGetListEntity aListEntity = new AdpositionGetListEntity();
-	                aListEntity.setAdxstate(AdxBasedExchangesStates.READYTOSUBMIT);
-	                aListEntity.setId_list(id+"");
-	                ApiDef.update_adposition_get_status_by_pubincids(con, aListEntity);
-	                response.put("message", "start dne");return ok(response);
-	            }else{
-	                response.put("message", "action : not present");return badRequest(response);
-	            }
-	        }else{
-	            response.put("message", "action or ids : null");return badRequest(response);
-	        }
-	    }catch(Exception e){
-	        play.Logger.error(e.getMessage(),e);
-	        response.put("message", "action or ids : null");return badRequest(response);
-	    }finally{
-	        try {
-	            if(con != null){
-	                con.close();
-	            }
-	        } catch (SQLException e) {
-	            play.Logger.error(e.getMessage(),e);
-	        }
-	    }
-	}
-	@SecuredAction
-	public static Result insertnew(int id,String action){
-	    ObjectNode response = Json.newObject();
-	    Connection con = null;
-	    try{
-	        if(action != null){
-	            con = DB.getConnection();
-	            if(AdxBasedExchangesStates.READYTOSUBMIT.getName().equals(action)){
-	                AdPositionGet entity = new AdPositionGet();
-	                entity.setAdxbasedexhangesstatus(AdxBasedExchangesStates.READYTOSUBMIT.getCode());
-	                entity.setPubIncId(id);
-	                ApiDef.insert_adposition_get(con, entity);
+	                ApiDef.update_material_video_status(con, aListEntity);
 	                response.put("message", "start dne");return ok(response);
 	            }else{
 	                response.put("message", "action : not present");return badRequest(response);

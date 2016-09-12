@@ -41,6 +41,10 @@ import com.kritter.api.entity.iddefinition.IddefinitionList;
 import com.kritter.api.entity.isp_mapping.Isp_mapping;
 import com.kritter.api.entity.isp_mapping.Isp_mappingList;
 import com.kritter.api.entity.isp_mapping.Isp_mappingListEntity;
+import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadList;
+import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadListEntity;
+import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadList;
+import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadListEntity;
 import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.site.SiteList;
 import com.kritter.api.entity.site.SiteListEntity;
@@ -57,12 +61,16 @@ import com.kritter.constants.Ext_siteEnum;
 import com.kritter.constants.IddefinitionEnum;
 import com.kritter.constants.IddefinitionType;
 import com.kritter.constants.Isp_mappingEnum;
+import com.kritter.constants.MaterialBannerUploadQueryEnum;
+import com.kritter.constants.MaterialVideoUploadQueryEnum;
 import com.kritter.constants.PageConstants;
 import com.kritter.constants.RetargetingSegmentEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.kritterui.api.def.ApiDef;
 
@@ -337,6 +345,33 @@ public class EntityListDataService {
                         }else{
                             entityList = new EntityList<AdPositionGet>(new ArrayList<AdPositionGet>(), 0);
                         }
+                        break;
+                case materialbannerupload:
+            		MaterialBannerUploadListEntity materialBannerUploadListEntity = new MaterialBannerUploadListEntity();
+            		materialBannerUploadListEntity.setQueryEnum(MaterialBannerUploadQueryEnum.list_material_banner_by_pubincids);
+            		materialBannerUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+            		MaterialBannerUploadList materialBannerUploadList = null;
+            		materialBannerUploadList = ApiDef.various_material_banner(con, materialBannerUploadListEntity);
+                    if(materialBannerUploadList.getMsg().getError_code()==0){ 
+                        entityList = new EntityList<MaterialUploadBanner>(materialBannerUploadList.getEntity_list(), 
+                        		materialBannerUploadList.getEntity_list().size()); 
+                    }else{
+                        entityList = new EntityList<MaterialUploadBanner>(new ArrayList<MaterialUploadBanner>(), 0);
+                    }
+                    break;
+                case materialvideoupload:
+            		MaterialVideoUploadListEntity materialVideoUploadListEntity = new MaterialVideoUploadListEntity();
+            		materialVideoUploadListEntity.setQueryEnum(MaterialVideoUploadQueryEnum.list_material_video_by_pubincids);
+            		materialVideoUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+            		MaterialVideoUploadList materialVideoUploadList = null;
+            		materialVideoUploadList = ApiDef.various_material_video(con, materialVideoUploadListEntity);
+                    if(materialVideoUploadList.getMsg().getError_code()==0){ 
+                        entityList = new EntityList<MaterialUploadVideo>(materialVideoUploadList.getEntity_list(), 
+                        		materialVideoUploadList.getEntity_list().size()); 
+                    }else{
+                        entityList = new EntityList<MaterialUploadVideo>(new ArrayList<MaterialUploadVideo>(), 0);
+                    }
+                    break;
 				default:
 					break;
 			}

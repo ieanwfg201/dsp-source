@@ -1,4 +1,4 @@
-package com.kritter.api.entity.materialbannerupload;
+package com.kritter.api.entity.materialvideoupload;
 
 import java.io.IOException;
 
@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import com.kritter.constants.AdxBasedExchangesStates;
-import com.kritter.constants.MaterialBannerUploadQueryEnum;
+import com.kritter.constants.MaterialVideoUploadQueryEnum;
 import com.kritter.constants.PageConstants;
 
 import lombok.EqualsAndHashCode;
@@ -18,7 +18,7 @@ import lombok.Setter;
 
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 @EqualsAndHashCode
-public class MaterialBannerUploadListEntity {
+public class MaterialVideoUploadListEntity {
     /** mandatory @see com.kritter.constants.PageConstants */
 	@Getter@Setter
     private int page_no = PageConstants.start_index;
@@ -29,8 +29,8 @@ public class MaterialBannerUploadListEntity {
 	@Getter@Setter
     private String id_list = null;
 	@Getter@Setter
-    /** @see com.kritter.constants.MaterialBannerUploadQueryEnum  mandatory - type of action available */
-    private MaterialBannerUploadQueryEnum queryEnum = MaterialBannerUploadQueryEnum.list_material_banner;
+    /** @see com.kritter.constants.MaterialVideoUploadQueryEnum  mandatory - type of action available */
+    private MaterialVideoUploadQueryEnum queryEnum = MaterialVideoUploadQueryEnum.list_material_video;
 	@Getter@Setter
     private AdxBasedExchangesStates adxstate = AdxBasedExchangesStates.BRINGINQUEUE;
 	
@@ -40,13 +40,13 @@ public class MaterialBannerUploadListEntity {
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
-    public static MaterialBannerUploadListEntity getObject(String str) throws JsonParseException, JsonMappingException, IOException{
+    public static MaterialVideoUploadListEntity getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
-    public static MaterialBannerUploadListEntity getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
-    	MaterialBannerUploadListEntity entity = objectMapper.readValue(str, MaterialBannerUploadListEntity.class);
+    public static MaterialVideoUploadListEntity getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
+    	MaterialVideoUploadListEntity entity = objectMapper.readValue(str, MaterialVideoUploadListEntity.class);
         return entity;
 
     }

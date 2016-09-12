@@ -1,0 +1,69 @@
+@(materialUploadExchangesForm: Form[models.entities.adxbasedexchanges.MaterialUploadExchangeFormEntity])
+@main("Video Upload"){
+
+@components.containers.panel("VideoUpload"){
+<div ng-controller="videouploadController">
+     <form id="extSiteForm" action="/adxbasedexchanges/videoupload/list" method="GET"">
+       @components.formElements.selectlist2(materialUploadExchangesForm("exchange"),"Exchange *", services.MetadataAPI.getAdxBasedExchangesMetadata())
+       @components.formElements.submitbutton("change", "Change Exchange")
+    </form>
+
+    <div class="btn-group pull-right">
+                     <button class="btn btn-success  active" ng-click="updateMultipleVideoUpload('SUBMITTED')">
+                            <span class="glyphicon glyphicon-pause" aria-hidden="true">Submit Video To Upload
+                     </button>
+        </div> 		<div infinite-scroll='nextPage()' infinite-scroll-disabled='videouploadListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="videouploadListData.filteredData"   
+			 					selected-items="videouploadListData.selections" 
+			 					fields="['select', 'action', 'exchangeName',  'adxstatus', 'videoUrl', 'advName', 'campaignName', 'campaignStatus','adName', 'adStatus','creativeName', 'creativeStatus' ,'message','info','lastmodified']" 
+			 					selection-mode="MultiRow"
+			 					enable-filtering="videouploadListData.enableFilter"
+			 					enable-sorting="videouploadListData.enableSorting" 
+			 					order-by="videouploadListData.orderBy"
+			 					order-by-reverse="videouploadListData.orderByReverse" 
+			 					page-items="videouploadListData.itemsPerPage"  
+			 					total-items="videouploadListData.totalItems"
+			 					current-page="videouploadListData.currentPage" 
+			 					on-data-required="videouploadListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+                        <th field-name="exchangeName" display-name="Exchange Name" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="adxstatus" display-name="Status" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="videoUrl" display-name="VideoUrl" >  </th>
+                        <th field-name="advName" display-name="Advertiser" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="campaignName" display-name="Campaign" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="campaignStatus" display-name="CampaignStatus" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="adName" display-name="Ad" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="adStatus" display-name="AdStatus" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="creativeName" display-name="Creative" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="creativeStatus" display-name="CreativeStatus" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="message" display-name="Message">  </th>
+                        <th field-name="info" display-name="Info Uploded">  </th>
+                        <th field-name="lastmodified" display-name="Last modified" enable-sorting="true" enable-filtering="true" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr>
+		    			<td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="videouploadListData.isItemChecked(gridItem)" ></td>
+		    			<td field-name="videoUrl">  <a gref="gridItem.videoUrl">Download</a></td>
+		    		
+			            <td field-name="action" > 
+					                <button ng-show="gridItem.submit" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="Submit" ng-click="updateVideoUpload(gridItem.id,'SUBMITTED')">
+					                					<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+					                </button>
+			            </td>
+			           
+			        </tr>
+			    </tbody>
+			</table> 
+		</div>
+</div>
+
+}
+
+
+
+<script src="@routes.Assets.at("javascripts/apps/adxbasedexchanges/videouploadController.js")" type="text/javascript"></script>
+}
