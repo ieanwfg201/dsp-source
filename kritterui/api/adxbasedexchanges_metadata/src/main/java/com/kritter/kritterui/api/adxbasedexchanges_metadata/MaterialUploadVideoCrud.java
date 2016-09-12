@@ -12,21 +12,22 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadList;
-import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadListEntity;
+
+import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadList;
+import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadListEntity;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.constants.error.ErrorEnum;
-import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
 
-public class MaterialUploadBannerCrud {
+public class MaterialUploadVideoCrud {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MaterialUploadBannerCrud.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MaterialUploadVideoCrud.class);
 
-	public static MaterialUploadBanner populate( ResultSet rset) throws SQLException{
-		MaterialUploadBanner entity = null;
+	public static MaterialUploadVideo populate( ResultSet rset) throws SQLException{
+		MaterialUploadVideo entity = null;
 		if(rset != null){
-			entity = new MaterialUploadBanner();
+			entity = new MaterialUploadVideo();
 			entity.setInternalid(rset.getInt("internalid"));
 			entity.setPubIncId(rset.getInt("pubIncId"));
 			entity.setAdxbasedexhangesstatus(rset.getInt("adxbasedexhangesstatus"));
@@ -41,7 +42,7 @@ public class MaterialUploadBannerCrud {
 			entity.setCreativeId(rset.getInt("creativeId"));
 			entity.setCreativeName(rset.getString("creativeName"));
 			entity.setCreativeStatus(rset.getInt("creativeStatus"));
-			entity.setBannerId(rset.getInt("bannerId"));
+			entity.setVideoInfoId(rset.getInt("videoInfoId"));
 			entity.setMessage(rset.getString("message"));
 			entity.setInfo(rset.getString("info"));
 			entity.setResource_uri_ids(rset.getString("resource_uri_ids"));
@@ -51,22 +52,22 @@ public class MaterialUploadBannerCrud {
 	}
 
 
-	public static JsonNode various_material_banner(Connection con, JsonNode jsonNode){
+	public static JsonNode various_material_video(Connection con, JsonNode jsonNode){
 		if(jsonNode == null){
-			MaterialBannerUploadList returnEntity = new MaterialBannerUploadList();
+			MaterialVideoUploadList returnEntity = new MaterialVideoUploadList();
 			Message msg = new Message();
-			msg.setError_code(ErrorEnum.MATERIAL_BANNER_NULL.getId());
-			msg.setMsg(ErrorEnum.MATERIAL_BANNER_NULL.getName());
+			msg.setError_code(ErrorEnum.MATERIAL_VIDEO_NULL.getId());
+			msg.setMsg(ErrorEnum.MATERIAL_VIDEO_NULL.getName());
 			returnEntity.setMsg(msg);
 			return returnEntity.toJson();
 		}
 		try{
 			ObjectMapper objectMapper = new ObjectMapper();
-			MaterialBannerUploadListEntity entity = objectMapper.treeToValue(jsonNode, MaterialBannerUploadListEntity.class);
-			return various_material_banner(con, entity).toJson();
+			MaterialVideoUploadListEntity entity = objectMapper.treeToValue(jsonNode, MaterialVideoUploadListEntity.class);
+			return various_material_video(con, entity).toJson();
 		}catch(Exception e){
 			LOG.error(e.getMessage(),e);
-			MaterialBannerUploadList returnEntity = new MaterialBannerUploadList();
+			MaterialVideoUploadList returnEntity = new MaterialVideoUploadList();
 			Message msg = new Message();
 			msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
 			msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
@@ -74,9 +75,9 @@ public class MaterialUploadBannerCrud {
 			return returnEntity.toJson();
 		}
 	}
-	public static MaterialBannerUploadList various_material_banner(Connection con, MaterialBannerUploadListEntity entity){
+	public static MaterialVideoUploadList various_material_video(Connection con, MaterialVideoUploadListEntity entity){
 		if(con == null){
-			MaterialBannerUploadList returnEntity = new MaterialBannerUploadList();
+			MaterialVideoUploadList returnEntity = new MaterialVideoUploadList();
 			Message msg = new Message();
 			msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
 			msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
@@ -84,24 +85,24 @@ public class MaterialUploadBannerCrud {
 			return returnEntity;
 		}
 		if(entity == null){
-			MaterialBannerUploadList returnEntity = new MaterialBannerUploadList();
+			MaterialVideoUploadList returnEntity = new MaterialVideoUploadList();
 			Message msg = new Message();
-			msg.setError_code(ErrorEnum.MATERIAL_BANNER_NULL.getId());
-			msg.setMsg(ErrorEnum.MATERIAL_BANNER_NULL.getName());
+			msg.setError_code(ErrorEnum.MATERIAL_VIDEO_NULL.getId());
+			msg.setMsg(ErrorEnum.MATERIAL_VIDEO_NULL.getName());
 			returnEntity.setMsg(msg);
 			return returnEntity;
 		}
 		PreparedStatement pstmt = null;
 		try{
 			switch (entity.getQueryEnum()){
-			case list_material_banner:
-				pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.MaterialBannerDef.list_material_banner);
+			case list_material_video:
+				pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.MaterialVideoDef.list_material_video);
 				break;
-			case list_material_banner_by_pubincids:
+			case list_material_video_by_pubincids:
                 if("none".equalsIgnoreCase(entity.getId_list()) || "[none]".equalsIgnoreCase(entity.getId_list()) ||
                 		"all".equalsIgnoreCase(entity.getId_list()) || "[all]".equalsIgnoreCase(entity.getId_list())
                 		|| "".equalsIgnoreCase(entity.getId_list())){
-        			MaterialBannerUploadList returnEntity = new MaterialBannerUploadList();
+        			MaterialVideoUploadList returnEntity = new MaterialVideoUploadList();
         			Message msg = new Message();
         			msg.setError_code(ErrorEnum.NO_ERROR.getId());
         			msg.setMsg(ErrorEnum.NO_ERROR.getName());
@@ -109,7 +110,7 @@ public class MaterialUploadBannerCrud {
         			return returnEntity;
                 }else{
                 	pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
-                            com.kritter.kritterui.api.db_query_def.MaterialBannerDef.list_material_banner_by_pubincids, "<id>", entity.getId_list(), 
+                            com.kritter.kritterui.api.db_query_def.MaterialVideoDef.list_material_video_by_pubincids, "<id>", entity.getId_list(), 
                             ",", false));
                 }
 				break;
@@ -117,10 +118,10 @@ public class MaterialUploadBannerCrud {
 				break;
 			}
 			ResultSet rset = pstmt.executeQuery();
-			MaterialBannerUploadList returnEntity = new MaterialBannerUploadList();
-			List<MaterialUploadBanner> entities = new LinkedList<MaterialUploadBanner>();
+			MaterialVideoUploadList returnEntity = new MaterialVideoUploadList();
+			List<MaterialUploadVideo> entities = new LinkedList<MaterialUploadVideo>();
 			while(rset.next()){
-				MaterialUploadBanner outentity = populate(rset);
+				MaterialUploadVideo outentity = populate(rset);
 				if(outentity != null){
 					entities.add(outentity);
 				}
@@ -131,14 +132,14 @@ public class MaterialUploadBannerCrud {
 				msg.setError_code(ErrorEnum.NO_ERROR.getId());
 				msg.setMsg(ErrorEnum.NO_ERROR.getName());
 			}else{
-				msg.setError_code(ErrorEnum.MATERIAL_BANNER_NF.getId());
-				msg.setMsg(ErrorEnum.MATERIAL_BANNER_NF.getName());
+				msg.setError_code(ErrorEnum.MATERIAL_VIDEO_NF.getId());
+				msg.setMsg(ErrorEnum.MATERIAL_VIDEO_NF.getName());
 			}
 			returnEntity.setMsg(msg);
 			return returnEntity;
 		}catch(Exception e){
 			LOG.error(e.getMessage(),e);
-			MaterialBannerUploadList returnEntity = new MaterialBannerUploadList();
+			MaterialVideoUploadList returnEntity = new MaterialVideoUploadList();
 			Message msg = new Message();
 			msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
 			msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
@@ -155,17 +156,17 @@ public class MaterialUploadBannerCrud {
 			}
 		} 
 	}
-	public static JsonNode update_material_banner_status(Connection con, JsonNode jsonNode){
+	public static JsonNode update_material_video_status(Connection con, JsonNode jsonNode){
 		if(jsonNode == null){
 			Message msg = new Message();
-			msg.setError_code(ErrorEnum.MATERIAL_BANNER_NULL.getId());
-			msg.setMsg(ErrorEnum.MATERIAL_BANNER_NULL.getName());
+			msg.setError_code(ErrorEnum.MATERIAL_VIDEO_NULL.getId());
+			msg.setMsg(ErrorEnum.MATERIAL_VIDEO_NULL.getName());
 			return msg.toJson();
 		}
 		try{
 			ObjectMapper objectMapper = new ObjectMapper();
-			MaterialBannerUploadListEntity entity = objectMapper.treeToValue(jsonNode, MaterialBannerUploadListEntity.class);
-			return update_material_banner_status(con, entity, true).toJson();
+			MaterialVideoUploadListEntity entity = objectMapper.treeToValue(jsonNode, MaterialVideoUploadListEntity.class);
+			return update_material_video_status(con, entity, true).toJson();
 		}catch(Exception e){
 			LOG.error(e.getMessage(),e);
 			Message msg = new Message();
@@ -174,7 +175,7 @@ public class MaterialUploadBannerCrud {
 			return msg.toJson();
 		}
 	}
-	public static Message update_material_banner_status(Connection con, MaterialBannerUploadListEntity entity, boolean createTransaction){
+	public static Message update_material_video_status(Connection con, MaterialVideoUploadListEntity entity, boolean createTransaction){
 		if(con == null){
 			Message msg = new Message();
 			msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
@@ -183,8 +184,8 @@ public class MaterialUploadBannerCrud {
 		}
 		if(entity == null){
 			Message msg = new Message();
-			msg.setError_code(ErrorEnum.MATERIAL_BANNER_NULL.getId());
-			msg.setMsg(ErrorEnum.MATERIAL_BANNER_NULL.getName());
+			msg.setError_code(ErrorEnum.MATERIAL_VIDEO_NULL.getId());
+			msg.setMsg(ErrorEnum.MATERIAL_VIDEO_NULL.getName());
 			return msg;
 		}
 		PreparedStatement pstmt = null;
@@ -195,7 +196,7 @@ public class MaterialUploadBannerCrud {
 				con.setAutoCommit(false);
 			}
 			pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
-					com.kritter.kritterui.api.db_query_def.MaterialBannerDef.update_material_banner_status, "<id>", entity.getId_list(), 
+					com.kritter.kritterui.api.db_query_def.MaterialVideoDef.update_material_video_status, "<id>", entity.getId_list(), 
 					",", false));
 
 			pstmt.setInt(1, entity.getAdxstate().getCode());
@@ -206,8 +207,8 @@ public class MaterialUploadBannerCrud {
 			}
 			if(returnCode == 0){
 				Message msg = new Message();
-				msg.setError_code(ErrorEnum.MATERIAL_BANNER_NOT_UPDATED.getId());
-				msg.setMsg(ErrorEnum.MATERIAL_BANNER_NOT_UPDATED.getName());
+				msg.setError_code(ErrorEnum.MATERIAL_VIDEO_NOT_UPDATED.getId());
+				msg.setMsg(ErrorEnum.MATERIAL_VIDEO_NOT_UPDATED.getName());
 				return msg;
 			}
 			Message msg = new Message();

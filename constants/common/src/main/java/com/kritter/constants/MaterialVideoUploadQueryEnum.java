@@ -3,22 +3,22 @@ package com.kritter.constants;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum MaterialBannerUploadQueryEnum
+public enum MaterialVideoUploadQueryEnum
 {
-	list_material_banner(0,"list_material_banner"),
-	list_material_banner_by_pubincids(1,"list_material_banner_by_pubincids");
+	list_material_video(0,"list_material_video"),
+	list_material_video_by_pubincids(1,"list_material_video_by_pubincids");
 
             private int code;
             private String name;
-            private static Map<Integer, MaterialBannerUploadQueryEnum> map = new HashMap<Integer, MaterialBannerUploadQueryEnum>();
+            private static Map<Integer, MaterialVideoUploadQueryEnum> map = new HashMap<Integer, MaterialVideoUploadQueryEnum>();
             static {
-                for (MaterialBannerUploadQueryEnum val : MaterialBannerUploadQueryEnum.values()) {
+                for (MaterialVideoUploadQueryEnum val : MaterialVideoUploadQueryEnum.values()) {
                     map.put(val.code, val);
                 }
             }
 
             
-            private MaterialBannerUploadQueryEnum(int code,String name)
+            private MaterialVideoUploadQueryEnum(int code,String name)
             {
                 this.code = code;
                 this.name = name;
@@ -34,7 +34,7 @@ public enum MaterialBannerUploadQueryEnum
                 return this.code;
             }
             
-            public static MaterialBannerUploadQueryEnum getEnum(int i)
+            public static MaterialVideoUploadQueryEnum getEnum(int i)
             {
                 return map.get(i);
             }

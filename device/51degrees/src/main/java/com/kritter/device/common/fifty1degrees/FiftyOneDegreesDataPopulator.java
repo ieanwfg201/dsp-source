@@ -58,7 +58,7 @@ public class FiftyOneDegreesDataPopulator implements HandsetPopulationProvider {
             "insert into handset_browser (browser_name, browser_versions, modified_by, modified_on) " +
                     "values (?, ?, ?, ?)";
     private static final String QUERY_UPDATE_OS_ID_VERSION = "update handset_os set os_versions = ? where os_id = " +
-            "(select id from handset_os where os_name = ?)";
+            "?";
     private static final String QUERY_UPDATE_BROWSER_ID_VERSION = "update handset_browser set browser_versions = ? " +
             "where browser_id = ?";
 
@@ -263,7 +263,7 @@ public class FiftyOneDegreesDataPopulator implements HandsetPopulationProvider {
                 preparedStatement = connection.prepareStatement(QUERY_UPDATE_OS_ID_VERSION);
                 preparedStatement.setString(1, ResultSetHelper.prepareStringArrayForMySQLInsertion(
                         handsetOperatingSystemData.getOperatingSystemVersions()));
-                preparedStatement.setString(2, handsetOperatingSystemData.getOperatingSystemName().toLowerCase());
+                preparedStatement.setInt(2, handsetOperatingSystemData.getOperatingSystemId());
                 preparedStatement.executeUpdate();
             } catch (SQLException sqle) {
                 logger.error("Error in prepared statement while populating new os {}", sqle);

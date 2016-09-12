@@ -15,6 +15,8 @@ import models.advertiser.TargetingDisplay;
 import models.entities.adpositionget.AdpositionGetDisplay;
 import models.entities.adxbasedexchanges.AdxBasedExchangesMetadataDisplay;
 import models.entities.isp_mapping.Isp_mappingDisplay;
+import models.entities.materialbannerupload.MaterialBannerUploadDisplay;
+import models.entities.materialvideoupload.MaterialVideoUploadDisplay;
 import models.iddefinition.IddefinitionDisplay;
 import models.pmp.display.PMPDisplay;
 import models.publisher.Ext_siteDisplay;
@@ -41,6 +43,8 @@ import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.Account_Type;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 
 public class EntityListController extends Controller{
@@ -111,6 +115,14 @@ public class EntityListController extends Controller{
 				case adpositionget:
 					entityList = EntityListDataService.listData(entityListFilter, new AdPositionGet());
 					populateAdPositionGet(itemList,(List<AdPositionGet>) entityList.getEntityList());
+					break;
+				case materialbannerupload:
+					entityList = EntityListDataService.listData(entityListFilter, new MaterialUploadBanner());
+					populateMaterialBannerUpload(itemList,(List<MaterialUploadBanner>) entityList.getEntityList());
+					break;
+				case materialvideoupload:
+					entityList = EntityListDataService.listData(entityListFilter, new MaterialUploadVideo());
+					populateMaterialVideoUpload(itemList,(List<MaterialUploadVideo>) entityList.getEntityList());
 					break;
 				default:
 					break;
@@ -200,6 +212,16 @@ public class EntityListController extends Controller{
     private static void populateAdPositionGet(ArrayNode entityArray, List<AdPositionGet> entityList){
         for (AdPositionGet entity : entityList) { 
             entityArray.addPOJO(objectMapper.valueToTree(new AdpositionGetDisplay(entity)));
+        }
+    }
+    private static void populateMaterialBannerUpload(ArrayNode entityArray, List<MaterialUploadBanner> entityList){
+        for (MaterialUploadBanner entity : entityList) { 
+            entityArray.addPOJO(objectMapper.valueToTree(new MaterialBannerUploadDisplay(entity)));
+        }
+    }
+    private static void populateMaterialVideoUpload(ArrayNode entityArray, List<MaterialUploadVideo> entityList){
+        for (MaterialUploadVideo entity : entityList) { 
+            entityArray.addPOJO(objectMapper.valueToTree(new MaterialVideoUploadDisplay(entity)));
         }
     }
 }

@@ -402,11 +402,19 @@ GET   /adxbasedexchanges/metadata/add						   		controllers.adxbasedexchanges.Cr
 POST  /adxbasedexchanges/metadata/save						   		controllers.adxbasedexchanges.CreateMetadataController.save()
 GET   /adxbasedexchanges/metadata/edit/:id                     		controllers.adxbasedexchanges.CreateMetadataController.edit(id: Int)
 GET   /adxbasedexchanges/metadata/list						   		controllers.adxbasedexchanges.CreateMetadataController.list()
+
 GET   /adxbasedexchanges/adpositionget/list						    controllers.adxbasedexchanges.AdPositionGetController.list()
 GET   /adxbasedexchanges/adpositionget/updatesingle/:id/:action     controllers.adxbasedexchanges.AdPositionGetController.updatesingle(id:Int, action:String)
 GET   /adxbasedexchanges/adpositionget/updatemultiple/:action     	controllers.adxbasedexchanges.AdPositionGetController.updatemultiple(action:String, ids: Option[String])
 GET   /adxbasedexchanges/adpositionget/insertnew/:id/:action        controllers.adxbasedexchanges.AdPositionGetController.insertnew(id:Int, action:String)
 
+GET   /adxbasedexchanges/bannerupload/list                          controllers.adxbasedexchanges.MaterialBannerUploadController.list(exchange: Option[String])
+GET   /adxbasedexchanges/bannerupload/updatesingle/:id/:action      controllers.adxbasedexchanges.MaterialBannerUploadController.updatesingle(id:Int, action:String)
+GET   /adxbasedexchanges/bannerupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialBannerUploadController.updatemultiple(action:String, ids: Option[String])
+
+GET   /adxbasedexchanges/videoupload/list                           controllers.adxbasedexchanges.MaterialVideoUploadController.list(exchange: Option[String])
+GET   /adxbasedexchanges/videoupload/updatesingle/:id/:action       controllers.adxbasedexchanges.MaterialVideoUploadController.updatesingle(id:Int, action:String)
+GET   /adxbasedexchanges/videoupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialVideoUploadController.updatemultiple(action:String, ids: Option[String])
 
 
 #PMP

@@ -50,6 +50,10 @@ import com.kritter.api.entity.isp_mapping.Isp_mapping;
 import com.kritter.api.entity.isp_mapping.Isp_mappingList;
 import com.kritter.api.entity.isp_mapping.Isp_mappingListEntity;
 import com.kritter.api.entity.log.LogEntity;
+import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadList;
+import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadListEntity;
+import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadList;
+import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadListEntity;
 import com.kritter.api.entity.metadata.MetaInput;
 import com.kritter.api.entity.metadata.MetaList;
 import com.kritter.api.entity.native_icon.NativeIconList;
@@ -90,6 +94,8 @@ import com.kritter.kritterui.api.ad.AdCrud;
 import com.kritter.kritterui.api.ad_stats.AdStatsCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.AdpositionGetCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.AdxBasedExchangesMetadataCrud;
+import com.kritter.kritterui.api.adxbasedexchanges_metadata.MaterialUploadBannerCrud;
+import com.kritter.kritterui.api.adxbasedexchanges_metadata.MaterialUploadVideoCrud;
 import com.kritter.kritterui.api.algo_models.AlgoModelCrud;
 import com.kritter.kritterui.api.campaign.CampaignCrud;
 import com.kritter.kritterui.api.campaign_budget.CampaignBudgetCrud;
@@ -1145,6 +1151,30 @@ public class ApiDef {
     }    
     public static Message update_adposition_get_status_by_pubincids(Connection con, AdpositionGetListEntity entity){
         return AdpositionGetCrud.update_adposition_get_status_by_pubincids(con, entity, true);
+    }
+    public static JsonNode update_material_banner_status(Connection con, JsonNode jsonNode){
+        return MaterialUploadBannerCrud.update_material_banner_status(con, jsonNode);
+    }    
+    public static Message update_material_banner_status(Connection con, MaterialBannerUploadListEntity entity){
+        return MaterialUploadBannerCrud.update_material_banner_status(con, entity, true);
+    }
+    public static JsonNode various_material_banner(Connection con, JsonNode jsonNode){
+        return MaterialUploadBannerCrud.various_material_banner(con, jsonNode);
+    }
+    public static MaterialBannerUploadList various_material_banner(Connection con, MaterialBannerUploadListEntity entity){
+        return MaterialUploadBannerCrud.various_material_banner(con, entity);
+    }
+    public static JsonNode update_material_video_status(Connection con, JsonNode jsonNode){
+        return MaterialUploadVideoCrud.update_material_video_status(con, jsonNode);
+    }    
+    public static Message update_material_video_status(Connection con, MaterialVideoUploadListEntity entity){
+        return MaterialUploadVideoCrud.update_material_video_status(con, entity, true);
+    }
+    public static JsonNode various_material_video(Connection con, JsonNode jsonNode){
+        return MaterialUploadVideoCrud.various_material_video(con, jsonNode);
+    }
+    public static MaterialVideoUploadList various_material_video(Connection con, MaterialVideoUploadListEntity entity){
+        return MaterialUploadVideoCrud.various_material_video(con, entity);
     }
 
 }

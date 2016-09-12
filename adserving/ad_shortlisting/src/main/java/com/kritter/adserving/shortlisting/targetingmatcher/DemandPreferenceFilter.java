@@ -70,6 +70,9 @@ public class DemandPreferenceFilter implements TargetingMatcher {
                     ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
+
+                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : only mediation and demand of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+
                 if( demandTypeCode == adEntity.getDemandtype()){
                     shortlistedAdIdSet.add(adId);
                     ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only mediation preference : ", adEntity.getAdGuid());
@@ -99,6 +102,9 @@ public class DemandPreferenceFilter implements TargetingMatcher {
                     ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
+
+                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : only dsp and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+
                 if( demandTypeCode == adEntity.getDemandtype()) {
                     shortlistedAdIdSet.add(adId);
                     ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only dsp preference : ", adEntity.getAdGuid());
@@ -128,6 +134,9 @@ public class DemandPreferenceFilter implements TargetingMatcher {
                     ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
+
+                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : only direct and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+
                 if( demandTypeCode == adEntity.getDemandtype()){
                     shortlistedAdIdSet.add(adId);
                     ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only direct preference : ", adEntity.getAdGuid());
@@ -158,6 +167,9 @@ public class DemandPreferenceFilter implements TargetingMatcher {
                     ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
                     continue;
                 }
+
+                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : direct then mediation and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+
                 if( demandTypeCode == adEntity.getDemandtype() || demandTypeCode1 == adEntity.getDemandtype()){
                     shortlistedAdIdSet.add(adId);
                     ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only direct Then Mediation " +
@@ -189,6 +201,9 @@ public class DemandPreferenceFilter implements TargetingMatcher {
                     ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
+
+                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : direct then DSP and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+
                 if( demandTypeCode == adEntity.getDemandtype() || demandTypeCode1 == adEntity.getDemandtype()){
                     shortlistedAdIdSet.add(adId);
                     ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only direct than dsp preference : ", adEntity.getAdGuid());

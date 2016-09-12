@@ -14,5 +14,7 @@ public enum EntityType {
 	retargeting_segment,
 	pmp_deal,
 	adxbasedexchangesmetadata,
-	adpositionget
+	adpositionget,
+	materialbannerupload,
+	materialvideoupload
 }
