@@ -7,6 +7,7 @@ import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.exception.BidRequestException;
 import com.kritter.bidrequest.reader.IBidRequestReader;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -46,6 +47,8 @@ public class BidRequestReaderCloudCross implements IBidRequestReader {
             cloudCrossBidRequestParentNodeDTO = this.jacksonObjectMapper.readValue(bidRequestJson, BidRequestCloudCrossDTO.class).getBidRequest();
             String uuidType = cloudCrossBidRequestParentNodeDTO.getCloudCrossBidRequestDeviceDTO().getUuidType();
             String uuid = cloudCrossBidRequestParentNodeDTO.getCloudCrossBidRequestDeviceDTO().getUuid();
+            if (StringUtils.isEmpty(uuidType))
+                uuid = "";
             switch (uuidType) {
                 case "mac":
                     cloudCrossBidRequestParentNodeDTO.getBidRequestDevice().setHashedMD5MacAddressOfDevice(uuid);
