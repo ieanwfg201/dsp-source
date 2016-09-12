@@ -125,7 +125,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
 
         BidResponseSeatBidCloudCrossDTO bidResponseSeatBidCloudCrossDTO = new BidResponseSeatBidCloudCrossDTO();
 
-        BidResponseBidCloudCrossDTO[] bidResponseBidCloudCrossArray = new BidResponseBidCloudCrossDTO[impressionIdsToRespondFor.size()];
+        BidResponseBidCloudCrossDTO bidResponseBidCloudCrossDTO = new BidResponseBidCloudCrossDTO();
         int counter = 0;
         boolean atleastOneBidAsResponse = false;
 
@@ -141,7 +141,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
             responseAdInfoToUse = pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
                     (responseAdInfoToUse, list);
 
-            BidResponseBidCloudCrossDTO bidResponseBidCloudCrossDTO =
+            BidResponseBidCloudCrossDTO bidResponseBidCloudCross =
                     prepareBidResponseSeatBidCloudCross(
                             responseAdInfoToUse,
                             request,
@@ -149,22 +149,23 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
                             impressionId
                     );
 
-            if (null == bidResponseBidCloudCrossDTO) {
+            if (null == bidResponseBidCloudCross) {
                 logger.error("BidResponseBidCloudCross could not be prepared for bidRequestImpressionId:{}",
                         impressionId);
                 continue;
+            } else {
+                bidResponseBidCloudCrossDTO = bidResponseBidCloudCross;
+                response.addResponseAdInfoAsFinalForImpressionId(impressionId, responseAdInfoToUse);
+                counter++;
+                atleastOneBidAsResponse = true;
+                break;
             }
-
-            bidResponseBidCloudCrossArray[counter] = bidResponseBidCloudCrossDTO;
-            response.addResponseAdInfoAsFinalForImpressionId(impressionId, responseAdInfoToUse);
-            counter++;
-            atleastOneBidAsResponse = true;
         }
 
         if (!atleastOneBidAsResponse)
             return null;
 
-        bidResponseSeatBidCloudCrossDTO.setBidResponseBidEntities(bidResponseBidCloudCrossArray);
+        bidResponseSeatBidCloudCrossDTO.setBidResponseBidEntities(bidResponseBidCloudCrossDTO);
         bidResponseSeatBidCloudCrossArray[0] = bidResponseSeatBidCloudCrossDTO;
 
         bidResponseCloudCrossDTO.setBidResponseSeatBid(bidResponseSeatBidCloudCrossArray);
