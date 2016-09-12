@@ -119,7 +119,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
             responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues(responseAdInfoToUse, list, randomPicker);
             Creative creative = responseAdInfoToUse.getCreative();
 
-            int maxPrice = responseAdInfoToUse.getEcpmValue().intValue();
+            int maxPrice = responseAdInfoToUse.getEcpmValue().intValue() * 100;
             response.addResponseAdInfoAsFinalForImpressionId(impressionId, responseAdInfoToUse);
             String creativeId = creative.getCreativeGuid();
             if (null != responseAdInfoToUse.getCreativeBanner()) {
