@@ -821,4 +821,15 @@
       </constructor-arg>
    </bean>
 
+    <bean id="user_recent_click_history_cache_props" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="namespace"><![CDATA[user]]></prop>
+           <prop key="table_name"><![CDATA[user_recent_clk_history]]></prop>
+           <prop key="primary_key_name"><![CDATA[user_id]]></prop>
+           <prop key="attribute_name_click_history"><![CDATA[clk_history]]></prop>
+         </props>
+      </constructor-arg>
+   </bean>
+
 </beans>
