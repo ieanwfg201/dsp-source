@@ -44,6 +44,21 @@ public class BidRequestReaderCloudCross implements IBidRequestReader {
 
         try {
             cloudCrossBidRequestParentNodeDTO = this.jacksonObjectMapper.readValue(bidRequestJson, BidRequestCloudCrossDTO.class).getBidRequest();
+            String uuidType = cloudCrossBidRequestParentNodeDTO.getCloudCrossBidRequestDeviceDTO().getUuidType();
+            String uuid = cloudCrossBidRequestParentNodeDTO.getCloudCrossBidRequestDeviceDTO().getUuid();
+            switch (uuidType) {
+                case "mac":
+                    cloudCrossBidRequestParentNodeDTO.getBidRequestDevice().setHashedMD5MacAddressOfDevice(uuid);
+                    break;
+                case "idfa":
+                    cloudCrossBidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDeviceId(uuid);
+                    break;
+                case "imei":
+                    cloudCrossBidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDeviceId(uuid);
+                    break;
+                default:
+                    break;
+            }
         } catch (JsonParseException e) {
             logger.error("JsonParseException inside convertBidRequestJsonToBusinessObject of BidRequestReaderCloudCross", e);
             throw new BidRequestException("JsonParseException inside convertBidRequestJsonToBusinessObject " +
