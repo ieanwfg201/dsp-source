@@ -38,6 +38,12 @@ public class FreqCap {
         return entity;
 
     }
+
+    @Override
+    public String toString() {
+        return toJson().toString();
+    }
+
     /*public static void main(String args[]){
     	FreqCap fc = new FreqCap();
     	System.out.println(fc.toJson().toString());

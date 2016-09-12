@@ -2,7 +2,11 @@ package com.kritter.adserving.shortlisting.targetingmatcher;
 
 import com.kritter.adserving.shortlisting.TargetingMatcher;
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.constants.FreqDuration;
+import com.kritter.constants.FreqEventType;
 import com.kritter.core.workflow.Context;
+import com.kritter.entity.freqcap_entity.FreqCap;
+import com.kritter.entity.freqcap_entity.FreqDef;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.entity.user.recenthistory.RecentClickHistoryProvider;
@@ -47,7 +51,7 @@ public class ClickCapFilter implements TargetingMatcher {
      * @param adIdSet Set of ids of all ads
      * @return Set of ad ids which don't have frequency capping
      */
-    private Set<Integer> getNonClickCappedAds(Set<Integer> adIdSet) {
+    private Set<Integer> getNonClickCappedAds(Set<Integer> adIdSet, Request request) {
         if(adIdSet == null || adIdSet.size() == 0)
             return adIdSet;
 
@@ -55,7 +59,8 @@ public class ClickCapFilter implements TargetingMatcher {
         for(Integer adId : adIdSet) {
             AdEntity adEntity = this.adEntityCache.query(adId);
 
-            if(!adEntity.isFrequencyCapped()) {
+            int[] clickCapDetails = getClickCapDetailsForAd(adEntity, request);
+            if(clickCapDetails == null) {
                 adIdSetToReturn.add(adId);
             }
         }
@@ -68,7 +73,7 @@ public class ClickCapFilter implements TargetingMatcher {
      * @param adIdSet Set of ids of all ads
      * @return Set of ad ids which don't have frequency capping
      */
-    private Set<Integer> getClickCappedAds(Set<Integer> adIdSet) {
+    private Set<Integer> getClickCappedAds(Set<Integer> adIdSet, Request request) {
         if(adIdSet == null || adIdSet.size() == 0)
             return new HashSet<Integer>();
 
@@ -76,7 +81,8 @@ public class ClickCapFilter implements TargetingMatcher {
         for(Integer adId : adIdSet) {
             AdEntity adEntity = this.adEntityCache.query(adId);
 
-            if(adEntity.isFrequencyCapped()) {
+            int[] clickCapDetails = getClickCapDetailsForAd(adEntity, request);
+            if(clickCapDetails != null) {
                 adIdSetToReturn.add(adId);
             }
         }
@@ -115,6 +121,40 @@ public class ClickCapFilter implements TargetingMatcher {
         return adToTimestampMap;
     }
 
+    private int[] getClickCapDetailsForAd(AdEntity adEntity, Request request) {
+        int maxCap = -1;
+        int timeWindowInHour = -1;
+        FreqCap freqCap = adEntity.getFrequencyCap();
+        if(freqCap != null && freqCap.getFDef() != null) {
+            if(!adEntity.getFrequencyCap().getFDef().containsKey(FreqEventType.CLK)) {
+                ReqLog.debugWithDebug(logger, request, "Ad id : {} has empty frequency cap object");
+                return null;
+            }
+            Set<FreqDef> freqDefs = freqCap.getFDef().get(FreqEventType.CLK);
+            for(FreqDef def : freqDefs) {
+                if(def.getDuration() == FreqDuration.BYHOUR) {
+                    maxCap = def.getCount();
+                    timeWindowInHour = def.getHour();
+                } else if(def.getDuration() == FreqDuration.BYDAY) {
+                    maxCap = def.getCount();
+                    timeWindowInHour = def.getHour() * 24;
+                }
+            }
+        }
+
+        if(maxCap == -1) {
+            ReqLog.debugWithDebug(logger, request, "Ad id : {} specifies frequency cap but not click cap.");
+            return null;
+        }
+
+        int[] result = new int[2];
+        result[0] = maxCap;
+        result[1] = timeWindowInHour;
+        ReqLog.debugWithDebug(logger, request, "Ad id : {} specifies click cap, maximum cap = {} and time window = " +
+                "{}.", maxCap, timeWindowInHour);
+        return result;
+    }
+
     /**
      * Function that gets user's history in a map from ad id to list of click times and returns whether the ad is
      * eligible for serving.
@@ -125,7 +165,8 @@ public class ClickCapFilter implements TargetingMatcher {
      * @param adToTimestampMap Recent click history for user
      * @return if the ad is eligible to be shown to the user
      */
-    private boolean isClickCappedAdEligibleForUser(int adId, Map<Integer, List<Long>> adToTimestampMap) {
+    private boolean isClickCappedAdEligibleForUser(int adId, Map<Integer, List<Long>> adToTimestampMap,
+                                                   Request request) {
         AdEntity adEntity = this.adEntityCache.query(adId);
 
         if (null == adEntity) {
@@ -133,8 +174,17 @@ public class ClickCapFilter implements TargetingMatcher {
             return false;
         }
 
-        // If ad is not frequency capped, then obviously eligible
-        if(!adEntity.isFrequencyCapped()) {
+        int maxCap = -1;
+        int timeWindowInHour = -1;
+        int[] clickCapDetails = getClickCapDetailsForAd(adEntity, request);
+        if(clickCapDetails != null) {
+            maxCap = clickCapDetails[0];
+            timeWindowInHour = clickCapDetails[1];
+        }
+
+        if(maxCap == -1) {
+            ReqLog.debugWithDebug(logger, request, "Ad id : {} is not frequency capped on click. Passing this ad",
+                    adId);
             return true;
         }
 
@@ -143,19 +193,17 @@ public class ClickCapFilter implements TargetingMatcher {
         }
 
         long currentTime = System.currentTimeMillis();
-        int maxCap = adEntity.getMaxCap();
-        int timeWindowInHour = adEntity.getFrequencyCapTimeWindowInHours();
 
         long beginTime = currentTime - (timeWindowInHour * HOUR_TO_MILLISECONDS_UNIT);
 
-        List<Long> adImpressionTimeList = adToTimestampMap.get(adId);
-        if(adImpressionTimeList == null) {
+        List<Long> adClickTimeList = adToTimestampMap.get(adId);
+        if(adClickTimeList == null) {
             // Ad has never been shown to the user. Can be shown irrespective of cap and duration
             return true;
         }
 
         int shownCount = 0;
-        for(long timestamp : adImpressionTimeList) {
+        for(long timestamp : adClickTimeList) {
             if(timestamp >= beginTime) {
                 ++shownCount;
             }
@@ -183,14 +231,14 @@ public class ClickCapFilter implements TargetingMatcher {
      */
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
-        ReqLog.debugWithDebug(logger,request, "Inside FrequencyCapFilter of AdTargetingMatcher...");
+        ReqLog.debugWithDebug(logger,request, "Inside ClickCapFilter of AdTargetingMatcher...");
 
         String kritterUserId = request.getUserId();
 
         // User history cache is unavailable. Drop all the frequency capped ads since we don't have any user
         // related information.
         if(kritterUserId == null || null == recentClickHistoryProvider) {
-            Set<Integer> clickCappedAds = getClickCappedAds(adIdSet);
+            Set<Integer> clickCappedAds = getClickCappedAds(adIdSet, request);
             for(Integer adId : clickCappedAds) {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);
@@ -204,14 +252,14 @@ public class ClickCapFilter implements TargetingMatcher {
                         "frequency capped ads");
             }
 
-            Set<Integer> shortlistedAdIdSet = getNonClickCappedAds(adIdSet);
+            Set<Integer> shortlistedAdIdSet = getNonClickCappedAds(adIdSet, request);
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
                 request.setNoFillReason(noFillReason);
             return shortlistedAdIdSet;
         }
 
         if (null == adIdSet || adIdSet.size() <= 0) {
-            ReqLog.debugWithDebug(logger,request, "No adIdSet supplied to UserRecentImpressionHistoryCache, " +
+            ReqLog.debugWithDebug(logger,request, "No adIdSet supplied to UserRecentClickHistoryCache, " +
                     "returning null/empty set...");
             return adIdSet;
         }
@@ -240,7 +288,7 @@ public class ClickCapFilter implements TargetingMatcher {
             }
 
             for (Integer adId : adIdSet) {
-                if(isClickCappedAdEligibleForUser(adId, adToTimestampMap)) {
+                if(isClickCappedAdEligibleForUser(adId, adToTimestampMap, request)) {
                     ReqLog.debugWithDebug(logger,request, "Ad id {} eligible to serve on user : {}", adId,
                             kritterUserId);
                     adIdSetToReturn.add(adId);
@@ -251,15 +299,15 @@ public class ClickCapFilter implements TargetingMatcher {
             }
         } catch (Exception e) {
             logger.error("Exception occur while trying to fetch user history. {}", e);
-            ReqLog.debugWithDebug(logger,request, "Exception inside FrequencyCapFilter reason: {}  ", e);
+            ReqLog.debugWithDebug(logger,request, "Exception inside ClickCapFilter reason: {}  ", e);
 
-            Set<Integer> frequencyCappedAds = getClickCappedAds(adIdSet);
-            for(Integer adId : frequencyCappedAds) {
+            Set<Integer> clickCappedAds = getClickCappedAds(adIdSet, request);
+            for(Integer adId : clickCappedAds) {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);
             }
 
-            Set<Integer> shortlistedAdIdSet = getNonClickCappedAds(adIdSet);
+            Set<Integer> shortlistedAdIdSet = getNonClickCappedAds(adIdSet, request);
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
                 request.setNoFillReason(noFillReason);
             return shortlistedAdIdSet;

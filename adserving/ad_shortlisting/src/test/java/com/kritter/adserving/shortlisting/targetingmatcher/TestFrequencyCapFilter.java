@@ -1,7 +1,11 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.constants.FreqDuration;
+import com.kritter.constants.FreqEventType;
 import com.kritter.core.workflow.Context;
+import com.kritter.entity.freqcap_entity.FreqCap;
+import com.kritter.entity.freqcap_entity.FreqDef;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.nosql.user.recenthistory.UserRecentImpressionHistoryCache;
 import com.kritter.nosql.user.utils.ImpressionEventComparator;
@@ -54,30 +58,40 @@ public class TestFrequencyCapFilter {
         return impressionEventSet;
     }
 
+    private FreqCap getFrequencyCapObject(int maxCap, int duration) {
+        FreqCap freqCap = new FreqCap();
+        Map<FreqEventType, Set<FreqDef>> freqEventTypeFreqDefMap = new HashMap<FreqEventType, Set<FreqDef>>();
+        FreqDef freqDef = new FreqDef();
+        freqDef.setCount(maxCap);
+        FreqDuration freqDuration = FreqDuration.BYHOUR;
+        freqDef.setDuration(freqDuration);
+        freqDef.setHour(duration);
+        Set<FreqDef> freqDefs = new HashSet<FreqDef>();
+        freqDefs.add(freqDef);
+        freqEventTypeFreqDefMap.put(FreqEventType.IMP, freqDefs);
+        freqCap.setFDef(freqEventTypeFreqDefMap);
+        return freqCap;
+    }
+
     @Before
     public void setup() throws Exception {
         AdEntity nonFrequencyCapped1 = EasyMock.createMock(AdEntity.class);
-        EasyMock.expect(nonFrequencyCapped1.isFrequencyCapped()).andReturn(false).anyTimes();
-        EasyMock.expect(nonFrequencyCapped1.getMaxCap()).andReturn(0).anyTimes();
-        EasyMock.expect(nonFrequencyCapped1.getFrequencyCapTimeWindowInHours()).andReturn(0).anyTimes();
+        EasyMock.expect(nonFrequencyCapped1.getFrequencyCap()).andReturn(null).anyTimes();
         EasyMock.replay(nonFrequencyCapped1);
 
         AdEntity frequencyCapped1 = EasyMock.createMock(AdEntity.class);
-        EasyMock.expect(frequencyCapped1.isFrequencyCapped()).andReturn(true).anyTimes();
-        EasyMock.expect(frequencyCapped1.getMaxCap()).andReturn(5).anyTimes();
-        EasyMock.expect(frequencyCapped1.getFrequencyCapTimeWindowInHours()).andReturn(6).anyTimes();
+        FreqCap freqCap1 = getFrequencyCapObject(5, 6);
+        EasyMock.expect(frequencyCapped1.getFrequencyCap()).andReturn(freqCap1).anyTimes();
         EasyMock.replay(frequencyCapped1);
 
         AdEntity frequencyCapped2 = EasyMock.createMock(AdEntity.class);
-        EasyMock.expect(frequencyCapped2.isFrequencyCapped()).andReturn(true).anyTimes();
-        EasyMock.expect(frequencyCapped2.getMaxCap()).andReturn(5).anyTimes();
-        EasyMock.expect(frequencyCapped2.getFrequencyCapTimeWindowInHours()).andReturn(12).anyTimes();
+        FreqCap freqCap2 = getFrequencyCapObject(5, 12);
+        EasyMock.expect(frequencyCapped2.getFrequencyCap()).andReturn(freqCap2).anyTimes();
         EasyMock.replay(frequencyCapped2);
 
         AdEntity frequencyCapped3 = EasyMock.createMock(AdEntity.class);
-        EasyMock.expect(frequencyCapped3.isFrequencyCapped()).andReturn(true).anyTimes();
-        EasyMock.expect(frequencyCapped3.getMaxCap()).andReturn(5).anyTimes();
-        EasyMock.expect(frequencyCapped3.getFrequencyCapTimeWindowInHours()).andReturn(24).anyTimes();
+        FreqCap freqCap3 = getFrequencyCapObject(5, 24);
+        EasyMock.expect(frequencyCapped3.getFrequencyCap()).andReturn(freqCap3).anyTimes();
         EasyMock.replay(frequencyCapped3);
 
         this.adIds = new HashSet<Integer>();

@@ -59,5 +59,6 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
         <constructor-arg index="46"><ref bean="campaign_cache"/></constructor-arg>
         <constructor-arg index="47"><ref bean="user_lifetime_campaign_imp_cache"/></constructor-arg>
         <constructor-arg index="48"><ref bean="user_lifetime_campaign_click_cache"/></constructor-arg>
+        <constructor-arg index="49"><ref bean="user_recent_click_history_cache"/></constructor-arg>
     </bean>
 </beans>
