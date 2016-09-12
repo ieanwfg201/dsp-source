@@ -93,10 +93,10 @@
                 <constructor-arg index="1" value="cache.logger"/>
                 <constructor-arg index="2"><ref bean="mad_ua_file_cache_props"/></constructor-arg>
         </bean>
-       
+
 	<bean id="ad_entity_cache" class="com.kritter.serving.demand.cache.AdEntityCache">
 	    <constructor-arg index="0">
-		<list> 
+		<list>
                     <value>com.kritter.serving.demand.index.CountryIdIndex</value>
                     <value>com.kritter.serving.demand.index.CountryCarrierIdIndex</value>
                     <value>com.kritter.serving.demand.index.BrandIdIndex</value>
@@ -207,7 +207,7 @@
             <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="native_screenshot_cache"/>
         </bean>
-        
+
 	<bean id="site_cache" class="com.kritter.common.site.cache.SiteCache">
 	    <constructor-arg index="0">
 		<list>
@@ -247,7 +247,7 @@
 	    <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="lr_ctr_data_cache"/>
         </bean>
-         
+
         <bean id="lr_csr_data_cache" class="com.kritter.adserving.prediction.cache.LogisticRegressionCSRDBCache">
             <constructor-arg index="0">
                 <list>
@@ -267,7 +267,7 @@
             <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="mnc_mcc_data_cache"/>
         </bean>
-  
+
         <bean id="iab_categories_cache" class="com.kritter.common.caches.iab.categories.IABCategoriesCache">
             <constructor-arg index="0">
                 <list>
@@ -500,8 +500,8 @@
          </props>
       </constructor-arg>
     </bean>
- 
-    <bean id="ad_entity_cache_properties" class="java.util.Properties"> 
+
+    <bean id="ad_entity_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
@@ -583,7 +583,7 @@
          </props>
        </constructor-arg>
    </bean>
-  
+
    <bean id="site_meta_data_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -592,7 +592,7 @@
          </props>
        </constructor-arg>
    </bean>
- 
+
    <bean id="offline_bidder_data_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -602,7 +602,7 @@
          </props>
       </constructor-arg>
    </bean>
- 
+
    <bean id="lr_ctr_data_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -680,7 +680,7 @@
          </props>
        </constructor-arg>
    </bean>
-  
+
     <bean id="mma_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -755,15 +755,15 @@
       </constructor-arg>
     </bean>
 
-    <bean id="user_lifetime_ad_click_cache_props" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="namespace"><![CDATA[user]]></prop>
-           <prop key="table_name"><![CDATA[user_lifetime_history]]></prop>
-           <prop key="primary_key_name"><![CDATA[user_id]]></prop>
-           <prop key="attribute_name_lifetime_history"><![CDATA[ad_ltclk]]></prop>
-         </props>
-      </constructor-arg>
+    <bean id="user_recent_click_history_cache_props" class="java.util.Properties">
+        <constructor-arg>
+            <props>
+                <prop key="namespace"><![CDATA[user]]></prop>
+                <prop key="table_name"><![CDATA[user_recent_clk_history]]></prop>
+                <prop key="primary_key_name"><![CDATA[user_id]]></prop>
+                <prop key="attribute_name_click_history"><![CDATA[clk_history]]></prop>
+            </props>
+        </constructor-arg>
     </bean>
 
     <bean id="user_id_cache_props" class="java.util.Properties">
