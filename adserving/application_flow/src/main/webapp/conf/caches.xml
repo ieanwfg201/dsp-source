@@ -755,17 +755,6 @@
       </constructor-arg>
     </bean>
 
-    <bean id="user_lifetime_ad_click_cache_props" class="java.util.Properties">
-      <constructor-arg>
-         <props>
-           <prop key="namespace"><![CDATA[user]]></prop>
-           <prop key="table_name"><![CDATA[user_lifetime_history]]></prop>
-           <prop key="primary_key_name"><![CDATA[user_id]]></prop>
-           <prop key="attribute_name_lifetime_history"><![CDATA[ad_ltclk]]></prop>
-         </props>
-      </constructor-arg>
-    </bean>
-
     <bean id="user_id_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
