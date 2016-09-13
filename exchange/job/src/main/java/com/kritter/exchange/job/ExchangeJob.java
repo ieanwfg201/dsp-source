@@ -217,7 +217,7 @@ public class ExchangeJob implements Job
             if(null == demandPreference)
                 demandPreference = pubEntity.getDemandPreference();
 
-            if(demandPreference == DemandPreference.OnlyDSP){
+            if(demandPreference == DemandPreference.OnlyDSP || demandPreference == DemandPreference.DirectThenDSP){
                 defaultToKritter = false;
             }
             int requestTimeoutMillis = pubEntity.getTimeout();

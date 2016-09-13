@@ -1467,3 +1467,6 @@ ALTER TABLE pmp_deals ADD COLUMN pub_id_list TEXT NOT NULL AFTER ad_id_list;
 ALTER TABLE pmp_deals ADD COLUMN status_id smallint(6) NOT NULL DEFAULT 2;
 
 alter table account add column adxbased boolean default false after open_rtb_ver_required;
+
+alter table ad_position modify adposid varchar(128) NOT NULL;
+ ALTER TABLE ad_position CONVERT TO CHARACTER SET utf8;

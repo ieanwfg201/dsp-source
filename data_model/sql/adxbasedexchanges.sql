@@ -61,3 +61,10 @@ CREATE TABLE `video_upload` (
 ) ENGINE=InnoDB;
 
 
+CREATE TABLE `material_upload_state` (
+  `internalid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pubIncId` int(11) NOT NULL,
+  `materialtype` int(11) NOT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`internalid`)
+) ENGINE=InnoDB;
