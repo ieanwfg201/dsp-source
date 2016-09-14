@@ -180,6 +180,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>billing</module>
     <module>kritterui/api</module>
     <module>skunkworks/thrift_b64_reader</module>
+    <module>material_upload</module>
     <module>CreativeApproval</module>
   </modules>
 
