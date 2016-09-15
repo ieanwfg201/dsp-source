@@ -16,7 +16,8 @@ public enum AdxBasedExchangesStates
 	ERROR(8,"ERROR"),
 	REFUSED(9,"REFUSED"),
 	APPROVING(10,"APPROVING"),
-	APPROVED(11,"APPROVED"),;
+	APPROVED(11,"APPROVED"),
+	UPLOADFAIL(12,"UPLOADFAIL");
 
             private int code;
             private String name;
