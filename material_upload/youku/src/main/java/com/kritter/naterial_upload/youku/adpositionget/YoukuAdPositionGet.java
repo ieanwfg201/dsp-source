@@ -83,12 +83,16 @@ public class YoukuAdPositionGet implements AdPositionGet{
 		PostEntity p = new PostEntity();
 		p.setDspid(getDspid());
 		p.setToken(getToken());
-		String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+properties.getProperty("youku_prefix_adposition").toString(),
-				p.toJson().toString());
-		if(out != null){
-			LOG.info(out);
-			setUrlgetOutput(out);
-		}else{
+		try{
+			String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+properties.getProperty("youku_prefix_adposition").toString(),
+					p.toJson().toString());
+			if(out != null){
+				LOG.info(out);
+				setUrlgetOutput(out);
+			}else{
+				setPerformTransaction(false);
+			}
+		}catch(Exception e){
 			setPerformTransaction(false);
 		}
 	}

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class UrlPost {
 	private static final Logger LOG = LoggerFactory.getLogger(UrlPost.class);
-	public String urlpost(String urlString,String postBody){
+	public String urlpost(String urlString,String postBody) throws Exception{
 		StringBuffer sbuff = new StringBuffer("");
         URL url;
         BufferedReader br = null;
@@ -21,8 +21,8 @@ public class UrlPost {
 		try{
             url = new URL(urlString);
             conn = (HttpURLConnection)url.openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
             os = conn.getOutputStream();
@@ -39,6 +39,7 @@ public class UrlPost {
             }
 		}catch(Exception e){
 			LOG.error(e.getMessage(),e);
+			throw new Exception(e);
 		}finally{
             if(br!= null){
                 try {

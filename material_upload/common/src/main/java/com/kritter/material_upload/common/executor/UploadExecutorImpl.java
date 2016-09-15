@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kritter.material_upload.common.adposition.AdPositionGet;
+import com.kritter.material_upload.common.banner.MUBanner;
+import com.kritter.material_upload.common.banner.MUBannerAudit;
 
 public abstract class UploadExecutorImpl implements UploadExecutor {
 	private static final Logger LOG = LoggerFactory.getLogger(UploadExecutorImpl.class);
@@ -27,6 +29,62 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				con.setAutoCommit(false);
 				adPositionGet.insertAdposition(con, properties);
 				adPositionGet.updaterun(con, properties);
+				con.commit();
+			}catch(Exception e){
+				LOG.error(e.getMessage(),e);
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					LOG.error(e1.getMessage(),e1);				
+				}
+			}finally{
+				try {
+					con.setAutoCommit(autoCommit);
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+	@Override
+	public void executeMaterialBannerUpload(Properties properties, MUBanner muBanner,Connection con) {
+		if(muBanner != null){
+			boolean autoCommit = true;
+			try{
+				autoCommit = con.getAutoCommit();
+				muBanner.init(properties);
+				con.setAutoCommit(false);
+				muBanner.getLastRun(properties, con);
+				muBanner.getModifiedEntities(properties, con);
+				muBanner.insertOrUpdateBannerUpload(properties, con);
+				muBanner.uploadmaterial(properties, con);
+				muBanner.updaterun(properties, con);
+				con.commit();
+			}catch(Exception e){
+				LOG.error(e.getMessage(),e);
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					LOG.error(e1.getMessage(),e1);				
+				}
+			}finally{
+				try {
+					con.setAutoCommit(autoCommit);
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+	@Override
+	public void executeMaterialBannerAudit(Properties properties, MUBannerAudit muBannerAudit,Connection con) {
+		if(muBannerAudit != null){
+			boolean autoCommit = true;
+			try{
+				autoCommit = con.getAutoCommit();
+				muBannerAudit.init(properties);
+				con.setAutoCommit(false);
+				muBannerAudit.fetchMaterialAudit(properties, con);
 				con.commit();
 			}catch(Exception e){
 				LOG.error(e.getMessage(),e);
