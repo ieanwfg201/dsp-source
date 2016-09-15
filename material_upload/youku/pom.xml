@@ -10,6 +10,16 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritter_material_upload_youku</name>
   <dependencies>
     <dependency>
+        <groupId>com.kritter.material_upload</groupId>
+        <artifactId>youkuvideouploader</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>com.kritter.entity.video_props</groupId>
+        <artifactId>kritter_entity_video_props</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.entity.adxbasedexchanges_metadata</groupId>
         <artifactId>kritter_entity_adxbasedexchanges_metadata</artifactId>
         <version>1.0.0</version>
