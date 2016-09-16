@@ -115,7 +115,7 @@ public class CreativeDisplayFull extends CreativeDisplay{
         return "";
     }
     public String getNativeRating(){
-        if(cc.getNative_rating()){
+        if(null != cc.getNative_rating() && cc.getNative_rating().booleanValue()){
             return "True";
         }
         return "False";

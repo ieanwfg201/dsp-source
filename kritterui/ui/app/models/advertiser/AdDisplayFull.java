@@ -8,6 +8,7 @@ import com.kritter.api.entity.creative_container.Creative_container;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.BidType;
 import com.kritter.constants.CreativeMacroQuote;
+import com.kritter.constants.ExtClickType;
 import com.kritter.constants.MetadataType;
 
 public class AdDisplayFull extends AdDisplay{
@@ -112,6 +113,13 @@ public class AdDisplayFull extends AdDisplay{
     }
     public String getClickMacroquote(){
         CreativeMacroQuote c = CreativeMacroQuote.getEnum(ad.getClickMacroQuote());
+        if(c != null){
+            return c.getName();
+        }
+        return "";
+    }
+    public String getExtclickType(){
+        ExtClickType c = ExtClickType.getEnum(ad.getExtclickType());
         if(c != null){
             return c.getName();
         }

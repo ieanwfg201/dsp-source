@@ -81,7 +81,8 @@ public class Ad {
     private String external_click_tracker = "";
     private String clickMacro = "[]";
     private int clickMacroQuote = 0;
-    /** optional - json array of mma tier1 category */
+    private int extclickType = 1;
+	/** optional - json array of mma tier1 category */
     private String mma_tier_1_list = "[]";
     /** optional - json array of mma_tier2 category */
     private String mma_tier_2_list = "[]";
@@ -580,6 +581,12 @@ public class Ad {
 	}
 	public void setMma_tier_2_list(String mma_tier_2_list) {
 		this.mma_tier_2_list = mma_tier_2_list;
+	}
+    public int getExtclickType() {
+		return extclickType;
+	}
+	public void setExtclickType(int extclickType) {
+		this.extclickType = extclickType;
 	}
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

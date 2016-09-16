@@ -216,6 +216,14 @@ public class MetadataAPI {
         } 
         return selectOptions;
     }
+    public static List<SelectOption> extClickType(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        ExtClickType[] types = ExtClickType.values();
+        for (ExtClickType type : types) {
+            selectOptions.add(new SelectOption(type.name(),  type.getCode()+""));
+        } 
+        return selectOptions;
+    }
     public static List<SelectOption> videopos(){
         List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
         VideoAdPos[] types = VideoAdPos.values();
