@@ -235,12 +235,16 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
 
         logger.debug("Going to set strict banner size for each impression if applicable inside YoukuRequestEnricher");
         String adpositionid=null;
+        double ecpmFloorValue=0.0;
         if(null != youkuBidRequestImpressionDTOs && youkuBidRequestImpressionDTOs.length > 0)
         {
             for(YoukuBidRequestImpressionDTO youkuBidRequestImpressionDTO : youkuBidRequestImpressionDTOs)
             {
             	if(youkuBidRequestImpressionDTO.getAdTagOrPlacementId() !=null && !"".equals(youkuBidRequestImpressionDTO.getAdTagOrPlacementId())){
             		adpositionid=youkuBidRequestImpressionDTO.getAdTagOrPlacementId();
+            	}
+            	if(youkuBidRequestImpressionDTO.getBidFloorPrice() !=null){
+            		ecpmFloorValue=youkuBidRequestImpressionDTO.getBidFloorPrice()/100;
             	}
                 BidRequestImpressionBannerObjectDTO youkuBidRequestImpressionBannerObjectDTO =
                         youkuBidRequestImpressionDTO.getBidRequestImpressionBannerObject();
@@ -285,7 +289,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
                 request.setSecureRequiredForImpressionIdOfRTBExchange(youkuBidRequestImpressionDTO.getBidRequestImpressionId(),Boolean.FALSE);
             }
         }
-        Site site = fetchSiteEntityForYoukuRequest(request, siteIdFromBidRequest,adpositionid);
+        Site site = fetchSiteEntityForYoukuRequest(request, siteIdFromBidRequest,adpositionid,ecpmFloorValue);
 
         if(null==site || !(site.getStatus() == StatusIdEnum.Active.getCode()))
         {
@@ -310,7 +314,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
      * All attributes must be set at runtime except hygiene ,which
      * should be taken from the entity as present in the database.
      */
-    private Site fetchSiteEntityForYoukuRequest(Request request,String siteIdFromBidRequest,String adpositionid)
+    private Site fetchSiteEntityForYoukuRequest(Request request,String siteIdFromBidRequest,String adpositionid,double ecpmFloorValue)
     {
         Site site = this.siteCache.query(siteIdFromBidRequest);
 
@@ -349,8 +353,6 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         Short appStoreId = 0;
         //keep floor value as 0.0, since its per impression, so for each impression
         //this value should be used and compared with ecpm value of each adunit.
-        double ecpmFloorValue = 0.0;
-
         //Create a new site and set all attributes, take hygiene from the one found in cache.
         Site siteToUse = new Site.SiteEntityBuilder
                 (
