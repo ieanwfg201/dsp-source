@@ -59,15 +59,15 @@ public class ThirdpartydataConnectionTypeCache extends AbstractFileStatsReloadab
                             ThirdpartydataConnectionType tpdConnectionType = new ThirdpartydataConnectionType();
                             tpdConnectionType.setConnectionTypeInt(Integer.parseInt(strSplit[2]));
                             tpdConnectionType.setEndIp(endIp);
-                            connectionTypeMap.put(startIp, tpdConnectionType);
+                            tempConnectionTypeMap.put(startIp, tpdConnectionType);
                         }else{
                             // ipv4
                             long startIp = GeoDetectionUtils.fetchLongValueForIPV4(strSplit[0]);
-                            long endIp = GeoDetectionUtils.fetchLongValueForIPV4(strSplit[0]);
+                            long endIp = GeoDetectionUtils.fetchLongValueForIPV4(strSplit[1]);
                             ThirdpartydataConnectionType tpdConnectionType = new ThirdpartydataConnectionType();
                             tpdConnectionType.setConnectionTypeInt(Integer.parseInt(strSplit[2]));
                             tpdConnectionType.setEndIp(BigInteger.valueOf(endIp));
-                            connectionTypeMap.put(BigInteger.valueOf(startIp), tpdConnectionType);
+                            tempConnectionTypeMap.put(BigInteger.valueOf(startIp), tpdConnectionType);
                         }
 
                     }catch(Exception e){

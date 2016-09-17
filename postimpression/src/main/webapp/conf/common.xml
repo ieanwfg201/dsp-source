@@ -52,6 +52,7 @@
         <constructor-arg index="7" value="aimpid"/>
         <constructor-arg index="8">
             <map>
+                <entry key="youku"><ref bean="youku_exchange_utils"/></entry>
             </map>
         </constructor-arg>
         <constructor-arg index="9"><ref bean="site_cache"/></constructor-arg>
@@ -102,8 +103,6 @@
                 <ref bean="impression_enricher_fraud_check_for_click"/>
                 <ref bean="site_enricher_unfit_fraud_check"/>
                 <ref bean="ad_id_enricher_fraud_check"/>
-                <ref bean="handset_id_enricher_fraud_check"/>
-                <ref bean="location_id_enricher_fraud_check"/>
             </list>
         </constructor-arg>
     </bean>
@@ -162,8 +161,6 @@
                 <ref bean="impression_enricher_fraud_check_for_csc"/>
                 <ref bean="site_enricher_unfit_fraud_check"/>
                 <ref bean="ad_id_enricher_fraud_check"/>
-                <ref bean="handset_id_enricher_fraud_check"/>
-                <ref bean="location_id_enricher_fraud_check"/>
             </list>
         </constructor-arg>
     </bean>
@@ -205,8 +202,6 @@
                 <ref bean="impression_enricher_fraud_check_for_win"/>
                 <ref bean="site_enricher_unfit_fraud_check"/>
                 <ref bean="ad_id_enricher_fraud_check"/>
-                <ref bean="handset_id_enricher_fraud_check"/>
-                <ref bean="location_id_enricher_fraud_check"/>
             </list>
         </constructor-arg>
     </bean>
@@ -407,6 +402,11 @@
     <bean id="tracking_manager" class="com.kritter.tracking.common.ThirdPartyTrackingManager">
         <constructor-arg index="0" value="postimpression.application"/>
         <constructor-arg index="1" value="subid1"/>
+    </bean>
+
+    <bean id="youku_exchange_utils" class="com.kritter.utils.common.YoukuAdExchageUtils">
+        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="1"><value><![CDATA[cd7c057fa02c4a1a85e113a10793e274]]></value></constructor-arg>
     </bean>
 
     <bean id="user_in_memory_db" class="com.kritter.utils.nosql.common.impl.InMemoryCache">
