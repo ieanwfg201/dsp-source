@@ -17,10 +17,12 @@
 }
 @if("false" == lat_lon_file){
 	@components.fielddisplays.listdisplay("TP-LatLongRadius", tp.getLatLong())
+	@components.fielddisplays.textdisplay("TP-RadiusUnit", tp.getLatLonRadiusUnit())
 }
 @if("true" == lat_lon_file){
 @if("" != tp.getLatLonRadiusFile()){
     @components.fielddisplays.htmldisplay("TP-LatLonRadiusFile") { <a href="@tp.getLatLonRadiusFile()">download</a> }
+	@components.fielddisplays.textdisplay("TP-RadiusUnit", tp.getLatLonRadiusUnit())
 }
 }
 @components.fielddisplays.listdisplay("TP-Browser", tp.getBrowserValues())

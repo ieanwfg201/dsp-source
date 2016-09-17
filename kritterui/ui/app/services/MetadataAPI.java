@@ -224,6 +224,14 @@ public class MetadataAPI {
         } 
         return selectOptions;
     }
+    public static List<SelectOption> latlonradiusunit(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        LatLonRadiusUnit[] types = LatLonRadiusUnit.values();
+        for (LatLonRadiusUnit type : types) {
+            selectOptions.add(new SelectOption(type.name(),  type.getCode()+""));
+        } 
+        return selectOptions;
+    }
     public static List<SelectOption> videopos(){
         List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
         VideoAdPos[] types = VideoAdPos.values();

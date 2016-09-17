@@ -63,6 +63,7 @@
 					 @if("false" == lat_lon_file) {
 						 @components.formElements.textarea(tpForm("lat_long"), "Lat-Long and Radius in miles (CSV with each line representing lat,long,radius)")
 					 }
+					 @components.formElements.selectlist2(tpForm("lat_lon_radius_unit"), "RadiusUnit ",services.MetadataAPI.latlonradiusunit() )
 				 </fieldset>
 				 
 				 <fieldset>

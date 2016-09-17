@@ -1470,3 +1470,6 @@ alter table account add column adxbased boolean default false after open_rtb_ver
 
 alter table ad_position modify adposid varchar(128) NOT NULL;
  ALTER TABLE ad_position CONVERT TO CHARACTER SET utf8;
+
+alter table targeting_profile add column lat_lon_radius_unit int(11) default 0 after deviceid_file;
+

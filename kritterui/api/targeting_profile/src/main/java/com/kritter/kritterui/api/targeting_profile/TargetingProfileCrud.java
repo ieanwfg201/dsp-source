@@ -755,6 +755,7 @@ public class TargetingProfileCrud {
         tp.setLat_lon_radius_file(db_to_ui_file_set(rset.getString("lat_lon_radius_file")));
         tp.setDeviceid_file(db_to_ui_file_set(rset.getString("deviceid_file")));
         tp.setId(rset.getInt("id"));
+        tp.setLat_lon_radius_unit(rset.getInt("lat_lon_radius_unit"));
     }
     
     private static void populateExt(Targeting_profile tp,String ext){
@@ -1201,6 +1202,7 @@ public class TargetingProfileCrud {
             pstmt.setString(34, generateExt(tp));
             pstmt.setString(35, ui_to_db_file_set(tp.getLat_lon_radius_file()));
             pstmt.setString(36, ui_to_db_file_set(tp.getDeviceid_file()));
+            pstmt.setInt(37, tp.getLat_lon_radius_unit());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -1314,6 +1316,7 @@ public class TargetingProfileCrud {
             pstmt.setString(31, generateRetargeting(tp.getRetargeting()));
             generatePMPDealJson(tp);
             pstmt.setString(32, tp.getPmp_deal_json());
+            pstmt.setInt(33, tp.getLat_lon_radius_unit());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -1462,7 +1465,8 @@ public class TargetingProfileCrud {
             pstmt.setString(32, generateExt(tp));
             pstmt.setString(33, ui_to_db_file_set(tp.getLat_lon_radius_file()));
             pstmt.setString(34, renameDeviceidfile(tp.getDeviceid_file(), tp.getAccount_guid(), tp.getFile_prefix_path(),tp.getId() ));
-            pstmt.setString(35, tp.getGuid());
+            pstmt.setInt(35, tp.getLat_lon_radius_unit());
+            pstmt.setString(36, tp.getGuid());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

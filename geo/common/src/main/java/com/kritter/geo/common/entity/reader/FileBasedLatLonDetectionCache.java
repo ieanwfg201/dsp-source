@@ -2,6 +2,7 @@ package com.kritter.geo.common.entity.reader;
 
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
+import com.kritter.constants.LatLonRadiusUnit;
 import com.kritter.geo.common.entity.LatLonRadius;
 import com.kritter.geo.common.utils.GeoCommonUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
@@ -203,7 +204,8 @@ public class FileBasedLatLonDetectionCache
         }
     }
 
-    public boolean doesLatLonExistsinLatLonFiles(Double lat,Double lon,String[] fileIdsForDataToCheck)
+    public boolean doesLatLonExistsinLatLonFiles(Double lat,Double lon,String[] fileIdsForDataToCheck,
+    		LatLonRadiusUnit llru)
     {
         if(null == lat || null == lon || null == fileIdsForDataToCheck)
             return false;
@@ -217,7 +219,12 @@ public class FileBasedLatLonDetectionCache
                         GeoCommonUtils.haversineDistanceInMiles(llr.getLatitude(), llr.getLongitude(),
                         		lat,
                         		lon);
-                	if(distanceFromRequestingPosition <= llr.getRadius()){
+                	double radius=llr.getRadius();
+                	if(llru==LatLonRadiusUnit.KM){
+                    	/*Converting to miles*/
+                    	radius = radius*0.621371;
+                	}
+                	if(distanceFromRequestingPosition <= radius){
                 		return true;
                 	}
                 }
