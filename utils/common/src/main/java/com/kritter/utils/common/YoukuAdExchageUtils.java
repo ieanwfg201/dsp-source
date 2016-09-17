@@ -28,7 +28,7 @@ public class YoukuAdExchageUtils extends AdExchangeUtils{
 				String s = new String(bytePlainText);
 				String split[] = s.split("_");
 				Double d = Double.parseDouble(split[0]);
-				return d;
+				return d/100;
 			}
 			return 0.0;
 		}catch(Exception e){
