@@ -362,6 +362,9 @@ public class AdCrud {
                     if(extTracker.getClickMacroQuote() != null){
                   	  ad.setClickMacroQuote(extTracker.getClickMacroQuote());
                     }
+                    if(extTracker.getClickType() != null){
+                    	  ad.setExtclickType(extTracker.getClickType());
+                      }
 
                 }
             }
@@ -412,6 +415,7 @@ public class AdCrud {
             }
             extTracker.setClickTracker(extTrackerUriList);
             Set<Integer> s = stringtoset(ad.getClickMacro());
+            extTracker.setClickType(ad.getExtclickType());
             if(s != null){
             	extTracker.setClickMacro(s);
                 extTracker.setClickMacroQuote(ad.getClickMacroQuote());

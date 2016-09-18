@@ -10,6 +10,7 @@ import com.kritter.bidrequest.reader.IBidRequestReader;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
+import com.kritter.constants.ExternalUserIdType;
 import com.kritter.constants.INVENTORY_SOURCE;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.constants.StatusIdEnum;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -139,17 +141,6 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
 
         logger.debug("SiteId received from bid request URL: {} ", siteIdFromBidRequest);
 
-        Site site = fetchSiteEntityForYoukuRequest(request, siteIdFromBidRequest);
-
-        if(null==site || !(site.getStatus() == StatusIdEnum.Active.getCode()))
-        {
-            request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.SITE_NOT_FIT);
-            this.logger.error("Requesting site is not fit or is not found in cache . siteid: {}" , siteIdFromBidRequest);
-            return request;
-        }
-
-        request.setSite(site);
-
         YoukuBidRequestParentNodeDTO youkuBidRequestParentNodeDTO =
                        (YoukuBidRequestParentNodeDTO)request.getBidRequest().getBidRequestParentNodeDTO();
 
@@ -243,11 +234,18 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
                 youkuBidRequestParentNodeDTO.getYoukuBidRequestImpressionDTOs();
 
         logger.debug("Going to set strict banner size for each impression if applicable inside YoukuRequestEnricher");
-
+        String adpositionid=null;
+        double ecpmFloorValue=0.0;
         if(null != youkuBidRequestImpressionDTOs && youkuBidRequestImpressionDTOs.length > 0)
         {
             for(YoukuBidRequestImpressionDTO youkuBidRequestImpressionDTO : youkuBidRequestImpressionDTOs)
             {
+            	if(youkuBidRequestImpressionDTO.getAdTagOrPlacementId() !=null && !"".equals(youkuBidRequestImpressionDTO.getAdTagOrPlacementId())){
+            		adpositionid=youkuBidRequestImpressionDTO.getAdTagOrPlacementId();
+            	}
+            	if(youkuBidRequestImpressionDTO.getBidFloorPrice() !=null){
+            		ecpmFloorValue=youkuBidRequestImpressionDTO.getBidFloorPrice()/100;
+            	}
                 BidRequestImpressionBannerObjectDTO youkuBidRequestImpressionBannerObjectDTO =
                         youkuBidRequestImpressionDTO.getBidRequestImpressionBannerObject();
                 if(youkuBidRequestImpressionBannerObjectDTO != null){
@@ -291,6 +289,17 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
                 request.setSecureRequiredForImpressionIdOfRTBExchange(youkuBidRequestImpressionDTO.getBidRequestImpressionId(),Boolean.FALSE);
             }
         }
+        Site site = fetchSiteEntityForYoukuRequest(request, siteIdFromBidRequest,adpositionid,ecpmFloorValue);
+
+        if(null==site || !(site.getStatus() == StatusIdEnum.Active.getCode()))
+        {
+            request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.SITE_NOT_FIT);
+            this.logger.error("Requesting site is not fit or is not found in cache . siteid: {}" , siteIdFromBidRequest);
+            return request;
+        }
+
+        request.setSite(site);
+
         /******************************************************************************************************/
 
 
@@ -305,7 +314,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
      * All attributes must be set at runtime except hygiene ,which
      * should be taken from the entity as present in the database.
      */
-    private Site fetchSiteEntityForYoukuRequest(Request request,String siteIdFromBidRequest)
+    private Site fetchSiteEntityForYoukuRequest(Request request,String siteIdFromBidRequest,String adpositionid,double ecpmFloorValue)
     {
         Site site = this.siteCache.query(siteIdFromBidRequest);
 
@@ -344,8 +353,6 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         Short appStoreId = 0;
         //keep floor value as 0.0, since its per impression, so for each impression
         //this value should be used and compared with ecpm value of each adunit.
-        double ecpmFloorValue = 0.0;
-
         //Create a new site and set all attributes, take hygiene from the one found in cache.
         Site siteToUse = new Site.SiteEntityBuilder
                 (
@@ -361,7 +368,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
                 .setEcpmFloor(ecpmFloorValue)
                 .setIsAdvertiserIdListExcluded(site.isAdvertiserIdListExcluded())
                 .setCampaignInclusionExclusionSchemaMap(site.getCampaignInclusionExclusionSchemaMap())
-                .setIsRichMediaAllowed(site.isRichMediaAllowed())
+                .setIsRichMediaAllowed(site.isRichMediaAllowed()).setAdPosition(adpositionid)
                 .build();
 
         /***************************************external supply attributes*************************************/
@@ -406,7 +413,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         /******************************************************************************************************/
         if(youkuBidRequestSiteDTO != null){
         	if(youkuBidRequestSiteDTO.getBidRequestContent() != null && youkuBidRequestSiteDTO.getBidRequestContent().getExtensionObject() != null){
-        		YoukuBidRequestContentExtDTO  contentExt =  (YoukuBidRequestContentExtDTO) youkuBidRequestSiteDTO.getExtensionObject();
+        		YoukuBidRequestContentExtDTO  contentExt =  youkuBidRequestSiteDTO.getBidRequestContent().getExtensionObject();
         		if(contentExt != null){
         			if(contentExt.getChannel() != null){
         				siteToUse.setChannelFirstLevelCode(contentExt.getChannel());
@@ -469,6 +476,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
 
         EnricherUtils.populateUserIdsFromBidRequestDeviceDTO(youkuBidRequestDeviceDTO, request);
         EnricherUtils.populateUserIdsFromBidRequestUserDTO(youkuBidRequestUserDTO, request);
+        populateUserIdsFromBidRequestYoukuDeviceDTO(youkuBidRequestDeviceDTO, request);
         Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
         if(externalUserIds == null || externalUserIds.size() == 0) {
             logger.debug("External user ids empty or not present");
@@ -485,4 +493,46 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
             request.setUserAgent(youkuBidRequestDeviceDTO.getDeviceUserAgent());
         }
     }
+    
+    private void populateUserIdsFromBidRequestYoukuDeviceDTO(
+    		YoukuBidRequestDeviceDTO bidRequestDeviceDTO,
+            Request request) {
+        if(null == bidRequestDeviceDTO)
+            return;
+
+        int siteIncId = -1;
+        if(request.getSite() != null)
+            siteIncId = request.getSite().getSiteIncId();
+
+        Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
+        if(externalUserIds == null) {
+            externalUserIds = new HashSet<ExternalUserId>();
+            request.setExternalUserIds(externalUserIds);
+        }
+
+        if(bidRequestDeviceDTO.getIdfa() != null &&
+                !bidRequestDeviceDTO.getIdfa().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.IFA_USER_ID, siteIncId,
+                    bidRequestDeviceDTO.getIdfa()));
+        }
+
+
+        if(bidRequestDeviceDTO.getAndroidid() != null &&
+                !bidRequestDeviceDTO.getAndroidid().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.DEVICE_PLATFORM_ID, siteIncId,
+                    bidRequestDeviceDTO.getAndroidid()));
+        }
+
+        if(bidRequestDeviceDTO.getImei() != null &&
+                !bidRequestDeviceDTO.getImei().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.DEVICE_ID, siteIncId,
+                    bidRequestDeviceDTO.getImei()));
+        }
+
+        if(bidRequestDeviceDTO.getMac() != null && !bidRequestDeviceDTO.getMac().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.MAC, siteIncId,
+                    bidRequestDeviceDTO.getMac()));
+        }
+    }
+
 }

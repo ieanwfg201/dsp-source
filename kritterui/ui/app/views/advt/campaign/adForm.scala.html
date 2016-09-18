@@ -97,6 +97,7 @@
                         </code>
                         @components.formElements.multiselectlist3(adForm("clickMacro"), '_label ->"MACROS (for replacement)" , '_row->true)
                         @components.formElements.selectlist2(adForm("clickMacroQuote"), "Macros (Quoted) ",services.MetadataAPI.creativeMacroQuote() )
+                        @components.formElements.selectlist2(adForm("extclickType"), "ExtClickType ",services.MetadataAPI.extClickType() )
                         
                         
                         @if("true" == mma_required) {

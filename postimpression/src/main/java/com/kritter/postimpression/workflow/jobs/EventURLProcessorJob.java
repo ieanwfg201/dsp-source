@@ -415,7 +415,9 @@ public class EventURLProcessorJob implements Job
                 }
                 if(adEntity != null && adEntity.getExtTracker() != null
                 		&& adEntity.getExtTracker().getClickTracker() != null
-                		&& adEntity.getExtTracker().getClickTracker().size()>0){
+                		&& adEntity.getExtTracker().getClickTracker().size()>0
+                		&& adEntity.getExtTracker().getClickType() != null
+                		&& adEntity.getExtTracker().getClickType() != ExtClickType.INEXCRESPONSE.getCode()){
                     KExecutor kexecutor = KExecutor.getKExecutor(loggerName);
                     if(kexecutor == null){
                     	logger.debug("POstIMp: KExecutor not Found");

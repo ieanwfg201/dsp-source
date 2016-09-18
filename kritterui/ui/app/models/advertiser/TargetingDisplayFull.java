@@ -9,6 +9,7 @@ import services.TPMetadataAPI;
 
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.Geo_Targeting_type;
+import com.kritter.constants.LatLonRadiusUnit;
 import com.kritter.constants.MetadataType;
 
 import controllers.routes;
@@ -202,5 +203,11 @@ public class TargetingDisplayFull extends TargetingDisplay{
     	}
     	return "";
     }
-
+    public String getLatLonRadiusUnit(){
+    	LatLonRadiusUnit llru=LatLonRadiusUnit.getEnum(tp.getLat_lon_radius_unit());
+    	if(llru != null){
+    		return llru.getName();
+    	}
+    	return "";
+    }
 }

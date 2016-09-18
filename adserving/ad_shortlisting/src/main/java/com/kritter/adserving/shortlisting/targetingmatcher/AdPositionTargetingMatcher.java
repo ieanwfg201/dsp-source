@@ -84,12 +84,17 @@ public class AdPositionTargetingMatcher implements TargetingMatcher {
 				tpExt = adEntity.getTargetingProfile().getTpExt();
 			}
 			if(tpExt != null && tpExt.getAdposids() != null && tpExt.getAdposids().size()>0){
-				if(adPositionUiId==null){
+				if(adPositionUiId==null && tpExt.isAdposids_inc()){
 					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
 							this.adNoFillReasonMapKey, context);
 					continue;
 				}
-				if(!tpExt.getAdposids().contains(adPositionUiId)){
+				if(!tpExt.getAdposids().contains(adPositionUiId) && tpExt.isAdposids_inc()){
+					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+							this.adNoFillReasonMapKey, context);
+					continue;
+				}
+				if(tpExt.getAdposids().contains(adPositionUiId) && !tpExt.isAdposids_inc()){
 					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
 							this.adNoFillReasonMapKey, context);
 					continue;

@@ -51,6 +51,8 @@ public class YoukuQueryEntity {
 	public Integer bannerId;
 	@Getter@Setter
 	public String resource_uri;
+	@Getter@Setter
+	public Integer videoInfoId;
 	
 	
 	public JsonNode toJson(){

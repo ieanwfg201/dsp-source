@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.kritter.material_upload.common.adposition.AdPositionGet;
 import com.kritter.material_upload.common.banner.MUBanner;
 import com.kritter.material_upload.common.banner.MUBannerAudit;
+import com.kritter.material_upload.common.video.MUVideo;
+import com.kritter.material_upload.common.video.MUVideoAudit;
 
 public abstract class UploadExecutorImpl implements UploadExecutor {
 	private static final Logger LOG = LoggerFactory.getLogger(UploadExecutorImpl.class);
@@ -102,5 +104,62 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 			}
 		}
 	}
+	@Override
+	public void executeMaterialVideoUpload(Properties properties, MUVideo muVideo,Connection con) {
+		if(muVideo != null){
+			boolean autoCommit = true;
+			try{
+				autoCommit = con.getAutoCommit();
+				muVideo.init(properties);
+				con.setAutoCommit(false);
+				muVideo.getLastRun(properties, con);
+				muVideo.getModifiedEntities(properties, con);
+				muVideo.insertOrUpdateVideoUpload(properties, con);
+				muVideo.uploadmaterial(properties, con);
+				muVideo.updaterun(properties, con);
+				con.commit();
+			}catch(Exception e){
+				LOG.error(e.getMessage(),e);
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					LOG.error(e1.getMessage(),e1);				
+				}
+			}finally{
+				try {
+					con.setAutoCommit(autoCommit);
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+	@Override
+	public void executeMaterialVideoAudit(Properties properties, MUVideoAudit muVideoAudit,Connection con) {
+		if(muVideoAudit != null){
+			boolean autoCommit = true;
+			try{
+				autoCommit = con.getAutoCommit();
+				muVideoAudit.init(properties);
+				con.setAutoCommit(false);
+				muVideoAudit.fetchMaterialAudit(properties, con);
+				con.commit();
+			}catch(Exception e){
+				LOG.error(e.getMessage(),e);
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					LOG.error(e1.getMessage(),e1);				
+				}
+			}finally{
+				try {
+					con.setAutoCommit(autoCommit);
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+
 
 }

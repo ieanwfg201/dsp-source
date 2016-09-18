@@ -67,8 +67,9 @@ public class TargetingProfileEntity extends Entity{
     private String deviceid_file = null;
     private String file_prefix_path = null;
     private int id;
+    private int lat_lon_radius_unit = 0;
 
-    public MidpValue getMidp() {
+	public MidpValue getMidp() {
         return midp;
     }
     public void setMidp(MidpValue midp) {
@@ -366,7 +367,12 @@ public class TargetingProfileEntity extends Entity{
 	public void setFile_prefix_path(String file_prefix_path) {
 		this.file_prefix_path = file_prefix_path;
 	}
-
+    public int getLat_lon_radius_unit() {
+		return lat_lon_radius_unit;
+	}
+	public void setLat_lon_radius_unit(int lat_lon_radius_unit) {
+		this.lat_lon_radius_unit = lat_lon_radius_unit;
+	}
 	public Targeting_profile getEntity(){
     	Targeting_profile tp = new Targeting_profile();
     	BeanUtils.copyProperties(this, tp);

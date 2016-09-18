@@ -189,6 +189,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             if(targetingExtStr != null && !"".equals(targetingExtStr.trim())){
             	targetingExt =  TPExt.getObject(targetingExtStr.trim());
             }
+            int lat_lon_radius_unit = resultSet.getInt("lat_lon_radius_unit");
             
             TargetingProfile.TargetingBuilder targetingBuilder = new
                 TargetingProfile.TargetingBuilder(targetingId, targetingGuid, accountId, false, profileLastModified);
@@ -221,6 +222,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             targetingBuilder.setTPExt(targetingExt);
             targetingBuilder.setLatLonFileIdArray(latLonFileIdArray);
             targetingBuilder.setUserIdInclusionExclusionType(InclusionExclusionType.getEnum(userIdInclusionExclusion));
+            targetingBuilder.setLatLonRadiusUnit(lat_lon_radius_unit);
 
             if(retargeting != null){
                 String tmp_retargeting = retargeting.trim();

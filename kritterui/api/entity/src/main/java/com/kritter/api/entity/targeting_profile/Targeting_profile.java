@@ -115,7 +115,7 @@ public class Targeting_profile {
     private String deviceid_file = null;
     private String file_prefix_path = null;
     private int id ;
-    
+    private int lat_lon_radius_unit =0 ;
     
 	@Override
 	public int hashCode() {
@@ -722,6 +722,14 @@ public class Targeting_profile {
 	public void setLat_lon_radius_file(String lat_lon_radius_file) {
 		this.lat_lon_radius_file = lat_lon_radius_file;
 	}
+    
+	public int getLat_lon_radius_unit() {
+		return lat_lon_radius_unit;
+	}
+	public void setLat_lon_radius_unit(int lat_lon_radius_unit) {
+		this.lat_lon_radius_unit = lat_lon_radius_unit;
+	}
+
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);

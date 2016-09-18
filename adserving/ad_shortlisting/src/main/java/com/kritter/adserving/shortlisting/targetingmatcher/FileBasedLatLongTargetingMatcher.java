@@ -1,6 +1,7 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.constants.LatLonRadiusUnit;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -57,6 +58,11 @@ public class FileBasedLatLongTargetingMatcher implements TargetingMatcher {
 
             TargetingProfile targetingProfile = adEntity.getTargetingProfile();
             String[] latlonFileArray = targetingProfile.getLatLonFileIdArray();
+            LatLonRadiusUnit llRUnit=LatLonRadiusUnit.getEnum(targetingProfile.getLat_lon_radius_unit());
+            if(llRUnit==null){
+            	llRUnit = LatLonRadiusUnit.MILES;
+            }
+
 
             if( null == latlonFileArray || latlonFileArray.length ==0 )
             {
@@ -68,7 +74,7 @@ public class FileBasedLatLongTargetingMatcher implements TargetingMatcher {
             {if(fileBasedLatLonDetectionCache.doesLatLonExistsinLatLonFiles(
                             request.getRequestingLatitudeValue(),
                             request.getRequestingLongitudeValue(),
-                            latlonFileArray
+                            latlonFileArray, llRUnit
                     )
                     )
             {
