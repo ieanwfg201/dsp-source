@@ -44,7 +44,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.kritter.ex_int</groupId>
+      <groupId>com.kritter.entity</groupId>
       <artifactId>entity_openrtb_2_3</artifactId>
       <version>1.0.0</version>
       <scope>compile</scope>
