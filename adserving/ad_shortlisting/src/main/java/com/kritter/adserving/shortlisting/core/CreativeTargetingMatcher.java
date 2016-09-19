@@ -482,7 +482,7 @@ public class CreativeTargetingMatcher
                     isRichmediaAllowed = false;
 
                 //if richmedia allowed, check if handset is compatible with javascript
-                if(request.getHandsetMasterData().isDeviceJavascriptCompatible())
+                if(null != request.getHandsetMasterData() && request.getHandsetMasterData().isDeviceJavascriptCompatible())
                 {
                     // Rich media not allowed, skip this ad.
                     if(!isRichmediaAllowed) {

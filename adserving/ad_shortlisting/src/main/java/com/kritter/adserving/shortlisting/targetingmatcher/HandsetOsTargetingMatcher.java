@@ -44,7 +44,10 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
 
         ReqLog.requestDebug( request, "Inside filterAdIdsForHandsetOS of AdTargetingMatcher");
 
-        HandsetMasterData handsetMasterData = (HandsetMasterData) context.getValue(contextHandsetMasterDataKey);
+        HandsetMasterData handsetMasterData = null;
+
+        if(null != context.getValue(contextHandsetMasterDataKey))
+            handsetMasterData = (HandsetMasterData) context.getValue(contextHandsetMasterDataKey);
 
         Set<Integer> filteredAdIds = new HashSet<Integer>();
 
@@ -74,12 +77,21 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
 
                 Map<String,String> osMap = targetingProfile.getTargetedOSJsonMap();
 
-                String handsetOSId = String.valueOf(handsetMasterData.getDeviceOperatingSystemId());
+                String handsetOSId = null;
+                if(null != handsetMasterData && null != handsetMasterData.getDeviceOperatingSystemId())
+                    handsetOSId = String.valueOf(handsetMasterData.getDeviceOperatingSystemId());
 
                 if(null == osMap || osMap.size() == 0)
                 {
                     ReqLog.debugWithDebug(logger, request, "The adId is not OS targeted,so passing the adId: {} ",adEntity.getAdGuid());
                     filteredAdIds.add(adId);
+                    continue;
+                }
+
+                /*Here it means ad targets operating system, so no use going further.*/
+                if(null == handsetOSId)
+                {
+                    ReqLog.debugWithDebug(logger, request, "The requesting handset has null operating system,but ad targets OS, skipping adId: {} " ,adEntity.getAdGuid());
                     continue;
                 }
 
@@ -100,7 +112,17 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
 
                 String minVersion = osVersions[0];
                 String maxVersion = osVersions[1];
-                String handsetOsVersion = handsetMasterData.getDeviceOperatingSystemVersion();
+
+                String handsetOsVersion = null;
+
+                if(null != handsetMasterData && null != handsetMasterData.getDeviceOperatingSystemVersion())
+                    handsetOsVersion = handsetMasterData.getDeviceOperatingSystemVersion();
+
+                if(null == handsetOsVersion)
+                {
+                    ReqLog.debugWithDebug(logger, request, "The osversion could not be detected,ad : {} targets os version , skipping it ", adEntity.getAdGuid());
+                    continue;
+                }
 
                 Version minVersionValue = new Version(minVersion);
                 Version maxVersionValue = new Version(maxVersion);

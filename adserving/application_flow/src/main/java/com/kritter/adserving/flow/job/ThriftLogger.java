@@ -184,24 +184,36 @@ public class ThriftLogger implements Job {
 
             if(null!=request.getHandsetMasterData() && null!=request.getHandsetMasterData().getInternalId())
                 adservingRequestResponse.setDeviceId(request.getHandsetMasterData().getInternalId());
+            else
+                adservingRequestResponse.setDeviceId(-1L);
 
             if(null!=request.getHandsetMasterData() && null!=request.getHandsetMasterData().getManufacturerId())
                 adservingRequestResponse.setDeviceManufacturerId(request.getHandsetMasterData().getManufacturerId());
+            else
+                adservingRequestResponse.setDeviceManufacturerId(-1);
 
             if(null!=request.getHandsetMasterData() && null!=request.getHandsetMasterData().getModelId())
                 adservingRequestResponse.setDeviceModelId(request.getHandsetMasterData().getModelId());
+            else
+                adservingRequestResponse.setDeviceModelId(-1);
 
             if(null!=request.getHandsetMasterData() &&
                     null!=request.getHandsetMasterData().getDeviceOperatingSystemId())
                 adservingRequestResponse.setDeviceOsId(request.getHandsetMasterData().getDeviceOperatingSystemId());
+            else
+                adservingRequestResponse.setDeviceOsId(-1);
 
             if(null!=request.getHandsetMasterData() &&
                     null!=request.getHandsetMasterData().getDeviceBrowserId())
                 adservingRequestResponse.setBrowserId(request.getHandsetMasterData().getDeviceBrowserId());
+            else
+                adservingRequestResponse.setBrowserId(-1);
 
             /*set device type*/
             if(null!=request.getHandsetMasterData() && null!=request.getHandsetMasterData().getDeviceType())
                 adservingRequestResponse.setDeviceType(request.getHandsetMasterData().getDeviceType().getCode());
+            else
+                adservingRequestResponse.setDeviceType((short)-1);
 
             if(null!=request.getCountry())
                 adservingRequestResponse.setDetectedCountryId(request.getCountry().getCountryInternalId());

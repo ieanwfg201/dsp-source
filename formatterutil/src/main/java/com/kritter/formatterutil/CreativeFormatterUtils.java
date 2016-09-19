@@ -95,9 +95,6 @@ public class CreativeFormatterUtils
         //handset is done inside request enrichers.
         HandsetMasterData handsetMasterData = request.getHandsetMasterData();
 
-        if(null == handsetMasterData)
-            return null;
-
         //For fraud check logic in postimpression,check for deviceId first,
         //if not equal then check for manufacturer and model to be equal.
         //Reason being just in case new handset dataloading happens first
@@ -116,11 +113,26 @@ public class CreativeFormatterUtils
         //postimpression server is different from adserving.)Otherwise
         //in case of same server the synch issue couldbe very less or not
         //at all.
-        Long deviceId = handsetMasterData.getInternalId();
-        int manufacturerId = handsetMasterData.getManufacturerId();
-        int modelId = handsetMasterData.getModelId();
-        int osId = handsetMasterData.getDeviceOperatingSystemId();
-        int browserId = handsetMasterData.getDeviceBrowserId();
+        Long deviceId = -1L;
+
+        if(null != handsetMasterData)
+            deviceId = handsetMasterData.getInternalId();
+
+        int manufacturerId = -1;
+        if(null != handsetMasterData)
+            manufacturerId = handsetMasterData.getManufacturerId();
+
+        int modelId = -1;
+        if(null != handsetMasterData)
+            modelId = handsetMasterData.getModelId();
+
+        int osId = -1;
+        if(null != handsetMasterData)
+            osId = handsetMasterData.getDeviceOperatingSystemId();
+
+        int browserId = -1;
+        if(null != handsetMasterData)
+            browserId = handsetMasterData.getDeviceBrowserId();
 
         Integer siteId = request.getSite().getSiteIncId();
         short supplySourceWapOrApp = -1;
