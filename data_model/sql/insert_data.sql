@@ -785,3 +785,8 @@ insert into inclusion_exclusion_type (id, name) values
 (1, "Inclusion"),
 (2, "Exclusion")
 ON DUPLICATE KEY UPDATE id = VALUES(id);
+
+insert into payout_threshold_metadata (name, value) values
+("campaign_absolute_payout_threshold", 2.5),
+("campaign_percentage_payout_threshold", 0.10)
+ON DUPLICATE KEY UPDATE name = VALUES(name);

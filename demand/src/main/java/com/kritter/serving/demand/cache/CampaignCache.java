@@ -28,8 +28,6 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
 
     private static Logger logger = LoggerFactory.getLogger("cache.logger");
     @Getter private final String name;
-    @Getter private final Double absolutePayoutThreshold;
-    @Getter private final Double percentPayoutThreshold;
 
     public CampaignCache(List<Class> secIndexKeyClassList, Properties props,
                          DatabaseManager dbMgr, String cacheName)
@@ -37,8 +35,6 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
     {
         super(secIndexKeyClassList, logger, props, dbMgr);
         this.name = cacheName;
-        this.absolutePayoutThreshold = Double.parseDouble(props.getProperty(ABSOLUTE_PAYOUT_THRESHOLD_KEY));
-        this.percentPayoutThreshold = Double.parseDouble(props.getProperty(PERCENT_PAYOUT_THRESHOLD_KEY));
     }
 
     @Override
@@ -79,12 +75,21 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
             if(impressionCap != 0 && impressionsAccrued >= impressionCap)
                 isMarkedForDeletion = true;
 
+            double absolutePayoutThreshold = resultSet.getDouble("cmpgn_abs_threshold");
+            double percentPayoutThreshold = resultSet.getDouble("cmpgn_percent_threshold");
+
             // If the campaign payout has already hit the limit, don't serve it any more
             Double campaignBurn = campaignDailyBudget - dailyBudgetRemaining;
+            logger.debug("Daily burn for campaign id : {} = {}. Payout = {}", id, campaignBurn, campaignPayout);
             if(campaignBurn + absolutePayoutThreshold < campaignPayout) {
                 isMarkedForDeletion = true;
+                logger.debug("Payout for this campaign exceeds burn by more than the absolute threshold : {}. Not " +
+                        "loading it in memory.", absolutePayoutThreshold);
             } else if((campaignPayout - campaignBurn) > (percentPayoutThreshold * campaignDailyBudget) / 100) {
                 isMarkedForDeletion = true;
+                logger.debug("Payout for this campaign exceeds burn by more than relative threshold. Percentage " +
+                        "threshold = {}%, {}$.", percentPayoutThreshold,
+                        (percentPayoutThreshold * campaignDailyBudget) / 100);
             }
 
             Long updateTime = resultSet.getTimestamp("last_modified").getTime();

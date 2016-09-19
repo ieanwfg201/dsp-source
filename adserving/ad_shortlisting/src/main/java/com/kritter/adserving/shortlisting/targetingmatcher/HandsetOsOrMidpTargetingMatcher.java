@@ -46,7 +46,10 @@ public class HandsetOsOrMidpTargetingMatcher implements TargetingMatcher {
 
         ReqLog.requestDebug(request, "Inside checkAdIdsForHandsetOsOrMidp of AdTargetingMatcher");
 
-        HandsetMasterData handsetMasterData = (HandsetMasterData) context.getValue(contextHandsetMasterDataKey);
+        HandsetMasterData handsetMasterData = null;
+
+        if(null != context.getValue(contextHandsetMasterDataKey))
+            handsetMasterData = (HandsetMasterData) context.getValue(contextHandsetMasterDataKey);
 
         Set<Integer> filteredAdIds = new HashSet<Integer>();
 
@@ -77,7 +80,10 @@ public class HandsetOsOrMidpTargetingMatcher implements TargetingMatcher {
 
                 Map<String,String> osMap = targetingProfile.getTargetedOSJsonMap();
 
-                String handsetOSId = String.valueOf(handsetMasterData.getDeviceOperatingSystemId());
+                String handsetOSId = null;
+
+                if(null != handsetMasterData)
+                    handsetOSId = String.valueOf(handsetMasterData.getDeviceOperatingSystemId());
 
                 if(null == osMap || osMap.size() == 0)
                 {
@@ -87,21 +93,29 @@ public class HandsetOsOrMidpTargetingMatcher implements TargetingMatcher {
                 }
 
                 //check if request is midp and ad targets corresponding midp version.
-                Boolean requestingHandsetIsMidp1 = handsetMasterData.getHandsetCapabilityObject().getMidp1();
-                Boolean requestingHandsetIsMidp2 = handsetMasterData.getHandsetCapabilityObject().getMidp2();
-                if(requestingHandsetIsMidp1 == null){
-                	requestingHandsetIsMidp1 = false;
-                }
-                if(requestingHandsetIsMidp2 == null){
-                	requestingHandsetIsMidp2 = false;
-                }
+                Boolean requestingHandsetIsMidp1 = false;
+                if(
+                    null != handsetMasterData &&
+                    null != handsetMasterData.getHandsetCapabilityObject() &&
+                    null != handsetMasterData.getHandsetCapabilityObject().getMidp1()
+                  )
+                    requestingHandsetIsMidp1 = handsetMasterData.getHandsetCapabilityObject().getMidp1();
+
+                Boolean requestingHandsetIsMidp2 = false;
+                if(
+                    null != handsetMasterData &&
+                    null != handsetMasterData.getHandsetCapabilityObject() &&
+                    null != handsetMasterData.getHandsetCapabilityObject().getMidp1()
+                  )
+                    requestingHandsetIsMidp2 = handsetMasterData.getHandsetCapabilityObject().getMidp2();
+
                 ReqLog.debugWithDebug(logger, request, "Handset's Midp1 value : {} ",requestingHandsetIsMidp1);
 
                 ReqLog.debugWithDebug(logger, request, "Handset's Midp2 value : {} ",requestingHandsetIsMidp2);
 
                 if(
-                        (requestingHandsetIsMidp1 && osMap.containsKey(MIDP_1)) || (requestingHandsetIsMidp2 && osMap.containsKey(MIDP_2))
-                        )
+                    (requestingHandsetIsMidp1 && osMap.containsKey(MIDP_1)) || (requestingHandsetIsMidp2 && osMap.containsKey(MIDP_2))
+                  )
                 {
 
                     ReqLog.debugWithDebug(logger, request, "The requesting handset is midp enabled, adId {} passes the midp version targeted..",adEntity.getAdGuid());
@@ -126,7 +140,16 @@ public class HandsetOsOrMidpTargetingMatcher implements TargetingMatcher {
 
                 String minVersion = osVersions[0];
                 String maxVersion = osVersions[1];
-                String handsetOsVersion = handsetMasterData.getDeviceOperatingSystemVersion();
+                String handsetOsVersion = null;
+
+                if(null != handsetMasterData && null != handsetMasterData.getDeviceOperatingSystemVersion())
+                    handsetOsVersion = handsetMasterData.getDeviceOperatingSystemVersion();
+
+                if(null == handsetOsVersion)
+                {
+                    ReqLog.debugWithDebug(logger, request, "The osversion could not be detected,ad : {} targets os version , skipping it ", adEntity.getAdGuid());
+                    continue;
+                }
 
                 Version minVersionValue = new Version(minVersion);
                 Version maxVersionValue = new Version(maxVersion);

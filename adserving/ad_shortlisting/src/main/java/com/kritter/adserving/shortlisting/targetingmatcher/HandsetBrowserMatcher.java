@@ -49,7 +49,9 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
         logger.info("Inside filterAdIdsForHandsetBrowser of AdTargetingMatcher");
         ReqLog.requestDebug(request, "Inside filterAdIdsForHandsetBrowser of AdTargetingMatcher");
 
-        HandsetMasterData handsetMasterData = (HandsetMasterData) context.getValue(contextHandsetMasterDataKey);
+        HandsetMasterData handsetMasterData = null;
+        if(null != context.getValue(contextHandsetMasterDataKey))
+            handsetMasterData = (HandsetMasterData) context.getValue(contextHandsetMasterDataKey);
 
         Set<Integer> filteredAdIds = new HashSet<Integer>();
         try
@@ -78,13 +80,23 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
 
                 Map<String,String> browserMap = targetingProfile.getTargetedBrowserJsonMap();
 
-                String handsetBrowserId = String.valueOf(handsetMasterData.getDeviceBrowserId());
+                String handsetBrowserId = null;
+                if(handsetMasterData != null && 
+                		null != handsetMasterData.getDeviceBrowserId())
+                    handsetBrowserId = String.valueOf(handsetMasterData.getDeviceBrowserId());
+
                 ReqLog.debugWithDebug(logger, request, "Requesting browserId is: {} ", handsetBrowserId);
 
                 if(null == browserMap || browserMap.size() == 0)
                 {
                     ReqLog.debugWithDebug(logger, request, "The ad id is not browser targeted,so passing the adId: {} ",adEntity.getAdGuid());
                     filteredAdIds.add(adId);
+                    continue;
+                }
+
+                if(null == handsetBrowserId)
+                {
+                    ReqLog.debugWithDebug(logger, request, "The requesting browser is null ,ad targets browser ,skipping adId: {} ",adEntity.getAdGuid());
                     continue;
                 }
 
@@ -98,8 +110,10 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
 
                 String browserVersions[] = browserMap.get(handsetBrowserId).split(DASH);
 
-                if(browserVersions[0].equalsIgnoreCase(ALL_VERSIONS) ||
-                        browserVersions[1].equalsIgnoreCase(ALL_VERSIONS))
+                if(
+                   browserVersions[0].equalsIgnoreCase(ALL_VERSIONS) ||
+                   browserVersions[1].equalsIgnoreCase(ALL_VERSIONS)
+                  )
                 {
                     ReqLog.debugWithDebug(logger, request, "The ad id is targeted to all browser versions so passing the adId: {} ",adEntity.getAdGuid());
                     filteredAdIds.add(adId);

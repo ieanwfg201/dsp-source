@@ -1473,3 +1473,17 @@ alter table ad_position modify adposid varchar(128) NOT NULL;
 
 alter table targeting_profile add column lat_lon_radius_unit int(11) default 0 after deviceid_file;
 
+CREATE TABLE IF NOT EXISTS `campaign_payout_threshold`
+(
+    `campaign_id` INTEGER UNSIGNED NOT NULL,
+    `absolute_threshold` FLOAT DEFAULT NULL, -- Absolute paytout threshold
+    `percentage_threshold` FLOAT DEFAULT NULL, -- Percentage payout threshold
+    `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `payout_threshold_metadata`
+(
+    `name` VARCHAR(100) UNIQUE NOT NULL,
+    `value` FLOAT NOT NULL DEFAULT 0,
+    `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;

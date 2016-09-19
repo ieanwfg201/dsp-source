@@ -40,8 +40,10 @@ public class MidpVersionTargetingMatcher implements TargetingMatcher {
 
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
 
-        HandsetMasterData handsetMasterData = (HandsetMasterData) context.getValue(contextHandsetMasterDataKey);
+        HandsetMasterData handsetMasterData = null;
 
+        if(null != context.getValue(contextHandsetMasterDataKey))
+            handsetMasterData = (HandsetMasterData) context.getValue(contextHandsetMasterDataKey);
 
         for(Integer adId : adIdSet)
         {
@@ -57,20 +59,36 @@ public class MidpVersionTargetingMatcher implements TargetingMatcher {
 
             MidpValue midpValueTargeted = targetingProfile.getMidpTargetingValue();
 
-            Boolean requestingHandsetIsMidp1 = handsetMasterData.getHandsetCapabilityObject().getMidp1();
-            Boolean requestingHandsetIsMidp2 = handsetMasterData.getHandsetCapabilityObject().getMidp2();
+            Boolean requestingHandsetIsMidp1 = false;
 
             if(
-                    (midpValueTargeted.getCode() == MidpValue.MIDP_1.getCode()) &&
-                            (requestingHandsetIsMidp1 || requestingHandsetIsMidp2)
-                    )
+               null != handsetMasterData &&
+               null != handsetMasterData.getHandsetCapabilityObject() &&
+               null != handsetMasterData.getHandsetCapabilityObject().getMidp1()
+              )
+                requestingHandsetIsMidp1 = handsetMasterData.getHandsetCapabilityObject().getMidp1();
+
+            Boolean requestingHandsetIsMidp2 = false;
+
+            if(
+               null != handsetMasterData &&
+               null != handsetMasterData.getHandsetCapabilityObject() &&
+               null != handsetMasterData.getHandsetCapabilityObject().getMidp2()
+              )
+
+                requestingHandsetIsMidp2 = handsetMasterData.getHandsetCapabilityObject().getMidp2();
+
+            if(
+                (midpValueTargeted.getCode() == MidpValue.MIDP_1.getCode()) &&
+                (requestingHandsetIsMidp1 || requestingHandsetIsMidp2)
+              )
             {
                 shortlistedAdIdSet.add(adId);
             }
             else if(
-                    (midpValueTargeted.getCode() == MidpValue.MIDP_2.getCode()) &&
-                            requestingHandsetIsMidp2
-                    )
+                     (midpValueTargeted.getCode() == MidpValue.MIDP_2.getCode()) &&
+                      requestingHandsetIsMidp2
+                   )
             {
                 shortlistedAdIdSet.add(adId);
             }

@@ -99,13 +99,13 @@ public class ChannelTargetingMatcher implements TargetingMatcher {
 			boolean channelTargeted=false;
 			if(tpExt != null && tpExt.getChannel_tier1() != null && tpExt.getChannel_tier1().size()>0){
 				channelTargeted=true;
-				if(tpExt.getChannel_tier1().contains(internalFirstLevelId)){
+				if(internalFirstLevelId != null && tpExt.getChannel_tier1().contains(internalFirstLevelId)){
 					found=true;
 				}
 			}
 			if(tpExt != null && tpExt.getChannel_tier2() != null && tpExt.getChannel_tier2().size()>0){
 				channelTargeted=true;
-				if(tpExt.getChannel_tier2().contains(internalSecondLevelId)){
+				if(internalSecondLevelId != null && tpExt.getChannel_tier2().contains(internalSecondLevelId)){
 					found=true;
 				}
 			}

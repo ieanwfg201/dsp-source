@@ -155,26 +155,24 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
             userAgent = youkuBidRequestDeviceDTO.getDeviceUserAgent();
         }
 
-        if(null == userAgent)
-            throw new Exception("User Agent absent in bidrequest inside YoukuRequestEnricher, cannot proceed....");
 
-        HandsetMasterData handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
+        HandsetMasterData handsetMasterData = null;
+        if(userAgent != null && !userAgent.isEmpty()){        		
+        	handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
+        }
 
         if(null == handsetMasterData)
         {
-            this.logger.error("Device detection failed inside YoukuRequestEnricher, cannot proceed further");
-            request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_UNDETECTED);
-            return request;
+            this.logger.debug("Device detection failed inside YoukuRequestEnricher, proceeding with  undetected handset");
+        }else {
+        	logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
+        	if(handsetMasterData.isBot())
+        	{
+        		this.logger.error("Device detected is BOT inside YoukuRequestEnricher, cannot proceed further");
+            	request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
+            		return request;
+        	}
         }
-        if(handsetMasterData.isBot())
-        {
-            this.logger.error("Device detected is BOT inside YoukuRequestEnricher, cannot proceed further");
-            request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
-            return request;
-        }
-
-        logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
-
         request.setHandsetMasterData(handsetMasterData);
 
         /*******************************DETECT COUNTRY CARRIER USING MNC MCC or IP*****************************/
@@ -189,12 +187,12 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
 
         /******************************************* ip extraction and connection type detection*********************/
         String ip = youkuBidRequestDeviceDTO.getIpV4AddressClosestToDevice();
-        if(null == ip)
+        if(null == ip || ip.isEmpty())
         {
+        	ip=ip.trim();
         	ip = youkuBidRequestDeviceDTO.getIpV6Address();
-        	if(ip == null){
-        		logger.error("Country and InternetServiceProvider could not be detected inside YoukuRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
-        		throw new Exception("Country and InternetServiceProvider could not be detected inside YoukuRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
+        	if(ip == null || ip.isEmpty()){
+        		logger.debug("Country and InternetServiceProvider could not be detected inside YoukuRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
         	}
         }
 
@@ -217,7 +215,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
 
 
         //if mnc mcc not present or location not detected use ip address to find location.
-        if(null == countryIspUiDataUsingMccMnc)
+        if(null == countryIspUiDataUsingMccMnc && ip !=null && !ip.isEmpty())
         {
             logger.debug("No entry could be found for mcc-mnc combination: {} , using ip: {} , for location detection. "
                          ,mncMccCode,ip);
@@ -438,7 +436,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         }
         catch (Exception e)
         {
-            logger.error("Exception inside AmobeeRequestEnricher in fetching country " , e);
+            logger.error("Exception inside YoukuRequestEnricher in fetching country " , e);
         }
 
         return country;
@@ -454,7 +452,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         }
         catch (Exception e)
         {
-            logger.error("Exception inside AmobeeRequestEnricher in fetching isp ",e);
+            logger.error("Exception inside YoukuRequestEnricher in fetching isp ",e);
         }
 
         return internetServiceProvider;
