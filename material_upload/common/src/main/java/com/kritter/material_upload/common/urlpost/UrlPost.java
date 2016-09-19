@@ -25,6 +25,7 @@ public class UrlPost {
             conn.setReadTimeout(10000);
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type","application/json");
             os = conn.getOutputStream();
             os.write(postBody.getBytes());
             os.flush();

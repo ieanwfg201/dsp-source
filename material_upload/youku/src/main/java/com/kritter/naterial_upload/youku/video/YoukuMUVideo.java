@@ -300,7 +300,7 @@ public class YoukuMUVideo implements MUVideo {
 							properties.getProperty("youku_refreshToken").toString(), 
 							properties.getProperty("youku_token_url").toString(), 
 							properties.getProperty("file_path_prefix").toString()+localEntity.getResource_uri(), 
-							localEntity.getCreativeName(),localEntity.getCreativeName());
+							localEntity.getCreativeName(),"广告");
 					if(ynvu.getVideoid()!=null && !ynvu.getVideoid().equals("")){
 						String youkuUrl = properties.getProperty("youku_video_url").toString().replaceAll("<videoid>", ynvu.getVideoid());
 						localEntity.setYoukuurl(youkuUrl);
