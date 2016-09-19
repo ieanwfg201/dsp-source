@@ -786,6 +786,14 @@ insert into inclusion_exclusion_type (id, name) values
 (2, "Exclusion")
 ON DUPLICATE KEY UPDATE id = VALUES(id);
 
+INSERT INTO account (guid,STATUS,type_id,NAME,userid,PASSWORD,email,address,country,city,phone,modified_by,created_on,last_modified, inventory_source, company_name) VALUES
+    ('cloudcross',1,2,'cloudcross','cloudcross','$2a$10$NRxVckXVGU0gzk77jIBIZOgdgUwoNwylRqHERcjBAPKv4pAhFokZu','cloudcross@cloudcross.com','','China','Shanghai','0123456',1,NOW(),NOW(),2,'cloudcross')
+ON DUPLICATE KEY UPDATE id = VALUES(id);
+
+INSERT INTO site (guid,NAME,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) VALUES
+    ('cloudcross','cloudcross',(SELECT id FROM account WHERE guid='cloudcross'),'cloudcross','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,NOW(),1,'')
+ON DUPLICATE KEY UPDATE id = VALUES(id);
+
 insert into payout_threshold_metadata (name, value) values
 ("campaign_absolute_payout_threshold", 2.5),
 ("campaign_percentage_payout_threshold", 0.10)
