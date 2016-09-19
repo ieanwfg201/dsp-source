@@ -1,6 +1,10 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.constants.FreqDuration;
+import com.kritter.constants.FreqEventType;
+import com.kritter.entity.freqcap_entity.FreqCap;
+import com.kritter.entity.freqcap_entity.FreqDef;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
 import com.kritter.entity.reqres.log.ReqLog;
@@ -46,7 +50,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
      * @param adIdSet Set of ids of all ads
      * @return Set of ad ids which don't have frequency capping
      */
-    private Set<Integer> getNonFrequencyCappedAds(Set<Integer> adIdSet) {
+    private Set<Integer> getNonFrequencyCappedAds(Set<Integer> adIdSet, Request request) {
         if(adIdSet == null || adIdSet.size() == 0)
             return adIdSet;
 
@@ -54,7 +58,8 @@ public class FrequencyCapFilter implements TargetingMatcher {
         for(Integer adId : adIdSet) {
             AdEntity adEntity = this.adEntityCache.query(adId);
 
-            if(!adEntity.isFrequencyCapped()) {
+            int[] frequencyCapDetails = getFrequencyCapDetailsForAd(adEntity, request);
+            if(frequencyCapDetails == null) {
                 adIdSetToReturn.add(adId);
             }
         }
@@ -67,7 +72,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
      * @param adIdSet Set of ids of all ads
      * @return Set of ad ids which don't have frequency capping
      */
-    private Set<Integer> getFrequencyCappedAds(Set<Integer> adIdSet) {
+    private Set<Integer> getFrequencyCappedAds(Set<Integer> adIdSet, Request request) {
         if(adIdSet == null || adIdSet.size() == 0)
             return new HashSet<Integer>();
 
@@ -75,7 +80,8 @@ public class FrequencyCapFilter implements TargetingMatcher {
         for(Integer adId : adIdSet) {
             AdEntity adEntity = this.adEntityCache.query(adId);
 
-            if(adEntity.isFrequencyCapped()) {
+            int[] frequencyCapDetails = getFrequencyCapDetailsForAd(adEntity, request);
+            if(frequencyCapDetails != null) {
                 adIdSetToReturn.add(adId);
             }
         }
@@ -115,6 +121,40 @@ public class FrequencyCapFilter implements TargetingMatcher {
         return adToTimestampMap;
     }
 
+    private int[] getFrequencyCapDetailsForAd(AdEntity adEntity, Request request) {
+        int maxCap = -1;
+        int timeWindowInHour = -1;
+        FreqCap freqCap = adEntity.getFrequencyCap();
+        if(freqCap != null && freqCap.getFDef() != null) {
+            if(!adEntity.getFrequencyCap().getFDef().containsKey(FreqEventType.IMP)) {
+                ReqLog.debugWithDebug(logger, request, "Ad id : {} has empty frequency cap object");
+                return null;
+            }
+            Set<FreqDef> freqDefs = freqCap.getFDef().get(FreqEventType.IMP);
+            for(FreqDef def : freqDefs) {
+                if(def.getDuration() == FreqDuration.BYHOUR) {
+                    maxCap = def.getCount();
+                    timeWindowInHour = def.getHour();
+                } else if(def.getDuration() == FreqDuration.BYDAY) {
+                    maxCap = def.getCount();
+                    timeWindowInHour = def.getHour() * 24;
+                }
+            }
+        }
+
+        if(maxCap == -1) {
+            ReqLog.debugWithDebug(logger, request, "Ad id : {} specifies frequency cap but not impression cap.");
+            return null;
+        }
+
+        int[] result = new int[2];
+        result[0] = maxCap;
+        result[1] = timeWindowInHour;
+        ReqLog.debugWithDebug(logger, request, "Ad id : {} specifies impression cap, maximum cap = {} and time " +
+                "window = {}.", maxCap, timeWindowInHour);
+        return result;
+    }
+
     /**
      * Function that gets user's history in a map from ad id to list of impression times and returns whether the ad is
      * eligible for serving.
@@ -125,7 +165,8 @@ public class FrequencyCapFilter implements TargetingMatcher {
      * @param adToTimestampMap Recent impression history for user
      * @return if the ad is eligible to be shown to the user
      */
-    private boolean isFreqCappedAdEligibleForUser(int adId, Map<Integer, List<Long>> adToTimestampMap) {
+    private boolean isFreqCappedAdEligibleForUser(int adId, Map<Integer, List<Long>> adToTimestampMap,
+                                                  Request request) {
         AdEntity adEntity = this.adEntityCache.query(adId);
 
         if (null == adEntity) {
@@ -133,18 +174,25 @@ public class FrequencyCapFilter implements TargetingMatcher {
             return false;
         }
 
-        // If ad is not frequency capped, then obviously eligible
-        if(!adEntity.isFrequencyCapped()) {
-            return true;
-        }
 
         if(adToTimestampMap == null) {
             return true;
         }
 
         long currentTime = System.currentTimeMillis();
-        int maxCap = adEntity.getMaxCap();
-        int timeWindowInHour = adEntity.getFrequencyCapTimeWindowInHours();
+
+        int maxCap = -1;
+        int timeWindowInHour = -1;
+        int[] frequencyCapDetails = getFrequencyCapDetailsForAd(adEntity, request);
+        if(frequencyCapDetails != null) {
+            maxCap = frequencyCapDetails[0];
+            timeWindowInHour = frequencyCapDetails[1];
+        }
+
+        if(maxCap == -1) {
+            ReqLog.debugWithDebug(logger, request, "Ad id : {} is not frequency capped. Passing this ad", adId);
+            return true;
+        }
 
         long beginTime = currentTime - (timeWindowInHour * HOUR_TO_MILLISECONDS_UNIT);
 
@@ -189,7 +237,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
         // User history cache is unavailable. Drop all the frequency capped ads since we don't have any user
         // related information.
         if(kritterUserId == null || null == recentHistoryProvider) {
-            Set<Integer> frequencyCappedAds = getFrequencyCappedAds(adIdSet);
+            Set<Integer> frequencyCappedAds = getFrequencyCappedAds(adIdSet, request);
             for(Integer adId : frequencyCappedAds) {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);
@@ -203,7 +251,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
                     "frequency capped ads");
             }
 
-            Set<Integer> shortlistedAdIdSet = getNonFrequencyCappedAds(adIdSet);
+            Set<Integer> shortlistedAdIdSet = getNonFrequencyCappedAds(adIdSet, request);
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
                 request.setNoFillReason(noFillReason);
             return shortlistedAdIdSet;
@@ -239,7 +287,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
             }
 
             for (Integer adId : adIdSet) {
-                if(isFreqCappedAdEligibleForUser(adId, adToTimestampMap)) {
+                if(isFreqCappedAdEligibleForUser(adId, adToTimestampMap, request)) {
                     ReqLog.debugWithDebug(logger,request, "Ad id {} eligible to serve on user : {}", adId,
                             kritterUserId);
                     adIdSetToReturn.add(adId);
@@ -252,13 +300,13 @@ public class FrequencyCapFilter implements TargetingMatcher {
             logger.error("Exception occur while trying to fetch user history. {}", e);
             ReqLog.debugWithDebug(logger,request, "Exception inside FrequencyCapFilter reason: {}  ", e);
 
-            Set<Integer> frequencyCappedAds = getFrequencyCappedAds(adIdSet);
+            Set<Integer> frequencyCappedAds = getFrequencyCappedAds(adIdSet, request);
             for(Integer adId : frequencyCappedAds) {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);
             }
 
-            Set<Integer> shortlistedAdIdSet = getNonFrequencyCappedAds(adIdSet);
+            Set<Integer> shortlistedAdIdSet = getNonFrequencyCappedAds(adIdSet, request);
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
                 request.setNoFillReason(noFillReason);
             return shortlistedAdIdSet;

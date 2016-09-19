@@ -56,6 +56,9 @@
                 <ref bean="user_id_inc_exc_filter"/>
                 <ref bean="lifetime_ad_imp_filter"/>
                 <ref bean="lifetime_ad_click_filter"/>
+                <ref bean="lifetime_camapaign_imp_filter"/>
+                <ref bean="lifetime_camapaign_click_filter"/>
+                <ref bean="click_cap_filter"/>
             </list>
         </constructor-arg>
     </bean>

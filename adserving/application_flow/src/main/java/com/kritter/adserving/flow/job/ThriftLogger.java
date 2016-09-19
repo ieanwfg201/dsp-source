@@ -477,7 +477,20 @@ public class ThriftLogger implements Job {
             }else{
             	adservingRequestResponse.setChannelId(ApplicationGeneralUtils.DEFAULT_CHANNEL_ID);
             }
-            
+
+            /*********************************** Persist bid prices offered by DSPs**********************************/
+            if(null != request.getSite())
+            adservingRequestResponse.setBidFloor(request.getSite().getEcpmFloorValue());
+
+            if(
+               null != request.getDspBidPriceResponseForExchangeRequest() &&
+               request.getDspBidPriceResponseForExchangeRequest().size() > 0
+              )
+            {
+                adservingRequestResponse.setDsp_bid_price(request.getDspBidPriceResponseForExchangeRequest());
+            }
+            /********************************************************************************************************/
+
             try
             {
                 TSerializer thriftSerializer = new TSerializer();

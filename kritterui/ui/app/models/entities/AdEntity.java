@@ -65,6 +65,7 @@ public class AdEntity extends Entity{
     private String external_click_tracker = "";
     private String clickMacro = "[]";
     private int clickMacroQuote = 0;
+    private int extclickType = 1;
     private String mma_tier_1_list = "[]";
     private String mma_tier_2_list = "[]";
     private boolean click_freq_cap = false;
@@ -382,6 +383,12 @@ public class AdEntity extends Entity{
 	}
 	public void setClickMacroQuote(int clickMacroQuote) {
 		this.clickMacroQuote = clickMacroQuote;
+	}
+    public int getExtclickType() {
+		return extclickType;
+	}
+	public void setExtclickType(int extclickType) {
+		this.extclickType = extclickType;
 	}
 
     public Ad getEntity(){

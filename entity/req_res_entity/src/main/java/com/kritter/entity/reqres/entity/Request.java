@@ -173,6 +173,9 @@ public class Request
     @Getter @Setter
     private Boolean doNotTrack;
 
+    /*This map would contain bid price values from DSPs*/
+    @Getter @Setter
+    private Map<String,Double> dspBidPriceResponseForExchangeRequest;
 
     //contains all request enrichment related error codes.
     public enum REQUEST_ENRICHMENT_ERROR_CODE
@@ -387,5 +390,21 @@ public class Request
             return false;
 
         return secureRequired.booleanValue();
+    }
+
+    public void addBidPriceOfferedByDSPForExchangeRequest(String dspGuid,Double bidPriceOfferedByDsp)
+    {
+        if(null == this.dspBidPriceResponseForExchangeRequest)
+            this.dspBidPriceResponseForExchangeRequest = new HashMap<String, Double>();
+
+        this.dspBidPriceResponseForExchangeRequest.put(dspGuid,bidPriceOfferedByDsp);
+    }
+
+    public Double fetchBidPriceOfferedByDSP(String dspGuid)
+    {
+        if(null == this.dspBidPriceResponseForExchangeRequest || null == dspGuid)
+            return null;
+
+        return this.dspBidPriceResponseForExchangeRequest.get(dspGuid);
     }
 }

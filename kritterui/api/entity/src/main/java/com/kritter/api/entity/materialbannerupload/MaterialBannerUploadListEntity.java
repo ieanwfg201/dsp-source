@@ -29,7 +29,7 @@ public class MaterialBannerUploadListEntity {
 	@Getter@Setter
     private String id_list = null;
 	@Getter@Setter
-    /** @see com.kritter.constants.AdpositionGetQueryEnum  mandatory - type of action available */
+    /** @see com.kritter.constants.MaterialBannerUploadQueryEnum  mandatory - type of action available */
     private MaterialBannerUploadQueryEnum queryEnum = MaterialBannerUploadQueryEnum.list_material_banner;
 	@Getter@Setter
     private AdxBasedExchangesStates adxstate = AdxBasedExchangesStates.BRINGINQUEUE;

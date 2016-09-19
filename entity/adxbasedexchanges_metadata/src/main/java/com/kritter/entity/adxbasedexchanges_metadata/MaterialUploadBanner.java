@@ -25,9 +25,25 @@ public class MaterialUploadBanner
     @Getter@Setter
     private Integer advIncId;
     @Getter@Setter
+    private String advName;
+    @Getter@Setter
     private Integer campaignId;
     @Getter@Setter
+    private String campaignName;
+    @Getter@Setter
+    private Integer campaignStatus;
+    @Getter@Setter
     private Integer adId;
+    @Getter@Setter
+    private String adName;
+    @Getter@Setter
+    private Integer adStatus;
+    @Getter@Setter
+    private Integer creativeId;
+    @Getter@Setter
+    private String creativeName;
+    @Getter@Setter
+    private Integer creativeStatus;
     @Getter@Setter
     private Integer bannerId;
     @Getter@Setter
@@ -36,6 +52,8 @@ public class MaterialUploadBanner
     private String info = "";
     @Getter@Setter
     private long last_modified = 0;
+    @Getter@Setter
+    private String resource_uri_ids;
     
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

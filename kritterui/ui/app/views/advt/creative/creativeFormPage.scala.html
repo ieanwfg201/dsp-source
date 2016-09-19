@@ -145,7 +145,7 @@
                         @components.formElements.textinput(creativeForm("maxextended"), '_label ->"MaxExtended (0 means Unknown)")
                         @components.formElements.textinput(creativeForm("bitrate"), '_label ->"BitRate (-1 means Unknown)")
 					    @components.formElements.selectlist2(creativeForm("boxingallowed"), "Boxing Allowed",services.MetadataAPI.boxingallowed() )
-                        @components.formElements.selectlist2(creativeForm("playbackmethod"), "Boxing Allowed",services.MetadataAPI.playbackmethod() )
+                        @components.formElements.selectlist2(creativeForm("playbackmethod"), "PlaybackMethod",services.MetadataAPI.playbackmethod() )
                         @components.formElements.selectlist2(creativeForm("delivery"), "Delivery",services.MetadataAPI.delivery() )
                         @components.formElements.selectlist2(creativeForm("api"), "API",services.MetadataAPI.api() )
                         @components.formElements.selectlist2(creativeForm("companiontype"), "CompanionType",services.MetadataAPI.companiontype() )

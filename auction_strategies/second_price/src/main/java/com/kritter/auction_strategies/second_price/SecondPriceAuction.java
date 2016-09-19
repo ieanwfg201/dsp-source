@@ -27,6 +27,14 @@ public class SecondPriceAuction implements KAuction {
 
         for(String key:bidderResponses.keySet()){
             BidResponseEntity entity = bidderResponses.get(key);
+
+            /*Note down the price offered by the DSP,would be used in thrift log.*/
+            if(null != entity && null != entity.getBidResponseSeatBid()[0] && null != entity.getBidResponseSeatBid()[0].getBidResponseBidEntities()[0])
+            {
+                float bidPrice = entity.getBidResponseSeatBid()[0].getBidResponseBidEntities()[0].getPrice();
+                request.addBidPriceOfferedByDSPForExchangeRequest(key,(double)bidPrice);
+            }
+
             if(ValidateBidResponse.validate(entity, request)){
                 if(ValidateFloor.validate(entity, request)){
                     if(ValidateBestPrice.validate(entity, firstPrice)){
@@ -70,6 +78,14 @@ public class SecondPriceAuction implements KAuction {
         float secondPrice = 0.0f;
         for(String key:bidderResponses.keySet()){
             com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity entity = bidderResponses.get(key);
+
+            /*Note down the price offered by the DSP,would be used in thrift log.*/
+            if(null != entity && null != entity.getBidResponseSeatBid()[0] && null != entity.getBidResponseSeatBid()[0].getBidResponseBidEntities()[0])
+            {
+                float bidPrice = entity.getBidResponseSeatBid()[0].getBidResponseBidEntities()[0].getPrice();
+                request.addBidPriceOfferedByDSPForExchangeRequest(key,(double)bidPrice);
+            }
+
             if(ValidateBidResponse.validate(entity, request)){
                 if(ValidateFloor.validate(entity, request)){
                     if(ValidateBestPrice.validate(entity, firstPrice)){

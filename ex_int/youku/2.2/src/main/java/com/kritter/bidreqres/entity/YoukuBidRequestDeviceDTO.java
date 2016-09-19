@@ -34,7 +34,6 @@ public class YoukuBidRequestDeviceDTO extends BidRequestDeviceDTO
 
     public void setIdfa(String idfa){
         this.idfa = idfa;
-        this.idfa = idfa;
     }
     
     @JsonIgnore

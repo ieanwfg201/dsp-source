@@ -1,6 +1,7 @@
 package com.kritter.adserving.shortlisting.targetingmatcher;
 
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.constants.LatLonRadiusUnit;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -53,7 +54,10 @@ public class LatLongTargetingMatcher implements TargetingMatcher {
             }
 
             TargetingProfile targetingProfile = adEntity.getTargetingProfile();
-
+            LatLonRadiusUnit llRUnit=LatLonRadiusUnit.getEnum(targetingProfile.getLat_lon_radius_unit());
+            if(llRUnit==null){
+            	llRUnit = LatLonRadiusUnit.MILES;
+            }
             TargetingProfile.LatitudeLongitudeRadius[] latitudeLongitudeRadiusArray =
                     targetingProfile.getLatitudeLongitudeRadiusArray();
 
@@ -83,8 +87,13 @@ public class LatLongTargetingMatcher implements TargetingMatcher {
                             GeoCommonUtils.haversineDistanceInMiles(entry.getLatitude(), entry.getLongitude(),
                                     request.getRequestingLatitudeValue(),
                                     request.getRequestingLongitudeValue());
-
-                    if(distanceFromRequestingPosition <= entry.getRadius())
+                    
+                    double radius= entry.getRadius();
+                    if(llRUnit==LatLonRadiusUnit.KM){
+                    	/*Converting to miles*/
+                    	radius = radius*0.621371;
+                    }
+                    if(distanceFromRequestingPosition <= radius)
                     {
                         ReqLog.debugWithDebug(logger, request, "The ad is latlong targeted and passes the check, adGuId: {}",adEntity.getAdGuid());
                         shortlistedAdIdSet.add(adId);

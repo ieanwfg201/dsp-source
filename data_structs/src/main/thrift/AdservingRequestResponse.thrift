@@ -234,4 +234,6 @@ struct AdservingRequestResponse {
 56: optional i32 cityId,        /*city id(ui_targeting_city) of the end user.*/
 57: optional i32 adpositionId,  /*ad position ui id*/
 58: optional i32 channelId,     /*channel internal id*/
+59: optional double bidFloor,   /*bid floor of ad-request,for network supply either from api request or from site,in ad-exchange case from bidrequest*/
+60: optional map<string,double> dsp_bid_price, /*map of dsp guid and bid price offered by them during auction/pmp-deal*/
 }

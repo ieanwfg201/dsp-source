@@ -74,7 +74,7 @@ public class AdPositionGetController extends Controller{
 	                aListEntity.setId_list(id+"");
 	                ApiDef.update_adposition_get_status_by_pubincids(con, aListEntity);
 	                response.put("message", "start dne");return ok(response);
-	            }if(AdxBasedExchangesStates.READYTOSUBMIT.getName().equals(action)){
+	            }else if(AdxBasedExchangesStates.READYTOSUBMIT.getName().equals(action)){
 	                AdpositionGetListEntity aListEntity = new AdpositionGetListEntity();
 	                aListEntity.setAdxstate(AdxBasedExchangesStates.READYTOSUBMIT);
 	                aListEntity.setId_list(id+"");

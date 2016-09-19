@@ -24,7 +24,7 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
     public static final String NAMESPACE_NAME_KEY = "namespace";
     public static final String TABLE_NAME_KEY = "table_name";
     public static final String PRIMARY_KEY_NAME_KEY = "primary_key_name";
-    public static final String ATTRIBUTE_NAME_IMPRESSION_HISTORY_KEY = "attribute_name_impression_history";
+    public static final String ATTRIBUTE_NAME_CLICK_HISTORY_KEY = "attribute_name_click_history";
 
     private Logger logger;
     @Getter
@@ -38,10 +38,10 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
     private final String primaryKeyName;
     @Getter
     private final NoSqlData.NoSqlDataType primaryKeyDataType = NoSqlData.NoSqlDataType.STRING;
-    private final String attributeNameImpressionHistory;
+    private final String clickHistoryAttributeName;
     private Set<String> attributeNameSet;
 
-    private int maxSizeImpressionList;
+    private int maxSizeClickList;
     @Getter
     private NoSqlNamespaceOperations noSqlNamespaceOperationsInstance;
     private TSerializer thriftSerializer;
@@ -50,23 +50,23 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
 
     public UserRecentClickHistoryCache(String name,
                                        String loggerName,
-                                       int maxSizeImpressionList,
+                                       int maxSizeClickList,
                                        int threadCount,
                                        NoSqlNamespaceOperations noSqlNamespaceOperations,
                                        Properties properties
                                        ) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
-        this.maxSizeImpressionList = maxSizeImpressionList;
+        this.maxSizeClickList = maxSizeClickList;
 
         this.noSqlNamespaceOperationsInstance = noSqlNamespaceOperations;
 
         this.namespaceName = properties.getProperty(NAMESPACE_NAME_KEY);
         this.tableName = properties.getProperty(TABLE_NAME_KEY);
         this.primaryKeyName = properties.getProperty(PRIMARY_KEY_NAME_KEY);
-        this.attributeNameImpressionHistory = properties.getProperty(ATTRIBUTE_NAME_IMPRESSION_HISTORY_KEY);
+        this.clickHistoryAttributeName = properties.getProperty(ATTRIBUTE_NAME_CLICK_HISTORY_KEY);
         this.attributeNameSet = new HashSet<String>();
-        this.attributeNameSet.add(attributeNameImpressionHistory);
+        this.attributeNameSet.add(clickHistoryAttributeName);
 
         this.thriftSerializer = new TSerializer(new TBinaryProtocol.Factory());
         this.thriftDeserializer = new TDeserializer(new TBinaryProtocol.Factory());
@@ -92,7 +92,7 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
 
         RecentClickHistory recentClickHistory = null;
         if(dataMap != null && dataMap.size() != 0) {
-            NoSqlData recentClickHistoryNoSqlObject = dataMap.get(this.attributeNameImpressionHistory);
+            NoSqlData recentClickHistoryNoSqlObject = dataMap.get(this.clickHistoryAttributeName);
 
             if(null == recentClickHistoryNoSqlObject) {
                 throw new Exception("RecentClickHistory is missing for user id : " +
@@ -135,7 +135,7 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
 
             List<ClickEvent> list = new ArrayList<ClickEvent>();
 
-            int head = updateClickEventListAndReturnHead(list, eventSet, -1, this.maxSizeImpressionList);
+            int head = updateClickEventListAndReturnHead(list, eventSet, -1, this.maxSizeClickList);
 
             recentClickHistory = new RecentClickHistory();
             recentClickHistory.setClickEventCircularList(list);
@@ -147,23 +147,23 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
             logger.debug("Found existing events for user id : {}, current head of list : {}, list size : {}",
                     kritterUserId, head, list.size());
 
-            head = updateClickEventListAndReturnHead(list, eventSet, head, this.maxSizeImpressionList);
+            head = updateClickEventListAndReturnHead(list, eventSet, head, this.maxSizeClickList);
             logger.debug("After updating events, new head : {}, new list size : {}", head, list.size());
 
             recentClickHistory.setClickEventCircularList(list);
             recentClickHistory.setClickEventListPosition(head);
         }
 
-        //now update no-sql store with modified RecentImpressionHistory object.
+        //now update no-sql store with modified RecentClickHistory object.
 
         byte[] dataToStore = fetchRecentClickHistoryByteArray(recentClickHistory);
         logger.debug("Size of data to store : {}", dataToStore.length);
 
         NoSqlData primaryKeyValue = new NoSqlData(NoSqlData.NoSqlDataType.STRING, kritterUserId);
-        NoSqlData recentImpressionHistoryNoSqlData = new NoSqlData(NoSqlData.NoSqlDataType.BINARY, dataToStore);
+        NoSqlData recentClickHistoryNoSqlData = new NoSqlData(NoSqlData.NoSqlDataType.BINARY, dataToStore);
 
         Map<String, NoSqlData> dataMap = new HashMap<String, NoSqlData>();
-        dataMap.put(attributeNameImpressionHistory,recentImpressionHistoryNoSqlData);
+        dataMap.put(clickHistoryAttributeName,recentClickHistoryNoSqlData);
 
         logger.debug("Updated recent history in the store");
         noSqlNamespaceOperationsInstance.updateAttributesInThisNamespace(
@@ -221,10 +221,10 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
 
     public RecentClickHistory fetchRecentClickHistoryObject(byte[] byteData) throws TException
     {
-        RecentClickHistory recentImpressionHistory = new RecentClickHistory();
-        thriftDeserializer.deserialize(recentImpressionHistory,byteData);
+        RecentClickHistory recentClickHistory = new RecentClickHistory();
+        thriftDeserializer.deserialize(recentClickHistory,byteData);
 
-        return recentImpressionHistory;
+        return recentClickHistory;
     }
 
 

@@ -2,6 +2,7 @@ package com.kritter.serving.demand.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.constants.InclusionExclusionType;
+import com.kritter.constants.LatLonRadiusUnit;
 import com.kritter.constants.MidpValue;
 import com.kritter.entity.targeting_profile.column.Retargeting;
 import com.kritter.entity.targeting_profile.column.TPExt;
@@ -63,6 +64,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
     private final TPExt tpExt;
     private final String[] latLonFileIdArray;
     private final InclusionExclusionType userIdInclusionExclusionType;
+    private final Integer lat_lon_radius_unit;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public TargetingProfile(TargetingBuilder targetingBuilder)
@@ -102,6 +104,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         this.tpExt = targetingBuilder.tpExt;
         this.latLonFileIdArray = targetingBuilder.latLonFileIdArray;
         this.userIdInclusionExclusionType = targetingBuilder.userIdInclusionExclusionType;
+        this.lat_lon_radius_unit = targetingBuilder.lat_lon_radius_unit;
     }
 
     @Override
@@ -149,6 +152,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         private TPExt tpExt;
         private String[] latLonFileIdArray;
         private InclusionExclusionType userIdInclusionExclusionType;
+        private Integer lat_lon_radius_unit = LatLonRadiusUnit.MILES.getCode();
         private static final TypeReference<Map<String,String>>
                      typeReferenceForOSBrowserJSon = new TypeReference<Map<String, String>>() {};
 
@@ -389,6 +393,11 @@ public class TargetingProfile implements IUpdatableEntity<String>{
 
         public TargetingBuilder setUserIdInclusionExclusionType(InclusionExclusionType userIdInclusionExclusionType) {
             this.userIdInclusionExclusionType = userIdInclusionExclusionType;
+            return this;
+        }
+        public TargetingBuilder setLatLonRadiusUnit(int lat_lon_radius_unit)
+        {
+            this.lat_lon_radius_unit = lat_lon_radius_unit;
             return this;
         }
 

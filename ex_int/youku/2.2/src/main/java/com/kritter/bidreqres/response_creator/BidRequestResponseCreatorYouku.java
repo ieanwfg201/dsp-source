@@ -4,15 +4,13 @@ import com.kritter.bidreqres.entity.*;
 import com.kritter.bidrequest.entity.IBidResponse;
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.bidrequest.response_creator.IBidResponseCreator;
-import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
 import com.kritter.ex_int.utils.picker.RandomPicker;
-import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
 import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.constants.CreativeFormat;
+import com.kritter.constants.ExtClickType;
 import com.kritter.constants.ExternalUserIdType;
-import com.kritter.entity.creative_macro.CreativeMacro;
 import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
@@ -350,6 +348,19 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         }
         impTrackerArray[0] = cscBeaconUrl.toString();
         bidResponseBidExtYoukuEntity.setPm(impTrackerArray);
+        if(extTracker != null && extTracker.getClickTracker() != null &&
+        		extTracker.getClickTracker().size()>0 && extTracker.getClickType() != null
+        		&& extTracker.getClickType()==ExtClickType.INEXCRESPONSE.getCode()){
+            String clickTrackerArray[] = null;
+        	clickTrackerArray = new String[extTracker.getClickTracker().size()];
+        	int i = 0;
+        	for(String str:extTracker.getClickTracker()){
+        		clickTrackerArray[i]=MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, "", 
+        				macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), "");
+        		i++;
+        	}
+        	bidResponseBidExtYoukuEntity.setCm(clickTrackerArray);
+        }
         return bidResponseBidExtYoukuEntity;
     }
     private BidResponseBidExtYoukuEntity prepareVideoMarkup(
@@ -443,7 +454,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     		impTrackerArray = new String[1+extTracker.getImpTracker().size()];
     		int i = 1;
     		for(String str:extTracker.getImpTracker()){
-    			impTrackerArray[1]=MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, "", 
+    			impTrackerArray[i]=MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, "", 
         				macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), "");;
     			i++;
     		}
@@ -452,6 +463,19 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     	}
     	impTrackerArray[0] = cscBeaconUrl.toString();
     	bidResponseBidExtYoukuEntity.setPm(impTrackerArray);
+        if(extTracker != null && extTracker.getClickTracker() != null &&
+        		extTracker.getClickTracker().size()>0 && extTracker.getClickType() != null
+        		&& extTracker.getClickType()==ExtClickType.INEXCRESPONSE.getCode()){
+            String clickTrackerArray[] = null;
+        	clickTrackerArray = new String[extTracker.getClickTracker().size()];
+        	int i = 0;
+        	for(String str:extTracker.getClickTracker()){
+        		clickTrackerArray[i]=MarkUpHelper.adTagMacroReplace(str, request, responseAdInfo, response, "", 
+        				macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), "");
+        		i++;
+        	}
+        	bidResponseBidExtYoukuEntity.setCm(clickTrackerArray);
+        }
     	return bidResponseBidExtYoukuEntity;
 }
 }

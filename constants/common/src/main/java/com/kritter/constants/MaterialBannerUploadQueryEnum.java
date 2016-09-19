@@ -5,7 +5,8 @@ import java.util.Map;
 
 public enum MaterialBannerUploadQueryEnum
 {
-	list_material_banner(0,"list_material_banner");
+	list_material_banner(0,"list_material_banner"),
+	list_material_banner_by_pubincids(1,"list_material_banner_by_pubincids");
 
             private int code;
             private String name;
