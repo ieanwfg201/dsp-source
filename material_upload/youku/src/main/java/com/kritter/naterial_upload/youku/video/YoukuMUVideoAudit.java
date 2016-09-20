@@ -56,7 +56,9 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 						YoukuMaterialAuditEntity ymae = new YoukuMaterialAuditEntity();
 						ymae.setDspid(dspid);
 						ymae.setToken(token);
-						ymae.setMaterialurl(ymue.getUrl());
+						String urlArray[] = new String[1];
+						urlArray[0]=ymue.getUrl();
+						ymae.setMaterialurl(urlArray);
 						String postBody= ymae.toJson().toString();
 						LOG.info("MATERIAL AUDIT POST");
 						LOG.info(postBody);

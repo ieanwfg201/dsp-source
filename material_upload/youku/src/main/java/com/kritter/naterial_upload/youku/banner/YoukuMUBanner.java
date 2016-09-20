@@ -177,18 +177,22 @@ public class YoukuMUBanner implements MUBanner {
 					YoukuMaterialUploadEntity ymue=new YoukuMaterialUploadEntity(materialurl, yqe.getLanding_url(), yqe.getAdvName(), campaignStartDate, campaignEndDate, null);
 					String newInfoStr = ymue.toJson().toString();
 					cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerUpload);
+					if(newInfoStr.equals(info)){
+						cpstmt.setInt(1, adxbasedexhangesstatus);
+					}else{
+						cpstmt.setInt(1, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
+					}
 					cpstmt.setInt(2, yqe.getCampaignStatus());
 					cpstmt.setInt(3, yqe.getAdStatus());
 					cpstmt.setInt(4, yqe.getCreativeStatus());
-					pstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
+					cpstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
 					if(newInfoStr.equals(info)){
-						cpstmt.setInt(1, adxbasedexhangesstatus);
 						cpstmt.setString(6, info);
 					}else{
-						cpstmt.setInt(1, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
 						cpstmt.setString(6, newInfoStr);
 					}
 					cpstmt.setInt(7, rset.getInt("internalid"));
+					System.out.println(cpstmt);
 					cpstmt.executeUpdate();
 					
 				}else{

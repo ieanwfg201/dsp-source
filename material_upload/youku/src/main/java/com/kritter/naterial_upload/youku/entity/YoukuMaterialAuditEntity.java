@@ -22,7 +22,7 @@ public class YoukuMaterialAuditEntity {
 	@Getter@Setter
 	public String token;
 	@Getter@Setter
-	public String materialurl;
+	public String[] materialurl;
 	
 	
 	public JsonNode toJson(){
