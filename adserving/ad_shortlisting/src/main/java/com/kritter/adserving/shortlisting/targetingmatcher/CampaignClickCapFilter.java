@@ -253,7 +253,7 @@ public class CampaignClickCapFilter implements TargetingMatcher {
      */
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
-        ReqLog.debugWithDebug(logger,request, "Inside FrequencyCapFilter of AdTargetingMatcher...");
+        ReqLog.debugWithDebug(logger,request, "Inside {} of AdTargetingMatcher...", getName());
 
         String kritterUserId = request.getUserId();
 
