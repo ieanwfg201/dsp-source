@@ -243,6 +243,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
             	}
             	if(youkuBidRequestImpressionDTO.getBidFloorPrice() !=null){
             		ecpmFloorValue=youkuBidRequestImpressionDTO.getBidFloorPrice()/100;
+            		youkuBidRequestImpressionDTO.setBidFloorPrice(youkuBidRequestImpressionDTO.getBidFloorPrice()/100);
             	}
                 BidRequestImpressionBannerObjectDTO youkuBidRequestImpressionBannerObjectDTO =
                         youkuBidRequestImpressionDTO.getBidRequestImpressionBannerObject();
