@@ -21,12 +21,12 @@ public enum ExternalUserIdType {
     EXCHANGE_CONSUMER_ID("id", true), /*Exchange-specific ID for the user. At least one of id or buyerid is recommended.*/
     BUYER_USER_ID("buyeruid", true), /*Buyer-specific ID for the user as mapped by the exchange for the buyer. At least one of buyerid or id is recommended*/
     AGGREGATOR_USER_ID("auid", true), /*If aggregator gives user*/
-    DEVICE_PLATFORM_ID("dpid", true), /*Platform device ID (e.g., Android ID); Clear Text*/
-    DEVICE_ID("did", true), /*Hardware device ID (e.g., IMEI);Clear Text*/
-    MAC("mac", true), /*MAC address of the device; Clear Text*/
-    UDID("udid", true), /*udid*/
-    OPENUDID("oudid", true), /*OpenUdid*/
-    AAID("aaid", true) /*aaid*/;
+    DEVICE_PLATFORM_ID("dpid", false), /*Platform device ID (e.g., Android ID); Clear Text*/
+    DEVICE_ID("did", false), /*Hardware device ID (e.g., IMEI);Clear Text*/
+    MAC("mac", false), /*MAC address of the device; Clear Text*/
+    UDID("udid", false), /*udid*/
+    OPENUDID("oudid", false), /*OpenUdid*/
+    AAID("aaid", false) /*aaid*/;
 
     @Getter
     private String typeName;
