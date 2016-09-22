@@ -1,6 +1,6 @@
-package com.kritter.creative.approval.cloudcross.abstracts;
+package com.kritter.naterial_upload.cloudcross.abstracts;
 
-import com.kritter.creative.approval.cloudcross.entity.*;
+import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
 import com.kritter.utils.http_client.SynchronousHttpClient;
 import com.kritter.utils.http_client.entity.HttpRequest;
 import com.kritter.utils.http_client.entity.HttpResponse;
@@ -15,13 +15,14 @@ import java.util.List;
  * Created by hamlin on 16-7-31.
  */
 @SuppressWarnings("unused")
-public abstract class CloudCrossInterface<T,E,W> {
+public abstract class CloudCrossInterface<T, E, W> {
     public static ObjectMapper MAPPER = new ObjectMapper();
+
+    public static String CREATIVE_DSPID_TOKEN = "?dspId=6&token=qaw6hu8x1d7m5k";
+
     static {
         MAPPER.setSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY);
     }
-    public static String CREATIVE_DSPID_TOKEN = "?dspId=6&token=qaw6hu8x1d7m5k";
-
 
     public static String buildBody(List<String> ids, String key) {
         StringBuilder sb = new StringBuilder("[{\"" + key + "\":\"");
@@ -42,11 +43,11 @@ public abstract class CloudCrossInterface<T,E,W> {
         return synchronousHttpClient.fetchResponseFromThirdPartyServer(request);
     }
 
-    public abstract List<CloudCrossResponse> add(ArrayList<T> entity);
+    public abstract List<CloudCrossResponse> add(List<T> entity);
 
-    public abstract List<CloudCrossResponse> update(ArrayList<T> entity);
+    public abstract List<CloudCrossResponse> update(List<T> entity);
 
-    public abstract List<E> queryByIds(List<String> ids,boolean isByBannerId);
+    public abstract List<E> queryByIds(List<String> ids, boolean isByBannerId);
 
     public abstract List<W> getStateByIds(List<String> ids);
 }

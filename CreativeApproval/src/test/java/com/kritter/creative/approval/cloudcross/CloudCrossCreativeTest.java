@@ -26,6 +26,14 @@ public class CloudCrossCreativeTest {
         cloudCrossBannerEntity.setRheight(5);
         cloudCrossBannerEntity.setRwidth(32);
         list.add(cloudCrossBannerEntity);
+        CloudCrossBannerEntity cloudCrossBannerEntity2 = new CloudCrossBannerEntity();
+        cloudCrossBannerEntity2.setAdvertiserId(123);
+        cloudCrossBannerEntity2.setHeight(50);
+        cloudCrossBannerEntity2.setWidth(320);
+        cloudCrossBannerEntity2.setPath("http://qa.admin.optimad.cn/img/01525400-0b35-d401-5703-e5df20000007.jpg");
+        cloudCrossBannerEntity2.setRheight(5);
+        cloudCrossBannerEntity2.setRwidth(32);
+        list.add(cloudCrossBannerEntity2);
         System.out.println(new ObjectMapper().writeValueAsString(new CloudCrossCreative().add(list)));
     }
 
@@ -58,8 +66,8 @@ public class CloudCrossCreativeTest {
     @Test
     public void testGetStateByIds() throws Exception {
         ArrayList<String> list = new ArrayList<>();
-        list.add("68");
-        list.add("69");
+        list.add("33");
+        list.add("34");
         System.out.println(new ObjectMapper().writeValueAsString(new CloudCrossCreative().getStateByIds(list)));
     }
 }
