@@ -202,7 +202,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
                 isRichmediaAllowed = false;
             }
 
-            if(!request.getHandsetMasterData().isDeviceJavascriptCompatible())
+            if(null == request.getHandsetMasterData() || !request.getHandsetMasterData().isDeviceJavascriptCompatible())
             {
                 ReqLog.debugWithDebug(logger, request, "Richmedia is not allowed for this impression.Requesting handset is not javascript compatible.");
 

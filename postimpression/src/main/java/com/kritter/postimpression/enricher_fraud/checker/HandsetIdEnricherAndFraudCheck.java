@@ -90,11 +90,8 @@ public class HandsetIdEnricherAndFraudCheck implements OnlineEnricherAndFraudChe
             logger.error("Exception in handset detection inside HandsetIdEnricherAndFraudCheck",e);
         }
 
-        if(null == handsetMasterData)
-            return ONLINE_FRAUD_REASON.HANDSET_UNDETECTED;
-
         logger.debug("Handset internal id detected in HandsetIdEnricherAndFraudCheck is: {}",
-                     handsetMasterData.getInternalId());
+                      null == handsetMasterData ? - 1 : handsetMasterData.getInternalId());
 
         request.setHandsetMasterData(handsetMasterData);
 
@@ -109,6 +106,10 @@ public class HandsetIdEnricherAndFraudCheck implements OnlineEnricherAndFraudChe
 
             if(null==deviceId)
                 return ONLINE_FRAUD_REASON.HANDSET_ID_MISSING_FROM_REQUEST;
+
+            /*If requesting device was null or default then just pass the fraud check.*/
+            if(null != deviceId && deviceId == -1L)
+                return ONLINE_FRAUD_REASON.HEALTHY_REQUEST;
 
             //If device id is equal or if both manufacturer id and model id are same
             //that means same device.

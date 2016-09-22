@@ -164,10 +164,6 @@ public class CTRCalculator implements Job
     {
         HandsetMasterData handsetMasterData = request.getHandsetMasterData();
 
-        if(null == handsetMasterData)
-            throw new IOException("HandsetMaster Data is null inside fetchDimensionValueForDimension of " +
-                                  "CTRCalculator, cannot proceed to find ctr for the request...");
-
         if(dimensionName.equalsIgnoreCase(SupplyDemandDimension.DIM_INVENTORY_SRC_ID.getCode()))
         {
             return Integer.valueOf(request.getInventorySource());
@@ -178,19 +174,27 @@ public class CTRCalculator implements Job
         }
         else if(dimensionName.equalsIgnoreCase(SupplyDemandDimension.DIM_DEVICE_ID.getCode()))
         {
-            Long internalId = handsetMasterData.getInternalId();
-            return (null == internalId) ? null : internalId.intValue();
+            if(null == handsetMasterData || null == handsetMasterData.getInternalId())
+                return null;
+
+            return handsetMasterData.getInternalId().intValue();
         }
         else if(dimensionName.equalsIgnoreCase(SupplyDemandDimension.DIM_MANUFACTURER_ID.getCode()))
         {
+            if(null == handsetMasterData)
+                return null;
             return handsetMasterData.getManufacturerId();
         }
         else if(dimensionName.equalsIgnoreCase(SupplyDemandDimension.DIM_MODEL_ID.getCode()))
         {
+            if(null == handsetMasterData)
+                return null;
             return handsetMasterData.getModelId();
         }
         else if(dimensionName.equalsIgnoreCase(SupplyDemandDimension.DIM_OS_ID.getCode()))
         {
+            if(null == handsetMasterData)
+                return null;
             return handsetMasterData.getDeviceOperatingSystemId();
         }
         else if(dimensionName.equalsIgnoreCase(SupplyDemandDimension.DIM_COUNTRY_ID.getCode()))

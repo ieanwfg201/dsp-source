@@ -17,7 +17,7 @@ public class ValidateRichMediaType {
         return true;
     }
     public static boolean validateDeviceHandset(Request request, Logger logger){
-        if(!request.getHandsetMasterData().isDeviceJavascriptCompatible())
+        if(null == request.getHandsetMasterData() || !request.getHandsetMasterData().isDeviceJavascriptCompatible())
         {
             ReqLog.debugWithDebug(logger, request, "Richmedia is not allowed for this impression.Requesting handset is not javascript compatible.");
             return false;

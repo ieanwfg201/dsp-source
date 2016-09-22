@@ -234,6 +234,24 @@
         <constructor-arg index="4" value="ad-nofill-map"/>
     </bean>
 
+    <bean id="campaign_frequency_cap_filter" class="com.kritter.adserving.shortlisting.targetingmatcher.CampaignFrequencyCapFilter">
+        <constructor-arg index="0" value="frequency_cap_filter"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="user_recent_history_cache"/></constructor-arg>
+        <constructor-arg index="4" value="ad-nofill-map"/>
+        <constructor-arg index="5"><ref bean="campaign_cache"/></constructor-arg>
+    </bean>
+
+    <bean id="campaign_click_cap_filter" class="com.kritter.adserving.shortlisting.targetingmatcher.CampaignClickCapFilter">
+        <constructor-arg index="0" value="click_cap_filter"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="user_recent_click_history_cache"/></constructor-arg>
+        <constructor-arg index="4" value="ad-nofill-map"/>
+        <constructor-arg index="5"><ref bean="campaign_cache"/></constructor-arg>
+    </bean>
+
     <bean id="lifetime_ad_imp_filter" class="com.kritter.adserving.shortlisting.targetingmatcher.LifetimeAdImpCapFilter">
         <constructor-arg index="0" value="lifetime_ad_imp_filter"/>
         <constructor-arg index="1" value="adserving.application"/>

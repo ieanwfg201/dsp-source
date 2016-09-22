@@ -67,14 +67,11 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
 
             HandsetMasterData handsetMasterData = request.getHandsetMasterData();
 
-            if(null == handsetMasterData)
-            {
-                logger.error("DeviceTypeTargetingMatcher could not be applied on ads, handset master data missing.");
-                return shortlistedAdIdSet;
-            }
-
             Short[] deviceTypeTargetedArray = adEntity.getTargetingProfile().getDeviceTypeArray();
-            DeviceType deviceType = handsetMasterData.getDeviceType();
+            DeviceType deviceType = null;
+
+            if(null != handsetMasterData)
+                deviceType = handsetMasterData.getDeviceType();
 
             boolean adDoesNotTargetDeviceType = (null == deviceTypeTargetedArray || deviceTypeTargetedArray.length <= 0);
 
