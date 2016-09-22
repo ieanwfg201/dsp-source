@@ -66,6 +66,26 @@
           <version>1.0-SNAPSHOT</version>
           <scope>compile</scope>
       </dependency>
+      <dependency>
+          <groupId>com.kritter.entity</groupId>
+          <artifactId>entity_openrtb_2_0</artifactId>
+          <version>1.0.0</version>
+      </dependency>
+       <dependency>
+          <groupId>com.kritter.entity</groupId>
+          <artifactId>entity_openrtb_2_1</artifactId>
+          <version>1.0.0</version>
+      </dependency>
+      <dependency>
+          <groupId>com.kritter.entity</groupId>
+          <artifactId>entity_openrtb_2_2</artifactId>
+          <version>1.0.0</version>
+      </dependency>
+      <dependency>
+          <groupId>com.kritter.entity</groupId>
+          <artifactId>entity_openrtb_2_3</artifactId>
+          <version>1.0.0</version>
+      </dependency>
   </dependencies>
 
   <properties>

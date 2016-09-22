@@ -1,5 +1,6 @@
 @(campaignForm: Form[models.entities.CampaignEntity], 
-		campaignBudgetForm: Form[models.entities.CampaignBudgetEntity], campaignDisplay:models.advertiser.CampaignDisplay,campaign_unlimited:String,user_flow_enabled:String)
+		campaignBudgetForm: Form[models.entities.CampaignBudgetEntity], campaignDisplay:models.advertiser.CampaignDisplay,campaign_unlimited:String,user_flow_enabled:String,
+		campaignPayoutForm: Form[models.entities.CampaignPayoutThresholdEntity])
 
 @main2("Campaign Form"){@navs.navadvt(campaignDisplay.getAccountGuid())} {@navs.breadcrumbs(campaignDisplay.getBreadCrumbPaths())}{ 
 <form id="campaignForm" action="/advertiser/campaigns/save" method="POST" ng-controller="campaignController">
@@ -69,6 +70,15 @@
                         </div>
                         </fieldset>
                      }		
+				<fieldset>
+					<legend>Payout Threshold</legend>
+					
+					<div>
+						@components.formElements.hiddenfield(campaignPayoutForm("campaign_id") )
+                        @components.formElements.modelcurrencyinput(campaignPayoutForm("absolute_threshold"), "Absolute Threshold (-1 means default)" )
+                        @components.formElements.modelcurrencyinput(campaignPayoutForm("percentage_threshold"), "Percentage Threshold(-1 means default)" )
+					</div>
+				</fieldset>
 				
 				</div>
 				@components.formElements.submitbutton("save", "Save")
