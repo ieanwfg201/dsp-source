@@ -57,7 +57,7 @@ public class ThirdpartydataStateInputData
         if (null == obj || getClass() != obj.getClass())
             return false;
 
-        ThirdpartydataCountryInputData externalObject = (ThirdpartydataCountryInputData) obj;
+        ThirdpartydataStateInputData externalObject = (ThirdpartydataStateInputData) obj;
 
         if (
                 (this.startIpValue.compareTo(externalObject.getStartIpValue()) <= 0  &&
