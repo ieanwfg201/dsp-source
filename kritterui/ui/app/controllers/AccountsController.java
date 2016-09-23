@@ -1,5 +1,14 @@
 package controllers;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
@@ -13,6 +22,8 @@ import models.accounts.displays.PublisherDisplay;
 import models.entities.AccountEntity;
 import models.formbinders.AccountWorkflowEntity;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FilenameUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 
@@ -25,6 +36,8 @@ import play.libs.Scala;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Http.MultipartFormData;
+import play.mvc.Http.MultipartFormData.FilePart;
 import scala.Option;
 import securesocial.core.java.SecureSocial.SecuredAction;
 import services.DataAPI;
@@ -34,13 +47,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.io.Files;
 import com.kritter.api.entity.account.Account;
 import com.kritter.api.entity.account.AccountMsgPair;
 import com.kritter.api.entity.response.msg.Message;
+import com.kritter.api.entity.targeting_profile.FileUploadResponse;
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.kritterui.api.def.ApiDef;
+import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
+
+import controllers.advertiser.ValidateIpFile;
 
 
 public class AccountsController extends Controller{
@@ -48,6 +66,7 @@ public class AccountsController extends Controller{
 	static Form<AccountEntity> accountFormData = Form.form(AccountEntity.class);
 	static Form<AccountWorkflowEntity> accountWorkflowFormData = Form.form(AccountWorkflowEntity.class);
 	private static String adx_based_exchanges = Play.application().configuration().getString("adx_based_exchanges");
+	private static String adx_ext = Play.application().configuration().getString("adx_ext");
 
 	public static Account getAccount(String userId){
 		Account account = new Account();
@@ -84,7 +103,7 @@ public class AccountsController extends Controller{
 		account.setStatus(StatusIdEnum.Active);
 		try {
 			account.setType_id(Account_Type.valueOf(accountType));
-			return ok(views.html.accounts.accountForm.render(accountFormData.fill(account), new AccountDisplay(account.getEntity()),adx_based_exchanges)); 
+			return ok(views.html.accounts.accountForm.render(accountFormData.fill(account), new AccountDisplay(account.getEntity()),adx_based_exchanges,adx_ext)); 
 		} catch (Exception e) {
 			return badRequest("Invalid account type specified");
 		}
@@ -98,9 +117,9 @@ public class AccountsController extends Controller{
 		accountEntity.setPassword("");
 		if(account != null){  
 			if(account.getType_id()== Account_Type.directadvertiser)
-				return ok(views.html.accounts.accountForm.render(accountFormData.fill(accountEntity),  new AdvertiserDisplay(account),adx_based_exchanges)); 
+				return ok(views.html.accounts.accountForm.render(accountFormData.fill(accountEntity),  new AdvertiserDisplay(account),adx_based_exchanges,adx_ext)); 
 			else
-				return ok(views.html.accounts.accountForm.render(accountFormData.fill(accountEntity),  new PublisherDisplay(account),adx_based_exchanges));
+				return ok(views.html.accounts.accountForm.render(accountFormData.fill(accountEntity),  new PublisherDisplay(account),adx_based_exchanges,adx_ext));
 		}
 		else
 			return ok("Invalid user id supplied");
@@ -161,7 +180,7 @@ public class AccountsController extends Controller{
 		AccountEntity accountEntity  = null;
 		Form<AccountEntity> filledForm = accountFormData.bindFromRequest(); 
 		if(filledForm.hasErrors()){
-			return ok(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
+			return ok(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges,adx_ext)); 
 		} 
 
 		accountEntity = filledForm.get();
@@ -180,7 +199,7 @@ public class AccountsController extends Controller{
 				account.setPassword(BCrypt.hashpw(account.getPassword(), BCrypt.gensalt()));
 			else{
 				filledForm.reject("password", "Password and Verify Password donot match");
-				return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
+				return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges,adx_ext)); 
 			}
 
 		}else  {
@@ -200,7 +219,7 @@ public class AccountsController extends Controller{
 				account.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
 			}else if(! "".equals(password)&& !password.equals(confirmPassword)  ){
 				filledForm.reject("verifyPassword", "Password and Verify Password donot match");
-				return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
+				return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges,adx_ext)); 
 			} 
 		}
 
@@ -230,7 +249,7 @@ public class AccountsController extends Controller{
 				        filledForm.reject("email", msg.getMsg());
 				    }
 					
-					return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
+					return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges,adx_ext)); 
 				} 
 			}catch(Exception e){
 				Logger.error("Error  while saving Account:"+ e.getMessage(),e);
@@ -243,7 +262,7 @@ public class AccountsController extends Controller{
                      Logger.error(e.getMessage(),e);
 				}
 			}
-		return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges)); 
+		return badRequest(views.html.accounts.accountForm.render(filledForm, new AccountDisplay(account),adx_based_exchanges,adx_ext)); 
 	}
 
 	@SecuredAction
@@ -297,6 +316,135 @@ public class AccountsController extends Controller{
 
 		response.put("message", "Update Failed. Please retry");
 		return badRequest(response);
+	}
+    @SecuredAction
+    public static Result uploadQualificationImage(){
+        return uploadQualificationImage(false, null,null);
+    }
+	public static Result uploadQualificationImage(boolean isApicall, String targeting_type, String account_guid){ 
+		MultipartFormData multipartFormData = request().body().asMultipartFormData(); 
+ 
+				
+		String targetingType = null; 
+		if(isApicall){
+		    targetingType = targeting_type;
+		}else{
+		      targetingType = multipartFormData.asFormUrlEncoded().get("targeting_type")[0]; 
+		}
+		 
+		
+		FilePart geoFile = multipartFormData.getFile("file"); 
+		ObjectNode  response = Json.newObject();	
+		if (geoFile != null) { 
+			String fileName = geoFile.getFilename();
+			String extension = FilenameUtils.getExtension(fileName);
+			if(!("jpg".equalsIgnoreCase(extension)|| "jpeg".equalsIgnoreCase(extension)|| "png".equalsIgnoreCase(extension))){
+			    if(isApicall){
+			        FileUploadResponse fur = new FileUploadResponse();
+                    fur.setErrorCode(ErrorEnum.FILE_EXTENSION_NOT_ALLOWED.getId());
+                    fur.setMessage(ErrorEnum.FILE_EXTENSION_NOT_ALLOWED.getName());
+                    return ok(fur.toJson().toString());
+			    }
+			    response.put("message", "Incorrect File " +fileName+ " of Type "+extension+" being uploaded. Allowed format is jpg|jpeg|png");
+			    return badRequest(response);
+			}
+			File file = geoFile.getFile();
+			String destFilePath = generateFileUrl(targetingType, fileName);
+			File outputFile = new File("public/"+destFilePath).getAbsoluteFile();
+			outputFile.getParentFile().mkdirs();
+			FileInputStream fis = null;
+			try {
+				if(!outputFile.exists()){
+					outputFile.createNewFile();
+				}
+
+				Files.copy(file, outputFile);
+				fis = new FileInputStream(outputFile);
+				String md5 = getMD5(fis);
+				if(isApicall){
+				    FileUploadResponse fur = new FileUploadResponse();
+				    fur.setErrorCode(ErrorEnum.NO_ERROR.getId());
+				    fur.setMessage(ErrorEnum.NO_ERROR.getName());
+				    fur.setPath(destFilePath);
+				    fur.setPreview_label(fileName);
+				    fur.setPreview_url(controllers.routes.StaticFileController.download(Scala.Option(destFilePath)).url());
+				    return ok(fur.toJson().toString());
+				}
+				response.put("message", targetingType+" File Uploaded Succesfully");
+				response.put("path", ""+destFilePath);
+				response.put("preview_label", fileName);
+				response.put("md5", md5);
+				response.put("preview_url", controllers.routes.StaticFileController.download(Scala.Option(destFilePath)).url()); 
+				return ok(response);
+
+			} catch (Exception e) {
+			    Logger.error("Error in reading uploaded file property. "+ e.getMessage(),e);
+			    if(isApicall){
+			        FileUploadResponse fur = new FileUploadResponse();
+                    fur.setErrorCode(ErrorEnum.FILE_READ_ERROR.getId());
+                    fur.setMessage(ErrorEnum.FILE_READ_ERROR.getName());
+                    return ok(fur.toJson().toString());
+                }
+			}finally{
+				if(fis!=null){
+					try {
+						fis.close();
+					} catch (IOException e) {
+						Logger.error(e.getMessage(),e);
+					}
+				}
+			}
+		} else {
+            if(isApicall){
+                FileUploadResponse fur = new FileUploadResponse();
+                fur.setErrorCode(ErrorEnum.FILE_UPLOAD_FAILED.getId());
+                fur.setMessage(ErrorEnum.FILE_UPLOAD_FAILED.getName());
+                return ok(fur.toJson().toString());
+            }else{
+                flash("error", "File Uploading failed");
+            }
+		}
+        if(isApicall){
+            FileUploadResponse fur = new FileUploadResponse();
+            fur.setErrorCode(ErrorEnum.FILE_UPLOAD_FAILED.getId());
+            fur.setMessage(ErrorEnum.FILE_UPLOAD_FAILED.getName());
+            return ok(fur.toJson().toString());
+        }else{
+            return ok("File uploaded successfully");
+        }
+	}
+	
+	private static String generateFileUrl(String targetingType, String filename){ 
+		String ext = "";
+		if(filename.indexOf('.')!= -1){
+			String splits[] = filename.split("\\.");
+			if(splits.length == 2)
+				ext = splits[1];
+		}
+		String uuidname = SingletonUUIDGenerator.getSingletonUUIDGenerator().generateUniversallyUniqueIdentifier().toString();
+		String basePath = "/targeting/geo/"+targetingType+"/"+uuidname+"."+ext;	  
+		return basePath; 
+	}
+	public static String getMD5(FileInputStream f) throws Exception {
+
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		String digest = getDigest(f, md, 2048);
+
+		return digest;
+
+	}
+	public static String getDigest(InputStream is, MessageDigest md, int byteArraySize)
+			throws Exception {
+
+		md.reset();
+		byte[] bytes = new byte[byteArraySize];
+		int numBytes;
+		while ((numBytes = is.read(bytes)) != -1) {
+			md.update(bytes, 0, numBytes);
+		}
+		byte[] digest = md.digest();
+		String result = new String(Hex.encodeHex(digest));
+		return result;
 	}
 
 

@@ -96,6 +96,7 @@ public class SupplyDemandMatcherJob implements Job
             {
                 ReqLog.errorWithDebug(logger, request, "Request object is null or the request parameters are not enough to proceed inside SupplyDemandMatcherJob, cannot continue. Skipping further workflow in this job.");
                 logger.debug("Reason for request being invalid is errorCode: {}",request.getRequestEnrichmentErrorCode());
+                context.setValue(this.responseObjectKey,new Response());
             }
             else
             {

@@ -3,6 +3,9 @@ package com.kritter.exchange.job;
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
 import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO;
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidResponseEntity;
 import com.kritter.common.site.entity.Site;
 import com.kritter.common_caches.pmp.*;
 import com.kritter.constants.*;
@@ -27,6 +30,7 @@ import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
 
+import com.kritter.utils.common.dsp.BidRequestModifier;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
@@ -66,7 +70,7 @@ public class ExchangeJob implements Job
     private PrivateMarketPlaceDealCache privateMarketPlaceDealCache;
     private ThirdPartyConnectionDSPMappingCache thirdPartyConnectionDSPMappingCache;
     private DSPAndAdvertiserMappingCache dspAndAdvertiserMappingCache;
-
+    private Map<String,BidRequestModifier> bidRequestModifierMap;
     public ExchangeJob(
                         String loggerName,
                         String jobName,
@@ -124,7 +128,8 @@ public class ExchangeJob implements Job
                         String exchange_rule_var,
                         PrivateMarketPlaceDealCache privateMarketPlaceDealCache,
                         ThirdPartyConnectionDSPMappingCache thirdPartyConnectionDSPMappingCache,
-                        DSPAndAdvertiserMappingCache dspAndAdvertiserMappingCache
+                        DSPAndAdvertiserMappingCache dspAndAdvertiserMappingCache,
+                        Map<String,BidRequestModifier> bidRequestModifierMap
                       )
     {
         this.loggerName = loggerName;
@@ -147,6 +152,7 @@ public class ExchangeJob implements Job
         this.privateMarketPlaceDealCache = privateMarketPlaceDealCache;
         this.thirdPartyConnectionDSPMappingCache = thirdPartyConnectionDSPMappingCache;
         this.dspAndAdvertiserMappingCache = dspAndAdvertiserMappingCache;
+        this.bidRequestModifierMap = bidRequestModifierMap;
     }
     @Override
     public String getName()
@@ -282,6 +288,14 @@ public class ExchangeJob implements Job
                         return;
                     }
 
+                    /****************check if bidrequest modifier is present then modify bid request******************/
+                    BidRequestModifier<BidRequestParentNodeDTO> bidRequestModifier = null;
+                    if(null != this.bidRequestModifierMap)
+                        bidRequestModifier = this.bidRequestModifierMap.get(advEntity.getGuid());
+                    if(null != bidRequestModifier)
+                        bidRequestParentNodeDtoTwoDotThree = bidRequestModifier.modifyBidRequest(bidRequestParentNodeDtoTwoDotThree);
+                    /*****************************Bid modification completed**************************************/
+
                     ObjectMapper objectMapper = new ObjectMapper();
                     objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
                     JsonNode jsonNode = objectMapper.valueToTree(bidRequestParentNodeDtoTwoDotThree);
@@ -328,6 +342,14 @@ public class ExchangeJob implements Job
                         request.setNoFillReason(NoFillReason.EX_OD_REQ_CONVERT);
                         return;
                     }
+
+                    /****************check if bidrequest modifier is present then modify bid request******************/
+                    BidRequestModifier<com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO> bidRequestModifier = null;
+                    if(null != this.bidRequestModifierMap)
+                        bidRequestModifier = this.bidRequestModifierMap.get(advEntity.getGuid());
+                    if(null != bidRequestModifier)
+                        bidRequestParentNodeDtoTwoDotTwo = bidRequestModifier.modifyBidRequest(bidRequestParentNodeDtoTwoDotTwo);
+                    /*****************************Bid modification completed**************************************/
 
                     ObjectMapper objectMapper = new ObjectMapper();
                     objectMapper.setSerializationInclusion(Inclusion.NON_NULL);

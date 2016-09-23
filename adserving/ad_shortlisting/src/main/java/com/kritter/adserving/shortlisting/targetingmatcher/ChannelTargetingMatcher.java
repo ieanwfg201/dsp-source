@@ -99,29 +99,54 @@ public class ChannelTargetingMatcher implements TargetingMatcher {
 			if(adEntity.getTargetingProfile() != null){
 				tpExt = adEntity.getTargetingProfile().getTpExt();
 			}
-			boolean found=false;
-			boolean channelTargeted=false;
+			boolean foundFirstTier=false;
+			boolean channelTargetedFirstTier=false;
 			if(tpExt != null && tpExt.getChannel_tier1() != null && tpExt.getChannel_tier1().size()>0){
-				channelTargeted=true;
+				channelTargetedFirstTier=true;
 				if(internalFirstLevelId != null && tpExt.getChannel_tier1().contains(internalFirstLevelId)){
-					found=true;
+					foundFirstTier=true;
 				}
 			}
+			boolean foundSecondTier=false;
+			boolean channelTargetedSecondTier=false;
 			if(tpExt != null && tpExt.getChannel_tier2() != null && tpExt.getChannel_tier2().size()>0){
-				channelTargeted=true;
+				channelTargetedSecondTier=true;
 				if(internalSecondLevelId != null && tpExt.getChannel_tier2().contains(internalSecondLevelId)){
-					found=true;
+					foundSecondTier=true;
 				}
 			}
-			if(channelTargeted && !found && tpExt.isChannel_inc()){
-				AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
-						this.adNoFillReasonMapKey, context);
-				continue;
-			}
-			if(channelTargeted && found && !tpExt.isChannel_inc()){
-				AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
-						this.adNoFillReasonMapKey, context);
-				continue;
+			if(channelTargetedSecondTier){
+				if(!foundSecondTier && tpExt.isChannel_inc()){
+					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+							this.adNoFillReasonMapKey, context);
+					continue;
+				}
+				if(foundSecondTier && !tpExt.isChannel_inc()){
+					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+							this.adNoFillReasonMapKey, context);
+					continue;
+				}
+				if(internalSecondLevelId==null && !tpExt.isChannel_inc()){
+					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+							this.adNoFillReasonMapKey, context);
+					continue;
+				}
+			}else if(channelTargetedFirstTier){
+				if(!foundFirstTier && tpExt.isChannel_inc()){
+					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+							this.adNoFillReasonMapKey, context);
+					continue;
+				}
+				if(foundFirstTier && !tpExt.isChannel_inc()){
+					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+							this.adNoFillReasonMapKey, context);
+					continue;
+				}
+				if(internalFirstLevelId==null && !tpExt.isChannel_inc()){
+					AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+							this.adNoFillReasonMapKey, context);
+					continue;
+				}
 			}
 			shortlistedAdIdSet.add(adId);
 			ReqLog.debugWithDebug(logger, request, "The adid: {}, passes ChannelTargetingMatcher : ", adEntity.getAdGuid());

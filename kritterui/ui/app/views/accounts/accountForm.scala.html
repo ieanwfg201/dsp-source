@@ -1,4 +1,4 @@
-@(accountForm: Form[models.entities.AccountEntity], display:models.accounts.displays.AccountDisplay, adx_based_exchanges:String)
+@(accountForm: Form[models.entities.AccountEntity], display:models.accounts.displays.AccountDisplay, adx_based_exchanges:String, adx_ext:String)
 
  
 @main2("New Account Form"){@nav()}{@navs.breadcrumbs(display.getBreadCrumbPaths())} {
@@ -6,7 +6,7 @@
  
  
 @components.containers.panel("Account Form"){
-<form id="accountForm" action="/accounts" method="POST" data-ng-controller="accountController">
+<form id="accountForm" action="/accounts" method="POST" data-ng-controller="accountController" ng-init='init()'>
  
 				@components.formElements.hiddenfield(accountForm("type_id"))
 				@components.formElements.hiddenfield(accountForm("id"))
@@ -34,6 +34,8 @@
                     <div id="dspid" ng-show="demandtype==2" ng-if="demandtype==2">
                         @components.formElements.textinput(accountForm("qps"), '_label ->"QPS" )
                         @components.formElements.textinput(accountForm("demand_url"), '_label ->"Dsp Url" )
+                        @components.formElements.selectlist2(accountForm("open_rtb_ver_required"), "Open RTB Version", services.MetadataAPI.openRTBVersions())
+                        @components.formElements.selectlist2(accountForm("third_party_demand_channel_type"), "Demand Channel Type", services.MetadataAPI.thirdPartyDemandChannelTypes())
                     </div>
                 </fieldset>
                 <fieldset ng-show="showPaymentOptions" ng-if="showPaymentOptions">
@@ -49,18 +51,29 @@
 					@components.formElements.textinput(accountForm("im"), '_label ->"IM" )
 					@components.formElements.textinput(accountForm("email"), '_label ->"Email *" )
 					@components.formElements.textinput(accountForm("phone"), '_label ->"Contact Number *" )
+					@components.formElements.textinput(accountForm("contactdetail"), '_label ->"ContactPersonDetail *" ) 
 				</fieldset>
 				<fieldset>
 					<legend>Company Information</legend>
 					@components.formElements.textinput(accountForm("company_name"), '_label ->"Company Name *" )
-					
+					@components.formElements.textinput(accountForm("brand"), '_label ->"Brand *" )
 					@components.formElements.textarea(accountForm("address"), "Company Address" ) 
 					@components.formElements.textinput(accountForm("city"), '_label ->"City *" )
 					@components.formElements.selectlist2(accountForm("country"), "Country *", services.TPMetadataAPI.countrySelectOptions()  )
-					
-					
-										
 				</fieldset>
+				@if("true" == adx_ext) {
+				<fieldset>
+					<legend>For Adx Based</legend>
+					@components.formElements.selectlist2(accountForm("firstIndustryCode"), "1st Industry Code *", services.MetadataAPI.tier1mmaindustrySelectOption()  )
+					@components.formElements.selectlist2(accountForm("secondIndustryCode"), "2nd Industry Code *", services.MetadataAPI.tier2mmaindustrySelectOption()  )
+					@components.formElements.textinput(accountForm("qualificationName"), '_label ->"Qualification Name *" )
+					@components.formElements.fileinput(accountForm("qualificationUrl"), '_label ->"Upload Image", 
+						'_uploadHandler -> "handleQualificationUpload($files, 'qualificationUrl')",
+							'_fileFilter -> "jpg|jpeg|png"  ) 
+					@components.formElements.hiddenfield(accountForm("qualificationMD5"))
+				</fieldset>
+					
+				}
 				<fieldset ng-show="showPaymentOptions" ng-if="showPaymentOptions">
                     @components.formElements.textinput(accountForm("billing_rules_json"), '_label ->"Payout Percentage")
 					<legend>Payment Information</legend> 	 

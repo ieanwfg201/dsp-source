@@ -12,6 +12,9 @@ import com.kritter.constants.Payment_type;
 import com.kritter.constants.Payout;
 import com.kritter.constants.StatusIdEnum;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 
 
@@ -68,10 +71,26 @@ public class AccountEntity {
     private int qps = 5;
     private int timeout = 200;
     private String demand_url = "";
+    private int open_rtb_ver_required = 0;
+    private int third_party_demand_channel_type = 0;
     private String billing_name = "";
     private String billing_email="";
     private String ext="";
     private boolean adxbased=false;
+    @Getter@Setter
+    private String contactdetail="";
+    @Getter@Setter
+    private String brand="";
+    @Getter@Setter
+    private String firstIndustryCode;
+    @Getter@Setter
+    private String secondIndustryCode;
+    @Getter@Setter
+    private String qualificationName;
+    @Getter@Setter
+    private String qualificationUrl;
+    @Getter@Setter
+    private String qualificationMD5;
 
 
     public String getDemand_url() {
@@ -79,6 +98,18 @@ public class AccountEntity {
     }
     public void setDemand_url(String demand_url) {
         this.demand_url = demand_url;
+    }
+    public int getOpen_rtb_ver_required() {
+        return open_rtb_ver_required;
+    }
+    public void setOpen_rtb_ver_required(int open_rtb_ver_required) {
+        this.open_rtb_ver_required = open_rtb_ver_required;
+    }
+    public int getThird_party_demand_channel_type() {
+        return third_party_demand_channel_type;
+    }
+    public void setThird_party_demand_channel_type(int third_party_demand_channel_type) {
+        this.third_party_demand_channel_type = third_party_demand_channel_type;
     }
     public int getQps() {
         return qps;

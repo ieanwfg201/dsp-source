@@ -1,0 +1,20 @@
+@(defaultPayoutEntityForm:Form[models.entities.payout.PayoutDefaultFormEntity])
+@main("Default Payout Threshold") {
+<div class="page page-dashboard" data-ng-controller="payoutController">
+
+    @components.containers.panel("Default Payout Threshold"){
+        <form id="payoutConfigForm" class="navbar-form navbar-left" action="/payout/defaultpayout/data" method="POST" ng-init='init()'>
+        <fieldset> 
+            @components.formElements.selectlist2(defaultPayoutEntityForm("name"),"Threshold Key", services.MetadataAPI.getDefaultPayoutKey())
+        </fieldset>         
+        <fieldset> 
+            @components.formElements.textinput(defaultPayoutEntityForm("value"), '_label ->"Value", '_help -> "*")
+        </fieldset>         
+        <button type="button" class="btn btn-default btn-primary" ng-click="edit()">Edit</button>
+        </form>
+        @components.misc.table("tableData")
+    }        
+</div>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/apps/payout/payoutController.js")" type="text/javascript"></script>
+}

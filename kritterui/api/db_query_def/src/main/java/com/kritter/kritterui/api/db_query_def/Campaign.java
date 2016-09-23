@@ -41,9 +41,13 @@ public class Campaign {
     		"b.adv_total_burn as adv_total_burn," +
     		"b.internal_daily_budget as internal_daily_budget,b.adv_daily_budget as adv_daily_budget," +
     		"b.internal_daily_burn as internal_daily_burn, b.adv_daily_burn as adv_daily_burn,c.internal_balance as internal_balance," +
-    		"c.adv_balance as adv_balance" +
-    		" from campaign as a LEFT JOIN campaign_budget as b ON a.id=b.campaign_id LEFT JOIN account_budget as c  ON a.account_guid=c.account_guid " +
-    		"where a.account_guid = ? and  status_id != 6 order by last_modified desc limit ?,?";
+    		"c.adv_balance as adv_balance,"
+    		+ "d.absolute_threshold as absolute_threshold, d.percentage_threshold as percentage_threshold,"
+    		+ "e.daily_payout as daily_payout " +
+    		" from campaign as a LEFT JOIN campaign_budget as b ON a.id=b.campaign_id LEFT JOIN account_budget as c ON a.account_guid=c.account_guid "
+    		+ " LEFT JOIN campaign_payout_threshold as d ON a.id=d.campaign_id "
+    		+ " LEFT JOIN (select campaign_id as campaign_id, SUM(daily_payout) as daily_payout  from payout group by campaign_id) as e ON a.id=e.campaign_id " +
+    		"where a.account_guid = ? and  status_id != 6 order by b.last_modified desc limit ?,?";
     
     public static final String list_all_expired_campaign_of_account = " select * from campaign where account_guid=? and  (status_id=6 or NOW() >= end_date) order by last_modified desc limit ?,?";
 
@@ -58,4 +62,6 @@ public class Campaign {
             "update campaign_impressions_budget set impression_cap = ? ,time_window_hours = ? where campaign_guid = ?";
     public static final String get_campaign_impression_budget =
             "select count(*) as count from campaign_impressions_budget where campaign_guid = ?";
+    public static final String payout_threshold_metadata =
+            "select * from payout_threshold_metadata";
 }

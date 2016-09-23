@@ -15,6 +15,8 @@ GET 	/accounts/:accountType            		       controllers.AccountsController.a
 POST 	/accounts/list            					   controllers.AccountsController.accountList()
 GET 	/accounts/updateStatus/:account_guid/:action   controllers.AccountsController.updateAccountStatus( account_guid:String, action: String )
 POST 	/accounts/updateStatus  					   controllers.AccountsController.saveAccountStatus()
+POST    /accounts/qualificationimage-upload            controllers.AccountsController.uploadQualificationImage() 
+
 
 
 #Entity List API
@@ -296,6 +298,11 @@ GET    /ispMapping/rejected-isp-mapping/Rejected             controllers.isp_map
 GET    /ssp/global         controllers.ssp.SSPController.globalwaterfall()
 POST   /ssp/global/data    controllers.ssp.SSPController.global_data()
 POST    /ssp/global/update  controllers.ssp.SSPController.update_insert()
+
+# payout 
+GET    /payout/defaultpayout         controllers.payout.PayoutController.defaultpayout()
+POST   /payout/defaultpayout/data    controllers.payout.PayoutController.defaultpayoutdata()
+POST   /payout/defaultpayout/update  controllers.payout.PayoutController.defaultpayoutupdate()
 
 
 #Metadata Services

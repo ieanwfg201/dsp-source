@@ -17,7 +17,8 @@ public enum StatusIdEnum
             Approved(9,"Approved"),
             CAMP_DAILY_BUDGET_OVER(10,"CAMP_DAILY_BUDGET_OVER"),
             CAMP_TOTAL_BUDGET_OVER(11,"CAMP_TOTAL_BUDGET_OVER"),
-            ACCOUNT_BALANCE_OVER(12,"ACCOUNT_BALANCE_OVER");
+            ACCOUNT_BALANCE_OVER(12,"ACCOUNT_BALANCE_OVER"),
+            PAYOUT_THRESHOLD(13,"PAYOUT_THRESHOLD");
 
             private int code;
             private String name;

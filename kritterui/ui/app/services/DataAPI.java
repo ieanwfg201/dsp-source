@@ -40,6 +40,8 @@ import com.kritter.api.entity.native_icon.NativeIconList;
 import com.kritter.api.entity.native_icon.NativeIconListEntity;
 import com.kritter.api.entity.native_screenshot.NativeScreenshotList;
 import com.kritter.api.entity.native_screenshot.NativeScreenshotListEntity;
+import com.kritter.api.entity.payoutthreshold.PayoutThresholdList;
+import com.kritter.api.entity.payoutthreshold.PayoutThresholdListEntity;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.api.entity.targeting_profile.TargetingProfileList;
 import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
@@ -54,10 +56,12 @@ import com.kritter.constants.CreativeContainerAPIEnum;
 import com.kritter.constants.NativeIconAPIEnum;
 import com.kritter.constants.NativeScreenshotAPIEnum;
 import com.kritter.constants.PageConstants;
+import com.kritter.constants.PayoutThresholdListEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
 import com.kritter.constants.VideoInfoAPIEnum;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
+import com.kritter.entity.payout_threshold.CampaignPayoutThreshold;
 import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.kritterui.api.def.ApiDef;
 
@@ -89,6 +93,33 @@ public class DataAPI {
 			}
 		}
 		return campaignBudget;
+	}
+	public static CampaignPayoutThreshold getCampaignPayoutThreshold(int campaignId){
+		Connection con = null;
+		CampaignPayoutThreshold cp = new CampaignPayoutThreshold();
+		try{
+			con = DB.getConnection();
+			PayoutThresholdListEntity listEntity = new PayoutThresholdListEntity();
+			listEntity.setId_list(campaignId+"");
+			listEntity.setQueryEnum(PayoutThresholdListEnum.campaign_payout_threshold);
+			PayoutThresholdList cl = ApiDef.various_get_payout_threshold(con, listEntity);
+			if(cl.getMsg().getError_code()==0){
+				if( cl.getCampaign_entity_list().size()>0){
+					cp = cl.getCampaign_entity_list().get(0);
+				}
+			}
+		}catch(Exception e){
+			play.Logger.error(e.getMessage()+".Error fetching campaign paypout for campaign with id = " +campaignId, e);
+		}
+		finally{
+			try {
+				if(con != null)
+					con.close();
+			} catch (SQLException e) {
+				Logger.error("Error closing DB connection in getCampaignPayoutThreshold in CampaignCOntroller",e);
+			}
+		}
+		return cp;
 	}
 
 	public static Campaign getCampaign(int campaignId)
