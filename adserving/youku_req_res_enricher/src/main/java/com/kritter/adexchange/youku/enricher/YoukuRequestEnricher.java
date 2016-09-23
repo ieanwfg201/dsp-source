@@ -382,23 +382,14 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
 
         if(null != youkuBidRequestSiteDTO)
         {
-            externalSupplyUrl = youkuBidRequestSiteDTO.getSitePageURL();
-            externalSupplyId = youkuBidRequestSiteDTO.getSiteIdOnExchange();
+        	externalSupplyDomain = youkuBidRequestSiteDTO.getSitePageURL();
+            externalSupplyId = youkuBidRequestSiteDTO.getSiteName();
             externalSupplyName = youkuBidRequestSiteDTO.getSiteName();
-            externalSupplyDomain = youkuBidRequestSiteDTO.getSiteDomain();
-            externalAppPageUrl = youkuBidRequestSiteDTO.getSitePageURL();
         }
         else if(null != youkuBidRequestAppDTO)
         {
-            externalSupplyUrl = youkuBidRequestAppDTO.getApplicationStoreUrl();
-            externalSupplyId = youkuBidRequestAppDTO.getApplicationIdOnExchange();
+            externalSupplyId = youkuBidRequestAppDTO.getApplicationName();
             externalSupplyName = youkuBidRequestAppDTO.getApplicationName();
-            externalSupplyDomain = youkuBidRequestAppDTO.getApplicationDomain();
-            externalAppVersion = youkuBidRequestAppDTO.getApplicationVersion();
-            if(youkuBidRequestAppDTO.getContentCategoriesApplication() != null){ 
-                externalCategories = youkuBidRequestAppDTO.getContentCategoriesApplication();
-            }
-            externalAppBundle = youkuBidRequestAppDTO.getApplicationBundleName();
         }
 
         siteToUse.setExternalSupplyDomain(externalSupplyDomain);

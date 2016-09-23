@@ -64,6 +64,7 @@ public class Metadata {
     		+ "b1.code=b2.code and b3.id=b1.ui_id";
     public static final String mma_category_by_ids = "select id as id, name as name from ui_mma_category where id in (<id>) and mma_type=1";
     public static final String mma_industry_tier1_all = "select id as id, name as name from ui_mma_category where tier=1 and mma_type=2";
+    public static final String mma_industry_tier2_all = "select id as id, name as name from ui_mma_category where tier=2 and mma_type=2";
     public static final String mma_industry_tier2_by_tier1 = "select b3.id as id, b3.name as name from mma_code_mma_ui_mapping as b1,"
     		+ "(select a1.code as code from mma_categories as a1 where a1.mma_type=2 and a1.parent_code in "
     		+ "(select  c.code as code from ui_mma_category as a, mma_code_mma_ui_mapping as b, "

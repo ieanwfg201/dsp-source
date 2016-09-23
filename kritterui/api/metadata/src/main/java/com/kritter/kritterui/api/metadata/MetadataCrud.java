@@ -334,6 +334,9 @@ public class MetadataCrud {
     public static JsonNode get_mma_industry_tier1_all(Connection con){
         return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER1_ALL,null).toJson();
     }
+    public static JsonNode get_mma_industry_tier2_all(Connection con){
+        return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER2_ALL,null).toJson();
+    }
     public static JsonNode get_mma_industry_tier2_by_tier1(Connection con){
         return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER2_BY_TIER1,null).toJson();
     }
@@ -673,6 +676,9 @@ public class MetadataCrud {
                     break;
                 case MMA_INDUSTRY_TIER1_ALL:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.mma_industry_tier1_all);
+                    break;
+                case MMA_INDUSTRY_TIER2_ALL:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Metadata.mma_industry_tier2_all);
                     break;
                 case MMA_INDUSTRY_TIER2_BY_TIER1:
                     if(metaInput.getQuery_id_list() == null || "[]".equals(metaInput.getQuery_id_list()) || "".equals(metaInput.getQuery_id_list())

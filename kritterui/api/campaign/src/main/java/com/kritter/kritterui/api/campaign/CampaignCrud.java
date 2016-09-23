@@ -25,6 +25,7 @@ import com.kritter.api.entity.response.msg.Message;
 import com.kritter.constants.Budget;
 import com.kritter.constants.FreqDuration;
 import com.kritter.constants.FreqEventType;
+import com.kritter.constants.PayoutThreshold;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.entity.freqcap_entity.FreqCap;
@@ -36,7 +37,8 @@ public class CampaignCrud {
     
     private static final Logger LOG = LoggerFactory.getLogger(CampaignCrud.class);
     
-    public static Campaign populate( ResultSet rset, boolean showExpiry, boolean budgetStatus, boolean accpunt_id) throws SQLException{
+    public static Campaign populate( ResultSet rset, boolean showExpiry, boolean budgetStatus, boolean accpunt_id,
+    		Float defaultAbsolute,Float defaultPercentage) throws SQLException{
         Campaign campaign = null;
         if(rset != null){
             Timestamp ts =  rset.getTimestamp("end_date");
@@ -76,7 +78,25 @@ public class CampaignCrud {
                 double adv_total_burn = rset.getDouble("adv_total_burn") ;
                 double adv_total_remaining = adv_total_budget - adv_total_burn;
                 double adv_balance = rset.getDouble("adv_balance") ;
-                
+                Object obj1 = rset.getObject("absolute_threshold");
+                Object obj2 = rset.getObject("percentage_threshold");
+                Object obj3 = rset.getObject("daily_payout");
+                Float absolute_threshold = -1.0f;
+                Float percentage_threshold = -1.0f;
+                Double daily_payout = -1.0;
+                if(obj1 !=null){
+                	absolute_threshold = rset.getFloat("absolute_threshold") ;
+                }else{
+                	absolute_threshold=defaultAbsolute;
+                }
+                if(obj2 !=null){
+                	percentage_threshold = rset.getFloat("percentage_threshold") ;
+                }else{
+                	percentage_threshold = defaultPercentage;
+                }
+                if(obj3 !=null){
+                	daily_payout = rset.getDouble("daily_payout") ;
+                }
                 
                 if(campaign.getStatus_id() == StatusIdEnum.Active.getCode() ){
                     if(internal_daily_remaining <= Budget.min_budget){
@@ -91,6 +111,12 @@ public class CampaignCrud {
                         campaign.setStatus_id(StatusIdEnum.ACCOUNT_BALANCE_OVER.getCode());
                     }else if(adv_balance <= Budget.min_budget){
                         campaign.setStatus_id(StatusIdEnum.ACCOUNT_BALANCE_OVER.getCode());
+                    }else if(absolute_threshold != null && absolute_threshold>0 && daily_payout >0  &&
+                    		daily_payout-internal_daily_burn>absolute_threshold){
+                    		campaign.setStatus_id(StatusIdEnum.PAYOUT_THRESHOLD.getCode());
+                    }else if(percentage_threshold != null && percentage_threshold>0 && daily_payout >0  &&
+                    		(daily_payout-internal_daily_burn > ((percentage_threshold*internal_daily_budget)/100)) ){
+                    		campaign.setStatus_id(StatusIdEnum.PAYOUT_THRESHOLD.getCode());
                     }
                 }
             }
@@ -476,7 +502,7 @@ public class CampaignCrud {
 
             while (rset.next())
             {
-                return populate(rset, true, false, false);
+                return populate(rset, true, false, false,null,null);
             }
         }
         catch(Exception e)
@@ -517,7 +543,7 @@ public class CampaignCrud {
 
             while (rset.next())
             {
-                return populate(rset, true, false, false);
+                return populate(rset, true, false, false,null, null);
             }
         }
         catch(Exception e)
@@ -560,11 +586,26 @@ public class CampaignCrud {
             campaignlist.setMsg(msg);
             return campaignlist;
         }
+        Float defaultAbsolute=null;
+        Float defaultPercentage=null;
+        PreparedStatement pstmt1 = null;
         PreparedStatement pstmt = null;
         boolean showExpiry=false;
         boolean budgetStatus=false;
         boolean account_id=false;
         try{
+        	
+        	pstmt1=con.prepareStatement(com.kritter.kritterui.api.db_query_def.Campaign.payout_threshold_metadata);
+        	ResultSet rset1=pstmt1.executeQuery();
+        	while(rset1.next()){
+        		String name =rset1.getString("name");
+        		if(PayoutThreshold.campaign_absolute_payout_threshold.getName().equals(name) ){
+        			defaultAbsolute = rset1.getFloat("value");
+        		}else if(PayoutThreshold.campaign_percentage_payout_threshold.getName().equals(name) ){
+        			defaultPercentage = rset1.getFloat("value");
+        		}
+        	}
+        	
             switch (campaignlistEntity.getCampaignQueryEnum()){
                 case get_campaign_of_account:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Campaign.get_campaign_of_account);
@@ -667,7 +708,7 @@ public class CampaignCrud {
             CampaignList campaignlist = new CampaignList();
             List<Campaign> campaigns = new LinkedList<Campaign>();
             while(rset.next()){
-                Campaign campaign = populate(rset,showExpiry, budgetStatus,account_id);
+                Campaign campaign = populate(rset,showExpiry, budgetStatus,account_id,defaultAbsolute,defaultPercentage);
                 if(campaign != null){
                     campaigns.add(campaign);
                 }
@@ -695,6 +736,13 @@ public class CampaignCrud {
             if(pstmt != null){
                 try {
                     pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+            if(pstmt1 != null){
+                try {
+                    pstmt1.close();
                 } catch (SQLException e) {
                     LOG.error(e.getMessage(),e);
                 }
