@@ -790,3 +790,6 @@ insert into payout_threshold_metadata (name, value) values
 ("campaign_absolute_payout_threshold", 2.5),
 ("campaign_percentage_payout_threshold", 0.10)
 ON DUPLICATE KEY UPDATE name = VALUES(name);
+
+update payout_threshold_metadata set value = 25 where name = "campaign_percentage_payout_threshold";
+update campaign set last_modified = now();
