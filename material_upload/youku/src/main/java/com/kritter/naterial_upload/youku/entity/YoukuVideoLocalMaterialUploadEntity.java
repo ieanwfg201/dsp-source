@@ -146,7 +146,7 @@ public class YoukuVideoLocalMaterialUploadEntity {
 		newentity.setStartdate(entity.getStartdate());
 		newentity.setLandingpage(entity.getLandingpage());
 		newentity.setMonitor(entity.getMonitor());
-		newentity.setUrl(entity.getInternalurl());
+		newentity.setUrl(entity.getYoukuurl());
 		return newentity;
 	}
     /*public static void main(String args[]){

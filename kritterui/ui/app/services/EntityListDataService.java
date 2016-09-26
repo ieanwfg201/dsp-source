@@ -41,6 +41,8 @@ import com.kritter.api.entity.iddefinition.IddefinitionList;
 import com.kritter.api.entity.isp_mapping.Isp_mapping;
 import com.kritter.api.entity.isp_mapping.Isp_mappingList;
 import com.kritter.api.entity.isp_mapping.Isp_mappingListEntity;
+import com.kritter.api.entity.materialadvinfoupload.MaterialAdvInfoUploadList;
+import com.kritter.api.entity.materialadvinfoupload.MaterialAdvInfoUploadListEntity;
 import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadList;
 import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadListEntity;
 import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadList;
@@ -61,6 +63,7 @@ import com.kritter.constants.Ext_siteEnum;
 import com.kritter.constants.IddefinitionEnum;
 import com.kritter.constants.IddefinitionType;
 import com.kritter.constants.Isp_mappingEnum;
+import com.kritter.constants.MaterialAdvInfoUploadQueryEnum;
 import com.kritter.constants.MaterialBannerUploadQueryEnum;
 import com.kritter.constants.MaterialVideoUploadQueryEnum;
 import com.kritter.constants.PageConstants;
@@ -69,6 +72,7 @@ import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
@@ -370,6 +374,19 @@ public class EntityListDataService {
                         		materialVideoUploadList.getEntity_list().size()); 
                     }else{
                         entityList = new EntityList<MaterialUploadVideo>(new ArrayList<MaterialUploadVideo>(), 0);
+                    }
+                    break;
+                case materialadvinfoupload:
+            		MaterialAdvInfoUploadListEntity materialAdvInfoUploadListEntity = new MaterialAdvInfoUploadListEntity();
+            		materialAdvInfoUploadListEntity.setQueryEnum(MaterialAdvInfoUploadQueryEnum.list_material_advinfo_by_pubincids);
+            		materialAdvInfoUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+            		MaterialAdvInfoUploadList materialAdvInfoUploadList = null;
+            		materialAdvInfoUploadList = ApiDef.various_material_advinfo(con, materialAdvInfoUploadListEntity);
+                    if(materialAdvInfoUploadList.getMsg().getError_code()==0){ 
+                        entityList = new EntityList<MaterialUploadAdvInfo>(materialAdvInfoUploadList.getEntity_list(), 
+                        		materialAdvInfoUploadList.getEntity_list().size()); 
+                    }else{
+                        entityList = new EntityList<MaterialUploadAdvInfo>(new ArrayList<MaterialUploadAdvInfo>(), 0);
                     }
                     break;
 				default:

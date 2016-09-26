@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kritter.material_upload.common.adposition.AdPositionGet;
+import com.kritter.material_upload.common.advInfo.MUADvInfoAudit;
+import com.kritter.material_upload.common.advInfo.MUAdvInfo;
 import com.kritter.material_upload.common.banner.MUBanner;
 import com.kritter.material_upload.common.banner.MUBannerAudit;
 import com.kritter.material_upload.common.video.MUVideo;
@@ -160,6 +162,60 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 			}
 		}
 	}
-
-
+	@Override
+	public void executeAdvInfoUpload(Properties properties, MUAdvInfo advInfo,Connection con) {
+		if(advInfo != null){
+			boolean autoCommit = true;
+			try{
+				autoCommit = con.getAutoCommit();
+				advInfo.init(properties);
+				con.setAutoCommit(false);
+				advInfo.getLastRun(properties, con);
+				advInfo.getModifiedEntities(properties, con);
+				advInfo.insertOrUpdateAdcInfoUpload(properties, con);
+				advInfo.uploadmaterial(properties, con);
+				advInfo.updaterun(properties, con);
+				con.commit();
+			}catch(Exception e){
+				LOG.error(e.getMessage(),e);
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					LOG.error(e1.getMessage(),e1);				
+				}
+			}finally{
+				try {
+					con.setAutoCommit(autoCommit);
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+	@Override
+	public void executeMaterialAdvInfoAudit(Properties properties, MUADvInfoAudit muAdvInforAudit,Connection con) {
+		if(muAdvInforAudit != null){
+			boolean autoCommit = true;
+			try{
+				autoCommit = con.getAutoCommit();
+				muAdvInforAudit.init(properties);
+				con.setAutoCommit(false);
+				muAdvInforAudit.fetchMaterialAudit(properties, con);
+				con.commit();
+			}catch(Exception e){
+				LOG.error(e.getMessage(),e);
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					LOG.error(e1.getMessage(),e1);				
+				}
+			}finally{
+				try {
+					con.setAutoCommit(autoCommit);
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
 }

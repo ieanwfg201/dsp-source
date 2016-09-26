@@ -193,6 +193,13 @@ public class TargetingDisplayFull extends TargetingDisplay{
     	}
     	return "";
     }
+    public String deviceIdIncExc(){
+    	if(tp.isUser_id_inc_exc()){
+    		return "Inclusion";
+    	}
+    	return "Exclusion";
+    }
+
     public String getDeviceidfile(){
     	String s = tp.getDeviceid_file();
     	if(s != null){

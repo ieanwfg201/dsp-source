@@ -1,16 +1,13 @@
 package controllers;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import models.EntityList;
@@ -52,10 +49,15 @@ import com.kritter.api.entity.account.Account;
 import com.kritter.api.entity.account.AccountMsgPair;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.api.entity.targeting_profile.FileUploadResponse;
+import com.kritter.api.upload_to_cdn.IUploadToCDN;
+import com.kritter.api.upload_to_cdn.everest.UploadToCDN;
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.kritterui.api.def.ApiDef;
+import com.kritter.utild.ucloud_upload.upload.UploadToUCloud;
+import com.kritter.utils.amazon_s3_upload.UploadToS3;
+import com.kritter.utils.edgecast_upload.UploadToEdgecast;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
 import controllers.advertiser.ValidateIpFile;
@@ -359,6 +361,32 @@ public class AccountsController extends Controller{
 				}
 
 				Files.copy(file, outputFile);
+				String uploadtoCDNFlag = Play.application().configuration().getString("cdn_upload");
+				if("evrest".equals(uploadtoCDNFlag)){
+				    boolean cdn_upload_success = postToEvrest(outputFile, outputFile.getName());
+				    if(!cdn_upload_success){
+				        response.put("message", "CDN upload failed");
+				        return badRequest(response);
+				    }
+				}else if("s3".equals(uploadtoCDNFlag)){
+                        boolean s3_upload_success = postToS3(outputFile);
+                        if(!s3_upload_success){
+                            response.put("message", "S3 upload failed");
+                            return badRequest(response);
+                        }
+				}else if("edgecast".equals(uploadtoCDNFlag)){
+                    boolean upload_success = postToEdgeCast(outputFile);
+                    if(!upload_success){
+                        response.put("message", "Edgecast upload failed");
+                        return badRequest(response);
+                    }
+				}else if("ucloud".equals(uploadtoCDNFlag)){
+                    boolean upload_success = postToUCloud(outputFile);
+                    if(!upload_success){
+                        response.put("message", "Ucloud upload failed");
+                        return badRequest(response);
+                    }
+                }
 				fis = new FileInputStream(outputFile);
 				String md5 = getMD5(fis);
 				if(isApicall){
@@ -446,6 +474,58 @@ public class AccountsController extends Controller{
 		String result = new String(Hex.encodeHex(digest));
 		return result;
 	}
+	private static boolean postToEvrest(File originalOutputFile, String destFileUuid){
+	    boolean cdn_upload_success = false;
+	    IUploadToCDN uploadTOCDN = new UploadToCDN();
+	    String url = Play.application().configuration().getString("cdn_upload_url");
+	    HashMap<String, String> postParams =  new HashMap<String, String>();
+	    postParams.put("account", Play.application().configuration().getString("cdn_upload_account"));
+	    postParams.put("j_security_username", Play.application().configuration().getString("cdn_upload_j_security_username"));
+	    postParams.put("j_security_password", Play.application().configuration().getString("cdn_upload_j_security_password"));
+	    cdn_upload_success = uploadTOCDN.upload(url, null, postParams, originalOutputFile, destFileUuid); 
+	    return cdn_upload_success ;
+	}
+	   private static boolean postToS3(File originalOutputFile){
+	       try{
+	           String s3_bucket_name = Play.application().configuration().getString("s3_bucket_name");
+	           String s3_access_key = Play.application().configuration().getString("s3_access_key");
+	           String s3_secret_key = Play.application().configuration().getString("s3_secret_key");
+	           String s3_key_name_prefix = Play.application().configuration().getString("s3_key_name_prefix");
+	           UploadToS3.upload(s3_bucket_name,s3_access_key, s3_secret_key,s3_key_name_prefix+"/"+originalOutputFile.getName(), originalOutputFile);
+	           return true;
+	       }catch(Exception e){
+	           Logger.error(e.getMessage(),e);
+	           return false;
+	       }
+	   }
+       private static boolean postToEdgeCast(File originalOutputFile){
+           try{
+               String edgecast_host = Play.application().configuration().getString("edgecast_host");
+               String edgecast_port = Play.application().configuration().getString("edgecast_port");
+               String edgecast_username = Play.application().configuration().getString("edgecast_username");
+               String edgecast_password = Play.application().configuration().getString("edgecast_password");
+               return UploadToEdgecast.upload(edgecast_host, edgecast_port, originalOutputFile, 
+                       edgecast_username, edgecast_password);
+           }catch(Exception e){
+               Logger.error(e.getMessage(),e);
+               return false;
+           }
+       }
+       private static boolean postToUCloud(File originalOutputFile){
+           try{
+               String ucloudPublicKey = Play.application().configuration().getString("ucloudPublicKey");
+               String ucloudPrivateKey = Play.application().configuration().getString("ucloudPrivateKey");
+               String ucloudproxySuffix = Play.application().configuration().getString("ucloudproxySuffix");
+               String uclouddownloadProxySuffix = Play.application().configuration().getString("uclouddownloadProxySuffix");
+               String ucloudbucketName = Play.application().configuration().getString("ucloudbucketName");
+               return UploadToUCloud.uploadToUCloud(ucloudPublicKey, ucloudPrivateKey, 
+                       ucloudproxySuffix, uclouddownloadProxySuffix, originalOutputFile, ucloudbucketName);
+           }catch(Exception e){
+               Logger.error(e.getMessage(),e);
+               return false;
+           }
+       }
+
 
 
 }

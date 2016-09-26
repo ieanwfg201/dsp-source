@@ -24,6 +24,7 @@ import com.kritter.material_upload.common.urlpost.UrlPost;
 import com.kritter.material_upload.common.video.MUVideo;
 import com.kritter.material_upload.youkuvideouploader.YoukuNonWebVideoUploader;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
+import com.kritter.naterial_upload.youku.entity.ReturnResultMessage;
 import com.kritter.naterial_upload.youku.entity.YoukuMaterialUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuMultipleMaterialUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuQueryEntity;
@@ -287,10 +288,9 @@ public class YoukuMUVideo implements MUVideo {
 			pstmt = con.prepareStatement(YoukuVideoQuery.selectforUpload);
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
-			List<YoukuMaterialUploadEntity> materialList = new LinkedList<YoukuMaterialUploadEntity>();
-			StringBuffer sBuff = new StringBuffer("");
-			boolean isFirst=true;
 			while(rset.next()){
+				boolean videoUploadSucess=false;
+				List<YoukuMaterialUploadEntity> materialList = new LinkedList<YoukuMaterialUploadEntity>();
 				//System.out.println(rset.getString("info"));
 				YoukuVideoLocalMaterialUploadEntity localEntity = YoukuVideoLocalMaterialUploadEntity.getObject(rset.getString("info"));
 				if(localEntity.getYoukuurl()==null || localEntity.getYoukuurl().equals("")){
@@ -318,57 +318,71 @@ public class YoukuMUVideo implements MUVideo {
 							cpstmt3.setString(2, viext.toJson().toString());
 							cpstmt3.setInt(3, localEntity.getVideoInfoId());
 							cpstmt3.executeUpdate();
+							videoUploadSucess=true;
 						}
 					}else{
 						LOG.info("NOTUPLOADED TO YOUKU CDN {} ",localEntity.getCreativeName());
 					}
 				}
-				if(localEntity.getYoukuurl()!=null && localEntity.getYoukuurl().equals("")){
+				if(localEntity.getYoukuurl()!=null && !localEntity.getYoukuurl().isEmpty()){
 					materialList.add(YoukuVideoLocalMaterialUploadEntity.createEntityforUpload(localEntity));
 				}
-				if(isFirst){
-					isFirst=false;
-				}else{
-					sBuff.append(",");
-				}
-				sBuff.append(rset.getInt("internalId"));
-			}
-			if(materialList.size()>0){
+				String internalId = rset.getInt("internalId")+"";
 				boolean isSuccess=false;
+				String errorCode="";
 				try{
-					
-					YoukuMultipleMaterialUploadEntity ymmue = new YoukuMultipleMaterialUploadEntity();
-					ymmue.setMaterial(materialList);
-					ymmue.setDspid(properties.getProperty("youku_dsp_id").toString());
-					ymmue.setToken(properties.getProperty("youku_token").toString());
-					LOG.info("MATERIAL VIDEO UPLOAD POSTBODY");
-					String postBody = ymmue.toJson().toString();
-					LOG.info(postBody);
-					
-					UrlPost urlPost = new UrlPost();
-					String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
-							properties.getProperty("youku_prefix_video_upload"), postBody);
-					LOG.info("MATERIAL VIDEO UPLOAD RESPONSE");
-					LOG.info(out);
-					if(out != null){
-						ReturnResultCode rrc = ReturnResultCode.getObject(out);
-						if(rrc.getResult()==0){
-							cpstmt = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", sBuff.toString()));
-							cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-							cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-							cpstmt.executeUpdate();
-							isSuccess=true;
+					if(videoUploadSucess){
+
+						YoukuMultipleMaterialUploadEntity ymmue = new YoukuMultipleMaterialUploadEntity();
+						ymmue.setMaterial(materialList);
+						ymmue.setDspid(properties.getProperty("youku_dsp_id").toString());
+						ymmue.setToken(properties.getProperty("youku_token").toString());
+						LOG.info("MATERIAL VIDEO UPLOAD POSTBODY");
+						String postBody = ymmue.toJson().toString();
+						LOG.info(postBody);
+
+						UrlPost urlPost = new UrlPost();
+						String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
+								properties.getProperty("youku_prefix_video_upload"), postBody);
+						LOG.info("MATERIAL VIDEO UPLOAD RESPONSE");
+						LOG.info(out);
+						if(out != null){
+							ReturnResultCode rrc = ReturnResultCode.getObject(out);
+							if(rrc.getResult()==0){
+								ReturnResultMessage rrm = ReturnResultMessage.getObject(out);
+								if(rrm.getResult()==0 && (rrm.getMessage() == null || rrm.getMessage().size()<1 )){
+									cpstmt = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
+									cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+									cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+									cpstmt.setString(3, errorCode);
+									cpstmt.executeUpdate();
+									isSuccess=true;
+								}else{
+									if(rrm.getMessage() != null && rrm.getMessage().size()>0 ){
+										errorCode=rrm.getMessage().keySet().iterator().next();
+									}else{
+										errorCode = rrm.getResult()+" -- ReturnCode";
+									}
+								}
+							}else{
+								errorCode = rrc.getResult()+" -- ReturnCode";
+							}
 						}
+					}else{
+						errorCode="CONTENTUPLOADFAILED";
 					}
 				}catch(Exception e1){
 					LOG.error(e1.getMessage(),e1);
 				}
 				if(!isSuccess){
-					cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", sBuff.toString()));
+					cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
 					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
 					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+					cpstmt1.setString(3, errorCode);
+
 					cpstmt1.executeUpdate();
 				}
+
 			}
 		}catch(Exception e){
 			setPerformTransaction(false);

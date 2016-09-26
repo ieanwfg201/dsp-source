@@ -15,6 +15,7 @@ import models.advertiser.TargetingDisplay;
 import models.entities.adpositionget.AdpositionGetDisplay;
 import models.entities.adxbasedexchanges.AdxBasedExchangesMetadataDisplay;
 import models.entities.isp_mapping.Isp_mappingDisplay;
+import models.entities.materialadvinfoupload.MaterialAdvInfoUploadDisplay;
 import models.entities.materialbannerupload.MaterialBannerUploadDisplay;
 import models.entities.materialvideoupload.MaterialVideoUploadDisplay;
 import models.iddefinition.IddefinitionDisplay;
@@ -43,6 +44,7 @@ import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.Account_Type;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
@@ -123,6 +125,10 @@ public class EntityListController extends Controller{
 				case materialvideoupload:
 					entityList = EntityListDataService.listData(entityListFilter, new MaterialUploadVideo());
 					populateMaterialVideoUpload(itemList,(List<MaterialUploadVideo>) entityList.getEntityList());
+					break;
+				case materialadvinfoupload:
+					entityList = EntityListDataService.listData(entityListFilter, new MaterialUploadAdvInfo());
+					populateMaterialAdvInfoUpload(itemList,(List<MaterialUploadAdvInfo>) entityList.getEntityList());
 					break;
 				default:
 					break;
@@ -222,6 +228,11 @@ public class EntityListController extends Controller{
     private static void populateMaterialVideoUpload(ArrayNode entityArray, List<MaterialUploadVideo> entityList){
         for (MaterialUploadVideo entity : entityList) { 
             entityArray.addPOJO(objectMapper.valueToTree(new MaterialVideoUploadDisplay(entity)));
+        }
+    }
+    private static void populateMaterialAdvInfoUpload(ArrayNode entityArray, List<MaterialUploadAdvInfo> entityList){
+        for (MaterialUploadAdvInfo entity : entityList) { 
+            entityArray.addPOJO(objectMapper.valueToTree(new MaterialAdvInfoUploadDisplay(entity)));
         }
     }
 }

@@ -7,6 +7,8 @@ import com.kritter.material_upload.common.adposition.AdPositionGet;
 import com.kritter.material_upload.common.executor.UploadExecutor;
 import com.kritter.material_upload.common.executor.UploadExecutorImpl;
 import com.kritter.naterial_upload.youku.adpositionget.YoukuAdPositionGet;
+import com.kritter.naterial_upload.youku.advInfo.YoukuMUAdvInfo;
+import com.kritter.naterial_upload.youku.advInfo.YoukuMUAdvInfoAudit;
 import com.kritter.naterial_upload.youku.banner.YoukuMUBanner;
 import com.kritter.naterial_upload.youku.banner.YoukuMUBannerAudit;
 import com.kritter.naterial_upload.youku.video.YoukuMUVideo;
@@ -26,6 +28,10 @@ public class YoukuUploadExecutor  extends UploadExecutorImpl implements UploadEx
 		super.executeMaterialVideoUpload(properties, muVideo, con);
 		YoukuMUVideoAudit muVideoAudit = new YoukuMUVideoAudit();
 		super.executeMaterialVideoAudit(properties, muVideoAudit, con);
+		YoukuMUAdvInfo muAdvInfo = new YoukuMUAdvInfo();
+		super.executeAdvInfoUpload(properties, muAdvInfo, con);
+		YoukuMUAdvInfoAudit muAdvInfoAudit = new YoukuMUAdvInfoAudit();
+		super.executeMaterialAdvInfoAudit(properties, muAdvInfoAudit, con);
 	}
 
 

@@ -50,7 +50,7 @@ public class Targeting_profile {
     private String categories_tier_2_list = "[]";
     /** flag to specify whether category is included or excluded */
     private boolean is_category_list_excluded = false;
-    /** optional - jason array of ip range files */
+	/** optional - jason array of ip range files */
     private String custom_ip_file_id_set = null;
     /** mandatory - id of Account which is modifying this entity @see com.kritter.api.entity.account.Account */
     private int modified_by = -1;
@@ -112,6 +112,7 @@ public class Targeting_profile {
     /** optional - jason array of lat lon radius files */
     private String lat_lon_radius_file = null;
     /** optional - jason array of deviceid files */
+    private boolean user_id_inc_exc=true;
     private String deviceid_file = null;
     private String file_prefix_path = null;
     private int id ;
@@ -728,6 +729,12 @@ public class Targeting_profile {
 	}
 	public void setLat_lon_radius_unit(int lat_lon_radius_unit) {
 		this.lat_lon_radius_unit = lat_lon_radius_unit;
+	}
+    public boolean isUser_id_inc_exc() {
+		return user_id_inc_exc;
+	}
+	public void setUser_id_inc_exc(boolean user_id_inc_exc) {
+		this.user_id_inc_exc = user_id_inc_exc;
 	}
 
 	public JsonNode toJson(){
