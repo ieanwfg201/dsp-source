@@ -186,7 +186,9 @@ public class CampaignController extends Controller{
 		
 		BeanUtils.copyProperties(campaign, campaignEntity);
 		BeanUtils.copyProperties(campaignBudget, campaignBudgetEntity);
-		BeanUtils.copyProperties(campaignPayout, campaignPayoutEntity);
+		if(campaignPayout!=null && campaignPayout.getCampaign_id() != null){
+			BeanUtils.copyProperties(campaignPayout, campaignPayoutEntity);
+		}
 		
 		return ok(views.html.advt.campaign.campaignForm.render(campaignFormTemplate.fill(campaignEntity), 
 				campaignBudgetFormTemplate.fill(campaignBudgetEntity),  new CampaignDisplay(campaign),campaign_unlimited,user_flow_enabled,

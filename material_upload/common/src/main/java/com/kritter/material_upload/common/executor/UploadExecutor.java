@@ -12,6 +12,7 @@ import com.kritter.material_upload.common.video.MUVideo;
 import com.kritter.material_upload.common.video.MUVideoAudit;
 
 public interface UploadExecutor {
+	void checkJobs(Properties properties,Connection con,int pubincId);
 	void execute(Properties properties,Connection con);
 	void executeAdpositionGet(Properties properties,AdPositionGet adPositionGet,Connection con);
 	void executeMaterialBannerUpload(Properties properties,MUBanner muBanner,Connection con);
