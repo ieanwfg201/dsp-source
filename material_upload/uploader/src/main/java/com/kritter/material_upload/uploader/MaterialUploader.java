@@ -11,8 +11,12 @@ import org.apache.log4j.PropertyConfigurator;
 import com.kritter.naterial_upload.youku.executor.YoukuUploadExecutor;
 import com.kritter.utils.dbconnector.DBConnector;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class MaterialUploader {
     
+	@Getter@Setter
     private Properties properties = null;
     public void configure_logger(String conf_path){
         FileInputStream fi = null;
@@ -55,9 +59,7 @@ public class MaterialUploader {
     }
     
     
-    public void materialupload(String conf_path){
-        configure_logger(conf_path);
-        read_properties(conf_path);
+    public void materialupload(){
         String split[] =  properties.get("adxbasedexchanges_prefix").toString().split(",");
         Connection con = null;
         try{
@@ -88,12 +90,17 @@ public class MaterialUploader {
     
     
     public static void main(String args[]){
-        /*if(args.length != 1){
+        if(args.length != 1){
             System.out.println("Incorrect Usage");
             System.exit(0);
-        }*/
+        }
         MaterialUploader uploader = new MaterialUploader();
         //uploader.materialupload(args[0]);
-        uploader.materialupload("/usr/share/kritter/material_upload/uploader/conf/current");
+        String confPath=args[0];
+        //String confPath="/usr/share/kritter/material_upload/uploader/conf/current";
+        uploader.configure_logger(confPath);
+        uploader.read_properties(confPath);
+        uploader.materialupload();
+
     }
 }

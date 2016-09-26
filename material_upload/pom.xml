@@ -48,5 +48,6 @@
         <module>youkuvideouploader</module>
         <module>youku</module>
         <module>uploader</module>
+        <module>materialdaemon</module>
   </modules>
 </project>
