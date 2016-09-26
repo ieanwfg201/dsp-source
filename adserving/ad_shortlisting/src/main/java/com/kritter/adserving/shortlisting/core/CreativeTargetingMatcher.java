@@ -196,7 +196,7 @@ public class CreativeTargetingMatcher
                          resultingIntersection.size(), site.isCreativeAttributesForExclusion());
 
             if(     siteCreativeAttributes.size() > 0                                       &&
-                    (
+                    ((
                      site.isCreativeAttributesForExclusion() &&
                      null != resultingIntersection &&
                      resultingIntersection.size() > 0
@@ -204,7 +204,7 @@ public class CreativeTargetingMatcher
                     (
                      !site.isCreativeAttributesForExclusion() &&
                      (null == resultingIntersection || resultingIntersection.size() == 0 )
-                    )
+                    ))
               )
             {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,

@@ -28,12 +28,12 @@ public class YoukuVideoQuery {
 	public static final String  selectforUpload = "select * from video_upload where pubIncId=? and adxbasedexhangesstatus=2";
 	
 	public static final String  updatetVideoStatus = "update video_upload"
-			+ " set adxbasedexhangesstatus=?,last_modified=? "
+			+ " set adxbasedexhangesstatus=?,last_modified=?,message=? "
 			+ " where internalid in (<id>)";
 	public static final String  updatetVideoStatusMessage = "update video_upload"
 			+ " set adxbasedexhangesstatus=?,message=?,last_modified=? "
 			+ " where internalid in (<id>)";
-	public static final String  selectforAudit = "select * from video_upload where pubIncId=? and (adxbasedexhangesstatus=7 or adxbasedexhangesstatus=12) ";
+	public static final String  selectforAudit = "select * from video_upload where pubIncId=? and (adxbasedexhangesstatus=7) ";
 
 	public static final String  insert_material_state= "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
 	public static final String  update_material_state= "update material_upload_state set last_modified=? where materialtype=? and pubIncId=?";

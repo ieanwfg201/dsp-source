@@ -11,6 +11,7 @@ DIRECT_PUBLISHER = 1,
 SSP = 3,
 DCP = 4,
 AGGREGATOR = 5,
+OPENRTB_AGGREGATOR = 6,
 }
 
 enum TerminationReason{

@@ -292,6 +292,21 @@ public class ResponseFormattingJob implements Job{
                         responseContent = noFillPassbackContent.getPassBackContent();
                     }
                 }
+                else if(request.isPassbackUsingFormatter() && (null == responseAdInfos || responseAdInfos.size() <= 0))
+                {
+                    if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.XHTML_FORMATTER_ID))
+                        responseContent = this.creativesXHTMLFormatter.formatCreatives(request,response);
+                    else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.XML_FORMATTER_ID))
+                        responseContent = this.creativesXMLFormatter.formatCreatives(request,response);
+                    else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.JSON_FORMATTER_ID))
+                        responseContent = this.creativesJSONFormatter.formatCreatives(request,response);
+                    else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.VAST_FORMATTER_ID))
+                        responseContent = this.vastFormatter.formatCreatives(request,response);
+                    else
+                        logger.error("Unrecognized formatting option for ad units: {}" , request.getResponseFormat());
+
+                    responseCode = HttpServletResponse.SC_OK;
+                }
                 else if(null != responseAdInfos && responseAdInfos.size() > 0)
                 {
                     if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.XHTML_FORMATTER_ID))

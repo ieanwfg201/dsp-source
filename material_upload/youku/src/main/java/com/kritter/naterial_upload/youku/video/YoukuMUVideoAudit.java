@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.material_upload.common.urlpost.UrlPost;
 import com.kritter.material_upload.common.video.MUVideoAudit;
+import com.kritter.naterial_upload.youku.banner.YoukuBannerQuery;
 import com.kritter.naterial_upload.youku.entity.ReturnAuditEntity;
 import com.kritter.naterial_upload.youku.entity.ReturnAuditRecord;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
@@ -88,9 +89,20 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 										cpstmt.setString(2, rar.getReason());
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
+									}else{
+										cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+										cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
+										cpstmt.setString(2, rrc.getResult()+"--AUDIT MESSAGE NOT PRSESENT");
+										cpstmt.setTimestamp(3, ts);
+										cpstmt.executeUpdate();
 									}
 								}
-
+							}else{
+								cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+								cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
+								cpstmt.setString(2, rrc.getResult()+"--RETURNCODEAUDIT");
+								cpstmt.setTimestamp(3, ts);
+								cpstmt.executeUpdate();
 							}
 						}
 					}catch(Exception e1){

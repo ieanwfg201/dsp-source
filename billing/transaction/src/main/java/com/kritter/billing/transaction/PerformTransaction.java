@@ -46,7 +46,8 @@ public class PerformTransaction {
 		            case CLICK:
 		                if(pirr.getInventorySource() == INVENTORY_SOURCE.DIRECT_PUBLISHER.getCode() || 
 		                pirr.getInventorySource() == INVENTORY_SOURCE.SSP.getCode() ||
-		                pirr.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode()){
+		                pirr.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode() ||
+		                pirr.getInventorySource() == INVENTORY_SOURCE.OPENRTB_AGGREGATOR.getCode()){
 		                    itransaction = new DirectPublisherClick();
 		                }else if(pirr.getInventorySource() == INVENTORY_SOURCE.RTB_EXCHANGE.getCode()){
 		                    itransaction = new ExchangeClick();
@@ -60,7 +61,8 @@ public class PerformTransaction {
 		            case INT_EXCHANGE_WIN:
                         if(pirr.getInventorySource() == INVENTORY_SOURCE.DIRECT_PUBLISHER.getCode() || 
                                 pirr.getInventorySource() == INVENTORY_SOURCE.SSP.getCode() ||
-                                pirr.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode()){
+                                pirr.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode()||
+                                pirr.getInventorySource() == INVENTORY_SOURCE.OPENRTB_AGGREGATOR.getCode()){
                             itransaction = new InternalExcWinNotification();
                         }
                         break;
@@ -72,7 +74,8 @@ public class PerformTransaction {
 		            case RENDER:
 		                if(pirr.getInventorySource() == INVENTORY_SOURCE.DIRECT_PUBLISHER.getCode() || 
 		                pirr.getInventorySource() == INVENTORY_SOURCE.SSP.getCode() ||
-		                pirr.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode()){
+		                pirr.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode() ||
+		                pirr.getInventorySource() == INVENTORY_SOURCE.OPENRTB_AGGREGATOR.getCode()){
 		                    itransaction = new DirectPublisherCPM();
 		                }else if(pirr.getInventorySource() == INVENTORY_SOURCE.RTB_EXCHANGE.getCode()){
 		                    itransaction = new ExchangeCPM();
@@ -81,7 +84,8 @@ public class PerformTransaction {
 		            case CONVERSION:
 		                if(pirr.getInventorySource() == INVENTORY_SOURCE.DIRECT_PUBLISHER.getCode() || 
                         pirr.getInventorySource() == INVENTORY_SOURCE.SSP.getCode() ||
-                        pirr.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode()){
+                        pirr.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode()||
+                        pirr.getInventorySource() == INVENTORY_SOURCE.OPENRTB_AGGREGATOR.getCode()){
                             itransaction = new DirectPublisherConversion();
                         }
                         break;
