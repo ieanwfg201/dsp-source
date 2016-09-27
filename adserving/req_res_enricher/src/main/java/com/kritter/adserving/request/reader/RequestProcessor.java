@@ -3,6 +3,7 @@ package com.kritter.adserving.request.reader;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.adserving.request.enricher.AggregatorRequestEnricher;
 import com.kritter.adserving.request.enricher.DirectPublisherRequestEnricher;
+import com.kritter.adserving.request.enricher.OpenRTBTwoDotThreeAggregatorRequestEnricher;
 import com.kritter.adserving.request.enricher.RTBExchangeRequestEnricher;
 import com.kritter.adserving.request.enricher.RequestEnricher;
 import com.kritter.utils.common.ApplicationGeneralUtils;
@@ -32,6 +33,7 @@ public class RequestProcessor
     private final DirectPublisherRequestEnricher directPublisherRequestEnricher;
     private final RequestEnricher aggregatorRequestEnricher;
     private final RTBExchangeRequestEnricher rtbExchangeRequestEnricher;
+    private final OpenRTBTwoDotThreeAggregatorRequestEnricher openrtbtwodotthreeRequestEnricher;
     private final List<? extends RequestEnricher> alternativeRequestEnrichers;
 
     public RequestProcessor(
@@ -40,7 +42,8 @@ public class RequestProcessor
                             DirectPublisherRequestEnricher directPublisherRequestEnricher,
                             RequestEnricher aggregatorRequestEnricher,
                             RTBExchangeRequestEnricher rtbExchangeRequestEnricher,
-                            List<? extends RequestEnricher> alternativeRequestEnrichers
+                            List<? extends RequestEnricher> alternativeRequestEnrichers,
+                            OpenRTBTwoDotThreeAggregatorRequestEnricher openrtbtwodotthreeRequestEnricher
                            )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -49,6 +52,7 @@ public class RequestProcessor
         this.aggregatorRequestEnricher = aggregatorRequestEnricher;
         this.rtbExchangeRequestEnricher = rtbExchangeRequestEnricher;
         this.alternativeRequestEnrichers = alternativeRequestEnrichers;
+        this.openrtbtwodotthreeRequestEnricher = openrtbtwodotthreeRequestEnricher;
     }
 
     public Request processRequest(String requestId, HttpServletRequest httpServletRequest) throws Exception
@@ -115,6 +119,9 @@ public class RequestProcessor
         }
         if(inventorySourceCode == INVENTORY_SOURCE.RTB_EXCHANGE.getCode()){
             return this.rtbExchangeRequestEnricher;
+        }
+        if(inventorySourceCode == INVENTORY_SOURCE.OPENRTB_AGGREGATOR.getCode()){
+            return this.openrtbtwodotthreeRequestEnricher;
         }
         return null;
     }

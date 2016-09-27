@@ -15,6 +15,8 @@ GET 	/accounts/:accountType            		       controllers.AccountsController.a
 POST 	/accounts/list            					   controllers.AccountsController.accountList()
 GET 	/accounts/updateStatus/:account_guid/:action   controllers.AccountsController.updateAccountStatus( account_guid:String, action: String )
 POST 	/accounts/updateStatus  					   controllers.AccountsController.saveAccountStatus()
+POST    /accounts/qualificationimage-upload            controllers.AccountsController.uploadQualificationImage() 
+
 
 
 #Entity List API
@@ -297,6 +299,11 @@ GET    /ssp/global         controllers.ssp.SSPController.globalwaterfall()
 POST   /ssp/global/data    controllers.ssp.SSPController.global_data()
 POST    /ssp/global/update  controllers.ssp.SSPController.update_insert()
 
+# payout 
+GET    /payout/defaultpayout         controllers.payout.PayoutController.defaultpayout()
+POST   /payout/defaultpayout/data    controllers.payout.PayoutController.defaultpayoutdata()
+POST   /payout/defaultpayout/update  controllers.payout.PayoutController.defaultpayoutupdate()
+
 
 #Metadata Services
 
@@ -415,6 +422,10 @@ GET   /adxbasedexchanges/bannerupload/updatemultiple/:action     	controllers.ad
 GET   /adxbasedexchanges/videoupload/list                           controllers.adxbasedexchanges.MaterialVideoUploadController.list(exchange: Option[String])
 GET   /adxbasedexchanges/videoupload/updatesingle/:id/:action       controllers.adxbasedexchanges.MaterialVideoUploadController.updatesingle(id:Int, action:String)
 GET   /adxbasedexchanges/videoupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialVideoUploadController.updatemultiple(action:String, ids: Option[String])
+
+GET   /adxbasedexchanges/advinfoupload/list                         controllers.adxbasedexchanges.MaterialAdvInfoController.list(exchange: Option[String])
+GET   /adxbasedexchanges/advinfoupload/updatesingle/:id/:action     controllers.adxbasedexchanges.MaterialAdvInfoController.updatesingle(id:Int, action:String)
+GET   /adxbasedexchanges/advinfoupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialAdvInfoController.updatemultiple(action:String, ids: Option[String])
 
 
 #PMP

@@ -32,6 +32,8 @@ import com.kritter.api.entity.ext_site.Ext_site_list;
 import com.kritter.api.entity.metadata.MetaField;
 import com.kritter.api.entity.metadata.MetaInput;
 import com.kritter.api.entity.metadata.MetaList;
+import com.kritter.api.entity.payoutthreshold.PayoutThresholdList;
+import com.kritter.api.entity.payoutthreshold.PayoutThresholdListEntity;
 import com.kritter.api.entity.retargeting_segment.RetargetingSegmentInputEntity;
 import com.kritter.api.entity.retargeting_segment.RetargetingSegmentList;
 import com.kritter.api.entity.site.Site;
@@ -39,6 +41,7 @@ import com.kritter.api.entity.site.SiteList;
 import com.kritter.api.entity.site.SiteListEntity;
 import com.kritter.constants.tracking_partner.TrackingPartner;
 import com.kritter.entity.demand_props.DemandProps;
+import com.kritter.entity.payout_threshold.DefaultPayoutThreshold;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.kritterui.api.def.ApiDef;
 import com.kritter.postimpression.thrift.struct.PostImpressionEvent;
@@ -750,6 +753,30 @@ public class MetadataAPI {
 	    }
 	    return selectOptions;
 	}
+	public static List<SelectOption> getDefaultPayoutKey(){
+	    List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+	    Connection con = null;
+	    try{
+	        con = DB.getConnection(true);
+	        PayoutThresholdListEntity entity =  new PayoutThresholdListEntity();
+	        entity.setQueryEnum(PayoutThresholdListEnum.default_payout_threshold);
+	        PayoutThresholdList list = ApiDef.various_get_payout_threshold(con, entity);
+	        for (DefaultPayoutThreshold threshold : list.getDefault_entity_list()) {
+	            selectOptions.add(new SelectOption(threshold.getName(), threshold.getName()));
+	        }
+	    }catch(Exception e){
+	        Logger.error("Error in getActiveAPIDemandPartner", e);
+	    }
+	    finally{
+	        try {
+	            if(con !=null)
+	                con.close();
+	        } catch (Exception e2) {
+	            Logger.error("Failed closing connection", e2);
+	        }
+	    }
+	    return selectOptions;
+	}
 	public static List<SelectOption> getAdxBasedExchangesMetadata(){
 	    List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
 	    Connection con = null;
@@ -866,6 +893,33 @@ public class MetadataAPI {
 		}
 		return metalistToArrayNode(mfields);
 	}
+	public static List<SelectOption> tier1mmaindustrySelectOption(){
+		List<SelectOption> optionNodes = new ArrayList<SelectOption>();
+
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.MMA_INDUSTRY_TIER1_ALL, null);
+			mfields = mlist.getMetaFieldList();
+			if(mfields != null){
+				for(MetaField m: mfields){
+					optionNodes.add(new SelectOption(m.getName(), m.getId()+""));
+				}
+			}
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return optionNodes;
+	}
 	public static ArrayNode tier2mmaindustry(String tier1List){
 		List<MetaField> mfields  = null;
 		Connection con = null;
@@ -889,6 +943,33 @@ public class MetadataAPI {
 			}
 		}
 		return metalistToArrayNode(mfields);
+	}
+	public static List<SelectOption> tier2mmaindustrySelectOption(){
+		List<SelectOption> optionNodes = new ArrayList<SelectOption>();
+
+		List<MetaField> mfields  = null;
+		Connection con = null;
+		try{
+			con = DB.getConnection(true);
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.MMA_INDUSTRY_TIER2_ALL, null);
+			mfields = mlist.getMetaFieldList();
+			if(mfields != null){
+				for(MetaField m: mfields){
+					optionNodes.add(new SelectOption(m.getName(), m.getId()+""));
+				}
+			}
+		}catch(Exception e){
+			Logger.error("Failed closing connection", e);
+		}
+		finally{
+			try {
+				if(con !=null)
+					con.close();
+			} catch (Exception e2) {
+				Logger.error("Failed closing connection", e2);
+			}
+		}
+		return optionNodes;
 	}
 	public static ArrayNode adposition_list(){
 		List<MetaField> mfields  = null;
@@ -2591,5 +2672,23 @@ public class MetadataAPI {
         }
 
         return selectOptions;
+    }
+
+    public static List<SelectOption> openRTBVersions()
+    {
+        List<SelectOption> options = emptyOptions();
+        options.add(new SelectOption("RTB 2.0", String.valueOf(OpenRTBVersion.VERSION_2_0.getCode())));
+        options.add(new SelectOption("RTB 2.1", String.valueOf(OpenRTBVersion.VERSION_2_1.getCode())));
+        options.add(new SelectOption("RTB 2.2", String.valueOf(OpenRTBVersion.VERSION_2_2.getCode())));
+        options.add(new SelectOption("RTB 2.3", String.valueOf(OpenRTBVersion.VERSION_2_3.getCode())));
+        return options;
+    }
+
+    public static List<SelectOption> thirdPartyDemandChannelTypes()
+    {
+        List<SelectOption> options = emptyOptions();
+        options.add(new SelectOption("Marketplace Of DSP", String.valueOf(ThirdPartyDemandChannel.MARKETPLACE_OF_DSP.getCode())));
+        options.add(new SelectOption("StandAlone DSP", String.valueOf(ThirdPartyDemandChannel.STANDALONE_DSP_BIDDER.getCode())));
+        return options;
     }
 }

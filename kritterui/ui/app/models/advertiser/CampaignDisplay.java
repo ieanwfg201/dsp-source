@@ -14,6 +14,7 @@ import com.kritter.api.entity.account.Account;
 import com.kritter.api.entity.campaign.Campaign;
 import com.kritter.api.entity.campaign_budget.Campaign_budget;
 import com.kritter.constants.StatusIdEnum;
+import com.kritter.entity.payout_threshold.CampaignPayoutThreshold;
 
 import controllers.advertiser.routes;
 
@@ -21,12 +22,14 @@ public class CampaignDisplay extends EntityDisplay{
 
 	Campaign campaign = null;
 	Campaign_budget budget = null;
+	CampaignPayoutThreshold payout = null;
 	Account account = null;
 
 	public CampaignDisplay(Campaign campaign){ 
 		this.campaign = campaign;
 		if(campaign.getId() !=-1){
-			this.budget = DataAPI.getCampaignBudget(campaign.getId()); 
+			this.budget = DataAPI.getCampaignBudget(campaign.getId());
+			this.payout = DataAPI.getCampaignPayoutThreshold(campaign.getId());
 		}
 		if(campaign.getAccount_guid() != null){ 
 			this.account = DataAPI.getAccountByGuid(campaign.getAccount_guid());
@@ -98,6 +101,22 @@ public class CampaignDisplay extends EntityDisplay{
 	
 	public Campaign_budget getBudget(){
 		return budget;
+	}
+	public String getAbsPayoutThreshold(){
+		if(this.payout != null){
+			if(this.payout.getAbsolute_threshold() != null && this.payout.getAbsolute_threshold()>0){
+				return this.payout.getAbsolute_threshold()+"";
+			}
+		}
+		return "SystemWide";
+	}
+	public String getPercentageThreshold(){
+		if(this.payout != null){
+			if(this.payout.getPercentage_threshold() != null && this.payout.getPercentage_threshold()>0){
+				return this.payout.getPercentage_threshold()+"";
+			}
+		}
+		return "SystemWide";
 	}
 
 	public String getViewUrl(){

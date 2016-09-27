@@ -177,6 +177,9 @@ public class Request
     @Getter @Setter
     private Map<String,Double> dspBidPriceResponseForExchangeRequest;
 
+    @Getter @Setter
+    private boolean passbackUsingFormatter = false;
+
     //contains all request enrichment related error codes.
     public enum REQUEST_ENRICHMENT_ERROR_CODE
     {

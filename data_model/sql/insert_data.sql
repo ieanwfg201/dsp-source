@@ -199,8 +199,8 @@ insert into targeting_profile (
     modified_by,
     created_on,
     last_modified) values
-    ('test_targeting_profile_guid','test_targeting_profile','test_adv_guid',true,'[32,1]','[283]','{"9":"3.2-4.2"}','{"3":"All-All"}',null,null,'[1]',false,'[1]',false,null,1,now(),now()),
-    ('test_targeting_profile_guid2','test_targeting_profile2','test_adv_guid',true,null,null,null,null,null,null,'[1]',false,'[1]',false,null,1,now(),now())
+    ('test_targeting_profile_guid','test_targeting_profile','test_adv_guid',true,'[32,1]','[283]','{"9":"3.2-4.2"}','{"3":"All-All"}',null,null,'[1]',false,'{"TIER1":[],"TIER2":[]}',false,null,1,now(),now()),
+    ('test_targeting_profile_guid2','test_targeting_profile2','test_adv_guid',true,null,null,null,null,null,null,'[1]',false,'{"TIER1":[],"TIER2":[]}',false,null,1,now(),now())
     ON DUPLICATE KEY UPDATE guid = VALUES(guid);
 
 
@@ -798,3 +798,6 @@ insert into payout_threshold_metadata (name, value) values
 ("campaign_absolute_payout_threshold", 2.5),
 ("campaign_percentage_payout_threshold", 0.10)
 ON DUPLICATE KEY UPDATE name = VALUES(name);
+
+update payout_threshold_metadata set value = 25 where name = "campaign_percentage_payout_threshold";
+update campaign set last_modified = now();

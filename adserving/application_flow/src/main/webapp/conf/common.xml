@@ -511,6 +511,17 @@
         <constructor-arg index="7"><ref bean="isp_detector"/></constructor-arg>
     </bean>
 
+    <bean id="openrtbaggregator_pub_request_enricher" class="com.kritter.adserving.request.enricher.OpenRTBTwoDotThreeAggregatorRequestEnricher">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="bid.req.logger"/>
+        <constructor-arg index="2"><ref bean="req_logging_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="site_cache"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="handset_detector"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="country_detector"/></constructor-arg>
+        <constructor-arg index="6"><ref bean="isp_detector"/></constructor-arg>
+        <constructor-arg index="7"><null /></constructor-arg>
+    </bean>
+
     <bean id="rtb_exchange_request_enricher" class="com.kritter.adserving.request.enricher.RTBExchangeRequestEnricher">
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1">
@@ -560,6 +571,7 @@
             <list>
             </list>
         </constructor-arg>
+        <constructor-arg index="6"><ref bean="openrtbaggregator_pub_request_enricher"/></constructor-arg>
     </bean>
 
     <!-- Creative formatters being. -->

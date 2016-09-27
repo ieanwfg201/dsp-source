@@ -104,10 +104,29 @@ public class Account {
     private DemandProps demandProps = null;
     @Getter@Setter
     private String demand_url = "";
+    @Getter @Setter
+    private int open_rtb_ver_required = 0;
+    @Getter @Setter
+    private int third_party_demand_channel_type = 0;
     private String billing_name = "";
     private String billing_email="";
     @Getter@Setter
     private String ext="";
+    @Getter@Setter
+    private String contactdetail="";
+    @Getter@Setter
+    private String brand="";
+    @Getter@Setter
+    private String firstIndustryCode;
+    @Getter@Setter
+    private String secondIndustryCode;
+    @Getter@Setter
+    private String qualificationName;
+    @Getter@Setter
+    private String qualificationUrl;
+    @Getter@Setter
+    private String qualificationMD5;
+    
     private boolean adxbased=false;
     
     public boolean isAdxbased() {

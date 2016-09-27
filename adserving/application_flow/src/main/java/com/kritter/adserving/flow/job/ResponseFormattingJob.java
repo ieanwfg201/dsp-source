@@ -256,7 +256,8 @@ public class ResponseFormattingJob implements Job{
                    responseAdInfos.size() == 0 &&
                    null != noFillPassbackContentArray &&
                    noFillPassbackContentArray.length > 0 &&
-                   site.getSitePassbackType().getCode() == SITE_PASSBACK_TYPE.DIRECT_PASSBACK.getCode()
+                   site.getSitePassbackType().getCode() == SITE_PASSBACK_TYPE.DIRECT_PASSBACK.getCode() &&
+                   !request.isPassbackUsingFormatter()
                   )
                 {
                     logger.debug("NoFill event and site has specified direct passback, performing it.");
@@ -291,12 +292,7 @@ public class ResponseFormattingJob implements Job{
                         responseContent = noFillPassbackContent.getPassBackContent();
                     }
                 }
-                else if(responseAdInfos.size() == 0)
-                {
-                    responseContent = this.errorOrEmptyResponse;
-                    responseCode = HttpServletResponse.SC_OK;
-                }
-                else
+                else if(request.isPassbackUsingFormatter() && (null == responseAdInfos || responseAdInfos.size() <= 0))
                 {
                     if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.XHTML_FORMATTER_ID))
                         responseContent = this.creativesXHTMLFormatter.formatCreatives(request,response);
@@ -309,6 +305,26 @@ public class ResponseFormattingJob implements Job{
                     else
                         logger.error("Unrecognized formatting option for ad units: {}" , request.getResponseFormat());
 
+                    responseCode = HttpServletResponse.SC_OK;
+                }
+                else if(null != responseAdInfos && responseAdInfos.size() > 0)
+                {
+                    if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.XHTML_FORMATTER_ID))
+                        responseContent = this.creativesXHTMLFormatter.formatCreatives(request,response);
+                    else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.XML_FORMATTER_ID))
+                        responseContent = this.creativesXMLFormatter.formatCreatives(request,response);
+                    else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.JSON_FORMATTER_ID))
+                        responseContent = this.creativesJSONFormatter.formatCreatives(request,response);
+                    else if(request.getResponseFormat().equalsIgnoreCase(FormatterIds.VAST_FORMATTER_ID))
+                        responseContent = this.vastFormatter.formatCreatives(request,response);
+                    else
+                        logger.error("Unrecognized formatting option for ad units: {}" , request.getResponseFormat());
+
+                    responseCode = HttpServletResponse.SC_OK;
+                }
+                else if(responseAdInfos.size() == 0)
+                {
+                    responseContent = this.errorOrEmptyResponse;
                     responseCode = HttpServletResponse.SC_OK;
                 }
             }

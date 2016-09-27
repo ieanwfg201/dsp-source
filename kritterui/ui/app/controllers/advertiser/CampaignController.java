@@ -10,6 +10,7 @@ import models.advertiser.AdDisplay;
 import models.advertiser.CampaignDisplay;
 import models.entities.CampaignBudgetEntity;
 import models.entities.CampaignEntity;
+import models.entities.CampaignPayoutThresholdEntity;
 import models.formbinders.MultiAdForm;
 
 import org.springframework.beans.BeanUtils;
@@ -38,6 +39,7 @@ import com.kritter.api.entity.campaign_budget.Campaign_budget;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.StatusIdEnum;
+import com.kritter.entity.payout_threshold.CampaignPayoutThreshold;
 import com.kritter.kritterui.api.def.ApiDef;
 
 public class CampaignController extends Controller{
@@ -45,6 +47,7 @@ public class CampaignController extends Controller{
 	static Form<CampaignEntity> campaignFormTemplate = Form.form(CampaignEntity.class); 
 	static Form<MultiAdForm> mafTemplate = Form.form(MultiAdForm.class); 
 	static Form<CampaignBudgetEntity> campaignBudgetFormTemplate = Form.form(CampaignBudgetEntity.class);
+	static Form<CampaignPayoutThresholdEntity> campaignPayoutFormTemplate = Form.form(CampaignPayoutThresholdEntity.class);
 	private static String campaign_unlimited = Play.application().configuration().getString("campaign_unlimited");
 	private static String user_flow_enabled = Play.application().configuration().getString("user_flow_enabled");
 	
@@ -164,24 +167,32 @@ public class CampaignController extends Controller{
 		CampaignBudgetEntity campaignBudget = new CampaignBudgetEntity(); 
 		campaignBudget.setCampaign_guid("");
 		campaignBudget.setCampaign_id(0);
+		CampaignPayoutThresholdEntity campaignPayoutEntity = new CampaignPayoutThresholdEntity();
 
 		return ok(views.html.advt.campaign.campaignForm.render(campaignFormTemplate.fill(campaign), 
-				campaignBudgetFormTemplate.fill(campaignBudget), new CampaignDisplay(campaign.getEntity()),campaign_unlimited,user_flow_enabled));
+				campaignBudgetFormTemplate.fill(campaignBudget), new CampaignDisplay(campaign.getEntity()),campaign_unlimited,user_flow_enabled,
+				campaignPayoutFormTemplate.fill(campaignPayoutEntity)));
 	}
 
 	@SecuredAction
 	public static Result edit( int campaignId){ 
 		Campaign campaign = getCampaign(campaignId);;
 		Campaign_budget campaignBudget = DataAPI.getCampaignBudget(campaign.getId());;
+        CampaignPayoutThreshold campaignPayout = DataAPI.getCampaignPayoutThreshold(campaign.getId());
 
 		CampaignEntity campaignEntity = new CampaignEntity(); 
 		CampaignBudgetEntity campaignBudgetEntity = new CampaignBudgetEntity(); 
+        CampaignPayoutThresholdEntity campaignPayoutEntity = new CampaignPayoutThresholdEntity();
 		
 		BeanUtils.copyProperties(campaign, campaignEntity);
 		BeanUtils.copyProperties(campaignBudget, campaignBudgetEntity);
+		if(campaignPayout!=null && campaignPayout.getCampaign_id() != null){
+			BeanUtils.copyProperties(campaignPayout, campaignPayoutEntity);
+		}
 		
 		return ok(views.html.advt.campaign.campaignForm.render(campaignFormTemplate.fill(campaignEntity), 
-				campaignBudgetFormTemplate.fill(campaignBudgetEntity),  new CampaignDisplay(campaign),campaign_unlimited,user_flow_enabled));
+				campaignBudgetFormTemplate.fill(campaignBudgetEntity),  new CampaignDisplay(campaign),campaign_unlimited,user_flow_enabled,
+				campaignPayoutFormTemplate.fill(campaignPayoutEntity)));
 	}
 
     @SecuredAction
@@ -190,7 +201,7 @@ public class CampaignController extends Controller{
         Campaign_budget campaignBudget = DataAPI.getCampaignBudget(campaign.getId());;
 
         CampaignEntity campaignEntity = new CampaignEntity(); 
-        CampaignBudgetEntity campaignBudgetEntity = new CampaignBudgetEntity(); 
+        CampaignBudgetEntity campaignBudgetEntity = new CampaignBudgetEntity();
         
         BeanUtils.copyProperties(campaign, campaignEntity);
         BeanUtils.copyProperties(campaignBudget, campaignBudgetEntity);
@@ -221,13 +232,15 @@ public class CampaignController extends Controller{
 	public static Result save(boolean addbudget){
 
 		Form<CampaignEntity> campaignForm = campaignFormTemplate.bindFromRequest();
-		Form<CampaignBudgetEntity> campaignBudgetForm = campaignBudgetFormTemplate.bindFromRequest(); 
+		Form<CampaignBudgetEntity> campaignBudgetForm = campaignBudgetFormTemplate.bindFromRequest();
+		Form<CampaignPayoutThresholdEntity> campaignPayoutForm = campaignPayoutFormTemplate.bindFromRequest();
 
 
 		Campaign campaign = new Campaign();
 		Campaign_budget campaignBudget = null;
 		CampaignEntity campaignEntity = new CampaignEntity();
 		CampaignBudgetEntity campaignBudgetEntity = null;
+		CampaignPayoutThresholdEntity campaignPayoutEntity = null;
 
 		if(!campaignForm.hasErrors()){
 			campaignEntity = campaignForm.get();
@@ -272,6 +285,20 @@ public class CampaignController extends Controller{
 					}
 
 					if(msg.getError_code()==0){ 
+						if(!campaignPayoutForm.hasErrors() && campaign !=null){
+							campaignPayoutEntity = campaignPayoutForm.get();
+							if(campaignPayoutEntity.getCampaign_id()<1){			
+								campaignPayoutEntity.setCampaign_id(campaign.getId());
+								msg = ApiDef.insert_campaign_payout_threshold(con, campaignPayoutEntity.getEntity());
+							}else{
+								CampaignPayoutThreshold campaignPayout = campaignPayoutEntity.getEntity();
+								msg = ApiDef.update_campaign_payout_threshold(con, campaignPayout);
+							}
+
+							if(msg.getError_code()==0){ 
+								return redirect(controllers.advertiser.routes.AdvertiserController.home(campaign.getAccount_guid()));
+							}
+						}
 						return redirect(controllers.advertiser.routes.AdvertiserController.home(campaign.getAccount_guid()));
 					}
 				}
@@ -298,7 +325,7 @@ public class CampaignController extends Controller{
 		}else{
 			campaign = getCampaign(Integer.parseInt(field.value()));
 		}		
-		return badRequest(views.html.advt.campaign.campaignForm.render(campaignForm, campaignBudgetForm,  new CampaignDisplay(campaign),campaign_unlimited,user_flow_enabled));
+		return badRequest(views.html.advt.campaign.campaignForm.render(campaignForm, campaignBudgetForm,  new CampaignDisplay(campaign),campaign_unlimited,user_flow_enabled,campaignPayoutForm));
 	}
 
 

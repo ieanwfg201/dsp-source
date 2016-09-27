@@ -46,6 +46,7 @@
 }
 @if("true" == deviceid_targeting){
 @if("" != tp.getDeviceidfile()){
+	@components.fielddisplays.textdisplay("TP-DeviceIdfile Inc/Exc", tp.deviceIdIncExc())
     @components.fielddisplays.htmldisplay("TP-Deviceidfile") { <a href="@tp.getDeviceidfile()">download</a> }
 }
 }

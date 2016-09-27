@@ -270,7 +270,7 @@ public class OpenRTBCountryISPDataLoader implements ThirdPartyDataLoader
                                                                               batchSizeForSqlInsertion
                                                                              );
 
-            GeoCommonUtils.feedISPDataForTargetingExposureOnUserInterface
+            GeoCommonUtils.feedISPDataForTargetingExposureOnUserInterfaceWithoutUsingIspMappings
                            (
                             logger,
                             new HashSet<InternetServiceProvider>(ispDataFromSqlDatabase.values()),

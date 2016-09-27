@@ -13,20 +13,24 @@ import org.apache.log4j.PropertyConfigurator;
 import com.kritter.naterial_upload.youku.executor.YoukuUploadExecutor;
 import com.kritter.utils.dbconnector.DBConnector;
 
-public class MaterialUploader {
+import lombok.Getter;
+import lombok.Setter;
 
+public class MaterialUploader {
+    
+	@Getter@Setter
     private Properties properties = null;
 
     public void configure_logger(String conf_path) {
         FileInputStream fi = null;
-        try {
-            File file = new File(conf_path + System.getProperty("file.separator") + "log4j.properties");
+        try{
+            File file = new File(conf_path+System.getProperty("file.separator")+"log4j.properties");
             fi = new FileInputStream(file);
             PropertyConfigurator.configure(fi);
-        } catch (Exception e) {
+        }catch(Exception e){
             e.printStackTrace();
-        } finally {
-            if (fi != null) {
+        }finally{
+            if(fi != null){
                 try {
                     fi.close();
                 } catch (IOException e) {
@@ -35,20 +39,19 @@ public class MaterialUploader {
             }
         }
     }
-
-    public void read_properties(String conf_path) {
+    public void read_properties(String conf_path){
         FileInputStream fi = null;
-        try {
-            if (properties == null) {
+        try{
+            if(properties == null){
                 properties = new Properties();
             }
-            File file = new File(conf_path + System.getProperty("file.separator") + "material.properties");
+            File file = new File(conf_path+System.getProperty("file.separator")+"material.properties");
             fi = new FileInputStream(file);
             properties.load(fi);
-        } catch (Exception e) {
+        }catch(Exception e){
             e.printStackTrace();
-        } finally {
-            if (fi != null) {
+        }finally{
+            if(fi != null){
                 try {
                     fi.close();
                 } catch (IOException e) {
@@ -57,12 +60,10 @@ public class MaterialUploader {
             }
         }
     }
-
-
-    public void materialupload(String conf_path) {
-        configure_logger(conf_path);
-        read_properties(conf_path);
-        String split[] = properties.get("adxbasedexchanges_prefix").toString().split(",");
+    
+    
+    public void materialupload(){
+        String split[] =  properties.get("adxbasedexchanges_prefix").toString().split(",");
         Connection con = null;
         try {
             con = DBConnector.getConnection(properties.get("dbtype").toString(), properties.get("dbhost").toString(),
@@ -96,15 +97,20 @@ public class MaterialUploader {
             }
         }
     }
-
-
-    public static void main(String args[]) {
-        /*if(args.length != 1){
+    
+    
+    
+    public static void main(String args[]){
+        if(args.length != 1){
             System.out.println("Incorrect Usage");
             System.exit(0);
-        }*/
+        }
         MaterialUploader uploader = new MaterialUploader();
-        //uploader.materialupload(args[0]);
-        uploader.materialupload("/usr/share/kritter/material_upload/uploader/conf/current");
+        String confPath=args[0];
+        //String confPath="/usr/share/kritter/material_upload/uploader/conf/current";
+        uploader.configure_logger(confPath);
+        uploader.read_properties(confPath);
+        uploader.materialupload();
+
     }
 }

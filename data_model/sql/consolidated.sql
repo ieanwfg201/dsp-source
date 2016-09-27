@@ -1487,3 +1487,7 @@ CREATE TABLE IF NOT EXISTS `payout_threshold_metadata`
     `value` FLOAT NOT NULL DEFAULT 0,
     `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+
+alter table account add column adxext text  after adxbased;
+alter table account add column contactdetail text  after adxext;
+alter table account add column brand text  after contactdetail;

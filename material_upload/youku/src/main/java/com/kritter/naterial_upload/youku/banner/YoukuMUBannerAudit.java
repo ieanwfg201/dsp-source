@@ -88,9 +88,20 @@ public class YoukuMUBannerAudit implements MUBannerAudit {
 										cpstmt.setString(2, rar.getReason());
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
+									}else{
+										cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+										cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
+										cpstmt.setString(2, rrc.getResult()+"--AUDIT MESSAGE NOT PRSESENT");
+										cpstmt.setTimestamp(3, ts);
+										cpstmt.executeUpdate();
 									}
 								}
-
+							}else{
+								cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+								cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
+								cpstmt.setString(2, rrc.getResult()+"--RETURNCODEAUDIT");
+								cpstmt.setTimestamp(3, ts);
+								cpstmt.executeUpdate();
 							}
 						}
 					}catch(Exception e1){

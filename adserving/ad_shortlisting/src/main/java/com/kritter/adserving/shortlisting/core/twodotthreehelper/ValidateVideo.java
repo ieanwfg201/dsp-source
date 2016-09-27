@@ -78,15 +78,19 @@ public class ValidateVideo {
                 }
                 VideoInfo videoInfo=null;
                 if(videoProps != null && videoProps.getVideo_info() != null){
+                    logger.debug("video props is not null : {} ", videoProps.toJson());
                     for(String videoId:videoProps.getVideo_info()){
+                        logger.debug("Video id is : {} ", videoId);
                         VideoInfoCacheEntity videoInfoCacheEntity = videoInfoCache.query(Integer.parseInt(videoId));
                         if(videoInfoCacheEntity != null){
+                            logger.debug("video info is : {} ", videoInfoCacheEntity.toString());
                             videoInfo = videoInfoCacheEntity.getVideoInfo();
                         }
                     }
                 }
 
                 nfrReasonPriority = ValidateVideoHelper.validate(logger, videoProps, videoObj);
+                logger.debug("NFR reason is :{} under ValidateVideo", nfrReason);
                 if(nfrReason ==  NoFillReason.FILL){
                     try {
                         responseAdInfo.setVideoProps(videoProps);

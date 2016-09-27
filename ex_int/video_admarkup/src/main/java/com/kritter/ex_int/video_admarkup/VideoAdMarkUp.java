@@ -96,14 +96,8 @@ public class VideoAdMarkUp {
                     responseAdInfo.getAdId());
             return null;
         }
-        VideoInfo videoInfo = responseAdInfo.getVideoInfo();
-        if(videoInfo == null){
-        	logger.error("Creative videoInfo null inside BidRequestResponseCreator,adId:{} ",
-                    responseAdInfo.getAdId());
-            return null;
-        }
+
         StringBuffer creativeUrl = new StringBuffer(cdnBaseImageUrl);
-        creativeUrl.append(videoInfo.getResource_uri());
 
         if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()){
         	String macroTagUrl = MarkUpHelper.adTagMacroReplace(videProps.getVastTagUrl(), request, responseAdInfo, response, 
@@ -159,7 +153,18 @@ public class VideoAdMarkUp {
                     logger.error(e.getMessage(),e);
                 }
             }
-        }else if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0.getCode()){
+        }
+
+        VideoInfo videoInfo = responseAdInfo.getVideoInfo();
+        if(videoInfo == null){
+            logger.error("Creative videoInfo null inside BidRequestResponseCreator,adId:{} ",
+                          responseAdInfo.getAdId());
+            return null;
+        }
+
+        creativeUrl.append(videoInfo.getResource_uri());
+
+        if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0.getCode()){
             String bitRateStr = null;
             if(videProps.getBitrate()!=-1){
             	bitRateStr = videProps.getBitrate()+"";

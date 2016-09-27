@@ -17,6 +17,8 @@
 		@if("True" == campaign.isFreqCap()){
             @components.fielddisplays.textdisplay("Campaign-Freq Cap", campaign.getFreqCapDisplay())
         }
+		@components.fielddisplays.textdisplay("Payout Threshold Absolute", campaign.getAbsPayoutThreshold())
+		@components.fielddisplays.textdisplay("Payout Threshold Absolute Percentage", campaign.getPercentageThreshold())
 		
  
 		

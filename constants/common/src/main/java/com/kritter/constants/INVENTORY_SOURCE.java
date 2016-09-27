@@ -9,7 +9,8 @@ public enum INVENTORY_SOURCE
             RTB_EXCHANGE((short)2,"rtb-exchange"),
             SSP((short)3,"ssp"),
             DCP((short)4,"dcp"),
-            AGGREGATOR((short)5,"aggregator");
+            AGGREGATOR((short)5,"aggregator"),
+            OPENRTB_AGGREGATOR((short)6,"OPENRTB_AGGREGATOR");
 
             private short code;
             private String inventorySource;

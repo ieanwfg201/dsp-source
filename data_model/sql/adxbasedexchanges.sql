@@ -68,3 +68,15 @@ CREATE TABLE `material_upload_state` (
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`internalid`)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE `advinfo_upload` (
+  `internalid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pubIncId` int(11) NOT NULL,
+  `adxbasedexhangesstatus` int(11) DEFAULT '1',
+  `advIncId` int(11) NOT NULL,
+  `message` text,
+  `info` text,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`internalid`)
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8;

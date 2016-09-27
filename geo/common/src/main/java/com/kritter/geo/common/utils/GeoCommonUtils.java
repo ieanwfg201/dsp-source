@@ -873,7 +873,7 @@ public class GeoCommonUtils
 
     /**
      * This function inserts isp data into ui_targeting_isp table for targeting exposure on user interface
-     * without using isp_mappings data.
+     * without using isp_mappings data.Used in vase of open-rtb database.
      * @param logger
      * @param ispDataSetToPopulate
      * @param connectionToDatabase
@@ -881,7 +881,6 @@ public class GeoCommonUtils
      * @param sqlBatchSize
      * @throws SQLException
      */
-    @Deprecated
     public static void feedISPDataForTargetingExposureOnUserInterfaceWithoutUsingIspMappings
                                                                     (
                                                                      Logger logger,

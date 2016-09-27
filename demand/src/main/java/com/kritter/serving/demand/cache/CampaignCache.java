@@ -56,7 +56,7 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
             String accountId = resultSet.getString("account_id");
             Timestamp startDate = resultSet.getTimestamp("start_date");
             Timestamp endDate = resultSet.getTimestamp("end_date");
-            Double campaignDailyBudget = resultSet.getDouble("campaign_adv_daily_budget");
+            Double campaignDailyBudget = resultSet.getDouble("internal_daily_budget");
             Double dailyBudgetRemaining = resultSet.getDouble("internal_daily_remaining_budget");
             Double accountAdvTotalBudget = resultSet.getDouble("adv_balance");
             Double campaignAdvertiserDailyRemainingBudget = resultSet.getDouble("campaign_adv_daily_remaining_budget");

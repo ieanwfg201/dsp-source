@@ -72,7 +72,7 @@ public class Site implements IUpdatableEntity<String>
     /*this map contains advertiser id as key and corresponding campaign id list for inc/exc as governed by flag.*/
     @Getter
     private Map<Integer,Set<Integer>> campaignInclusionExclusionSchemaMap;
-    @Getter
+    @Getter @Setter
     private NoFillPassbackContent[] nofillBackupContentArray;
     @Getter
     private SITE_PASSBACK_TYPE sitePassbackType;
@@ -380,6 +380,11 @@ public class Site implements IUpdatableEntity<String>
             }
 
             return this;
+        }
+
+        public NoFillPassbackContent[] getNofillBackupContentArray()
+        {
+            return this.nofillBackupContentArray;
         }
 
         public SiteEntityBuilder setSitePassbackType(short sitePassbackType)

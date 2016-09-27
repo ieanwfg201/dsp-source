@@ -7,8 +7,12 @@ import java.util.Set;
 
 import com.kritter.api.entity.deal.*;
 import com.kritter.api.entity.parent_account.ParentAccount;
+import com.kritter.api.entity.payoutthreshold.PayoutThresholdList;
+import com.kritter.api.entity.payoutthreshold.PayoutThresholdListEntity;
 import com.kritter.kritterui.api.deal.PrivateMarketPlaceDealCrud;
 import com.kritter.kritterui.api.parent_account.ParentAccountCrud;
+import com.kritter.kritterui.api.payout_threshold.PayoutThresholdCrud;
+
 import org.codehaus.jackson.JsonNode;
 import com.kritter.api.entity.account.Account;
 import com.kritter.api.entity.account.AccountList;
@@ -50,6 +54,8 @@ import com.kritter.api.entity.isp_mapping.Isp_mapping;
 import com.kritter.api.entity.isp_mapping.Isp_mappingList;
 import com.kritter.api.entity.isp_mapping.Isp_mappingListEntity;
 import com.kritter.api.entity.log.LogEntity;
+import com.kritter.api.entity.materialadvinfoupload.MaterialAdvInfoUploadList;
+import com.kritter.api.entity.materialadvinfoupload.MaterialAdvInfoUploadListEntity;
 import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadList;
 import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadListEntity;
 import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadList;
@@ -84,6 +90,8 @@ import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.algomodel.AlgoModelEntity;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
+import com.kritter.entity.payout_threshold.CampaignPayoutThreshold;
+import com.kritter.entity.payout_threshold.DefaultPayoutThreshold;
 import com.kritter.entity.req_logging.ReqLoggingEntity;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.entity.userreports.UserReport;
@@ -94,6 +102,7 @@ import com.kritter.kritterui.api.ad.AdCrud;
 import com.kritter.kritterui.api.ad_stats.AdStatsCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.AdpositionGetCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.AdxBasedExchangesMetadataCrud;
+import com.kritter.kritterui.api.adxbasedexchanges_metadata.MaterialAdvInfoCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.MaterialUploadBannerCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.MaterialUploadVideoCrud;
 import com.kritter.kritterui.api.algo_models.AlgoModelCrud;
@@ -759,6 +768,9 @@ public class ApiDef {
     public static JsonNode get_mma_industry_tier1_all(Connection con){
         return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER1_ALL,null).toJson();
     }
+    public static JsonNode get_mma_industry_tier2_all(Connection con){
+        return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER2_ALL,null).toJson();
+    }
     public static JsonNode get_mma_industry_tier2_by_tier1(Connection con){
         return get_metalist(con,MetadataType.MMA_INDUSTRY_TIER2_BY_TIER1,null).toJson();
     }
@@ -1152,6 +1164,7 @@ public class ApiDef {
     public static Message update_adposition_get_status_by_pubincids(Connection con, AdpositionGetListEntity entity){
         return AdpositionGetCrud.update_adposition_get_status_by_pubincids(con, entity, true);
     }
+    /* MATERIAL APIS */
     public static JsonNode update_material_banner_status(Connection con, JsonNode jsonNode){
         return MaterialUploadBannerCrud.update_material_banner_status(con, jsonNode);
     }    
@@ -1176,5 +1189,46 @@ public class ApiDef {
     public static MaterialVideoUploadList various_material_video(Connection con, MaterialVideoUploadListEntity entity){
         return MaterialUploadVideoCrud.various_material_video(con, entity);
     }
+    public static JsonNode update_material_advinfo_status(Connection con, JsonNode jsonNode){
+        return MaterialAdvInfoCrud.update_material_advinfo_status(con, jsonNode);
+    }    
+    public static Message update_material_advinfo_status(Connection con, MaterialAdvInfoUploadListEntity entity){
+        return MaterialAdvInfoCrud.update_material_advinfo_status(con, entity, true);
+    }
+    public static JsonNode various_material_advinfo(Connection con, JsonNode jsonNode){
+        return MaterialAdvInfoCrud.various_material_advinfo(con, jsonNode);
+    }
+    public static MaterialAdvInfoUploadList various_material_advinfo(Connection con, MaterialAdvInfoUploadListEntity entity){
+        return MaterialAdvInfoCrud.various_material_advinfo(con, entity);
+    }
+
+    /*PAYOUT THRESHOLD APIS*/
+    public static JsonNode insert_campaign_payout_threshold(Connection con, JsonNode jsonNode){
+        return PayoutThresholdCrud.insert_campaign_payout_threshold(con, jsonNode);
+    }    
+    public static Message insert_campaign_payout_threshold(Connection con, CampaignPayoutThreshold entity){
+        return PayoutThresholdCrud.insert_campaign_payout_threshold(con, entity, true);
+    }
+    public static JsonNode update_campaign_payout_threshold(Connection con, JsonNode jsonNode){
+        return PayoutThresholdCrud.update_campaign_payout_threshold(con, jsonNode);
+    }    
+    public static Message update_campaign_payout_threshold(Connection con, CampaignPayoutThreshold entity){
+        return PayoutThresholdCrud.update_campaign_payout_threshold(con, entity, true);
+    }
+    public static JsonNode update_default_payout_threshold(Connection con, JsonNode jsonNode){
+        return PayoutThresholdCrud.update_default_payout_threshold(con, jsonNode);
+    }    
+    public static Message update_default_payout_threshold(Connection con, DefaultPayoutThreshold  entity){
+        return PayoutThresholdCrud.update_default_payout_threshold(con, entity, true);
+    }
+    public static JsonNode various_get_payout_threshold(Connection con, JsonNode jsonNode){
+        return PayoutThresholdCrud.various_get_payout_threshold(con, jsonNode);
+    }
+    public static PayoutThresholdList various_get_payout_threshold(Connection con, PayoutThresholdListEntity entity){
+        return PayoutThresholdCrud.various_get_payout_threshold(con, entity);
+    }
+    public static JsonNode get_default_payout_data(Connection con){
+        return PayoutThresholdCrud.get_default_payout_data(con);
+    }    
 
 }
