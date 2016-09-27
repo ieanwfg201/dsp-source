@@ -46,7 +46,7 @@ public class ValidateCreativeAttribute {
         if(null != resultingIntersection && resultingIntersection.size() > 0)
         {
             //the creative is not appropriate for the requesting impression.
-            ReqLog.debugWithDebug(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the impression: {}",
+            ReqLog.debugWithDebugNew(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the impression: {}",
                     adEntity.getCreativeId(),
                     bidRequestImpressionDTO.getBidRequestImpressionId());
             return false;

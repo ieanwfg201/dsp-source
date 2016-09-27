@@ -55,30 +55,33 @@ public class OSTargetingMatcher implements TargetingMatcher {
         if(!this.useMidpUnderOperatingSystem)
         {
             logger.debug("Running handset OperatingSystem and MIDP as separate filters ");
-            ReqLog.requestDebug(request, "Running handset OperatingSystem and MIDP as separate filters ");
+            ReqLog.requestDebugNew(request, "Running handset OperatingSystem and MIDP as separate filters ");
 
             //check if operating system targeting passes.
             finalShortlistedAdIds = handsetOsTargetingMatcher.shortlistAds(adIdSet, request, context);
             logger.debug("After filterAdIdsForHandsetOS , adidset: {}", finalShortlistedAdIds);
-            ReqLog.requestDebug(request, "After filterAdIdsForHandsetOS , adidset: ");
-            ReqLog.requestDebug(request, AdTargetingMatcher.
-                        fetchGuidSetForAdIncIdSet(finalShortlistedAdIds, adEntityCache).toString());
+            ReqLog.requestDebugNew(request, "After filterAdIdsForHandsetOS , adidset: ");
+            if(request.isRequestForSystemDebugging()){
+            	request.addDebugMessageForTestRequest(finalShortlistedAdIds.toString());
+            }
             //filter on midp versions targeted if any.
             finalShortlistedAdIds = midpVersionTargetingMatcher.shortlistAds(finalShortlistedAdIds, request, context);
             logger.debug("After filterAdIdsBasedOnMidpVersion , adidset: {}", finalShortlistedAdIds);
-            ReqLog.requestDebug(request, "After filterAdIdsBasedOnMidpVersion , adidset: ");
-            ReqLog.requestDebug(request, AdTargetingMatcher.
-                        fetchGuidSetForAdIncIdSet(finalShortlistedAdIds, adEntityCache).toString());
+            ReqLog.requestDebugNew(request, "After filterAdIdsBasedOnMidpVersion , adidset: ");
+            if(request.isRequestForSystemDebugging()){
+            	request.addDebugMessageForTestRequest(finalShortlistedAdIds.toString());
+            }
         }
         else
         {
-            ReqLog.debugWithDebug(logger, request,"Running handset OperatingSystem and MIDP combined as filters ");
+            ReqLog.debugWithDebugNew(logger, request,"Running handset OperatingSystem and MIDP combined as filters ");
             //check if operating system or midp targeting passes, one of them will do...
             finalShortlistedAdIds = handsetOsOrMidpTargetingMatcher.shortlistAds(adIdSet, request, context);
             logger.debug("After checkAdIdsForHandsetOsAndMidpCombined , adidset: {}", finalShortlistedAdIds);
-            ReqLog.requestDebug(request, "After checkAdIdsForHandsetOsAndMidpCombined , adidset: ");
-            ReqLog.requestDebug(request, AdTargetingMatcher.
-                        fetchGuidSetForAdIncIdSet(finalShortlistedAdIds, adEntityCache).toString());
+            ReqLog.requestDebugNew(request, "After checkAdIdsForHandsetOsAndMidpCombined , adidset: ");
+            if(request.isRequestForSystemDebugging()){
+            	request.addDebugMessageForTestRequest(finalShortlistedAdIds.toString());
+            }
         }
 
         if(finalShortlistedAdIds == null)

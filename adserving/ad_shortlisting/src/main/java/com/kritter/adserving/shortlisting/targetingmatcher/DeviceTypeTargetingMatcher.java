@@ -44,7 +44,7 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context)
     {
         logger.info("Inside filterAdIdsForDeviceTypeTargeting of AdTargetingMatcher ...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsForDeviceTypeTargeting of AdTargetingMatcher ...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsForDeviceTypeTargeting of AdTargetingMatcher ...");
 
         if(adIdSet == null || adIdSet.size() == 0) {
             logger.debug("No ads to shortlist from. Returning!");
@@ -61,7 +61,7 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : " + adId);
+                ReqLog.errorWithDebugNew(logger,request, "AdEntity not found in cache id : " + adId);
                 continue;
             }
 
@@ -78,7 +78,7 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
             //no device type detected and ad does not target any device type.
             if(null == deviceType && adDoesNotTargetDeviceType)
             {
-                ReqLog.debugWithDebug(logger,request, "Ad:{} does not target any device type (desktop/mobile etc)...passing it and no device type detected",adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger,request, "Ad:{} does not target any device type (desktop/mobile etc)...passing it and no device type detected",adEntity.getAdGuid());
 
                 shortlistedAdIdSet.add(adId);
                 continue;
@@ -89,7 +89,7 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
 
             if(adDoesNotTargetDeviceType)
             {
-                ReqLog.debugWithDebug(logger,request, "Ad:{} does not target any device type (desktop/mobile etc)...passing it",
+                ReqLog.debugWithDebugNew(logger,request, "Ad:{} does not target any device type (desktop/mobile etc)...passing it",
                               adEntity.getAdGuid());
 
                 shortlistedAdIdSet.add(adId);
@@ -103,7 +103,7 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
                 {
                     if(requestingDeviceTypeCode == deviceTypeId)
                     {
-                        ReqLog.debugWithDebug(logger,request, "Ad:{}  targets device type (desktop/mobile etc)...passing it",
+                        ReqLog.debugWithDebugNew(logger,request, "Ad:{}  targets device type (desktop/mobile etc)...passing it",
                         adEntity.getAdGuid());
                         shortlistedAdIdSet.add(adId);
                         foundTargetedDeviceType = true;

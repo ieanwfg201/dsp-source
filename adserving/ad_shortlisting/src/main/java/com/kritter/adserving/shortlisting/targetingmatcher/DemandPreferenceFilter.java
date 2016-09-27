@@ -41,7 +41,7 @@ public class DemandPreferenceFilter implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsBasedOnDemandPreference of AdTargetingMatcher ...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsBasedOnDemandPreference of AdTargetingMatcher ...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsBasedOnDemandPreference of AdTargetingMatcher ...");
 
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
         
@@ -67,15 +67,15 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+                    ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
 
-                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : only mediation and demand of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+                ReqLog.debugWithDebugNew(logger,request,"Demand Preference for site: {} is : only mediation and demand of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
 
                 if( demandTypeCode == adEntity.getDemandtype()){
                     shortlistedAdIdSet.add(adId);
-                    ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only mediation preference : ", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The adid: {}, passes only mediation preference : ", adEntity.getAdGuid());
                     
                 } else {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
@@ -99,15 +99,15 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+                    ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
 
-                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : only dsp and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+                ReqLog.debugWithDebugNew(logger,request,"Demand Preference for site: {} is : only dsp and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
 
                 if( demandTypeCode == adEntity.getDemandtype()) {
                     shortlistedAdIdSet.add(adId);
-                    ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only dsp preference : ", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The adid: {}, passes only dsp preference : ", adEntity.getAdGuid());
                     
                 } else {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
@@ -131,15 +131,15 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+                    ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
 
-                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : only direct and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+                ReqLog.debugWithDebugNew(logger,request,"Demand Preference for site: {} is : only direct and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
 
                 if( demandTypeCode == adEntity.getDemandtype()){
                     shortlistedAdIdSet.add(adId);
-                    ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only direct preference : ", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The adid: {}, passes only direct preference : ", adEntity.getAdGuid());
                     
                 } else {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
@@ -164,15 +164,15 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
+                    ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : " + adId);
                     continue;
                 }
 
-                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : direct then mediation and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+                ReqLog.debugWithDebugNew(logger,request,"Demand Preference for site: {} is : direct then mediation and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
 
                 if( demandTypeCode == adEntity.getDemandtype() || demandTypeCode1 == adEntity.getDemandtype()){
                     shortlistedAdIdSet.add(adId);
-                    ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only direct Then Mediation " +
+                    ReqLog.debugWithDebugNew(logger, request, "The adid: {}, passes only direct Then Mediation " +
                             "preference : ", adEntity.getAdGuid());
                     
                 } else {
@@ -198,15 +198,15 @@ public class DemandPreferenceFilter implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+                    ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
                     continue;
                 }
 
-                ReqLog.debugWithDebug(logger,request,"Demand Preference for site: {} is : direct then DSP and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
+                ReqLog.debugWithDebugNew(logger,request,"Demand Preference for site: {} is : direct then DSP and demand type of ad is : {} ", request.getSite().getSiteGuid(), adEntity.getDemandtype());
 
                 if( demandTypeCode == adEntity.getDemandtype() || demandTypeCode1 == adEntity.getDemandtype()){
                     shortlistedAdIdSet.add(adId);
-                    ReqLog.debugWithDebug(logger, request, "The adid: {}, passes only direct than dsp preference : ", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The adid: {}, passes only direct than dsp preference : ", adEntity.getAdGuid());
                     
                 } else {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),

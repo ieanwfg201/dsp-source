@@ -211,7 +211,7 @@ public class CreativeTargetingMatcher
                         NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
 
                 //the creative is not appropriate for the requesting site.
-                ReqLog.debugWithDebug(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the siteid: {}",
+                ReqLog.debugWithDebugNew(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the siteid: {}",
                              adEntity.getCreativeId(), site.getId());
                 continue;
             }
@@ -233,11 +233,11 @@ public class CreativeTargetingMatcher
             }
 
             if(site.isNative() && !creative.getCreativeFormat().equals(CreativeFormat.Native)){
-                ReqLog.debugWithDebug(logger, request, "Site is Native but Creative not native " , creative.getId());
+                ReqLog.debugWithDebugNew(logger, request, "Site is Native but Creative not native " , creative.getId());
                 continue;
             }
             if(site.isVideo() && !creative.getCreativeFormat().equals(CreativeFormat.VIDEO)){
-                ReqLog.debugWithDebug(logger, request, "Site is Video but Creative not video " , creative.getId());
+                ReqLog.debugWithDebugNew(logger, request, "Site is Video but Creative not video " , creative.getId());
                 continue;
             }
             //if creative type is banner then check for size otherwise just allow.
@@ -302,7 +302,7 @@ public class CreativeTargetingMatcher
                         continue;
                     }
 
-                    ReqLog.debugWithDebug(logger, request, "Creative Slot width and height: {} , : {} , requestedWidth: {} , requestedHeight:{} ",
+                    ReqLog.debugWithDebugNew(logger, request, "Creative Slot width and height: {} , : {} , requestedWidth: {} , requestedHeight:{} ",
                                  creativeSlot.getCreativeSlotWidth(),creativeSlot.getCreativeSlotHeight(),
                                  requestedWidths[0],requestedHeights[0]);
 
@@ -327,11 +327,18 @@ public class CreativeTargetingMatcher
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CREATIVE_SIZE.getValue(), this.adNoFillReasonMapKey, context);
 
-                    ReqLog.errorWithDebug(logger, request, "We could not find any creative supporting the requesting sizes of (width,height) combinations: {}  for/by creativeid: {}" +
+                    logger.debug("We could not find any creative supporting the requesting sizes of (width,height) combinations: {}  for/by creativeid: {}" +
                             fetchRequestedWidthAndHeightPairForDebug(requestedWidths,requestedHeights) , creative.getId());
+                    if(request.isRequestForSystemDebugging()){
+                    	request.addDebugMessageForTestRequest("We could not find any creative supporting the "
+                    			+ "requesting sizes of (width,height) combinations: "+
+                    			fetchRequestedWidthAndHeightPairForDebug(requestedWidths,requestedHeights)+
+                    			"  for/by creativeid: {}" +
+                              creative.getId());
+                    }
                 }
             } else if(creative.getCreativeFormat().equals(CreativeFormat.VIDEO)) {
-            	ReqLog.debugWithDebug(logger, request, "checking for video creative id " , creative.getId());
+            	ReqLog.debugWithDebugNew(logger, request, "checking for video creative id " , creative.getId());
                 if(!site.isVideo()){
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
@@ -361,14 +368,14 @@ public class CreativeTargetingMatcher
                     }
                 }
 
-                ReqLog.debugWithDebug(logger, request, "Match found for video creative id" + creative.getId());
+                ReqLog.debugWithDebugNew(logger, request, "Match found for video creative id {}" , creative.getId());
                 creativeFoundForRequestedSlot = true;
                 responseAdInfo.setVideoProps(videoProps);
                 responseAdInfo.setVideoInfo(videoInfo);
                 responseAdInfoSetForUse.add(responseAdInfo);
             }
             else if(creative.getCreativeFormat().equals(CreativeFormat.Native)) {
-                ReqLog.debugWithDebug(logger, request, "checking for native creative id " , creative.getId());
+                ReqLog.debugWithDebugNew(logger, request, "checking for native creative id " , creative.getId());
                 if(!site.isNative()){
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
@@ -460,7 +467,7 @@ public class CreativeTargetingMatcher
                     logger.debug("Screenshot check failed for creative id : {} " , creative.getId());
                     continue;
                 }
-                ReqLog.debugWithDebug(logger, request, "Match found for native creative id" + creative.getId());
+                ReqLog.debugWithDebugNew(logger, request, "Match found for native creative id {}" , creative.getId());
                 creativeFoundForRequestedSlot = true;
                 responseAdInfo.setNativeIcon(nativeIcon);
                 responseAdInfo.setNativeScreenshot(nativeScreenshot);
@@ -497,7 +504,7 @@ public class CreativeTargetingMatcher
                     }
 
                     // Rich media allowed on site
-                    ReqLog.debugWithDebug(logger, request, "Site allows richmedia ads and handset is javascript compatible, allowing ad: {} ",
+                    ReqLog.debugWithDebugNew(logger, request, "Site allows richmedia ads and handset is javascript compatible, allowing ad: {} ",
                                  adEntity.getAdGuid());
                     responseAdInfo.setRichMediaAdIsCompatibleForAdserving(true);
                     richMediaAdFound = true;
@@ -507,7 +514,7 @@ public class CreativeTargetingMatcher
             /*if text ad then just allow*/
             else if(creative.getCreativeFormat().equals(CreativeFormat.TEXT))
             {
-                ReqLog.requestDebug(request, "Text ad found for site..."+site.getSiteGuid()+" and ad id as: "+adEntity.getAdGuid());
+                ReqLog.requestDebugNew(request, "Text ad found for site..."+site.getSiteGuid()+" and ad id as: "+adEntity.getAdGuid());
                 creativeFoundForRequestedSlot = true;
                 responseAdInfoSetForUse.add(responseAdInfo);
             }

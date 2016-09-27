@@ -128,7 +128,7 @@ public class EcpmBidCalculatorUsingBidder implements Job
                 responseAdInfo.setEcpmValue(ecpmValue);
             }
             finalResponseAdInfoSet.add(responseAdInfo);
-            ReqLog.debugWithDebug(logger, request, "Ecpm bid value calculated inside EcpmBidCalculatorUsingBidder as : {} for adunit id: {}",
+            ReqLog.debugWithDebugNew(logger, request, "Ecpm bid value calculated inside EcpmBidCalculatorUsingBidder as : {} for adunit id: {}",
                     responseAdInfo.getEcpmValue(), responseAdInfo.getAdId());
         }
 
@@ -137,7 +137,7 @@ public class EcpmBidCalculatorUsingBidder implements Job
         if(finalResponseAdInfoSet.size() <= 0 && null == request.getNoFillReason())
         {
             request.setNoFillReason(NoFillReason.BIDDER_BID_NEGATIVE_ZERO);
-            ReqLog.debugWithDebug(logger, request, "Bidder bid is calculated as negative or zero in this request and no ad could get a positive ecpm value ");
+            ReqLog.debugWithDebugNew(logger, request, "Bidder bid is calculated as negative or zero in this request and no ad could get a positive ecpm value ");
             
         }
     }

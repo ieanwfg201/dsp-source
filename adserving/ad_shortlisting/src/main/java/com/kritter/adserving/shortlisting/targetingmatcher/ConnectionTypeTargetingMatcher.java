@@ -39,7 +39,7 @@ public class ConnectionTypeTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsForConnectionTypeTargeting of AdTargetingMatcher...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsForConnectionTypeTargeting of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsForConnectionTypeTargeting of AdTargetingMatcher...");
 
         if(adIdSet == null || adIdSet.size() == 0) {
             logger.debug("No ads to shortlist from. Returning!");
@@ -52,23 +52,23 @@ public class ConnectionTypeTargetingMatcher implements TargetingMatcher {
             AdEntity adEntity = adEntityCache.query(adId);
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : {}" , adId);
+                ReqLog.errorWithDebugNew(logger,request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
             TargetingProfile targetingProfile = adEntity.getTargetingProfile();
             Short[] targetedConnectionTypes = targetingProfile.getTargetedConnectionTypes();
             if(targetedConnectionTypes == null || targetedConnectionTypes.length == 0) {
-                ReqLog.debugWithDebug(logger,request, "The ad id {} is not targeted to any connection type so passing the filter....", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger,request, "The ad id {} is not targeted to any connection type so passing the filter....", adEntity.getAdGuid());
                 shortlistedAdIdSet.add(adId);
             } else {
                 ConnectionType connectionType = request.getConnectionType();
                 if(ArrayUtils.contains(targetedConnectionTypes, connectionType.getId())) {
-                    ReqLog.debugWithDebug(logger,request, "The ad id {} is connection type targeted and passes the check, detected ConnectionType:{} ", adEntity.getAdGuid(), connectionType);
+                    ReqLog.debugWithDebugNew(logger,request, "The ad id {} is connection type targeted and passes the check, detected ConnectionType:{} ", adEntity.getAdGuid(), connectionType);
                     shortlistedAdIdSet.add(adId);
                 } else {
                     // Fails the filter
-                    ReqLog.debugWithDebug(logger,request, "The ad id {} is connection type targeted and fails the check. Detected ConnectionType:{}", adEntity.getAdGuid(), connectionType);
+                    ReqLog.debugWithDebugNew(logger,request, "The ad id {} is connection type targeted and fails the check. Detected ConnectionType:{}", adEntity.getAdGuid(), connectionType);
 
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                             this.adNoFillReasonMapKey, context);
