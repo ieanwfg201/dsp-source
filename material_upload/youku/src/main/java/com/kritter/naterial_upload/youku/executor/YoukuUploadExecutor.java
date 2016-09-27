@@ -18,6 +18,8 @@ public class YoukuUploadExecutor  extends UploadExecutorImpl implements UploadEx
 
 	@Override
 	public void execute(Properties properties,Connection con) {
+		int pubInc=Integer.parseInt(properties.getProperty("youku_pubIncId").toString());
+		super.checkJobs(properties, con, pubInc);
 		AdPositionGet yag = new YoukuAdPositionGet();
 		super.executeAdpositionGet(properties,yag,con);
 		YoukuMUBanner muBanner = new YoukuMUBanner();

@@ -95,7 +95,6 @@ public class MaterialUploader {
             System.exit(0);
         }
         MaterialUploader uploader = new MaterialUploader();
-        //uploader.materialupload(args[0]);
         String confPath=args[0];
         //String confPath="/usr/share/kritter/material_upload/uploader/conf/current";
         uploader.configure_logger(confPath);
