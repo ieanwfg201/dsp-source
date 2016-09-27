@@ -1,9 +1,15 @@
-package com.kritter.creative.approval.cloudcross;
+package com.kritter.naterial_upload.cloudcross.advertiser;
 
-import com.kritter.creative.approval.cloudcross.abstracts.CloudCrossInterface;
-import com.kritter.creative.approval.cloudcross.entity.*;
+import com.kritter.naterial_upload.cloudcross.abstracts.CloudCrossInterface;
+import com.kritter.naterial_upload.cloudcross.banner.CloudCrossMUBanner;
+import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertieseStateResponseEntiry;
+import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiseResponseEntity;
+import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiserEntity;
+import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.type.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,21 +18,31 @@ import java.util.List;
 /**
  * Created by hamlin on 16-7-29.
  */
-public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertiserEntity,CloudCrossAdvertiseResponseEntity,CloudCrossAdvertieseStateResponseEntiry> {
+public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertiserEntity, CloudCrossAdvertiseResponseEntity, CloudCrossAdvertieseStateResponseEntiry> {
+    private static final Logger LOG = LoggerFactory.getLogger(CloudCrossMUBanner.class);
+    public String ADVERTISER_ADD_URL;
+    public String ADVERTISER_UPDATE_URL;
+    public String ADVERTISER_GET_ALL;
+    public String ADVERTISER_BY_IDS;
+    public String ADVERTISER_GET_STATE_BY_IDS;
 
-    public static String ADVERTISER_ADD_URL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/add" + CREATIVE_DSPID_TOKEN;
-    public static String ADVERTISER_UPDATE_URL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/update" + CREATIVE_DSPID_TOKEN;
-    public static String ADVERTISER_GET_ALL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/getAll" + CREATIVE_DSPID_TOKEN;
-    public static String ADVERTISER_BY_IDS = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/get" + CREATIVE_DSPID_TOKEN;
-    public static String ADVERTISER_GET_STATE_BY_IDS = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/queryState" + CREATIVE_DSPID_TOKEN;
 
-
+    public CloudCrossAdvertiser(String ADVERTISER_ADD_URL, String ADVERTISER_UPDATE_URL, String ADVERTISER_GET_ALL, String ADVERTISER_BY_IDS, String ADVERTISER_GET_STATE_BY_IDS) {
+        this.ADVERTISER_ADD_URL = ADVERTISER_ADD_URL;
+        this.ADVERTISER_UPDATE_URL = ADVERTISER_UPDATE_URL;
+        this.ADVERTISER_GET_ALL = ADVERTISER_GET_ALL;
+        this.ADVERTISER_BY_IDS = ADVERTISER_BY_IDS;
+        this.ADVERTISER_GET_STATE_BY_IDS = ADVERTISER_GET_STATE_BY_IDS;
+    }
 
     @Override
-    public List<CloudCrossResponse> add(ArrayList<CloudCrossAdvertiserEntity> cloudCrossAdvertisers) {
+    public List<CloudCrossResponse> add(List<CloudCrossAdvertiserEntity> cloudCrossAdvertisers) {
         String response = null;
         try {
-            response = getCloudCrossResponse(ADVERTISER_ADD_URL, "request=" + MAPPER.writeValueAsString(cloudCrossAdvertisers));
+            LOG.info("MATERIAL BANNER UPLOAD POSTBODY");
+            String body = "request=" + MAPPER.writeValueAsString(cloudCrossAdvertisers);
+            LOG.info(body);
+            response = getCloudCrossResponse(ADVERTISER_ADD_URL, body);
 
             return (List<CloudCrossResponse>) MAPPER.readValue(response, new TypeReference<List<CloudCrossResponse>>() {
             });
@@ -37,7 +53,7 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
     }
 
     @Override
-    public List<CloudCrossResponse> update(ArrayList<CloudCrossAdvertiserEntity> cloudCrossAdvertiser) {
+    public List<CloudCrossResponse> update(List<CloudCrossAdvertiserEntity> cloudCrossAdvertiser) {
         String response = null;
         try {
             response = getCloudCrossResponse(ADVERTISER_UPDATE_URL, "request=" + MAPPER.writeValueAsString(cloudCrossAdvertiser));
@@ -62,19 +78,18 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
     // TODO 这里的返回值应该是 list<banner>,但是现在不清楚返回的json结构
 
     /**
-     *
-     * @param ids  bannerids or advertiserIds
+     * @param ids          bannerids or advertiserIds
      * @param isByBannerId if true ,ids is bannerids, else ids is advertiserIds
      * @return
      */
     @Override
-    public List<CloudCrossAdvertiseResponseEntity> queryByIds(List<String> ids,boolean isByBannerId) {
+    public List<CloudCrossAdvertiseResponseEntity> queryByIds(List<String> ids, boolean isByBannerId) {
         String idsStr = null;
         String url;
         if (ids != null) {
             idsStr = buildBody(ids, "advertiserIds");
             url = ADVERTISER_BY_IDS;
-        }else {
+        } else {
             url = ADVERTISER_GET_ALL;
         }
         try {
@@ -93,7 +108,7 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
         if (ids != null)
             idsStr = buildBody(ids, "advertiserIds");
         try {
-            String cloudCrossResponse = getCloudCrossResponse(ADVERTISER_GET_STATE_BY_IDS, "request="+idsStr);
+            String cloudCrossResponse = getCloudCrossResponse(ADVERTISER_GET_STATE_BY_IDS, "request=" + idsStr);
             return (List<CloudCrossAdvertieseStateResponseEntiry>) MAPPER.readValue(cloudCrossResponse, new TypeReference<List<CloudCrossAdvertieseStateResponseEntiry>>() {
             });
         } catch (IOException e) {

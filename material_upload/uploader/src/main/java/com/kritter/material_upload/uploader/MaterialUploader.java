@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import com.kritter.naterial_upload.cloudcross.executor.CloudCrossUploadExecutor;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.kritter.naterial_upload.youku.executor.YoukuUploadExecutor;
@@ -18,7 +20,8 @@ public class MaterialUploader {
     
 	@Getter@Setter
     private Properties properties = null;
-    public void configure_logger(String conf_path){
+
+    public void configure_logger(String conf_path) {
         FileInputStream fi = null;
         try{
             File file = new File(conf_path+System.getProperty("file.separator")+"log4j.properties");
@@ -62,28 +65,36 @@ public class MaterialUploader {
     public void materialupload(){
         String split[] =  properties.get("adxbasedexchanges_prefix").toString().split(",");
         Connection con = null;
-        try{
-        	con = DBConnector.getConnection(properties.get("dbtype").toString(),properties.get("dbhost").toString(), 
-        		properties.get("dbport").toString(), properties.get("dbname").toString(), 
-        		properties.get("dbuser").toString(), properties.get("dbpwd").toString());
-        	for(String str:split){
-        		if("youku".equals(str)){
-        			System.out.println("YOUKU BEGIN");
-        			YoukuUploadExecutor yue = new YoukuUploadExecutor();
-        			yue.execute(properties, con);
-        			System.out.println("YOUKU END");
-        		}
-        	}
-        }catch(Exception e){
-        	e.printStackTrace();
-        }finally{
-        	if(con != null){
-        		try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-        	}
+        try {
+            con = DBConnector.getConnection(properties.get("dbtype").toString(), properties.get("dbhost").toString(),
+                    properties.get("dbport").toString(), properties.get("dbname").toString(),
+                    properties.get("dbuser").toString(), properties.get("dbpwd").toString());
+            for (String str : split) {
+                switch (str) {
+                    case "youku":
+                        System.out.println("YOUKU BEGIN");
+                        YoukuUploadExecutor yue = new YoukuUploadExecutor();
+                        yue.execute(properties, con);
+                        System.out.println("YOUKU END");
+                        break;
+                    case "cloudcross":
+                        System.out.println("CLOUDCROSS BEGIN");
+                        CloudCrossUploadExecutor executor = new CloudCrossUploadExecutor();
+                        executor.execute(properties, con);
+                        System.out.println("CLOUDCROSS END");
+                        break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
     

@@ -48,6 +48,7 @@
         <module>youkuvideouploader</module>
         <module>youku</module>
         <module>uploader</module>
+    <module>cloudcross</module>
         <module>materialdaemon</module>
   </modules>
 </project>
