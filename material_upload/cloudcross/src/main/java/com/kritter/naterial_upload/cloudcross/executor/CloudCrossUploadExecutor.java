@@ -14,6 +14,8 @@ import java.util.Properties;
 public class CloudCrossUploadExecutor extends UploadExecutorImpl implements UploadExecutor {
     @Override
     public void execute(Properties properties, Connection con) {
+        int pubInc=Integer.parseInt(properties.getProperty("cloudcross_pubIncId").toString());
+        super.checkJobs(properties, con, pubInc);
         CloudCrossMUBanner muBanner = new CloudCrossMUBanner();
         super.executeMaterialBannerUpload(properties, muBanner, con);
         // 物料审核状态查询
