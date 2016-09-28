@@ -40,7 +40,7 @@ public class InventorySourceTypeTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdsOnInventorySourceType of AdTargetingMatcher...");
-        ReqLog.requestDebug(request, "Inside filterAdsOnInventorySourceType of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside filterAdsOnInventorySourceType of AdTargetingMatcher...");
 
         Site site = request.getSite();
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
@@ -51,7 +51,7 @@ public class InventorySourceTypeTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : {}" , adId);
+                ReqLog.errorWithDebugNew(logger,request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -76,7 +76,7 @@ public class InventorySourceTypeTargetingMatcher implements TargetingMatcher {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);
 
-                ReqLog.debugWithDebug(logger,request, "SupplySourceType defined for adGuId:{} is {} ,does not qualify for site's platform type: {} ", 
+                ReqLog.debugWithDebugNew(logger,request, "SupplySourceType defined for adGuId:{} is {} ,does not qualify for site's platform type: {} ", 
                         adEntity.getAdGuid(),SupplySourceTypeEnum.getEnum(targetingProfile.getSupplySourceType()).getName(),
                         SITE_PLATFORM.getEnum(site.getSitePlatform()).getDescription());
             }

@@ -11,7 +11,7 @@ public class ValidateRichMediaType {
     public static boolean validate(Request request, Logger logger){
         if(!request.getSite().isRichMediaAllowed())
         {
-            ReqLog.debugWithDebug(logger, request, "Richmedia is not allowed for this impression.Site does not allow it.");
+            ReqLog.debugWithDebugNew(logger, request, "Richmedia is not allowed for this impression.Site does not allow it.");
             return false;
         }
         return true;
@@ -19,7 +19,7 @@ public class ValidateRichMediaType {
     public static boolean validateDeviceHandset(Request request, Logger logger){
         if(null == request.getHandsetMasterData() || !request.getHandsetMasterData().isDeviceJavascriptCompatible())
         {
-            ReqLog.debugWithDebug(logger, request, "Richmedia is not allowed for this impression.Requesting handset is not javascript compatible.");
+            ReqLog.debugWithDebugNew(logger, request, "Richmedia is not allowed for this impression.Requesting handset is not javascript compatible.");
             return false;
         }
         return true;
@@ -31,7 +31,7 @@ public class ValidateRichMediaType {
                 blockedCreativeTypeSet.contains(RICHMEDIA_CREATIVE_TYPE)
                )
              {
-                ReqLog.debugWithDebug(logger, request, "Richmedia is not allowed for this impression.Creative types do not allow richmedia.");
+                ReqLog.debugWithDebugNew(logger, request, "Richmedia is not allowed for this impression.Creative types do not allow richmedia.");
                  return false;
              }
         return true;

@@ -41,7 +41,7 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsForCampaignFlightDatesAndBudget of AdTargetingMatcher...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsForCampaignFlightDatesAndBudget of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsForCampaignFlightDatesAndBudget of AdTargetingMatcher...");
 
         Set<Integer> activeAdIds = new HashSet<Integer>();
 
@@ -51,7 +51,7 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache,FATAL error!!! for ad id: {} " , adId);
+                ReqLog.errorWithDebugNew(logger,request, "AdEntity not found in cache,FATAL error!!! for ad id: {} " , adId);
                 continue;
             }
 
@@ -61,7 +61,7 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
 
             if(null == campaign)
             {
-                ReqLog.debugWithDebug(logger,request, "Campaign not found in cache,FATAL error!!! for campaign id: {} ",
+                ReqLog.debugWithDebugNew(logger,request, "Campaign not found in cache,FATAL error!!! for campaign id: {} ",
                         campaignId);
 
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
@@ -87,7 +87,7 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
                 logMessage.append("The campaign is valid to go ahead in terms of flight dates and budget values,CampaignId: ");
                 logMessage.append(campaign.getCampaignGuid());
 
-                ReqLog.debugWithDebug(logger,request, logMessage.toString());
+                ReqLog.debugWithDebugNew(logger,request, logMessage.toString());
 
                 activeAdIds.add(adId);
             }
@@ -96,8 +96,11 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
                 logMessage.setLength(0);
                 logMessage.append("The campaign FAILS flight dates and budget checks,CampaignId: ");
                 logMessage.append(campaign.getCampaignGuid());
-
-                ReqLog.debugWithDebug(logger,request, logMessage.toString());
+                
+                logger.debug(logMessage.toString());
+                if(request.isRequestForSystemDebugging()){
+                	request.addDebugMessageForTestRequest(logMessage.toString());
+                }
 
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);

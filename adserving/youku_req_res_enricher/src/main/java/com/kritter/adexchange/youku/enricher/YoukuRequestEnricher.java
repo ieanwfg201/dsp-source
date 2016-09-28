@@ -24,13 +24,19 @@ import com.kritter.geo.common.entity.InternetServiceProvider;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.utils.common.ApplicationGeneralUtils;
+
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -466,7 +472,18 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
 
         EnricherUtils.populateUserIdsFromBidRequestDeviceDTO(youkuBidRequestDeviceDTO, request);
         EnricherUtils.populateUserIdsFromBidRequestUserDTO(youkuBidRequestUserDTO, request);
-        populateUserIdsFromBidRequestYoukuDeviceDTO(youkuBidRequestDeviceDTO, request);
+        boolean imeimd5=false;
+        if(youkuBidRequestDeviceDTO.getMD5HashedDeviceId() == null ||
+                youkuBidRequestDeviceDTO.getMD5HashedDeviceId().isEmpty()) {
+        	imeimd5=true;
+        }
+        boolean androididmd5=false;
+        if(youkuBidRequestDeviceDTO.getMD5HashedDevicePlatformId() == null ||
+                youkuBidRequestDeviceDTO.getMD5HashedDevicePlatformId().isEmpty()) {
+        	androididmd5=true;
+            }
+
+        populateUserIdsFromBidRequestYoukuDeviceDTO(youkuBidRequestDeviceDTO, request,imeimd5,androididmd5);
         Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
         if(externalUserIds == null || externalUserIds.size() == 0) {
             logger.debug("External user ids empty or not present");
@@ -486,7 +503,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
     
     private void populateUserIdsFromBidRequestYoukuDeviceDTO(
     		YoukuBidRequestDeviceDTO bidRequestDeviceDTO,
-            Request request) {
+            Request request, boolean imeimd5,boolean androididmd5) {
         if(null == bidRequestDeviceDTO)
             return;
 
@@ -511,18 +528,59 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
                 !bidRequestDeviceDTO.getAndroidid().isEmpty()) {
             externalUserIds.add(new ExternalUserId(ExternalUserIdType.DEVICE_PLATFORM_ID, siteIncId,
                     bidRequestDeviceDTO.getAndroidid()));
+            if(androididmd5){
+            	String androididmd5Str = getMD5( bidRequestDeviceDTO.getAndroidid());
+            	if(androididmd5Str != null && !androididmd5Str.isEmpty()){
+                    externalUserIds.add(new ExternalUserId(ExternalUserIdType.MD5_DEVICE_PLATFORM_ID, siteIncId,
+                    		androididmd5Str));
+            		
+            	}
+            }
+
         }
 
         if(bidRequestDeviceDTO.getImei() != null &&
                 !bidRequestDeviceDTO.getImei().isEmpty()) {
             externalUserIds.add(new ExternalUserId(ExternalUserIdType.DEVICE_ID, siteIncId,
                     bidRequestDeviceDTO.getImei()));
+            if(imeimd5){
+            	String imeimd5Str = getMD5( bidRequestDeviceDTO.getImei());
+            	if(imeimd5Str != null && !imeimd5Str.isEmpty()){
+                    externalUserIds.add(new ExternalUserId(ExternalUserIdType.MD5_DEVICE_ID, siteIncId,
+                    		imeimd5Str));
+            		
+            	}
+            }
         }
 
         if(bidRequestDeviceDTO.getMac() != null && !bidRequestDeviceDTO.getMac().isEmpty()) {
             externalUserIds.add(new ExternalUserId(ExternalUserIdType.MAC, siteIncId,
                     bidRequestDeviceDTO.getMac()));
         }
-    }
+    }	
+    public String getMD5(String s) {
+
+    	if(s==null){
+    		return s;
+    	}
+    	try{
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		String digest = getDigest(s,md);
+		return digest;
+    	}catch(Exception e){
+    		logger.error(e.getMessage(), e);
+    		return null;
+    	}
+
+
+	} 
+	public String getDigest(String s , MessageDigest md)
+			throws Exception {
+
+		md.reset();
+		byte[] digest = md.digest(s.getBytes());
+		String result = new String(Hex.encodeHex(digest));
+		return result;
+	}
 
 }

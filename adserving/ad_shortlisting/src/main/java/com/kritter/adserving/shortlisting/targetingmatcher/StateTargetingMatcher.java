@@ -63,12 +63,12 @@ public class StateTargetingMatcher implements TargetingMatcher
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context)
     {
         logger.info("Inside StateTargetingMatcher of AdTargetingMatcher ...");
-        ReqLog.requestDebug(request, "Inside StateTargetingMatcher of AdTargetingMatcher ...");
+        ReqLog.requestDebugNew(request, "Inside StateTargetingMatcher of AdTargetingMatcher ...");
 
         if(adIdSet == null || adIdSet.size() == 0)
         {
             logger.debug("No ads to shortlist from inside StateTargetingMatcher. Returning!");
-            ReqLog.requestDebug(request,"No ads to shortlist from inside StateTargetingMatcher. Returning!");
+            ReqLog.requestDebugNew(request,"No ads to shortlist from inside StateTargetingMatcher. Returning!");
             return adIdSet;
         }
 
@@ -83,7 +83,7 @@ public class StateTargetingMatcher implements TargetingMatcher
             if(null != state)
             {
                 logger.debug("State detected id is: {} " , state.getStateId());
-                ReqLog.requestDebug(request,"State detected id is: " + state.getStateId());
+                ReqLog.requestDebugNew(request,"State detected id is: " + state.getStateId());
                 request.setDataSourceNameUsedForStateDetection(state.getDataSourceName());
 
                 Set<Integer> uiIdSetState = stateUserInterfaceIdCache.query(
@@ -104,7 +104,7 @@ public class StateTargetingMatcher implements TargetingMatcher
                           ipAddress,e);
             logger.error("State cannot be detected, some error happened, only ads with no state targeting " +
                          "will be shortlisted.");
-            ReqLog.requestDebug(request,"State cannot be detected, some error happened, only ads with " +
+            ReqLog.requestDebugNew(request,"State cannot be detected, some error happened, only ads with " +
                                                   "no state targeting will be shortlisted, {} "+ e.getMessage());
         }
 
@@ -124,7 +124,7 @@ public class StateTargetingMatcher implements TargetingMatcher
             }
 
             logger.debug("State user interface id detected is: {} ", stateUserInterfaceId.getStateUserInterfaceId());
-            ReqLog.requestDebug(request,"State user interface id detected is: " +
+            ReqLog.requestDebugNew(request,"State user interface id detected is: " +
                                          stateUserInterfaceId.getStateUserInterfaceId());
         }
 
@@ -136,7 +136,7 @@ public class StateTargetingMatcher implements TargetingMatcher
 
             if (null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}", adId);
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}", adId);
                 continue;
             }
 
@@ -152,7 +152,7 @@ public class StateTargetingMatcher implements TargetingMatcher
             if (null == stateTargetingEntity || null == targetedStateUIIdSet)
             {
                 logger.debug("AdId: {} does not target any state , so passing it... ", adId);
-                ReqLog.requestDebug(request,"AdId: "+ adId + " does not target any state , so passing it...");
+                ReqLog.requestDebugNew(request,"AdId: "+ adId + " does not target any state , so passing it...");
                 shortlistedAdIdSet.add(adId);
                 continue;
             }
@@ -160,7 +160,7 @@ public class StateTargetingMatcher implements TargetingMatcher
             if(null == stateUserInterfaceId)
             {
                 logger.error("State is null, only ads with no state targeting will pass...");
-                ReqLog.requestDebug(request,"State is null, only ads with no state targeting will pass...");
+                ReqLog.requestDebugNew(request,"State is null, only ads with no state targeting will pass...");
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                                                               this.adNoFillReasonMapKey, context);
                 continue;
@@ -174,7 +174,7 @@ public class StateTargetingMatcher implements TargetingMatcher
                     logger.debug("StateUserInterfaceId: {} targeted by ad: {} and is detected in request,passing ad.",
                                  stateUserInterfaceId.getStateUserInterfaceId(),adId);
 
-                    ReqLog.requestDebug(request,"StateUserInterfaceId:"+
+                    ReqLog.requestDebugNew(request,"StateUserInterfaceId:"+
                                         stateUserInterfaceId.getStateUserInterfaceId()  +
                                         "targeted by ad: {} " + adId +
                                         " and is detected in request,passing ad.");
@@ -187,7 +187,7 @@ public class StateTargetingMatcher implements TargetingMatcher
             {
                 logger.debug("StateUserInterfaceId: {} targeted by ad: {} and is not detected in request,failing ad.",
                              stateUserInterfaceId.getStateUserInterfaceId(),adId);
-                ReqLog.requestDebug(request,"StateUserInterfaceId: " + stateUserInterfaceId.getStateUserInterfaceId()
+                ReqLog.requestDebugNew(request,"StateUserInterfaceId: " + stateUserInterfaceId.getStateUserInterfaceId()
                                     + " targeted by ad: " + adId + " and is not detected in request, failing ad.");
 
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),

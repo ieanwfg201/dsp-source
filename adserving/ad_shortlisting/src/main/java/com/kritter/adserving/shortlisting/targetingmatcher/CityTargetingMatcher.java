@@ -62,11 +62,11 @@ public class CityTargetingMatcher implements TargetingMatcher
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside CityTargetingMatcher of AdTargetingMatcher ...");
-        ReqLog.requestDebug(request, "Inside CityTargetingMatcher of AdTargetingMatcher ...");
+        ReqLog.requestDebugNew(request, "Inside CityTargetingMatcher of AdTargetingMatcher ...");
 
         if (adIdSet == null || adIdSet.size() == 0) {
             logger.debug("No ads to shortlist from inside CityTargetingMatcher. Returning!");
-            ReqLog.requestDebug(request, "No ads to shortlist from inside CityTargetingMatcher. Returning!");
+            ReqLog.requestDebugNew(request, "No ads to shortlist from inside CityTargetingMatcher. Returning!");
             return adIdSet;
         }
 
@@ -81,7 +81,7 @@ public class CityTargetingMatcher implements TargetingMatcher
             if (null != city)
             {
                 logger.debug("City detected id is: {} " , city.getCityId());
-                ReqLog.requestDebug(request,"City detected id is: " + city.getCityId());
+                ReqLog.requestDebugNew(request,"City detected id is: " + city.getCityId());
                 request.setDataSourceNameUsedForCityDetection(city.getDataSourceName());
 
                 Set<Integer> uiIdSetCity = cityUserInterfaceIdCache.query(
@@ -101,7 +101,7 @@ public class CityTargetingMatcher implements TargetingMatcher
                     ipAddress, e);
             logger.error("City cannot be detected, some error happened, only ads with no city targeting " +
                     "will be shortlisted.");
-            ReqLog.requestDebug(request, "City cannot be detected, some error happened, only ads with " +
+            ReqLog.requestDebugNew(request, "City cannot be detected, some error happened, only ads with " +
                     "no city targeting will be shortlisted,  " + e.getMessage());
         }
 
@@ -121,7 +121,7 @@ public class CityTargetingMatcher implements TargetingMatcher
             }
 
             logger.debug("City user interface id detected is: {} ", cityUserInterfaceId.getCityUserInterfaceId());
-            ReqLog.requestDebug(request,"City user interface id detected is: " +
+            ReqLog.requestDebugNew(request,"City user interface id detected is: " +
                                 cityUserInterfaceId.getCityUserInterfaceId());
         }
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
@@ -132,7 +132,7 @@ public class CityTargetingMatcher implements TargetingMatcher
 
             if (null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}", adId);
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}", adId);
                 continue;
             }
 
@@ -148,7 +148,7 @@ public class CityTargetingMatcher implements TargetingMatcher
             if (null == cityTargetingEntity || null == targetedCityUIIdSet)
             {
                 logger.debug("AdId: {} does not target any city , so passing it... ", adId);
-                ReqLog.requestDebug(request,"AdId:" + adId + " does not target any city , so passing it...");
+                ReqLog.requestDebugNew(request,"AdId:" + adId + " does not target any city , so passing it...");
                 shortlistedAdIdSet.add(adId);
                 continue;
             }
@@ -156,7 +156,7 @@ public class CityTargetingMatcher implements TargetingMatcher
             if(null == cityUserInterfaceId)
             {
                 logger.error("City is null, only ads with no city targeting will pass...");
-                ReqLog.requestDebug(request,"City is null, only ads with no city targeting will pass...");
+                ReqLog.requestDebugNew(request,"City is null, only ads with no city targeting will pass...");
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                                                               this.adNoFillReasonMapKey, context);
                 continue;
@@ -170,7 +170,7 @@ public class CityTargetingMatcher implements TargetingMatcher
                     logger.debug("CityUserInterfaceId: {} targeted by ad: {} and is detected in request,passing ad.",
                                   cityUserInterfaceId.getCityUserInterfaceId(),adId);
 
-                    ReqLog.requestDebug(request,"CityUserInterfaceId: " +
+                    ReqLog.requestDebugNew(request,"CityUserInterfaceId: " +
                                         cityUserInterfaceId.getCityUserInterfaceId() +
                                         " targeted by ad: " + adId +
                                         " and is detected in request,passing ad.");
@@ -184,7 +184,7 @@ public class CityTargetingMatcher implements TargetingMatcher
             {
                 logger.debug("CityUserInterfaceId: {} targeted by ad: {} and is not detected in request,failing ad.",
                               cityUserInterfaceId.getCityUserInterfaceId(),adId);
-                ReqLog.requestDebug(request,"CityUserInterfaceId : " + cityUserInterfaceId.getCityUserInterfaceId() +
+                ReqLog.requestDebugNew(request,"CityUserInterfaceId : " + cityUserInterfaceId.getCityUserInterfaceId() +
                                     " targeted by ad: " + adId + " and is not detected in request,failing ad.");
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                                                               this.adNoFillReasonMapKey, context);

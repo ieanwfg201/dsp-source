@@ -82,10 +82,10 @@ public class UserIdIncExcFilter implements TargetingMatcher {
 
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
-        ReqLog.debugWithDebug(logger, request, "Inside {} of AdTargetingMatcher...", this.name);
+        ReqLog.debugWithDebugNew(logger, request, "Inside {} of AdTargetingMatcher...", this.name);
 
         if(adIdSet == null || adIdSet.size() == 0) {
-            ReqLog.debugWithDebug(logger,request, "No adIdSet supplied to {}, returning null/empty set...", this.name);
+            ReqLog.debugWithDebugNew(logger,request, "No adIdSet supplied to {}, returning null/empty set...", this.name);
             return adIdSet;
         }
 
@@ -98,10 +98,10 @@ public class UserIdIncExcFilter implements TargetingMatcher {
             }
 
             if(externalUserIds == null || externalUserIds.isEmpty()) {
-                ReqLog.debugWithDebug(logger,request, "No user ids in this request. Hence allowing only those ads " +
+                ReqLog.debugWithDebugNew(logger,request, "No user ids in this request. Hence allowing only those ads " +
                         "that do not specify user id inclusion exclusion.");
             } else {
-                ReqLog.debugWithDebug(logger,request, "User id inclusion exclusion cache is not available. So " +
+                ReqLog.debugWithDebugNew(logger,request, "User id inclusion exclusion cache is not available. So " +
                         "allowing only ads not specifying user id inclusion exclusion.");
             }
 
@@ -121,22 +121,22 @@ public class UserIdIncExcFilter implements TargetingMatcher {
             // If the set of targeting profiles included or excluded against this user id is absent, that means no ad
             // has included or excluded this ad. So inclusion criterion should fail, i.e., all ads specifying user id
             // inclusion should get dropped.
-            ReqLog.debugWithDebug(logger, request, "No targeting profiles included/excluded for user ids.");
+            ReqLog.debugWithDebugNew(logger, request, "No targeting profiles included/excluded for user ids.");
 
             for(Integer adId : adIdSet) {
                 AdEntity adEntity = this.adEntityCache.query(adId);
                 TargetingProfile targetingProfile = adEntity.getTargetingProfile();
 
                 if(targetingProfile.getUserIdInclusionExclusionType() == InclusionExclusionType.None) {
-                    ReqLog.debugWithDebug(logger, request, "\tAd id : {} doesn't specify user id inclusion/exclusion" +
+                    ReqLog.debugWithDebugNew(logger, request, "\tAd id : {} doesn't specify user id inclusion/exclusion" +
                             ". Passing filter.", adId);
                     adIdSetToReturn.add(adId);
                 } else if(targetingProfile.getUserIdInclusionExclusionType() == InclusionExclusionType.Exclusion) {
-                    ReqLog.debugWithDebug(logger, request, "\tAd id : {} specifies user id exclusion but doesn't " +
+                    ReqLog.debugWithDebugNew(logger, request, "\tAd id : {} specifies user id exclusion but doesn't " +
                             "exclude this user. Passing filter.", adId);
                     adIdSetToReturn.add(adId);
                 } else {
-                    ReqLog.debugWithDebug(logger, request, "\tAd id : {} specifies user id inclusion but doesn't " +
+                    ReqLog.debugWithDebugNew(logger, request, "\tAd id : {} specifies user id inclusion but doesn't " +
                             "include this user. Failing filter.", adId);
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                             this.adNoFillReasonMapKey, context);
@@ -144,9 +144,9 @@ public class UserIdIncExcFilter implements TargetingMatcher {
             }
         } else {
             Set<Integer> targetingProfileSet = new HashSet<Integer>(targetingProfilesIncExc.size());
-            ReqLog.debugWithDebug(logger, request, "Targeting profiles included/excluded for this user :");
+            ReqLog.debugWithDebugNew(logger, request, "Targeting profiles included/excluded for this user :");
             for(Integer targetingProfileId : targetingProfilesIncExc) {
-                ReqLog.debugWithDebug(logger, request, "\t{}", targetingProfileId);
+                ReqLog.debugWithDebugNew(logger, request, "\t{}", targetingProfileId);
                 targetingProfileSet.add(targetingProfileId);
             }
 
@@ -155,7 +155,7 @@ public class UserIdIncExcFilter implements TargetingMatcher {
                 TargetingProfile targetingProfile = adEntity.getTargetingProfile();
 
                 if(targetingProfile.getUserIdInclusionExclusionType() == InclusionExclusionType.None) {
-                    ReqLog.debugWithDebug(logger, request, "\tAd id : {} doesn't specify user id inclusion/exclusion" +
+                    ReqLog.debugWithDebugNew(logger, request, "\tAd id : {} doesn't specify user id inclusion/exclusion" +
                             ". Passing filter.", adId);
                     adIdSetToReturn.add(adId);
                 } else if(targetingProfile.getUserIdInclusionExclusionType() == InclusionExclusionType.Inclusion) {
@@ -163,11 +163,11 @@ public class UserIdIncExcFilter implements TargetingMatcher {
                     int targetingProfileId = targetingProfile.getTargetingId();
 
                     if(targetingProfileSet.contains(targetingProfileId)) {
-                        ReqLog.debugWithDebug(logger, request, "\tAd id : {} specifies user id inclusion for this " +
+                        ReqLog.debugWithDebugNew(logger, request, "\tAd id : {} specifies user id inclusion for this " +
                                 "user. Passing filter.", adId);
                         adIdSetToReturn.add(adId);
                     } else {
-                        ReqLog.debugWithDebug(logger, request, "\tAd id : {} specifies user id inclusion, but " +
+                        ReqLog.debugWithDebugNew(logger, request, "\tAd id : {} specifies user id inclusion, but " +
                                 "doesn't include this user. Failing filter.", adId);
                         AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                                 this.adNoFillReasonMapKey, context);
@@ -177,11 +177,11 @@ public class UserIdIncExcFilter implements TargetingMatcher {
                     int targetingProfileId = targetingProfile.getTargetingId();
 
                     if(!targetingProfileSet.contains(targetingProfileId)) {
-                        ReqLog.debugWithDebug(logger, request, "\tAd id : {} specifies user id exclusion, but doesn't " +
+                        ReqLog.debugWithDebugNew(logger, request, "\tAd id : {} specifies user id exclusion, but doesn't " +
                                 "exclude this user. Passing filter.", adId);
                         adIdSetToReturn.add(adId);
                     } else {
-                        ReqLog.debugWithDebug(logger, request, "\tAd id : {} specifies user id exclusion for this " +
+                        ReqLog.debugWithDebugNew(logger, request, "\tAd id : {} specifies user id exclusion for this " +
                                 "user. Failing filter.", adId);
                         AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                                 this.adNoFillReasonMapKey, context);

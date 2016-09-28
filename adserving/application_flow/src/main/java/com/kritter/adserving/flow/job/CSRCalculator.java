@@ -109,12 +109,12 @@ public class CSRCalculator implements Job
                 }
                 catch (IOException ioe)
                 {
-                    ReqLog.errorWithDebug(logger, request, "IOException inside CSRCalculator ",ioe);
+                    ReqLog.errorWithDebugNew(logger, request, "IOException inside CSRCalculator ",ioe);
                 }
 
                 int value = (null == dimensionValue ? DEFAULT_DIM_VALUE : dimensionValue);
 
-                ReqLog.debugWithDebug(logger, request, "Dimension Name: {} and value: {}", dimensionName, value );
+                ReqLog.debugWithDebugNew(logger, request, "Dimension Name: {} and value: {}", dimensionName, value );
                 dimensionValues[counter++] = value;
             }
 
@@ -123,7 +123,7 @@ public class CSRCalculator implements Job
             if(csrModel != null)
                 csrValue = csrModel.getCSR(this.dimensionNames, dimensionValues);
 
-            ReqLog.debugWithDebug(logger, request, "CSR value for ad unit: {} is : {} ", responseAdInfo.getAdId(), csrValue);
+            ReqLog.debugWithDebugNew(logger, request, "CSR value for ad unit: {} is : {} ", responseAdInfo.getAdId(), csrValue);
             responseAdInfo.setCpaValue(csrValue);
         }
     }

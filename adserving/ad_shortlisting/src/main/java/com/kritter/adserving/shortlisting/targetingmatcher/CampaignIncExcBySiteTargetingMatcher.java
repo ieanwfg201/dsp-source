@@ -46,7 +46,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
         logger.info("Inside filterAdIdsForCampaignInclusionExclusionBySite of AdTargetingMatcher.Site specifies exclusion: {} ",
                 request.getSite().isAdvertiserIdListExcluded());
 
-        ReqLog.requestDebug(request, "Inside filterAdIdsForCampaignInclusionExclusionBySite of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsForCampaignInclusionExclusionBySite of AdTargetingMatcher...");
 
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
         Site site = request.getSite();
@@ -56,7 +56,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
         //if no advertiser specified for inc/exc then just pass all adids.
         if(null == campaignInclusionExclusionSchemaMap || campaignInclusionExclusionSchemaMap.size() == 0)
         {
-            ReqLog.debugWithDebug(logger,request, "CampaignInclusionExclusion does not matter for site {}   passing all adids...",
+            ReqLog.debugWithDebugNew(logger,request, "CampaignInclusionExclusion does not matter for site {}   passing all adids...",
                     site.getSiteGuid()  );
 
             return adIdSet;
@@ -69,7 +69,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : {} " , adId);
+                ReqLog.errorWithDebugNew(logger,request, "AdEntity not found in cache id : {} " , adId);
                 continue;
             }
 
@@ -88,14 +88,14 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
             if(adEntity.getDemandtype() == DemandType.API.getCode() && accountEntity != null 
                     && (demandPreference == DemandPreference.DIRECTthenMediation
                     || demandPreference == DemandPreference.OnlyMediation)){
-                ReqLog.requestDebug(request, "Demand Type API. Including "+advertiserId);
+                ReqLog.requestDebugNew(request, "Demand Type API. Including "+advertiserId);
                 shortlistedAdIdSet.add(adId);
                 continue;
             }
             if(adEntity.getDemandtype() == DemandType.DSP.getCode() && accountEntity != null 
                     && (demandPreference == DemandPreference.DirectThenDSP
                             || demandPreference == DemandPreference.OnlyDSP)){
-                ReqLog.requestDebug(request, "Demand Type DSP. Including "+advertiserId);
+                ReqLog.requestDebugNew(request, "Demand Type DSP. Including "+advertiserId);
                 shortlistedAdIdSet.add(adId);
                 continue;
             }
@@ -106,7 +106,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 /*advertiser not included.*/
                 if(!campaignInclusionExclusionSchemaMap.containsKey(advertiserId))
                 {
-                    ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} not contained in targeting.Failing",advertiserId);
+                    ReqLog.debugWithDebugNew(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} not contained in targeting.Failing",advertiserId);
 
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                             this.adNoFillReasonMapKey, context);
@@ -117,7 +117,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 /*map contains advertiser id to include but no campaign list specified, means all included.*/
                 if(campaignInclusionExclusionSchemaMap.containsKey(advertiserId) && null == campaignIdList)
                 {
-                    ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} contained and no campaigns specified .Passing",advertiserId);
+                    ReqLog.debugWithDebugNew(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} contained and no campaigns specified .Passing",advertiserId);
 
                     shortlistedAdIdSet.add(adId);
                     continue;
@@ -127,7 +127,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 if(campaignInclusionExclusionSchemaMap.containsKey(advertiserId) &&
                         null != campaignIdList && !campaignIdList.contains(campaignId))
                 {
-                    ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} contained and campaign {} not included .Failing",
+                    ReqLog.debugWithDebugNew(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} contained and campaign {} not included .Failing",
                             advertiserId,campaignId);
 
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
@@ -140,7 +140,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 if(campaignInclusionExclusionSchemaMap.containsKey(advertiserId) &&
                         null != campaignIdList && campaignIdList.contains(campaignId))
                 {
-                    ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} contained and campaign {} included .Passing",
+                    ReqLog.debugWithDebugNew(logger,request, "CampaignAdvertiserInclusionExclusion inclusion specified with advertiserId: {} contained and campaign {} included .Passing",
                             advertiserId,campaignId);
                     shortlistedAdIdSet.add(adId);
                     continue;
@@ -151,7 +151,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 /*if advertiser not excluded.*/
                 if(!campaignInclusionExclusionSchemaMap.containsKey(advertiserId))
                 {
-                    ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion exclusion specified with advertiserId: {} not contained .Passing",
+                    ReqLog.debugWithDebugNew(logger,request, "CampaignAdvertiserInclusionExclusion exclusion specified with advertiserId: {} not contained .Passing",
                             advertiserId);
                     shortlistedAdIdSet.add(adId);
                     continue;
@@ -160,7 +160,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 /*if advertiser excluded with no campaigns listed then all campaigns are excluded*/
                 if(campaignInclusionExclusionSchemaMap.containsKey(advertiserId) && null == campaignIdList)
                 {
-                    ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion exclusion specified with advertiserId: {} contained and campaign list not specified, means all excluded.Failing",
+                    ReqLog.debugWithDebugNew(logger,request, "CampaignAdvertiserInclusionExclusion exclusion specified with advertiserId: {} contained and campaign list not specified, means all excluded.Failing",
                             advertiserId);
                     continue;
                 }
@@ -168,7 +168,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 /*if advertiser excluded with campaigns specified and this campaign excluded*/
                 if(campaignInclusionExclusionSchemaMap.containsKey(advertiserId) && null != campaignIdList && campaignIdList.contains(campaignId))
                 {
-                    ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion exclusion specified with advertiserId: {} contained and campaign {} included .Failing",
+                    ReqLog.debugWithDebugNew(logger,request, "CampaignAdvertiserInclusionExclusion exclusion specified with advertiserId: {} contained and campaign {} included .Failing",
                             advertiserId,campaignId);
 
                     continue;
@@ -177,7 +177,7 @@ public class CampaignIncExcBySiteTargetingMatcher implements TargetingMatcher {
                 /*if advertiser excluded with campaigns specified and this campaign not excluded*/
                 if(campaignInclusionExclusionSchemaMap.containsKey(advertiserId) && null != campaignIdList && !campaignIdList.contains(campaignId))
                 {
-                    ReqLog.debugWithDebug(logger,request, "CampaignAdvertiserInclusionExclusion exclusion specified with advertiserId: {} contained and campaign {} not included .Passing",
+                    ReqLog.debugWithDebugNew(logger,request, "CampaignAdvertiserInclusionExclusion exclusion specified with advertiserId: {} contained and campaign {} not included .Passing",
                             advertiserId,campaignId);
 
                     shortlistedAdIdSet.add(adId);

@@ -51,10 +51,10 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
 
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
-        ReqLog.debugWithDebug(logger,request, "Inside {} of AdTargetingMatcher...", getName());
+        ReqLog.debugWithDebugNew(logger,request, "Inside {} of AdTargetingMatcher...", getName());
 
         if(adIdSet == null || adIdSet.size() == 0) {
-            ReqLog.debugWithDebug(logger,request, "Ad id set is null or empty. Returning.");
+            ReqLog.debugWithDebugNew(logger,request, "Ad id set is null or empty. Returning.");
             return adIdSet;
         }
 
@@ -71,10 +71,10 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
             }
 
             if(kritterUserId == null) {
-                ReqLog.debugWithDebug(logger,request, "User info not available for this request. Allowing only non " +
+                ReqLog.debugWithDebugNew(logger,request, "User info not available for this request. Allowing only non " +
                         "life time impression capped ads");
             } else {
-                ReqLog.debugWithDebug(logger,request, "Recent history cache is not available. So allowing only non " +
+                ReqLog.debugWithDebugNew(logger,request, "Recent history cache is not available. So allowing only non " +
                         "life time impression capped ads");
             }
 
@@ -92,13 +92,13 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
 
             /*If there is no history then user can be shown all ads.*/
             if (null == history) {
-                ReqLog.debugWithDebug(logger,request, "History for userId: {} is null ,allowing " +
+                ReqLog.debugWithDebugNew(logger,request, "History for userId: {} is null ,allowing " +
                         "all ads", kritterUserId);
                 return adIdSet;
             }
 
 
-            ReqLog.debugWithDebug(logger, request, "Fetched user history for user id : {}. History : {}.",
+            ReqLog.debugWithDebugNew(logger, request, "Fetched user history for user id : {}. History : {}.",
                     kritterUserId, history);
 
             for(int adId : adIdSet) {
@@ -114,40 +114,40 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
                     for(FreqDef def : frequencyDefinition) {
                         if(def.getDuration() == FreqDuration.LIFE) {
                             frequencyCapCount = def.getCount();
-                            ReqLog.debugWithDebug(logger, request, " Ad id : {}, campaign id : {} has life time " +
+                            ReqLog.debugWithDebugNew(logger, request, " Ad id : {}, campaign id : {} has life time " +
                                     "impression cap : {}.", adId, campaignId, frequencyCapCount);
                         } else {
-                            ReqLog.debugWithDebug(logger, request, "Ad id : {}, campaign id : {} doesn't have life " +
+                            ReqLog.debugWithDebugNew(logger, request, "Ad id : {}, campaign id : {} doesn't have life " +
                                     "time impression cap.", adId, campaignId);
                         }
                     }
                 } else {
-                    ReqLog.debugWithDebug(logger, request, "Ad id : {}, campaign id : {} doesn't have life " +
+                    ReqLog.debugWithDebugNew(logger, request, "Ad id : {}, campaign id : {} doesn't have life " +
                             "time impression cap.", adId, campaignId);
                 }
 
                 if(frequencyCapCount == -1) {
                     // Ad is not capped.
-                    ReqLog.debugWithDebug(logger, request, "Campaign id : {}, for ad id : {} doesn't have life time " +
+                    ReqLog.debugWithDebugNew(logger, request, "Campaign id : {}, for ad id : {} doesn't have life time " +
                             "impression cap. Adding it to shortlisted ads.", campaignId, adId);
                     adIdSetToReturn.add(adId);
                 } else {
                     if(history.demandEventCount.containsKey(campaignId)) {
                         long currentCount = history.demandEventCount.get(campaignId);
-                        ReqLog.debugWithDebug(logger, request, "Life time impression count for user id : {}, ad id" +
+                        ReqLog.debugWithDebugNew(logger, request, "Life time impression count for user id : {}, ad id" +
                                 " : {}, campaign id : {} = {}", adId, kritterUserId, campaignId, currentCount);
                         if(currentCount >= frequencyCapCount) {
-                            ReqLog.debugWithDebug(logger, request, "Lifetime impression cap has been hit for ad id : " +
+                            ReqLog.debugWithDebugNew(logger, request, "Lifetime impression cap has been hit for ad id : " +
                                     "{}, campaign id : {}. Dropped the ad.", adId, campaignId);
                             AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, getNoFillReason().getValue(),
                                     this.adNoFillReasonMapKey, context);
                         } else{
-                            ReqLog.debugWithDebug(logger, request, "Lifetime impression cap has not been hit. Adding " +
+                            ReqLog.debugWithDebugNew(logger, request, "Lifetime impression cap has not been hit. Adding " +
                                     "ad id : {}, campaign id : {} to shortlisted ads", adId, campaignId);
                             adIdSetToReturn.add(adId);
                         }
                     } else {
-                        ReqLog.debugWithDebug(logger, request, "Ad id : {}, campaign id : {} doesn't have life time " +
+                        ReqLog.debugWithDebugNew(logger, request, "Ad id : {}, campaign id : {} doesn't have life time " +
                                 "impression count in user history. Adding it to shortlisted ads.", adId, campaignId);
                         adIdSetToReturn.add(adId);
                     }
@@ -155,7 +155,7 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
             }
         } catch (Exception e) {
             logger.error("Exception occur while trying to fetch user history. {}", e);
-            ReqLog.debugWithDebug(logger,request, "Exception inside LifetimeAdImpCapFilter reason: {}  ", e);
+            ReqLog.debugWithDebugNew(logger,request, "Exception inside LifetimeAdImpCapFilter reason: {}  ", e);
 
             Set<Integer> cappedAds = LifetimeCapUtils.getCappedCampaigns(adEntityCache, campaignCache, adIdSet,
                     getEventType());
