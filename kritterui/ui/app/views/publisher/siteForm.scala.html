@@ -114,7 +114,7 @@
             <legend>PassBack</legend>
                 @components.formElements.selectlist2(siteForm("passback_type"), "Passback Type", services.MetadataAPI.passback_type())
                 @components.formElements.selectlist2(siteForm("passback_content_type"), "Passback Content Type", services.MetadataAPI.passback_content_type())
-                @components.formElements.textinput(siteForm("nofill_backup_content"), '_label ->"PassBack Content")
+                @components.formElements.textarea(siteForm("nofill_backup_content"), "PassBack Content")
             </fieldset>
             }
             @components.formElements.textinput(siteForm("billing_rules_json"), '_label ->"Payout Percentage")

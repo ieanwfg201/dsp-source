@@ -299,7 +299,7 @@ public class SiteCrud {
         if(site.getPassback_content_type() == (int)SITE_PASSBACK_CONTENT_TYPE.NONE.getCode()){
             return "";
         }
-        return "[{\"priority\":1,\"content\":\""+site.getNofill_backup_content().trim()+"\",\"type\":"+site.getPassback_content_type()+"}]";
+        return "[{\"priority\":1,\"content\":\""+site.getNofill_backup_content().trim().replaceAll("\"", "\\\\\"")+"\",\"type\":"+site.getPassback_content_type()+"}]";
     }
     private static String generateNativeProps(Site site){
         if(site == null){

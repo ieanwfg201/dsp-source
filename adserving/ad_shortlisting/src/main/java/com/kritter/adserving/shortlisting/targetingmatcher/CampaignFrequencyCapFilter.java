@@ -142,7 +142,7 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
         FreqCap freqCap = campaign.getFrequencyCap();
         if(freqCap != null && freqCap.getFDef() != null) {
             if(!campaign.getFrequencyCap().getFDef().containsKey(FreqEventType.IMP)) {
-                ReqLog.debugWithDebug(logger, request, "Ad id : {} has empty frequency cap object");
+                ReqLog.debugWithDebugNew(logger, request, "Ad id : {} has empty frequency cap object");
                 return null;
             }
             Set<FreqDef> freqDefs = freqCap.getFDef().get(FreqEventType.IMP);
@@ -158,14 +158,14 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
         }
 
         if(maxCap == -1) {
-            ReqLog.debugWithDebug(logger, request, "Ad id : {} specifies frequency cap but not impression cap.");
+            ReqLog.debugWithDebugNew(logger, request, "Ad id : {} specifies frequency cap but not impression cap.");
             return null;
         }
 
         int[] result = new int[2];
         result[0] = maxCap;
         result[1] = timeWindowInHour;
-        ReqLog.debugWithDebug(logger, request, "Ad id : {} specifies impression cap, maximum cap = {} and time " +
+        ReqLog.debugWithDebugNew(logger, request, "Ad id : {} specifies impression cap, maximum cap = {} and time " +
                 "window = {}.", maxCap, timeWindowInHour);
         return result;
     }
@@ -212,7 +212,7 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
         }
 
         if(maxCap == -1) {
-            ReqLog.debugWithDebug(logger, request, "Campaign id : {} is not frequency capped. Passing this ad",
+            ReqLog.debugWithDebugNew(logger, request, "Campaign id : {} is not frequency capped. Passing this ad",
                     campaignId);
             return true;
         }
@@ -253,7 +253,7 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
      */
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
-        ReqLog.debugWithDebug(logger,request, "Inside {} of AdTargetingMatcher...", getName());
+        ReqLog.debugWithDebugNew(logger,request, "Inside {} of AdTargetingMatcher...", getName());
 
         String kritterUserId = request.getUserId();
 
@@ -267,10 +267,10 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
             }
 
             if(kritterUserId == null) {
-                ReqLog.debugWithDebug(logger,request, "User info not available for this request. Allowing only non " +
+                ReqLog.debugWithDebugNew(logger,request, "User info not available for this request. Allowing only non " +
                         "frequency capped ads");
             } else {
-                ReqLog.debugWithDebug(logger,request, "Recent history cache is not available. So allowing only non " +
+                ReqLog.debugWithDebugNew(logger,request, "Recent history cache is not available. So allowing only non " +
                         "frequency capped ads");
             }
 
@@ -281,7 +281,7 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
         }
 
         if (null == adIdSet || adIdSet.size() <= 0) {
-            ReqLog.debugWithDebug(logger,request, "No adIdSet supplied to UserRecentImpressionHistoryCache, " +
+            ReqLog.debugWithDebugNew(logger,request, "No adIdSet supplied to UserRecentImpressionHistoryCache, " +
                     "returning null/empty set...");
             return adIdSet;
         }
@@ -293,12 +293,12 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
 
             /*If there is no impression history then user can be shown all ads.*/
             if (null == recentImpressionHistory) {
-                ReqLog.debugWithDebug(logger,request, "RecentImpressionHistory for userId: {} is null ,allowing " +
+                ReqLog.debugWithDebugNew(logger,request, "RecentImpressionHistory for userId: {} is null ,allowing " +
                         "all ads", kritterUserId);
                 return adIdSet;
             }
 
-            ReqLog.debugWithDebug(logger, request, "Fetched user history for user id : {}. History : {}.",
+            ReqLog.debugWithDebugNew(logger, request, "Fetched user history for user id : {}. History : {}.",
                     kritterUserId, recentImpressionHistory);
 
             Map<Integer, List<Long>> adToTimestampMap =
@@ -312,7 +312,7 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
 
             for (Integer adId : adIdSet) {
                 if(isFreqCappedAdEligibleForUser(adId, adToTimestampMap, request)) {
-                    ReqLog.debugWithDebug(logger,request, "Ad id {} eligible to serve on user : {}", adId,
+                    ReqLog.debugWithDebugNew(logger,request, "Ad id {} eligible to serve on user : {}", adId,
                             kritterUserId);
                     adIdSetToReturn.add(adId);
                 } else {
@@ -322,7 +322,7 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
             }
         } catch (Exception e) {
             logger.error("Exception occur while trying to fetch user history. {}", e);
-            ReqLog.debugWithDebug(logger,request, "Exception inside FrequencyCapFilter reason: {}  ", e);
+            ReqLog.debugWithDebugNew(logger,request, "Exception inside FrequencyCapFilter reason: {}  ", e);
 
             Set<Integer> frequencyCappedAds = getFrequencyCappedAds(adIdSet, request);
             for(Integer adId : frequencyCappedAds) {

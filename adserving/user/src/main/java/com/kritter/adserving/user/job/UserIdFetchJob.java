@@ -45,15 +45,15 @@ public class UserIdFetchJob implements Job {
             if(externalUserIds != null && !externalUserIds.isEmpty()) {
                 // Find internal user id for the supplied external user ids and set the internal user id in the
                 // request
-                ReqLog.debugWithDebug(this.logger, request, "Number of external user ids : {}", externalUserIds.size());
+                ReqLog.debugWithDebugNew(this.logger, request, "Number of external user ids : {}", externalUserIds.size());
                 String internalUserId = this.userIdProvider.getInternalUserId(externalUserIds);
-                ReqLog.debugWithDebug(this.logger, request, "Internal user id found : {}", internalUserId);
+                ReqLog.debugWithDebugNew(this.logger, request, "Internal user id found : {}", internalUserId);
                 request.setUserId(internalUserId);
             } else {
-                ReqLog.debugWithDebug(this.logger, request, "External User ids not present in this request.");
+                ReqLog.debugWithDebugNew(this.logger, request, "External User ids not present in this request.");
             }
         } else {
-            ReqLog.debugWithDebug(this.logger, request, "User id provider inside {} is null.", this.name);
+            ReqLog.debugWithDebugNew(this.logger, request, "User id provider inside {} is null.", this.name);
         }
     }
 }

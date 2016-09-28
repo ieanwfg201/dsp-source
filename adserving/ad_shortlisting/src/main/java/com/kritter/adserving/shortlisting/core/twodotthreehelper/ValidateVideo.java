@@ -113,7 +113,7 @@ public class ValidateVideo {
                 nfrReason = nfrReasonPriority;
 
             request.setNoFillReason(nfrReason);
-            ReqLog.debugWithDebug(logger, request, "Validate Video NFR: {}", nfrReason);
+            ReqLog.debugWithDebugNew(logger, request, "Validate Video NFR: {}", nfrReason);
         }
     }
 
@@ -193,7 +193,7 @@ public class ValidateVideo {
         }
         if(isNFR){
             request.setNoFillReason(nfrReason);
-            ReqLog.debugWithDebug(logger, request, "Validate Video NFR: {}", nfrReason);
+            ReqLog.debugWithDebugNew(logger, request, "Validate Video NFR: {}", nfrReason);
         }
     }
 

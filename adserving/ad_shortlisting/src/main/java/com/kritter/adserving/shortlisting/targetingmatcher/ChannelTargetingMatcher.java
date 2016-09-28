@@ -42,7 +42,7 @@ public class ChannelTargetingMatcher implements TargetingMatcher {
 	@Override
 	public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
 		logger.info("Inside filterAdIdsBasedOnDemandPreference of ChannelTargetingMatcher ...");
-		ReqLog.requestDebug(request, "Inside filterAdIdsBasedOnDemandPreference of ChannelTargetingMatcher ...");
+		ReqLog.requestDebugNew(request, "Inside filterAdIdsBasedOnDemandPreference of ChannelTargetingMatcher ...");
 
 		if(adIdSet == null || adIdSet.size() == 0) {
 			logger.debug("No ads to shortlist from. Returning!");
@@ -60,7 +60,7 @@ public class ChannelTargetingMatcher implements TargetingMatcher {
 		}
 		Integer pubIncId = request.getSite().getPublisherIncId();
 		if( pubIncId == null){
-			ReqLog.errorWithDebug(logger, request, "Public not found ChannelTargetingMatcher : {}" , pubIncId);
+			ReqLog.errorWithDebugNew(logger, request, "Public not found ChannelTargetingMatcher : {}" , pubIncId);
 			return adIdSet;
 		}
 		String channelSecondLevelCode = request.getSite().getChannelSecondLevelCode();
@@ -71,7 +71,7 @@ public class ChannelTargetingMatcher implements TargetingMatcher {
 			internalSecondLevelId = channelEntity.getInternalid();
 			if(internalSecondLevelId != null){
 				request.getSite().setChannelInternalId(internalSecondLevelId);
-				ReqLog.debugWithDebug(logger, request, "Channel Second level found : {}" , internalSecondLevelId);
+				ReqLog.debugWithDebugNew(logger, request, "Channel Second level found : {}" , internalSecondLevelId);
 			}
 			}
 		}
@@ -83,7 +83,7 @@ public class ChannelTargetingMatcher implements TargetingMatcher {
 			internalFirstLevelId = channelEntity.getInternalid();
 			if(internalFirstLevelId != null){
 				request.getSite().setChannelInternalId(internalFirstLevelId);
-				ReqLog.debugWithDebug(logger, request, "Channel First Level level found : {}" , internalFirstLevelId);
+				ReqLog.debugWithDebugNew(logger, request, "Channel First Level level found : {}" , internalFirstLevelId);
 			}
 			}
 		}
@@ -92,7 +92,7 @@ public class ChannelTargetingMatcher implements TargetingMatcher {
 		for(Integer adId : adIdSet) {
 			AdEntity adEntity = adEntityCache.query(adId);
 			if(null == adEntity) {
-				ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+				ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
 				continue;
 			}
 			TPExt tpExt = null;
@@ -149,11 +149,11 @@ public class ChannelTargetingMatcher implements TargetingMatcher {
 				}
 			}
 			shortlistedAdIdSet.add(adId);
-			ReqLog.debugWithDebug(logger, request, "The adid: {}, passes ChannelTargetingMatcher : ", adEntity.getAdGuid());
+			ReqLog.debugWithDebugNew(logger, request, "The adid: {}, passes ChannelTargetingMatcher : ", adEntity.getAdGuid());
 		}
 		if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0){
 			request.setNoFillReason(NoFillReason.CHANNEL_MISMATCH);
-			ReqLog.debugWithDebug(logger, request, "ALL ad dropped in Channel");
+			ReqLog.debugWithDebugNew(logger, request, "ALL ad dropped in Channel");
 		}
 		return shortlistedAdIdSet;
 

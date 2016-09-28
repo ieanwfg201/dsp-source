@@ -42,7 +42,7 @@ public class FileBasedLatLongTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsBasedOnFileLatLongTargeting of AdTargetingMatcher...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsBasedOnFileLatLongTargeting of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsBasedOnFileLatLongTargeting of AdTargetingMatcher...");
 
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
 
@@ -52,7 +52,7 @@ public class FileBasedLatLongTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -66,7 +66,7 @@ public class FileBasedLatLongTargetingMatcher implements TargetingMatcher {
 
             if( null == latlonFileArray || latlonFileArray.length ==0 )
             {
-                ReqLog.debugWithDebug(logger, request, "The ad {} is not custom lat lon file targeted so passing the filter....", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "The ad {} is not custom lat lon file targeted so passing the filter....", adEntity.getAdGuid());
                 shortlistedAdIdSet.add(adId);
             }
 
@@ -78,12 +78,12 @@ public class FileBasedLatLongTargetingMatcher implements TargetingMatcher {
                     )
                     )
             {
-                ReqLog.debugWithDebug(logger, request, "The ad {} is custom latlon targeted and passes the check...", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "The ad {} is custom latlon targeted and passes the check...", adEntity.getAdGuid());
                 shortlistedAdIdSet.add(adId);
             }
             else
             {
-                ReqLog.debugWithDebug(logger, request, "The ad {} is custom lat lon targeted and fails the check...", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "The ad {} is custom lat lon targeted and fails the check...", adEntity.getAdGuid());
 
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);

@@ -182,19 +182,19 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                blockedCreativeTypeSet.contains(BANNER_CREATIVE_TYPE)
               )
             {
-                ReqLog.debugWithDebug(logger, request, "Banner is not allowed for this impression.Creative types block it.");
+                ReqLog.debugWithDebugNew(logger, request, "Banner is not allowed for this impression.Creative types block it.");
                 isBannerAllowed = false;
             }
 
             if(!request.getSite().isRichMediaAllowed())
             {
-                ReqLog.debugWithDebug(logger, request, "Richmedia is not allowed for this impression.Site does not allow it.");
+                ReqLog.debugWithDebugNew(logger, request, "Richmedia is not allowed for this impression.Site does not allow it.");
                 isRichmediaAllowed = false;
             }
 
             if(null == request.getHandsetMasterData() || !request.getHandsetMasterData().isDeviceJavascriptCompatible())
             {
-                ReqLog.debugWithDebug(logger, request, "Richmedia is not allowed for this impression.Requesting handset is not javascript compatible.");
+                ReqLog.debugWithDebugNew(logger, request, "Richmedia is not allowed for this impression.Requesting handset is not javascript compatible.");
                 isRichmediaAllowed = false;
             }
 
@@ -203,13 +203,13 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                blockedCreativeTypeSet.contains(RICHMEDIA_CREATIVE_TYPE)
               )
             {
-                ReqLog.debugWithDebug(logger, request, "Richmedia is not allowed for this impression.Creative types do not allow richmedia.");
+                ReqLog.debugWithDebugNew(logger, request, "Richmedia is not allowed for this impression.Creative types do not allow richmedia.");
                 isRichmediaAllowed = false;
             }
 
             if(!isBannerAllowed && !isRichmediaAllowed)
             {
-                ReqLog.errorWithDebug(logger, request, "BidRequestImpression does not allow banner ads or richmedia inside AdShortlistingRTBExchangeTwoDotOne, cannot process request for this impressionId: {} ",
+                ReqLog.errorWithDebugNew(logger, request, "BidRequestImpression does not allow banner ads or richmedia inside AdShortlistingRTBExchangeTwoDotOne, cannot process request for this impressionId: {} ",
                         bidRequestImpressionDTO.getBidRequestImpressionId());
                 continue;
             }
@@ -284,7 +284,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                             NoFillReason.CREATIVE_ATTR.getValue(), this.adNoFillReasonMapKey, context);
 
                     //the creative is not appropriate for the requesting impression.
-                    ReqLog.debugWithDebug(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the impression: {}",
+                    ReqLog.debugWithDebugNew(logger, request, "Creative id: {} does not qualify for creative attributes demanded by the impression: {}",
                                  adEntity.getCreativeId(),
                                  bidRequestImpressionDTO.getBidRequestImpressionId());
                     continue;
@@ -489,28 +489,37 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                                           creativeSlot.getCreativeSlotHeight(),width,height);
                         }
 
-
-                        ReqLog.debugWithDebug(logger, request, "StrictBannerSize: {} , request interstitial : {} , isCreativeEqualToRequestSize: {}, isCreativeSizeLessThanEqualRequestSize:{} ",
-                                         strictBannerSize,request.isInterstitialBidRequest(),
-                                         isCreativeSlotEqualsRequestingSlot(creativeSlot,width,height),
-                                         isCreativeSlotFitForRequestingSlot(creativeSlot,width,height)
-                                        );
+                        logger.debug("StrictBannerSize: {} , request interstitial : {} , isCreativeEqualToRequestSize: {}, isCreativeSizeLessThanEqualRequestSize:{} ",
+                                        strictBannerSize,request.isInterstitialBidRequest(),
+                                        isCreativeSlotEqualsRequestingSlot(creativeSlot,width,height),
+                                        isCreativeSlotFitForRequestingSlot(creativeSlot,width,height));
+                        if(request.isRequestForSystemDebugging()){
+                        	request.addDebugMessageForTestRequest("StrictBannerSize: "+strictBannerSize+" , request interstitial : "+request.isInterstitialBidRequest()+
+                        	" , isCreativeEqualToRequestSize: "+isCreativeSlotEqualsRequestingSlot(creativeSlot,width,height)+
+                        	", isCreativeSizeLessThanEqualRequestSize:"+isCreativeSlotFitForRequestingSlot(creativeSlot,width,height));
+                            
+                        }
                     }
 
                     if(!sizeCheckForBanner)
                     {
                         AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                                 NoFillReason.CREATIVE_SIZE.getValue(), this.adNoFillReasonMapKey, context);
-
-                        ReqLog.errorWithDebug(logger, request, "We could not find any creative supporting the requesting sizes of (width,height) combinations: {} for/by creativeId: {}" ,
-                                     fetchRequestedWidthAndHeightPairForDebug(width,height) ,creative.getId());
+                        	
+                        if(request.isRequestForSystemDebugging()){
+                        	request.addDebugMessageForTestRequest("We could not find any creative supporting the requesting sizes of "
+                        			+ "(width,height) combinations: "+fetchRequestedWidthAndHeightPairForDebug(width,height)+" for/by creativeId: "+
+                        			creative.getId());
+                        }
+                        logger.debug("We could not find any creative supporting the requesting sizes of (width,height) combinations: {} for/by creativeId: {}" ,
+                                fetchRequestedWidthAndHeightPairForDebug(width,height) ,creative.getId());
                     }
                 }
                 //if creative is richmedia then allow the creative if flow comes till here.
                 else if(creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
                 {
                     if(request.isExternalResouceURLRequired() && creative.getExternalResourceURL() == null) {
-                        ReqLog.debugWithDebug(logger, request, "External resource URL required by the supply. Not set for the ad. Skipping adunit:{}", 
+                        ReqLog.debugWithDebugNew(logger, request, "External resource URL required by the supply. Not set for the ad. Skipping adunit:{}", 
                                 adEntity.getAdGuid());
                         creativeFoundForRequestedSlot = false;
                     } else {
@@ -541,7 +550,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CREATIVE_SIZE.getValue(), this.adNoFillReasonMapKey, context);
 
-                    ReqLog.errorWithDebug(logger, request, "No creative could be found for impression id of this bidrequest.Skipping adunit:{} ",
+                    ReqLog.errorWithDebugNew(logger, request, "No creative could be found for impression id of this bidrequest.Skipping adunit:{} ",
                                  adEntity.getAdGuid());
                     continue;
                 }
@@ -557,14 +566,14 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                     errorMessage.setLength(0);
                     errorMessage.append("FATAL!!! campaign not found for adid: ");
                     errorMessage.append(adEntity.getId());
-                    ReqLog.errorWithDebug(logger, request, errorMessage.toString());
+                    ReqLog.errorWithDebugNew(logger, request, errorMessage.toString());
                     continue;
                 }
 
                 //lastly use bidfloor value of impression to see if ad qualifies.
                 Double bidFloorForImpression = bidRequestImpressionDTO.getBidFloorPrice();
 
-                ReqLog.requestDebug(request, " Ecpm floor value asked by exchange is : "+bidFloorForImpression);
+                ReqLog.requestDebugNew(request, " Ecpm floor value asked by exchange is : "+bidFloorForImpression);
 
                 boolean adFloorPriceMet = false;
                 //for the case of creative being banner.
@@ -587,7 +596,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                                                       )
                 )
                 {
-                    ReqLog.debugWithDebug(logger, request, "Qualifying BannerId: {} with qualifying ecpm value: {} found for impressionId: {} with bidFloor as: {} ",
+                    ReqLog.debugWithDebugNew(logger, request, "Qualifying BannerId: {} with qualifying ecpm value: {} found for impressionId: {} with bidFloor as: {} ",
                                  creativeBannerToUse.getId() , responseAdInfo.getEcpmValue(),
                                  bidRequestImpressionDTO.getBidRequestImpressionId(),bidFloorForImpression);
 
@@ -622,7 +631,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                     creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA)
                 )
                 {
-                    ReqLog.debugWithDebug(logger, request, "Qualifying richmedia ad with qualifying ecpm value: {} found for impressionId: {} with bidFloor as: {} ",
+                    ReqLog.debugWithDebugNew(logger, request, "Qualifying richmedia ad with qualifying ecpm value: {} found for impressionId: {} with bidFloor as: {} ",
                                  responseAdInfo.getEcpmValue(),
                                  bidRequestImpressionDTO.getBidRequestImpressionId(),bidFloorForImpression);
 
@@ -650,7 +659,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.ECPM_FLOOR_UNMET.getValue(), this.adNoFillReasonMapKey, context);
 
-                    ReqLog.debugWithDebug(logger, request, "Ad id : {} has ecpm {} while the floor is {}. " +
+                    ReqLog.debugWithDebugNew(logger, request, "Ad id : {} has ecpm {} while the floor is {}. " +
                             "The ad doesn't meet ecpm floor, skipping it.", adId, responseAdInfo.getEcpmValue(),
                             bidFloorForImpression);
                 }
@@ -667,19 +676,19 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
         if(!creativeAttributesMatchAtleastOnce && null == request.getNoFillReason())
         {
             request.setNoFillReason(NoFillReason.CREATIVE_ATTR);
-            ReqLog.debugWithDebug(logger, request, "NoFill found as creative attributes inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
+            ReqLog.debugWithDebugNew(logger, request, "NoFill found as creative attributes inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
         }
 
         if(!creativeFoundForRequestedSlot && null == request.getNoFillReason())
         {
             request.setNoFillReason(NoFillReason.CREATIVE_SIZE);
-            ReqLog.debugWithDebug(logger, request, "NoFill found as creative size inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
+            ReqLog.debugWithDebugNew(logger, request, "NoFill found as creative size inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
         }
 
         if(!floorPriceMet && null == request.getNoFillReason())
         {
             request.setNoFillReason(NoFillReason.ECPM_FLOOR_UNMET);
-            ReqLog.debugWithDebug(logger, request, "NoFill found as ecpm floor unmet inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
+            ReqLog.debugWithDebugNew(logger, request, "NoFill found as ecpm floor unmet inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
         }
 
         //set to request all the requesting slotids.
@@ -834,7 +843,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                                                        ResponseAdInfo responseAdInfo
                                                       )
     {
-        ReqLog.infoWithDebug(logger, request, "Inside doesImpressionHasPMPDealIdForAdUnit of CreativeAndFloorMatchingRTBExchangeTwoDotOne ...");
+        ReqLog.infoWithDebugNew(logger, request, "Inside doesImpressionHasPMPDealIdForAdUnit of CreativeAndFloorMatchingRTBExchangeTwoDotOne ...");
 
         Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet =
                                                     request.fetchPrivateDealInfoSetForImpressionId(impressionId);
@@ -864,8 +873,12 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
             dealIdArrayForThisPublisher.length > 0
           )
         {
-            ReqLog.debugWithDebug(logger, request, "Impression Id:{} has deal id specified, looking if ad:{} is targeting deal id set: {} ",
-                          impressionId,adEntity.getAdGuid(),fetchDealIdString(privateDealInfoSet));
+        	logger.debug("Impression Id:{} has deal id specified, looking if ad:{} is targeting deal id set: {} ",
+                    impressionId,adEntity.getAdGuid(),fetchDealIdString(privateDealInfoSet));
+            if(request.isRequestForSystemDebugging()){
+            	request.addDebugMessageForTestRequest("Impression Id:"+impressionId+" has deal id specified, looking if "
+            			+ "ad:"+adEntity.getAdGuid()+" is targeting deal id set:  "+fetchDealIdString(privateDealInfoSet));
+            }
 
             for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
             {
@@ -885,7 +898,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                        )
                       )
                     {
-                        ReqLog.debugWithDebug(logger, request, "DealIdByAd: {} matches and fits deal id in impression:{} ",
+                        ReqLog.debugWithDebugNew(logger, request, "DealIdByAd: {} matches and fits deal id in impression:{} ",
                                       dealIdByAd,privateDealInfo.getDealId());
                         responseAdInfo.setDealId(dealIdByAd);
                         return true;

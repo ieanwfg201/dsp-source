@@ -104,9 +104,9 @@ public class SspOrInHouse implements Job
             return -1;
         }
         Set<String> adSet = advShortlistedAd.get(demandPartnerAccountId);
-        ReqLog.requestDebug(request, "Inside SSPOrInHouse:fetchAdsFromDemandPartnerApi fetching ad for "+demandPartnerAccountId);
+        ReqLog.requestDebugNew(request, "Inside SSPOrInHouse:fetchAdsFromDemandPartnerApi fetching ad for "+demandPartnerAccountId);
         if(adSet== null){
-            ReqLog.requestDebug(request, "Inside SSPOrInHouse:fetchAdsFromDemandPartnerApi adSet not Found for "+demandPartnerAccountId);
+            ReqLog.requestDebugNew(request, "Inside SSPOrInHouse:fetchAdsFromDemandPartnerApi adSet not Found for "+demandPartnerAccountId);
             return -1;
         }
         for(String adId : adSet){
@@ -166,7 +166,7 @@ public class SspOrInHouse implements Job
                                     .setExternalResourceURL(null)
                                     .build();
 
-                    ReqLog.debugWithDebug(logger, request, "DemandPartner Response, status: {} , no-fill: {} ,payload: {} ",
+                    ReqLog.debugWithDebugNew(logger, request, "DemandPartner Response, status: {} , no-fill: {} ,payload: {} ",
                                 demandPartnerApiResponse.getResponseStatusCode(),
                                 demandPartnerApiResponse.isNoFill(),
                                 demandPartnerApiResponse.getResponsePayload()
@@ -182,7 +182,7 @@ public class SspOrInHouse implements Job
                     return 0;
                 }
             }else{
-                ReqLog.requestDebug(request, "Inside SSPOrInHouse:fetchAdsFromDemandPartnerApi demandPartnerApi not found for "+demandPartnerAccountId);
+                ReqLog.requestDebugNew(request, "Inside SSPOrInHouse:fetchAdsFromDemandPartnerApi demandPartnerApi not found for "+demandPartnerAccountId);
             }
         }
         return -1;
@@ -261,14 +261,14 @@ public class SspOrInHouse implements Job
                 }
             }
             if(directDemandFound){
-                ReqLog.requestDebug(request, "Inside SSPOrInHouse Direct Demand Found");
+                ReqLog.requestDebugNew(request, "Inside SSPOrInHouse Direct Demand Found");
                 takeFlowToKritterDemand = defaultToDirectWithDebug("Direct Demand Found in SspOrInHouse", context,null);
                 response.setResponseAdInfo(directresponseAdnfo);
                 response.setShortlistedAdIdSet(directShortlistedAd);;
                 return;
             }
             if(demandPreference == DemandPreference.DIRECT){
-                ReqLog.requestDebug(request, "Inside SSPOrInHouse Direct Preference is Direct");
+                ReqLog.requestDebugNew(request, "Inside SSPOrInHouse Direct Preference is Direct");
                 takeFlowToKritterDemand = defaultToDirectWithDebug("Demand Preference Direct", context, null);
                 response.setResponseAdInfo(directresponseAdnfo);
                 response.setShortlistedAdIdSet(directShortlistedAd);;
@@ -283,20 +283,20 @@ public class SspOrInHouse implements Job
 
             int globalRuleEntityCount = this.sspGlobalRulesCache.getEntityCount();
             if(globalRuleEntityCount != 1){
-                ReqLog.requestDebug(request, "Inside SSPOrInHouse this.sspGlobalRulesCache.getEntityCount() not1 ");
+                ReqLog.requestDebugNew(request, "Inside SSPOrInHouse this.sspGlobalRulesCache.getEntityCount() not1 ");
                 takeFlowToKritterDemand = defaultToDirectWithError("Global Entity count != 1", context,response );
                 return;
             }
             SspGlobalRulesEntity sspGlobalRuleEntity = this.sspGlobalRulesCache.query(SSPEnum.INSERT_ID.getCode());
             SSPGlobalRuleDef sspGlobalRuleDef = sspGlobalRuleEntity.getSspGlobalRuleDef();
             if(sspGlobalRuleDef == null){
-                ReqLog.requestDebug(request, "Inside SSPOrInHouse sspGlobalRuleDef == null ");
+                ReqLog.requestDebugNew(request, "Inside SSPOrInHouse sspGlobalRuleDef == null ");
                 takeFlowToKritterDemand = defaultToDirectWithError("NO NON Direct Demand Found Found", context, response);
                 return;
             }
             List<Map.Entry<String, Double>> apiAdvertiserList = sspGlobalRuleEntity.getAvertiserInOrder();
             if(apiAdvertiserList == null || apiAdvertiserList.size() <1){
-                ReqLog.requestDebug(request, "Inside SSPOrInHouse apiAdvertiserList not found ");
+                ReqLog.requestDebugNew(request, "Inside SSPOrInHouse apiAdvertiserList not found ");
                 takeFlowToKritterDemand = defaultToDirectWithError("NO NON Direct Demand Found Found", context, response);
                 return;
             }
@@ -306,14 +306,14 @@ public class SspOrInHouse implements Job
             }
             boolean externaldemandFound = false;
             long startTime = System.currentTimeMillis();
-            ReqLog.requestDebug(request, "Inside SSPOrInHouse Timeout "+timeoutInMilis );
-            ReqLog.requestDebug(request, "Inside SSPOrInHouse Start time "+startTime );
+            ReqLog.requestDebugNew(request, "Inside SSPOrInHouse Timeout "+timeoutInMilis );
+            ReqLog.requestDebugNew(request, "Inside SSPOrInHouse Start time "+startTime );
             for(Map.Entry<String, Double> apiAdsertiser:apiAdvertiserList){
                 long currentTime = System.currentTimeMillis();
-                ReqLog.requestDebug(request, "Inside SSPOrInHouse EndTime"+currentTime);
+                ReqLog.requestDebugNew(request, "Inside SSPOrInHouse EndTime"+currentTime);
                 int diff = (int)(currentTime - startTime);
                 if(diff > timeoutInMilis){
-                    ReqLog.requestDebug(request, "Inside SSPOrInHouse timedout");
+                    ReqLog.requestDebugNew(request, "Inside SSPOrInHouse timedout");
                     takeFlowToKritterDemand = defaultToDirectWithError("SSP AD Fetch Timesout", context, response);
                     return;
                 }

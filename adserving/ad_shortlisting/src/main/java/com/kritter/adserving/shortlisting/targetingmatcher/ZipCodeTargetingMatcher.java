@@ -56,7 +56,7 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsForZipCodeTargeting of AdTargetingMatcher...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsForZipCodeTargeting of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsForZipCodeTargeting of AdTargetingMatcher...");
 
         Set<Integer> shortListedAdIdSet = new HashSet<Integer>();
 
@@ -66,7 +66,7 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : " + adId);
                 continue;
             }
 
@@ -76,7 +76,7 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
 
             if( null == zipCodeFileArray || zipCodeFileArray.length ==0 )
             {
-                ReqLog.debugWithDebug(logger, request, "The ad is not zip code targeted so passing the filter - adguid{}", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "The ad is not zip code targeted so passing the filter - adguid{}", adEntity.getAdGuid());
                 shortListedAdIdSet.add(adId);
             }
 
@@ -96,7 +96,7 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
                                         )
                         )
                 {
-                    ReqLog.debugWithDebug(logger, request, "The ad is zipcode targeted and passes the check, detected adGuid {} ZipCodeSet:{} ",
+                    ReqLog.debugWithDebugNew(logger, request, "The ad is zipcode targeted and passes the check, detected adGuid {} ZipCodeSet:{} ",
                             adEntity.getAdGuid(), zipCodeDetectedSet);
 
                     shortListedAdIdSet.add(adId);
@@ -106,7 +106,7 @@ public class ZipCodeTargetingMatcher implements TargetingMatcher {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                             this.adNoFillReasonMapKey, context);
 
-                    ReqLog.debugWithDebug(logger, request, "The ad is zipcode targeted and fails the check..aguid {} .", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The ad is zipcode targeted and fails the check..aguid {} .", adEntity.getAdGuid());
                 }
             }
         }

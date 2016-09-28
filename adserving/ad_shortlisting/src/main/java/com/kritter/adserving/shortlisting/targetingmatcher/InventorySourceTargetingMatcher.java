@@ -39,7 +39,7 @@ public class InventorySourceTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdsOnInventorySource of AdTargetingMatcher...");
-        ReqLog.requestDebug(request,"Inside filterAdsOnInventorySource of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request,"Inside filterAdsOnInventorySource of AdTargetingMatcher...");
 
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
 
@@ -49,7 +49,7 @@ public class InventorySourceTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request,"AdEntity not found in cache id : {}" , adId);
+                ReqLog.errorWithDebugNew(logger,request,"AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -81,7 +81,7 @@ public class InventorySourceTargetingMatcher implements TargetingMatcher {
 
             else
             {
-                ReqLog.debugWithDebug(logger,request,"SupplySource targeting for adId: {}  ,which is: {}  , does not qualify for inventory supply source , which is:  {}",
+                ReqLog.debugWithDebugNew(logger,request,"SupplySource targeting for adId: {}  ,which is: {}  , does not qualify for inventory supply source , which is:  {}",
                         adEntity.getAdGuid(),SupplySourceEnum.getEnum(targetingProfile.getSupplySource()).getName(), INVENTORY_SOURCE.getEnum(request.getInventorySource()).getInventorySource());
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);

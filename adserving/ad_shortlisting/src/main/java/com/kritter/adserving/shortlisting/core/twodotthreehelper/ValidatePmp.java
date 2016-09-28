@@ -33,7 +33,7 @@ public class ValidatePmp {
     {
         logger.info("Inside doesImpressionHasPMPDealIdForAdUnit of CreativeAndFloorMatchingRTBExchange...");
 
-        ReqLog.requestDebug(request, "Inside doesImpressionHasPMPDealIdForAdUnit of CreativeAndFloorMatchingRTBExchange ...");
+        ReqLog.requestDebugNew(request, "Inside doesImpressionHasPMPDealIdForAdUnit of CreativeAndFloorMatchingRTBExchange ...");
 
         Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet =
                 request.fetchPrivateDealInfoSetForImpressionId(impressionId);
@@ -63,8 +63,13 @@ public class ValidatePmp {
                 dealIdArrayForThisPublisher.length > 0
           )
         {
-            ReqLog.debugWithDebug(logger, request, "Impression Id:{} has deal id specified, looking if ad:{} is targeting deal id set: {} ",
+        	logger.debug("Impression Id:{} has deal id specified, looking if ad:{} is targeting deal id set: {} ",
                     impressionId,adEntity.getAdGuid(),fetchDealIdString(privateDealInfoSet));
+        	if(request.isRequestForSystemDebugging()){
+        		request.addDebugMessageForTestRequest("Impression Id:"+impressionId+" has deal id specified, "
+        				+ "looking if ad:"+adEntity.getAdGuid()+" is targeting deal id set:  "+
+                    fetchDealIdString(privateDealInfoSet));
+        	}
 
             for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
             {
@@ -84,7 +89,7 @@ public class ValidatePmp {
                                     )
                             )
                     {
-                        ReqLog.debugWithDebug(logger, request, "DealIdByAd: {} matches and fits deal id in impression:{} ",
+                        ReqLog.debugWithDebugNew(logger, request, "DealIdByAd: {} matches and fits deal id in impression:{} ",
                                 dealIdByAd,privateDealInfo.getDealId());
                         responseAdInfo.setDealId(dealIdByAd);
                         return true;

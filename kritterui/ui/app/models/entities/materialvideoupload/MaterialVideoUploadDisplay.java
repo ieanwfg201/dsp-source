@@ -52,7 +52,7 @@ public class MaterialVideoUploadDisplay extends EntityDisplay{
 		return this.account.getName();
 	}
 	public String getAdvName() {
-		return this.entity.getAdName();
+		return this.entity.getAdvName();
 	}
 	public String getCampaignName() {
 		return this.entity.getCampaignName();

@@ -184,13 +184,13 @@ public class ValidateNative {
         if(isNFR){
             if(null != nfrReason){
                 request.setNoFillReason(nfrReason);
-                ReqLog.debugWithDebug(logger, request, "Validate Native NFR: {}", nfrReason);
+                ReqLog.debugWithDebugNew(logger, request, "Validate Native NFR: {}", nfrReason);
             }else if (nonNativeNfrReason != NoFillReason.FILL ){
                 request.setNoFillReason(nonNativeNfrReason);
-                ReqLog.debugWithDebug(logger, request, "Validate Native NFR: {}", nonNativeNfrReason);
+                ReqLog.debugWithDebugNew(logger, request, "Validate Native NFR: {}", nonNativeNfrReason);
             }else{
                 request.setNoFillReason(NoFillReason.NATIVE_MISMATCH);
-                ReqLog.debugWithDebug(logger, request, "Validate Native NFR: {}", NoFillReason.NATIVE_MISMATCH);
+                ReqLog.debugWithDebugNew(logger, request, "Validate Native NFR: {}", NoFillReason.NATIVE_MISMATCH);
             }
         }
     }
