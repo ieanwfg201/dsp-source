@@ -72,7 +72,8 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
                             // 状态（0通过，1待检查，2检查未通过）
                             CloudCrossBannerStateResponseEntiry stateResponseEntiry = stateByIds.get(0);
                             if (stateResponseEntiry != null && StringUtils.isNotEmpty(stateResponseEntiry.getStateValue())) {
-                                cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatusMessage);
+                                String updatetBannerStatusMessage = CloudCrossBannerQuery.updatetBannerStatusMessage.replace("<id>", Integer.toString(rset.getInt("internalid")));
+                                cpstmt = con.prepareStatement(updatetBannerStatusMessage);
                                 switch (stateResponseEntiry.getState()) {
                                     case 0:
                                         cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());

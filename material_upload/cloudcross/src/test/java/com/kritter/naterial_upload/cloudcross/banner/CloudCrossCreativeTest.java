@@ -1,10 +1,14 @@
 package com.kritter.naterial_upload.cloudcross.banner;
 
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossBannerEntity;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
@@ -25,8 +29,15 @@ public class CloudCrossCreativeTest {
     private boolean lastRunPresent = false;
     private CloudCrossCreative cloudCrossCreative;
 
-//    @Before
-    public void init(Properties properties) {
+    @Before
+    public void init() {
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileReader(new File("/home/hamlin/workspace/optimad/material_upload/uploader/conf/kritter/material.properties")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         setDspid(properties.getProperty("cloudcross_dsp_id").toString());
         setToken(properties.getProperty("cloudcross_token").toString());
         setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId").toString()));
@@ -90,11 +101,11 @@ public class CloudCrossCreativeTest {
         System.out.println(new ObjectMapper().writeValueAsString(cloudCrossCreative.queryByIds(list, false)));
     }
 
-//    @Test
+    @Test
     public void testGetStateByIds() throws Exception {
         ArrayList<String> list = new ArrayList<>();
-        list.add("33");
-        list.add("34");
+//        list.add("33");
+        list.add("36");
         System.out.println(new ObjectMapper().writeValueAsString(cloudCrossCreative.getStateByIds(list)));
     }
 

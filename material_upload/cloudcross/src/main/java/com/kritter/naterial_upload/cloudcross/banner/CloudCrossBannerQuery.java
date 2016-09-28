@@ -41,7 +41,7 @@ public class CloudCrossBannerQuery {
 					"      b.last_modified, " +
 					"      c.last_modified, " +
 					"      d.last_modified " +
-					"    ) > '2016-01-01') AS j1  " +
+					"    ) > ?) AS j1  " +
 					"  JOIN creative_banner AS j2  " +
 					"    ON FIND_IN_SET( " +
 					"      j2.id, " +
