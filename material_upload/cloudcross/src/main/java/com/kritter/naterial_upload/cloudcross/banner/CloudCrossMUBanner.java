@@ -3,10 +3,8 @@ package com.kritter.naterial_upload.cloudcross.banner;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
 import com.kritter.material_upload.common.banner.MUBanner;
-import com.kritter.material_upload.common.urlpost.UrlPost;
 import com.kritter.naterial_upload.cloudcross.advertiser.CloudCrossAdvertiser;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossBannerEntity;
-import com.kritter.naterial_upload.cloudcross.entity.CloudCrossMultipleMaterialUploadEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossQueryEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
 import lombok.Getter;
@@ -208,7 +206,7 @@ public class CloudCrossMUBanner implements MUBanner {
                     cpstmt.setInt(2, cqe.getCampaignStatus());
                     cpstmt.setInt(3, cqe.getAdStatus());
                     cpstmt.setInt(4, cqe.getCreativeStatus());
-                    pstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
+                    cpstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
                     if (newInfoStr.equals(info)) {
                         cpstmt.setInt(1, adxbasedexhangesstatus);
                         cpstmt.setString(6, info);
