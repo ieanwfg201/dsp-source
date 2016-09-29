@@ -59,6 +59,10 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
             Timestamp ts = new Timestamp(new Date().getTime());
             while (rset.next()) {
                 CloudCrossBannerEntity ccbe = objectMapper.readValue(rset.getString("info"), CloudCrossBannerEntity.class);
+                if (ccbe.getBannerId() == null || ccbe.getBannerId() == 0) {
+                    LOG.warn("banner id is null or zero!");
+                    continue;
+                }
                 if (ccbe != null) {
                     try {
                         List<String> ids = new ArrayList<>();

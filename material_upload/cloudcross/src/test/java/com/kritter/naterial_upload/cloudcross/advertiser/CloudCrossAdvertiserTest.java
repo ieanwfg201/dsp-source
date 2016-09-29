@@ -5,6 +5,8 @@ import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiseResponse
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiserEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileReader;
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- *
  * Created by hamlin on 16-9-22.
  */
 @SuppressWarnings("unused")
@@ -59,6 +60,7 @@ public class CloudCrossAdvertiserTest {
         this.pubIncId = pubIncId;
     }
 
+//    @Before
     public void init() {
         Properties properties = new Properties();
         try {
@@ -82,14 +84,15 @@ public class CloudCrossAdvertiserTest {
 
     }
 
+//    @Test
     public void testAdd() throws Exception {
         ArrayList<CloudCrossAdvertiserEntity> list = new ArrayList<>();
         CloudCrossAdvertiserEntity advertiserEntity = new CloudCrossAdvertiserEntity();
         advertiserEntity.setDspId(6);
-        advertiserEntity.setAdvertiserId(23);
-        advertiserEntity.setIndustryId(10);
-        advertiserEntity.setName(123);
-        advertiserEntity.setRegName("madhouse-test-advertise-add2");
+        advertiserEntity.setAdvertiserId(70);
+        advertiserEntity.setIndustryId(1);
+        advertiserEntity.setName(70);
+        advertiserEntity.setRegName("only-for-cloudcross-debug");
         list.add(advertiserEntity);
         List<CloudCrossResponse> response = cloudCrossAdvertiser.add(list);
         System.out.println(mapper.writeValueAsString(response));

@@ -36,14 +36,16 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
 
     @Override
     public void init(Properties properties) {
-        setDspid(properties.getProperty("cloudCross_dsp_id"));
-        setToken(properties.getProperty("cloudCross_token"));
-        setPubIncId(Integer.parseInt(properties.getProperty("cloudCross_pubIncId")));
+        setDspid(properties.getProperty("cloudcross_dsp_id"));
+        setToken(properties.getProperty("cloudcross_token"));
+        setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId")));
+        LOG.info("cloudcross_dsp_id:" + getDspid() + ", cloudcross_token:" + getToken() + ",cloudcross_pubIncId:" + getPubIncId());
 
+        String creative_dspid_token = "?dspId=" + this.getDspid() + "&token=" + this.getToken();
         String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix");
-        String advertiser_add_url = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_add");
-        String cloudcross_prefix_advertiser_update = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_update");
-        String cloudcross_prefix_advertiser_status = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_status");
+        String advertiser_add_url = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_add") + creative_dspid_token;
+        String cloudcross_prefix_advertiser_update = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_update") + creative_dspid_token;
+        String cloudcross_prefix_advertiser_status = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_status") + creative_dspid_token;
         cloudCrossAdvertiser = new CloudCrossAdvertiser(advertiser_add_url, cloudcross_prefix_advertiser_update, null, null, cloudcross_prefix_advertiser_status);
     }
 
@@ -57,6 +59,7 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
             ResultSet rset = pstmt.executeQuery();
             Timestamp ts = new Timestamp(new Date().getTime());
             while (rset.next()) {
+                int internalId = rset.getInt("internalId");
                 CloudCrossAdvertiserEntity advertiserEntity = objectMapper.readValue(rset.getString("info"), CloudCrossAdvertiserEntity.class);
                 if (advertiserEntity != null) {
                     try {
@@ -70,7 +73,7 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
                             // [{"refuseReason":"","state":1,"stateValue":"待检查","advertiserId":23,"dspId":6}]
                             CloudCrossAdvertieseStateResponseEntiry advertieseStateResponseEntiry = stateByIds.get(0);
                             if (advertieseStateResponseEntiry != null && StringUtils.isNotEmpty(advertieseStateResponseEntiry.getStateValue())) {
-                                cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvInfoStatusMessage);
+                                cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvInfoStatusMessage.replace("<id>", Integer.toString(internalId)));
                                 // 状态（0通过，1待检查，2检查未通过）
                                 switch (advertieseStateResponseEntiry.getState()) {
                                     case 0:

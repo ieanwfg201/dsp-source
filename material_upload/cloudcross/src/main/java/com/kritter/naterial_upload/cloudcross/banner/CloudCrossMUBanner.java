@@ -195,7 +195,7 @@ public class CloudCrossMUBanner implements MUBanner {
 //					CloudCrossMaterialUploadEntity ymue=new CloudCrossMaterialUploadEntity(materialurl, cqe.getLanding_url(), cqe.getAdvName(), campaignStartDate, campaignEndDate, null);
                     CloudCrossBannerEntity bannerEntity = new CloudCrossBannerEntity();
                     bannerEntity.setAdvertiserId(cqe.getAdvId());
-                    bannerEntity.setBannerId(cqe.getBannerId());
+                    bannerEntity.setBannerId(null);
                     bannerEntity.setHeight(cqe.getHeight());
                     bannerEntity.setWidth(cqe.getWidth());
                     bannerEntity.setPath(materialurl);
@@ -232,7 +232,7 @@ public class CloudCrossMUBanner implements MUBanner {
                     cpstmt.setTimestamp(11, new Timestamp(dateNow.getTime()));
                     CloudCrossBannerEntity bannerEntity = new CloudCrossBannerEntity();
                     bannerEntity.setAdvertiserId(cqe.getAdvId());
-                    bannerEntity.setBannerId(cqe.getBannerId());
+                    bannerEntity.setBannerId(null);
                     bannerEntity.setHeight(cqe.getHeight());
                     bannerEntity.setWidth(cqe.getWidth());
                     bannerEntity.setPath(materialurl);
@@ -281,44 +281,34 @@ public class CloudCrossMUBanner implements MUBanner {
             ResultSet rset = pstmt.executeQuery();
             List<CloudCrossBannerEntity> materialList = new LinkedList<>();
             StringBuffer sBuff = new StringBuffer("");
-            boolean isFirst = true;
             while (rset.next()) {
                 //System.out.println(rset.getString("info"));
-                materialList.add(objectMapper.readValue(rset.getString("info"), CloudCrossBannerEntity.class));
-                if (isFirst) {
-                    isFirst = false;
-                } else {
-                    sBuff.append(",");
-                }
-                sBuff.append(rset.getInt("internalId"));
-            }
-            if (materialList.size() > 0) {
+                CloudCrossBannerEntity info = objectMapper.readValue(rset.getString("info"), CloudCrossBannerEntity.class);
+                materialList.add(info);
+
                 boolean isSuccess = false;
-                try {
-                    //[{"status":0,"success":{"message":"插入成功","index":1,"bannerId":32,"code":200}},{"status":0,"success":{"message":"插入成功","index":2,"code":200}}]
-                    List<CloudCrossResponse> add = cloudCrossCreative.add(materialList);
-                    LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
-                    String out = objectMapper.writeValueAsString(add);
-                    LOG.info(out);
-                    if (out != null && add != null && add.size() > 0) {
-//                        ReturnResultCode rrc = ReturnResultCode.getObject(out);
-//                        if (rrc.getResult() == 0) {
-                        CloudCrossResponse cloudCrossResponse = add.get(0);
-                        if (cloudCrossResponse != null && cloudCrossResponse.getSuccess() != null && cloudCrossResponse.getSuccess().getCode() == 200) {
-                            cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
-                            cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                            cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                            cpstmt.executeUpdate();
-                            isSuccess = true;
-                        }
+                //[{"status":0,"success":{"message":"插入成功","index":1,"bannerId":32,"code":200}},{"status":0,"success":{"message":"插入成功","index":2,"code":200}}]
+                List<CloudCrossResponse> add = cloudCrossCreative.add(materialList);
+                LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
+                String out = objectMapper.writeValueAsString(add);
+                LOG.info(out);
+                if (out != null && add != null && add.size() > 0) {
+                    CloudCrossResponse cloudCrossResponse = add.get(0);
+                    if (cloudCrossResponse != null && cloudCrossResponse.getSuccess() != null && cloudCrossResponse.getSuccess().getCode() == 200) {
+                        info.setBannerId(cloudCrossResponse.getSuccess().getBannerId());
+                        cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", Integer.toString(rset.getInt("internalId"))));
+                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+                        cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                        cpstmt.setString(3, objectMapper.writeValueAsString(info));
+                        cpstmt.executeUpdate();
+                        isSuccess = true;
                     }
-                } catch (Exception e1) {
-                    LOG.error(e1.getMessage(), e1);
                 }
                 if (!isSuccess) {
                     cpstmt1 = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
                     cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
                     cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                    cpstmt.setString(3, objectMapper.writeValueAsString(info));
                     cpstmt1.executeUpdate();
                 }
             }

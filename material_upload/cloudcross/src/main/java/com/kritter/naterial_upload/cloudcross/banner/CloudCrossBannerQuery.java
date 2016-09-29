@@ -71,7 +71,7 @@ public class CloudCrossBannerQuery {
 	public static final String  selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=2";
 
 	public static final String  updatetBannerStatus = "update banner_upload"
-			+ " set adxbasedexhangesstatus=?,last_modified=? "
+			+ " set adxbasedexhangesstatus=?,last_modified=?,info=? "
 			+ " where internalid in (<id>)";
 	public static final String  updatetBannerStatusMessage = "update banner_upload"
 			+ " set adxbasedexhangesstatus=?,message=?,last_modified=? "

@@ -59,15 +59,16 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
 
     @Override
     public void init(Properties properties) {
-        setDspid(properties.getProperty("cloudCross_dsp_id"));
-        setToken(properties.getProperty("cloudCross_token"));
-        setPubIncId(Integer.parseInt(properties.getProperty("cloudCross_pubIncId")));
+        setDspid(properties.getProperty("cloudcross_dsp_id"));
+        setToken(properties.getProperty("cloudcross_token"));
+        setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId")));
         dateNow = new Date();
-
+        LOG.info("cloudcross_dsp_id:" + getDspid() + ", cloudcross_token:" + getToken() + ",cloudcross_pubIncId:" + getPubIncId());
+        String creative_dspid_token = "?dspId=" + getDspid() + "&token=" + getToken();
         String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix");
-        String advertiser_add_url = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_add");
-        String cloudcross_prefix_advertiser_update = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_update");
-        String cloudcross_prefix_advertiser_status = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_status");
+        String advertiser_add_url = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_add") + creative_dspid_token;
+        String cloudcross_prefix_advertiser_update = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_update") + creative_dspid_token;
+        String cloudcross_prefix_advertiser_status = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_status") + creative_dspid_token;
         cloudCrossAdvertiser = new CloudCrossAdvertiser(advertiser_add_url, cloudcross_prefix_advertiser_update, null, null, cloudcross_prefix_advertiser_status);
     }
 
@@ -87,7 +88,7 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                 LOG.debug("PubIncId {} found DB", pubIncId);
             } else {
                 startDate = new Date();
-                startDate = DateUtils.addDays(startDate, 0 - Integer.parseInt(properties.getProperty("cloudCross_init_date_go_back")));
+                startDate = DateUtils.addDays(startDate, 0 - Integer.parseInt(properties.getProperty("cloudcross_init_date_go_back")));
             }
             DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String s = dfm.format(startDate);
@@ -124,7 +125,7 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                     isFirst = false;
                 }
                 CloudCrossAdvertiserEntity ccade = new CloudCrossAdvertiserEntity();
-                ccade.setDspId(6);
+                ccade.setDspId(Integer.parseInt(getDspid()));
                 ccade.setAdvertiserId(rset.getInt("advId"));
                 ccade.setIndustryId(Integer.parseInt(getIndustryIdByUiMMACode(con, rset)));
                 ccade.setRegName(rset.getString("advName"));
@@ -151,7 +152,8 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
         PreparedStatement statement = con.prepareStatement(CloudCrossAdvInfoQuery.selectSupplyIndustryIdByUIMMACategoriesId);
         statement.setInt(1, Integer.parseInt(adxext.getSecondInd()));
         ResultSet resultSet = statement.executeQuery();
-        return resultSet.getString("supplycode");
+
+        return resultSet.next() ? resultSet.getString("supplycode") : "-1";
     }
 
     @Override
@@ -193,7 +195,6 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                     cpstmt.setString(3, newInfo);
                     cpstmt.setInt(4, rset.getInt("internalid"));
                     cpstmt.executeUpdate();
-
                 } else {
                     cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.insertAdvInfoUpload);
                     cpstmt.setInt(1, getPubIncId());
@@ -256,20 +257,23 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                         CloudCrossResponse cloudCrossResponse = responses.get(0);
                         if (cloudCrossResponse != null) {
                             CloudCrossResponse.Success success = cloudCrossResponse.getSuccess();
-                            if (success != null && success.getCode() == 200 && success.getMessage().equals("插入成功")) {
-                                cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId + ""));
-                                cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                                cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                                cpstmt.setString(3, errorCode);
-                                cpstmt.executeUpdate();
+                            CloudCrossError error = cloudCrossResponse.getError();
+                            if ((success != null && success.getCode() == 200) &&
+                                    ((success != null && success.getMessage().equals("插入成功")))) {
+                                cpstmt = updatetAdvSuccess(con, cpstmt, internalId, errorCode);
+                                isSuccess = true;
+                                LOG.info("advertiser upload success!");
+                            } else if ((error != null && error.getCode() == 2001) && (error != null && error.getMessage().equals("插入重复"))) {
+                                cpstmt = updatetAdvSuccess(con, cpstmt, internalId, errorCode);
                                 isSuccess = true;
                             } else {
-                                CloudCrossError error = cloudCrossResponse.getError();
+
                                 if (error != null && StringUtils.isNotEmpty(error.getMessage())) {
                                     errorCode = error.getMessage();
                                 } else {
                                     errorCode = objectMapper.writeValueAsString(cloudCrossResponse);
                                 }
+                                LOG.info("advertiser upload failed! message : " + errorCode);
                             }
                         }
                     }
@@ -312,6 +316,15 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
             }
         }
 
+    }
+
+    private PreparedStatement updatetAdvSuccess(Connection con, PreparedStatement cpstmt, int internalId, String errorCode) throws SQLException {
+        cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId + ""));
+        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+        cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+        cpstmt.setString(3, errorCode);
+        cpstmt.executeUpdate();
+        return cpstmt;
     }
 
     @Override
