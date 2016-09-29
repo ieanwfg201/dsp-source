@@ -50,4 +50,6 @@ public abstract class CloudCrossInterface<T, E, W> {
     public abstract List<E> queryByIds(List<String> ids, boolean isByBannerId);
 
     public abstract List<W> getStateByIds(List<String> ids);
+
+
 }
