@@ -40,27 +40,27 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 	public void checkJobs(Properties properties,Connection con,int pubIncId) {
 		this.pubIncId = pubIncId;
 		PreparedStatement pstmt = null;
-			try{
-				pstmt =con.prepareStatement("select * from adxbasedexchanges_metadata where pubIncId=?");
-				pstmt.setInt(1, pubIncId);
-				ResultSet rset = pstmt.executeQuery();
-				if(rset.next()){
-					advertiser_upload=rset.getBoolean("advertiser_upload");
-					adposition_get=rset.getBoolean("adposition_get");
-					banner_upload=rset.getBoolean("banner_upload");
-					video_upload=rset.getBoolean("video_upload");
-				}
-			}catch(Exception e){
-				LOG.error(e.getMessage(),e);
-			}finally{
-				if(pstmt!= null){
-					try {
-						pstmt.close();
-					} catch (SQLException e) {
-						LOG.error(e.getMessage(),e);
-					}
+		try{
+			pstmt =con.prepareStatement("select * from adxbasedexchanges_metadata where pubIncId=?");
+			pstmt.setInt(1, pubIncId);
+			ResultSet rset = pstmt.executeQuery();
+			if(rset.next()){
+				advertiser_upload=rset.getBoolean("advertiser_upload");
+				adposition_get=rset.getBoolean("adposition_get");
+				banner_upload=rset.getBoolean("banner_upload");
+				video_upload=rset.getBoolean("video_upload");
+			}
+		}catch(Exception e){
+			LOG.error(e.getMessage(),e);
+		}finally{
+			if(pstmt!= null){
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
 				}
 			}
+		}
 	}
 	@Override
 	public void executeAdpositionGet(Properties properties, AdPositionGet adPositionGet,Connection con) {

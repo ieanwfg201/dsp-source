@@ -53,9 +53,9 @@ public class CloudCrossBannerQuery {
 					"    )) AS result  " +
 					"  LEFT JOIN creative_banner AS cb ON cb.id = result.`bannerId` " +
 					"  LEFT JOIN creative_slots AS cs ON cs.id = cb.slot_id";
-	
-	
-	
+
+
+
 	public static final String  getBannerUpload = "SELECT bu.*,cs.`width`,cs.`height`" +
 			" FROM (SELECT * FROM banner_upload WHERE pubIncId=? AND advIncId=? AND campaignId=? AND adId=? AND creativeId=? AND bannerId=? ) AS bu" +
 			"  LEFT JOIN creative_banner AS cb ON cb.id = bu.`bannerId`" +
@@ -69,7 +69,7 @@ public class CloudCrossBannerQuery {
 			+ ",adStatus=?,creativeStatus=?,last_modified=?,info=? "
 			+ " where internalid=?";
 	public static final String  selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=2";
-	
+
 	public static final String  updatetBannerStatus = "update banner_upload"
 			+ " set adxbasedexhangesstatus=?,last_modified=? "
 			+ " where internalid in (<id>)";

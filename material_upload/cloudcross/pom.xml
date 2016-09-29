@@ -29,6 +29,11 @@
             <artifactId>material_upload_common</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.kritter.entity.account</groupId>
+            <artifactId>kritter_entity_account</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
