@@ -11,9 +11,9 @@
 				<div id="adxbasedExchangesCreateMetadataForm"  ng-controller="adxbasedExchangesCreateMetadataController">
 						@components.formElements.hiddenfield(adxbasedExchangesCreateMetadataForm("internalid"))
 						@components.formElements.selectlist2(adxbasedExchangesCreateMetadataForm("pubIncId"),"Exchange *", services.MetadataAPI.getAdxBasedExchangesMetadata())
-						@components.formElements.selectlist2(adxbasedExchangesCreateMetadataForm("advertiser_upload"),"Adposition Get *", services.MetadataAPI.noYesOptions())
-						@components.formElements.selectlist2(adxbasedExchangesCreateMetadataForm("adposition_get"),"Advertiser Video *", services.MetadataAPI.noYesOptions())
-						@components.formElements.selectlist2(adxbasedExchangesCreateMetadataForm("banner_upload"),"Banner Video *", services.MetadataAPI.noYesOptions())
+						@components.formElements.selectlist2(adxbasedExchangesCreateMetadataForm("adposition_get")," Adposition get *", services.MetadataAPI.noYesOptions())
+						@components.formElements.selectlist2(adxbasedExchangesCreateMetadataForm("advertiser_upload"),"Upload Advertiser Info *", services.MetadataAPI.noYesOptions())
+						@components.formElements.selectlist2(adxbasedExchangesCreateMetadataForm("banner_upload"),"Upload Banner *", services.MetadataAPI.noYesOptions())
 						@components.formElements.selectlist2(adxbasedExchangesCreateMetadataForm("video_upload"),"Upload Video *", services.MetadataAPI.noYesOptions())
 				
 				@components.formElements.submitbutton("save", "Save")
