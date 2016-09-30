@@ -2,6 +2,8 @@ package com.kritter.naterial_upload.cloudcross.banner;
 
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossBannerEntity;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileReader;
@@ -11,7 +13,6 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- *
  * Created by hamlin on 16-9-22.
  */
 @SuppressWarnings("unused")
@@ -26,7 +27,7 @@ public class CloudCrossCreativeTest {
     private boolean lastRunPresent = false;
     private CloudCrossCreative cloudCrossCreative;
 
-    //    @Before
+//    @Before
     public void init() {
         Properties properties = new Properties();
         try {
@@ -95,10 +96,11 @@ public class CloudCrossCreativeTest {
         System.out.println(new ObjectMapper().writeValueAsString(cloudCrossCreative.queryByIds(list, false)));
     }
 
+//    @Test
     public void testGetStateByIds() throws Exception {
         ArrayList<String> list = new ArrayList<>();
 //        list.add("33");
-        list.add("36");
+        list.add("41");
         System.out.println(new ObjectMapper().writeValueAsString(cloudCrossCreative.getStateByIds(list)));
     }
 

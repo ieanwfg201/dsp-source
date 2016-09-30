@@ -59,7 +59,7 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
             Timestamp ts = new Timestamp(new Date().getTime());
             while (rset.next()) {
                 CloudCrossBannerEntity ccbe = objectMapper.readValue(rset.getString("info"), CloudCrossBannerEntity.class);
-                if (ccbe.getBannerId() == null || ccbe.getBannerId() == 0) {
+                if (ccbe == null || ccbe.getBannerId() == null || ccbe.getBannerId() == 0) {
                     LOG.warn("banner id is null or zero!");
                     continue;
                 }
@@ -102,6 +102,8 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
                     } catch (Exception e1) {
                         LOG.error(e1.getMessage(), e1);
                     }
+                } else {
+                    LOG.warn("dont have approving!");
                 }
             }
         } catch (Exception e) {
