@@ -11,7 +11,7 @@ public class YoukuVideoQuery {
 			+ "from account as a,campaign as b, ad as c, creative_container as d  "
 			+ "where  a.guid=b.account_guid and b.id=c.campaign_id and  c.creative_id=d.id and "
 			+ "d.format_id=4 and d.video_props is not null and d.video_props<>'' and d.video_props<>'[]' "
-			+ "and GREATEST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >? ";
+			+ "and LEAST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >? ";
 	
 	public static final String  getVideoInfo = "select * from video_info where id=?";
 	

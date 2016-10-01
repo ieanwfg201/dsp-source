@@ -429,9 +429,10 @@ public class ZipCodeLatLongDatabase<T extends ZipCodeLatLongDatabase.ZipCodeInfo
         public int compare(KdNode o1, KdNode o2) {
             Double d1 = point.haversineDistance(o1.id);
             Double d2 = point.haversineDistance(o2.id);
-            if (d1.compareTo(d2) < 0)
+            int comparisonResult = d1.compareTo(d2);
+            if(comparisonResult < 0)
                 return -1;
-            else if (d2.compareTo(d1) < 0)
+            else if (comparisonResult > 0)
                 return 1;
             return o1.id.compareTo(o2.id);
         }

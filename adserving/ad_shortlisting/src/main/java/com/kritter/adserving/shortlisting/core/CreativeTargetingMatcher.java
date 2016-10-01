@@ -1,6 +1,7 @@
 package com.kritter.adserving.shortlisting.core;
 
 import com.kritter.adserving.shortlisting.core.directhelper.ValidateVideoDirect;
+import com.kritter.adserving.shortlisting.utils.CreativeUtils;
 import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.core.workflow.Context;
@@ -83,7 +84,7 @@ public class CreativeTargetingMatcher
         this.adEntityCache = adEntityCache;
         this.creativeSlotCache = creativeSlotCache;
         this.creativeSlotSizeCache = creativeSlotSizeCache;
-        this.comparator = new BannerSizeComparator();
+        this.comparator = new CreativeUtils.BannerSizeComparator(creativeSlotCache);
         this.nativeIconCache = nativeIconCache;
         this.nativeScreenshotCache = nativeScreenshotCache;
         this.accountCache = accountCache;
@@ -571,33 +572,4 @@ public class CreativeTargetingMatcher
         return false;
     }
 
-    private class BannerSizeComparator implements Comparator<CreativeBanner>
-    {
-        @Override
-        public int compare(
-                           CreativeBanner creativeBannerFirst,
-                           CreativeBanner creativeBannerSecond
-                          )
-        {
-
-            CreativeSlot creativeSlotFirst = creativeSlotCache.query(creativeBannerFirst.getSlotId());
-            CreativeSlot creativeSlotSecond = creativeSlotCache.query(creativeBannerSecond.getSlotId());
-
-            if(null == creativeSlotFirst || null == creativeSlotSecond)
-                return 0;
-
-            if(creativeSlotFirst.getCreativeSlotWidth().shortValue() >
-               creativeSlotSecond.getCreativeSlotWidth().shortValue())
-                return -1;
-
-            if(creativeSlotFirst.getCreativeSlotWidth().shortValue() ==
-               creativeSlotSecond.getCreativeSlotWidth().shortValue() &&
-               creativeSlotFirst.getCreativeSlotHeight().shortValue() >
-               creativeSlotSecond.getCreativeSlotHeight().shortValue()
-              )
-                return -1;
-
-            return 1;
-        }
-    }
 }

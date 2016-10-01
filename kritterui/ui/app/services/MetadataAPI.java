@@ -1313,6 +1313,9 @@ public class MetadataAPI {
            }
            return optionNodes;
        }
+       public static List<SelectOption> activeAdvIdsSelectOption(){
+           return activeAdvIdsList(Account_Type.directadvertiser);
+       }
        
 	public static ArrayNode activeAdvertiserArray(){
 		List<SelectOption> options  =  activeAccountList(Account_Type.directadvertiser);

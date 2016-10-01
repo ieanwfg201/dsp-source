@@ -5,10 +5,11 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="MediaFiles")
 public class MediaFiles {
-    @Setter@XmlElement(name="MediaFile")
+    @Setter@Getter@XmlElement(name="MediaFile")
     private List<MediaFile> mediaFile;
 }

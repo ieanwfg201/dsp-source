@@ -543,6 +543,10 @@ public class ExchangeJob implements Job
             if(request.getSite() != null && request.getSite().isNative()){
                 isNative = true;
             }
+            boolean isVideo = false;
+            if(request.getSite() != null && request.getSite().isVideo()){
+            	isVideo = true;
+            }
             if(request.isRequestForSystemDebugging() && winEntity != null){
                 request.addDebugMessageForTestRequest("ExchangeJob BIDRESPONSE");
                 ObjectMapper objectMapper1 = new ObjectMapper();
@@ -562,9 +566,9 @@ public class ExchangeJob implements Job
             /*Use (advertiser_guid <-> bid_request_parent_object) map here to fetch required bid request object*/
             Object bidRequestParentNodeDtoObject = bidRequestObjectPerDSP.get(winEntity.getAdvId());
             if(bidRequestParentNodeDtoObject instanceof BidRequestParentNodeDTO)
-                formattedResponse = FormatDspResponse.formatResponse2_3(winEntity, (BidRequestParentNodeDTO)bidRequestParentNodeDtoObject, clickUri, exchangeInternalWinUrl, isNative, logger);
+                formattedResponse = FormatDspResponse.formatResponse2_3(winEntity, (BidRequestParentNodeDTO)bidRequestParentNodeDtoObject, clickUri, exchangeInternalWinUrl, isNative, logger,isVideo);
             else if(bidRequestParentNodeDtoObject instanceof com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO)
-                formattedResponse = FormatDspResponse.formatResponse2_2(winEntity, (com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO)bidRequestParentNodeDtoObject, clickUri, exchangeInternalWinUrl, isNative, logger);
+                formattedResponse = FormatDspResponse.formatResponse2_2(winEntity, (com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO)bidRequestParentNodeDtoObject, clickUri, exchangeInternalWinUrl, isNative, logger,isVideo);
 
             logger.debug("Exchange Job - formattedResponse {} ", formattedResponse);
             if(request.isRequestForSystemDebugging()){

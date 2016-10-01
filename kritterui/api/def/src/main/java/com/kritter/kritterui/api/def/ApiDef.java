@@ -9,9 +9,12 @@ import com.kritter.api.entity.deal.*;
 import com.kritter.api.entity.parent_account.ParentAccount;
 import com.kritter.api.entity.payoutthreshold.PayoutThresholdList;
 import com.kritter.api.entity.payoutthreshold.PayoutThresholdListEntity;
+import com.kritter.api.entity.qualification.QualificationList;
+import com.kritter.api.entity.qualification.QualificationListEntity;
 import com.kritter.kritterui.api.deal.PrivateMarketPlaceDealCrud;
 import com.kritter.kritterui.api.parent_account.ParentAccountCrud;
 import com.kritter.kritterui.api.payout_threshold.PayoutThresholdCrud;
+import com.kritter.kritterui.api.qualification.QualificationCrud;
 
 import org.codehaus.jackson.JsonNode;
 import com.kritter.api.entity.account.Account;
@@ -84,6 +87,7 @@ import com.kritter.api.entity.tracking_event.TrackingEvent;
 import com.kritter.api.entity.video_info.VideoInfoList;
 import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.MetadataType;
+import com.kritter.entity.account.Qualification;
 import com.kritter.entity.ad_stats.AdStats;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
@@ -1230,5 +1234,31 @@ public class ApiDef {
     public static JsonNode get_default_payout_data(Connection con){
         return PayoutThresholdCrud.get_default_payout_data(con);
     }    
+
+    /*QUALIFICATION APIS*/
+    public static JsonNode insert_qualification(Connection con, JsonNode jsonNode){
+        return QualificationCrud.insert_qualification(con, jsonNode);
+    }    
+    public static Message insert_qualification(Connection con, Qualification entity){
+        return QualificationCrud.insert_qualification(con, entity, true);
+    }
+    public static JsonNode update_qualification(Connection con, JsonNode jsonNode){
+        return QualificationCrud.update_qualification(con, jsonNode);
+    }    
+    public static Message update_qualification(Connection con, Qualification entity){
+        return QualificationCrud.update_qualification(con, entity, true);
+    }
+    public static JsonNode delete_multiple_qualification(Connection con, JsonNode jsonNode){
+        return QualificationCrud.delete_multiple_qualification(con, jsonNode);
+    }    
+    public static Message delete_multiple_qualification(Connection con, QualificationListEntity entity){
+        return QualificationCrud.delete_multiple_qualification(con, entity, true);
+    }
+    public static JsonNode various_get_qualification(Connection con, JsonNode jsonNode){
+        return QualificationCrud.various_get_qualification(con, jsonNode);
+    }
+    public static QualificationList various_get_qualification(Connection con, QualificationListEntity entity){
+        return QualificationCrud.various_get_qualification(con, entity);
+    }
 
 }

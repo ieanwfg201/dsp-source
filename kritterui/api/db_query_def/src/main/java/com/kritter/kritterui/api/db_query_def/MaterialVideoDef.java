@@ -3,7 +3,7 @@ package com.kritter.kritterui.api.db_query_def;
 public class MaterialVideoDef {
 	public static final String insert_material_video = "insert into video_upload(pubIncId,adxbasedexhangesstatus,advIncId,campaignId,"
 			+ "adId,videoInfoId,last_modified) values(?,?,?,?,?,?,?)";
-	public static final String update_material_video_status = "update banner_upload set adxbasedexhangesstatus=?, last_modified=?  where internalid in (<id>)";
+	public static final String update_material_video_status = "update video_upload set adxbasedexhangesstatus=?, last_modified=?  where internalid in (<id>)";
 	public static final String list_material_video = "select a.internalid as internalid, a.pubIncId as pubIncId , "
 			+ "a.adxbasedexhangesstatus as adxbasedexhangesstatus, a.advIncId as advIncId,b.name as advName, a.campaignId as campaignId,"
 			+ "c.name as campaignName, a.campaignStatus as campaignStatus, a.adId as adId,d.name as adName, a.adStatus as adStatus, a.creativeId as creativeId, "

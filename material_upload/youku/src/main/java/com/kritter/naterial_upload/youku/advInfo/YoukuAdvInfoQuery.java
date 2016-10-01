@@ -1,11 +1,23 @@
 package com.kritter.naterial_upload.youku.advInfo;
 
 public class YoukuAdvInfoQuery {
-	public static final String  selectQuery ="select a.id as advId, a.name as advName, a.brand as brand,a.contactdetail as contactdetail,"
-			+ " a.address as address, a.phone as phone,a.adxext as adxext from account as a where a.type_id=3 and a.last_modified > ?";
-			
-	
-	
+	public static final String  selectQuery ="select "
+			+ "a.id as advId,a.brand as brand,a.contactdetail as contactdetail,"
+			+ "a.address as address,a.phone as phone,a.name as advName,"
+			+ "c.supplycode as firstind,d.supplycode as secondind ,"
+			+ "b.name as qname,b.url as qurl,b.md5 as qmd5, b.state as qstate "
+			+ "from account as a left join qualification as b on a.id=b.advIncId "
+			+ "left join "
+			+ "(select p.supplycode as supplycode, q.ui_id as ui_id from "
+			+ "	supply_mma_mapping as p, mma_code_mma_ui_mapping as q,mma_exchangename_id_mapping as r  "
+			+ "	where p.mma_category_code = q.code and p.exchangename=r.exchangename )  as c "
+			+ "on a.firstind=c.ui_id "
+			+ "left join "
+			+ "(select x.supplycode as supplycode, y.ui_id as ui_id "
+			+ "	from supply_mma_mapping as x, mma_code_mma_ui_mapping as y,mma_exchangename_id_mapping as z  "
+			+ "	where x.mma_category_code = y.code and z.exchangename=z.exchangename) as d "
+			+ "on a.secondind=d.ui_id "
+			+ "where a.type_id=3 and (a.last_modified>? or b.last_modified>?)";
 	
 	public static final String  getAdvInfoUpload = "select * from advinfo_upload where "
 			+ "pubIncId=? and advIncId=?";
@@ -13,7 +25,7 @@ public class YoukuAdvInfoQuery {
 			+ "(pubIncId,adxbasedexhangesstatus,advIncId,last_modified,info) "
 			+ "values(?,?,?,?,?)";
 	public static final String  updatetAdvInfoUpload = "update advinfo_upload"
-			+ " set adxbasedexhangesstatus=?,last_modified=?,info=? "
+			+ " set adxbasedexhangesstatus=?,info=?, last_modified=?"
 			+ " where internalid=?";
 	public static final String  selectforUpload = "select * from advinfo_upload where pubIncId=? and adxbasedexhangesstatus=2";
 	

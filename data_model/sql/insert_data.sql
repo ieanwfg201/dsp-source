@@ -642,7 +642,6 @@ insert into app_store (id,name,description,modified_by,created_on,last_modified)
 (6,'Windows Store','Microsoft',1,now(),now())
 ON DUPLICATE KEY UPDATE id = VALUES(id);
 
-
 INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) values
 ('test_site_guid','xyz',(select id from account where guid='test_pub_guid'),'test_pub_guid','kritter.in','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,''),
 ('kritterx','kritterx',(select id from account where guid='kritterx'),'kritterx','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,''),
@@ -793,3 +792,11 @@ ON DUPLICATE KEY UPDATE name = VALUES(name);
 
 update payout_threshold_metadata set value = 25 where name = "campaign_percentage_payout_threshold";
 update campaign set last_modified = now();
+
+insert into account (guid,status,type_id,name,userid,password,email,address,country,city,phone,modified_by,created_on,last_modified,inventory_source, company_name) values
+('openx2_3',1,2,'openx2_3','openx2_3','$2a$10$NRxVckXVGU0gzk77jIBIZOgdgUwoNwylRqHERcjBAPKv4pAhFokZu','openx2_3@openx.com','','United States','New York','0123456',1,now(),now(),2,'openx')
+ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) values
+('openx2_3','openx2_3',(select id from account where guid='openx2_3'),'openx2_3','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,'')
+ON DUPLICATE KEY UPDATE guid = VALUES(guid);

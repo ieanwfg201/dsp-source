@@ -1,5 +1,6 @@
 package com.kritter.adserving.shortlisting.core;
 
+import com.kritter.adserving.shortlisting.utils.CreativeUtils;
 import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.bidrequest.entity.common.openrtb2_0.BidRequestDeviceDTO;
 import com.kritter.constants.OpenRTBParameters;
@@ -71,7 +72,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
         this.creativeSlotCache = creativeSlotCache;
         this.campaignCache = campaignCache;
         this.creativeSlotSizeCache = creativeSlotSizeCache;
-        this.comparator = new BannerSizeComparator();
+        this.comparator = new CreativeUtils.BannerSizeComparator(creativeSlotCache);
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
         this.openRTBBidRequestParameterCodeList = openRTBBidRequestParameterCodeList;
     }
@@ -248,7 +249,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CREATIVE_FORMAT_ERROR.getValue(), this.adNoFillReasonMapKey, context);
 
-                    logger.error("Creative format is not banner or richmedia inside AdShortlistingRTBExchangeTwoDotZero, skipping adId: {} ", adEntity.getAdGuid());
+                    logger.debug("Creative format is not banner or richmedia inside AdShortlistingRTBExchangeTwoDotZero, skipping adId: {} ", adEntity.getAdGuid());
                     continue;
                 }
 
@@ -513,8 +514,16 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                         AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                                 NoFillReason.CREATIVE_SIZE.getValue(), this.adNoFillReasonMapKey, context);
 
-                        ReqLog.errorWithDebugNew(logger, request, "We could not find any creative supporting the requesting sizes of (width,height) combinations: {} for/by creativeId: {} " ,
-                                fetchRequestedWidthAndHeightPairForDebug(width,height) , creative.getId());
+                        logger.debug("We could not find any creative supporting the requesting sizes of (width,height) combinations: {} for/by creativeId: {} " ,
+                                      fetchRequestedWidthAndHeightPairForDebug(width,height) , creative.getId());
+
+                        if(request.isRequestForSystemDebugging())
+                        {
+                            request.addDebugMessageForTestRequest("We could not find any creative supporting the requesting sizes of (width,height) combinations:");
+                            request.addDebugMessageForTestRequest(fetchRequestedWidthAndHeightPairForDebug(width,height));
+                            request.addDebugMessageForTestRequest("for/by creativeId:");
+                            request.addDebugMessageForTestRequest(String.valueOf(creative.getId()));
+                        }
                     }
                 }
                 //if creative is richmedia then allow the creative if flow comes till here.
@@ -564,8 +573,12 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CREATIVE_SIZE.getValue(), this.adNoFillReasonMapKey, context);
 
-                    ReqLog.errorWithDebugNew(logger, request, "No creative could be found for impression id of this bidrequest.Skipping adunit:{} ",
-                            adEntity.getAdGuid());
+                    logger.debug("No creative could be found for impression id of this bidrequest.Skipping adunit: {} ", adEntity.getAdGuid());
+                    if(request.isRequestForSystemDebugging())
+                    {
+                        ReqLog.errorWithDebugNew(logger, request, "No creative could be found for impression id of this bidrequest.Skipping adunit:{} ",
+                                adEntity.getAdGuid());
+                    }
                     continue;
                 }
 
@@ -812,36 +825,6 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
         return sb.toString();
     }
 
-    private class BannerSizeComparator implements Comparator<CreativeBanner>
-    {
-        @Override
-        public int compare(
-                CreativeBanner creativeBannerFirst,
-                CreativeBanner creativeBannerSecond
-        )
-        {
-
-            CreativeSlot creativeSlotFirst = creativeSlotCache.query(creativeBannerFirst.getSlotId());
-            CreativeSlot creativeSlotSecond = creativeSlotCache.query(creativeBannerSecond.getSlotId());
-
-            if(null == creativeSlotFirst || null == creativeSlotSecond)
-                return 0;
-
-            if(creativeSlotFirst.getCreativeSlotWidth().shortValue() >
-                    creativeSlotSecond.getCreativeSlotWidth().shortValue())
-                return -1;
-
-            if(creativeSlotFirst.getCreativeSlotWidth().shortValue() ==
-                    creativeSlotSecond.getCreativeSlotWidth().shortValue() &&
-                    creativeSlotFirst.getCreativeSlotHeight().shortValue() >
-                            creativeSlotSecond.getCreativeSlotHeight().shortValue()
-                    )
-                return -1;
-
-            return 1;
-        }
-    }
-
     /**
      * if ad is deal id targeted then run only on that deal id,
      * if impression has deal id then only that deal id targeted
@@ -957,7 +940,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
     {
         if(null == bidRequestParentNodeDTO)
         {
-            logger.error("BidRequestParentNodeDTO is null inside setURLFieldsFromBidRequest of " +
+            logger.debug("BidRequestParentNodeDTO is null inside setURLFieldsFromBidRequest of " +
                          "CreativeAndFloorMatchingRTBExchangeTwoDotZero, cannot set urlfield attributes.");
             return;
         }
@@ -966,7 +949,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
         if(null == bidRequestDeviceDTO)
         {
-            logger.error("BidRequestDeviceDTO is null inside setURLFieldsFromBidRequest of " +
+            logger.debug("BidRequestDeviceDTO is null inside setURLFieldsFromBidRequest of " +
                          "CreativeAndFloorMatchingRTBExchangeTwoDotZero,cannot set urlfield attributes.");
             return;
         }

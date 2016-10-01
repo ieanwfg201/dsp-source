@@ -47,6 +47,8 @@ import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadList;
 import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadListEntity;
 import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadList;
 import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadListEntity;
+import com.kritter.api.entity.qualification.QualificationList;
+import com.kritter.api.entity.qualification.QualificationListEntity;
 import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.site.SiteList;
 import com.kritter.api.entity.site.SiteListEntity;
@@ -67,9 +69,11 @@ import com.kritter.constants.MaterialAdvInfoUploadQueryEnum;
 import com.kritter.constants.MaterialBannerUploadQueryEnum;
 import com.kritter.constants.MaterialVideoUploadQueryEnum;
 import com.kritter.constants.PageConstants;
+import com.kritter.constants.QualificationDefEnum;
 import com.kritter.constants.RetargetingSegmentEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
+import com.kritter.entity.account.Qualification;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
@@ -387,6 +391,19 @@ public class EntityListDataService {
                         		materialAdvInfoUploadList.getEntity_list().size()); 
                     }else{
                         entityList = new EntityList<MaterialUploadAdvInfo>(new ArrayList<MaterialUploadAdvInfo>(), 0);
+                    }
+                    break;
+                case qualification:
+            		QualificationListEntity qualificationListEntity = new QualificationListEntity();
+            		qualificationListEntity.setQueryEnum(QualificationDefEnum.select_qualification_byadvertisers);
+            		qualificationListEntity.setId_list(listDataFilter.getAdvIncId()+"");
+            		QualificationList qualificationList = null;
+            		qualificationList = ApiDef.various_get_qualification(con, qualificationListEntity);
+                    if(qualificationList.getMsg().getError_code()==0){ 
+                        entityList = new EntityList<Qualification>(qualificationList.getEntity_list(), 
+                        		qualificationList.getEntity_list().size()); 
+                    }else{
+                        entityList = new EntityList<Qualification>(new ArrayList<Qualification>(), 0);
                     }
                     break;
 				default:

@@ -15,7 +15,16 @@ GET 	/accounts/:accountType            		       controllers.AccountsController.a
 POST 	/accounts/list            					   controllers.AccountsController.accountList()
 GET 	/accounts/updateStatus/:account_guid/:action   controllers.AccountsController.updateAccountStatus( account_guid:String, action: String )
 POST 	/accounts/updateStatus  					   controllers.AccountsController.saveAccountStatus()
-POST    /accounts/qualificationimage-upload            controllers.AccountsController.uploadQualificationImage() 
+
+#Qualification
+POST  /qualificationimage-upload           	 			controllers.adxbasedexchanges.QualificationController.uploadQualificationImage() 
+GET   /adxbasedexchanges/qualification/add				controllers.adxbasedexchanges.QualificationController.add()
+POST  /adxbasedexchanges/qualification/save				controllers.adxbasedexchanges.QualificationController.save()
+GET   /adxbasedexchanges/qualification/edit/:id         controllers.adxbasedexchanges.QualificationController.edit(id: Int)
+GET   /adxbasedexchanges/qualification/list				controllers.adxbasedexchanges.QualificationController.list(ids: Option[String])
+GET   /adxbasedexchanges/qualification/changeAdvertiser				controllers.adxbasedexchanges.QualificationController.changeAdvertiser()
+GET   /adxbasedexchanges/qualification/updatesingle/:id/:action     controllers.adxbasedexchanges.QualificationController.updatesingle(id:Int, action:String)
+GET   /adxbasedexchanges/qualification/updatemultiple/:action     	controllers.adxbasedexchanges.QualificationController.updatemultiple(action:String, ids: Option[String])
 
 
 

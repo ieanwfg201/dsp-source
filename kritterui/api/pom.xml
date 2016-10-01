@@ -83,6 +83,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>video_info</module>
     <module>adxbasedexchanges_metadata</module>
     <module>payout_threshold</module>
+    <module>qualification</module>
   	<module>def</module>
     <module>manual</module>
     <module>deal</module>

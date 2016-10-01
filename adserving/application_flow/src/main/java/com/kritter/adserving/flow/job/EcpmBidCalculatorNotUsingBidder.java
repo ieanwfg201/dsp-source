@@ -123,7 +123,7 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
 
             if( budgetRemainingForeseen < Budget.min_budget )
             {
-                ReqLog.errorWithDebugNew(logger, request, "Adunit's budget : {} is less than minimum value inside EcpmBidCalculatorNotUsingBidder for adid : {} , removing this ad from final list... ",
+                ReqLog.debugWithDebugNew(logger, request, "Adunit's budget : {} is less than minimum value inside EcpmBidCalculatorNotUsingBidder for adid : {} , removing this ad from final list... ",
                              budgetRemainingForeseen ,responseAdInfo.getAdId());
                 finalResponseAdInfo.remove(responseAdInfo);
                 continue;
@@ -136,7 +136,7 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
             {
                 if(optimizedBidValueOfAdForThisImpression < request.getBidFloorValueForNetworkSupply().doubleValue())
                 {
-                    ReqLog.errorWithDebugNew(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,provided real time via ad request for the site: {} ,for adid : {}",
+                    ReqLog.debugWithDebugNew(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,provided real time via ad request for the site: {} ,for adid : {}",
                             optimizedBidValueOfAdForThisImpression,
                             request.getBidFloorValueForNetworkSupply().doubleValue(),request.getSite().getId(),
                             responseAdInfo.getAdId());
@@ -147,7 +147,7 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
             }
             else if(optimizedBidValueOfAdForThisImpression <  request.getSite().getEcpmFloorValue())
             {
-                ReqLog.errorWithDebugNew(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,for the site {} ,for adid : {}",
+                ReqLog.debugWithDebugNew(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,for the site {} ,for adid : {}",
                              optimizedBidValueOfAdForThisImpression,
                              request.getSite().getEcpmFloorValue(),request.getSite().getId(),
                              responseAdInfo.getAdId());

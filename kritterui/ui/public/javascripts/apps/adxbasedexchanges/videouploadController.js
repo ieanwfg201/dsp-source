@@ -19,7 +19,7 @@ controller('videouploadController',function ($scope, $http, $modal) {
 		} 
 	}
 	$scope.init();
-		$scope.updateVideoUpload = function (pubIncId, action) {
+		$scope.updateVideoUpload = function (id, action) {
 		var modalInstance = $modal.open({
 			templateUrl: '/adxbasedexchanges/videoupload/updatesingle/'+id +'/'+action, 
 			controller:videouploadrefreshController,

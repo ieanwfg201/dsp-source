@@ -13,7 +13,7 @@ public class YoukuBannerQuery {
 			+ 	"where  a.guid=b.account_guid and b.id=c.campaign_id and  c.creative_id=d.id "
 			+ 	"and d.format_id=2 and d.resource_uri_ids is not null and d.resource_uri_ids<>'' "
 			+ 	"and d.resource_uri_ids<>'[]' and "
-			+ 	"GREATEST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >? ) as j1 "
+			+ 	"LEAST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >? ) as j1 "
 			+ "join creative_banner as j2 "
 			+ 	"on FIND_IN_SET(j2.id,REPLACE(REPLACE(j1.resource_uri_ids,'[',''),']',''))";
 	

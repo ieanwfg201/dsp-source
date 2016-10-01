@@ -329,7 +329,7 @@ public class YoukuMUVideo implements MUVideo {
 				}
 				String internalId = rset.getInt("internalId")+"";
 				boolean isSuccess=false;
-				String errorCode="";
+				String out=null;
 				try{
 					if(videoUploadSucess){
 
@@ -342,7 +342,7 @@ public class YoukuMUVideo implements MUVideo {
 						LOG.info(postBody);
 
 						UrlPost urlPost = new UrlPost();
-						String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
+						out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
 								properties.getProperty("youku_prefix_video_upload"), postBody);
 						LOG.info("MATERIAL VIDEO UPLOAD RESPONSE");
 						LOG.info(out);
@@ -354,22 +354,14 @@ public class YoukuMUVideo implements MUVideo {
 									cpstmt = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
 									cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
 									cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-									cpstmt.setString(3, errorCode);
+									cpstmt.setString(3, out);
 									cpstmt.executeUpdate();
 									isSuccess=true;
-								}else{
-									if(rrm.getMessage() != null && rrm.getMessage().size()>0 ){
-										errorCode=rrm.getMessage().keySet().iterator().next();
-									}else{
-										errorCode = rrm.getResult()+" -- ReturnCode";
-									}
 								}
-							}else{
-								errorCode = rrc.getResult()+" -- ReturnCode";
 							}
 						}
 					}else{
-						errorCode="CONTENTUPLOADFAILED";
+						out="CONTENTUPLOADFAILED";
 					}
 				}catch(Exception e1){
 					LOG.error(e1.getMessage(),e1);
@@ -378,7 +370,10 @@ public class YoukuMUVideo implements MUVideo {
 					cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
 					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
 					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-					cpstmt1.setString(3, errorCode);
+					if(out==null){
+						out="";
+					}
+					cpstmt1.setString(3, out);
 
 					cpstmt1.executeUpdate();
 				}

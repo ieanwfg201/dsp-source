@@ -83,7 +83,7 @@ public class EcpmBidCalculatorUsingBidder implements Job
 
         if(null == request || null == response)
         {
-            logger.error("Request, Response are null inside EcpmBidCalculatorUsingBidder");
+            logger.debug("Request, Response are null inside EcpmBidCalculatorUsingBidder");
             return;
         }
 

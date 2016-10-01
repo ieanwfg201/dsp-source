@@ -8,8 +8,10 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -18,14 +20,13 @@ import org.slf4j.LoggerFactory;
 
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
-import com.kritter.entity.account.AdxAccountExt;
+import com.kritter.constants.QualificationState;
 import com.kritter.material_upload.common.advInfo.MUAdvInfo;
 import com.kritter.material_upload.common.urlpost.UrlPost;
 import com.kritter.naterial_upload.youku.advInfo.YoukuAdvInfoQuery;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
 import com.kritter.naterial_upload.youku.entity.ReturnResultMessage;
 import com.kritter.naterial_upload.youku.entity.YoukuAdvInfoLocaLMaterialUploadEntity;
-import com.kritter.naterial_upload.youku.entity.YoukuAdvInfoQueryEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuAdvInfoUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuQualifications;
 
@@ -51,7 +52,7 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 	@Getter @Setter
 	private boolean lastRunPresent=false;
 	@Getter @Setter
-	private LinkedList<YoukuAdvInfoQueryEntity> youkuQueryEntityList;
+	private Map<Integer, YoukuAdvInfoLocaLMaterialUploadEntity> queryMap;
 
 
 	@Override
@@ -107,31 +108,47 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 		try{
 			pstmt = con.prepareStatement(YoukuAdvInfoQuery.selectQuery);
 			pstmt.setString(1, getStartDateStr());
+			pstmt.setString(2, getStartDateStr());
 			ResultSet rset = pstmt.executeQuery();
 			boolean isFirst = true;
 			while(rset.next()){
 				if(isFirst){
-					youkuQueryEntityList = new LinkedList<YoukuAdvInfoQueryEntity>();
+					queryMap = new HashMap<Integer, YoukuAdvInfoLocaLMaterialUploadEntity>();
 					isFirst=false;
 				}
-				YoukuAdvInfoQueryEntity yqe = new YoukuAdvInfoQueryEntity();
-				yqe.setAdvId(rset.getInt("advId"));
-				yqe.setAdvName(rset.getString("advName"));
-				yqe.setAddress(rset.getString("address"));
-				try{
-					AdxAccountExt adExt = AdxAccountExt.getObject(rset.getString("adxext"));
-					if(adExt==null){
-						continue;
-					}
-					yqe.setAdxext(adExt);
-				}catch(Exception e1){
-					LOG.error(e1.getMessage(),e1);
-					continue;
+				Integer advIncId = rset.getInt("advId");
+				YoukuAdvInfoLocaLMaterialUploadEntity yailmue = queryMap.get(advIncId);
+				if(yailmue == null){
+					yailmue = new YoukuAdvInfoLocaLMaterialUploadEntity();
 				}
-				yqe.setBrand(rset.getString("brand"));
-				yqe.setContactdetail(rset.getString("contactdetail"));
-				yqe.setPhone(rset.getString("phone"));
-				youkuQueryEntityList.add(yqe);
+				yailmue.setAddress(rset.getString("address"));
+				yailmue.setBrand(rset.getString("brand"));
+				yailmue.setContacts(rset.getString("contactdetail"));
+				yailmue.setName(rset.getString("advName"));
+				yailmue.setTel(rset.getString("phone"));
+				if(rset.getObject("firstind") != null){
+					yailmue.setFirstindustry(Integer.parseInt(rset.getString("firstind")));
+				}
+				if(rset.getObject("secondind") != null){
+					yailmue.setSecondindustry(Integer.parseInt(rset.getString("secondind")));
+				}
+				List<YoukuQualifications> qualifications = yailmue.getQualifications();
+				if(qualifications ==null){
+					qualifications = new LinkedList<YoukuQualifications>();
+				}
+				if(rset.getObject("qname") != null 
+						&& rset.getObject("qurl") != null && rset.getObject("qmd5") != null){
+					YoukuQualifications qualification = new YoukuQualifications();
+					qualification.setMd5(rset.getString("qmd5"));
+					qualification.setName(rset.getString("qname"));
+					qualification.setOperation(QualificationState.getEnum(rset.getInt("qstate")).getName());
+					String materialurl=properties.getProperty("cdn_url").toString();
+			        String split[] = rset.getString("qurl").split("/");
+					qualification.setUrl(materialurl+split[split.length-1]);
+					qualifications.add(qualification);
+				}
+				yailmue.setQualifications(qualifications);
+				queryMap.put(advIncId, yailmue);
 			}
 		}catch(Exception e){
 			setPerformTransaction(false);
@@ -151,81 +168,35 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 		if(!isPerformTransaction()){
 			return;
 		}
-		if(youkuQueryEntityList == null){
+		if(queryMap == null){
 			return;
 		}
-		for(YoukuAdvInfoQueryEntity yqe:youkuQueryEntityList){
-			if(yqe == null){
-				continue;
-			}
+		for(Integer advIncId:queryMap.keySet()){
 			PreparedStatement pstmt = null;
 			PreparedStatement cpstmt = null;
+			YoukuAdvInfoLocaLMaterialUploadEntity ymue = queryMap.get(advIncId);
 			try{
 				pstmt = con.prepareStatement(YoukuAdvInfoQuery.getAdvInfoUpload);
 				pstmt.setInt(1,getPubIncId());
-				pstmt.setInt(2,yqe.getAdvId());
+				pstmt.setInt(2,advIncId);
 				ResultSet rset = pstmt.executeQuery();
-				YoukuAdvInfoLocaLMaterialUploadEntity ymue= new YoukuAdvInfoLocaLMaterialUploadEntity();
-				ymue.setAddress(yqe.getAddress());ymue.setBrand(yqe.getBrand());
-				ymue.setContacts(yqe.getContactdetail());
-				ymue.setName(yqe.getAdvName());
-				ymue.setTel(yqe.getPhone());
-				String materialurl=properties.getProperty("cdn_url").toString();
-		        
-				YoukuQualifications yQ = null;
-				if(yqe.getAdxext()!=null){
-					yQ= new YoukuQualifications();
-					if(yqe.getAdxext().getMd5() != null){
-						yQ.setMd5(yqe.getAdxext().getMd5());
-					}
-					if(yqe.getAdxext().getQname() != null){
-						yQ.setName(yqe.getAdxext().getQname());
-					}
-					yQ.setOperation("add");
-					if(yqe.getAdxext().getQurl() != null && !yqe.getAdxext().getQurl().isEmpty()){
-				        String split[] = yqe.getAdxext().getQurl() .split("/");
-						yQ.setUrl(materialurl+split[split.length-1]);
-					}
-					if(yqe.getAdxext().getFirstInd() != null){
-						ymue.setFirstindustry(Integer.parseInt(yqe.getAdxext().getFirstInd() ));
-					}
-					if(yqe.getAdxext().getSecondInd() != null){
-						ymue.setSecondindustry(Integer.parseInt(yqe.getAdxext().getSecondInd() ));
-					}
-				}
-				List<YoukuQualifications> qual = new LinkedList<YoukuQualifications>();
-				if(yQ != null){
-					qual.add(yQ);
-				}
-				ymue.setQualifications(qual);
-
 				if(rset.next()){
 					String info=rset.getString("info");
-					int adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
-					YoukuAdvInfoLocaLMaterialUploadEntity oldEntity= YoukuAdvInfoLocaLMaterialUploadEntity.getObject("info");
-					cpstmt = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvInfoUpload);
+					YoukuAdvInfoLocaLMaterialUploadEntity oldEntity= YoukuAdvInfoLocaLMaterialUploadEntity.getObject(info);
 					if(oldEntity.equals(ymue)){
-						cpstmt.setInt(1, adxbasedexhangesstatus);
 					}else{
-						if(ymue.getQualifications() != null && ymue.getQualifications().size()>0){
-							ymue.getQualifications().get(0).setOperation("update");
-						}
+						cpstmt = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvInfoUpload);
 						cpstmt.setInt(1, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
+						cpstmt.setString(2, ymue.toJson().toString());
+						cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+						cpstmt.setInt(4, rset.getInt("internalid"));
+						cpstmt.executeUpdate();
 					}
-					cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-					if(oldEntity.equals(ymue)){
-						cpstmt.setString(3, info);
-					}else{
-						cpstmt.setString(3, ymue.toJson().toString());
-					}
-					cpstmt.setInt(4, rset.getInt("internalid"));
-					cpstmt.executeUpdate();
-					
 				}else{
 					cpstmt = con.prepareStatement(YoukuAdvInfoQuery.insertAdvInfoUpload);
 					cpstmt.setInt(1, getPubIncId());
 					cpstmt.setInt(2, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
-					cpstmt.setInt(3, yqe.getAdvId());
+					cpstmt.setInt(3, advIncId);
 					cpstmt.setTimestamp(4, new Timestamp(dateNow.getTime()));
 					String newInfoStr = ymue.toJson().toString();
 					cpstmt.setString(5, newInfoStr);
@@ -272,7 +243,7 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 			while(rset.next()){
 				int internalId =  rset.getInt("internalId");
 				boolean isSuccess=false;
-				String errorCode="";
+				String out=null;
 				try{
 					
 					YoukuAdvInfoUploadEntity ymmue = new YoukuAdvInfoUploadEntity();
@@ -284,7 +255,7 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 					LOG.info(postBody);
 					
 					UrlPost urlPost = new UrlPost();
-					String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
+					out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
 							properties.getProperty("youku_prefix_advinfo_upload"), postBody);
 					LOG.info("MATERIAL ADVINFO UPLOAD RESPONSE");
 					LOG.info(out);
@@ -296,18 +267,10 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 								cpstmt = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId+""));
 								cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
 								cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-								cpstmt.setString(3, errorCode);
+								cpstmt.setString(3, out);
 								cpstmt.executeUpdate();
 								isSuccess=true;
-							}else{
-								if(rrm.getMessage() != null && rrm.getMessage().size()>0 ){
-									errorCode=rrm.getMessage().keySet().iterator().next();
-								}else{
-									errorCode = rrm.getResult()+" -- ReturnCode";
-								}
 							}
-						}else{
-							errorCode = rrc.getResult()+" -- ReturnCode";
 						}
 					}
 				}catch(Exception e1){
@@ -317,7 +280,10 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 					cpstmt1 = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId+""));
 					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
 					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-					cpstmt1.setString(3, errorCode);
+					if(out==null){
+						out="";
+					}
+					cpstmt1.setString(3, out);
 					cpstmt1.executeUpdate();
 				}
 

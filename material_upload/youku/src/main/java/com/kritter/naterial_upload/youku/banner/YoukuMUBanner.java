@@ -258,7 +258,7 @@ public class YoukuMUBanner implements MUBanner {
 				materialList.add(YoukuMaterialUploadEntity.getObject(rset.getString("info")));
 				int internalId =  rset.getInt("internalId");
 				boolean isSuccess=false;
-				String errorCode="";
+				String out=null;
 				try{
 					YoukuMultipleMaterialUploadEntity ymmue = new YoukuMultipleMaterialUploadEntity();
 					ymmue.setMaterial(materialList);
@@ -269,7 +269,7 @@ public class YoukuMUBanner implements MUBanner {
 					LOG.info(postBody);
 					
 					UrlPost urlPost = new UrlPost();
-					String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
+					out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
 							properties.getProperty("youku_prefix_banner_upload"), postBody);
 					LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
 					LOG.info(out);
@@ -284,16 +284,7 @@ public class YoukuMUBanner implements MUBanner {
 								cpstmt.setString(3, "");
 								cpstmt.executeUpdate();
 								isSuccess=true;
-
-							}else{
-								if(rrm.getMessage() != null && rrm.getMessage().size()>0 ){
-									errorCode=rrm.getMessage().keySet().iterator().next();
-								}else{
-									errorCode = rrm.getResult()+" -- ReturnCode";
-								}
 							}
-						}else{
-							errorCode = rrc.getResult()+" -- ReturnCode";
 						}
 					}
 				}catch(Exception e1){
@@ -303,7 +294,10 @@ public class YoukuMUBanner implements MUBanner {
 					cpstmt1 = con.prepareStatement(YoukuBannerQuery.updatetBannerStatus.replaceAll("<id>", internalId+""));
 					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
 					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-					cpstmt1.setString(3, errorCode);
+					if(out ==null){
+						out="";
+					}
+					cpstmt1.setString(3, out);
 					cpstmt1.executeUpdate();
 				}
 

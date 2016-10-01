@@ -115,33 +115,31 @@ public class CreativeSlotSizeCache
         return -1;
     }
 
-    private class CreativeSlotSizeComparator implements Comparator<CreativeSlotSize>
-    {
+    private class CreativeSlotSizeComparator implements Comparator<CreativeSlotSize> {
         @Override
-        public int compare(
-                           CreativeSlotSize creativeSlotSizeFirst,
-                           CreativeSlotSize creativeSlotSizeSecond
-                          )
-        {
-
-            if(null == creativeSlotSizeFirst || null == creativeSlotSizeSecond)
+        public int compare(CreativeSlotSize creativeSlotSizeFirst, CreativeSlotSize creativeSlotSizeSecond) {
+            if(creativeSlotSizeFirst == creativeSlotSizeSecond)
                 return 0;
 
-            if(
-               creativeSlotSizeFirst.getWidth()  >
-               creativeSlotSizeSecond.getWidth()
-              )
+            if(null == creativeSlotSizeFirst)
+                return 1;
+
+            if(null == creativeSlotSizeSecond)
                 return -1;
 
-            if(
-               creativeSlotSizeFirst.getWidth() ==
-               creativeSlotSizeSecond.getWidth()     &&
-               creativeSlotSizeFirst.getHeight() >
-               creativeSlotSizeSecond.getHeight()
-              )
+            if(creativeSlotSizeFirst.getWidth() > creativeSlotSizeSecond.getWidth())
                 return -1;
 
-            return 1;
+            if(creativeSlotSizeFirst.getWidth() < creativeSlotSizeSecond.getWidth())
+                return 1;
+
+            if(creativeSlotSizeFirst.getHeight() > creativeSlotSizeSecond.getHeight())
+                return -1;
+
+            if(creativeSlotSizeFirst.getHeight() < creativeSlotSizeSecond.getHeight())
+                return 1;
+
+            return 0;
         }
     }
 

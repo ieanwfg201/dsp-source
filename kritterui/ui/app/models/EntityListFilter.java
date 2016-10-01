@@ -26,6 +26,8 @@ public class EntityListFilter {
 	
 	private int exchangeId;
 	
+	private int advIncId;
+	
 	private String osId;
 
 	private String dealGuid;
@@ -147,7 +149,15 @@ public class EntityListFilter {
         this.id_guid = id_guid;
     }
 
-    public int getGet_type() {
+    public int getAdvIncId() {
+		return advIncId;
+	}
+
+	public void setAdvIncId(int advIncId) {
+		this.advIncId = advIncId;
+	}
+
+	public int getGet_type() {
         return get_type;
     }
 

@@ -3,18 +3,19 @@ package com.kritter.entity.vast.normal.twodotzero;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="Linear")
 public class Linear {
-    @Setter@XmlElement(name="Duration")
+    @Setter@Getter@XmlElement(name="Duration")
     private Duration duration;
-    @Setter@XmlElement(name="TrackingEvents")
+    @Setter@Getter@XmlElement(name="TrackingEvents")
     private TrackingEvents trackingEvents;
-    @Setter@XmlElement(name="AdParameters")
+    @Setter@Getter@XmlElement(name="AdParameters")
     private AdParameters adParameters;    
-    @Setter@XmlElement(name="VideoClicks")
+    @Setter@Getter@XmlElement(name="VideoClicks")
     private VideoClicks videoClicks;    
-    @Setter@XmlElement(name="MediaFiles")
+    @Setter@Getter@XmlElement(name="MediaFiles")
     private MediaFiles mediaFiles;
 }

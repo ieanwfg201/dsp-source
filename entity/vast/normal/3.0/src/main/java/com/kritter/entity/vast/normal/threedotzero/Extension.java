@@ -6,12 +6,13 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.eclipse.persistence.oxm.annotations.XmlCDATA;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="Extension")
 public class Extension {
-    @Setter@XmlAttribute(name="type")
+    @Setter@Getter@XmlAttribute(name="type")
     private String type;
-    @Setter@XmlValue@XmlCDATA
+    @Setter@Getter@XmlValue@XmlCDATA
     private String str;
 }

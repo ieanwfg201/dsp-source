@@ -6,12 +6,13 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.eclipse.persistence.oxm.annotations.XmlCDATA;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="StaticResource")
 public class StaticResource {
-    @Setter@XmlAttribute(name="creativeType")
+    @Setter@Getter@XmlAttribute(name="creativeType")
     private String creativeType;
-    @Setter@XmlValue@XmlCDATA
+    @Setter@Getter@XmlValue@XmlCDATA
     private String str;
 }

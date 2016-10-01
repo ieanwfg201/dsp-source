@@ -47,7 +47,7 @@
 			    <tbody>
 		    		<tr>
 		    			<td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="banneruploadListData.isItemChecked(gridItem)" ></td>
-		    			<td field-name="bannerUrl">  <img src="gridItem.bannerUrl" /></td>
+		    			<td field-name="bannerUrl">  <a href="{{gridItem.bannerUrl}}">Download </a></td>
 		    		
 			            <td field-name="action" > 
 					                <button ng-show="gridItem.submit" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="Submit" ng-click="updateBannerUpload(gridItem.id,'SUBMITTED')">

@@ -1,27 +1,30 @@
 package com.kritter.entity.vast.normal.twodotzero;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="InLine")
 public class InLine {
-    @Setter@XmlElement(name="AdSystem")
+    @Setter@Getter@XmlElement(name="AdSystem")
     private AdSystem adSystem;
-    @Setter@XmlElement(name="AdTitle")
+    @Setter@Getter@XmlElement(name="AdTitle")
     private AdTitle adTitle;
-    @Setter@XmlElement(name="Description")
+    @Setter@Getter@XmlElement(name="Description")
     private Description description;
-    @Setter@XmlElement(name="Survey")
+    @Setter@Getter@XmlElement(name="Survey")
     private Survey survey;
-    @Setter@XmlElement(name="Error")
+    @Setter@Getter@XmlElement(name="Error")
     private Error error;
-    @Setter@XmlElement(name="Impression")
-    private Impression impression;
-    @Setter@XmlElement(name="Creatives")
+    @Setter@Getter@XmlElement(name="Impression")
+    private List<Impression> impression;
+    @Setter@Getter@XmlElement(name="Creatives")
     private Creatives creatives;
-    @Setter@XmlElement(name="Extensions")
+    @Setter@Getter@XmlElement(name="Extensions")
     private Extensions extensions;
 
 }

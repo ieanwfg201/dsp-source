@@ -18,9 +18,10 @@ import com.kritter.utild.ucloud_upload.ufile.sender.PutSender;
 public class UploadToUCloud {
     private static Logger m_logger = Logger.getLogger(UploadToUCloud.class);
     public static void main(String args[]) {
-        //UploadToUCloud.uploadToUCloud(ucloudPublicKey, ucloudPrivateKey, proxySuffix,
-        //        downloadProxySuffix, file, bucketName);
-        
+        System.out.println(UploadToUCloud.uploadToUCloud("ucloudtangshandefeng@madhouse-inc.com1449818162000213211814",
+                "f19be22892b1ae2210d923580897dcfd9fc3b0aa",".ufile.ucloud.cn", ".ufile.ucloud.cn",
+                "/home/rohan/banners/AT_EN_320x53.jpg","madhouse"
+                ));
     }
     public static boolean uploadToUCloud(String ucloudPublicKey,String ucloudPrivateKey, String proxySuffix,
             String downloadProxySuffix, String absoluteFilePath, String bucketName) {
@@ -40,13 +41,12 @@ public class UploadToUCloud {
             request.setBucketName(bucketName);
             request.setKey(key);
             request.setFilePath(filePath);
-
             m_logger.debug("PutFile BEGIN ...");
             ufileClient = new UFileClient();
             ufileClient.loadConfig(ucloudPublicKey, ucloudPrivateKey, proxySuffix, downloadProxySuffix);
-            putFile(ufileClient, request);
+            boolean retPutFile = putFile(ufileClient, request);
             m_logger.debug("PutFile END ...\n\n");
-            return true;
+            return retPutFile;
         }catch(Exception e){
             m_logger.error(e.getMessage(),e);
             return false;
@@ -58,10 +58,10 @@ public class UploadToUCloud {
 
     }
 
-    private static void putFile(UFileClient ufileClient, UFileRequest request) {
+    private static boolean putFile(UFileClient ufileClient, UFileRequest request) {
         PutSender sender = new PutSender();
         sender.makeAuth(ufileClient, request);
-
+        
         UFileResponse response = sender.send(ufileClient, request);
         if (response != null) {
 
@@ -78,13 +78,21 @@ public class UploadToUCloud {
             if (inputStream != null) {
                 try {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                    String s = "";
+                    StringBuffer sBuff = new StringBuffer("");
+                    String s;
                     while ((s = reader.readLine()) != null) {
-                        m_logger.debug(s);
+                    	sBuff.append(s);
                     }
-
+                    String retStr = sBuff.toString();
+                    //System.out.println(retStr);
+                    m_logger.debug(retStr);
+                    if(retStr.indexOf("-148651")>-1){
+                    	return false;
+                    }
+                    return true;
                 } catch (IOException e) {
                     m_logger.error(e.getMessage(),e);
+                    return false;
                 } finally {
                     if (inputStream != null) {
                         try {
@@ -96,6 +104,7 @@ public class UploadToUCloud {
                 }
             }
         }
+        return false;
     }
 
 

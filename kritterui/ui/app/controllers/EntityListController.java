@@ -18,6 +18,7 @@ import models.entities.isp_mapping.Isp_mappingDisplay;
 import models.entities.materialadvinfoupload.MaterialAdvInfoUploadDisplay;
 import models.entities.materialbannerupload.MaterialBannerUploadDisplay;
 import models.entities.materialvideoupload.MaterialVideoUploadDisplay;
+import models.entities.qualification.QualificationDisplay;
 import models.iddefinition.IddefinitionDisplay;
 import models.pmp.display.PMPDisplay;
 import models.publisher.Ext_siteDisplay;
@@ -42,6 +43,7 @@ import com.kritter.api.entity.isp_mapping.Isp_mapping;
 import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.Account_Type;
+import com.kritter.entity.account.Qualification;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
@@ -129,6 +131,10 @@ public class EntityListController extends Controller{
 				case materialadvinfoupload:
 					entityList = EntityListDataService.listData(entityListFilter, new MaterialUploadAdvInfo());
 					populateMaterialAdvInfoUpload(itemList,(List<MaterialUploadAdvInfo>) entityList.getEntityList());
+					break;
+				case qualification:
+					entityList = EntityListDataService.listData(entityListFilter, new Qualification());
+					populateQualification(itemList,(List<Qualification>) entityList.getEntityList());
 					break;
 				default:
 					break;
@@ -233,6 +239,11 @@ public class EntityListController extends Controller{
     private static void populateMaterialAdvInfoUpload(ArrayNode entityArray, List<MaterialUploadAdvInfo> entityList){
         for (MaterialUploadAdvInfo entity : entityList) { 
             entityArray.addPOJO(objectMapper.valueToTree(new MaterialAdvInfoUploadDisplay(entity)));
+        }
+    }
+    private static void populateQualification(ArrayNode entityArray, List<Qualification> entityList){
+        for (Qualification entity : entityList) { 
+            entityArray.addPOJO(objectMapper.valueToTree(new QualificationDisplay(entity)));
         }
     }
 }

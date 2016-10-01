@@ -54,8 +54,8 @@ public class YoukuAdvInfoLocaLMaterialUploadEntity {
         return entity;
 
     }
-    /*public static void main(String args[]){
-    	YoukuMaterialUploadEntity h = new YoukuMaterialUploadEntity("sxcd", "wqdwq", "qwdqw", "adsqaw", "wdwe",null);
-    	System.out.println(h.toJson());
-    	*/
+    public static void main(String args[]) throws Exception{
+    	String s="{\"name\":\"亿动广告传媒\",\"brand\":\"广告传媒\",\"address\":\"黄埔区成都北路500号38楼\",\"contacts\":\"亿动广告\",\"tel\":\"13912345678\",\"firstindustry\":36,\"secondindustry\":133,\"qualifications\":[{\"name\":\"亿动广告传媒\",\"url\":\"http://madhouse.ufile.ucloud.com.cn/01525400-0b35-d401-576f-57d66e000002.jpg\",\"md5\":\"bd207f18123dfc05c1381a26c6cb6ad1\",\"operation\":\"add\"}]}";
+    	System.out.println(YoukuAdvInfoLocaLMaterialUploadEntity.getObject(s));
+    }
 }

@@ -3,15 +3,16 @@ package com.kritter.entity.vast.wrapper.two_dot_zero;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="VideoClicks")
 public class VideoClicks {
-    @Setter@XmlElement(name="ClickThrough")
+    @Setter@Getter@XmlElement(name="ClickThrough")
     private ClickThrough clickThrough;
-    @Setter@XmlElement(name="ClickTracking")
+    @Setter@Getter@XmlElement(name="ClickTracking")
     private ClickTracking clickTracking;
-    @Setter@XmlElement(name="CustomClick")
+    @Setter@Getter@XmlElement(name="CustomClick")
     private CustomClick customClick;
     
 }
