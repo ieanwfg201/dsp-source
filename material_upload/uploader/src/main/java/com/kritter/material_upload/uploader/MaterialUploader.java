@@ -90,13 +90,13 @@ public class MaterialUploader {
     
     
     public static void main(String args[]){
-        /*if(args.length != 1){
+        if(args.length != 1){
             System.out.println("Incorrect Usage");
             System.exit(0);
-        }*/
+        }
         MaterialUploader uploader = new MaterialUploader();
-        //String confPath=args[0];
-        String confPath="/usr/share/kritter/material_upload/uploader/conf/current";
+        String confPath=args[0];
+        //String confPath="/usr/share/kritter/material_upload/uploader/conf/current";
         uploader.configure_logger(confPath);
         uploader.read_properties(confPath);
         uploader.materialupload();
