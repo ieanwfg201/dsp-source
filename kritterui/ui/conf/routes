@@ -424,15 +424,15 @@ GET   /adxbasedexchanges/adpositionget/updatesingle/:id/:action     controllers.
 GET   /adxbasedexchanges/adpositionget/updatemultiple/:action     	controllers.adxbasedexchanges.AdPositionGetController.updatemultiple(action:String, ids: Option[String])
 GET   /adxbasedexchanges/adpositionget/insertnew/:id/:action        controllers.adxbasedexchanges.AdPositionGetController.insertnew(id:Int, action:String)
 
-GET   /adxbasedexchanges/bannerupload/list                          controllers.adxbasedexchanges.MaterialBannerUploadController.list(exchange: Option[String])
+GET   /adxbasedexchanges/bannerupload/list                          controllers.adxbasedexchanges.MaterialBannerUploadController.list(exchange: Option[String], adxBasedExchangesStates: Option[String])
 GET   /adxbasedexchanges/bannerupload/updatesingle/:id/:action      controllers.adxbasedexchanges.MaterialBannerUploadController.updatesingle(id:Int, action:String)
 GET   /adxbasedexchanges/bannerupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialBannerUploadController.updatemultiple(action:String, ids: Option[String])
 
-GET   /adxbasedexchanges/videoupload/list                           controllers.adxbasedexchanges.MaterialVideoUploadController.list(exchange: Option[String])
+GET   /adxbasedexchanges/videoupload/list                           controllers.adxbasedexchanges.MaterialVideoUploadController.list(exchange: Option[String], adxBasedExchangesStates: Option[String])
 GET   /adxbasedexchanges/videoupload/updatesingle/:id/:action       controllers.adxbasedexchanges.MaterialVideoUploadController.updatesingle(id:Int, action:String)
 GET   /adxbasedexchanges/videoupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialVideoUploadController.updatemultiple(action:String, ids: Option[String])
 
-GET   /adxbasedexchanges/advinfoupload/list                         controllers.adxbasedexchanges.MaterialAdvInfoController.list(exchange: Option[String])
+GET   /adxbasedexchanges/advinfoupload/list                         controllers.adxbasedexchanges.MaterialAdvInfoController.list(exchange: Option[String], adxBasedExchangesStates: Option[String])
 GET   /adxbasedexchanges/advinfoupload/updatesingle/:id/:action     controllers.adxbasedexchanges.MaterialAdvInfoController.updatesingle(id:Int, action:String)
 GET   /adxbasedexchanges/advinfoupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialAdvInfoController.updatemultiple(action:String, ids: Option[String])
 

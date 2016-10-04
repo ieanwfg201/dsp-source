@@ -6,7 +6,8 @@ import java.util.Map;
 public enum MaterialAdvInfoUploadQueryEnum
 {
 	list_material_advinfo(0,"list_material_advinfo"),
-	list_material_advinfo_by_pubincids(1,"list_material_advinfo_by_pubincids");
+	list_material_advinfo_by_pubincids(1,"list_material_advinfo_by_pubincids"),
+	list_material_advinfo_by_pubincids_status(2,"list_material_advinfo_by_pubincids_status");
 
             private int code;
             private String name;

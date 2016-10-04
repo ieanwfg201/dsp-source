@@ -214,17 +214,17 @@ public class YoukuMUVideo implements MUVideo {
 							yqe.getVideoInfoId());
 					String newInfoStr = ymue.toJson().toString();
 					cpstmt = con.prepareStatement(YoukuVideoQuery.updatetVideoUpload);
-					cpstmt.setInt(2, yqe.getCampaignStatus());
-					cpstmt.setInt(3, yqe.getAdStatus());
-					cpstmt.setInt(4, yqe.getCreativeStatus());
-					pstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
 					if(YoukuVideoLocalMaterialUploadEntity.equalityWithoutYoukuUrl(oldymue, ymue)){
 						cpstmt.setInt(1, adxbasedexhangesstatus);
-						cpstmt.setString(6, info);
+						cpstmt.setString(2, info);
 					}else{
 						cpstmt.setInt(1, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
-						cpstmt.setString(6, newInfoStr);
+						cpstmt.setString(2, newInfoStr);
 					}
+					cpstmt.setInt(3, yqe.getCampaignStatus());
+					cpstmt.setInt(4, yqe.getAdStatus());
+					cpstmt.setInt(5, yqe.getCreativeStatus());
+					cpstmt.setTimestamp(6, new Timestamp(dateNow.getTime()));
 					cpstmt.setInt(7, rset.getInt("internalid"));
 					cpstmt.executeUpdate();
 					

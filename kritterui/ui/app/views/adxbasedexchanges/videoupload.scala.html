@@ -5,7 +5,8 @@
 <div ng-controller="videouploadController">
      <form id="extSiteForm" action="/adxbasedexchanges/videoupload/list" method="GET"">
        @components.formElements.selectlist2(materialUploadExchangesForm("exchange"),"Exchange *", services.MetadataAPI.getAdxBasedExchangesMetadata())
-       @components.formElements.submitbutton("change", "Change Exchange")
+       @components.formElements.selectlist2(materialUploadExchangesForm("adxBasedExchangesStates"),"State *", services.MetadataAPI.getAdxBasedExchangesStates())
+       @components.formElements.submitbutton("change", "Change Exchange/State")
     </form>
 
     <div class="btn-group pull-right">

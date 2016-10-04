@@ -136,7 +136,7 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
             {
                 if(optimizedBidValueOfAdForThisImpression < request.getBidFloorValueForNetworkSupply().doubleValue())
                 {
-                    ReqLog.debugWithDebugNew(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,provided real time via ad request for the site: {} ,for adid : {}",
+                    ReqLog.errorWithDebugNew(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,provided real time via ad request for the site: {} ,for adid : {}",
                             optimizedBidValueOfAdForThisImpression,
                             request.getBidFloorValueForNetworkSupply().doubleValue(),request.getSite().getId(),
                             responseAdInfo.getAdId());
@@ -147,7 +147,7 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
             }
             else if(optimizedBidValueOfAdForThisImpression <  request.getSite().getEcpmFloorValue())
             {
-                ReqLog.debugWithDebugNew(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,for the site {} ,for adid : {}",
+                ReqLog.errorWithDebugNew(logger, request, "Adunit's ecpm value: {} ,is less than floor value: {} ,for the site {} ,for adid : {}",
                              optimizedBidValueOfAdForThisImpression,
                              request.getSite().getEcpmFloorValue(),request.getSite().getId(),
                              responseAdInfo.getAdId());

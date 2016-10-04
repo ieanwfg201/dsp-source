@@ -17,7 +17,7 @@ public class YoukuAdvInfoQuery {
 			+ "	from supply_mma_mapping as x, mma_code_mma_ui_mapping as y,mma_exchangename_id_mapping as z  "
 			+ "	where x.mma_category_code = y.code and z.exchangename=z.exchangename) as d "
 			+ "on a.secondind=d.ui_id "
-			+ "where a.type_id=3 and (a.last_modified>? or b.last_modified>?)";
+			+ "where a.type_id=3 and (a.last_modified>=? or b.last_modified>=?)";
 	
 	public static final String  getAdvInfoUpload = "select * from advinfo_upload where "
 			+ "pubIncId=? and advIncId=?";

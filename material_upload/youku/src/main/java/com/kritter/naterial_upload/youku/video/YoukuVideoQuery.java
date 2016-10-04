@@ -11,7 +11,7 @@ public class YoukuVideoQuery {
 			+ "from account as a,campaign as b, ad as c, creative_container as d  "
 			+ "where  a.guid=b.account_guid and b.id=c.campaign_id and  c.creative_id=d.id and "
 			+ "d.format_id=4 and d.video_props is not null and d.video_props<>'' and d.video_props<>'[]' "
-			+ "and LEAST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >? ";
+			+ "and GREATEST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >=? ";
 	
 	public static final String  getVideoInfo = "select * from video_info where id=?";
 	
@@ -22,8 +22,8 @@ public class YoukuVideoQuery {
 			+ ",adId,adStatus,creativeId,creativeStatus,videoInfoId,last_modified,info) "
 			+ "values(?,?,?,?,?,?,?,?,?,?,?,?)";
 	public static final String  updatetVideoUpload = "update video_upload"
-			+ " set adxbasedexhangesstatus=?,campaignStatus=?"
-			+ ",adStatus=?,creativeStatus=?,last_modified=?,info=? "
+			+ " set adxbasedexhangesstatus=?,info=?,campaignStatus=?"
+			+ ",adStatus=?,creativeStatus=?,last_modified=? "
 			+ " where internalid=?";
 	public static final String  selectforUpload = "select * from video_upload where pubIncId=? and adxbasedexhangesstatus=2";
 	

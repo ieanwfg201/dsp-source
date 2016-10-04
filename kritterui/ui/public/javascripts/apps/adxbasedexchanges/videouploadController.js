@@ -9,6 +9,7 @@ controller('videouploadController',function ($scope, $http, $modal) {
 	    $scope.videouploadListData.init("/entitylist" );
 	    $scope.videouploadListData.setFilterAttribute("entityType", "materialvideoupload" );
 		$scope.videouploadListData.setFilterAttribute("exchangeId", $("#exchange").val() );
+		$scope.videouploadListData.setFilterAttribute("adxBasedExchangesStates", $("#adxBasedExchangesStates").val() );
 		var path = $.url().attr('path');
 		var pathComps = path.split("/");
 		if(pathComps.length == 4){

@@ -59,6 +59,7 @@ import com.kritter.constants.Account_Type;
 import com.kritter.constants.AdAPIEnum;
 import com.kritter.constants.AdpositionGetQueryEnum;
 import com.kritter.constants.AdxBasedExchangesMetadataQueryEnum;
+import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.CreativeContainerAPIEnum;
 import com.kritter.constants.Ext_siteEnum;
@@ -356,8 +357,18 @@ public class EntityListDataService {
                         break;
                 case materialbannerupload:
             		MaterialBannerUploadListEntity materialBannerUploadListEntity = new MaterialBannerUploadListEntity();
-            		materialBannerUploadListEntity.setQueryEnum(MaterialBannerUploadQueryEnum.list_material_banner_by_pubincids);
+            		materialBannerUploadListEntity.setQueryEnum(MaterialBannerUploadQueryEnum.list_material_banner_by_pubincids_state);
             		materialBannerUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+                	if(listDataFilter.getAdxBasedExchangesStates() != null){
+                		try{
+                			AdxBasedExchangesStates aes = AdxBasedExchangesStates.getEnum(listDataFilter.getAdxBasedExchangesStates());
+                			if(aes!=null){
+                				materialBannerUploadListEntity.setAdxstate(aes);
+                			}
+                		}catch(Exception e){
+                			Logger.error(e.getMessage(),e);
+                		}
+                	}
             		MaterialBannerUploadList materialBannerUploadList = null;
             		materialBannerUploadList = ApiDef.various_material_banner(con, materialBannerUploadListEntity);
                     if(materialBannerUploadList.getMsg().getError_code()==0){ 
@@ -369,8 +380,18 @@ public class EntityListDataService {
                     break;
                 case materialvideoupload:
             		MaterialVideoUploadListEntity materialVideoUploadListEntity = new MaterialVideoUploadListEntity();
-            		materialVideoUploadListEntity.setQueryEnum(MaterialVideoUploadQueryEnum.list_material_video_by_pubincids);
+            		materialVideoUploadListEntity.setQueryEnum(MaterialVideoUploadQueryEnum.list_material_video_by_pubincids_state);
             		materialVideoUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+                	if(listDataFilter.getAdxBasedExchangesStates() != null){
+                		try{
+                			AdxBasedExchangesStates aes = AdxBasedExchangesStates.getEnum(listDataFilter.getAdxBasedExchangesStates());
+                			if(aes!=null){
+                				materialVideoUploadListEntity.setAdxstate(aes);
+                			}
+                		}catch(Exception e){
+                			Logger.error(e.getMessage(),e);
+                		}
+                	}
             		MaterialVideoUploadList materialVideoUploadList = null;
             		materialVideoUploadList = ApiDef.various_material_video(con, materialVideoUploadListEntity);
                     if(materialVideoUploadList.getMsg().getError_code()==0){ 
@@ -382,8 +403,18 @@ public class EntityListDataService {
                     break;
                 case materialadvinfoupload:
             		MaterialAdvInfoUploadListEntity materialAdvInfoUploadListEntity = new MaterialAdvInfoUploadListEntity();
-            		materialAdvInfoUploadListEntity.setQueryEnum(MaterialAdvInfoUploadQueryEnum.list_material_advinfo_by_pubincids);
+            		materialAdvInfoUploadListEntity.setQueryEnum(MaterialAdvInfoUploadQueryEnum.list_material_advinfo_by_pubincids_status);
             		materialAdvInfoUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+                	if(listDataFilter.getAdxBasedExchangesStates() != null){
+                		try{
+                			AdxBasedExchangesStates aes = AdxBasedExchangesStates.getEnum(listDataFilter.getAdxBasedExchangesStates());
+                			if(aes!=null){
+                				materialAdvInfoUploadListEntity.setAdxstate(aes);
+                			}
+                		}catch(Exception e){
+                			Logger.error(e.getMessage(),e);
+                		}
+                	}
             		MaterialAdvInfoUploadList materialAdvInfoUploadList = null;
             		materialAdvInfoUploadList = ApiDef.various_material_advinfo(con, materialAdvInfoUploadListEntity);
                     if(materialAdvInfoUploadList.getMsg().getError_code()==0){ 
