@@ -100,6 +100,78 @@ public class YoukuMUVideo implements MUVideo {
 	}
 
 	@Override
+	public void removeDisassociatedCreative(Properties properties, Connection con) {
+		if(!isPerformTransaction()){
+			return;
+		}
+		PreparedStatement pstmt = null;
+		PreparedStatement secondSelectstmt = null;
+		PreparedStatement updatestmt = null;
+		try{
+			pstmt = con.prepareStatement(YoukuVideoQuery.removedCreatives);
+			//pstmt.setString(1, getStartDateStr());
+			ResultSet rset = pstmt.executeQuery();
+			while(rset.next()){
+				int internalid=rset.getInt("internalid");
+				int creativeId=rset.getInt("creativeId");
+				int videoInfoId=rset.getInt("videoInfoId");
+				secondSelectstmt = con.prepareStatement(YoukuVideoQuery.getCreativeContainer);
+				secondSelectstmt.setInt(1,creativeId);
+				ResultSet secondRset = secondSelectstmt.executeQuery();
+				if(secondRset.next()){
+					boolean found =false;
+					String video_props = secondRset.getString("video_props");
+					try{
+						if(video_props != null && !video_props.isEmpty()){
+							VideoProps vProps = VideoProps.getObject(video_props);
+							if(vProps.getVideo_info() != null && vProps.getVideo_info().length>0){
+								for(String s:vProps.getVideo_info() ){
+									if(s.equals(videoInfoId+"")){
+										found=true;
+										break;
+									}
+								}
+							}
+						}
+					}catch(Exception e1){
+						LOG.error(e1.getMessage(),e1);
+					}
+					if(!found){
+						updatestmt = con.prepareStatement(YoukuVideoQuery.updateRemovedCreatives);
+						updatestmt.setInt(1, internalid);
+						updatestmt.executeUpdate();
+					}
+					
+				}
+			}
+		}catch(Exception e){
+			setPerformTransaction(false);
+			LOG.error(e.getMessage(),e);
+		}finally{
+			if(pstmt != null){
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+			if(secondSelectstmt != null){
+				try {
+					secondSelectstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+			if(updatestmt != null){
+				try {
+					updatestmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+	@Override
 	public void getModifiedEntities(Properties properties, Connection con) {
 		if(!isPerformTransaction()){
 			return;

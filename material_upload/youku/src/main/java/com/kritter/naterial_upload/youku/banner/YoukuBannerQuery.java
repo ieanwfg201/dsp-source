@@ -20,7 +20,7 @@ public class YoukuBannerQuery {
 	
 	
 	public static final String  getBannerUpload = "select * from banner_upload where "
-			+ "pubIncId=? and advIncId=? and campaignId=? and adId=? and creativeId=? and bannerId=?";
+			+ "pubIncId=? and advIncId=? and campaignId=? and adId=? and creativeId=? and bannerId=? and adxbasedexhangesstatus!=14";
 	public static final String  insertBannerUpload = "insert into banner_upload"
 			+ "(pubIncId,adxbasedexhangesstatus,advIncId,campaignId,campaignStatus"
 			+ ",adId,adStatus,creativeId,creativeStatus,bannerId,last_modified,info) "
@@ -41,6 +41,14 @@ public class YoukuBannerQuery {
 
 	public static final String  insert_material_state= "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
 	public static final String  update_material_state= "update material_upload_state set last_modified=? where materialtype=? and pubIncId=?";
+	
+	public static final String removedCreativesQuery = "select c.internalid as internalid from creative_banner as a , "
+			+ "creative_container as b,banner_upload as c "
+			+ "where a.account_guid=b.account_guid and b.format_id=2 and "
+			+ "not FIND_IN_SET(a.id,REPLACE(REPLACE(b.resource_uri_ids,'[',''),']','')) and "
+			+ "GREATEST(a.last_modified,b.last_modified) >= ? and a.id=c.bannerId ";
+	
+	public static final String updateRemovedCreatives = "update banner_upload set adxbasedexhangesstatus=14 where internalid=?"; 
 	public static void main(String args[]){
 		System.out.println(selectQuery);
 	}

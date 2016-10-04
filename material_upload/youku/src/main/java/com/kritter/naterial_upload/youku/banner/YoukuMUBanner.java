@@ -94,6 +94,42 @@ public class YoukuMUBanner implements MUBanner {
 			}
 		}
 	}
+	@Override
+	public void removeDisassociatedCreative(Properties properties, Connection con) {
+		if(!isPerformTransaction()){
+			return;
+		}
+		PreparedStatement pstmt = null;
+		PreparedStatement updatestmt = null;
+		try{
+			pstmt = con.prepareStatement(YoukuBannerQuery.removedCreativesQuery);
+			pstmt.setString(1, getStartDateStr());
+			ResultSet rset = pstmt.executeQuery();
+			while(rset.next()){
+				updatestmt=con.prepareStatement(YoukuBannerQuery.updateRemovedCreatives);
+				updatestmt.setInt(1, rset.getInt("internalid"));
+				updatestmt.executeUpdate();
+			}
+		}catch(Exception e){
+			setPerformTransaction(false);
+			LOG.error(e.getMessage(),e);
+		}finally{
+			if(pstmt != null){
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+			if(updatestmt != null){
+				try {
+					updatestmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
 
 	@Override
 	public void getModifiedEntities(Properties properties, Connection con) {

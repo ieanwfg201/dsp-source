@@ -106,6 +106,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				muBanner.init(properties);
 				con.setAutoCommit(false);
 				muBanner.getLastRun(properties, con);
+				muBanner.removeDisassociatedCreative(properties, con);
 				muBanner.getModifiedEntities(properties, con);
 				muBanner.insertOrUpdateBannerUpload(properties, con);
 				muBanner.uploadmaterial(properties, con);
@@ -172,6 +173,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				muVideo.init(properties);
 				con.setAutoCommit(false);
 				muVideo.getLastRun(properties, con);
+				muVideo.removeDisassociatedCreative(properties, con);
 				muVideo.getModifiedEntities(properties, con);
 				muVideo.insertOrUpdateVideoUpload(properties, con);
 				muVideo.uploadmaterial(properties, con);
