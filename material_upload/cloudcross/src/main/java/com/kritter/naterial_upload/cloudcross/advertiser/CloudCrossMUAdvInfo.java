@@ -117,7 +117,6 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
         try {
             pstmt = con.prepareStatement(CloudCrossAdvInfoQuery.selectQuery);
             pstmt.setString(1, getStartDateStr());
-            pstmt.setString(2, getStartDateStr());
             ResultSet rset = pstmt.executeQuery();
             boolean isFirst = true;
             while (rset.next()) {
