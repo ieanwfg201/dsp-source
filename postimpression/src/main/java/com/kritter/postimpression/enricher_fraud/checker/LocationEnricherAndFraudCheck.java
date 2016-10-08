@@ -125,9 +125,11 @@ public class LocationEnricherAndFraudCheck implements OnlineEnricherAndFraudChec
 
         logger.debug("Inside LocationEnricherAndFraudCheck , Remote address: {}, xffHeader: {} and user agent: {}", remoteAddress, xffHeader, userAgent);
 
-        String ip = ApplicationGeneralUtils.findCorrectIpAddressForDetection(remoteAddress,
-                xffHeader,
-                privateAddressPrefixList);
+        String ip = ApplicationGeneralUtils.findCorrectIpAddressForDetection(
+                                                                             remoteAddress,
+                                                                             xffHeader,
+                                                                             privateAddressPrefixList
+                                                                            );
 
         logger.debug("The ip found for detection is : {}", ip);
 
@@ -201,45 +203,19 @@ public class LocationEnricherAndFraudCheck implements OnlineEnricherAndFraudChec
         request.setCountryId(countryId);
         request.setCountryCarrierId(countryCarrierId);
 
-        /**
-         * Not required to set connection type here, as its set using id from url.
-        ConnectionType connectionType = ConnectionType.UNKNOWN;
-        if(connectionTypeDetectionCache != null) {
-            connectionType = connectionTypeDetectionCache.getConnectionType(ip);
-            logger.debug("Connection type for ip {} = {}", ip, connectionType);
-        }
-        request.setConnectionType(connectionType);
-        **/
-
         if(null == request.getUiCountryId() || null == request.getUiCountryCarrierId())
         {
             return ONLINE_FRAUD_REASON.LOCATION_ID_MISSING_FROM_REQUEST;
         }
 
-        //check if country and carrier id matches or not.
         if(null != uiCountryCarrierId && null != uiCountryId)
         {
-            if(
-                (
-                 (uiCountryCarrierId.intValue() == request.getUiCountryCarrierId().intValue()) ||
-                 request.getUiCountryCarrierId().equals(ApplicationGeneralUtils.DEFAULT_COUNTRY_CARRIER_ID)
-                ) &&
-                (
-                 (uiCountryId.intValue() == request.getUiCountryId().intValue()) ||
-                 request.getUiCountryId().equals(ApplicationGeneralUtils.DEFAULT_COUNTRY_ID)
-                )
-              )
-                return ONLINE_FRAUD_REASON.HEALTHY_REQUEST;
-            else
-            {
-                //set detected ui country and carrier ids.
-                request.setUiCountryId(uiCountryId);
-                request.setUiCountryCarrierId(uiCountryCarrierId);
-                return ONLINE_FRAUD_REASON.LOCATION_MISMATCH;
-            }
+            //set detected ui country and carrier ids.
+            request.setUiCountryId(uiCountryId);
+            request.setUiCountryCarrierId(uiCountryCarrierId);
         }
 
-		return ONLINE_FRAUD_REASON.LOCATION_MISMATCH;
+		return ONLINE_FRAUD_REASON.HEALTHY_REQUEST;
 	}
 
     private Integer findCountryId(String ip) throws Exception

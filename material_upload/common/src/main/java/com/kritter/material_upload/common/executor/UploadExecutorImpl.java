@@ -22,7 +22,7 @@ import lombok.Setter;
 
 public abstract class UploadExecutorImpl implements UploadExecutor {
 	private static final Logger LOG = LoggerFactory.getLogger(UploadExecutorImpl.class);
-
+	
 	@Getter@Setter
 	private boolean advertiser_upload=false;
 	@Getter@Setter
@@ -63,9 +63,9 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 		}
 	}
 	@Override
-	public void executeAdpositionGet(Properties properties, AdPositionGet adPositionGet,Connection con) {
+	public void executeAdpositionGet(Properties properties, AdPositionGet adPositionGet,Connection con,int pubincId) {
 		if(!this.adposition_get){
-			LOG.debug(this.pubIncId +" ADPOSITION is not set in METADATA");
+			LOG.debug("PubIncId {} - ADPOSITION is not set in METADATA",pubincId);
 			return;
 		}
 		if(adPositionGet != null){
@@ -84,7 +84,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				try {
 					con.rollback();
 				} catch (SQLException e1) {
-					LOG.error(e1.getMessage(),e1);
+					LOG.error(e1.getMessage(),e1);				
 				}
 			}finally{
 				try {
@@ -96,9 +96,9 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 		}
 	}
 	@Override
-	public void executeMaterialBannerUpload(Properties properties, MUBanner muBanner,Connection con) {
+	public void executeMaterialBannerUpload(Properties properties, MUBanner muBanner,Connection con,int pubincId) {
 		if(!this.banner_upload){
-			LOG.debug(this.pubIncId +" BANNER UPLOAD is not set in METADATA");
+			LOG.debug("PubIncId {} - BANNER UPLOAD is not set in METADATA",pubincId);
 			return;
 		}
 
@@ -109,6 +109,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				muBanner.init(properties);
 				con.setAutoCommit(false);
 				muBanner.getLastRun(properties, con);
+				muBanner.removeDisassociatedCreative(properties, con);
 				muBanner.getModifiedEntities(properties, con);
 				muBanner.insertOrUpdateBannerUpload(properties, con);
 				muBanner.uploadmaterial(properties, con);
@@ -119,7 +120,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				try {
 					con.rollback();
 				} catch (SQLException e1) {
-					LOG.error(e1.getMessage(),e1);
+					LOG.error(e1.getMessage(),e1);				
 				}
 			}finally{
 				try {
@@ -131,9 +132,9 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 		}
 	}
 	@Override
-	public void executeMaterialBannerAudit(Properties properties, MUBannerAudit muBannerAudit,Connection con) {
+	public void executeMaterialBannerAudit(Properties properties, MUBannerAudit muBannerAudit,Connection con,int pubincId) {
 		if(!this.banner_upload){
-			LOG.debug(this.pubIncId +" BANNERUPLOAD is not set in METADATA");
+			LOG.debug("PubIncId {} - BANNERUPLOAD is not set in METADATA",pubincId);
 			return;
 		}
 
@@ -150,7 +151,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				try {
 					con.rollback();
 				} catch (SQLException e1) {
-					LOG.error(e1.getMessage(),e1);
+					LOG.error(e1.getMessage(),e1);				
 				}
 			}finally{
 				try {
@@ -162,9 +163,9 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 		}
 	}
 	@Override
-	public void executeMaterialVideoUpload(Properties properties, MUVideo muVideo,Connection con) {
+	public void executeMaterialVideoUpload(Properties properties, MUVideo muVideo,Connection con,int pubincId) {
 		if(!this.video_upload){
-			LOG.debug(this.pubIncId +" VIDEOUPLOAD is not set in METADATA");
+			LOG.debug("PubIncId {} - VIDEOUPLOAD is not set in METADATA",pubincId);
 			return;
 		}
 
@@ -175,6 +176,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				muVideo.init(properties);
 				con.setAutoCommit(false);
 				muVideo.getLastRun(properties, con);
+				muVideo.removeDisassociatedCreative(properties, con);
 				muVideo.getModifiedEntities(properties, con);
 				muVideo.insertOrUpdateVideoUpload(properties, con);
 				muVideo.uploadmaterial(properties, con);
@@ -185,7 +187,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				try {
 					con.rollback();
 				} catch (SQLException e1) {
-					LOG.error(e1.getMessage(),e1);
+					LOG.error(e1.getMessage(),e1);				
 				}
 			}finally{
 				try {
@@ -197,9 +199,9 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 		}
 	}
 	@Override
-	public void executeMaterialVideoAudit(Properties properties, MUVideoAudit muVideoAudit,Connection con) {
+	public void executeMaterialVideoAudit(Properties properties, MUVideoAudit muVideoAudit,Connection con,int pubincId) {
 		if(!this.video_upload){
-			LOG.debug(this.pubIncId +" VIDEOUPLOAD is not set in METADATA");
+			LOG.debug("PubIncId {} - VIDEOUPLOAD is not set in METADATA",pubincId);
 			return;
 		}
 
@@ -216,7 +218,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				try {
 					con.rollback();
 				} catch (SQLException e1) {
-					LOG.error(e1.getMessage(),e1);
+					LOG.error(e1.getMessage(),e1);				
 				}
 			}finally{
 				try {
@@ -228,9 +230,9 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 		}
 	}
 	@Override
-	public void executeAdvInfoUpload(Properties properties, MUAdvInfo advInfo,Connection con) {
+	public void executeAdvInfoUpload(Properties properties, MUAdvInfo advInfo,Connection con,int pubincId) {
 		if(!this.advertiser_upload){
-			LOG.debug(this.pubIncId +" ADVINFOUPLOAD is not set in METADATA");
+			LOG.debug("PubIncId {} - ADVINFOUPLOAD is not set in METADATA",pubincId);
 			return;
 		}
 
@@ -251,7 +253,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				try {
 					con.rollback();
 				} catch (SQLException e1) {
-					LOG.error(e1.getMessage(),e1);
+					LOG.error(e1.getMessage(),e1);				
 				}
 			}finally{
 				try {
@@ -265,7 +267,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 	@Override
 	public void executeMaterialAdvInfoAudit(Properties properties, MUADvInfoAudit muAdvInforAudit,Connection con) {
 		if(!this.advertiser_upload){
-			LOG.debug(this.pubIncId +" ADVINFOUPLOAD is not set in METADATA");
+			LOG.debug("PubIncId {} - ADVINFOUPLOAD is not set in METADATA",pubincId);
 			return;
 		}
 
@@ -282,7 +284,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 				try {
 					con.rollback();
 				} catch (SQLException e1) {
-					LOG.error(e1.getMessage(),e1);
+					LOG.error(e1.getMessage(),e1);				
 				}
 			}finally{
 				try {

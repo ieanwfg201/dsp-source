@@ -12,6 +12,7 @@ import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
 public class GetJaxBContextVastTwoDotZero {
     private static JAXBContext context;
+    private static JAXBContext unMarshallcontext;
     private GetJaxBContextVastTwoDotZero(){
     }
     public static synchronized JAXBContext getContext(){
@@ -29,4 +30,18 @@ public class GetJaxBContextVastTwoDotZero {
             return context;
         }
     }
+    public static synchronized JAXBContext getUnMarshallContext(){
+        if(unMarshallcontext == null){
+            try {
+            	unMarshallcontext= JAXBContextFactory.createContext(new Class[] {VastWrapper.class}, null);
+                return unMarshallcontext;
+            } catch (JAXBException e) {
+                // TODO Auto-generated catch block
+                return unMarshallcontext;
+            }
+        }else{
+            return unMarshallcontext;
+        }
+    }
+
 }

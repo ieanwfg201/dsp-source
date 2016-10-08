@@ -104,12 +104,15 @@ public class HandsetDetector extends AbstractDBStatsReloadableQueryableCache<Han
 
             HandsetDataTopLevelKey key = new HandsetDataTopLevelKey(
                     externalId, source, version);
-            return new HandsetMasterData(internalId,
+
+            HandsetMasterData handsetMasterData = new HandsetMasterData(internalId,
                     key, manufacturerId, modelId, marketingName,
                     deviceOsId, deviceOsVersion, deviceBrowserId,
                     deviceBrowserVersion, deviceCapabilityJSON, modifiedBy,
                     modifiedOn);
 
+            logger.debug("Inside {}, new handset master data object created : {}", getName(), handsetMasterData);
+            return handsetMasterData;
         }
         catch (Exception e)
         {

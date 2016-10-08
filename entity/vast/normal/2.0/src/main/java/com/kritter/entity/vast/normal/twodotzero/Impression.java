@@ -6,12 +6,13 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.eclipse.persistence.oxm.annotations.XmlCDATA;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="Impression")
 public class Impression {
-    @Setter@XmlAttribute(name="id")
+    @Setter@Getter@XmlAttribute(name="id")
     private String id;
-    @Setter@XmlValue@XmlCDATA
+    @Setter@Getter@XmlValue@XmlCDATA
     private String str;
 }

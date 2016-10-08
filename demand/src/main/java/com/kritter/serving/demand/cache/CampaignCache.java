@@ -48,7 +48,6 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
     {
         Integer id = null;
         try{
-
             id = resultSet.getInt("id");
             Double accountBalance = resultSet.getDouble("account_balance");
             Double campaignTotalBalance = resultSet.getDouble("internal_total_remaining_budget");

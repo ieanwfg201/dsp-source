@@ -6,12 +6,13 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.eclipse.persistence.oxm.annotations.XmlCDATA;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="AdSystem")
 public class AdSystem {
-    @Setter@XmlAttribute(name="version")
+    @Setter@Getter@XmlAttribute(name="version")
     private String version="2.0";
-    @Setter@XmlValue@XmlCDATA
+    @Setter@Getter@XmlValue@XmlCDATA
     private String str;
 }

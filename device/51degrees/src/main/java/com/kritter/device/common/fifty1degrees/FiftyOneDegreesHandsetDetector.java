@@ -44,7 +44,7 @@ public class FiftyOneDegreesHandsetDetector implements HandsetDetectionProvider 
             resolutionWidth = Integer.parseInt(handsetInfo.getResolutionWidth());
             resolutionHeight = Integer.parseInt(handsetInfo.getResolutionHeight());
         } catch (NumberFormatException nfe) {
-            logger.error("NumberFormatException inside FiftyOneDegreesHandsetDetector ",nfe);
+            logger.debug("NumberFormatException inside FiftyOneDegreesHandsetDetector ",nfe);
             resolutionWidth = null;
             resolutionHeight = null;
         }

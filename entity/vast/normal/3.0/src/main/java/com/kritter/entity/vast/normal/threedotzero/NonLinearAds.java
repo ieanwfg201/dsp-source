@@ -5,12 +5,13 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="NonLinearAds")
 public class NonLinearAds {
-    @Setter@XmlElement(name="NonLinear")
+    @Setter@Getter@XmlElement(name="NonLinear")
     private List<NonLinear> nonLinearAds;
-    @Setter@XmlElement(name="TrackingEvents")
+    @Setter@Getter@XmlElement(name="TrackingEvents")
     private TrackingEvents trackingEvents;    
 }

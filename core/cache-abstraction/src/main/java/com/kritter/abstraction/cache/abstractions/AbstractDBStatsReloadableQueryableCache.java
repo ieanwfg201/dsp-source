@@ -137,10 +137,14 @@ public abstract class AbstractDBStatsReloadableQueryableCache<I, E extends IUpda
                     continue;
 
                 // Check if the entity is updated for addition or removal
-                if(!entity.isMarkedForDeletion())
+                if(!entity.isMarkedForDeletion()) {
                     this.add(entity);
-                else
+                    logger.debug("Inside {}. Added entity id : {} to primary index.", getName(), entity.getId());
+                }
+                else {
                     this.remove(entity.getId());
+                    logger.debug("Inside {}. Removed entity id : {} from primary index.", getName(), entity.getId());
+                }
 
                 // Always remove from error Map
                 // Expectation is that the derived will take care of additions to the error map itself
@@ -154,6 +158,7 @@ public abstract class AbstractDBStatsReloadableQueryableCache<I, E extends IUpda
                 if(mostRecentEntityTime.before(entityTimestamp))
                     mostRecentEntityTime = entityTimestamp;
             }
+            logger.debug("Inside {}. Entry count in primary index = {}.", getName(), primaryIndex.size());
         }
         catch (SQLException e)
         {

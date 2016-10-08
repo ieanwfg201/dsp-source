@@ -668,7 +668,8 @@ public class CreativeContainerCrud {
                 pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Creative_container.update_status);
                 pstmt.setInt(1, cc.getStatus_id().getCode());
                 pstmt.setString(2, cc.getComment());
-                pstmt.setInt(3, cc.getId());
+                pstmt.setTimestamp(3, new Timestamp((new Date()).getTime()));
+                pstmt.setInt(4, cc.getId());
                 break;
             case update_multiple_status:
                 pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
@@ -676,6 +677,7 @@ public class CreativeContainerCrud {
                         ",", false));
                 pstmt.setInt(1, cc.getStatus_id().getCode());
                 pstmt.setString(2, cc.getComment());
+                pstmt.setTimestamp(3, new Timestamp((new Date()).getTime()));
                break;
             default:
                 break;

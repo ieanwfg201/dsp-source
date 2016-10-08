@@ -25,7 +25,8 @@ public enum ConvertErrorEnum {
     RES_INPUT_NULL(18,"RES_INPUT_NULL"),
     RES_INPUT_EMPTY(19,"RES_INPUT_EMPTY"),
     RES_CONVERT_EXCEPTION(20,"RES_CONVERT_EXCEPTION"),
-    REQ_NATIVE_PROP_NF(21,"REQ_NATIVE_PROP_NF");
+    REQ_NATIVE_PROP_NF(21,"REQ_NATIVE_PROP_NF"),
+    REQ_VIDEO_PROP_NF(22,"REQ_VIDEO_PROP_NF");
     private int code;
     private String name;
     private static Map<Integer, ConvertErrorEnum> map = new HashMap<Integer, ConvertErrorEnum>();

@@ -11,7 +11,6 @@ import com.kritter.constants.VideoBoxing;
 import com.kritter.constants.VideoMaxExtended;
 import com.kritter.constants.VideoMimeTypes;
 import com.kritter.constants.VideoPlaybackMethods;
-import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.video_props.VideoProps;
 
 public class ValidateVideoHelper {

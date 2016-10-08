@@ -17,7 +17,7 @@ public class ExampleVideoRequest {
 		entity.setWidthVideoPlayerInPixels(300); // in pixels
 		entity.setHeightVideoPlayerInPixels(250);// in pixels
 		Integer[] videoBidResponseProtocol =new Integer[4]; //	 1-> VAST 1.0,2->VAST 2.0,3->VAST 3.0,4->VAST 1.0 Wrapper,5-> VAST 2.0 Wrapper, 6->VAST 3.0 Wrapper
-		videoBidResponseProtocol[0]=2;videoBidResponseProtocol[0]=3;videoBidResponseProtocol[0]=5;videoBidResponseProtocol[0]=6;
+		videoBidResponseProtocol[0]=2;videoBidResponseProtocol[1]=3;videoBidResponseProtocol[2]=5;videoBidResponseProtocol[3]=6;
 		entity.setVideoBidResponseProtocol(videoBidResponseProtocol);
 		String[] mimeTypesSupported = new String[1];
 		mimeTypesSupported[0] = "video/mp4";

@@ -91,16 +91,16 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 										cpstmt.executeUpdate();
 									}else{
 										cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
-										cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
-										cpstmt.setString(2, rrc.getResult()+"--AUDIT MESSAGE NOT PRSESENT");
+										cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
+										cpstmt.setString(2, rrc.getResult()+"--AUDIT MESSAGE NOT PRSESENT: "+out);
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
 									}
 								}
 							}else{
 								cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
-								cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
-								cpstmt.setString(2, rrc.getResult()+"--RETURNCODEAUDIT");
+								cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
+								cpstmt.setString(2, rrc.getResult()+"--RETURNCODEAUDIT: "+out);
 								cpstmt.setTimestamp(3, ts);
 								cpstmt.executeUpdate();
 							}

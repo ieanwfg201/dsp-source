@@ -13,8 +13,10 @@ import com.kritter.geo.common.entity.CountryUserInterfaceIdSecondaryIndex;
 import com.kritter.geo.common.entity.IspUserInterfaceIdSecondaryIndex;
 import com.kritter.geo.common.entity.reader.*;
 import com.kritter.serving.demand.cache.AdEntityCache;
+import com.kritter.serving.demand.cache.CampaignCache;
 import com.kritter.serving.demand.entity.*;
 import com.kritter.serving.demand.index.*;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.SetUtils;
 import lombok.Getter;
@@ -46,6 +48,8 @@ public class AdTargetingMatcher implements Job
     private CountryUserInterfaceIdCache countryUserInterfaceIdCache;
     private ISPUserInterfaceIdCache ispUserInterfaceIdCache;
     private List<TargetingMatcher> targetingMatchers;
+    private String adNoFillReasonMapKey;
+    private CampaignCache campaignCache;
 
     public AdTargetingMatcher(
                                 String name,
@@ -57,7 +61,9 @@ public class AdTargetingMatcher implements Job
                                 AdEntityCache adEntityCache,
                                 CountryUserInterfaceIdCache countryUserInterfaceIdCache,
                                 ISPUserInterfaceIdCache ispUserInterfaceIdCache,
-                                List<TargetingMatcher> targetingMatchers
+                                List<TargetingMatcher> targetingMatchers,
+                                String adNoFillReasonMapKey,
+                                CampaignCache campaignCache
                              ) throws SQLException
     {
         this.name = name;
@@ -70,6 +76,8 @@ public class AdTargetingMatcher implements Job
         this.countryUserInterfaceIdCache = countryUserInterfaceIdCache;
         this.ispUserInterfaceIdCache = ispUserInterfaceIdCache;
         this.targetingMatchers = targetingMatchers;
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
+        this.campaignCache = campaignCache;
     }
 
     /**
@@ -241,6 +249,11 @@ public class AdTargetingMatcher implements Job
             request.addDebugMessageForTestRequest(debugMessage.toString());
         }
 
+        // Pick only those ads with valid campaigns
+        finalShortlistedAdIds = getAdsWithValidCampaigns(finalShortlistedAdIds, campaignCache, request, context);
+        ReqLog.debugWithDebugNew(logger, request, "Second set of shortlisted ads with valid campaigns : ",
+                finalShortlistedAdIds);
+
         try
         {
             int osId = (null == handsetMasterData) ? -1 : handsetMasterData.getDeviceOperatingSystemId();
@@ -312,6 +325,48 @@ public class AdTargetingMatcher implements Job
         context.setValue(this.shortlistedAdKey, finalShortlistedAdIds);
         Short selectedSiteCategoryId = findSelectedSiteCategoryId();
         context.setValue(this.selectedSiteCategoryIdKey, selectedSiteCategoryId);
+    }
+
+    /**
+     * Given a set of ad ids, returns only those ads which have campaigns in campaign cache.
+     * @param adIdSet Set of shortlisted ad ids
+     * @param campaignCache campaign cache containing all campaigns
+     * @param request Adserving request object
+     * @param context Workflow context object
+     * @return Set containing ads having valid campaigns
+     */
+    private Set<Integer> getAdsWithValidCampaigns(Set<Integer> adIdSet, CampaignCache campaignCache, Request request,
+                                                  Context context) {
+        if(adIdSet == null || adIdSet.isEmpty())
+            return adIdSet;
+
+        Set<Integer> validAdIdSet = new HashSet<Integer>();
+
+        for(int adId: adIdSet) {
+            AdEntity adEntity = adEntityCache.query(adId);
+
+            if (null == adEntity) {
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache for ad id: {}. Dropping it.",
+                        adId);
+                continue;
+            }
+
+            int campaignId = adEntity.getCampaignIncId();
+            Campaign campaign = campaignCache.query(campaignId);
+
+            if(null == campaign) {
+                ReqLog.debugWithDebugNew(logger,request, "Campaign not found in cache for campaign id: {}. Dropping " +
+                        "ad id : {}.", campaignId, adId);
+
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, NoFillReason.CAMPAIGN_NOT_FOUND.getValue(),
+                        this.adNoFillReasonMapKey, context);
+                continue;
+            }
+
+            validAdIdSet.add(adId);
+        }
+
+        return validAdIdSet;
     }
 
     private Set<Integer> pickAdIdsForCountryUserInterfaceId(Request request,Integer countryUserInterfaceId)

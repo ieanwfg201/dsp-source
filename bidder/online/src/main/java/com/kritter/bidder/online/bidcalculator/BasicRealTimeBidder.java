@@ -110,13 +110,11 @@ public class BasicRealTimeBidder implements RealTimeBidder
 
             if(optimizedBidValueOfAdForThisImpression <= 0.0)
             {
-                logger.error("The optimized bid calculated inside BasicRealTimeBidder is negative: {} ,for entity id:{} ", optimizedBidValueOfAdForThisImpression, servedEntityInfo.getEntityId());
+                logger.debug("The optimized bid calculated inside BasicRealTimeBidder is negative: {} ,for entity id:{} ", optimizedBidValueOfAdForThisImpression, servedEntityInfo.getEntityId());
                 continue;
             }
 
-
-            if(logger.isDebugEnabled())
-                logger.debug("Optimized bid value calculated inside BasicRealTimeBidder as : {}", optimizedBidValueOfAdForThisImpression);
+            logger.debug("Optimized bid value calculated inside BasicRealTimeBidder as : {}", optimizedBidValueOfAdForThisImpression);
 
             //check for budget remaining of the entity, if less , then ad cant participate in auction.
             if(
@@ -124,7 +122,7 @@ public class BasicRealTimeBidder implements RealTimeBidder
                (Budget.min_budget)
               )
             {
-                logger.error("ServedEntityInfo's budget is less than minimum value inside BasicRealTimeBidder for adid : {} ", servedEntityInfo.getEntityId());
+                logger.debug("ServedEntityInfo's budget is less than minimum value inside BasicRealTimeBidder for adid : {} ", servedEntityInfo.getEntityId());
                 continue;
             }
 

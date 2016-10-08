@@ -85,12 +85,6 @@ public class AccountEntity {
     private String firstIndustryCode;
     @Getter@Setter
     private String secondIndustryCode;
-    @Getter@Setter
-    private String qualificationName;
-    @Getter@Setter
-    private String qualificationUrl;
-    @Getter@Setter
-    private String qualificationMD5;
 
 
     public String getDemand_url() {

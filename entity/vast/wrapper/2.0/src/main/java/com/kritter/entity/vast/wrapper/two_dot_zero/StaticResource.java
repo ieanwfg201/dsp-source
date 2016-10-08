@@ -4,12 +4,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="StaticResource")
 public class StaticResource {
-    @Setter@XmlAttribute(name="creativeType")
+    @Setter@Getter@XmlAttribute(name="creativeType")
     private String creativeType;
-    @Setter@XmlValue
+    @Setter@Getter@XmlValue
     private String str;
 }

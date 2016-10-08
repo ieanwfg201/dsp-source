@@ -57,6 +57,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/vast/wrapper/2.0</module>
     <module>entity/vast/normal/3.0</module>
     <module>entity/vast/normal/2.0</module>
+    <module>entity/vast/vastversion</module>
     <module>entity/userreports</module>
     <module>entity/algomodel</module>
     <module>entity/pmp</module>
