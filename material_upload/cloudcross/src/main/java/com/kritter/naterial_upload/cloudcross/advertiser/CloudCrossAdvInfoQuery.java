@@ -4,8 +4,7 @@ package com.kritter.naterial_upload.cloudcross.advertiser;
  * Created by hamlin on 16-9-28.
  */
 public class CloudCrossAdvInfoQuery {
-    public static final String selectQuery = "select a.id as advId, a.name as advName, a.brand as brand,a.contactdetail as contactdetail,"
-            + " a.address as address, a.phone as phone,a.adxext as adxext from account as a where a.type_id=3 and a.last_modified > ?";
+    public static final String selectQuery = "SELECT a.id AS advId, a.name AS advName, a.brand AS brand,a.contactdetail AS contactdetail,a.address AS address, a.phone AS phone,a.firstind AS firstind,a.secondind AS secondind FROM account AS a WHERE a.type_id=3 AND a.last_modified > ?";
 
 
     public static final String getAdvInfoUpload = "select * from advinfo_upload where "

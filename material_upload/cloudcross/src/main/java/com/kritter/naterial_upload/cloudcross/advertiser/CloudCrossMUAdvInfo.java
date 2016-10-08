@@ -117,6 +117,7 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
         try {
             pstmt = con.prepareStatement(CloudCrossAdvInfoQuery.selectQuery);
             pstmt.setString(1, getStartDateStr());
+            pstmt.setString(2, getStartDateStr());
             ResultSet rset = pstmt.executeQuery();
             boolean isFirst = true;
             while (rset.next()) {
@@ -148,9 +149,15 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
     }
 
     private String getIndustryIdByUiMMACode(Connection con, ResultSet rset) throws java.io.IOException, SQLException {
-        AdxAccountExt adxext = objectMapper.readValue(rset.getString("adxext"), AdxAccountExt.class);
+        Integer industryId = -1;
+        if (rset.getObject("firstind") != null) {
+            industryId = Integer.parseInt(rset.getString("firstind"));
+        }
+        if (rset.getObject("secondind") != null) {
+            industryId = Integer.parseInt(rset.getString("secondind"));
+        }
         PreparedStatement statement = con.prepareStatement(CloudCrossAdvInfoQuery.selectSupplyIndustryIdByUIMMACategoriesId);
-        statement.setInt(1, Integer.parseInt(adxext.getSecondInd()));
+        statement.setInt(1, industryId);
         ResultSet resultSet = statement.executeQuery();
 
         return resultSet.next() ? resultSet.getString("supplycode") : "-1";
