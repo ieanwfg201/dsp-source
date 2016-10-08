@@ -9,6 +9,7 @@ controller('advinfouploadController',function ($scope, $http, $modal) {
 	    $scope.advinfouploadListData.init("/entitylist");
 	    $scope.advinfouploadListData.setFilterAttribute("entityType", "materialadvinfoupload");
 		$scope.advinfouploadListData.setFilterAttribute("exchangeId", $("#exchange").val() );
+		$scope.advinfouploadListData.setFilterAttribute("adxBasedExchangesStates", $("#adxBasedExchangesStates").val() );
 		var path = $.url().attr('path');
 		var pathComps = path.split("/");
 		if(pathComps.length == 4){
@@ -19,7 +20,7 @@ controller('advinfouploadController',function ($scope, $http, $modal) {
 		} 
 	};
 	$scope.init();
-	$scope.updateAdvInfoUpload = function (pubIncId, action) {
+	$scope.updateAdvInfoUpload = function (id, action) {
 		var modalInstance = $modal.open({
 			templateUrl: '/adxbasedexchanges/advinfoupload/updatesingle/'+id +'/'+action, 
 			controller:advinfouploadrefreshController,

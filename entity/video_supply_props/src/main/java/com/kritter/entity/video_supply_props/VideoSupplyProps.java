@@ -1,14 +1,16 @@
 package com.kritter.entity.video_supply_props;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+
+import com.kritter.constants.VideoMimeTypes;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -86,5 +88,34 @@ public class VideoSupplyProps {
     	VideoSupplyProps entity = objectMapper.readValue(str, VideoSupplyProps.class);
         return entity;
 
+    }
+    public static Integer[] toIntArray(HashSet<Integer>  set,Integer doNotInclude){
+    	if(set ==null){
+    		return null;
+    	}
+    	ArrayList<Integer> arrlist = new ArrayList<Integer>();
+    	for(Integer setInteger:set){
+    		if(setInteger != doNotInclude){
+    			arrlist.add(setInteger);
+    		}
+    	}
+    	Integer list2[] = new Integer[arrlist.size()];
+    	list2 = arrlist.toArray(list2);
+    	return list2;
+    }
+    public static String[] toMimes(HashSet<Integer>  set){
+    	if(set ==null){
+    		return null;
+    	}
+    	ArrayList<String> arrlist = new ArrayList<String>();
+    	for(Integer setInteger:set){
+    		VideoMimeTypes m = VideoMimeTypes.getEnum(setInteger);
+    		if(m!=null){
+    			arrlist.add(m.getMime());
+    		}
+    	}
+    	String list2[] = new String[arrlist.size()];
+    	list2 = arrlist.toArray(list2);
+    	return list2;
     }
 }

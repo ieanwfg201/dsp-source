@@ -1,6 +1,5 @@
 package models;
 
-import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.StatusIdEnum;
 
 import models.Constants.EntityType;
@@ -26,14 +25,16 @@ public class EntityListFilter {
 	
 	private int exchangeId;
 	
+	private int advIncId;
+	
 	private String osId;
 
 	private String dealGuid;
 	
 	private PageType pageType = PageType.none;
 	
-	private AdxBasedExchangesStates adxstates;
-	
+	private Integer adxBasedExchangesStates;
+
 	/** Created getiddefinition */
 	private String ids;
 	    private int id_guid;
@@ -147,20 +148,26 @@ public class EntityListFilter {
         this.id_guid = id_guid;
     }
 
-    public int getGet_type() {
+    public int getAdvIncId() {
+		return advIncId;
+	}
+
+	public void setAdvIncId(int advIncId) {
+		this.advIncId = advIncId;
+	}
+
+	public int getGet_type() {
         return get_type;
     }
 
     public void setGet_type(int get_type) {
         this.get_type = get_type;
     }
-	public AdxBasedExchangesStates getAdxstates() {
-		return adxstates;
+	public Integer getAdxBasedExchangesStates() {
+		return adxBasedExchangesStates;
 	}
 
-	public void setAdxstates(AdxBasedExchangesStates adxstates) {
-		this.adxstates = adxstates;
+	public void setAdxBasedExchangesStates(Integer adxBasedExchangesStates) {
+		this.adxBasedExchangesStates = adxBasedExchangesStates;
 	}
-
-
 }

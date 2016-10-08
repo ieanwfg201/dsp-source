@@ -3,35 +3,37 @@ package com.kritter.entity.vast.normal.threedotzero;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="Icon")
 public class Icon {
-    @Setter@XmlAttribute(name="program")
+    @Setter@Getter@XmlAttribute(name="program")
     private String program;
-    @Setter@XmlAttribute(name="width")
+    @Setter@Getter@XmlAttribute(name="width")
     private String width;
-    @Setter@XmlAttribute(name="height")
+    @Setter@Getter@XmlAttribute(name="height")
     private String height;
-    @Setter@XmlAttribute(name="xPosition")
+    @Setter@Getter@XmlAttribute(name="xPosition")
     private String xPosition;
-    @Setter@XmlAttribute(name="yPosition")
+    @Setter@Getter@XmlAttribute(name="yPosition")
     private String yPosition;
-    @Setter@XmlAttribute(name="duration")
+    @Setter@Getter@XmlAttribute(name="duration")
     private String duration;
-    @Setter@XmlAttribute(name="offset")
+    @Setter@Getter@XmlAttribute(name="offset")
     private String offset;
-    @Setter@XmlAttribute(name="apiFramework")
+    @Setter@Getter@XmlAttribute(name="apiFramework")
     private String apiFramework;
-    @Setter@XmlElement(name="StaticResource")
+    @Setter@Getter@XmlElement(name="StaticResource")
     private StaticResource staticResource;
-    @Setter@XmlElement(name="IFrameResource")
+    @Setter@Getter@XmlElement(name="IFrameResource")
     private IFrameResource iFrameResource;
-    @Setter@XmlElement(name="HTMLResource")
+    @Setter@Getter@XmlElement(name="HTMLResource")
     private HTMLResource hTMLResource;
-    @Setter@XmlElement(name="IconClicks")
+    @Setter@Getter@XmlElement(name="IconClicks")
     private IconClicks iconClicks;
-    @Setter@XmlElement(name="IconViewTracking")
+    @Setter@Getter@XmlElement(name="IconViewTracking")
     private IconViewTracking iconViewTracking;
     
 

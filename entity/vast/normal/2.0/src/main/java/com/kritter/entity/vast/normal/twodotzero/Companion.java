@@ -3,34 +3,36 @@ package com.kritter.entity.vast.normal.twodotzero;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="Companion")
 public class Companion {
-    @Setter@XmlAttribute(name="id")
+    @Setter@Getter@XmlAttribute(name="id")
     private String id;
-    @Setter@XmlAttribute(name="width")
+    @Setter@Getter@XmlAttribute(name="width")
     private int width;
-    @Setter@XmlAttribute(name="height")
+    @Setter@Getter@XmlAttribute(name="height")
     private int height;
-    @Setter@XmlAttribute(name="expandedWidth")
+    @Setter@Getter@XmlAttribute(name="expandedWidth")
     private String expandedWidth;
-    @Setter@XmlAttribute(name="expandedHeight")
+    @Setter@Getter@XmlAttribute(name="expandedHeight")
     private String expandedHeight;
-    @Setter@XmlAttribute(name="apiFramework")
+    @Setter@Getter@XmlAttribute(name="apiFramework")
     private String apiFramework;
-    @Setter@XmlElement(name="StaticResource")
+    @Setter@Getter@XmlElement(name="StaticResource")
     private StaticResource staticResource;
-    @Setter@XmlElement(name="IFrameResource")
+    @Setter@Getter@XmlElement(name="IFrameResource")
     private IFrameResource iFrameResource;
-    @Setter@XmlElement(name="HTMLResource")
+    @Setter@Getter@XmlElement(name="HTMLResource")
     private HTMLResource hTMLResource;
-    @Setter@XmlElement(name="TrackingEvents")
+    @Setter@Getter@XmlElement(name="TrackingEvents")
     private TrackingEvents trackingEvents;
-    @Setter@XmlElement(name="CompanionClickThrough")
+    @Setter@Getter@XmlElement(name="CompanionClickThrough")
     private CompanionClickThrough companionClickThrough;
-    @Setter@XmlElement(name="AltText")
+    @Setter@Getter@XmlElement(name="AltText")
     private AltText altText;
-    @Setter@XmlElement(name="AdParameters")
+    @Setter@Getter@XmlElement(name="AdParameters")
     private AdParameters adParameters;
 }

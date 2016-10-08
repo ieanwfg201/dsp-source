@@ -6,28 +6,29 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.eclipse.persistence.oxm.annotations.XmlCDATA;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="MediaFile")
 public class MediaFile {
-    @Setter@XmlAttribute(name="id")
+    @Setter@Getter@XmlAttribute(name="id")
     private String id;
-    @Setter@XmlAttribute(name="delivery")
+    @Setter@Getter@XmlAttribute(name="delivery")
     private String delivery;
-    @Setter@XmlAttribute(name="type")
+    @Setter@Getter@XmlAttribute(name="type")
     private String type;
-    @Setter@XmlAttribute(name="bitrate")
+    @Setter@Getter@XmlAttribute(name="bitrate")
     private String bitrate;
-    @Setter@XmlAttribute(name="width")
+    @Setter@Getter@XmlAttribute(name="width")
     private int width;
-    @Setter@XmlAttribute(name="height")
+    @Setter@Getter@XmlAttribute(name="height")
     private int height;
-    @Setter@XmlAttribute(name="scalable")
+    @Setter@Getter@XmlAttribute(name="scalable")
     private String scalable;
-    @Setter@XmlAttribute(name="maintainAspectRatio")
+    @Setter@Getter@XmlAttribute(name="maintainAspectRatio")
     private String maintainAspectRatio;
-    @Setter@XmlAttribute(name="apiFramework")
+    @Setter@Getter@XmlAttribute(name="apiFramework")
     private String apiFramework;
-    @Setter@XmlValue@XmlCDATA
+    @Setter@Getter@XmlValue@XmlCDATA
     private String str;
 }

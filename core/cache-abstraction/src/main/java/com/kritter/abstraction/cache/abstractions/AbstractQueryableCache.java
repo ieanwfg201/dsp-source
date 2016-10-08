@@ -239,6 +239,8 @@ public abstract class AbstractQueryableCache<I, E extends IEntity<I>> implements
     public abstract ISecondaryIndexWrapper getSecondaryIndexKey(Class className, E entity);
 
     public Collection<E> getAllEntities() {
-        return primaryIndex.values();
+        Collection<E> values = primaryIndex.values();
+        logger.debug("Inside {}. Number of values = {}.", values.size());
+        return values;
     }
 }

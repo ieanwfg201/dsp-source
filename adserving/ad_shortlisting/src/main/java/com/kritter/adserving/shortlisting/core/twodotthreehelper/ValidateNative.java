@@ -60,13 +60,13 @@ public class ValidateNative {
                 nativeObj = null;
             } 
             if(nativeObj == null){
-                logger.error("NativeObj null");
+                logger.debug("NativeObj null");
                 nonNativeNfrReason = NoFillReason.NATIVE_REQ_NULL;
                 continue;
             }
             Asset[] assets = nativeObj.getAssets();
             if(assets == null){
-                logger.error("NativeObj Assets null");
+                logger.debug("NativeObj Assets null");
                 nonNativeNfrReason = NoFillReason.NATIVE_REQ_ASSET_NULL;
                 continue;
             }
@@ -85,23 +85,23 @@ public class ValidateNative {
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.Native){
-                    logger.error("Creative Not Native,!!! for creative id: {}" , adEntity.getCreativeId());
+                    logger.debug("Creative Not Native,!!! for creative id: {}" , adEntity.getCreativeId());
                     nonNativeNfrReason = NoFillReason.CREATIVE_NOT_NATIVE;
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
-                    logger.error("DealID check not satisfied");
+                    logger.debug("DealID check not satisfied");
                     nonNativeNfrReason = NoFillReason.DEAL_ID_MISMATCH;
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidFloorPrice() != null &&  bidRequestImpressionDTO.getBidFloorPrice()>responseAdInfo.getEcpmValue()){
-                    logger.error("Floor price unmet");
+                    logger.debug("Floor price unmet");
                     nonNativeNfrReason = NoFillReason.BIDDER_FLOOR_UNMET;
                     continue;
                 }
                 NativeDemandProps nativeDemandPros  = creative.getNative_demand_props();
                 if(nativeDemandPros == null){
-                    logger.error("Native Demand Props Null,!!! for creative id: {}" , adEntity.getCreativeId());
+                    logger.debug("Native Demand Props Null,!!! for creative id: {}" , adEntity.getCreativeId());
                     nonNativeNfrReason = NoFillReason.NATIVE_PROPS_NULL;
                     continue;
                 }

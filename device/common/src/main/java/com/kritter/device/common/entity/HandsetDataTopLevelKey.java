@@ -1,9 +1,11 @@
 package com.kritter.device.common.entity;
 
+import lombok.ToString;
+
 /**
  * This class keeps the top level key for data in handset_detection_data table.
  */
-
+@ToString
 public class HandsetDataTopLevelKey
 {
 

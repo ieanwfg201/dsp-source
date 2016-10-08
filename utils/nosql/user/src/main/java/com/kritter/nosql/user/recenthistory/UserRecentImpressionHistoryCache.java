@@ -7,6 +7,7 @@ import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
 import com.kritter.utils.nosql.common.NoSqlNamespaceTable;
 import lombok.Getter;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
@@ -52,8 +53,6 @@ public class UserRecentImpressionHistoryCache implements NoSqlNamespaceTable, IC
     private int maxSizeImpressionList;
     @Getter
     private NoSqlNamespaceOperations noSqlNamespaceOperationsInstance;
-    private TSerializer thriftSerializer;
-    private TDeserializer thriftDeserializer;
     private final ExecutorService updaterService;
 
     public UserRecentImpressionHistoryCache(
@@ -77,9 +76,6 @@ public class UserRecentImpressionHistoryCache implements NoSqlNamespaceTable, IC
         this.attributeNameImpressionHistory = properties.getProperty(ATTRIBUTE_NAME_IMPRESSION_HISTORY_KEY);
         this.attributeNameSet = new HashSet<String>();
         this.attributeNameSet.add(attributeNameImpressionHistory);
-
-        this.thriftSerializer = new TSerializer(new TBinaryProtocol.Factory());
-        this.thriftDeserializer = new TDeserializer(new TBinaryProtocol.Factory());
 
         this.updaterService = Executors.newFixedThreadPool(threadCount);
     }
@@ -121,6 +117,9 @@ public class UserRecentImpressionHistoryCache implements NoSqlNamespaceTable, IC
             } catch (TException te) {
                 this.logger.error("Exception caught while decoding recent impression for user: {}. Byte array size : " +
                         "{}, Exception : {}", kritterUserId, serializedObject.length, te);
+                Base64 base64Encoder = new Base64(0);
+                this.logger.error("Size of serialized object = {}, serialized object = {}.", serializedObject.length,
+                        new String(base64Encoder.encode(serializedObject)));
                 recentImpressionHistory = null;
             }
         }
@@ -227,11 +226,13 @@ public class UserRecentImpressionHistoryCache implements NoSqlNamespaceTable, IC
     public byte[] fetchRecentImpressionHistoryByteArray(RecentImpressionHistory recentImpressionHistory)
                                                                                                     throws TException
     {
+        TSerializer thriftSerializer = new TSerializer(new TBinaryProtocol.Factory());
         return thriftSerializer.serialize(recentImpressionHistory);
     }
 
     public RecentImpressionHistory fetchRecentImpressionHistoryObject(byte[] byteData) throws TException
     {
+        TDeserializer thriftDeserializer = new TDeserializer(new TBinaryProtocol.Factory());
         RecentImpressionHistory recentImpressionHistory = new RecentImpressionHistory();
         thriftDeserializer.deserialize(recentImpressionHistory,byteData);
 

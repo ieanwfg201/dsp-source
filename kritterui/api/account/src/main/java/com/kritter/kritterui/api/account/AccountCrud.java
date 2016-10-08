@@ -26,7 +26,6 @@ import com.kritter.constants.Payment_type;
 import com.kritter.constants.Payout;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.error.ErrorEnum;
-import com.kritter.entity.account.AdxAccountExt;
 import com.kritter.entity.demand_props.DemandProps;
 import com.kritter.kritterui.api.utils.check.CheckPhoneNumber;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
@@ -124,59 +123,9 @@ public class AccountCrud {
             }
             account.setContactdetail(rset.getString("contactdetail"));
             account.setBrand(rset.getString("brand"));
-            populateAdxExt(rset.getString("adxext"), account);
+            account.setFirstIndustryCode(rset.getString("firstind"));
+            account.setSecondIndustryCode(rset.getString("secondind"));
         }
-    }
-    private static void populateAdxExt(String str,Account account){
-    	if(str != null){
-    		String strTrim = str.trim();
-    		if(strTrim.isEmpty()){
-    			return;
-    		}
-    		try{
-    			AdxAccountExt entity = AdxAccountExt.getObject(strTrim);
-    			if(entity == null){
-    				return;
-    			}
-    			if(entity.getFirstInd() != null){
-    				account.setFirstIndustryCode(entity.getFirstInd());
-    			}
-    			if(entity.getSecondInd() != null){
-    				account.setSecondIndustryCode(entity.getSecondInd());
-    			}
-    			if(entity.getQname() != null){
-    				account.setQualificationName(entity.getQname());
-    			}
-    			if(entity.getQurl() != null){
-    				account.setQualificationUrl(entity.getQurl());
-    			}
-    			if(entity.getMd5() != null){
-    				account.setQualificationMD5(entity.getMd5());
-    			}
-    		}catch(Exception e){
-    			LOG.error(e.getMessage(),e);
-    		}
-    	}
-    }
-
-    private static String generateAdxExt(Account account){
-    	AdxAccountExt entity=new AdxAccountExt();
-    	if(account.getFirstIndustryCode() != null){
-    		entity.setFirstInd(account.getFirstIndustryCode() );
-    	}
-    	if(account.getSecondIndustryCode() != null){
-    		entity.setSecondInd(account.getSecondIndustryCode());
-    	}
-    	if(account.getQualificationName() != null){
-    		entity.setQname(account.getQualificationName());
-    	}
-    	if(account.getQualificationUrl() != null){
-    		entity.setQurl(account.getQualificationUrl());
-    	}
-    	if(account.getQualificationMD5() != null){
-    		entity.setMd5(account.getQualificationMD5() );
-    	}
-    	return entity.toJson().toString();
     }
     private static String generateDemandProps(Account account){
         DemandProps demandProps = new DemandProps();
@@ -397,7 +346,8 @@ public class AccountCrud {
             pstmt.setInt(44,account.getThird_party_demand_channel_type());
             pstmt.setString(45, account.getContactdetail());
             pstmt.setString(46, account.getBrand());
-            pstmt.setString(47, generateAdxExt(account));
+            pstmt.setString(47, account.getFirstIndustryCode());
+            pstmt.setString(48, account.getSecondIndustryCode());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -959,8 +909,9 @@ public class AccountCrud {
             pstmt.setInt(41,account.getThird_party_demand_channel_type());
             pstmt.setString(42, account.getContactdetail());
             pstmt.setString(43, account.getBrand());
-            pstmt.setString(44, generateAdxExt(account));
-            pstmt.setInt(45, account.getId());
+            pstmt.setString(44, account.getFirstIndustryCode());
+            pstmt.setString(45, account.getSecondIndustryCode());
+            pstmt.setInt(46, account.getId());
 
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){

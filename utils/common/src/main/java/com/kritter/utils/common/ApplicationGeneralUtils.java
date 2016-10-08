@@ -438,10 +438,10 @@ public class ApplicationGeneralUtils
         StringBuffer sb = new StringBuffer();
         sb.append(url);
 
-        if(url.contains(URL_QUERY_BEGIN_QUESTION_MARK))
-            sb.append(URL_QUERY_PARAM_DELIMITER);
-        else
+        if(!url.contains(URL_QUERY_BEGIN_QUESTION_MARK))
             sb.append(URL_QUERY_BEGIN_QUESTION_MARK);
+        if(!url.contains(URL_QUERY_PARAM_DELIMITER))
+            sb.append(URL_QUERY_PARAM_DELIMITER);
 
         return sb.toString();
     }
@@ -466,7 +466,9 @@ public class ApplicationGeneralUtils
 
         if(null != kritterUserIdValue)
         {
-            cscUrlToModify.append(URL_QUERY_PARAM_DELIMITER);
+            if(!cscUrlToModify.toString().endsWith(URL_QUERY_PARAM_DELIMITER))
+                cscUrlToModify.append(URL_QUERY_PARAM_DELIMITER);
+
             cscUrlToModify.append(KRITTER_USER_ID_PARAM_NAME);
             cscUrlToModify.append(URL_PARAM_VALUE_DELIMITER);
             cscUrlToModify.append(kritterUserIdValue);

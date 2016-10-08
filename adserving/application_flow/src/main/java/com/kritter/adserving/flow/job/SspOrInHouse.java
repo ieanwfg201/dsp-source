@@ -90,7 +90,7 @@ public class SspOrInHouse implements Job
         return 1;
     }
     private int defaultToDirectWithDebug(String msg, Context context,Response response){
-        logger.error(msg);
+        logger.debug(msg);
         context.setValue(this.ruleSetVariableNameForKritterWorkflow,2);
         if(response != null){
             response.setResponseAdInfo(new HashSet<ResponseAdInfo>());

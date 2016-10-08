@@ -21,19 +21,19 @@ public class YoukuUploadExecutor  extends UploadExecutorImpl implements UploadEx
 		int pubInc=Integer.parseInt(properties.getProperty("youku_pubIncId").toString());
 		super.checkJobs(properties, con, pubInc);
 		AdPositionGet yag = new YoukuAdPositionGet();
-		super.executeAdpositionGet(properties,yag,con);
+		super.executeAdpositionGet(properties,yag,con,pubInc);
 		YoukuMUBanner muBanner = new YoukuMUBanner();
-		super.executeMaterialBannerUpload(properties, muBanner, con);
+		super.executeMaterialBannerUpload(properties, muBanner, con,pubInc);
 		YoukuMUBannerAudit muBannerAudit = new YoukuMUBannerAudit();
-		super.executeMaterialBannerAudit(properties, muBannerAudit, con);
+		super.executeMaterialBannerAudit(properties, muBannerAudit, con,pubInc);
 		YoukuMUVideo muVideo = new YoukuMUVideo();
-		super.executeMaterialVideoUpload(properties, muVideo, con);
+		super.executeMaterialVideoUpload(properties, muVideo, con,pubInc);
 		YoukuMUVideoAudit muVideoAudit = new YoukuMUVideoAudit();
-		super.executeMaterialVideoAudit(properties, muVideoAudit, con);
+		super.executeMaterialVideoAudit(properties, muVideoAudit, con,pubInc);
 		YoukuMUAdvInfo muAdvInfo = new YoukuMUAdvInfo();
-		super.executeAdvInfoUpload(properties, muAdvInfo, con);
+		super.executeAdvInfoUpload(properties, muAdvInfo, con,pubInc);
 		YoukuMUAdvInfoAudit muAdvInfoAudit = new YoukuMUAdvInfoAudit();
-		super.executeMaterialAdvInfoAudit(properties, muAdvInfoAudit, con);
+		super.executeMaterialAdvInfoAudit(properties, muAdvInfoAudit, con,pubInc);
 	}
 
 
