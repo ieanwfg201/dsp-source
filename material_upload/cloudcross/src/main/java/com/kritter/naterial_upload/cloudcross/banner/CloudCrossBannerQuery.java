@@ -83,4 +83,11 @@ public class CloudCrossBannerQuery {
 	public static void main(String args[]){
 		System.out.println(selectQuery);
 	}
+	public static final String removedCreativesQuery = "select c.internalid as internalid from creative_banner as a , "
+			+ "creative_container as b,banner_upload as c "
+			+ "where a.account_guid=b.account_guid and b.format_id=2 and "
+			+ "not FIND_IN_SET(a.id,REPLACE(REPLACE(b.resource_uri_ids,'[',''),']','')) and "
+			+ "GREATEST(a.last_modified,b.last_modified) >= ? and a.id=c.bannerId ";
+	public static final String updateRemovedCreatives = "update banner_upload set adxbasedexhangesstatus=14 where internalid=?";
+
 }

@@ -94,7 +94,7 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
                                 cpstmt.executeUpdate();
                             } else {
                                 cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvInfoStatusMessage);
-                                cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
+                                cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
                                 cpstmt.setString(2, response + "--AUDIT MESSAGE NOT PRSESENT");
                                 cpstmt.setTimestamp(3, ts);
                                 cpstmt.executeUpdate();

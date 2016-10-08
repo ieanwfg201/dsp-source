@@ -16,17 +16,17 @@ import java.util.Properties;
 public class CloudCrossUploadExecutor extends UploadExecutorImpl implements UploadExecutor {
     @Override
     public void execute(Properties properties, Connection con) {
-        int pubInc = Integer.parseInt(properties.getProperty("cloudcross_pubIncId"));
-        super.checkJobs(properties, con, pubInc);
+        int pubincId = Integer.parseInt(properties.getProperty("cloudcross_pubIncId"));
+        super.checkJobs(properties, con, pubincId);
 
         CloudCrossMUBanner muBanner = new CloudCrossMUBanner();
-        super.executeMaterialBannerUpload(properties, muBanner, con);
+        super.executeMaterialBannerUpload(properties, muBanner, con, pubincId);
         CloudCrossMUBannerAudit cloudCrossMUBannerAudit = new CloudCrossMUBannerAudit();
-        super.executeMaterialBannerAudit(properties, cloudCrossMUBannerAudit, con);
+        super.executeMaterialBannerAudit(properties, cloudCrossMUBannerAudit, con, pubincId);
 
         CloudCrossMUAdvInfo muAdvInfo = new CloudCrossMUAdvInfo();
-        super.executeAdvInfoUpload(properties, muAdvInfo, con);
+        super.executeAdvInfoUpload(properties, muAdvInfo, con, pubincId);
         CloudCrossMUAdvInfoAudit muAdvInfoAudit = new CloudCrossMUAdvInfoAudit();
-        super.executeMaterialAdvInfoAudit(properties, muAdvInfoAudit, con);
+        super.executeMaterialAdvInfoAudit(properties, muAdvInfoAudit, con, pubincId);
     }
 }
