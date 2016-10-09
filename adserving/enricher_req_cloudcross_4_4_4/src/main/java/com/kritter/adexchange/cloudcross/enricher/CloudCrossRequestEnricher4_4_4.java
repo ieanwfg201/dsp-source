@@ -181,24 +181,23 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
                 userAgent = cloudCrossBidRequestDeviceDTO.getDeviceUserAgent();
             }
 
-            if (null == userAgent)
-                throw new Exception("User Agent absent in bidrequest inside CloudCrossRequestEnricher, cannot proceed....");
-
-            HandsetMasterData handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
-
-            if (null == handsetMasterData) {
-                this.logger.error("Device detection failed inside CloudCrossRequestEnricher, can not proceed further");
-                request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_UNDETECTED);
-                return request;
-            }
-            if (handsetMasterData.isBot()) {
-                this.logger.error("Device detected is BOT inside CloudCrossRequestEnricher, can not proceed further");
-                request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
-                return request;
+            HandsetMasterData handsetMasterData = null;
+            if(userAgent != null && !userAgent.isEmpty()){
+                handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
             }
 
-            logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
-
+            if(null == handsetMasterData)
+            {
+                this.logger.debug("Device detection failed inside CloudCrossRequestEnricher, proceeding with  undetected handset");
+            }else {
+                logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
+                if(handsetMasterData.isBot())
+                {
+                    this.logger.error("Device detected is BOT inside CloudCrossRequestEnricher, cannot proceed further");
+                    request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
+                    return request;
+                }
+            }
             request.setHandsetMasterData(handsetMasterData);
 
             /*******************************DETECT COUNTRY CARRIER USING MNC MCC or IP*****************************/
@@ -218,9 +217,13 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
 
             /******************************************* ip extraction and connection type detection*********************/
             String ip = cloudCrossBidRequestDeviceDTO.getIpV4AddressClosestToDevice();
-            if (null == ip) {
-                logger.error("Country and InternetServiceProvider could not be detected inside CloudCrossRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
-                throw new Exception("Country and InternetServiceProvider could not be detected inside CloudCrossRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
+            if(null == ip || ip.isEmpty())
+            {
+                ip=ip.trim();
+                ip = cloudCrossBidRequestDeviceDTO.getIpV6Address();
+                if(ip == null || ip.isEmpty()){
+                    logger.debug("Country and InternetServiceProvider could not be detected inside YoukuRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
+                }
             }
 
             request.setIpAddressUsedForDetection(ip);

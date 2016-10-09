@@ -21,6 +21,7 @@ import com.kritter.constants.MaterialType;
 import com.kritter.material_upload.common.banner.MUBanner;
 import com.kritter.material_upload.common.urlpost.UrlPost;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
+import com.kritter.naterial_upload.youku.entity.ReturnResultMessage;
 import com.kritter.naterial_upload.youku.entity.YoukuMaterialUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuMultipleMaterialUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuQueryEntity;
@@ -251,21 +252,13 @@ public class YoukuMUBanner implements MUBanner {
 			pstmt = con.prepareStatement(YoukuBannerQuery.selectforUpload);
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
-			List<YoukuMaterialUploadEntity> materialList = new LinkedList<YoukuMaterialUploadEntity>();
-			StringBuffer sBuff = new StringBuffer("");
-			boolean isFirst=true;
 			while(rset.next()){
 				//System.out.println(rset.getString("info"));
+				List<YoukuMaterialUploadEntity> materialList = new LinkedList<YoukuMaterialUploadEntity>();
 				materialList.add(YoukuMaterialUploadEntity.getObject(rset.getString("info")));
-				if(isFirst){
-					isFirst=false;
-				}else{
-					sBuff.append(",");
-				}
-				sBuff.append(rset.getInt("internalId"));
-			}
-			if(materialList.size()>0){
+				int internalId =  rset.getInt("internalId");
 				boolean isSuccess=false;
+				String errorCode="";
 				try{
 					YoukuMultipleMaterialUploadEntity ymmue = new YoukuMultipleMaterialUploadEntity();
 					ymmue.setMaterial(materialList);
@@ -283,22 +276,37 @@ public class YoukuMUBanner implements MUBanner {
 					if(out != null){
 						ReturnResultCode rrc = ReturnResultCode.getObject(out);
 						if(rrc.getResult()==0){
-							cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
-							cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-							cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-							cpstmt.executeUpdate();
-							isSuccess=true;
+							ReturnResultMessage rrm = ReturnResultMessage.getObject(out);
+							if(rrm.getResult()==0 && (rrm.getMessage() == null || rrm.getMessage().size()<1 )){
+								cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatus.replaceAll("<id>", internalId+""));
+								cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+								cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+								cpstmt.setString(3, "");
+								cpstmt.executeUpdate();
+								isSuccess=true;
+
+							}else{
+								if(rrm.getMessage() != null && rrm.getMessage().size()>0 ){
+									errorCode=rrm.getMessage().keySet().iterator().next();
+								}else{
+									errorCode = rrm.getResult()+" -- ReturnCode";
+								}
+							}
+						}else{
+							errorCode = rrc.getResult()+" -- ReturnCode";
 						}
 					}
 				}catch(Exception e1){
 					LOG.error(e1.getMessage(),e1);
 				}
 				if(!isSuccess){
-					cpstmt1 = con.prepareStatement(YoukuBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
+					cpstmt1 = con.prepareStatement(YoukuBannerQuery.updatetBannerStatus.replaceAll("<id>", internalId+""));
 					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
 					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+					cpstmt1.setString(3, errorCode);
 					cpstmt1.executeUpdate();
 				}
+
 			}
 		}catch(Exception e){
 			setPerformTransaction(false);

@@ -10,6 +10,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritter_material_upload_uploader</name>
   <dependencies>
     <dependency>
+        <groupId>com.kritter.entity.account</groupId>
+        <artifactId>kritter_entity_account</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.entity.video_props</groupId>
         <artifactId>kritter_entity_video_props</artifactId>
         <version>1.0.0</version>
@@ -23,6 +28,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <groupId>com.kritter.material_upload</groupId>
         <artifactId>material_upload_youku</artifactId>
         <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.kritter.material_upload</groupId>
+      <artifactId>material_upload_cloudcross</artifactId>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
         <groupId>com.kritter.material_upload</groupId>
@@ -106,8 +116,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <version>2.3.2</version>
         <configuration>
           <compilerArgument>-Xlint</compilerArgument>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
       <plugin>

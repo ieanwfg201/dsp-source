@@ -3,10 +3,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="db-manager" class="com.kritter.utils.databasemanager.DatabaseManager"> 
+    <bean id="db-manager" class="com.kritter.utils.databasemanager.DatabaseManager">
         <constructor-arg index="0" value="jdbc/AdserverDatabase"/>
     </bean>
-    
+
     <bean id="server_config" class="com.kritter.utils.common.ServerConfig">
         <constructor-arg index="0" value="/var/data/kritter/server.properties"/>
     </bean>
@@ -59,6 +59,7 @@
             <map>
                 <entry key="cloudcross" value-ref="cloud_cross_win_price_decry_utils"/>
                 <entry key="youku"><ref bean="youku_exchange_utils"/></entry>
+                <entry key="cloudcross" value-ref="cloud_cross_win_price_decry_utils"/>
             </map>
         </constructor-arg>
         <constructor-arg index="9"><ref bean="site_cache"/></constructor-arg>

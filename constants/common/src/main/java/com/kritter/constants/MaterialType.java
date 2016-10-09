@@ -7,7 +7,8 @@ public enum MaterialType
 {
             ADPOSITION(0,"ADPOSITION"),
             BANNERUPLOAD(1,"BANNERUPLOAD"),
-            VIDEOUPLOAD(2,"VIDEOUPLOAD");
+            VIDEOUPLOAD(2,"VIDEOUPLOAD"),
+            ADVINFOUPLOAD(3,"ADVINFOUPLOAD");
 
             private int code;
             private String name;

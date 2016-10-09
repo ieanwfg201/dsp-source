@@ -17,21 +17,25 @@ public class YoukuNonWebVideoUploader {
     private String videoid;
     public void upload(String client_id,String client_secret,String refresh_token,
     		String token_url, String fullFileName,String title,String tag) {
-        String result = "";
-        HashMap<String, String> params, uploadInfo;
-        params = new HashMap<String, String>();
-        TokenNonWeb tokenNonWeb = new TokenNonWeb();
-        tokenNonWeb.refreshToken(client_id, client_secret, refresh_token, token_url);
-        params.put("access_token", tokenNonWeb.getAccessToken());
-        uploadInfo = new HashMap<String, String>();
-        uploadInfo.put("file_name", fullFileName);       // file name: full path of file, mandatory
-        uploadInfo.put("title", title);     // Title: mandatory
-        uploadInfo.put("tags", tag);          // Tags：mandatory
-        uploadInfo.put("public_type", "all");       //video visibility（all：public（default），friend：friend only，password：password required to watch the video）
-        uploader = new YoukuUploader(client_id, client_secret);
-        result = uploader.upload(params, uploadInfo, fullFileName, false); // 4th param：boolean（true：show progress false：dont show progress）
-        setVideoid(result);
-        LOG.info(result); //video id
+    	try{
+    		String result = "";
+    		HashMap<String, String> params, uploadInfo;
+    		params = new HashMap<String, String>();
+    		TokenNonWeb tokenNonWeb = new TokenNonWeb();
+    		tokenNonWeb.refreshToken(client_id, client_secret, refresh_token, token_url);
+    		params.put("access_token", tokenNonWeb.getAccessToken());
+    		uploadInfo = new HashMap<String, String>();
+    		uploadInfo.put("file_name", fullFileName);       // file name: full path of file, mandatory
+    		uploadInfo.put("title", title);     // Title: mandatory
+    		uploadInfo.put("tags", tag);          // Tags：mandatory
+    		uploadInfo.put("public_type", "all");       //video visibility（all：public（default），friend：friend only，password：password required to watch the video）
+    		uploader = new YoukuUploader(client_id, client_secret);
+    		result = uploader.upload(params, uploadInfo, fullFileName, false); // 4th param：boolean（true：show progress false：dont show progress）
+    		setVideoid(result);
+    		LOG.info(result); //video id
+    	}catch(Exception e){
+    		LOG.error(e.getMessage(),e);
+    	}
     }
 
     public static void main(String args[]){

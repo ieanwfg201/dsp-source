@@ -20,9 +20,7 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
     public static String ADVERTISER_BY_IDS = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/get" + CREATIVE_DSPID_TOKEN;
     public static String ADVERTISER_GET_STATE_BY_IDS = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-advertiser/queryState" + CREATIVE_DSPID_TOKEN;
 
-    static {
-        MAPPER.setSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY);
-    }
+
 
     @Override
     public List<CloudCrossResponse> add(ArrayList<CloudCrossAdvertiserEntity> cloudCrossAdvertisers) {

@@ -549,7 +549,11 @@ public class ThriftLogger implements Job {
         else if(INVENTORY_SOURCE.RTB_EXCHANGE.getCode() == request.getInventorySource())
         {
             return InventorySource.RTB_EXCHANGE;
+        }else  if(INVENTORY_SOURCE.OPENRTB_AGGREGATOR.getCode() == request.getInventorySource())
+        {
+            return InventorySource.OPENRTB_AGGREGATOR;
         }
+
 
         return null;
     }

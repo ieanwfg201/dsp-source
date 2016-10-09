@@ -16,5 +16,6 @@ public enum EntityType {
 	adxbasedexchangesmetadata,
 	adpositionget,
 	materialbannerupload,
-	materialvideoupload
+	materialvideoupload,
+	materialadvinfoupload
 }

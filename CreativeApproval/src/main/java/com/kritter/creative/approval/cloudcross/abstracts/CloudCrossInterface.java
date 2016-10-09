@@ -5,6 +5,7 @@ import com.kritter.utils.http_client.SynchronousHttpClient;
 import com.kritter.utils.http_client.entity.HttpRequest;
 import com.kritter.utils.http_client.entity.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +17,9 @@ import java.util.List;
 @SuppressWarnings("unused")
 public abstract class CloudCrossInterface<T,E,W> {
     public static ObjectMapper MAPPER = new ObjectMapper();
-
+    static {
+        MAPPER.setSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY);
+    }
     public static String CREATIVE_DSPID_TOKEN = "?dspId=6&token=qaw6hu8x1d7m5k";
 
 

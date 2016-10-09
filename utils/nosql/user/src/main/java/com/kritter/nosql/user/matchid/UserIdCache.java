@@ -47,6 +47,7 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
     @Getter @NonNull
     private List<ExternalUserIdType> priorityList;
     private ExecutorService updatorService;
+    private List<ExternalUserIdType> idTypesNotInPriorityList;
 
     /**
      * @param name Name of the cache
@@ -73,6 +74,12 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
         this.attributeNameSet.add(this.attributeNameUserId);
         this.priorityList = priorityList;
         this.updatorService = Executors.newFixedThreadPool(threadCount);
+        this.idTypesNotInPriorityList = new ArrayList<ExternalUserIdType>();
+        for(ExternalUserIdType userIdType : ExternalUserIdType.values()) {
+            if(!priorityList.contains(userIdType)) {
+                idTypesNotInPriorityList.add(userIdType);
+            }
+        }
     }
 
 
@@ -92,6 +99,18 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
         logger.debug("user ids from request :");
 
         for(ExternalUserIdType type : priorityList) {
+            for(ExternalUserId userId : userIds) {
+                if(userId.getIdType() == type) {
+                    String userIdStr = userId.toString();
+                    logger.debug("Found user id : {} with type {}, return internal user id : {} ", userId.getUserId(),
+                            type.getTypeName(), userId.toString());
+                    return userId;
+                }
+            }
+        }
+
+        for(ExternalUserIdType type : idTypesNotInPriorityList) {
+            logger.debug("Id type not present in priority list, type {}.", type.getTypeName());
             for(ExternalUserId userId : userIds) {
                 if(userId.getIdType() == type) {
                     String userIdStr = userId.toString();

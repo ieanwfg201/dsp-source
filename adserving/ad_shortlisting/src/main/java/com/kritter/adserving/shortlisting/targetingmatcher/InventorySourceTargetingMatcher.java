@@ -72,7 +72,8 @@ public class InventorySourceTargetingMatcher implements TargetingMatcher {
                                                     (request.getInventorySource() == INVENTORY_SOURCE.DIRECT_PUBLISHER.getCode()) ||
                                                             (request.getInventorySource() == INVENTORY_SOURCE.AGGREGATOR.getCode())       ||
                                                             (request.getInventorySource() == INVENTORY_SOURCE.DCP.getCode())              ||
-                                                            (request.getInventorySource() == INVENTORY_SOURCE.SSP.getCode())
+                                                            (request.getInventorySource() == INVENTORY_SOURCE.SSP.getCode()) ||
+                                                            (request.getInventorySource() == INVENTORY_SOURCE.OPENRTB_AGGREGATOR.getCode())
                                             )
                             )
                     )

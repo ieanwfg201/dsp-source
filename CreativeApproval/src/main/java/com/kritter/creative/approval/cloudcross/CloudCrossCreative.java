@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by hamlin on 16-7-29.
  */
-public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEntity, CloudCrossBannerResponseEntity,CloudCrossBannerStateResponseEntiry> {
+public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEntity, CloudCrossBannerResponseEntity, CloudCrossBannerStateResponseEntiry> {
     public static String CREATIVE_ADD_URL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-banner/add" + CREATIVE_DSPID_TOKEN;
     public static String CREATIVE_UPDATE_URL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-banner/update" + CREATIVE_DSPID_TOKEN;
     public static String CREATIVE_GET_ALL = "http://test.datacross.cn:8080/ssp_web/dsp/main/dsp-banner/getAll" + CREATIVE_DSPID_TOKEN;
@@ -22,8 +22,13 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
     @Override
     public List<CloudCrossResponse> add(ArrayList<CloudCrossBannerEntity> banner) {
         try {
-            String cloudCrossResponse = getCloudCrossResponse(CREATIVE_ADD_URL, "request=" + MAPPER.writeValueAsString(banner));
-            System.out.println(cloudCrossResponse);
+            String body = "request=" + MAPPER.writeValueAsString(banner);
+            String cloudCrossResponse = getCloudCrossResponse(CREATIVE_ADD_URL, body);
+            System.out.println("====================");
+            System.out.println("url: " + CREATIVE_ADD_URL);
+            System.out.println("body: " + body);
+            System.out.println("response: " + cloudCrossResponse);
+            System.out.println("====================");
             return MAPPER.readValue(cloudCrossResponse, new TypeReference<List<CloudCrossResponse>>() {
             });
         } catch (Exception e) {
@@ -45,20 +50,9 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
         return null;
     }
 
-    //    public static CloudCrossResponse creativeGetAllBannerByAdvertiserIds(List<String> ids) {
-//        String idsStr = buildBody(ids, "advertiserIds");
-//        try {
-//            return getCloudCrossResponse(CREATIVE_GET_ALL_BY_ADVERTISERIDS, idsStr);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-    // TODO 这里的返回值应该是 list<banner>,但是现在不清楚返回的json结构
 
     /**
-     *
-     * @param ids  bannerids or advertiserIds
+     * @param ids          bannerids or advertiserIds
      * @param isByBannerId if true ,ids is bannerids, else ids is advertiserIds
      * @return
      */
@@ -81,7 +75,8 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
         {
             String response = getCloudCrossResponse(url, "request=" + idsStr);
             System.out.println(response);
-            return (List<CloudCrossBannerResponseEntity>) MAPPER.readValue(response, new TypeReference<List<CloudCrossBannerResponseEntity>>() {});
+            return (List<CloudCrossBannerResponseEntity>) MAPPER.readValue(response, new TypeReference<List<CloudCrossBannerResponseEntity>>() {
+            });
         } catch (
                 IOException e
                 )
@@ -99,7 +94,8 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
         try {
             String cloudCrossResponse = getCloudCrossResponse(CREATIVE_GET_ALL_BANNERIDS_STATE, "request=" + idsStr);
             System.out.println(cloudCrossResponse);
-            return (List<CloudCrossBannerStateResponseEntiry>) MAPPER.readValue(cloudCrossResponse, new TypeReference<List<CloudCrossBannerStateResponseEntiry>>() {});
+            return (List<CloudCrossBannerStateResponseEntiry>) MAPPER.readValue(cloudCrossResponse, new TypeReference<List<CloudCrossBannerStateResponseEntiry>>() {
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

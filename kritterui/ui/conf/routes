@@ -423,6 +423,10 @@ GET   /adxbasedexchanges/videoupload/list                           controllers.
 GET   /adxbasedexchanges/videoupload/updatesingle/:id/:action       controllers.adxbasedexchanges.MaterialVideoUploadController.updatesingle(id:Int, action:String)
 GET   /adxbasedexchanges/videoupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialVideoUploadController.updatemultiple(action:String, ids: Option[String])
 
+GET   /adxbasedexchanges/advinfoupload/list                         controllers.adxbasedexchanges.MaterialAdvInfoController.list(exchange: Option[String])
+GET   /adxbasedexchanges/advinfoupload/updatesingle/:id/:action     controllers.adxbasedexchanges.MaterialAdvInfoController.updatesingle(id:Int, action:String)
+GET   /adxbasedexchanges/advinfoupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialAdvInfoController.updatemultiple(action:String, ids: Option[String])
+
 
 #PMP
 GET    /pmp/default                                            controllers.deal.DealController.getDealForm()

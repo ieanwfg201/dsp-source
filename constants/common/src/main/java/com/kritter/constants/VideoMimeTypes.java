@@ -43,4 +43,13 @@ public enum VideoMimeTypes {
     public static VideoMimeTypes getEnum(int i){
         return map.get(i);
     }
+    public static Integer getCodeFromName(String s){
+    	for(Integer i:map.keySet()){
+    		VideoMimeTypes m = map.get(i);
+    		if(m.getMime().equals(s)){
+    			return i;
+    		}
+    	}
+    	return null;
+    }
 }
