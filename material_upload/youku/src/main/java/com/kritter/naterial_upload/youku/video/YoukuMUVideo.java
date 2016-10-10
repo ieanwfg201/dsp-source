@@ -380,7 +380,15 @@ public class YoukuMUVideo implements MUVideo {
 						cpstmt2.setInt(1, localEntity.getVideoInfoId());
 						ResultSet cpstmt2Rset = cpstmt2.executeQuery();
 						if(cpstmt2Rset.next()){
-							VideoInfoExt viext = VideoInfoExt.getObject(cpstmt2Rset.getString("ext"));
+							VideoInfoExt viext = null;
+							try{
+								String ext=cpstmt2Rset.getString("ext");
+								if(ext != null && !ext.isEmpty()){
+									viext = VideoInfoExt.getObject(ext);
+								}
+							}catch(Exception e ){
+								LOG.error(e.getMessage(),e);
+							}
 							if(viext ==null){
 								viext=new VideoInfoExt();
 							}
