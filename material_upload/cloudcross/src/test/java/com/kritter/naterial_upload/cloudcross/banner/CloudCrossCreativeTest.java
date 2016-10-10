@@ -5,15 +5,17 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by hamlin on 16-9-22.
  */
+@SuppressWarnings("unused")
 public class CloudCrossCreativeTest {
     private String dspid;
     private String token;
@@ -26,23 +28,29 @@ public class CloudCrossCreativeTest {
     private CloudCrossCreative cloudCrossCreative;
 
 //    @Before
-    public void init(Properties properties) {
-        setDspid(properties.getProperty("cloudcross_dsp_id").toString());
-        setToken(properties.getProperty("cloudcross_token").toString());
-        setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId").toString()));
+    public void init() {
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileReader(new File("/home/hamlin/workspace/optimad/material_upload/uploader/conf/kritter/material.properties")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        setDspid(properties.getProperty("cloudcross_dsp_id"));
+        setToken(properties.getProperty("cloudcross_token"));
+        setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId")));
         dateNow = new Date();
 
         String creative_dspid_token = "?dspId=" + getDspid() + "&token=" + getToken();
-        String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix").toString();
-        String cloudcross_prefix_banner_add = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_add").toString() + creative_dspid_token;
-        String cloudcross_prefix_banner_update = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_update").toString() + creative_dspid_token;
-        String cloudcross_prefix_banner_status = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_status").toString() + creative_dspid_token;
+        String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix");
+        String cloudcross_prefix_banner_add = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_add") + creative_dspid_token;
+        String cloudcross_prefix_banner_update = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_update") + creative_dspid_token;
+        String cloudcross_prefix_banner_status = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_status") + creative_dspid_token;
         this.cloudCrossCreative = new CloudCrossCreative(cloudcross_prefix_banner_add, cloudcross_prefix_banner_update, null, null, cloudcross_prefix_banner_status);
 
 
     }
 
-//    @Test
     public void testAdd() throws Exception {
         ArrayList<CloudCrossBannerEntity> list = new ArrayList<>();
         CloudCrossBannerEntity cloudCrossBannerEntity = new CloudCrossBannerEntity();
@@ -64,7 +72,6 @@ public class CloudCrossCreativeTest {
         System.out.println(new ObjectMapper().writeValueAsString(cloudCrossCreative.add(list)));
     }
 
-//    @Test
     public void testUpdate() throws Exception {
         ArrayList<CloudCrossBannerEntity> list = new ArrayList<>();
         CloudCrossBannerEntity cloudCrossBannerEntity = new CloudCrossBannerEntity();
@@ -79,7 +86,6 @@ public class CloudCrossCreativeTest {
         System.out.println(new ObjectMapper().writeValueAsString(cloudCrossCreative.update(list)));
     }
 
-//    @Test
     public void testGetAllByIds() throws Exception {
         ArrayList<String> list = new ArrayList<>();
         list.add("68");
@@ -93,8 +99,8 @@ public class CloudCrossCreativeTest {
 //    @Test
     public void testGetStateByIds() throws Exception {
         ArrayList<String> list = new ArrayList<>();
-        list.add("33");
-        list.add("34");
+//        list.add("33");
+        list.add("41");
         System.out.println(new ObjectMapper().writeValueAsString(cloudCrossCreative.getStateByIds(list)));
     }
 

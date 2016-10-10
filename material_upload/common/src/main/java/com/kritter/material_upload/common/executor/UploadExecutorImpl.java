@@ -229,7 +229,7 @@ public abstract class UploadExecutorImpl implements UploadExecutor {
 	@Override
 	public void executeAdvInfoUpload(Properties properties, MUAdvInfo advInfo,Connection con,int pubincId) {
 		if(!this.advertiser_upload){
-			LOG.debug("PubIncId {} - ADVINFOUPLOAD is not set in METADATA",pubincId);
+			LOG.debug("ADVINFOUPLOAD is not set in METADATA");
 			return;
 		}
 

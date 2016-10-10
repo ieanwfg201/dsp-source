@@ -6,13 +6,11 @@ import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertieseStateRe
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiseResponseEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiserEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,13 +35,14 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
 
     @Override
     public List<CloudCrossResponse> add(List<CloudCrossAdvertiserEntity> cloudCrossAdvertisers) {
-        String response = null;
+        String response;
         try {
             LOG.info("MATERIAL BANNER UPLOAD POSTBODY");
             String body = "request=" + MAPPER.writeValueAsString(cloudCrossAdvertisers);
             LOG.info(body);
             response = getCloudCrossResponse(ADVERTISER_ADD_URL, body);
 
+            //noinspection unchecked
             return (List<CloudCrossResponse>) MAPPER.readValue(response, new TypeReference<List<CloudCrossResponse>>() {
             });
         } catch (Exception e) {
@@ -54,10 +53,11 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
 
     @Override
     public List<CloudCrossResponse> update(List<CloudCrossAdvertiserEntity> cloudCrossAdvertiser) {
-        String response = null;
+        String response;
         try {
             response = getCloudCrossResponse(ADVERTISER_UPDATE_URL, "request=" + MAPPER.writeValueAsString(cloudCrossAdvertiser));
 //            return MAPPER.readValue(response, CloudCrossResponse.class);
+            //noinspection unchecked
             return (List<CloudCrossResponse>) MAPPER.readValue(response, new TypeReference<List<CloudCrossResponse>>() {
             });
         } catch (IOException e) {
@@ -75,13 +75,13 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
 //        }
 //        return null;
 //    }
-    // TODO 这里的返回值应该是 list<banner>,但是现在不清楚返回的json结构
 
     /**
      * @param ids          bannerids or advertiserIds
      * @param isByBannerId if true ,ids is bannerids, else ids is advertiserIds
      * @return
      */
+    @SuppressWarnings("JavaDoc")
     @Override
     public List<CloudCrossAdvertiseResponseEntity> queryByIds(List<String> ids, boolean isByBannerId) {
         String idsStr = null;
@@ -94,6 +94,7 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
         }
         try {
             String response = getCloudCrossResponse(url, idsStr);
+            //noinspection unchecked
             return (List<CloudCrossAdvertiseResponseEntity>) MAPPER.readValue(response, new TypeReference<List<CloudCrossAdvertiseResponseEntity>>() {
             });
         } catch (IOException e) {
@@ -109,6 +110,7 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
             idsStr = buildBody(ids, "advertiserIds");
         try {
             String cloudCrossResponse = getCloudCrossResponse(ADVERTISER_GET_STATE_BY_IDS, "request=" + idsStr);
+            //noinspection unchecked
             return (List<CloudCrossAdvertieseStateResponseEntiry>) MAPPER.readValue(cloudCrossResponse, new TypeReference<List<CloudCrossAdvertieseStateResponseEntiry>>() {
             });
         } catch (IOException e) {

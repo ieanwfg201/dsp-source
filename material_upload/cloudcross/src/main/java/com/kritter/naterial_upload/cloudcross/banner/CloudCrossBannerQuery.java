@@ -41,7 +41,7 @@ public class CloudCrossBannerQuery {
 					"      b.last_modified, " +
 					"      c.last_modified, " +
 					"      d.last_modified " +
-					"    ) > '2016-01-01') AS j1  " +
+					"    ) > ?) AS j1  " +
 					"  JOIN creative_banner AS j2  " +
 					"    ON FIND_IN_SET( " +
 					"      j2.id, " +
@@ -53,9 +53,9 @@ public class CloudCrossBannerQuery {
 					"    )) AS result  " +
 					"  LEFT JOIN creative_banner AS cb ON cb.id = result.`bannerId` " +
 					"  LEFT JOIN creative_slots AS cs ON cs.id = cb.slot_id";
-	
-	
-	
+
+
+
 	public static final String  getBannerUpload = "SELECT bu.*,cs.`width`,cs.`height`" +
 			" FROM (SELECT * FROM banner_upload WHERE pubIncId=? AND advIncId=? AND campaignId=? AND adId=? AND creativeId=? AND bannerId=? ) AS bu" +
 			"  LEFT JOIN creative_banner AS cb ON cb.id = bu.`bannerId`" +
@@ -69,18 +69,25 @@ public class CloudCrossBannerQuery {
 			+ ",adStatus=?,creativeStatus=?,last_modified=?,info=? "
 			+ " where internalid=?";
 	public static final String  selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=2";
-	
+
 	public static final String  updatetBannerStatus = "update banner_upload"
-			+ " set adxbasedexhangesstatus=?,last_modified=? "
+			+ " set adxbasedexhangesstatus=?,last_modified=?,info=? "
 			+ " where internalid in (<id>)";
 	public static final String  updatetBannerStatusMessage = "update banner_upload"
 			+ " set adxbasedexhangesstatus=?,message=?,last_modified=? "
 			+ " where internalid in (<id>)";
-	public static final String  selectforAudit = "select * from banner_upload where pubIncId=? and (adxbasedexhangesstatus=7 or adxbasedexhangesstatus=12) ";
+	public static final String  selectforAudit = "select * from banner_upload where pubIncId=?  AND adxbasedexhangesstatus IN (7, 10, 12)";
 
 	public static final String  insert_material_state= "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
 	public static final String  update_material_state= "update material_upload_state set last_modified=? where materialtype=? and pubIncId=?";
 	public static void main(String args[]){
 		System.out.println(selectQuery);
 	}
+	public static final String removedCreativesQuery = "select c.internalid as internalid from creative_banner as a , "
+			+ "creative_container as b,banner_upload as c "
+			+ "where a.account_guid=b.account_guid and b.format_id=2 and "
+			+ "not FIND_IN_SET(a.id,REPLACE(REPLACE(b.resource_uri_ids,'[',''),']','')) and "
+			+ "GREATEST(a.last_modified,b.last_modified) >= ? and a.id=c.bannerId ";
+	public static final String updateRemovedCreatives = "update banner_upload set adxbasedexhangesstatus=14 where internalid=?";
+
 }

@@ -3,10 +3,8 @@ package com.kritter.naterial_upload.cloudcross.banner;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
 import com.kritter.material_upload.common.banner.MUBanner;
-import com.kritter.material_upload.common.urlpost.UrlPost;
 import com.kritter.naterial_upload.cloudcross.advertiser.CloudCrossAdvertiser;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossBannerEntity;
-import com.kritter.naterial_upload.cloudcross.entity.CloudCrossMultipleMaterialUploadEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossQueryEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
 import lombok.Getter;
@@ -197,7 +195,7 @@ public class CloudCrossMUBanner implements MUBanner {
 //					CloudCrossMaterialUploadEntity ymue=new CloudCrossMaterialUploadEntity(materialurl, cqe.getLanding_url(), cqe.getAdvName(), campaignStartDate, campaignEndDate, null);
                     CloudCrossBannerEntity bannerEntity = new CloudCrossBannerEntity();
                     bannerEntity.setAdvertiserId(cqe.getAdvId());
-                    bannerEntity.setBannerId(cqe.getBannerId());
+                    bannerEntity.setBannerId(null);
                     bannerEntity.setHeight(cqe.getHeight());
                     bannerEntity.setWidth(cqe.getWidth());
                     bannerEntity.setPath(materialurl);
@@ -208,7 +206,7 @@ public class CloudCrossMUBanner implements MUBanner {
                     cpstmt.setInt(2, cqe.getCampaignStatus());
                     cpstmt.setInt(3, cqe.getAdStatus());
                     cpstmt.setInt(4, cqe.getCreativeStatus());
-                    pstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
+                    cpstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
                     if (newInfoStr.equals(info)) {
                         cpstmt.setInt(1, adxbasedexhangesstatus);
                         cpstmt.setString(6, info);
@@ -234,7 +232,7 @@ public class CloudCrossMUBanner implements MUBanner {
                     cpstmt.setTimestamp(11, new Timestamp(dateNow.getTime()));
                     CloudCrossBannerEntity bannerEntity = new CloudCrossBannerEntity();
                     bannerEntity.setAdvertiserId(cqe.getAdvId());
-                    bannerEntity.setBannerId(cqe.getBannerId());
+                    bannerEntity.setBannerId(null);
                     bannerEntity.setHeight(cqe.getHeight());
                     bannerEntity.setWidth(cqe.getWidth());
                     bannerEntity.setPath(materialurl);
@@ -283,44 +281,34 @@ public class CloudCrossMUBanner implements MUBanner {
             ResultSet rset = pstmt.executeQuery();
             List<CloudCrossBannerEntity> materialList = new LinkedList<>();
             StringBuffer sBuff = new StringBuffer("");
-            boolean isFirst = true;
             while (rset.next()) {
                 //System.out.println(rset.getString("info"));
-                materialList.add(objectMapper.readValue(rset.getString("info"), CloudCrossBannerEntity.class));
-                if (isFirst) {
-                    isFirst = false;
-                } else {
-                    sBuff.append(",");
-                }
-                sBuff.append(rset.getInt("internalId"));
-            }
-            if (materialList.size() > 0) {
+                CloudCrossBannerEntity info = objectMapper.readValue(rset.getString("info"), CloudCrossBannerEntity.class);
+                materialList.add(info);
+
                 boolean isSuccess = false;
-                try {
-                    //[{"status":0,"success":{"message":"插入成功","index":1,"bannerId":32,"code":200}},{"status":0,"success":{"message":"插入成功","index":2,"code":200}}]
-                    List<CloudCrossResponse> add = cloudCrossCreative.add(materialList);
-                    LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
-                    String out = objectMapper.writeValueAsString(add);
-                    LOG.info(out);
-                    if (out != null && add != null && add.size() > 0) {
-//                        ReturnResultCode rrc = ReturnResultCode.getObject(out);
-//                        if (rrc.getResult() == 0) {
-                        CloudCrossResponse cloudCrossResponse = add.get(0);
-                        if (cloudCrossResponse != null && cloudCrossResponse.getSuccess() != null && cloudCrossResponse.getSuccess().getCode() == 200) {
-                            cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
-                            cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                            cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                            cpstmt.executeUpdate();
-                            isSuccess = true;
-                        }
+                //[{"status":0,"success":{"message":"插入成功","index":1,"bannerId":32,"code":200}},{"status":0,"success":{"message":"插入成功","index":2,"code":200}}]
+                List<CloudCrossResponse> add = cloudCrossCreative.add(materialList);
+                LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
+                String out = objectMapper.writeValueAsString(add);
+                LOG.info(out);
+                if (out != null && add != null && add.size() > 0) {
+                    CloudCrossResponse cloudCrossResponse = add.get(0);
+                    if (cloudCrossResponse != null && cloudCrossResponse.getSuccess() != null && cloudCrossResponse.getSuccess().getCode() == 200) {
+                        info.setBannerId(cloudCrossResponse.getSuccess().getBannerId());
+                        cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", Integer.toString(rset.getInt("internalId"))));
+                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+                        cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                        cpstmt.setString(3, objectMapper.writeValueAsString(info));
+                        cpstmt.executeUpdate();
+                        isSuccess = true;
                     }
-                } catch (Exception e1) {
-                    LOG.error(e1.getMessage(), e1);
                 }
                 if (!isSuccess) {
                     cpstmt1 = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
                     cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
                     cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                    cpstmt.setString(3, objectMapper.writeValueAsString(info));
                     cpstmt1.executeUpdate();
                 }
             }
@@ -385,6 +373,43 @@ public class CloudCrossMUBanner implements MUBanner {
             }
         }
 
+    }
+
+    @Override
+    public void removeDisassociatedCreative(Properties properties, Connection con) {
+        if(!isPerformTransaction()){
+            return;
+        }
+        PreparedStatement pstmt = null;
+        PreparedStatement updatestmt = null;
+        try{
+            pstmt = con.prepareStatement(CloudCrossBannerQuery.removedCreativesQuery);
+            pstmt.setString(1, getStartDateStr());
+            ResultSet rset = pstmt.executeQuery();
+            while(rset.next()){
+                updatestmt=con.prepareStatement(CloudCrossBannerQuery.updateRemovedCreatives);
+                updatestmt.setInt(1, rset.getInt("internalid"));
+                updatestmt.executeUpdate();
+            }
+        }catch(Exception e){
+            setPerformTransaction(false);
+            LOG.error(e.getMessage(),e);
+        }finally{
+            if(pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+            if(updatestmt != null){
+                try {
+                    updatestmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+        }
     }
 
 }

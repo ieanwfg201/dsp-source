@@ -33,15 +33,15 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
 
     @Override
     public void init(Properties properties) {
-        setDspid(properties.getProperty("cloudcross_dsp_id").toString());
-        setToken(properties.getProperty("cloudcross_token").toString());
-        setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId").toString()));
+        setDspid(properties.getProperty("cloudcross_dsp_id"));
+        setToken(properties.getProperty("cloudcross_token"));
+        setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId")));
 
         String creative_dspid_token = "?dspId=" + getDspid() + "&token=" + getToken();
-        String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix").toString();
-        String cloudcross_prefix_banner_add = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_add").toString() + creative_dspid_token;
-        String cloudcross_prefix_banner_update = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_update").toString() + creative_dspid_token;
-        String cloudcross_prefix_banner_status = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_status").toString() + creative_dspid_token;
+        String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix");
+        String cloudcross_prefix_banner_add = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_add") + creative_dspid_token;
+        String cloudcross_prefix_banner_update = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_update") + creative_dspid_token;
+        String cloudcross_prefix_banner_status = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_banner_status") + creative_dspid_token;
         this.cloudCrossCreative = new CloudCrossCreative(cloudcross_prefix_banner_add, cloudcross_prefix_banner_update, null, null, cloudcross_prefix_banner_status);
 
 
@@ -59,6 +59,10 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
             Timestamp ts = new Timestamp(new Date().getTime());
             while (rset.next()) {
                 CloudCrossBannerEntity ccbe = objectMapper.readValue(rset.getString("info"), CloudCrossBannerEntity.class);
+                if (ccbe == null || ccbe.getBannerId() == null || ccbe.getBannerId() == 0) {
+                    LOG.warn("banner id is null or zero!");
+                    continue;
+                }
                 if (ccbe != null) {
                     try {
                         List<String> ids = new ArrayList<>();
@@ -72,7 +76,8 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
                             // 状态（0通过，1待检查，2检查未通过）
                             CloudCrossBannerStateResponseEntiry stateResponseEntiry = stateByIds.get(0);
                             if (stateResponseEntiry != null && StringUtils.isNotEmpty(stateResponseEntiry.getStateValue())) {
-                                cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatusMessage);
+                                String updatetBannerStatusMessage = CloudCrossBannerQuery.updatetBannerStatusMessage.replace("<id>", Integer.toString(rset.getInt("internalid")));
+                                cpstmt = con.prepareStatement(updatetBannerStatusMessage);
                                 switch (stateResponseEntiry.getState()) {
                                     case 0:
                                         cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
@@ -97,6 +102,8 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
                     } catch (Exception e1) {
                         LOG.error(e1.getMessage(), e1);
                     }
+                } else {
+                    LOG.warn("dont have approving!");
                 }
             }
         } catch (Exception e) {
