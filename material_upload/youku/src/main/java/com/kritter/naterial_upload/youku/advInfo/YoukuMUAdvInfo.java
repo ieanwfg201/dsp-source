@@ -107,8 +107,10 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 		PreparedStatement pstmt = null;
 		try{
 			pstmt = con.prepareStatement(YoukuAdvInfoQuery.selectQuery);
-			pstmt.setString(1, getStartDateStr());
-			pstmt.setString(2, getStartDateStr());
+			pstmt.setInt(1, getPubIncId());
+			pstmt.setInt(2, getPubIncId());
+			pstmt.setString(3, getStartDateStr());
+			pstmt.setString(4, getStartDateStr());
 			ResultSet rset = pstmt.executeQuery();
 			boolean isFirst = true;
 			while(rset.next()){
