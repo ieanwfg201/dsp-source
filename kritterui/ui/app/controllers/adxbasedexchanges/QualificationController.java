@@ -11,6 +11,8 @@ import java.util.HashMap;
 
 import models.entities.QualificationEntity;
 import models.entities.QualificationListFormEntity;
+import models.publisher.SiteDisplayFull;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +35,7 @@ import com.google.common.io.Files;
 import com.kritter.api.entity.qualification.QualificationList;
 import com.kritter.api.entity.qualification.QualificationListEntity;
 import com.kritter.api.entity.response.msg.Message;
+import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.targeting_profile.FileUploadResponse;
 import com.kritter.api.upload_to_cdn.IUploadToCDN;
 import com.kritter.api.upload_to_cdn.everest.UploadToCDN;
@@ -115,6 +118,7 @@ public class QualificationController extends Controller{
 		Form<QualificationEntity> qualForm = qualFormTemplate.bindFromRequest();
 		QualificationEntity qualEntity = null;
 		Qualification qual =null;
+		if(!"cancel".equals(qualForm.data().get("action"))){
 		if(!qualForm.hasErrors()){
 			qualEntity = qualForm.get();
 			Message msg = null; 
@@ -125,6 +129,7 @@ public class QualificationController extends Controller{
 				QualificationListEntity qE = new QualificationListEntity();
 				qE.setName(qual.getQname());
 				qE.setId_list(qual.getAdvIncId()+"");
+				qE.setQueryEnum(QualificationDefEnum.select_by_name_adv);
 				QualificationList qList =ApiDef.various_get_qualification(con, qE);
 				if(qList==null || qList.getEntity_list()==null || qList.getEntity_list().size()<1){
 					if(qual.getInternalid()>0){
@@ -156,6 +161,11 @@ public class QualificationController extends Controller{
 					Logger.error("Error while closing DB connection", e );
 				}
 			}
+		}
+		}else{
+			QualificationEntity qual1 = new QualificationEntity(); 
+			return ok(views.html.adxbasedexchanges.qualification.render(qualFormTemplate.fill(qual1)));
+
 		}
 		return badRequest(views.html.adxbasedexchanges.qualification.render( qualForm ));
 	}
