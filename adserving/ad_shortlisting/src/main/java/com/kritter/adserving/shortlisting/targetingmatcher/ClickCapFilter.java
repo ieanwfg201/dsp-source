@@ -127,7 +127,7 @@ public class ClickCapFilter implements TargetingMatcher {
         FreqCap freqCap = adEntity.getFrequencyCap();
         if(freqCap != null && freqCap.getFDef() != null) {
             if(!adEntity.getFrequencyCap().getFDef().containsKey(FreqEventType.CLK)) {
-                ReqLog.debugWithDebug(logger, request, "Ad id : {} has empty frequency cap object");
+                ReqLog.debugWithDebugNew(logger, request, "Ad id : {} has empty frequency cap object");
                 return null;
             }
             Set<FreqDef> freqDefs = freqCap.getFDef().get(FreqEventType.CLK);
@@ -143,14 +143,14 @@ public class ClickCapFilter implements TargetingMatcher {
         }
 
         if(maxCap == -1) {
-            ReqLog.debugWithDebug(logger, request, "Ad id : {} specifies frequency cap but not click cap.");
+            ReqLog.debugWithDebugNew(logger, request, "Ad id : {} specifies frequency cap but not click cap.");
             return null;
         }
 
         int[] result = new int[2];
         result[0] = maxCap;
         result[1] = timeWindowInHour;
-        ReqLog.debugWithDebug(logger, request, "Ad id : {} specifies click cap, maximum cap = {} and time window = " +
+        ReqLog.debugWithDebugNew(logger, request, "Ad id : {} specifies click cap, maximum cap = {} and time window = " +
                 "{}.", maxCap, timeWindowInHour);
         return result;
     }
@@ -183,7 +183,7 @@ public class ClickCapFilter implements TargetingMatcher {
         }
 
         if(maxCap == -1) {
-            ReqLog.debugWithDebug(logger, request, "Ad id : {} is not frequency capped on click. Passing this ad",
+            ReqLog.debugWithDebugNew(logger, request, "Ad id : {} is not frequency capped on click. Passing this ad",
                     adId);
             return true;
         }
@@ -231,7 +231,7 @@ public class ClickCapFilter implements TargetingMatcher {
      */
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
-        ReqLog.debugWithDebug(logger,request, "Inside {} of AdTargetingMatcher...", getName());
+        ReqLog.debugWithDebugNew(logger,request, "Inside {} of AdTargetingMatcher...", getName());
 
         String kritterUserId = request.getUserId();
 
@@ -245,10 +245,10 @@ public class ClickCapFilter implements TargetingMatcher {
             }
 
             if(kritterUserId == null) {
-                ReqLog.debugWithDebug(logger,request, "User info not available for this request. Allowing only non " +
+                ReqLog.debugWithDebugNew(logger,request, "User info not available for this request. Allowing only non " +
                         "frequency capped ads");
             } else {
-                ReqLog.debugWithDebug(logger,request, "Recent history cache is not available. So allowing only non " +
+                ReqLog.debugWithDebugNew(logger,request, "Recent history cache is not available. So allowing only non " +
                         "frequency capped ads");
             }
 
@@ -259,7 +259,7 @@ public class ClickCapFilter implements TargetingMatcher {
         }
 
         if (null == adIdSet || adIdSet.size() <= 0) {
-            ReqLog.debugWithDebug(logger,request, "No adIdSet supplied to UserRecentClickHistoryCache, " +
+            ReqLog.debugWithDebugNew(logger,request, "No adIdSet supplied to UserRecentClickHistoryCache, " +
                     "returning null/empty set...");
             return adIdSet;
         }
@@ -271,12 +271,12 @@ public class ClickCapFilter implements TargetingMatcher {
 
             /*If there is no click history then user can be shown all ads.*/
             if (null == recentClickHistory) {
-                ReqLog.debugWithDebug(logger,request, "RecentClickHistory for userId: {} is null ,allowing " +
+                ReqLog.debugWithDebugNew(logger,request, "RecentClickHistory for userId: {} is null ,allowing " +
                         "all ads", kritterUserId);
                 return adIdSet;
             }
 
-            ReqLog.debugWithDebug(logger, request, "Fetched click history for user id : {}. History : {}.",
+            ReqLog.debugWithDebugNew(logger, request, "Fetched click history for user id : {}. History : {}.",
                     kritterUserId, recentClickHistory);
 
             Map<Integer, List<Long>> adToTimestampMap = getAdToTimestampMapFromRecentHistory(recentClickHistory);
@@ -289,7 +289,7 @@ public class ClickCapFilter implements TargetingMatcher {
 
             for (Integer adId : adIdSet) {
                 if(isClickCappedAdEligibleForUser(adId, adToTimestampMap, request)) {
-                    ReqLog.debugWithDebug(logger,request, "Ad id {} eligible to serve on user : {}", adId,
+                    ReqLog.debugWithDebugNew(logger,request, "Ad id {} eligible to serve on user : {}", adId,
                             kritterUserId);
                     adIdSetToReturn.add(adId);
                 } else {
@@ -299,7 +299,7 @@ public class ClickCapFilter implements TargetingMatcher {
             }
         } catch (Exception e) {
             logger.error("Exception occur while trying to fetch user history. {}", e);
-            ReqLog.debugWithDebug(logger,request, "Exception inside ClickCapFilter reason: {}  ", e);
+            ReqLog.debugWithDebugNew(logger,request, "Exception inside ClickCapFilter reason: {}  ", e);
 
             Set<Integer> clickCappedAds = getClickCappedAds(adIdSet, request);
             for(Integer adId : clickCappedAds) {

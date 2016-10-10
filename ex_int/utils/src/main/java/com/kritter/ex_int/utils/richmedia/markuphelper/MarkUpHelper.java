@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.kritter.constants.ADTagMacros;
 import com.kritter.constants.CreativeMacroQuote;
@@ -50,189 +51,189 @@ public class MarkUpHelper {
                   switch(adTagMacro){
                       case AD_HEIGHT:
                           if(request.getRequestedSlotHeights()!= null && request.getRequestedSlotHeights().length> 0){
-                              strTemp = strTemp.replaceAll(ADTagMacros.AD_HEIGHT.getDesc(), quote+request.getRequestedSlotHeights()[0]+quote);
+                              strTemp = StringUtils.replace(strTemp, ADTagMacros.AD_HEIGHT.getName(), quote+request.getRequestedSlotHeights()[0]+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.AD_HEIGHT.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.AD_HEIGHT.getName(),defaultReplace);
                           }
                           break;
                       case AD_WIDTH:
                           if(request.getRequestedSlotWidths() != null && request.getRequestedSlotWidths().length> 0){
-                              strTemp = strTemp.replaceAll(ADTagMacros.AD_WIDTH.getDesc(), quote+request.getRequestedSlotWidths()[0]+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.AD_WIDTH.getName(), quote+request.getRequestedSlotWidths()[0]+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.AD_WIDTH.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.AD_WIDTH.getName(),defaultReplace);
                           }
                           break;
                       case AD_ID:
                           if(responseAdInfo.getGuid() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.AD_ID.getDesc(),quote+responseAdInfo.getGuid()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.AD_ID.getName(),quote+responseAdInfo.getGuid()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.AD_ID.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.AD_ID.getName(),defaultReplace);
                           }
                           break;
                       case APP_BUNDLE:
                           if(request.getSite() != null && request.getSite().getSitePlatform() == SITE_PLATFORM.APP.getPlatform() && request.getSite().getExternalAppBundle() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_BUNDLE.getDesc(),quote+request.getSite().getExternalAppBundle()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_BUNDLE.getName(),quote+request.getSite().getExternalAppBundle()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_BUNDLE.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_BUNDLE.getName(),defaultReplace);
                           }
                           break;
                       case APP_CATEGORY:
                           if(request.getSite() != null && request.getSite().getSitePlatform() == SITE_PLATFORM.APP.getPlatform() && request.getSite().getExternalCategories() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_CATEGORY.getDesc(),quote+ArrayUtils.toString(request.getSite().getExternalCategories())+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_CATEGORY.getName(),quote+ArrayUtils.toString(request.getSite().getExternalCategories())+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_CATEGORY.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_CATEGORY.getName(),defaultReplace);
                           }
                           break;
                       case APP_NAME:
                           if(request.getSite() != null && request.getSite().getSitePlatform() == SITE_PLATFORM.APP.getPlatform() && request.getSite().getExternalSupplyName() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_NAME.getDesc(),quote+request.getSite().getExternalSupplyName()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_NAME.getName(),quote+request.getSite().getExternalSupplyName()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_NAME.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_NAME.getName(),defaultReplace);
                           }
                           break;
                       case APP_STOREURL:
                           if(request.getSite() != null && request.getSite().getSitePlatform() == SITE_PLATFORM.APP.getPlatform() && request.getSite().getExternalSupplyUrl() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_STOREURL.getDesc(),quote+request.getSite().getExternalSupplyUrl()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_STOREURL.getName(),quote+request.getSite().getExternalSupplyUrl()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_STOREURL.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_STOREURL.getName(),defaultReplace);
                           }
                           break;
                       case APP_VERSION:
                           if(request.getSite() != null && request.getSite().getSitePlatform() == SITE_PLATFORM.APP.getPlatform() && request.getSite().getExternalAppVersion() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_VERSION.getDesc(),quote+request.getSite().getExternalAppVersion()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_VERSION.getName(),quote+request.getSite().getExternalAppVersion()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.APP_VERSION.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.APP_VERSION.getName(),defaultReplace);
                           }
                           break;
                       case CAMPAIGN_ID:
                           if(responseAdInfo.getCampaignId() != null ){
-                              strTemp = strTemp.replaceAll(ADTagMacros.CAMPAIGN_ID.getDesc(),quote+responseAdInfo.getCampaignId()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.CAMPAIGN_ID.getName(),quote+responseAdInfo.getCampaignId()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.CAMPAIGN_ID.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.CAMPAIGN_ID.getName(),defaultReplace);
                           }
                           break;
                       case CLICK_ID:
                           if(responseAdInfo.getImpressionId() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.CLICK_ID.getDesc(),quote+responseAdInfo.getImpressionId()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.CLICK_ID.getName(),quote+responseAdInfo.getImpressionId()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.CLICK_ID.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.CLICK_ID.getName(),defaultReplace);
                           }
                           break;
                       case DEVICE_IP:
                           if(request.getIpAddressUsedForDetection() != null ){
-                              strTemp = strTemp.replaceAll(ADTagMacros.DEVICE_IP.getDesc(),quote+request.getIpAddressUsedForDetection()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DEVICE_IP.getName(),quote+request.getIpAddressUsedForDetection()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.DEVICE_IP.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DEVICE_IP.getName(),defaultReplace);
                           }
                           break;
                       case DEVICE_OS:
                           if(request.getHandsetMasterData() != null && request.getHandsetMasterData().getDeviceOperatingSystemId() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.DEVICE_OS.getDesc(),quote+request.getHandsetMasterData().getDeviceOperatingSystemId()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DEVICE_OS.getName(),quote+request.getHandsetMasterData().getDeviceOperatingSystemId()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.DEVICE_OS.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DEVICE_OS.getName(),defaultReplace);
                           }
                           break;
                       case DEVICE_UA:
                           if(request.getUserAgent() != null ){
-                              strTemp = strTemp.replaceAll(ADTagMacros.DEVICE_UA.getDesc(),quote+request.getUserAgent()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DEVICE_UA.getName(),quote+request.getUserAgent()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.DEVICE_UA.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DEVICE_UA.getName(),defaultReplace);
                           }
                           break;
                       case EXCHANGE:
                           if(request.getSite() != null && request.getSite().getPublisherId() != null ){
-                              strTemp = strTemp.replaceAll(ADTagMacros.EXCHANGE.getDesc(),quote+request.getSite().getPublisherId()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.EXCHANGE.getName(),quote+request.getSite().getPublisherId()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.EXCHANGE.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.EXCHANGE.getName(),defaultReplace);
                           }
                           break;
                       case PAGE_URL:
                           if(request.getSite() != null && request.getSite().getExternalPageUrl() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.PAGE_URL.getDesc(),quote+request.getSite().getExternalPageUrl()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.PAGE_URL.getName(),quote+request.getSite().getExternalPageUrl()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.PAGE_URL.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.PAGE_URL.getName(),defaultReplace);
                           }
                           break;
                       case SITE_DOMAIN:
                           if(request.getSite() != null && request.getSite().getSitePlatform() == SITE_PLATFORM.WAP.getPlatform() && request.getSite().getExternalSupplyDomain() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.SITE_DOMAIN.getDesc(),quote+request.getSite().getExternalSupplyDomain()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.SITE_DOMAIN.getName(),quote+request.getSite().getExternalSupplyDomain()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.SITE_DOMAIN.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.SITE_DOMAIN.getName(),defaultReplace);
                           }
                           break;
                       case TIMESTAMP:
-                          strTemp = strTemp.replaceAll(ADTagMacros.TIMESTAMP.getDesc(),quote+System.currentTimeMillis()/1000+quote);
+                          strTemp = StringUtils.replace(strTemp,ADTagMacros.TIMESTAMP.getName(),quote+System.currentTimeMillis()/1000+quote);
                           break;
                       case USER_COUNTRY:
                           if(request.getCountryUserInterfaceId() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.USER_COUNTRY.getDesc(),quote+request.getCountryUserInterfaceId()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.USER_COUNTRY.getName(),quote+request.getCountryUserInterfaceId()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.USER_COUNTRY.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.USER_COUNTRY.getName(),defaultReplace);
                           }
                           break;
                       case USER_GEO_LAT:
                           if(request.getRequestingLatitudeValue() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.USER_GEO_LAT.getDesc(),quote+request.getRequestingLatitudeValue()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.USER_GEO_LAT.getName(),quote+request.getRequestingLatitudeValue()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.USER_GEO_LAT.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.USER_GEO_LAT.getName(),defaultReplace);
                           }
                           break;
                       case USER_GEO_LNG:
                           if(request.getRequestingLongitudeValue() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.USER_GEO_LNG.getDesc(),quote+request.getRequestingLongitudeValue()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.USER_GEO_LNG.getName(),quote+request.getRequestingLongitudeValue()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.USER_GEO_LNG.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.USER_GEO_LNG.getName(),defaultReplace);
                           }
                           break;
                       case DEVICE_ID:
                           if(request.getUserId() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.DEVICE_ID.getDesc(),quote+request.getUserId()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DEVICE_ID.getName(),quote+request.getUserId()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.DEVICE_ID.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DEVICE_ID.getName(),defaultReplace);
                           }
                           break;
                       case CLICK_URL:
                           if(macroClickUrl != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.CLICK_URL.getDesc(),quote+macroClickUrl+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.CLICK_URL.getName(),quote+macroClickUrl+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.CLICK_URL.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.CLICK_URL.getName(),defaultReplace);
                           }
                           break;
                       case SECURE_CLICK_URL:
                           if(macroClickUrl != null){
                               String secureMacroClickUrl = macroClickUrl.replaceFirst("http", "https");
-                              strTemp = strTemp.replaceAll(ADTagMacros.SECURE_CLICK_URL.getDesc(),quote+secureMacroClickUrl+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.SECURE_CLICK_URL.getName(),quote+secureMacroClickUrl+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.SECURE_CLICK_URL.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.SECURE_CLICK_URL.getName(),defaultReplace);
                           }
                           break;
                       case RANDOM:
                           String a = quote+System.nanoTime()+quote;
-                          strTemp = strTemp.replaceAll(ADTagMacros.RANDOM.getDesc(),a);
+                          strTemp = StringUtils.replace(strTemp,ADTagMacros.RANDOM.getName(),a);
                           break;
                       case CACHEBUSTER:
                           String b = quote+System.nanoTime()+quote;
-                          strTemp = strTemp.replaceAll(ADTagMacros.CACHEBUSTER.getDesc(),b);
+                          strTemp = StringUtils.replace(strTemp,ADTagMacros.CACHEBUSTER.getName(),b);
                           break;
                       case PUB_GUID:
                           if(request.getSite() != null && request.getSite().getPublisherId() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.PUB_GUID.getDesc(),quote+request.getSite().getPublisherId()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.PUB_GUID.getName(),quote+request.getSite().getPublisherId()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.PUB_GUID.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.PUB_GUID.getName(),defaultReplace);
                           }
                       	break;
                       case DO_NOT_TRACK:
                           if(request.getDoNotTrack() != null && request.getDoNotTrack()){
-                              strTemp = strTemp.replaceAll(ADTagMacros.DO_NOT_TRACK.getDesc(),quote+"True"+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DO_NOT_TRACK.getName(),quote+"True"+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.DO_NOT_TRACK.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.DO_NOT_TRACK.getName(),defaultReplace);
                           }
                       	break;
                       case REFERER:
                           if(request.getSite() != null && request.getSite().getReferer() != null){
-                              strTemp = strTemp.replaceAll(ADTagMacros.REFERER.getDesc(),quote+request.getSite().getReferer()+quote);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.REFERER.getName(),quote+request.getSite().getReferer()+quote);
                           }else{
-                              strTemp = strTemp.replaceAll(ADTagMacros.REFERER.getDesc(),defaultReplace);
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.REFERER.getName(),defaultReplace);
                           }
                       	break;
                       case IMEI:
@@ -242,12 +243,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.DEVICE_ID) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.IMEI.getDesc(),quote+useridMap.get(ExternalUserIdType.DEVICE_ID)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.IMEI.getName(),quote+useridMap.get(ExternalUserIdType.DEVICE_ID)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.IMEI.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.IMEI.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.IMEI.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.IMEI.getName(),defaultReplace);
                       	}
                       	break;
                       case IMEIMD5:
@@ -257,12 +258,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.MD5_DEVICE_ID) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.IMEIMD5.getDesc(),quote+useridMap.get(ExternalUserIdType.MD5_DEVICE_ID)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.IMEIMD5.getName(),quote+useridMap.get(ExternalUserIdType.MD5_DEVICE_ID)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.IMEIMD5.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.IMEIMD5.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.IMEIMD5.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.IMEIMD5.getName(),defaultReplace);
                       	}
                       	break;
                       case MAC:
@@ -272,12 +273,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.MAC) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.MAC.getDesc(),quote+useridMap.get(ExternalUserIdType.MAC)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.MAC.getName(),quote+useridMap.get(ExternalUserIdType.MAC)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.MAC.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.MAC.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.MAC.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.MAC.getName(),defaultReplace);
                       	}
                       	break;
                       case IDFA:
@@ -287,12 +288,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.IFA_USER_ID) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.IDFA.getDesc(),quote+useridMap.get(ExternalUserIdType.IFA_USER_ID)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.IDFA.getName(),quote+useridMap.get(ExternalUserIdType.IFA_USER_ID)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.IDFA.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.IDFA.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.IDFA.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.IDFA.getName(),defaultReplace);
                       	}
                       	break;
                       case AAID:
@@ -302,12 +303,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.AAID) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.AAID.getDesc(),quote+useridMap.get(ExternalUserIdType.AAID)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.AAID.getName(),quote+useridMap.get(ExternalUserIdType.AAID)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.AAID.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.AAID.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.AAID.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.AAID.getName(),defaultReplace);
                       	}
                       	break;
                       case OpenUDID:
@@ -317,12 +318,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.OPENUDID) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.OpenUDID.getDesc(),quote+useridMap.get(ExternalUserIdType.OPENUDID)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.OpenUDID.getName(),quote+useridMap.get(ExternalUserIdType.OPENUDID)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.OpenUDID.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.OpenUDID.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.OpenUDID.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.OpenUDID.getName(),defaultReplace);
                       	}
                       	break;
                       case AndroidID:
@@ -332,12 +333,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.DEVICE_PLATFORM_ID) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.AndroidID.getDesc(),quote+useridMap.get(ExternalUserIdType.DEVICE_PLATFORM_ID)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.AndroidID.getName(),quote+useridMap.get(ExternalUserIdType.DEVICE_PLATFORM_ID)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.AndroidID.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.AndroidID.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.AndroidID.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.AndroidID.getName(),defaultReplace);
                       	}
                       	break;
                       case AndroidIDMD5:
@@ -347,12 +348,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.MD5_DEVICE_PLATFORM_ID) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.AndroidIDMD5.getDesc(),quote+useridMap.get(ExternalUserIdType.MD5_DEVICE_PLATFORM_ID)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.AndroidIDMD5.getName(),quote+useridMap.get(ExternalUserIdType.MD5_DEVICE_PLATFORM_ID)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.AndroidIDMD5.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.AndroidIDMD5.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.AndroidIDMD5.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.AndroidIDMD5.getName(),defaultReplace);
                       	}
                       	break;
                       case UDID:
@@ -362,12 +363,12 @@ public class MarkUpHelper {
                       	}
                       	if(useridMap != null){
                       		if(useridMap.get(ExternalUserIdType.UDID) != null){
-                      			strTemp = strTemp.replaceAll(ADTagMacros.UDID.getDesc(),quote+useridMap.get(ExternalUserIdType.UDID)+quote);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.UDID.getName(),quote+useridMap.get(ExternalUserIdType.UDID)+quote);
                       		}else{
-                      			strTemp = strTemp.replaceAll(ADTagMacros.UDID.getDesc(),defaultReplace);
+                      			strTemp = StringUtils.replace(strTemp,ADTagMacros.UDID.getName(),defaultReplace);
                       		}
                       	}else{
-                      		strTemp = strTemp.replaceAll(ADTagMacros.UDID.getDesc(),defaultReplace);
+                      		strTemp = StringUtils.replace(strTemp,ADTagMacros.UDID.getName(),defaultReplace);
                       	}
                       	break;
                       default:
@@ -390,5 +391,11 @@ public class MarkUpHelper {
       	return null;
       }
 
-
+public static void main(String args[]){
+/*	String b = "mocospace.mw.320x50.english.$1.30";
+	String a="{{APP_NAME}}<script t[CLICK_URL]ype=\"text/javascript\" src=\"http://apac.mobrt.com/unit/player.aspx?sga=152&size=320x50&banner=skywars_320x50.jpg&publisher_id=1001&subid={{APP_NAME}}&idfa={{IDFA}}\"></script>";
+	System.out.println(StringUtils.replace(a, ADTagMacros.APP_NAME.getName(), "\""+b+"'"));
+	
+	*/
+}
 }

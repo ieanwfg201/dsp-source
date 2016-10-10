@@ -37,15 +37,8 @@ public class GeoDetectionUtils
     private static class ComparatorIpRangeKeyValue implements Comparator<IpRangeKeyValue>
     {
         @Override
-        public int compare(IpRangeKeyValue first, IpRangeKeyValue second)
-        {
-            if (first.getStartIpValue().compareTo(second.getStartIpValue()) <= 0)
-                return -1;
-
-            if (first.getStartIpValue().compareTo(second.getStartIpValue()) >= 0)
-                return 1;
-
-            return 0;
+        public int compare(IpRangeKeyValue first, IpRangeKeyValue second) {
+            return first.getStartIpValue().compareTo(second.getStartIpValue());
         }
     }
 

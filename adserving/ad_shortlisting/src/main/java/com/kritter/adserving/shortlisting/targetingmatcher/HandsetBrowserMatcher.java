@@ -47,7 +47,7 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsForHandsetBrowser of AdTargetingMatcher");
-        ReqLog.requestDebug(request, "Inside filterAdIdsForHandsetBrowser of AdTargetingMatcher");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsForHandsetBrowser of AdTargetingMatcher");
 
         HandsetMasterData handsetMasterData = null;
         if(null != context.getValue(contextHandsetMasterDataKey))
@@ -62,18 +62,18 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache,FATAL error!!! for adId: {} " , adId);
+                    ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache,FATAL error!!! for adId: {} " , adId);
                     continue;
                 }
 
                 TargetingProfile targetingProfile = adEntity.getTargetingProfile();
 
-                ReqLog.debugWithDebug(logger, request, "TargetedBrowserJson is {} for ad id : {}", targetingProfile.getTargetedBrowserJson(), adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "TargetedBrowserJson is {} for ad id : {}", targetingProfile.getTargetedBrowserJson(), adEntity.getAdGuid());
 
                 //if no browser targeting specified then browser json has to be null.
                 if(null == targetingProfile.getTargetedBrowserJson())
                 {
-                    ReqLog.debugWithDebug(logger, request, "The ad id is not browser targeted,so passing the adId: {} ",adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The ad id is not browser targeted,so passing the adId: {} ",adEntity.getAdGuid());
                     filteredAdIds.add(adId);
                     continue;
                 }
@@ -85,24 +85,24 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
                 		null != handsetMasterData.getDeviceBrowserId())
                     handsetBrowserId = String.valueOf(handsetMasterData.getDeviceBrowserId());
 
-                ReqLog.debugWithDebug(logger, request, "Requesting browserId is: {} ", handsetBrowserId);
+                ReqLog.debugWithDebugNew(logger, request, "Requesting browserId is: {} ", handsetBrowserId);
 
                 if(null == browserMap || browserMap.size() == 0)
                 {
-                    ReqLog.debugWithDebug(logger, request, "The ad id is not browser targeted,so passing the adId: {} ",adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The ad id is not browser targeted,so passing the adId: {} ",adEntity.getAdGuid());
                     filteredAdIds.add(adId);
                     continue;
                 }
 
                 if(null == handsetBrowserId)
                 {
-                    ReqLog.debugWithDebug(logger, request, "The requesting browser is null ,ad targets browser ,skipping adId: {} ",adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The requesting browser is null ,ad targets browser ,skipping adId: {} ",adEntity.getAdGuid());
                     continue;
                 }
 
                 if(!browserMap.containsKey(handsetBrowserId))
                 {
-                    ReqLog.debugWithDebug(logger, request, "The requesting handset does not comply with any targeted browser in ad, skipping adId: {} ",adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The requesting handset does not comply with any targeted browser in ad, skipping adId: {} ",adEntity.getAdGuid());
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                             this.adNoFillReasonMapKey, context);
                     continue;
@@ -115,7 +115,7 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
                    browserVersions[1].equalsIgnoreCase(ALL_VERSIONS)
                   )
                 {
-                    ReqLog.debugWithDebug(logger, request, "The ad id is targeted to all browser versions so passing the adId: {} ",adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The ad id is targeted to all browser versions so passing the adId: {} ",adEntity.getAdGuid());
                     filteredAdIds.add(adId);
                     continue;
                 }
@@ -130,7 +130,7 @@ public class HandsetBrowserMatcher implements TargetingMatcher {
 
                 if(versionRange.checkIfVersionIsWithin(new Version(handsetBrowserVersion)))
                 {
-                    ReqLog.debugWithDebug(logger, request, "The browserversion: {} is within targeted version range. For adid : {}, passing it...", handsetBrowserVersion, adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The browserversion: {} is within targeted version range. For adid : {}, passing it...", handsetBrowserVersion, adEntity.getAdGuid());
                     filteredAdIds.add(adId);
                 } else {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),

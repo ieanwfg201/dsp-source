@@ -38,12 +38,12 @@ public class HourOfDayTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsBasedOnHourOfDayTargeting of AdTargetingMatcher ...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsBasedOnHourOfDayTargeting of AdTargetingMatcher ...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsBasedOnHourOfDayTargeting of AdTargetingMatcher ...");
 
         int hourOfDay = ApplicationGeneralUtils.getHourOfDay();
         Short hourOfDayToUse = new Short((short)hourOfDay);
 
-        ReqLog.debugWithDebug(logger,request, "Hour of day is : {}", hourOfDay);
+        ReqLog.debugWithDebugNew(logger,request, "Hour of day is : {}", hourOfDay);
 
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
 
@@ -53,7 +53,7 @@ public class HourOfDayTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : {}" , adId);
+                ReqLog.errorWithDebugNew(logger,request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -61,7 +61,7 @@ public class HourOfDayTargetingMatcher implements TargetingMatcher {
 
             Set<Short> hoursTargeted = targetingProfile.getHoursTargetedInTheDay();
 
-            ReqLog.debugWithDebug(logger,request, "The adid: {}, targets hours of day : ", adEntity.getAdGuid(),  hoursTargeted);
+            ReqLog.debugWithDebugNew(logger,request, "The adid: {}, targets hours of day : ", adEntity.getAdGuid(),  hoursTargeted);
 
             if(null == hoursTargeted || hoursTargeted.size() == 0)
             {
@@ -75,7 +75,7 @@ public class HourOfDayTargetingMatcher implements TargetingMatcher {
             {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);
-                ReqLog.debugWithDebug(logger,request, "Hour of day targeting fails for adGuId: ",adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger,request, "Hour of day targeting fails for adGuId: ",adEntity.getAdGuid());
             }
         }
 

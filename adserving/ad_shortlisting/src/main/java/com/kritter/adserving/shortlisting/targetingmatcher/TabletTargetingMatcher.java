@@ -41,7 +41,7 @@ public class TabletTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside TabletTargetingMatcher of AdTargetingMatcher");
-        ReqLog.requestDebug(request, "Inside filterAdIdsForHandsetBrowser of AdTargetingMatcher");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsForHandsetBrowser of AdTargetingMatcher");
 
         if(adIdSet == null || adIdSet.size() == 0) {
             return adIdSet;
@@ -53,7 +53,7 @@ public class TabletTargetingMatcher implements TargetingMatcher {
             AdEntity adEntity = this.adEntityCache.query(adId);
 
             if(null == adEntity) {
-                ReqLog.debugWithDebug(logger,request, "AdEntity not found in cache,FATAL error!!! for adId: {} " , adId);
+                ReqLog.debugWithDebugNew(logger,request, "AdEntity not found in cache,FATAL error!!! for adId: {} " , adId);
                 continue;
             }
 
@@ -61,18 +61,18 @@ public class TabletTargetingMatcher implements TargetingMatcher {
             boolean isTabletTargeting = targetingProfile.isTabletTargeting();
 
             if(!isTabletTargeting) {
-                ReqLog.debugWithDebug(logger,request, "Ad with adId : {} is not tablet targeted, passing!", adId);
+                ReqLog.debugWithDebugNew(logger,request, "Ad with adId : {} is not tablet targeted, passing!", adId);
                 filteredAds.add(adId);
             } else {
                 if(handsetMasterData.getHandsetCapabilityObject().getIsTablet()) {
-                    ReqLog.debugWithDebug(logger,request, "Ad with adId : {} is tablet targeted, the request is from tablet, hence passing",
+                    ReqLog.debugWithDebugNew(logger,request, "Ad with adId : {} is tablet targeted, the request is from tablet, hence passing",
                             adId);
                     filteredAds.add(adId);
                 } else {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                             this.adNoFillReasonMapKey, context);
 
-                    ReqLog.debugWithDebug(logger,request, "Ad with adId : {} is tablet targeted. Request is not from tablet, hence dropping" +
+                    ReqLog.debugWithDebugNew(logger,request, "Ad with adId : {} is tablet targeted. Request is not from tablet, hence dropping" +
                             "the ad", adId);
                 }
             }

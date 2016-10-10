@@ -17,5 +17,6 @@ public enum EntityType {
 	adpositionget,
 	materialbannerupload,
 	materialvideoupload,
-	materialadvinfoupload
+	materialadvinfoupload,
+	qualification
 }

@@ -226,7 +226,7 @@ public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperatio
         }
         catch (Exception e)
         {
-            this.logger.error("Exception inside fetchSingleRecordAttributes of AerospikeNoSqlNamespaceOperations ",e);
+            logger.debug("Exception inside fetchSingleRecordAttributes of AerospikeNoSqlNamespaceOperations ",e);
             return null;
         }
 

@@ -63,6 +63,8 @@
                 <ref bean="campaign_click_cap_filter"/>
             </list>
         </constructor-arg>
+        <constructor-arg index="10" value="ad-nofill-map"/>
+        <constructor-arg index="11"><ref bean="campaign_cache"/></constructor-arg>
     </bean>
 
     <bean id="supply_demand_matcher_job" class="com.kritter.adserving.flow.job.SupplyDemandMatcherJob">

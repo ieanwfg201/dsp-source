@@ -365,6 +365,7 @@
                 <value type="com.kritter.constants.ExternalUserIdType">AGGREGATOR_USER_ID</value>
             </list>
         </constructor-arg>
+        <constructor-arg index="5" value="3"/>
     </bean>
 
     <bean id="user_inc_exc_cache" class="com.kritter.nosql.user.targetingprofileincexc.cache.UserTargetingProfileIncExcCache">
@@ -514,7 +515,62 @@
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select c.cmpgn_abs_threshold, c.cmpgn_percent_threshold, c.campaign_payout_exchange_payout, c.freqcap_json as freqcap_json,c.impressions_accrued as impressions_accrued,c.impression_cap as impression_cap,ab.internal_balance as account_balance,c.id as id,c.guid as guid,c.account_guid as account_id,c.start_date,c.end_date,(cb.internal_daily_budget - cb.internal_daily_burn) as internal_daily_remaining_budget,(cb.internal_total_budget - cb.internal_total_burn) as internal_total_remaining_budget,cb.internal_daily_budget as internal_daily_budget, (cb.adv_daily_budget - cb.adv_daily_burn) as campaign_adv_daily_remaining_budget,(cb.adv_total_budget - cb.adv_total_burn) as campaign_adv_total_remaining_budget,ab.adv_balance as adv_balance,c.status_id as status_id,c.last_modified as last_modified from (select campaign.*,IFNULL(campaign_impressions_budget.impression_cap,0) as impression_cap, IFNULL(campaign_impressions_budget.impressions_accrued,0) as impressions_accrued, campaign_impressions_budget.last_modified as campaign_imp_budget_last_modified, IFNULL(payout.daily_payout,0) as campaign_payout_exchange_payout, payout.last_modified as campaign_payout_last_modified, IFNULL(campaign_payout_threshold.absolute_threshold, (select value from payout_threshold_metadata where name = "campaign_absolute_payout_threshold")) as cmpgn_abs_threshold, IFNULL(campaign_payout_threshold.percentage_threshold, (select value from payout_threshold_metadata where name = "campaign_percentage_payout_threshold")) as cmpgn_percent_threshold from campaign left join campaign_impressions_budget on campaign.guid = campaign_impressions_budget.campaign_guid left join campaign_payout_threshold on campaign.id = campaign_payout_threshold.campaign_id left join (select campaign_id, last_modified, sum(daily_payout) as daily_payout from payout group by campaign_id) payout on campaign.id = payout.campaign_id) as c,campaign_budget as cb, account_budget as ab where c.id=cb.campaign_id and c.account_guid = ab.account_guid and (c.last_modified >= '$last_modified' or cb.last_modified >= '$last_modified' or ab.last_modified >= '$last_modified' or (c.campaign_imp_budget_last_modified is not NULL and c.campaign_imp_budget_last_modified >= '$last_modified') or (c.campaign_payout_last_modified is not NULL and c.campaign_payout_last_modified >= '$last_modified')) group by id]]></prop>
+           <prop key="query"><![CDATA[SELECT c.cmpgn_abs_threshold,
+       c.cmpgn_percent_threshold,
+       c.campaign_payout_exchange_payout,
+       c.freqcap_json AS freqcap_json,
+       c.impressions_accrued AS impressions_accrued,
+       c.impression_cap AS impression_cap,
+       ab.internal_balance AS account_balance,
+       c.id AS id,
+       c.guid AS guid,
+       c.account_guid AS account_id,
+       c.start_date,
+       c.end_date,
+       (cb.internal_daily_budget - cb.internal_daily_burn) AS internal_daily_remaining_budget,
+       (cb.internal_total_budget - cb.internal_total_burn) AS internal_total_remaining_budget,
+       cb.internal_daily_budget AS internal_daily_budget,
+       (cb.adv_daily_budget - cb.adv_daily_burn) AS campaign_adv_daily_remaining_budget,
+       (cb.adv_total_budget - cb.adv_total_burn) AS campaign_adv_total_remaining_budget,
+       ab.adv_balance AS adv_balance,
+       c.status_id AS status_id,
+       least(c.last_modified,cb.last_modified,ab.last_modified) AS last_modified
+FROM
+  (SELECT campaign.*,
+          IFNULL(campaign_impressions_budget.impression_cap,0) AS impression_cap,
+          IFNULL(campaign_impressions_budget.impressions_accrued,0) AS impressions_accrued,
+          campaign_impressions_budget.last_modified AS campaign_imp_budget_last_modified,
+          IFNULL(payout.daily_payout,0) AS campaign_payout_exchange_payout,
+          payout.last_modified AS campaign_payout_last_modified,
+          IFNULL(campaign_payout_threshold.absolute_threshold,
+                   (SELECT value
+                    FROM payout_threshold_metadata
+                    WHERE name = "campaign_absolute_payout_threshold")) AS cmpgn_abs_threshold,
+          IFNULL(campaign_payout_threshold.percentage_threshold,
+                   (SELECT value
+                    FROM payout_threshold_metadata
+                    WHERE name = "campaign_percentage_payout_threshold")) AS cmpgn_percent_threshold
+   FROM campaign
+   LEFT JOIN campaign_impressions_budget ON campaign.guid = campaign_impressions_budget.campaign_guid
+   LEFT JOIN campaign_payout_threshold ON campaign.id = campaign_payout_threshold.campaign_id
+   LEFT JOIN
+     (SELECT campaign_id,
+             last_modified,
+             sum(daily_payout) AS daily_payout
+      FROM payout
+      GROUP BY campaign_id) payout ON campaign.id = payout.campaign_id) AS c,
+     campaign_budget AS cb,
+     account_budget AS ab
+WHERE c.id=cb.campaign_id
+  AND c.account_guid = ab.account_guid
+  AND (c.last_modified >= '$last_modified'
+       OR cb.last_modified >= '$last_modified'
+       OR ab.last_modified >= '$last_modified'
+       OR (c.campaign_imp_budget_last_modified IS NOT NULL
+           AND c.campaign_imp_budget_last_modified >= '$last_modified')
+       OR (c.campaign_payout_last_modified IS NOT NULL
+           AND c.campaign_payout_last_modified >= '$last_modified'))
+GROUP BY id;]]></prop>
          </props>
        </constructor-arg>
    </bean>

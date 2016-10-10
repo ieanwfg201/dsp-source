@@ -4,13 +4,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="VAST")
 public class VastNormal {
     
-    @Setter@XmlAttribute(name="version")
+    @Setter@Getter@XmlAttribute(name="version")
     private String version="2.0";
-    @Setter@XmlElement(name="Ad")
+    @Setter@Getter@XmlElement(name="Ad")
     private Ad ad;
 }

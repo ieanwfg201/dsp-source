@@ -1,3 +1,4 @@
+@import play.Play;
 @import play.libs._
 @import com.kritter.constants.StatusIdEnum
 
@@ -14,5 +15,12 @@
 
 		<li><a href="@{routes.AccountsController.accountListView("directpublisher", Scala.Option(StatusIdEnum.Active.getName()))}"><i
 				class="fa fa-caret-right"></i><span data-i18n="Active Publishers"></span></a></li>
+		@if("true" == Play.application().configuration().getString("adx_ext") )  {
+			<li><a href="@{controllers.adxbasedexchanges.routes.QualificationController.add()}"><i
+				class="fa fa-caret-right"></i><span data-i18n="Add Qualification"></span></a></li>
+			<li><a href="@{controllers.adxbasedexchanges.routes.QualificationController.list(Scala.Option(""))}"><i
+				class="fa fa-caret-right"></i><span data-i18n="List Qualifications"></span></a></li>
+		
+		}
 	</ul>
 </li>

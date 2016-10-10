@@ -14,5 +14,13 @@ public class MaterialAdvInfoDef {
 			+ "from advinfo_upload as a,account as b "
 			+ "where a.advIncId=b.id "
 			+ "and a.pubIncId in (<id>)";
+
+	public static final String list_material_advinfo_by_pubincids_status = "select a.internalid as internalid, a.pubIncId as pubIncId , "
+			+ "a.adxbasedexhangesstatus as adxbasedexhangesstatus, a.advIncId as advIncId,b.name as advName,a.message as message, a.info as info, "
+			+ "a.last_modified as last_modified "
+			+ "from advinfo_upload as a,account as b "
+			+ "where a.advIncId=b.id "
+			+ "and a.pubIncId in (<id>) and a.adxbasedexhangesstatus=?";
+
 }
 

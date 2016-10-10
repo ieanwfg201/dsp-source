@@ -4,36 +4,37 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="NonLinear")
 public class NonLinear {
-    @Setter@XmlAttribute(name="id")
+    @Setter@Getter@XmlAttribute(name="id")
     private String id;
-    @Setter@XmlAttribute(name="width")
+    @Setter@Getter@XmlAttribute(name="width")
     private String width;
-    @Setter@XmlAttribute(name="height")
+    @Setter@Getter@XmlAttribute(name="height")
     private String height;
-    @Setter@XmlAttribute(name="expandedWidth")
+    @Setter@Getter@XmlAttribute(name="expandedWidth")
     private String expandedWidth;
-    @Setter@XmlAttribute(name="expandedHeight")
+    @Setter@Getter@XmlAttribute(name="expandedHeight")
     private String expandedHeight;
-    @Setter@XmlAttribute(name="scalable")
+    @Setter@Getter@XmlAttribute(name="scalable")
     private String scalable;
-    @Setter@XmlAttribute(name="maintainAspectRatio")
+    @Setter@Getter@XmlAttribute(name="maintainAspectRatio")
     private String maintainAspectRatio;
-    @Setter@XmlAttribute(name="minSuggestedDuration")
+    @Setter@Getter@XmlAttribute(name="minSuggestedDuration")
     private String minSuggestedDuration;
-    @Setter@XmlAttribute(name="apiFramework")
+    @Setter@Getter@XmlAttribute(name="apiFramework")
     private String apiFramework;
-    @Setter@XmlElement(name="StaticResource")
+    @Setter@Getter@XmlElement(name="StaticResource")
     private StaticResource staticResource;
-    @Setter@XmlElement(name="IFrameResource")
+    @Setter@Getter@XmlElement(name="IFrameResource")
     private IFrameResource iFrameResource;
-    @Setter@XmlElement(name="HTMLResource")
+    @Setter@Getter@XmlElement(name="HTMLResource")
     private HTMLResource htmlResource;
-    @Setter@XmlElement(name="NonLinearClickThrough")
+    @Setter@Getter@XmlElement(name="NonLinearClickThrough")
     private NonLinearClickThrough nonLinearClickThrough;
-    @Setter@XmlElement(name="AdParameters")
+    @Setter@Getter@XmlElement(name="AdParameters")
     private AdParameters adParameters;
 }

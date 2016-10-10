@@ -39,7 +39,7 @@ public class LatLongTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsBasedOnLatLongTargeting of AdTargetingMatcher...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsBasedOnLatLongTargeting of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsBasedOnLatLongTargeting of AdTargetingMatcher...");
 
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
 
@@ -49,7 +49,7 @@ public class LatLongTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -63,7 +63,7 @@ public class LatLongTargetingMatcher implements TargetingMatcher {
 
             if( null == latitudeLongitudeRadiusArray || latitudeLongitudeRadiusArray.length ==0 )
             {
-                ReqLog.debugWithDebug(logger, request, "The adguid {} is not lat long targeted so passing the filter....", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "The adguid {} is not lat long targeted so passing the filter....", adEntity.getAdGuid());
                 shortlistedAdIdSet.add(adId);
             }
 
@@ -95,7 +95,7 @@ public class LatLongTargetingMatcher implements TargetingMatcher {
                     }
                     if(distanceFromRequestingPosition <= radius)
                     {
-                        ReqLog.debugWithDebug(logger, request, "The ad is latlong targeted and passes the check, adGuId: {}",adEntity.getAdGuid());
+                        ReqLog.debugWithDebugNew(logger, request, "The ad is latlong targeted and passes the check, adGuId: {}",adEntity.getAdGuid());
                         shortlistedAdIdSet.add(adId);
                         break;
                     }
@@ -104,7 +104,7 @@ public class LatLongTargetingMatcher implements TargetingMatcher {
                         AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                                 this.adNoFillReasonMapKey, context);
 
-                        ReqLog.debugWithDebug(logger, request, "The ad is latlong targeted and fails the check,adId {}",adEntity.getAdGuid());
+                        ReqLog.debugWithDebugNew(logger, request, "The ad is latlong targeted and fails the check,adId {}",adEntity.getAdGuid());
                     }
                 }
             }

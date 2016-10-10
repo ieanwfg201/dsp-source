@@ -120,12 +120,6 @@ public class Account {
     private String firstIndustryCode;
     @Getter@Setter
     private String secondIndustryCode;
-    @Getter@Setter
-    private String qualificationName;
-    @Getter@Setter
-    private String qualificationUrl;
-    @Getter@Setter
-    private String qualificationMD5;
     
     private boolean adxbased=false;
     

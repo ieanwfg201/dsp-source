@@ -40,8 +40,6 @@ public class UserLifetimeDemandHistoryCache implements LifetimeDemandHistoryProv
     private Set<String> attributeNameSet;
 
     private NoSqlNamespaceOperations noSqlNamespaceOperationsInstance;
-    private TSerializer thriftSerializer;
-    private TDeserializer thriftDeserializer;
     private final ExecutorService updaterService;
 
     public UserLifetimeDemandHistoryCache(String name,
@@ -60,9 +58,6 @@ public class UserLifetimeDemandHistoryCache implements LifetimeDemandHistoryProv
         this.attributeNameHistory = properties.getProperty(ATTRIBUTE_NAME_KEY);
         this.attributeNameSet = new HashSet<String>();
         this.attributeNameSet.add(attributeNameHistory);
-
-        this.thriftSerializer = new TSerializer(new TBinaryProtocol.Factory());
-        this.thriftDeserializer = new TDeserializer(new TBinaryProtocol.Factory());
 
         this.updaterService = Executors.newFixedThreadPool(threadCount);
     }
@@ -107,10 +102,12 @@ public class UserLifetimeDemandHistoryCache implements LifetimeDemandHistoryProv
     }
 
     public byte[] fetchHistoryByteArray(LifetimeDemandHistory lifetimeDemandHistory) throws TException {
+        TSerializer thriftSerializer = new TSerializer(new TBinaryProtocol.Factory());
         return thriftSerializer.serialize(lifetimeDemandHistory);
     }
 
     public LifetimeDemandHistory fetchHistoryObject(byte[] byteData) throws TException {
+        TDeserializer thriftDeserializer = new TDeserializer(new TBinaryProtocol.Factory());
         LifetimeDemandHistory lifetimeDemandHistory = new LifetimeDemandHistory();
         thriftDeserializer.deserialize(lifetimeDemandHistory, byteData);
 

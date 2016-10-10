@@ -1491,3 +1491,20 @@ CREATE TABLE IF NOT EXISTS `payout_threshold_metadata`
 alter table account add column adxext text  after adxbased;
 alter table account add column contactdetail text  after adxext;
 alter table account add column brand text  after contactdetail;
+
+alter table account drop column adxext ;
+alter table account add column firstind text  default null after brand;
+alter table account add column secondind text default null  after firstind;
+
+
+CREATE TABLE `qualification` (
+  `internalid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL,
+  `url` text NOT NULL,
+  `md5` text NOT NULL,
+  `state` int NOT NULL,
+  `advIncId` int NOT NULL,
+  `last_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`internalid`),
+  UNIQUE KEY `qualification_unique_key` (`name`,`advIncId`)
+) ENGINE=InnoDB;

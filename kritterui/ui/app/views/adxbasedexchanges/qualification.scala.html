@@ -1,0 +1,30 @@
+@(qualForm:Form[models.entities.QualificationEntity] )
+
+@main("Qualification") {
+@components.containers.panel("QualificationForm"){
+<form id="qualificationForm" action="/adxbasedexchanges/qualification/save" method="POST" data-ng-controller="qualificationController" ng-init='init()'>
+	<div class="page">
+		<section class="panel panel-default">
+			<div class="panel-heading">
+				<strong><span class="glyphicon glyphicon-th"></span>Qualification</strong>
+			</div>
+			<div class="panel-body">
+				<div id="qualForm"  ng-controller="qualificationController">
+						@components.formElements.hiddenfield(qualForm("internalid"))
+						@components.formElements.selectlist2(qualForm("advIncId"),"Advertiser (Once Saved cant be updated)*", services.MetadataAPI.activeAdvIdsSelectOption())
+						@components.formElements.textinput(qualForm("qname"), '_label ->"Name" )
+						@components.formElements.fileinput(qualForm("qurl"), '_label ->"Upload Image",
+                        '_uploadHandler -> "handleQualificationUpload($files, 'qurl')",
+                            '_fileFilter -> "jpg|jpeg|png"  )
+                    @components.formElements.hiddenfield(qualForm("md5"))
+				
+				@components.formElements.submitbutton("save", "Save")
+				@components.formElements.submitbutton("cancel", "Cancel")
+
+			</div>
+		</section>
+	</div>
+</form>
+}
+<script src="@routes.Assets.at("javascripts/apps/adxbasedexchanges/qualificationController.js")" type="text/javascript"></script>
+}

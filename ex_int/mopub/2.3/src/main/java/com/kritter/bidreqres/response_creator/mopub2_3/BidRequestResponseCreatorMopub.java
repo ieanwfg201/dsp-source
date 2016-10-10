@@ -100,8 +100,10 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         Object responseObject = dspObjects[1];
 
         if(!(requestObject instanceof Request) || !(responseObject instanceof Response))
-            throw new BidResponseException("Inside BidRequestResponseCreatorMopub, arguments passed " +
-                                           "for formatting are not Request and Response objects...");
+        {
+            logger.debug("Request response objects are null, case of nofill inside : {} ", getClass().getName());
+            return null;
+        }
 
         Request request = (Request)requestObject;
         Response response = (Response)responseObject;

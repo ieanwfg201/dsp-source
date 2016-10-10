@@ -36,7 +36,7 @@ public class MidpVersionTargetingMatcher implements TargetingMatcher {
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsBasedOnMidpVersion of AdTargetingMatcher ...");
 
-        ReqLog.requestDebug(request,"Inside filterAdIdsBasedOnMidpVersion of AdTargetingMatcher ...");
+        ReqLog.requestDebugNew(request,"Inside filterAdIdsBasedOnMidpVersion of AdTargetingMatcher ...");
 
         Set<Integer> shortlistedAdIdSet = new HashSet<Integer>();
 
@@ -51,7 +51,7 @@ public class MidpVersionTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -98,7 +98,7 @@ public class MidpVersionTargetingMatcher implements TargetingMatcher {
             }
             else
             {
-                ReqLog.debugWithDebug(logger, request,"Requesting handset is midp1 enabled: {} Requesting handset is midp2 enabled: {} , midp value targeted by ad, not under os: so failing the ad to pass,adId: {} ", requestingHandsetIsMidp1,requestingHandsetIsMidp2,midpValueTargeted.getDescription(),adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request,"Requesting handset is midp1 enabled: {} Requesting handset is midp2 enabled: {} , midp value targeted by ad, not under os: so failing the ad to pass,adId: {} ", requestingHandsetIsMidp1,requestingHandsetIsMidp2,midpValueTargeted.getDescription(),adEntity.getAdGuid());
             }
         }
 

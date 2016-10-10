@@ -57,7 +57,7 @@
             <groupId>com.aerospike</groupId>
             <artifactId>aerospike-client</artifactId>
             <version>3.2.4</version>
-        </dependency>   
+        </dependency>
   </dependencies>
 
   <properties>

@@ -9,7 +9,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>client</module>
     <module>examples</module>
     <module>benchmarks</module>
     <module>servlets</module>

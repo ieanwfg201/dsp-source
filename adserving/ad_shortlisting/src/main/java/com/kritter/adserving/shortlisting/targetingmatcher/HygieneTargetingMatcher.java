@@ -40,7 +40,7 @@ public class HygieneTargetingMatcher implements TargetingMatcher {
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside matchUpHygieneCriteriaBetweenAdAndSite of AdTargetingMatcher...");
 
-        ReqLog.requestDebug(request, "Inside matchUpHygieneCriteriaBetweenAdAndSite of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside matchUpHygieneCriteriaBetweenAdAndSite of AdTargetingMatcher...");
 
         Site site = request.getSite();
 
@@ -52,7 +52,7 @@ public class HygieneTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : " + adId);
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : " + adId);
                 continue;
             }
 
@@ -60,7 +60,7 @@ public class HygieneTargetingMatcher implements TargetingMatcher {
 
             if(null == site.getHygieneList() || null == adEntity.getHygieneArray())
             {
-                ReqLog.errorWithDebug(logger,request,"Site id:{} or adguid: {} , do not have hygiene lists defined, no connection can be made...skipping ad..." , 
+                ReqLog.errorWithDebugNew(logger,request,"Site id:{} or adguid: {} , do not have hygiene lists defined, no connection can be made...skipping ad..." , 
                         site.getSiteGuid() , adEntity.getAdGuid() );
 
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
@@ -105,14 +105,14 @@ public class HygieneTargetingMatcher implements TargetingMatcher {
 
             if(matchFound)
             {
-                ReqLog.debugWithDebug(logger,request,"Hygiene match found for site: {} and ad: {}", site.getSiteGuid(), adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger,request,"Hygiene match found for site: {} and ad: {}", site.getSiteGuid(), adEntity.getAdGuid());
             }
             else
             {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);
 
-                ReqLog.debugWithDebug(logger,request,"Hygiene match not found for site: {} and ad: {}", site.getSiteGuid(), adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger,request,"Hygiene match not found for site: {} and ad: {}", site.getSiteGuid(), adEntity.getAdGuid());
             }
         }
 

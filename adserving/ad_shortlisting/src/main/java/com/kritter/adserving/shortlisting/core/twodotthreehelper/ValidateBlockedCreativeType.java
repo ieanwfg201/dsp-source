@@ -14,7 +14,7 @@ public class ValidateBlockedCreativeType {
                 blockedCreativeTypeSet.contains(BANNER_CREATIVE_TYPE)
                )
              {
-                ReqLog.debugWithDebug(logger, request, "Banner is not allowed for this impression.Creative types block it.");
+                ReqLog.debugWithDebugNew(logger, request, "Banner is not allowed for this impression.Creative types block it.");
                  return false;
              }
         return true;

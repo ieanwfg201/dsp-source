@@ -1,10 +1,12 @@
 package com.kritter.entity.vast.normal.twodotzero;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 
@@ -214,7 +216,9 @@ public class CreateVastNormalTwoDotZero {
     		inline.setExtensions(extensions);
     	*/
     	inline.setError(error);
-    	inline.setImpression(impression);
+    	List<Impression> impressions = new LinkedList<Impression>();
+    	impressions.add(impression);
+    	inline.setImpression(impressions);
     	Creatives c = new Creatives();
     	c.setCreative(creatives);
     	inline.setCreatives(c);
@@ -253,4 +257,63 @@ public class CreateVastNormalTwoDotZero {
             return null;
         }
     }
+    public static VastNormal unMarshallNormalVastTwoDotZeroStr(String str,Logger  logger){
+    	if(str==null || str.isEmpty()){
+    		return null;
+    	}
+    	try{
+    		Unmarshaller jaxbUnmarshaller = GetJaxBContextVastNormalTwoDotZero.getUnMarshallContext().createUnmarshaller();
+    		StringReader reader = new StringReader(str);
+    		VastNormal vastNormal = (VastNormal)jaxbUnmarshaller.unmarshal(reader);
+    		//System.out.println(jaxbUnmarshaller.unmarshal(reader));
+    		return vastNormal;
+    		//return null;
+    	}catch(Exception e){
+    		logger.error(e.getMessage(),e);
+    		//e.printStackTrace();
+    		return null;
+    	}
+    }
+    public static String addImpressionsVastStr(String str,Logger logger, LinkedList<String> impressionsTrackers,String id){
+    	if(impressionsTrackers ==null || impressionsTrackers.size()<1){
+    		return str;
+    	}
+    	
+    	VastNormal normal =  unMarshallNormalVastTwoDotZeroStr(str,logger);
+    	if(normal==null){
+    		return null;
+    	}
+    	if(normal.getAd() != null && normal.getAd().getInline() != null){
+    		List<Impression> impressions=null;
+    		impressions=normal.getAd().getInline().getImpression();
+    		if(impressions==null){
+    			impressions = new LinkedList<Impression>();
+    		}
+    		int count=0;
+    		for(String impressionsTracker:impressionsTrackers){
+    			Impression imp = new Impression();
+    			imp.setId(id+":"+count);
+    			imp.setStr(impressionsTracker);
+    			impressions.add(imp);
+    			count++;
+    		}
+            try{
+                Marshaller marshallerObj = GetJaxBContextVastNormalTwoDotZero.getContext().createMarshaller();  
+                marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                StringWriter sw = new StringWriter();
+                marshallerObj.marshal(normal, sw);
+                return sw.toString();
+            }catch(Exception e){
+                logger.error(e.getMessage(),e);
+                return null;
+            }    		
+    	}
+    	return null;
+    }
+
+
+   /* public static void main(String args[]){
+    	String s ="<?xml version=\"1.0\" encoding=\"UTF-8\"?><VAST version=\"2.0\">   <Ad id=\"01026424-75fb-e701-576a-13d37700000a\" sequence=\"1\">      <InLine>         <AdSystem version=\"3.0\"><![CDATA[01026424-75fb-e701-576a-0a92b2000001]]></AdSystem>         <AdTitle><![CDATA[2]]></AdTitle>         <Impression id=\"010258de-4e3e-d901-576f-ea4bc2000015:2\"><![CDATA[http://post.pokkt.com/csc/1/6/010258de-4e3e-d901-576f-ea4bc2000015:2/43187/234/1054/2/2/-1/26/172/-1/aT0wLjEsZT0wLjE=/-1/-1/2/-1/1/1/6dea835e15dcc3aa683ed16992d79d6?iid=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAjQPaWQ6MjY6VU5JUVVFIElEMg9pZDoyNjpVTklRVUUgSUQzFVVOSVFVRVNJVEVJRE9GVEhFU0lURQ&eid=id:26:UNIQUE ID&kid=id:26:UNIQUE ID]]></Impression>         <Creatives>            <Creative id=\"01026424-75fb-e701-576a-103710000008\" adID=\"01026424-75fb-e701-576a-13d37700000a\">               <Linear>                  <Duration><![CDATA[00:00:33]]></Duration>                  <MediaFiles>                     <MediaFile type=\"video/mp4\" width=\"-1\" height=\"-1\"><![CDATA[http://d1f7ey67xs6qkf.cloudfront.net/img/01026424-75fb-e701-576a-0ffecb000006.mp4]]></MediaFile>                  </MediaFiles>               </Linear>            </Creative>         </Creatives>      </InLine>   </Ad></VAST>";
+    	System.out.println(CreateVastNormalTwoDotZero.unMarshallNormalVastTwoDotZeroStr(s, null));
+    }*/
 }

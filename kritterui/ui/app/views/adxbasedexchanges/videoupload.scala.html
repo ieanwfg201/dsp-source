@@ -5,7 +5,8 @@
 <div ng-controller="videouploadController">
      <form id="extSiteForm" action="/adxbasedexchanges/videoupload/list" method="GET"">
        @components.formElements.selectlist2(materialUploadExchangesForm("exchange"),"Exchange *", services.MetadataAPI.getAdxBasedExchangesMetadata())
-       @components.formElements.submitbutton("change", "Change Exchange")
+       @components.formElements.selectlist2(materialUploadExchangesForm("adxBasedExchangesStates"),"State *", services.MetadataAPI.getAdxBasedExchangesStates())
+       @components.formElements.submitbutton("change", "Change Exchange/State")
     </form>
 
     <div class="btn-group pull-right">
@@ -47,7 +48,7 @@
 			    <tbody>
 		    		<tr>
 		    			<td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="videouploadListData.isItemChecked(gridItem)" ></td>
-		    			<td field-name="videoUrl">  <a gref="gridItem.videoUrl">Download</a></td>
+		    			<td field-name="videoUrl">  <a href="{{gridItem.videoUrl}}">Download</a></td>
 		    		
 			            <td field-name="action" > 
 					                <button ng-show="gridItem.submit" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="Submit" ng-click="updateVideoUpload(gridItem.id,'SUBMITTED')">

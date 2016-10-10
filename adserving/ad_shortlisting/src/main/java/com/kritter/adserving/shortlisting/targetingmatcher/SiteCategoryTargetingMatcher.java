@@ -40,7 +40,7 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsForSiteCategories of AdTargetingMatcher ...");
-        ReqLog.requestDebug( request, "Inside filterAdIdsForSiteCategories of AdTargetingMatcher ...");
+        ReqLog.requestDebugNew( request, "Inside filterAdIdsForSiteCategories of AdTargetingMatcher ...");
 
         Site site = request.getSite();
 
@@ -52,7 +52,7 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache adId : {} ",adId);
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache adId : {} ",adId);
                 continue;
             }
 
@@ -62,7 +62,7 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
             if(null == targetingProfile.getCategoriesExclusionList() &&
                     null == targetingProfile.getCategoriesInclusionList() )
             {
-                ReqLog.debugWithDebug(logger, request, "For adid : {}, site category inc/exc does not matter.", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "For adid : {}, site category inc/exc does not matter.", adEntity.getAdGuid());
                 shortlistedAdIdSet.add(adId);
                 continue;
             }
@@ -74,7 +74,7 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
 
             if(null != targetingProfile.getCategoriesExclusionList())
             {
-                ReqLog.debugWithDebug(logger, request, "For adid: {}, sitecategory excl is defined...", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "For adid: {}, sitecategory excl is defined...", adEntity.getAdGuid());
                 Set<Short> exclusionSet = new HashSet<Short>(
                         Arrays.asList(targetingProfile.getCategoriesExclusionList()));
 
@@ -83,7 +83,7 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
 
                 if(null == excludedResult || excludedResult.size() == 0 )
                 {
-                    ReqLog.debugWithDebug(logger, request, "For adid: {}, sitecategory excl passes...", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "For adid: {}, sitecategory excl passes...", adEntity.getAdGuid());
                     shortlistedAdIdSet.add(adId);
                 } else {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
@@ -92,7 +92,7 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
             }
             else if(null != targetingProfile.getCategoriesInclusionList())
             {
-                ReqLog.debugWithDebug(logger, request, "For adid: {}, sitecategory incl is defined...", adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "For adid: {}, sitecategory incl is defined...", adEntity.getAdGuid());
 
                 Set<Short> inclusionSet = new HashSet<Short>(
                         Arrays.asList(targetingProfile.getCategoriesInclusionList()));
@@ -102,7 +102,7 @@ public class SiteCategoryTargetingMatcher implements TargetingMatcher {
 
                 if(null != includedResult && includedResult.size() > 0 )
                 {
-                    ReqLog.debugWithDebug(logger, request, "For adid: {}, sitecategory incl passes...", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "For adid: {}, sitecategory incl passes...", adEntity.getAdGuid());
                     shortlistedAdIdSet.add(adId);
                 } else {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),

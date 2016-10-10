@@ -118,12 +118,12 @@ public class CTRCalculator implements Job
                 }
                 catch (IOException ioe)
                 {
-                    ReqLog.errorWithDebug(logger, request, "IOException inside CTRCalculator ",ioe);
+                    ReqLog.errorWithDebugNew(logger, request, "IOException inside CTRCalculator ",ioe);
                 }
 
                 int value = (null == dimensionValue ? DEFAULT_DIM_VALUE : dimensionValue);
 
-                ReqLog.debugWithDebug(logger, request, "Dimension Name: {} and value: {}", dimensionName, value );
+                ReqLog.debugWithDebugNew(logger, request, "Dimension Name: {} and value: {}", dimensionName, value );
                 dimensionValues[counter++] = value;
             }
 
@@ -137,10 +137,10 @@ public class CTRCalculator implements Job
             if(ctrValue < 0)
                 ctrValue = defaultCTR;
 
-            ReqLog.debugWithDebug(logger, request, "CTR value for ad unit: {} is : {}", responseAdInfo.getAdId(), ctrValue);
+            ReqLog.debugWithDebugNew(logger, request, "CTR value for ad unit: {} is : {}", responseAdInfo.getAdId(), ctrValue);
 
             if(ctrValue > ctrCeiling) {
-                ReqLog.debugWithDebug(logger, request, "CTR value for ad unit: {} predicted to be more than CTR ceiling. Setting CTR to: {}",
+                ReqLog.debugWithDebugNew(logger, request, "CTR value for ad unit: {} predicted to be more than CTR ceiling. Setting CTR to: {}",
                         responseAdInfo.getAdId(), this.ctrCeiling);
                 ctrValue = this.ctrCeiling;
             }
