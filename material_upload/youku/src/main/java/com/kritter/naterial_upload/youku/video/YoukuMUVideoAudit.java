@@ -8,13 +8,13 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.material_upload.common.urlpost.UrlPost;
 import com.kritter.material_upload.common.video.MUVideoAudit;
-import com.kritter.naterial_upload.youku.banner.YoukuBannerQuery;
 import com.kritter.naterial_upload.youku.entity.ReturnAuditEntity;
 import com.kritter.naterial_upload.youku.entity.ReturnAuditRecord;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
@@ -52,6 +52,7 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 			Timestamp ts = new Timestamp(new Date().getTime());
 			while(rset.next()){
 				YoukuMaterialUploadEntity ymue = YoukuMaterialUploadEntity.getObject(rset.getString("info"));
+				int internalid = rset.getInt("internalid");
 				if(ymue !=  null){
 					try{
 						YoukuMaterialAuditEntity ymae = new YoukuMaterialAuditEntity();
@@ -76,7 +77,7 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 										rae.getMessage().getRecords() != null && rae.getMessage().getRecords().size()>0){
 									ReturnAuditRecord rar = rae.getMessage().getRecords().get(0);
 									if(rar != null){
-										cpstmt = con.prepareStatement(YoukuVideoQuery.updatetVideoStatusMessage);
+										cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
 										if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(rar.getReason())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
 										}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(rar.getReason())){
@@ -90,7 +91,7 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
 									}else{
-										cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+										cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
 										cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
 										cpstmt.setString(2, rrc.getResult()+"--AUDIT MESSAGE NOT PRSESENT: "+out);
 										cpstmt.setTimestamp(3, ts);
@@ -98,7 +99,7 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 									}
 								}
 							}else{
-								cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+								cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
 								cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
 								cpstmt.setString(2, rrc.getResult()+"--RETURNCODEAUDIT: "+out);
 								cpstmt.setTimestamp(3, ts);
