@@ -278,10 +278,9 @@ public class VamMUBanner implements MUBanner {
 			}
 			if(materialList.size()>0){
 				boolean isSuccess=false;
-				HttpUtils vamPost = new HttpUtils();
 				try{
 					for(VamMaterialUploadEntity vamMaterialUploadEntity:materialList){
-						Integer out = vamPost.post(properties.getProperty("vam_url_prefix").toString()+
+						Integer out = HttpUtils.post(properties.getProperty("vam_url_prefix").toString()+
 								properties.getProperty("vam_prefix_banner_add").toString(),vamMaterialUploadEntity,getUsername(),getPassword());
 						LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
 						LOG.info(String.valueOf(out));

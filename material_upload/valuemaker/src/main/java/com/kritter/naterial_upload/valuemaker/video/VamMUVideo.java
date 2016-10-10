@@ -320,10 +320,9 @@ public class VamMUVideo implements MUVideo {
 			}
 			if(materialList.size()>0){
 				boolean isSuccess=false;
-				HttpUtils vamPost = new HttpUtils();
 				try{
 					for(VamVideoMaterialUploadEntity vamVideoMaterialUploadEntity:materialList){
-						Integer out = vamPost.post(properties.getProperty("vam_url_prefix").toString()+
+						Integer out = HttpUtils.post(properties.getProperty("vam_url_prefix").toString()+
 								properties.getProperty("vam_prefix_video_add").toString(),vamVideoMaterialUploadEntity,getUsername(),getPassword());
 						LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
 						LOG.info(String.valueOf(out));

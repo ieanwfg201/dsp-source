@@ -15,6 +15,8 @@ public class VamUploadExecutor  extends UploadExecutorImpl implements UploadExec
 
 	@Override
 	public void execute(Properties properties,Connection con) {
+		int pubInc=Integer.parseInt(properties.getProperty("vam_pubIncId").toString());
+		super.checkJobs(properties, con, pubInc);
 		VamMUBanner muBanner = new VamMUBanner();
 		super.executeMaterialBannerUpload(properties, muBanner, con);
 		VamMUBannerAudit muBannerAudit = new VamMUBannerAudit();

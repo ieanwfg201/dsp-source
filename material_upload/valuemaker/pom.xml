@@ -10,19 +10,9 @@
   <name>kritter_material_upload_valuemaker</name>
   <dependencies>
     <dependency>
-      <groupId>com.kritter.utils</groupId>
-      <artifactId>http_client</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
-    </dependency>
-    <dependency>
-      <groupId>com.kritter.constants</groupId>
-      <artifactId>kritter-constants</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.kritter.material_upload</groupId>
@@ -35,19 +25,9 @@
       <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.2</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.5</version>
-    </dependency>
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-core</artifactId>
-      <version>1.9.13</version>
     </dependency>
     <dependency>
       <groupId>com.alibaba</groupId>
@@ -59,6 +39,11 @@
       <groupId>com.kritter.entity.video_props</groupId>
       <artifactId>kritter_entity_video_props</artifactId>
       <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.2</version>
     </dependency>
   </dependencies>
   <build>

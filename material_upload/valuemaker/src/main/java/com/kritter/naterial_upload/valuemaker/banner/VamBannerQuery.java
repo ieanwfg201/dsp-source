@@ -23,8 +23,8 @@ public class VamBannerQuery {
 					"    d.id AS creativeId, " +
 					"    d.label AS creativeName, " +
 					"    d.resource_uri_ids AS resource_uri_ids, " +
-					"    d.status_id AS creativeStatus  " +
-					"    d.guid AS creativeGuid" +
+					"    d.status_id AS creativeStatus,  " +
+					"    d.guid AS creativeGuid  " +
 					"  FROM " +
 					"    account AS a, " +
 					"    campaign AS b, " +
@@ -42,7 +42,7 @@ public class VamBannerQuery {
 					"      b.last_modified, " +
 					"      c.last_modified, " +
 					"      d.last_modified " +
-					"    ) > '2016-01-01') AS j1  " +
+					"    ) > ?) AS j1  " +
 					"  JOIN creative_banner AS j2  " +
 					"    ON FIND_IN_SET( " +
 					"      j2.id, " +

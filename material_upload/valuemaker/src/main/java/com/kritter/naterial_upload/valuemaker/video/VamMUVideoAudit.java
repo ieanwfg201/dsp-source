@@ -53,8 +53,7 @@ public class VamMUVideoAudit implements MUVideoAudit {
 				id = rset.getString("guid");
 				if(id !=  null){
 					try{
-						HttpUtils vamGet = new HttpUtils();
-						String out = vamGet.get(properties.getProperty("vam_url_prefix").toString()+
+						String out = HttpUtils.get(properties.getProperty("vam_url_prefix").toString()+
 								properties.getProperty("vam_prefix_video_audit").toString()+"?id="+id,getUsername(),getPassword());
 						LOG.info("MATERIAL AUDIT RETURN");
 						LOG.info(out);

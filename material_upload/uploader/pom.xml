@@ -90,6 +90,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <artifactId>structs</artifactId>
         <version>1.0.0</version>
     </dependency>
+      <dependency>
+          <groupId>com.kritter.material_upload</groupId>
+          <artifactId>material_upload_valuemaker</artifactId>
+          <version>1.0.0</version>
+      </dependency>
   </dependencies>
   <organization>
     <name>Kritter</name>
