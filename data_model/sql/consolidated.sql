@@ -1508,3 +1508,5 @@ CREATE TABLE `qualification` (
   PRIMARY KEY (`internalid`),
   UNIQUE KEY `qualification_unique_key` (`name`,`advIncId`)
 ) ENGINE=InnoDB;
+
+alter table qualification drop index qualification_unique_key;
