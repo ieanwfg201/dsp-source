@@ -131,23 +131,20 @@ public class QualificationController extends Controller{
 				qE.setId_list(qual.getAdvIncId()+"");
 				qE.setQueryEnum(QualificationDefEnum.select_by_name_adv);
 				QualificationList qList =ApiDef.various_get_qualification(con, qE);
-				if(qList==null || qList.getEntity_list()==null || qList.getEntity_list().size()<1){
+				if(qList==null || qList.getEntity_list()==null || qList.getEntity_list().size()<1 && qual.getInternalid()<1){
+					msg = ApiDef.insert_qualification(con, qual);
+					if(msg.getError_code()==0){ 
+						return redirect(routes.QualificationController.list(Scala.Option(qual.getAdvIncId()+"")));
+					}
+				}else{
 					if(qual.getInternalid()>0){
 						msg = ApiDef.update_qualification(con, qual);
 					}else{
-						msg = ApiDef.insert_qualification(con, qual);
+						qualForm.reject("qname", "Duplicate Name");	
 					}
-
 					if(msg.getError_code()==0){ 
-						//Form<QualificationListFormEntity> qualificationFormEntityData = Form.form(QualificationListFormEntity.class);
-						//QualificationListFormEntity qEntity  = new QualificationListFormEntity();
-						//qEntity.setAdvIncId(qual.getAdvIncId());
-						//; 
 						return redirect(routes.QualificationController.list(Scala.Option(qual.getAdvIncId()+"")));
-						//return ok(views.html.adxbasedexchanges.listqualification.render(qualificationFormEntityData.fill(qEntity)));
 					}
-				}else{
-					qualForm.reject("qname", "Duplicate Name");
 				}
 
 			} catch (Exception e) {
