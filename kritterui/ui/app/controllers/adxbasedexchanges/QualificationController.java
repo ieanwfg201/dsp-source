@@ -119,46 +119,34 @@ public class QualificationController extends Controller{
 		QualificationEntity qualEntity = null;
 		Qualification qual =null;
 		if(!"cancel".equals(qualForm.data().get("action"))){
-		if(!qualForm.hasErrors()){
-			qualEntity = qualForm.get();
-			Message msg = null; 
-			Connection con = null;
-			try {
-				con = DB.getConnection();
-				qual = qualEntity.getEntity();
-				QualificationListEntity qE = new QualificationListEntity();
-				qE.setName(qual.getQname());
-				qE.setId_list(qual.getAdvIncId()+"");
-				qE.setQueryEnum(QualificationDefEnum.select_by_name_adv);
-				QualificationList qList =ApiDef.various_get_qualification(con, qE);
-				if(qList==null || qList.getEntity_list()==null || qList.getEntity_list().size()<1 && qual.getInternalid()<1){
-					msg = ApiDef.insert_qualification(con, qual);
-					if(msg.getError_code()==0){ 
-						return redirect(routes.QualificationController.list(Scala.Option(qual.getAdvIncId()+"")));
-					}
-				}else{
+			if(!qualForm.hasErrors()){
+				qualEntity = qualForm.get();
+				Message msg = null; 
+				Connection con = null;
+				try {
+					con = DB.getConnection();
+					qual = qualEntity.getEntity();
 					if(qual.getInternalid()>0){
 						msg = ApiDef.update_qualification(con, qual);
 					}else{
-						qualForm.reject("qname", "Duplicate Name");	
+						msg = ApiDef.insert_qualification(con, qual);
 					}
 					if(msg.getError_code()==0){ 
 						return redirect(routes.QualificationController.list(Scala.Option(qual.getAdvIncId()+"")));
 					}
-				}
 
-			} catch (Exception e) {
-				Logger.error("Error while updating qual", e );
-			} finally{
-				try{
-					if(con!=null){
-						con.close();
+				} catch (Exception e) {
+					Logger.error("Error while updating qual", e );
+				} finally{
+					try{
+						if(con!=null){
+							con.close();
+						}
+					}catch(Exception e){
+						Logger.error("Error while closing DB connection", e );
 					}
-				}catch(Exception e){
-					Logger.error("Error while closing DB connection", e );
 				}
 			}
-		}
 		}else{
 			QualificationEntity qual1 = new QualificationEntity(); 
 			return ok(views.html.adxbasedexchanges.qualification.render(qualFormTemplate.fill(qual1)));

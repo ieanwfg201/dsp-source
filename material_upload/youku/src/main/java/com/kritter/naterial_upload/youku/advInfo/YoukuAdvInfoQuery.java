@@ -10,12 +10,12 @@ public class YoukuAdvInfoQuery {
 			+ "left join "
 			+ "(select p.supplycode as supplycode, q.ui_id as ui_id from "
 			+ "	supply_mma_mapping as p, mma_code_mma_ui_mapping as q,mma_exchangename_id_mapping as r  "
-			+ "	where p.mma_category_code = q.code and p.exchangename=r.exchangename and r.exchangeid=?)  as c "
+			+ "	where p.mma_category_code = q.code and p.exchangename=r.exchangename and r.exchangeid=? group by q.ui_id)  as c "
 			+ "on a.firstind=c.ui_id "
 			+ "left join "
 			+ "(select x.supplycode as supplycode, y.ui_id as ui_id "
 			+ "	from supply_mma_mapping as x, mma_code_mma_ui_mapping as y,mma_exchangename_id_mapping as z  "
-			+ "	where x.mma_category_code = y.code and x.exchangename=z.exchangename and z.exchangeid=?) as d "
+			+ "	where x.mma_category_code = y.code and x.exchangename=z.exchangename and z.exchangeid=? group by y.ui_id) as d "
 			+ "on a.secondind=d.ui_id "
 			+ "where a.type_id=3 and (a.last_modified>=? or b.last_modified>=?)";
 	
