@@ -61,7 +61,7 @@ public class YoukuMUAdvInfoAudit implements MUADvInfoAudit {
 						LOG.info(postBody);
 						UrlPost urlPost = new UrlPost();
 						String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
-								properties.getProperty("youku_prefix_advinfo_ge").toString(), postBody);
+								properties.getProperty("youku_prefix_advinfo_get").toString(), postBody);
 						LOG.info("MATERIAL AUDIT RETURN");
 						LOG.info(out);
 						if(out !=null){
