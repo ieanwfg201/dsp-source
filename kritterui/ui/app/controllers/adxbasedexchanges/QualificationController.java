@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 import models.entities.QualificationEntity;
 import models.entities.QualificationListFormEntity;
-import models.publisher.SiteDisplayFull;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FilenameUtils;
@@ -35,7 +34,6 @@ import com.google.common.io.Files;
 import com.kritter.api.entity.qualification.QualificationList;
 import com.kritter.api.entity.qualification.QualificationListEntity;
 import com.kritter.api.entity.response.msg.Message;
-import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.targeting_profile.FileUploadResponse;
 import com.kritter.api.upload_to_cdn.IUploadToCDN;
 import com.kritter.api.upload_to_cdn.everest.UploadToCDN;
@@ -148,9 +146,17 @@ public class QualificationController extends Controller{
 				}
 			}
 		}else{
-			QualificationEntity qual1 = new QualificationEntity(); 
-			return ok(views.html.adxbasedexchanges.qualification.render(qualFormTemplate.fill(qual1)));
-
+	        Form<QualificationListFormEntity> qualificationFormEntityData = Form.form(QualificationListFormEntity.class);
+	        QualificationListFormEntity qEntity  = new QualificationListFormEntity();
+			if(!qualForm.hasErrors()){
+				qualEntity = qualForm.get();
+			}
+			if(qualEntity != null && qualEntity.getAdvIncId() != null && qualEntity.getInternalid() != null&&qualEntity.getInternalid() != -1){
+				qEntity.setAdvIncId(qualEntity.getAdvIncId());
+				return ok(views.html.adxbasedexchanges.listqualification.render(qualificationFormEntityData.fill(qEntity)));
+			}else{
+				return badRequest(views.html.adxbasedexchanges.qualification.render( qualForm.fill(new QualificationEntity()) ));
+			}
 		}
 		return badRequest(views.html.adxbasedexchanges.qualification.render( qualForm ));
 	}
