@@ -15,7 +15,7 @@ public class CloudCrossAdvInfoQuery {
     public static final String updatetAdvInfoUpload = "update advinfo_upload"
             + " set adxbasedexhangesstatus=?,last_modified=?,info=? "
             + " where internalid=?";
-    public static final String selectforUpload = "select * from advinfo_upload where pubIncId=? and adxbasedexhangesstatus=2";
+    public static final String selectforUpload = "select * from advinfo_upload where pubIncId=? and adxbasedexhangesstatus=2 OR adxbasedexhangesstatus=15";
 
     public static final String updatetAdvinfoStatus = "update advinfo_upload"
             + " set adxbasedexhangesstatus=?,last_modified=?,message=? "
