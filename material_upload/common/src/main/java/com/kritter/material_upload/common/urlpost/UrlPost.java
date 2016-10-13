@@ -63,4 +63,51 @@ public class UrlPost {
 		}
 		return sbuff.toString();
 	}
+	public String urlGet(String urlString) throws Exception{
+		StringBuffer sbuff = new StringBuffer("");
+        URL url;
+        BufferedReader br = null;
+        HttpURLConnection conn=null;
+        OutputStream os=null;
+		try{
+            url = new URL(urlString);
+            conn = (HttpURLConnection)url.openConnection();
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+            conn.setDoOutput(true);
+            conn.setRequestMethod("GET");
+
+            // open the stream and put it into BufferedReader
+            br= new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+
+            String inputLine;
+            while ((inputLine = br.readLine()) != null) {
+                sbuff.append(inputLine);
+            }
+		}catch(Exception e){
+			LOG.error(e.getMessage(),e);
+			throw new Exception(e);
+		}finally{
+            if(br!= null){
+                try {
+                    br.close();
+                } catch (IOException e) {
+                	LOG.error(e.getMessage(),e);
+                }
+            }
+            if(conn != null){
+            	conn.disconnect();
+            }
+            if(os != null){
+            	try {
+					os.close();
+				} catch (IOException e) {
+					LOG.error(e.getMessage(),e);
+				}
+            }
+
+		}
+		return sbuff.toString();
+	}
 }
