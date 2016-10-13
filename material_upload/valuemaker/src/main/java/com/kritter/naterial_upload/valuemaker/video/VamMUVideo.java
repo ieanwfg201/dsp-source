@@ -289,7 +289,7 @@ public class VamMUVideo implements MUVideo {
 				pstmt.setInt(6,vqe.getVideoInfoId());
 				ResultSet rset = pstmt.executeQuery();
 		        String split[] = vqe.getResource_uri().split("/");
-		        String materialurl=properties.getProperty("cdn_url").toString()+split[split.length-1];
+		        String[] materialurl={properties.getProperty("cdn_url").toString()+split[split.length-1]};
 		        DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
 		        String campaignStartDate = dfm.format(new Date(vqe.getCampaignStartDate()));
 		        String campaignEndDate = dfm.format(new Date(vqe.getCampaignEndDate()));

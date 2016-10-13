@@ -143,7 +143,7 @@ public class VamMUBanner implements MUBanner {
 		PreparedStatement pstmt = null;
 		try{
 			pstmt = con.prepareStatement(VamBannerQuery.selectQuery);
-			pstmt.setString(1, getStartDateStr());
+			pstmt.setString(1, "2015-1-1");
 			ResultSet rset = pstmt.executeQuery();
 			boolean isFirst = true;
 			while(rset.next()){
@@ -211,7 +211,7 @@ public class VamMUBanner implements MUBanner {
 				pstmt.setInt(6,vqe.getBannerId());
 				ResultSet rset = pstmt.executeQuery();
 		        String split[] = vqe.getResource_uri().split("/");
-		        String materialurl=properties.getProperty("cdn_url").toString()+split[split.length-1];
+		        String[] materialurl={properties.getProperty("cdn_url").toString()+split[split.length-1]};
 		        DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
 		        String campaignStartDate = dfm.format(new Date(vqe.getCampaignStartDate()));
 		        String campaignEndDate = dfm.format(new Date(vqe.getCampaignEndDate()));
