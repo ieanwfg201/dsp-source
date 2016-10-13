@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import models.entities.QualificationEntity;
 import models.entities.QualificationListFormEntity;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.BeanUtils;
@@ -115,46 +116,46 @@ public class QualificationController extends Controller{
 		Form<QualificationEntity> qualForm = qualFormTemplate.bindFromRequest();
 		QualificationEntity qualEntity = null;
 		Qualification qual =null;
-		if(!qualForm.hasErrors()){
-			qualEntity = qualForm.get();
-			Message msg = null; 
-			Connection con = null;
-			try {
-				con = DB.getConnection();
-				qual = qualEntity.getEntity();
-				QualificationListEntity qE = new QualificationListEntity();
-				qE.setName(qual.getQname());
-				qE.setId_list(qual.getAdvIncId()+"");
-				QualificationList qList =ApiDef.various_get_qualification(con, qE);
-				if(qList==null || qList.getEntity_list()==null || qList.getEntity_list().size()<1){
+		if(!"cancel".equals(qualForm.data().get("action"))){
+			if(!qualForm.hasErrors()){
+				qualEntity = qualForm.get();
+				Message msg = null; 
+				Connection con = null;
+				try {
+					con = DB.getConnection();
+					qual = qualEntity.getEntity();
 					if(qual.getInternalid()>0){
 						msg = ApiDef.update_qualification(con, qual);
 					}else{
 						msg = ApiDef.insert_qualification(con, qual);
 					}
-
 					if(msg.getError_code()==0){ 
-						//Form<QualificationListFormEntity> qualificationFormEntityData = Form.form(QualificationListFormEntity.class);
-						//QualificationListFormEntity qEntity  = new QualificationListFormEntity();
-						//qEntity.setAdvIncId(qual.getAdvIncId());
-						//; 
 						return redirect(routes.QualificationController.list(Scala.Option(qual.getAdvIncId()+"")));
-						//return ok(views.html.adxbasedexchanges.listqualification.render(qualificationFormEntityData.fill(qEntity)));
 					}
-				}else{
-					qualForm.reject("qname", "Duplicate Name");
-				}
 
-			} catch (Exception e) {
-				Logger.error("Error while updating qual", e );
-			} finally{
-				try{
-					if(con!=null){
-						con.close();
+				} catch (Exception e) {
+					Logger.error("Error while updating qual", e );
+				} finally{
+					try{
+						if(con!=null){
+							con.close();
+						}
+					}catch(Exception e){
+						Logger.error("Error while closing DB connection", e );
 					}
-				}catch(Exception e){
-					Logger.error("Error while closing DB connection", e );
 				}
+			}
+		}else{
+	        Form<QualificationListFormEntity> qualificationFormEntityData = Form.form(QualificationListFormEntity.class);
+	        QualificationListFormEntity qEntity  = new QualificationListFormEntity();
+			if(!qualForm.hasErrors()){
+				qualEntity = qualForm.get();
+			}
+			if(qualEntity != null && qualEntity.getAdvIncId() != null && qualEntity.getInternalid() != null&&qualEntity.getInternalid() != -1){
+				qEntity.setAdvIncId(qualEntity.getAdvIncId());
+				return ok(views.html.adxbasedexchanges.listqualification.render(qualificationFormEntityData.fill(qEntity)));
+			}else{
+				return badRequest(views.html.adxbasedexchanges.qualification.render( qualForm.fill(new QualificationEntity()) ));
 			}
 		}
 		return badRequest(views.html.adxbasedexchanges.qualification.render( qualForm ));

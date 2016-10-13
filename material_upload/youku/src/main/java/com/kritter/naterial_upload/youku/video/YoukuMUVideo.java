@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
+import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.entity.video_props.VideoInfoExt;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.material_upload.common.urlpost.UrlPost;
@@ -28,6 +29,7 @@ import com.kritter.naterial_upload.youku.entity.ReturnResultMessage;
 import com.kritter.naterial_upload.youku.entity.YoukuMaterialUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuMultipleMaterialUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuQueryEntity;
+import com.kritter.naterial_upload.youku.entity.YoukuVideoId;
 import com.kritter.naterial_upload.youku.entity.YoukuVideoLocalMaterialUploadEntity;
 
 import lombok.Getter;
@@ -374,13 +376,33 @@ public class YoukuMUVideo implements MUVideo {
 							properties.getProperty("file_path_prefix").toString()+localEntity.getResource_uri(), 
 							localEntity.getCreativeName(),"广告");
 					if(ynvu.getVideoid()!=null && !ynvu.getVideoid().equals("")){
-						String youkuUrl = properties.getProperty("youku_video_url").toString().replaceAll("<videoid>", ynvu.getVideoid());
+						String vId = ynvu.getVideoid();
+						if(vId != null && !vId.isEmpty()){
+							try{
+								YoukuVideoId videoInfoExt = YoukuVideoId.getObject(vId);
+								vId = videoInfoExt.getVideo_id();
+							}catch(Exception e){
+								vId="ERROR";
+								LOG.error(e.getMessage(),e);
+							}
+						}else{
+							vId="ERROR";
+						}
+						String youkuUrl = properties.getProperty("youku_video_url").toString().replaceAll("<videoid>", vId);
 						localEntity.setYoukuurl(youkuUrl);
 						cpstmt2 = con.prepareStatement(YoukuVideoQuery.getVideoInfo);
 						cpstmt2.setInt(1, localEntity.getVideoInfoId());
 						ResultSet cpstmt2Rset = cpstmt2.executeQuery();
 						if(cpstmt2Rset.next()){
-							VideoInfoExt viext = VideoInfoExt.getObject(rset.getString("ext"));
+							VideoInfoExt viext = null;
+							try{
+								String ext=cpstmt2Rset.getString("ext");
+								if(ext != null && !ext.isEmpty()){
+									viext = VideoInfoExt.getObject(ext);
+								}
+							}catch(Exception e ){
+								LOG.error(e.getMessage(),e);
+							}
 							if(viext ==null){
 								viext=new VideoInfoExt();
 							}
@@ -526,5 +548,4 @@ public class YoukuMUVideo implements MUVideo {
 		}
 
 	}
-
 }

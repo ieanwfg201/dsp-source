@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,7 @@ public class YoukuMUBannerAudit implements MUBannerAudit {
 			Timestamp ts = new Timestamp(new Date().getTime());
 			while(rset.next()){
 				YoukuMaterialUploadEntity ymue = YoukuMaterialUploadEntity.getObject(rset.getString("info"));
+				int internalid = rset.getInt("internalid");
 				if(ymue !=  null){
 					try{
 						YoukuMaterialAuditEntity ymae = new YoukuMaterialAuditEntity();
@@ -75,7 +77,7 @@ public class YoukuMUBannerAudit implements MUBannerAudit {
 										rae.getMessage().getRecords() != null && rae.getMessage().getRecords().size()>0){
 									ReturnAuditRecord rar = rae.getMessage().getRecords().get(0);
 									if(rar != null){
-										cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+										cpstmt = con.prepareStatement(StringUtils.replace(YoukuBannerQuery.updatetBannerStatusMessage, "<id>", internalid+""));
 										if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(rar.getReason())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
 										}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(rar.getReason())){
@@ -89,7 +91,7 @@ public class YoukuMUBannerAudit implements MUBannerAudit {
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
 									}else{
-										cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+										cpstmt = con.prepareStatement(StringUtils.replace(YoukuBannerQuery.updatetBannerStatusMessage, "<id>", internalid+""));
 										cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
 										cpstmt.setString(2, rrc.getResult()+"--AUDIT MESSAGE NOT PRSESENT: "+out);
 										cpstmt.setTimestamp(3, ts);
@@ -97,7 +99,7 @@ public class YoukuMUBannerAudit implements MUBannerAudit {
 									}
 								}
 							}else{
-								cpstmt = con.prepareStatement(YoukuBannerQuery.updatetBannerStatusMessage);
+								cpstmt = con.prepareStatement(StringUtils.replace(YoukuBannerQuery.updatetBannerStatusMessage, "<id>", internalid+""));
 								cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
 								cpstmt.setString(2, rrc.getResult()+"--RETURNCODEAUDIT: "+out);
 								cpstmt.setTimestamp(3, ts);
