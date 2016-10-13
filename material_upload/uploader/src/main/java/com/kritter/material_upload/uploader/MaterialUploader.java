@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import com.kritter.naterial_upload.cloudcross.executor.CloudCrossUploadExecutor;
+import com.kritter.naterial_upload.valuemaker.executor.VamUploadExecutor;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.kritter.naterial_upload.youku.executor.YoukuUploadExecutor;
@@ -82,6 +83,12 @@ public class MaterialUploader {
                         CloudCrossUploadExecutor executor = new CloudCrossUploadExecutor();
                         executor.execute(properties, con);
                         System.out.println("CLOUDCROSS END");
+                        break;
+                    case "valuemaker":
+                        System.out.println("VALUEMAKER BEGIN");
+                        VamUploadExecutor vame = new VamUploadExecutor();
+                        vame.execute(properties, con);
+                        System.out.println("VALUEMAKER END");
                         break;
                 }
             }
