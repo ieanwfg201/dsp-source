@@ -42,7 +42,7 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsForHandsetOS of AdTargetingMatcher");
 
-        ReqLog.requestDebug( request, "Inside filterAdIdsForHandsetOS of AdTargetingMatcher");
+        ReqLog.requestDebugNew( request, "Inside filterAdIdsForHandsetOS of AdTargetingMatcher");
 
         HandsetMasterData handsetMasterData = null;
 
@@ -59,17 +59,17 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
 
                 if(null == adEntity)
                 {
-                    ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache,FATAL error!!! for adId: {} " , adId);
+                    ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache,FATAL error!!! for adId: {} " , adId);
                     continue;
                 }
 
                 TargetingProfile targetingProfile = adEntity.getTargetingProfile();
 
-                ReqLog.debugWithDebug(logger, request, "TargetedOsJson is {} for ad id : {}", targetingProfile.getTargetedOSJson(), adEntity.getAdGuid());
+                ReqLog.debugWithDebugNew(logger, request, "TargetedOsJson is {} for ad id : {}", targetingProfile.getTargetedOSJson(), adEntity.getAdGuid());
                 //if no OS targeting specified then OS json has to be null.
                 if(null == targetingProfile.getTargetedOSJson())
                 {
-                    ReqLog.debugWithDebug(logger, request, "The adId is not OS targeted,so passing the adId: {} ", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The adId is not OS targeted,so passing the adId: {} ", adEntity.getAdGuid());
 
                     filteredAdIds.add(adId);
                     continue;
@@ -83,7 +83,7 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
 
                 if(null == osMap || osMap.size() == 0)
                 {
-                    ReqLog.debugWithDebug(logger, request, "The adId is not OS targeted,so passing the adId: {} ",adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The adId is not OS targeted,so passing the adId: {} ",adEntity.getAdGuid());
                     filteredAdIds.add(adId);
                     continue;
                 }
@@ -91,13 +91,13 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
                 /*Here it means ad targets operating system, so no use going further.*/
                 if(null == handsetOSId)
                 {
-                    ReqLog.debugWithDebug(logger, request, "The requesting handset has null operating system,but ad targets OS, skipping adId: {} " ,adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The requesting handset has null operating system,but ad targets OS, skipping adId: {} " ,adEntity.getAdGuid());
                     continue;
                 }
 
                 if(!osMap.containsKey(handsetOSId))
                 {
-                    ReqLog.debugWithDebug(logger, request, "The requesting handset does not comply with any targeted os in campaign, skipping adId: {} " ,adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The requesting handset does not comply with any targeted os in campaign, skipping adId: {} " ,adEntity.getAdGuid());
                     continue;
                 }
 
@@ -105,7 +105,7 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
 
                 if(osVersions[0].equalsIgnoreCase(ALL_VERSIONS) || osVersions[1].equalsIgnoreCase(ALL_VERSIONS))
                 {
-                    ReqLog.debugWithDebug(logger, request, "The ad id is targeted to all os versions so passing the adId: {} ",adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The ad id is targeted to all os versions so passing the adId: {} ",adEntity.getAdGuid());
                     filteredAdIds.add(adId);
                     continue;
                 }
@@ -120,7 +120,7 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
 
                 if(null == handsetOsVersion)
                 {
-                    ReqLog.debugWithDebug(logger, request, "The osversion could not be detected,ad : {} targets os version , skipping it ", adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The osversion could not be detected,ad : {} targets os version , skipping it ", adEntity.getAdGuid());
                     continue;
                 }
 
@@ -130,7 +130,7 @@ public class HandsetOsTargetingMatcher implements TargetingMatcher {
 
                 if(versionRange.checkIfVersionIsWithin(new Version(handsetOsVersion)))
                 {
-                    ReqLog.debugWithDebug(logger, request, "The osversion: {} is within targeted version range. For adid : {}, passing it...", handsetOsVersion, adEntity.getAdGuid());
+                    ReqLog.debugWithDebugNew(logger, request, "The osversion: {} is within targeted version range. For adid : {}, passing it...", handsetOsVersion, adEntity.getAdGuid());
                     filteredAdIds.add(adId);
                 }
             }

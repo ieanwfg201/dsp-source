@@ -47,6 +47,8 @@ import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadList;
 import com.kritter.api.entity.materialbannerupload.MaterialBannerUploadListEntity;
 import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadList;
 import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadListEntity;
+import com.kritter.api.entity.qualification.QualificationList;
+import com.kritter.api.entity.qualification.QualificationListEntity;
 import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.site.SiteList;
 import com.kritter.api.entity.site.SiteListEntity;
@@ -57,6 +59,7 @@ import com.kritter.constants.Account_Type;
 import com.kritter.constants.AdAPIEnum;
 import com.kritter.constants.AdpositionGetQueryEnum;
 import com.kritter.constants.AdxBasedExchangesMetadataQueryEnum;
+import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.CreativeContainerAPIEnum;
 import com.kritter.constants.Ext_siteEnum;
@@ -67,9 +70,11 @@ import com.kritter.constants.MaterialAdvInfoUploadQueryEnum;
 import com.kritter.constants.MaterialBannerUploadQueryEnum;
 import com.kritter.constants.MaterialVideoUploadQueryEnum;
 import com.kritter.constants.PageConstants;
+import com.kritter.constants.QualificationDefEnum;
 import com.kritter.constants.RetargetingSegmentEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
+import com.kritter.entity.account.Qualification;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
@@ -352,8 +357,18 @@ public class EntityListDataService {
                         break;
                 case materialbannerupload:
             		MaterialBannerUploadListEntity materialBannerUploadListEntity = new MaterialBannerUploadListEntity();
-            		materialBannerUploadListEntity.setQueryEnum(MaterialBannerUploadQueryEnum.list_material_banner_by_pubincids);
+            		materialBannerUploadListEntity.setQueryEnum(MaterialBannerUploadQueryEnum.list_material_banner_by_pubincids_state);
             		materialBannerUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+                	if(listDataFilter.getAdxBasedExchangesStates() != null){
+                		try{
+                			AdxBasedExchangesStates aes = AdxBasedExchangesStates.getEnum(listDataFilter.getAdxBasedExchangesStates());
+                			if(aes!=null){
+                				materialBannerUploadListEntity.setAdxstate(aes);
+                			}
+                		}catch(Exception e){
+                			Logger.error(e.getMessage(),e);
+                		}
+                	}
             		MaterialBannerUploadList materialBannerUploadList = null;
             		materialBannerUploadList = ApiDef.various_material_banner(con, materialBannerUploadListEntity);
                     if(materialBannerUploadList.getMsg().getError_code()==0){ 
@@ -365,8 +380,18 @@ public class EntityListDataService {
                     break;
                 case materialvideoupload:
             		MaterialVideoUploadListEntity materialVideoUploadListEntity = new MaterialVideoUploadListEntity();
-            		materialVideoUploadListEntity.setQueryEnum(MaterialVideoUploadQueryEnum.list_material_video_by_pubincids);
+            		materialVideoUploadListEntity.setQueryEnum(MaterialVideoUploadQueryEnum.list_material_video_by_pubincids_state);
             		materialVideoUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+                	if(listDataFilter.getAdxBasedExchangesStates() != null){
+                		try{
+                			AdxBasedExchangesStates aes = AdxBasedExchangesStates.getEnum(listDataFilter.getAdxBasedExchangesStates());
+                			if(aes!=null){
+                				materialVideoUploadListEntity.setAdxstate(aes);
+                			}
+                		}catch(Exception e){
+                			Logger.error(e.getMessage(),e);
+                		}
+                	}
             		MaterialVideoUploadList materialVideoUploadList = null;
             		materialVideoUploadList = ApiDef.various_material_video(con, materialVideoUploadListEntity);
                     if(materialVideoUploadList.getMsg().getError_code()==0){ 
@@ -378,8 +403,18 @@ public class EntityListDataService {
                     break;
                 case materialadvinfoupload:
             		MaterialAdvInfoUploadListEntity materialAdvInfoUploadListEntity = new MaterialAdvInfoUploadListEntity();
-            		materialAdvInfoUploadListEntity.setQueryEnum(MaterialAdvInfoUploadQueryEnum.list_material_advinfo_by_pubincids);
+            		materialAdvInfoUploadListEntity.setQueryEnum(MaterialAdvInfoUploadQueryEnum.list_material_advinfo_by_pubincids_status);
             		materialAdvInfoUploadListEntity.setId_list(listDataFilter.getExchangeId()+"");
+                	if(listDataFilter.getAdxBasedExchangesStates() != null){
+                		try{
+                			AdxBasedExchangesStates aes = AdxBasedExchangesStates.getEnum(listDataFilter.getAdxBasedExchangesStates());
+                			if(aes!=null){
+                				materialAdvInfoUploadListEntity.setAdxstate(aes);
+                			}
+                		}catch(Exception e){
+                			Logger.error(e.getMessage(),e);
+                		}
+                	}
             		MaterialAdvInfoUploadList materialAdvInfoUploadList = null;
             		materialAdvInfoUploadList = ApiDef.various_material_advinfo(con, materialAdvInfoUploadListEntity);
                     if(materialAdvInfoUploadList.getMsg().getError_code()==0){ 
@@ -387,6 +422,19 @@ public class EntityListDataService {
                         		materialAdvInfoUploadList.getEntity_list().size()); 
                     }else{
                         entityList = new EntityList<MaterialUploadAdvInfo>(new ArrayList<MaterialUploadAdvInfo>(), 0);
+                    }
+                    break;
+                case qualification:
+            		QualificationListEntity qualificationListEntity = new QualificationListEntity();
+            		qualificationListEntity.setQueryEnum(QualificationDefEnum.select_qualification_byadvertisers);
+            		qualificationListEntity.setId_list(listDataFilter.getAdvIncId()+"");
+            		QualificationList qualificationList = null;
+            		qualificationList = ApiDef.various_get_qualification(con, qualificationListEntity);
+                    if(qualificationList.getMsg().getError_code()==0){ 
+                        entityList = new EntityList<Qualification>(qualificationList.getEntity_list(), 
+                        		qualificationList.getEntity_list().size()); 
+                    }else{
+                        entityList = new EntityList<Qualification>(new ArrayList<Qualification>(), 0);
                     }
                     break;
 				default:

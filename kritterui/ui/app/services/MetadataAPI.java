@@ -260,6 +260,14 @@ public class MetadataAPI {
         } 
         return selectOptions;
     }
+    public static List<SelectOption> getAdxBasedExchangesStates(){
+        List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
+        AdxBasedExchangesStates[] types = AdxBasedExchangesStates.values();
+        for (AdxBasedExchangesStates type : types) {
+            selectOptions.add(new SelectOption(type.getName(),  type.getCode()+""));
+        } 
+        return selectOptions;
+    }
     public static List<SelectOption> native_screenshot_image_size(){
         List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
         NativeScreenShotImageSize[] types = NativeScreenShotImageSize.values();
@@ -1312,6 +1320,9 @@ public class MetadataAPI {
                optionNodes.add(option.toJson());
            }
            return optionNodes;
+       }
+       public static List<SelectOption> activeAdvIdsSelectOption(){
+           return activeAdvIdsList(Account_Type.directadvertiser);
        }
        
 	public static ArrayNode activeAdvertiserArray(){

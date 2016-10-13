@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,7 @@ public class YoukuMUAdvInfoAudit implements MUADvInfoAudit {
 			Timestamp ts = new Timestamp(new Date().getTime());
 			while(rset.next()){
 				YoukuAdvInfoLocaLMaterialUploadEntity ymue = YoukuAdvInfoLocaLMaterialUploadEntity.getObject(rset.getString("info"));
+				int internalid = rset.getInt("internalid");
 				if(ymue !=  null){
 					try{
 						YoukuAdvInfoAuditEntity ymae = new YoukuAdvInfoAuditEntity();
@@ -61,7 +63,7 @@ public class YoukuMUAdvInfoAudit implements MUADvInfoAudit {
 						LOG.info(postBody);
 						UrlPost urlPost = new UrlPost();
 						String out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
-								properties.getProperty("youku_prefix_advinfo_ge").toString(), postBody);
+								properties.getProperty("youku_prefix_advinfo_get").toString(), postBody);
 						LOG.info("MATERIAL AUDIT RETURN");
 						LOG.info(out);
 						if(out !=null){
@@ -70,7 +72,7 @@ public class YoukuMUAdvInfoAudit implements MUADvInfoAudit {
 								ReturnAdvInfoMessage rae=ReturnAdvInfoMessage.getObject(out);
 								if(rae != null && rae.getMessage() != null &&
 										rae.getMessage().getState() != null ){
-									cpstmt = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvInfoStatusMessage);
+									cpstmt = con.prepareStatement(StringUtils.replace(YoukuAdvInfoQuery.updatetAdvInfoStatusMessage, "<id>", internalid+""));
 									if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(rae.getMessage().getState())){
 										cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
 									}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(rae.getMessage().getState())){
@@ -84,16 +86,16 @@ public class YoukuMUAdvInfoAudit implements MUADvInfoAudit {
 									cpstmt.setTimestamp(3, ts);
 									cpstmt.executeUpdate();
 								}else{
-									cpstmt = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvInfoStatusMessage);
-									cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
-									cpstmt.setString(2, rrc.getResult()+"--AUDIT MESSAGE NOT PRSESENT");
+									cpstmt = con.prepareStatement(StringUtils.replace(YoukuAdvInfoQuery.updatetAdvInfoStatusMessage, "<id>", internalid+""));
+									cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
+									cpstmt.setString(2, rrc.getResult()+"--AUDIT MESSAGE NOT PRSESENT: "+out);
 									cpstmt.setTimestamp(3, ts);
 									cpstmt.executeUpdate();
 								}
 							}else{
-								cpstmt = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvInfoStatusMessage);
-								cpstmt.setInt(1, AdxBasedExchangesStates.AUGITORGETFAIL.getCode());
-								cpstmt.setString(2, rrc.getResult()+"--RETURNCODEAUDIT");
+								cpstmt = con.prepareStatement(StringUtils.replace(YoukuAdvInfoQuery.updatetAdvInfoStatusMessage, "<id>", internalid+""));
+								cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
+								cpstmt.setString(2, rrc.getResult()+"--RETURNCODEAUDIT :"+out);
 								cpstmt.setTimestamp(3, ts);
 								cpstmt.executeUpdate();
 							}

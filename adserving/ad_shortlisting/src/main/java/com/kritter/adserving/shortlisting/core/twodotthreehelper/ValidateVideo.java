@@ -40,7 +40,7 @@ public class ValidateVideo {
             }
             BidRequestImpressionVideoObjectDTO  videoObj = bidRequestImpressionDTO.getBidRequestImpressionVideoObject();
             if(videoObj == null){
-                logger.error("VideoObj null");
+                logger.debug("VideoObj null");
                 continue;
             }
             for(ResponseAdInfo responseAdInfo : response.getResponseAdInfo()){
@@ -52,28 +52,28 @@ public class ValidateVideo {
                 }
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
                 if(null == creative) {
-                    logger.error("Creative null in cache,!!! for creative id:{} ", adEntity.getCreativeId());
+                    logger.debug("Creative null in cache,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.VIDEO){
                     nfrReason = NoFillReason.CREATIVE_NOT_VIDEO;
-                    logger.error("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
+                    logger.debug("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
                     nfrReason = NoFillReason.DEAL_ID_MISMATCH;
-                    logger.error("DealID check not satisfied");
+                    logger.debug("DealID check not satisfied");
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidFloorPrice() != null &&  bidRequestImpressionDTO.getBidFloorPrice()>responseAdInfo.getEcpmValue()){
                     nfrReason = NoFillReason.BIDDER_FLOOR_UNMET;
-                    logger.error("Floor price unmet");
+                    logger.debug("Floor price unmet");
                     continue;
                 }
                 VideoProps videoProps  = creative.getVideoProps();
                 if(videoProps == null){
                     nfrReason = NoFillReason.VIDEO_PROPS_NULL;
-                    logger.error("Video Props Null,!!! for creative id:{} ",  adEntity.getCreativeId());
+                    logger.debug("Video Props Null,!!! for creative id:{} ",  adEntity.getCreativeId());
                     continue;
                 }
                 VideoInfo videoInfo=null;
@@ -113,7 +113,7 @@ public class ValidateVideo {
                 nfrReason = nfrReasonPriority;
 
             request.setNoFillReason(nfrReason);
-            ReqLog.debugWithDebug(logger, request, "Validate Video NFR: {}", nfrReason);
+            ReqLog.debugWithDebugNew(logger, request, "Validate Video NFR: {}", nfrReason);
         }
     }
 
@@ -133,36 +133,36 @@ public class ValidateVideo {
             }
             com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionVideoObjectDTO  videoObj = bidRequestImpressionDTO.getBidRequestImpressionVideoObject();
             if(videoObj == null){
-                logger.error("VideoObj null");
+                logger.debug("VideoObj null");
                 continue;
             }
             for(ResponseAdInfo responseAdInfo : response.getResponseAdInfo()){
                 AdEntity adEntity = adEntityCache.query(responseAdInfo.getAdId());
                 if(null == adEntity){
-                    logger.error("AdEntity not found in cache,FATAL error!!! for adId: {} ", 
+                    logger.debug("AdEntity not found in cache,FATAL error!!! for adId: {} ",
                             responseAdInfo.getAdId());
                     continue;
                 }
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
                 if(null == creative) {
-                    logger.error("Creative null in cache,!!! for creative id:{} "  , adEntity.getCreativeId());
+                    logger.debug("Creative null in cache,!!! for creative id:{} "  , adEntity.getCreativeId());
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.VIDEO){
-                    logger.error("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
+                    logger.debug("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
-                    logger.error("DealID check not satisfied");
+                    logger.debug("DealID check not satisfied");
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidFloorPrice() != null &&  bidRequestImpressionDTO.getBidFloorPrice()>responseAdInfo.getEcpmValue()){
-                    logger.error("Floor price unmet");
+                    logger.debug("Floor price unmet");
                     continue;
                 }
                 VideoProps videoProps  = creative.getVideoProps();
                 if(videoProps == null){
-                    logger.error("Video Props Null,!!! for creative id:{} ", adEntity.getCreativeId());
+                    logger.debug("Video Props Null,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 VideoInfo videoInfo=null;
@@ -193,7 +193,7 @@ public class ValidateVideo {
         }
         if(isNFR){
             request.setNoFillReason(nfrReason);
-            ReqLog.debugWithDebug(logger, request, "Validate Video NFR: {}", nfrReason);
+            ReqLog.debugWithDebugNew(logger, request, "Validate Video NFR: {}", nfrReason);
         }
     }
 

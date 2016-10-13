@@ -1,5 +1,7 @@
 package com.kritter.exchange.formatting;
 
+import java.util.LinkedList;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
@@ -13,11 +15,12 @@ import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.Res
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespNativeParent;
 import com.kritter.constants.ExchangeConstants;
 import com.kritter.entity.winner.WinEntity;
+import com.kritter.vast.vastversion.CheckVastVersion;
 
 public class FormatDspResponse {
 
     public static String formatResponse2_3(WinEntity winEntity, BidRequestParentNodeDTO bidRequestParent,
-            String internalFieldURI, String internalWinUrl, boolean isNative, Logger logger){
+            String internalFieldURI, String internalWinUrl, boolean isNative, Logger logger, boolean isVideo){
         
         if(winEntity == null || bidRequestParent == null 
                 || internalFieldURI == null || internalWinUrl == null) {
@@ -87,6 +90,19 @@ public class FormatDspResponse {
                 logger.error(e.getMessage(),e);
             }
             
+        }else if(isVideo){
+        	if(bidResponseBidEntity.getAdMarkup() ==null || bidResponseBidEntity.getAdMarkup().isEmpty()){
+        		return "";
+        	}
+        	LinkedList<String> impTrackers = new LinkedList<String>();
+        	impTrackers.add(winUrl);
+        	impTrackers.add(internalWinUrl + internalFieldURI + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price());
+        	String s = CheckVastVersion.enhanceVastResponse(bidResponseBidEntity.getAdMarkup(), logger, impTrackers, "kritkjqbsxcdkjqw");
+        	if(s==null || s.isEmpty()){
+        		return "";
+        	}
+        	return s;
+        	
         }else{
             sBuff.append(bidResponseBidEntity.getAdMarkup());
             sBuff.append("<img src=\"");
@@ -103,7 +119,7 @@ public class FormatDspResponse {
 
     public static String formatResponse2_2(WinEntity winEntity,
                                            com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO bidRequestParent,
-                                           String internalFieldURI, String internalWinUrl, boolean isNative, Logger logger){
+                                           String internalFieldURI, String internalWinUrl, boolean isNative, Logger logger, boolean isVideo){
 
         if(winEntity == null || bidRequestParent == null
                 || internalFieldURI == null || internalWinUrl == null) {
@@ -173,6 +189,19 @@ public class FormatDspResponse {
                 logger.error(e.getMessage(),e);
             }
 
+        }else if(isVideo){
+        	if(bidResponseBidEntity.getAdMarkup() ==null || bidResponseBidEntity.getAdMarkup().isEmpty()){
+        		return "";
+        	}
+        	LinkedList<String> impTrackers = new LinkedList<String>();
+        	impTrackers.add(winUrl);
+        	impTrackers.add(internalWinUrl + internalFieldURI + (internalFieldURI.contains("?") ? "&" : "?") + "wp="+winEntity.getWin_price());
+        	String s = CheckVastVersion.enhanceVastResponse(bidResponseBidEntity.getAdMarkup(), logger, impTrackers, "kritkjqbsxcdkjqw");
+        	if(s==null || s.isEmpty()){
+        		return "";
+        	}
+        	return s;
+        	
         }else{
             sBuff.append(bidResponseBidEntity.getAdMarkup());
             sBuff.append("<img src=\"");

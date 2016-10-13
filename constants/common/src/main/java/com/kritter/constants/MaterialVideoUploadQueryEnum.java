@@ -6,7 +6,8 @@ import java.util.Map;
 public enum MaterialVideoUploadQueryEnum
 {
 	list_material_video(0,"list_material_video"),
-	list_material_video_by_pubincids(1,"list_material_video_by_pubincids");
+	list_material_video_by_pubincids(1,"list_material_video_by_pubincids"),
+	list_material_video_by_pubincids_state(2,"list_material_video_by_pubincids_state");
 
             private int code;
             private String name;

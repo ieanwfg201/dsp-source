@@ -9,6 +9,7 @@ controller('banneruploadController',function ($scope, $http, $modal) {
 	    $scope.banneruploadListData.init("/entitylist" );
 	    $scope.banneruploadListData.setFilterAttribute("entityType", "materialbannerupload" );
 		$scope.banneruploadListData.setFilterAttribute("exchangeId", $("#exchange").val() );
+		$scope.banneruploadListData.setFilterAttribute("adxBasedExchangesStates", $("#adxBasedExchangesStates").val() );
 		var path = $.url().attr('path');
 		var pathComps = path.split("/");
 		if(pathComps.length == 4){
@@ -19,7 +20,7 @@ controller('banneruploadController',function ($scope, $http, $modal) {
 		} 
 	}
 	$scope.init();
-		$scope.updateBannerUpload = function (pubIncId, action) {
+		$scope.updateBannerUpload = function (id, action) {
 		var modalInstance = $modal.open({
 			templateUrl: '/adxbasedexchanges/bannerupload/updatesingle/'+id +'/'+action, 
 			controller:banneruploadrefreshController,

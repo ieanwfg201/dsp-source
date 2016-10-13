@@ -10,6 +10,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritterui_api_entity</name>
   <dependencies>
     <dependency>
+        <groupId>com.kritter.entity.account</groupId>
+        <artifactId>kritter_entity_account</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.entity.payout_threshold</groupId>
         <artifactId>kritter_entity_payout_threshold</artifactId>
         <version>1.0.0</version>

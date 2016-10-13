@@ -66,11 +66,6 @@
 					<legend>For Adx Based</legend>
 					@components.formElements.selectlist2(accountForm("firstIndustryCode"), "1st Industry Code *", services.MetadataAPI.tier1mmaindustrySelectOption()  )
 					@components.formElements.selectlist2(accountForm("secondIndustryCode"), "2nd Industry Code *", services.MetadataAPI.tier2mmaindustrySelectOption()  )
-					@components.formElements.textinput(accountForm("qualificationName"), '_label ->"Qualification Name *" )
-					@components.formElements.fileinput(accountForm("qualificationUrl"), '_label ->"Upload Image", 
-						'_uploadHandler -> "handleQualificationUpload($files, 'qualificationUrl')",
-							'_fileFilter -> "jpg|jpeg|png"  ) 
-					@components.formElements.hiddenfield(accountForm("qualificationMD5"))
 				</fieldset>
 					
 				}

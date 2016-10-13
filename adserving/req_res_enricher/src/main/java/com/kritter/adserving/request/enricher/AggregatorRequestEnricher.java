@@ -382,7 +382,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
             }
             catch (NumberFormatException nfe)
             {
-                logger.error("Inside AggregatorRequestEnricher Requesting width,height has invalid value : width:{} height:{} " ,
+                logger.debug("Inside AggregatorRequestEnricher Requesting width,height has invalid value : width:{} height:{} " ,
                               width , height);
             }
 

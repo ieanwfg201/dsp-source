@@ -10,7 +10,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-@EqualsAndHashCode(of={"creativeGuid"})
+@EqualsAndHashCode(of={"creativeSlotIncId"})
 public class CreativeSlot implements IUpdatableEntity<Short>
 {
     private final Short creativeSlotIncId;

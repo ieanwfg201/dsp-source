@@ -6,14 +6,15 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.eclipse.persistence.oxm.annotations.XmlCDATA;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @XmlRootElement(name="Pricing")
 public class Pricing {
-    @Setter@XmlAttribute(name="model")
+    @Setter@Getter@XmlAttribute(name="model")
     private String model;
-    @Setter@XmlAttribute(name="currency")
+    @Setter@Getter@XmlAttribute(name="currency")
     private String currency;
-    @Setter@XmlValue@XmlCDATA
+    @Setter@Getter@XmlValue@XmlCDATA
     private String str;
 }

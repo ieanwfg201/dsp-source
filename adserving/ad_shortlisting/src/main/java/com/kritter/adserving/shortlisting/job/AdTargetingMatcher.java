@@ -13,8 +13,10 @@ import com.kritter.geo.common.entity.CountryUserInterfaceIdSecondaryIndex;
 import com.kritter.geo.common.entity.IspUserInterfaceIdSecondaryIndex;
 import com.kritter.geo.common.entity.reader.*;
 import com.kritter.serving.demand.cache.AdEntityCache;
+import com.kritter.serving.demand.cache.CampaignCache;
 import com.kritter.serving.demand.entity.*;
 import com.kritter.serving.demand.index.*;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.SetUtils;
 import lombok.Getter;
@@ -32,7 +34,8 @@ import java.util.*;
  * Regarding the campaigns for these adids check if flight dates are valid
  * and if budget remaining is acceptable to go ahead.
  */
-public class AdTargetingMatcher implements Job {
+public class AdTargetingMatcher implements Job
+{
     @Getter
     private String name;
     private Logger logger;
@@ -45,18 +48,24 @@ public class AdTargetingMatcher implements Job {
     private CountryUserInterfaceIdCache countryUserInterfaceIdCache;
     private ISPUserInterfaceIdCache ispUserInterfaceIdCache;
     private List<TargetingMatcher> targetingMatchers;
+    private String adNoFillReasonMapKey;
+    private CampaignCache campaignCache;
 
     public AdTargetingMatcher(
-            String name,
-            String loggerName,
-            String requestObjectKey,
-            String shortlistedAdKey,
-            String selectedSiteCategoryIdKey,
-            String contextHandsetMasterDataKey,
-            AdEntityCache adEntityCache,
-            CountryUserInterfaceIdCache countryUserInterfaceIdCache,
-            ISPUserInterfaceIdCache ispUserInterfaceIdCache,
-            List<TargetingMatcher> targetingMatchers) throws SQLException {
+                                String name,
+                                String loggerName,
+                                String requestObjectKey,
+                                String shortlistedAdKey,
+                                String selectedSiteCategoryIdKey,
+                                String contextHandsetMasterDataKey,
+                                AdEntityCache adEntityCache,
+                                CountryUserInterfaceIdCache countryUserInterfaceIdCache,
+                                ISPUserInterfaceIdCache ispUserInterfaceIdCache,
+                                List<TargetingMatcher> targetingMatchers,
+                                String adNoFillReasonMapKey,
+                                CampaignCache campaignCache
+                             ) throws SQLException
+    {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
         this.requestObjectKey = requestObjectKey;
@@ -67,9 +76,8 @@ public class AdTargetingMatcher implements Job {
         this.countryUserInterfaceIdCache = countryUserInterfaceIdCache;
         this.ispUserInterfaceIdCache = ispUserInterfaceIdCache;
         this.targetingMatchers = targetingMatchers;
-
-        Collection<CountryUserInterfaceId> countryUserInterfaceIds = this.countryUserInterfaceIdCache.getAllEntities();
-        logger.debug("Data from country user interface id cache inside ad targeting matcher is : {} ", countryUserInterfaceIds);
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
+        this.campaignCache = campaignCache;
     }
 
     /**
@@ -78,7 +86,8 @@ public class AdTargetingMatcher implements Job {
      * @return
      */
     @Override
-    public void execute(Context context) {
+    public void execute(Context context)
+    {
         Request request = (Request)context.getValue(requestObjectKey);
 
         Set<Integer> finalShortlistedAdIds;
@@ -90,12 +99,18 @@ public class AdTargetingMatcher implements Job {
                                        null : request.getInternetServiceProvider().getOperatorInternalId());
 
         //pick adids for country.
-        StringBuilder debugMessage = new StringBuilder("Going to pick up ads for countryId: ");
-        debugMessage.append(String.valueOf(countryIdToQueryAds));
-        debugMessage.append(" , or countryUiId(if available already )");
-        debugMessage.append(String.valueOf(request.getCountryUserInterfaceId()));
+        StringBuilder debugMessage = new StringBuilder();
+        logger.debug("CountryId: {} and countryUiId:{} (if available already)",
+                      countryIdToQueryAds,request.getCountryUserInterfaceId());
 
-        ReqLog.debugWithDebug(this.logger, request, debugMessage.toString());
+        if(request.isRequestForSystemDebugging())
+        {
+            debugMessage = new StringBuilder("Going to pick up ads for countryId: ");
+            debugMessage.append(String.valueOf(countryIdToQueryAds));
+            debugMessage.append(" , or countryUiId(if available already )");
+            debugMessage.append(String.valueOf(request.getCountryUserInterfaceId()));
+            request.addDebugMessageForTestRequest(debugMessage.toString());
+        }
 
         Set<Integer> adIdsForCountry = null;
 
@@ -104,25 +119,34 @@ public class AdTargetingMatcher implements Job {
         else
             adIdsForCountry = pickAdIdsForCountryId(request,countryIdToQueryAds);
 
-        debugMessage.setLength(0);
-        debugMessage.append("AdIds shortlisted for countryId: ");
-        debugMessage.append(String.valueOf(countryIdToQueryAds));
-        debugMessage.append(" , or countryUiId: ");
-        debugMessage.append(String.valueOf(request.getCountryUserInterfaceId()));
-        debugMessage.append(" are: ");
-        debugMessage.append(adIdsForCountry.toString());
-        ReqLog.debugWithDebug(this.logger, request, debugMessage.toString());
-        ReqLog.requestDebug(request, " and their guid set: ");
-        ReqLog.requestDebug(request, fetchGuidSetForAdIncIdSet(adIdsForCountry, adEntityCache).toString());
- 
-        //shortlist on basis of country carrier id.
-        debugMessage.setLength(0);
-        debugMessage.append("Going to pick up ads for carrierId: ");
-        debugMessage.append(String.valueOf(carriedIdToQueryAds));
-        debugMessage.append(" , or carrierUiId(if available already )");
-        debugMessage.append(String.valueOf(request.getCarrierUserInterfaceId()));
+        logger.debug("AdIds shortlisted for countryId: {} , or countryUiId: {} are: {} ",
+                      countryIdToQueryAds,request.getCountryUserInterfaceId(),adIdsForCountry);
 
-        ReqLog.debugWithDebug(this.logger, request, debugMessage.toString());
+        if(request.isRequestForSystemDebugging())
+        {
+            debugMessage.setLength(0);
+            debugMessage.append("AdIds shortlisted for countryId: ");
+            debugMessage.append(String.valueOf(countryIdToQueryAds));
+            debugMessage.append(" , or countryUiId: ");
+            debugMessage.append(String.valueOf(request.getCountryUserInterfaceId()));
+            debugMessage.append(" are: ");
+            debugMessage.append(adIdsForCountry.toString());
+            request.addDebugMessageForTestRequest(debugMessage.toString());
+        }
+
+        //shortlist on basis of country carrier id.
+        logger.debug("Going to pick up ads for carrierId: {} , or carrierUiId: {} (if available already)",
+                      carriedIdToQueryAds,request.getCarrierUserInterfaceId());
+
+        if(request.isRequestForSystemDebugging())
+        {
+            debugMessage.setLength(0);
+            debugMessage.append("Going to pick up ads for carrierId: ");
+            debugMessage.append(String.valueOf(carriedIdToQueryAds));
+            debugMessage.append(" , or carrierUiId(if available already )");
+            debugMessage.append(String.valueOf(request.getCarrierUserInterfaceId()));
+            request.addDebugMessageForTestRequest(debugMessage.toString());
+        }
 
         Set<Integer> adIdsForCarrier = null;
         if(null != request.getCarrierUserInterfaceId())
@@ -130,28 +154,33 @@ public class AdTargetingMatcher implements Job {
         else
             adIdsForCarrier = pickAdIdsForCountryCarrierId(request,carriedIdToQueryAds);
 
-        debugMessage.setLength(0);
-        debugMessage.append("AdIds shortlisted for Carrier id: ");
-        debugMessage.append(String.valueOf(carriedIdToQueryAds));
-        debugMessage.append(" , or carrierUiId: ");
-        debugMessage.append(String.valueOf(request.getCarrierUserInterfaceId()));
-        debugMessage.append(" are: ");
-        debugMessage.append(adIdsForCarrier.toString());
-        
-        ReqLog.debugWithDebug(this.logger, request, debugMessage.toString());
-        ReqLog.requestDebug(request, " and their guid set: ");
-        ReqLog.requestDebug(request, fetchGuidSetForAdIncIdSet(adIdsForCarrier, adEntityCache).toString());
-        
+        logger.debug("AdIds shortlisted for Carrier id: {} , or carrierUiId: {} are: {} ",
+                      carriedIdToQueryAds,request.getCarrierUserInterfaceId(),adIdsForCarrier);
+
+        if(request.isRequestForSystemDebugging())
+        {
+            debugMessage.setLength(0);
+            debugMessage.append("AdIds shortlisted for Carrier id: ");
+            debugMessage.append(String.valueOf(carriedIdToQueryAds));
+            debugMessage.append(" , or carrierUiId: ");
+            debugMessage.append(String.valueOf(request.getCarrierUserInterfaceId()));
+            debugMessage.append(" are: ");
+            debugMessage.append(adIdsForCarrier.toString());
+            request.addDebugMessageForTestRequest(debugMessage.toString());
+        }
+
         adIdsForCountry = SetUtils.intersectNSets(adIdsForCountry,adIdsForCarrier);
 
-        debugMessage.setLength(0);
-        debugMessage.append("AdIds shortlisted for Country and Carrier intersection are : ");
-        debugMessage.append(adIdsForCountry);
-        ReqLog.debugWithDebug(this.logger, request, debugMessage.toString());
-        ReqLog.requestDebug(request, " and their guid set: ");
-        ReqLog.requestDebug(request, fetchGuidSetForAdIncIdSet(adIdsForCountry, adEntityCache).toString());
+        logger.debug("AdIds shortlisted for Country and Carrier intersection are : {} ", adIdsForCountry);
 
-            /****************************************Set no fill reason.**********************************************/
+        if(request.isRequestForSystemDebugging())
+        {
+            debugMessage.setLength(0);
+            debugMessage.append("AdIds shortlisted for Country and Carrier intersection are : ");
+            debugMessage.append(adIdsForCountry);
+            request.addDebugMessageForTestRequest(debugMessage.toString());
+        }
+        /****************************************Set no fill reason.**********************************************/
         if(adIdsForCountry.size() <= 0)
             request.setNoFillReason(NoFillReason.NO_ADS_COUNTRY_CARRIER);
         /*********************************************************************************************************/
@@ -163,16 +192,19 @@ public class AdTargetingMatcher implements Job {
         Set<Integer> adIdsForHandsetBrand =
              pickAdIdsForHandsetBrand(null == handsetMasterData ? null : handsetMasterData.getManufacturerId(),request);
 
-        debugMessage.setLength(0);
-        debugMessage.append("AdIds shortlisted for brand id : ");
-        debugMessage.append(String.valueOf(null == handsetMasterData ? null : handsetMasterData.getManufacturerId()));
-        debugMessage.append(" are: ");
-        debugMessage.append(adIdsForHandsetBrand.toString());
-        
-        ReqLog.debugWithDebug(this.logger, request, debugMessage.toString());
-        ReqLog.requestDebug(request, " and their guid set: ");
-        ReqLog.requestDebug(request, fetchGuidSetForAdIncIdSet(adIdsForHandsetBrand, adEntityCache).toString());
+        logger.debug("AdIds shortlisted for manufacturer id : {} , are: {} ",
+                      String.valueOf(null == handsetMasterData ? null : handsetMasterData.getManufacturerId()),
+                      adIdsForHandsetBrand);
 
+        if(request.isRequestForSystemDebugging())
+        {
+            debugMessage.setLength(0);
+            debugMessage.append("AdIds shortlisted for brand id : ");
+            debugMessage.append(String.valueOf(null == handsetMasterData ? null : handsetMasterData.getManufacturerId()));
+            debugMessage.append(" are: ");
+            debugMessage.append(adIdsForHandsetBrand.toString());
+            request.addDebugMessageForTestRequest(debugMessage.toString());
+        }
         /****************************************Set no fill reason.**********************************************/
         if(null == request.getNoFillReason() && adIdsForHandsetBrand.size() <= 0)
             request.setNoFillReason(NoFillReason.NO_ADS_BRAND);
@@ -182,15 +214,19 @@ public class AdTargetingMatcher implements Job {
         Set<Integer> adIdsForHandsetModel =
                 pickAdIdsForHandsetModel(null == handsetMasterData ? null : handsetMasterData.getModelId(),request);
 
-        debugMessage.setLength(0);
-        debugMessage.append(" AdIds shortlisted for model id : ");
-        debugMessage.append(String.valueOf(null == handsetMasterData ? null : handsetMasterData.getModelId()));
-        debugMessage.append(" are: ");
-        debugMessage.append(adIdsForHandsetModel.toString());
-        ReqLog.debugWithDebug(this.logger, request, debugMessage.toString());
-        ReqLog.requestDebug(request, " and their guid set: ");
-        ReqLog.requestDebug(request, fetchGuidSetForAdIncIdSet(adIdsForHandsetModel, adEntityCache).toString());
+        logger.debug("AdIds shortlisted for model id : {} , are: {} ",
+                      String.valueOf(null == handsetMasterData ? null : handsetMasterData.getModelId()),
+                      adIdsForHandsetModel);
 
+        if(request.isRequestForSystemDebugging())
+        {
+            debugMessage.setLength(0);
+            debugMessage.append(" AdIds shortlisted for model id : ");
+            debugMessage.append(String.valueOf(null == handsetMasterData ? null : handsetMasterData.getModelId()));
+            debugMessage.append(" are: ");
+            debugMessage.append(adIdsForHandsetModel.toString());
+            request.addDebugMessageForTestRequest(debugMessage.toString());
+        }
         /****************************************Set no fill reason.**********************************************/
         if(null == request.getNoFillReason() && adIdsForHandsetModel.size() <= 0)
             request.setNoFillReason(NoFillReason.NO_ADS_MODEL);
@@ -203,35 +239,83 @@ public class AdTargetingMatcher implements Job {
                                                         adIdsForHandsetModel
                                                        );
 
-        debugMessage.setLength(0);
-        debugMessage.append("First set of shortlisted adids before filters : ");
-        debugMessage.append(finalShortlistedAdIds);
-        ReqLog.debugWithDebug(this.logger, request, debugMessage.toString());
-        ReqLog.requestDebug(request, " and their guid set: ");
-        ReqLog.requestDebug(request, fetchGuidSetForAdIncIdSet(finalShortlistedAdIds, adEntityCache).toString());
+        logger.debug("First set of shortlisted adids before filters: {} ", finalShortlistedAdIds);
+
+        if(request.isRequestForSystemDebugging())
+        {
+            debugMessage.setLength(0);
+            debugMessage.append("First set of shortlisted adids before filters : ");
+            debugMessage.append(finalShortlistedAdIds);
+            request.addDebugMessageForTestRequest(debugMessage.toString());
+        }
+
+        // Pick only those ads with valid campaigns
+        finalShortlistedAdIds = getAdsWithValidCampaigns(finalShortlistedAdIds, campaignCache, request, context);
+        ReqLog.debugWithDebugNew(logger, request, "Second set of shortlisted ads with valid campaigns : ",
+                finalShortlistedAdIds);
 
         try
         {
             int osId = (null == handsetMasterData) ? -1 : handsetMasterData.getDeviceOperatingSystemId();
             String osVersion = (null == handsetMasterData) ? null : handsetMasterData.getDeviceOperatingSystemVersion();
 
-            ReqLog.debugWithDebug(logger, request, "Os detected: {} ,OSVersion detected : {} ",osId, osVersion);
+            logger.debug("Os detected: {} ,OSVersion detected : {} ",osId, osVersion);
+            if(request.isRequestForSystemDebugging())
+            {
+                debugMessage.setLength(0);
+                debugMessage.append("Os detected ");
+                debugMessage.append(osId);
+                debugMessage.append(" , OSVersion detected: ");
+                debugMessage.append(osVersion);
+                request.addDebugMessageForTestRequest(debugMessage.toString());
+            }
         }
         catch (RuntimeException e)
         {
-            ReqLog.errorWithDebug(logger, request, "RuntimeException inside AdTargetingMatcher " , e);
+            logger.error("RuntimeException inside AdTargetingMatcher " , e);
+            if(request.isRequestForSystemDebugging())
+            {
+                debugMessage.setLength(0);
+                debugMessage.append("RuntimeException inside AdTargetingMatcher");
+                debugMessage.append(e);
+                request.addDebugMessageForTestRequest(debugMessage.toString());
+            }
             finalShortlistedAdIds = Collections.<Integer>emptySet();
         }
 
         for(TargetingMatcher targetingMatcher : targetingMatchers) {
             finalShortlistedAdIds = targetingMatcher.shortlistAds(finalShortlistedAdIds, request, context);
 
-            ReqLog.debugWithDebug(logger, request, "Shortlisted ads after {} = ", targetingMatcher.getName());
-            if(finalShortlistedAdIds == null || finalShortlistedAdIds.size() == 0) {
-                ReqLog.debugWithDebug(logger, request, "null");
-            } else {
-                for(Integer adId : finalShortlistedAdIds) {
-                    ReqLog.debugWithDebug(logger, request, "\tad id : {}", adId);
+            logger.debug("Shortlisted ads after targeting-matcher : {}", targetingMatcher.getName());
+
+            if(request.isRequestForSystemDebugging())
+            {
+                debugMessage.setLength(0);
+                debugMessage.append("Shortlisted ads after targeting-matcher : ");
+                debugMessage.append(targetingMatcher.getName());
+                request.addDebugMessageForTestRequest(debugMessage.toString());
+            }
+
+            if(finalShortlistedAdIds == null || finalShortlistedAdIds.size() == 0)
+            {
+                logger.debug("No ads shortlisted .... there is going to be DSP calls or passback if configured.");
+                if(request.isRequestForSystemDebugging())
+                {
+                    debugMessage.setLength(0);
+                    debugMessage.append("No ads shortlisted .... there is going to be passback if configured.");
+                    request.addDebugMessageForTestRequest(debugMessage.toString());
+                }
+            }
+            else
+            {
+                logger.debug("Ads are shortlisted after first level of all targeting matchers as : {} ",
+                              finalShortlistedAdIds);
+                if(request.isRequestForSystemDebugging())
+                {
+                    debugMessage.setLength(0);
+                    debugMessage.append("Ads are shortlisted after first level of all targeting matchers as : ");
+                    debugMessage.append(finalShortlistedAdIds);
+                    request.addDebugMessageForTestRequest(debugMessage.toString());
                 }
             }
         }
@@ -243,21 +327,64 @@ public class AdTargetingMatcher implements Job {
         context.setValue(this.selectedSiteCategoryIdKey, selectedSiteCategoryId);
     }
 
-    private Set<Integer> pickAdIdsForCountryUserInterfaceId(Request request,Integer countryUserInterfaceId) {
+    /**
+     * Given a set of ad ids, returns only those ads which have campaigns in campaign cache.
+     * @param adIdSet Set of shortlisted ad ids
+     * @param campaignCache campaign cache containing all campaigns
+     * @param request Adserving request object
+     * @param context Workflow context object
+     * @return Set containing ads having valid campaigns
+     */
+    private Set<Integer> getAdsWithValidCampaigns(Set<Integer> adIdSet, CampaignCache campaignCache, Request request,
+                                                  Context context) {
+        if(adIdSet == null || adIdSet.isEmpty())
+            return adIdSet;
+
+        Set<Integer> validAdIdSet = new HashSet<Integer>();
+
+        for(int adId: adIdSet) {
+            AdEntity adEntity = adEntityCache.query(adId);
+
+            if (null == adEntity) {
+                ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache for ad id: {}. Dropping it.",
+                        adId);
+                continue;
+            }
+
+            int campaignId = adEntity.getCampaignIncId();
+            Campaign campaign = campaignCache.query(campaignId);
+
+            if(null == campaign) {
+                ReqLog.debugWithDebugNew(logger,request, "Campaign not found in cache for campaign id: {}. Dropping " +
+                        "ad id : {}.", campaignId, adId);
+
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, NoFillReason.CAMPAIGN_NOT_FOUND.getValue(),
+                        this.adNoFillReasonMapKey, context);
+                continue;
+            }
+
+            validAdIdSet.add(adId);
+        }
+
+        return validAdIdSet;
+    }
+
+    private Set<Integer> pickAdIdsForCountryUserInterfaceId(Request request,Integer countryUserInterfaceId)
+    {
         Set<Integer> adIdSet = null;
 
-        try {
+        try
+        {
             adIdSet = adEntityCache.query(new CountryIdIndex(countryUserInterfaceId));
-
-            ReqLog.debugWithDebug(logger, request, "Picking adIds for countryUiId: {} ",countryUserInterfaceId);
-
-            StringBuilder logMessage = new StringBuilder();
-            logMessage.append("Inside pickAdIdsForCountryUserInterfaceId, size of adidset: ");
-            logMessage.append(null == adIdSet ? 0 : adIdSet.size());
-
-            ReqLog.debugWithDebug(logger, request, logMessage.toString());
-        } catch (UnSupportedOperationException e) {
-            ReqLog.errorWithDebug(logger, request, "Exception inside pickAdIdsForCountryUserInterfaceId() of AdTargetingMatcher ",e);
+        }
+        catch (UnSupportedOperationException e)
+        {
+            logger.error("Exception inside pickAdIdsForCountryUserInterfaceId() of AdTargetingMatcher ", e);
+            if (request.isRequestForSystemDebugging())
+            {
+                request.addDebugMessageForTestRequest("Exception inside pickAdIdsForCountryUserInterfaceId() ");
+                request.addDebugMessageForTestRequest(e.toString());
+            }
         }
 
         return (null==adIdSet) ? Collections.<Integer>emptySet() : adIdSet;
@@ -285,14 +412,6 @@ public class AdTargetingMatcher implements Job {
 
             adIdSet = adEntityCache.query(new CountryIdIndex(countryUiId));
 
-            ReqLog.debugWithDebug(logger, request, "Picking adIds for countryUiId: {} ",countryUiId);
-
-            StringBuffer logMessage = new StringBuffer();
-            logMessage.append("Inside pickAdIdsForCountryId, size of adidset: ");
-            logMessage.append(null == adIdSet ? 0 : adIdSet.size());
-
-            ReqLog.debugWithDebug(logger, request, logMessage.toString());
-
             if(null == countryUiId)
                 request.setCountryUserInterfaceId(ApplicationGeneralUtils.DEFAULT_COUNTRY_ID);
             else
@@ -300,7 +419,12 @@ public class AdTargetingMatcher implements Job {
         }
         catch (UnSupportedOperationException e)
         {
-            ReqLog.errorWithDebug(logger, request, "Exception inside pickAdIdsForCountryId() of AdTargetingMatcher ",e);
+            logger.error("Exception inside pickAdIdsForCountryId() of AdTargetingMatcher ",e);
+            if(request.isRequestForSystemDebugging())
+            {
+                request.addDebugMessageForTestRequest("Exception inside pickAdIdsForCountryId() of AdTargetingMatcher");
+                request.addDebugMessageForTestRequest(e.toString());
+            }
         }
 
         return (null==adIdSet) ? Collections.<Integer>emptySet() : adIdSet;
@@ -316,18 +440,15 @@ public class AdTargetingMatcher implements Job {
         try
         {
             adIdSet = adEntityCache.query(new CountryCarrierIdIndex(countryCarrierUserInterfaceId));
-
-            ReqLog.debugWithDebug(logger, request, "Picking adIds for ispUiId: {} ", countryCarrierUserInterfaceId);
-
-            StringBuffer logMessage = new StringBuffer();
-            logMessage.append("Inside pickAdIdsForCountryCarrierUserInterfaceId, size of adidset: ");
-            logMessage.append(null == adIdSet ? 0 : adIdSet.size());
-
-            ReqLog.debugWithDebug(logger, request, logMessage.toString());
         }
         catch (UnSupportedOperationException e)
         {
-            ReqLog.errorWithDebug(logger, request, "Exception inside pickAdIdsForCountryId() of AdTargetingMatcher ",e);
+            logger.error("Exception inside pickAdIdsForCountryCarrierUserInterfaceId() of AdTargetingMatcher ",e);
+            if(request.isRequestForSystemDebugging())
+            {
+                request.addDebugMessageForTestRequest("Exception inside pickAdIdsForCountryCarrierUserInterfaceId() of AdTargetingMatcher");
+                request.addDebugMessageForTestRequest(e.toString());
+            }
         }
 
         return (null==adIdSet) ? Collections.<Integer>emptySet() : adIdSet;
@@ -358,14 +479,6 @@ public class AdTargetingMatcher implements Job {
 
             adIdSet = adEntityCache.query(new CountryCarrierIdIndex(ispUiId));
 
-            ReqLog.debugWithDebug(logger, request, "Picking adIds for ispUiId: {} ", ispUiId);
-
-            StringBuffer logMessage = new StringBuffer();
-            logMessage.append("Inside pickAdIdsForCountryCarrierId, size of adidset: ");
-            logMessage.append(null == adIdSet ? 0 : adIdSet.size());
-
-            ReqLog.debugWithDebug(logger, request, logMessage.toString());
-
             if(null == ispUiId)
                 request.setCarrierUserInterfaceId(ApplicationGeneralUtils.DEFAULT_COUNTRY_CARRIER_ID);
             else
@@ -373,7 +486,12 @@ public class AdTargetingMatcher implements Job {
         }
         catch (UnSupportedOperationException e)
         {
-            ReqLog.errorWithDebug(logger, request, "Exception inside pickAdIdsForCountryId() of AdTargetingMatcher ",e);
+            logger.error("Exception inside pickAdIdsForCountryId() of AdTargetingMatcher ",e);
+            if(request.isRequestForSystemDebugging())
+            {
+                request.addDebugMessageForTestRequest("Exception inside pickAdIdsForCountryCarrierId() of AdTargetingMatcher");
+                request.addDebugMessageForTestRequest(e.toString());
+            }
         }
 
         return (null==adIdSet) ? Collections.<Integer>emptySet() : adIdSet;
@@ -389,7 +507,7 @@ public class AdTargetingMatcher implements Job {
         }
         catch(UnSupportedOperationException e)
         {
-            ReqLog.errorWithDebug(logger, request, "Exception inside pickAdIdsForHandsetBrand() of AdTargetingMatcher ",e);
+            logger.error("Exception inside pickAdIdsForHandsetBrand() of AdTargetingMatcher ",e);
         }
 
         return (null==adIdSet) ? Collections.<Integer>emptySet() : adIdSet;
@@ -405,29 +523,12 @@ public class AdTargetingMatcher implements Job {
         }
         catch(UnSupportedOperationException e)
         {
-            ReqLog.errorWithDebug(logger, request, "Exception inside pickAdIdsForHandsetModel() of AdTargetingMatcher ",e);
+            logger.error("Exception inside pickAdIdsForHandsetModel() of AdTargetingMatcher ",e);
         }
 
         return (null==adIdSet) ? Collections.<Integer>emptySet() : adIdSet;
     }
 
-    public static Set<String> fetchGuidSetForAdIncIdSet(Set<Integer> adIdSet, AdEntityCache adEntityCache)
-    {
-        if(null == adIdSet || adIdSet.size() == 0)
-            return new HashSet<String>();
-
-        Set<String> guidSet = new HashSet<String>();
-
-        for(Integer adId: adIdSet)
-        {
-            AdEntity adEntity = adEntityCache.query(adId);
-
-            if(null != adEntity)
-                guidSet.add(adEntity.getAdGuid());
-        }
-
-        return guidSet;
-    }
 
     //TODO perform some logic to find out what should be the site's selected category id.
     public Short findSelectedSiteCategoryId()

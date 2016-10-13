@@ -94,7 +94,7 @@ public class ReTargetingMatcher implements TargetingMatcher {
      */
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
-        ReqLog.debugWithDebug(logger, request, "Inside ReTargetingMatcher of AdTargetingMatcher");
+        ReqLog.debugWithDebugNew(logger, request, "Inside ReTargetingMatcher of AdTargetingMatcher");
 
         String kritterUserId = request.getUserId();
         if(kritterUserId == null || null == userSegmentProvider) {
@@ -105,10 +105,10 @@ public class ReTargetingMatcher implements TargetingMatcher {
             }
 
             if(kritterUserId == null) {
-                ReqLog.debugWithDebug(logger, request, "User info not available for this request dropping all " +
+                ReqLog.debugWithDebugNew(logger, request, "User info not available for this request dropping all " +
                         "retargeting ads");
             } else {
-                ReqLog.debugWithDebug(logger, request, "UserSegment for userId: {} is null, allowing only non " +
+                ReqLog.debugWithDebugNew(logger, request, "UserSegment for userId: {} is null, allowing only non " +
                         "retargeted ads", kritterUserId);
             }
 
@@ -119,7 +119,7 @@ public class ReTargetingMatcher implements TargetingMatcher {
         }
 
         if (null == adIdSet || adIdSet.size() <= 0) {
-            ReqLog.debugWithDebug(logger, request, "No adIdSet supplied to UserTargetingMatcher, returning " +
+            ReqLog.debugWithDebugNew(logger, request, "No adIdSet supplied to UserTargetingMatcher, returning " +
                     "null/empty set...");
             return adIdSet;
         }
@@ -128,7 +128,7 @@ public class ReTargetingMatcher implements TargetingMatcher {
             UserSegment userSegment =
                     userSegmentProvider.fetchUserSegment(kritterUserId);
             if (null == userSegment) {
-                ReqLog.debugWithDebug(logger, request, "UserSegment for userId: {} is null, allowing all non " +
+                ReqLog.debugWithDebugNew(logger, request, "UserSegment for userId: {} is null, allowing all non " +
                         "retargeted ads", kritterUserId);
                 return getNonRetargetedAds(adIdSet);
             }
@@ -158,7 +158,7 @@ public class ReTargetingMatcher implements TargetingMatcher {
         } catch (Exception e) {
             logger.error("Exception occur while trying to fetch user history");
             logger.error("{}", e);
-            ReqLog.debugWithDebug(logger,request, "Exception inside FrequencyCapFilter reason: {}  ", e);
+            ReqLog.debugWithDebugNew(logger,request, "Exception inside FrequencyCapFilter reason: {}  ", e);
             // If an exception has occurred then drop all the ads that are retargeted
 
             Set<Integer> frequencyCappedAds = getRetargetedAds(adIdSet);

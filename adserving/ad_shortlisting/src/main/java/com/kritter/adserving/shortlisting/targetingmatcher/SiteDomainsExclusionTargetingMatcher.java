@@ -43,14 +43,14 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
     @Override
     public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
         logger.info("Inside filterAdIdsForSiteDomainsExclusion of AdTargetingMatcher...");
-        ReqLog.requestDebug(request, "Inside filterAdIdsForSiteDomainsExclusion of AdTargetingMatcher...");
+        ReqLog.requestDebugNew(request, "Inside filterAdIdsForSiteDomainsExclusion of AdTargetingMatcher...");
 
         Site site = request.getSite();
         boolean excludeDefinedAdDomains = site.isExcludeDefinedAdDomains();
 
         if(!excludeDefinedAdDomains)
         {
-            ReqLog.debugWithDebug(logger,request, "Site does not want to exclude any domains ... passing all adids...");
+            ReqLog.debugWithDebugNew(logger,request, "Site does not want to exclude any domains ... passing all adids...");
 
             return adIdSet;
         }
@@ -59,7 +59,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
 
         if(null == excludedDomains || excludedDomains.length == 0)
         {
-            ReqLog.debugWithDebug(logger,request, "Site's excluded domains list is empty ... passing all adids...");
+            ReqLog.debugWithDebugNew(logger,request, "Site's excluded domains list is empty ... passing all adids...");
             return adIdSet;
         }
 
@@ -71,7 +71,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
 
             if(null == adEntity)
             {
-                ReqLog.errorWithDebug(logger,request, "AdEntity not found in cache id : {}" , adId);
+                ReqLog.errorWithDebugNew(logger,request, "AdEntity not found in cache id : {}" , adId);
                 continue;
             }
 
@@ -88,7 +88,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                         this.adNoFillReasonMapKey, context);
 
-                ReqLog.errorWithDebug(logger,request, "The landing url is not well formed,skipping ad unit {}" , adEntity.getAdGuid());
+                ReqLog.errorWithDebugNew(logger,request, "The landing url is not well formed,skipping ad unit {}" , adEntity.getAdGuid());
                 continue;
             }
 
@@ -110,7 +110,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                             this.adNoFillReasonMapKey, context);
 
-                    ReqLog.debugWithDebug(logger,request, "Addomain is excluded by site ... ,ad-domain {}, blocked domain by site is {}",adDomain,  blockedDomain);
+                    ReqLog.debugWithDebugNew(logger,request, "Addomain is excluded by site ... ,ad-domain {}, blocked domain by site is {}",adDomain,  blockedDomain);
                     isAdAllowed = false;
                     break;
                 }

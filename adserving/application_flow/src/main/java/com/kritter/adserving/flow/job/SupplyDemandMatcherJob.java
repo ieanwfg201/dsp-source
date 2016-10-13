@@ -94,7 +94,7 @@ public class SupplyDemandMatcherJob implements Job
             }
             else if(null != request.getRequestEnrichmentErrorCode())
             {
-                ReqLog.errorWithDebug(logger, request, "Request object is null or the request parameters are not enough to proceed inside SupplyDemandMatcherJob, cannot continue. Skipping further workflow in this job.");
+                ReqLog.errorWithDebugNew(logger, request, "Request object is null or the request parameters are not enough to proceed inside SupplyDemandMatcherJob, cannot continue. Skipping further workflow in this job.");
                 logger.debug("Reason for request being invalid is errorCode: {}",request.getRequestEnrichmentErrorCode());
                 context.setValue(this.responseObjectKey,new Response());
             }
@@ -135,7 +135,7 @@ public class SupplyDemandMatcherJob implements Job
                         errorMessage.setLength(0);
                         errorMessage.append("FATAL!!! campaign not found for adid: ");
                         errorMessage.append(adEntity.getId());
-                        ReqLog.errorWithDebug(logger, request, errorMessage.toString());
+                        ReqLog.errorWithDebugNew(logger, request, errorMessage.toString());
                         continue;
                     }
 
@@ -178,7 +178,7 @@ public class SupplyDemandMatcherJob implements Job
         }
         catch (Exception e)
         {
-            ReqLog.errorWithDebug(logger, request, "Exception inside SupplyDemandMatcherJob while processing the request." ,e );
+            ReqLog.errorWithDebugNew(logger, request, "Exception inside SupplyDemandMatcherJob while processing the request." ,e );
         }
     }
 }

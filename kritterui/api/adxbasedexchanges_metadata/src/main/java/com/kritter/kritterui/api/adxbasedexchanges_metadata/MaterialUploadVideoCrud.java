@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadList;
 import com.kritter.api.entity.materialvideoupload.MaterialVideoUploadListEntity;
 import com.kritter.api.entity.response.msg.Message;
+import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
@@ -112,6 +113,27 @@ public class MaterialUploadVideoCrud {
                 	pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
                             com.kritter.kritterui.api.db_query_def.MaterialVideoDef.list_material_video_by_pubincids, "<id>", entity.getId_list(), 
                             ",", false));
+                }
+				break;
+			case list_material_video_by_pubincids_state:
+                if("none".equalsIgnoreCase(entity.getId_list()) || "[none]".equalsIgnoreCase(entity.getId_list()) ||
+                		"all".equalsIgnoreCase(entity.getId_list()) || "[all]".equalsIgnoreCase(entity.getId_list())
+                		|| "".equalsIgnoreCase(entity.getId_list())){
+        			MaterialVideoUploadList returnEntity = new MaterialVideoUploadList();
+        			Message msg = new Message();
+        			msg.setError_code(ErrorEnum.NO_ERROR.getId());
+        			msg.setMsg(ErrorEnum.NO_ERROR.getName());
+        			returnEntity.setMsg(msg);
+        			return returnEntity;
+                }else{
+                	pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                            com.kritter.kritterui.api.db_query_def.MaterialVideoDef.list_material_video_by_pubincids_state, "<id>", entity.getId_list(), 
+                            ",", false));
+                	if(entity.getAdxstate()==null){
+                		pstmt.setInt(1, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
+                	}else{
+                		pstmt.setInt(1, entity.getAdxstate().getCode());
+                	}
                 }
 				break;
 			default:

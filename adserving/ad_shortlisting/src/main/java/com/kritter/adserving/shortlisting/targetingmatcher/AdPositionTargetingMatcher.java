@@ -42,7 +42,7 @@ public class AdPositionTargetingMatcher implements TargetingMatcher {
 	@Override
 	public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
 		logger.info("Inside filterAdIdsBasedOnDemandPreference of AdPositionTargetingMatcher ...");
-		ReqLog.requestDebug(request, "Inside filterAdIdsBasedOnDemandPreference of AdPositionTargetingMatcher ...");
+		ReqLog.requestDebugNew(request, "Inside filterAdIdsBasedOnDemandPreference of AdPositionTargetingMatcher ...");
 
 		if(adIdSet == null || adIdSet.size() == 0) {
 			logger.debug("No ads to shortlist from. Returning!");
@@ -60,7 +60,7 @@ public class AdPositionTargetingMatcher implements TargetingMatcher {
 		}
 		Integer pubIncId = request.getSite().getPublisherIncId();
 		if( pubIncId == null){
-			ReqLog.errorWithDebug(logger, request, "Public not found AdPositionTargetingMatcher : {}" , pubIncId);
+			ReqLog.errorWithDebugNew(logger, request, "Public not found AdPositionTargetingMatcher : {}" , pubIncId);
 			return adIdSet;
 		}
 		/**/
@@ -76,7 +76,7 @@ public class AdPositionTargetingMatcher implements TargetingMatcher {
 		for(Integer adId : adIdSet) {
 			AdEntity adEntity = adEntityCache.query(adId);
 			if(null == adEntity) {
-				ReqLog.errorWithDebug(logger, request, "AdEntity not found in cache id : {}" , adId);
+				ReqLog.errorWithDebugNew(logger, request, "AdEntity not found in cache id : {}" , adId);
 				continue;
 			}
 			TPExt tpExt = null;
@@ -101,7 +101,7 @@ public class AdPositionTargetingMatcher implements TargetingMatcher {
 				}
 			}
 			shortlistedAdIdSet.add(adId);
-			ReqLog.debugWithDebug(logger, request, "The adid: {}, passes AdPositionTargetingMatcher : ", adEntity.getAdGuid());
+			ReqLog.debugWithDebugNew(logger, request, "The adid: {}, passes AdPositionTargetingMatcher : ", adEntity.getAdGuid());
 		}
 		if(null == request.getNoFillReason() && shortlistedAdIdSet.size() <= 0)
 			request.setNoFillReason(NoFillReason.ADPOSITION_MISMATCH);

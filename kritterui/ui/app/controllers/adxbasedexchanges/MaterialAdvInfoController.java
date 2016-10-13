@@ -3,6 +3,7 @@ package controllers.adxbasedexchanges;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import play.Logger;
 import play.data.Form;
 import play.db.DB;
 import play.libs.Json;
@@ -21,12 +22,26 @@ import models.entities.adxbasedexchanges.MaterialUploadExchangeFormEntity;
 public class MaterialAdvInfoController extends Controller{
 	
     @SecuredAction
-    public static Result list(Option<String> exchange){
+    public static Result list(Option<String> exchange,Option<String> adxBasedExchangesStates){
         Form<MaterialUploadExchangeFormEntity> materialUploadExchangesFormEntityData = Form.form(MaterialUploadExchangeFormEntity.class);
         MaterialUploadExchangeFormEntity materialUploadExchangesFormEntity  = new MaterialUploadExchangeFormEntity();
 
         if(!exchange.isEmpty()){
         	materialUploadExchangesFormEntity.setExchange(exchange.get());
+        }
+        if(!adxBasedExchangesStates.isEmpty()){
+        	String str = adxBasedExchangesStates.get();
+        	if(!str.isEmpty()){
+        		try{
+        			Integer a = Integer.parseInt(str);
+        			AdxBasedExchangesStates aes = AdxBasedExchangesStates.getEnum(a);
+        			if(aes !=null){
+        				materialUploadExchangesFormEntity.setAdxBasedExchangesStates(aes.getCode());
+        			}
+        		}catch(Exception e){
+        			Logger.error(e.getMessage(),e);
+        		}
+        	}
         }
         return ok(views.html.adxbasedexchanges.advinfoupload.render(materialUploadExchangesFormEntityData.fill(materialUploadExchangesFormEntity)));
     }

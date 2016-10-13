@@ -27,7 +27,6 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
     public static final String TABLE_NAME_KEY = "table_name";
     public static final String PRIMARY_KEY_NAME_KEY = "primary_key_name";
     public static final String ATTRIBUTE_NAME_USERID = "attribute_name_user_id";
-    private static final int threadCount = 1;
 
     @Getter
     private String name;
@@ -48,6 +47,8 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
     private List<ExternalUserIdType> priorityList;
     private ExecutorService updatorService;
     private List<ExternalUserIdType> idTypesNotInPriorityList;
+    @Getter
+    private final int threadCount;
 
     /**
      * @param name Name of the cache
@@ -60,7 +61,8 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
                        String loggerName,
                        NoSqlNamespaceOperations noSqlNamespaceOperationsInstance,
                        Properties properties,
-                       List<ExternalUserIdType> priorityList) {
+                       List<ExternalUserIdType> priorityList,
+                       int threadCount) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(loggerName);
 
@@ -73,7 +75,8 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
         this.attributeNameSet = new HashSet<String>();
         this.attributeNameSet.add(this.attributeNameUserId);
         this.priorityList = priorityList;
-        this.updatorService = Executors.newFixedThreadPool(threadCount);
+        this.threadCount = threadCount;
+        this.updatorService = Executors.newFixedThreadPool(this.threadCount);
         this.idTypesNotInPriorityList = new ArrayList<ExternalUserIdType>();
         for(ExternalUserIdType userIdType : ExternalUserIdType.values()) {
             if(!priorityList.contains(userIdType)) {
@@ -200,6 +203,10 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
 
     @Override
     public void updateUserId(Set<String> externalUserIds, String internalUserId) {
+        // Nothing to update.
+        if(externalUserIds == null || externalUserIds.size() == 0 || internalUserId == null)
+            return;
+
         UserIdRunnable userIdRunnable = new UserIdRunnable(this.logger, this, externalUserIds, internalUserId);
         logger.debug("Submitting task to executor service for internal user id {}", internalUserId);
         updatorService.submit(userIdRunnable);

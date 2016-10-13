@@ -44,8 +44,6 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
     private int maxSizeClickList;
     @Getter
     private NoSqlNamespaceOperations noSqlNamespaceOperationsInstance;
-    private TSerializer thriftSerializer;
-    private TDeserializer thriftDeserializer;
     private final ExecutorService updaterService;
 
     public UserRecentClickHistoryCache(String name,
@@ -67,9 +65,6 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
         this.clickHistoryAttributeName = properties.getProperty(ATTRIBUTE_NAME_CLICK_HISTORY_KEY);
         this.attributeNameSet = new HashSet<String>();
         this.attributeNameSet.add(clickHistoryAttributeName);
-
-        this.thriftSerializer = new TSerializer(new TBinaryProtocol.Factory());
-        this.thriftDeserializer = new TDeserializer(new TBinaryProtocol.Factory());
 
         this.updaterService = Executors.newFixedThreadPool(threadCount);
     }
@@ -216,11 +211,13 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
     public byte[] fetchRecentClickHistoryByteArray(RecentClickHistory recentClickHistory)
             throws TException
     {
+        TSerializer thriftSerializer = new TSerializer(new TBinaryProtocol.Factory());
         return thriftSerializer.serialize(recentClickHistory);
     }
 
     public RecentClickHistory fetchRecentClickHistoryObject(byte[] byteData) throws TException
     {
+        TDeserializer thriftDeserializer = new TDeserializer(new TBinaryProtocol.Factory());
         RecentClickHistory recentClickHistory = new RecentClickHistory();
         thriftDeserializer.deserialize(recentClickHistory,byteData);
 

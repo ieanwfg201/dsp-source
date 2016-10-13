@@ -9,6 +9,7 @@ controller('videouploadController',function ($scope, $http, $modal) {
 	    $scope.videouploadListData.init("/entitylist" );
 	    $scope.videouploadListData.setFilterAttribute("entityType", "materialvideoupload" );
 		$scope.videouploadListData.setFilterAttribute("exchangeId", $("#exchange").val() );
+		$scope.videouploadListData.setFilterAttribute("adxBasedExchangesStates", $("#adxBasedExchangesStates").val() );
 		var path = $.url().attr('path');
 		var pathComps = path.split("/");
 		if(pathComps.length == 4){
@@ -19,7 +20,7 @@ controller('videouploadController',function ($scope, $http, $modal) {
 		} 
 	}
 	$scope.init();
-		$scope.updateVideoUpload = function (pubIncId, action) {
+		$scope.updateVideoUpload = function (id, action) {
 		var modalInstance = $modal.open({
 			templateUrl: '/adxbasedexchanges/videoupload/updatesingle/'+id +'/'+action, 
 			controller:videouploadrefreshController,

@@ -12,8 +12,8 @@ public class Creative_container {
     public static final String get_creative_container = "select * from creative_container where id=?";
     public static final String list_creative_container_by_account = "select * from creative_container where account_guid=? order by last_modified desc limit ?,?";
     public static final String list_creative_container_by_status = "select * from creative_container where status_id=? order by last_modified desc limit ?,?";
-    public static final String update_status = "update creative_container set status_id=?,comment=? where id = ?";
-    public static final String update_multiple_status = "update creative_container set status_id=?,comment=? where id in (<id>)";
+    public static final String update_status = "update creative_container set status_id=?,comment=?,last_modified=? where id = ?";
+    public static final String update_multiple_status = "update creative_container set status_id=?,comment=?,last_modified=? where id in (<id>)";
     public static final String get_creative_container_by_guid = "select * from creative_container where guid = ?";
     
     

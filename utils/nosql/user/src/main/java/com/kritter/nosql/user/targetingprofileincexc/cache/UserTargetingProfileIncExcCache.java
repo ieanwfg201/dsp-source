@@ -144,7 +144,7 @@ public class UserTargetingProfileIncExcCache implements NoSqlNamespaceTable, ICa
                     this.logger.debug("Entry for user id : {} in namespace : {}, table : {}, with attribue : {}, " +
                             "not found.", userId, this.namespaceName, this.tableName,
                             this.attributeNameTargetingProfilesIncExc);
-                    return null;
+                    continue;
                 }
 
                 @SuppressWarnings("unchecked")
