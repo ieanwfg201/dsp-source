@@ -143,7 +143,7 @@ public class VamMUBanner implements MUBanner {
 		PreparedStatement pstmt = null;
 		try{
 			pstmt = con.prepareStatement(VamBannerQuery.selectQuery);
-			pstmt.setString(1, "2015-1-1");
+			pstmt.setString(1, getStartDateStr());
 			ResultSet rset = pstmt.executeQuery();
 			boolean isFirst = true;
 			while(rset.next()){
