@@ -15,6 +15,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kritter.naterial_upload.valuemaker.entity.HttpUtils;
 
+import com.kritter.naterial_upload.valuemaker.entity.VamCreative;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,9 @@ public class VamMUBannerAudit implements MUBannerAudit {
 	private String id;//creative guid
 	@Getter @Setter
 	private Integer pubIncId;
+	@Getter @Setter
+	private Map<String,String> header;
+	private VamCreative vamCreative;
 
 	@Override
 	public void init(Properties properties) {
@@ -42,6 +47,10 @@ public class VamMUBannerAudit implements MUBannerAudit {
 		setUsername(properties.getProperty("vam_username").toString());
 		setPassword(properties.getProperty("vam_password").toString());
 		setPubIncId(Integer.parseInt(properties.getProperty("vam_pubIncId").toString()));
+
+		String vam_url_prefix = properties.getProperty("vam_url_prefix").toString();
+		String vam_prefix_banner_audit = vam_url_prefix + properties.getProperty("vam_prefix_banner_audit").toString();
+		this.vamCreative = new VamCreative(null,vam_prefix_banner_audit);
 	}
 
 	@Override
@@ -53,12 +62,13 @@ public class VamMUBannerAudit implements MUBannerAudit {
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
 			Timestamp ts = new Timestamp(new Date().getTime());
+			header.put("Content-Type", "application/json;charset=utf-8");
+			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
 				id = rset.getString("guid");
 				if(id !=  null){
 					try{
-						String out = HttpUtils.get(properties.getProperty("vam_url_prefix").toString()+
-								properties.getProperty("vam_prefix_banner_audit").toString()+"?id="+id,getUsername(),getPassword());
+						String out = vamCreative.getBannerStateByIds(id,header);
 						LOG.info("MATERIAL AUDIT RETURN");
 						LOG.info(out);
 						if(out !=null){
@@ -124,5 +134,6 @@ public class VamMUBannerAudit implements MUBannerAudit {
 		Map<String, String> map = gson.fromJson(jsonString, type);
 		return map;
 	}
+
 
 }

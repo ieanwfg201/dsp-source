@@ -7,12 +7,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
-import com.kritter.naterial_upload.valuemaker.entity.HttpUtils;
+import com.kritter.naterial_upload.valuemaker.entity.VamCreative;
 import com.kritter.naterial_upload.valuemaker.entity.VamQueryEntity;
 import com.kritter.naterial_upload.valuemaker.entity.VamVideoMaterialUploadEntity;
 import org.apache.commons.lang.time.DateUtils;
@@ -51,15 +48,23 @@ public class VamMUVideo implements MUVideo {
 	private boolean lastRunPresent=false;
 	@Getter @Setter
 	private LinkedList<VamQueryEntity> vamQueryEntityList;
+	@Getter @Setter
+	private Map<String,String> header;
+	private VamCreative vamCreative;
 
 
 	@Override
 	public void init(Properties properties) {
 		setDspid(properties.getProperty("vam_dsp_id").toString());
+		setPubIncId(Integer.parseInt(properties.getProperty("vam_pubIncId").toString()));
+		this.dateNow = new Date();
+		this.header = new HashMap<String,String>();
 		setUsername(properties.getProperty("vam_username").toString());
 		setPassword(properties.getProperty("vam_password").toString());
-		setPubIncId(Integer.parseInt(properties.getProperty("vam_pubIncId").toString()));
-		dateNow = new Date();
+		String vam_url_prefix = properties.getProperty("vam_url_prefix").toString();
+		String vam_prefix_video_add = vam_url_prefix + properties.getProperty("vam_prefix_video_add").toString();
+		this.vamCreative = new VamCreative(vam_prefix_video_add,null);
+
 	}
 
 	@Override
@@ -91,6 +96,79 @@ public class VamMUVideo implements MUVideo {
 			if(pstmt != null){
 				try {
 					pstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void removeDisassociatedCreative(Properties properties, Connection con) {
+		if(!isPerformTransaction()){
+			return;
+		}
+		PreparedStatement pstmt = null;
+		PreparedStatement secondSelectstmt = null;
+		PreparedStatement updatestmt = null;
+		try{
+			pstmt = con.prepareStatement(VamVideoQuery.removedCreatives);
+			//pstmt.setString(1, getStartDateStr());
+			ResultSet rset = pstmt.executeQuery();
+			while(rset.next()){
+				int internalid=rset.getInt("internalid");
+				int creativeId=rset.getInt("creativeId");
+				int videoInfoId=rset.getInt("videoInfoId");
+				secondSelectstmt = con.prepareStatement(VamVideoQuery.getCreativeContainer);
+				secondSelectstmt.setInt(1,creativeId);
+				ResultSet secondRset = secondSelectstmt.executeQuery();
+				if(secondRset.next()){
+					boolean found =false;
+					String video_props = secondRset.getString("video_props");
+					try{
+						if(video_props != null && !video_props.isEmpty()){
+							VideoProps vProps = VideoProps.getObject(video_props);
+							if(vProps.getVideo_info() != null && vProps.getVideo_info().length>0){
+								for(String s:vProps.getVideo_info() ){
+									if(s.equals(videoInfoId+"")){
+										found=true;
+										break;
+									}
+								}
+							}
+						}
+					}catch(Exception e1){
+						LOG.error(e1.getMessage(),e1);
+					}
+					if(!found){
+						updatestmt = con.prepareStatement(VamVideoQuery.updateRemovedCreatives);
+						updatestmt.setInt(1, internalid);
+						updatestmt.executeUpdate();
+					}
+
+				}
+			}
+		}catch(Exception e){
+			setPerformTransaction(false);
+			LOG.error(e.getMessage(),e);
+		}finally{
+			if(pstmt != null){
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+			if(secondSelectstmt != null){
+				try {
+					secondSelectstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+			if(updatestmt != null){
+				try {
+					updatestmt.close();
 				} catch (SQLException e) {
 					LOG.error(e.getMessage(),e);
 				}
@@ -308,6 +386,8 @@ public class VamMUVideo implements MUVideo {
 			List<VamVideoMaterialUploadEntity> materialList = new LinkedList<VamVideoMaterialUploadEntity>();
 			StringBuffer sBuff = new StringBuffer("");
 			boolean isFirst=true;
+			header.put("Content-Type", "application/json;charset=utf-8");
+			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
 				//System.out.println(rset.getString("info"));
 				materialList.add(VamVideoMaterialUploadEntity.getObject(rset.getString("info")));
@@ -322,29 +402,27 @@ public class VamMUVideo implements MUVideo {
 				boolean isSuccess=false;
 				try{
 					for(VamVideoMaterialUploadEntity vamVideoMaterialUploadEntity:materialList){
-						Integer out = HttpUtils.post(properties.getProperty("vam_url_prefix").toString()+
-								properties.getProperty("vam_prefix_video_add").toString(),vamVideoMaterialUploadEntity,getUsername(),getPassword());
+						Integer out = vamCreative.addVideo(vamVideoMaterialUploadEntity,header);
 						LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
 						LOG.info(String.valueOf(out));
-						if(out != null){
-							if(out==200){
-								cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatus.replaceAll("<id>", sBuff.toString()));
-								cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-								cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-								cpstmt.executeUpdate();
-								isSuccess=true;
-							}
+						if(out != null && out == 200){
+							cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatus.replaceAll("<id>", sBuff.toString()));
+							cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+							cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+							cpstmt.executeUpdate();
+							isSuccess=true;
+						}
+						if(!isSuccess){
+							cpstmt1 = con.prepareStatement(VamVideoQuery.updatetVideoStatus.replaceAll("<id>", sBuff.toString()));
+							cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
+							cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+							cpstmt1.executeUpdate();
 						}
 					}
 				}catch(Exception e1){
 					LOG.error(e1.getMessage(),e1);
 				}
-				if(!isSuccess){
-					cpstmt1 = con.prepareStatement(VamVideoQuery.updatetVideoStatus.replaceAll("<id>", sBuff.toString()));
-					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
-					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-					cpstmt1.executeUpdate();
-				}
+
 			}
 		}catch(Exception e){
 			setPerformTransaction(false);

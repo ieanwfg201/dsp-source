@@ -40,11 +40,24 @@
       <artifactId>kritter_entity_video_props</artifactId>
       <version>1.0.0</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.2</version>
+      <version>4.5</version>
+      <!--<exclusions>-->
+      <!--<exclusion>-->
+      <!--<groupId>org.apache.httpcomponents</groupId>-->
+      <!--<artifactId>httpcore</artifactId>-->
+      <!--</exclusion>-->
+      <!--</exclusions>-->
     </dependency>
+    <dependency>
+      <groupId>com.kritter.utils</groupId>
+      <artifactId>http_client</artifactId>
+      <version>1.0</version>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>

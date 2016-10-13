@@ -39,7 +39,13 @@ public class VamVideoQuery {
 	public static final String  update_material_state= "update material_upload_state set last_modified=? where materialtype=? and pubIncId=?";
 	
 	public static final String  update_video_info= "update video_info set last_modified=?,ext=? where id=?";
-	
+
+	public static final String  removedCreatives= "select internalid,creativeId,videoInfoId from video_upload where adxbasedexhangesstatus!=14";
+
+	public static final String  getCreativeContainer= "select video_props from creative_container where id=?";
+
+	public static final String  updateRemovedCreatives= "update video_upload set adxbasedexhangesstatus=14 where internalid=?";
+
 	public static void main(String args[]){
 		System.out.println(selectQuery);
 	}

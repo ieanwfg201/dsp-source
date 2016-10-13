@@ -18,13 +18,13 @@ public class VamUploadExecutor  extends UploadExecutorImpl implements UploadExec
 		int pubInc=Integer.parseInt(properties.getProperty("vam_pubIncId").toString());
 		super.checkJobs(properties, con, pubInc);
 		VamMUBanner muBanner = new VamMUBanner();
-		super.executeMaterialBannerUpload(properties, muBanner, con);
+		super.executeMaterialBannerUpload(properties, muBanner, con, pubInc );
 		VamMUBannerAudit muBannerAudit = new VamMUBannerAudit();
-		super.executeMaterialBannerAudit(properties, muBannerAudit, con);
+		super.executeMaterialBannerAudit(properties, muBannerAudit, con, pubInc);
 		VamMUVideo muVideo = new VamMUVideo();
-		super.executeMaterialVideoUpload(properties, muVideo, con);
+		super.executeMaterialVideoUpload(properties, muVideo, con, pubInc);
 		VamMUVideoAudit muVideoAudit = new VamMUVideoAudit();
-		super.executeMaterialVideoAudit(properties, muVideoAudit, con);
+		super.executeMaterialVideoAudit(properties, muVideoAudit, con, pubInc);
 	}
 
 

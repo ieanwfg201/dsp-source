@@ -7,12 +7,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
-import com.kritter.naterial_upload.valuemaker.entity.HttpUtils;
+import com.kritter.naterial_upload.valuemaker.entity.*;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
 import com.kritter.material_upload.common.banner.MUBanner;
-import com.kritter.naterial_upload.valuemaker.entity.VamMaterialUploadEntity;
-import com.kritter.naterial_upload.valuemaker.entity.VamQueryEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -48,14 +44,22 @@ public class VamMUBanner implements MUBanner {
 	private boolean lastRunPresent=false;
 	@Getter @Setter
 	private LinkedList<VamQueryEntity> vamQueryEntityList;
+	@Getter @Setter
+	private Map<String,String> header;
+	private VamCreative vamCreative;
 
 	@Override
 	public void init(Properties properties) {
 		setDspid(properties.getProperty("vam_dsp_id").toString());
-		setUsername(properties.getProperty("vam_username").toString());
-		setPassword(properties.getProperty("vam_password").toString());
 		setPubIncId(Integer.parseInt(properties.getProperty("vam_pubIncId").toString()));
 		dateNow = new Date();
+		header = new HashMap<String,String>();
+		setUsername(properties.getProperty("vam_username").toString());
+		setPassword(properties.getProperty("vam_password").toString());
+		String vam_url_prefix = properties.getProperty("vam_url_prefix").toString();
+		String vam_prefix_banner_add =vam_url_prefix + properties.getProperty("vam_prefix_banner_add").toString();
+		this.vamCreative = new VamCreative(vam_prefix_banner_add,null);
+
 	}
 
 	@Override
@@ -87,6 +91,43 @@ public class VamMUBanner implements MUBanner {
 			if(pstmt != null){
 				try {
 					pstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void removeDisassociatedCreative(Properties properties, Connection con) {
+		if(!isPerformTransaction()){
+			return;
+		}
+		PreparedStatement pstmt = null;
+		PreparedStatement updatestmt = null;
+		try{
+			pstmt = con.prepareStatement(VamBannerQuery.removedCreativesQuery);
+			pstmt.setString(1, getStartDateStr());
+			ResultSet rset = pstmt.executeQuery();
+			while(rset.next()){
+				updatestmt=con.prepareStatement(VamBannerQuery.updateRemovedCreatives);
+				updatestmt.setInt(1, rset.getInt("internalid"));
+				updatestmt.executeUpdate();
+			}
+		}catch(Exception e){
+			setPerformTransaction(false);
+			LOG.error(e.getMessage(),e);
+		}finally{
+			if(pstmt != null){
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					LOG.error(e.getMessage(),e);
+				}
+			}
+			if(updatestmt != null){
+				try {
+					updatestmt.close();
 				} catch (SQLException e) {
 					LOG.error(e.getMessage(),e);
 				}
@@ -219,7 +260,7 @@ public class VamMUBanner implements MUBanner {
 
 					VamMaterialUploadEntity bannerEntity = new VamMaterialUploadEntity(vqe.getCreativeGuid(),
 							"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),vqe.getWidth(),
-							vqe.getHeight(),1,1,1,Adomain_list,materialurl,"title","test");;
+							vqe.getHeight(),1,1,6001,Adomain_list,materialurl,"title","test");;
 					String newInfoStr = bannerEntity.toJson().toString();
 
 					cpstmt.setString(12, newInfoStr);
@@ -266,6 +307,9 @@ public class VamMUBanner implements MUBanner {
 			List<VamMaterialUploadEntity> materialList = new LinkedList<VamMaterialUploadEntity>();
 			StringBuffer sBuff = new StringBuffer("");
 			boolean isFirst=true;
+			header.put("Content-Type", "application/json;charset=utf-8");
+			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
+
 			while(rset.next()){
 				//System.out.println(rset.getString("info"));
 				materialList.add(VamMaterialUploadEntity.getObject(rset.getString("info")));
@@ -276,34 +320,31 @@ public class VamMUBanner implements MUBanner {
 				}
 				sBuff.append(rset.getInt("internalId"));
 			}
-			if(materialList.size()>0){
-				boolean isSuccess=false;
-				try{
-					for(VamMaterialUploadEntity vamMaterialUploadEntity:materialList){
-						Integer out = HttpUtils.post(properties.getProperty("vam_url_prefix").toString()+
-								properties.getProperty("vam_prefix_banner_add").toString(),vamMaterialUploadEntity,getUsername(),getPassword());
-						LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
-						LOG.info(String.valueOf(out));
-						if(out != null){
-							if(out==200){
+				boolean isSuccess = false;
+				if(materialList.size()>0){
+					try{
+						for(VamMaterialUploadEntity vamMaterialUploadEntity:materialList){
+							Integer out = vamCreative.addBanner(vamMaterialUploadEntity,header);
+							LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
+							LOG.info(String.valueOf(out));
+							if(out != null && out == 200){
 								cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
 								cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
 								cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
 								cpstmt.executeUpdate();
 								isSuccess=true;
 							}
+							if(!isSuccess){
+								cpstmt1 = con.prepareStatement(VamBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
+								cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
+								cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+								cpstmt1.executeUpdate();
+							}
 						}
+					}catch(Exception e1){
+						LOG.error(e1.getMessage(),e1);
 					}
-				}catch(Exception e1){
-					LOG.error(e1.getMessage(),e1);
 				}
-				if(!isSuccess){
-					cpstmt1 = con.prepareStatement(VamBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
-					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
-					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-					cpstmt1.executeUpdate();
-				}
-			}
 		}catch(Exception e){
 			setPerformTransaction(false);
 			LOG.error(e.getMessage(),e);

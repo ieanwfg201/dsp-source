@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import com.google.gson.reflect.TypeToken;
 
 import com.kritter.naterial_upload.valuemaker.entity.HttpUtils;
+import com.kritter.naterial_upload.valuemaker.entity.VamCreative;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +32,21 @@ public class VamMUVideoAudit implements MUVideoAudit {
 	private String id;//creative guid
 	@Getter @Setter
 	private Integer pubIncId;
+	@Getter @Setter
+	private Map<String,String> header;
 
+	private VamCreative vamCreative;
 	@Override
 	public void init(Properties properties) {
 		setDspid(properties.getProperty("vam_dsp_id").toString());
 		setUsername(properties.getProperty("vam_username").toString());
 		setPassword(properties.getProperty("vam_password").toString());
 		setPubIncId(Integer.parseInt(properties.getProperty("vam_pubIncId").toString()));
+
+		String vam_url_prefix = properties.getProperty("vam_url_prefix").toString();
+		String vam_prefix_video_audit = vam_url_prefix + properties.getProperty("vam_prefix_video_audit").toString();
+		this.vamCreative = new VamCreative(null,vam_prefix_video_audit);
+		header = new HashMap<String, String>();
 	}
 
 	@Override
@@ -49,12 +58,13 @@ public class VamMUVideoAudit implements MUVideoAudit {
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
 			Timestamp ts = new Timestamp(new Date().getTime());
+			header.put("Content-Type", "application/json;charset=utf-8");
+			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
 				id = rset.getString("guid");
 				if(id !=  null){
 					try{
-						String out = HttpUtils.get(properties.getProperty("vam_url_prefix").toString()+
-								properties.getProperty("vam_prefix_video_audit").toString()+"?id="+id,getUsername(),getPassword());
+						String out = vamCreative.getVideoStateByIds(id,header);
 						LOG.info("MATERIAL AUDIT RETURN");
 						LOG.info(out);
 						if(out !=null){
