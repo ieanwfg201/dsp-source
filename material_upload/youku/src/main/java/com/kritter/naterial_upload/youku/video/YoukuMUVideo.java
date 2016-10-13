@@ -12,13 +12,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
-import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.entity.video_props.VideoInfoExt;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.material_upload.common.urlpost.UrlPost;
@@ -26,6 +26,7 @@ import com.kritter.material_upload.common.video.MUVideo;
 import com.kritter.material_upload.youkuvideouploader.YoukuNonWebVideoUploader;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
 import com.kritter.naterial_upload.youku.entity.ReturnResultMessage;
+import com.kritter.naterial_upload.youku.entity.ReturnVideoStatus;
 import com.kritter.naterial_upload.youku.entity.YoukuMaterialUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuMultipleMaterialUploadEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuQueryEntity;
@@ -345,7 +346,29 @@ public class YoukuMUVideo implements MUVideo {
 		}
 	}
 
-
+	private boolean checkVideoStatus(Properties properties, String vId){
+		try{
+			UrlPost urlPost = new UrlPost();
+			String urlString=properties.getProperty("youku_video_status").toString();
+			String clientId = properties.getProperty("youku_clientId").toString();
+			urlString = StringUtils.replace(urlString, "<clientId>", clientId);
+			urlString = StringUtils.replace(urlString, "<video_id>", vId);
+			LOG.debug("Video Status Get Url: {}",urlString);
+			String out = urlPost.urlGet(urlString);
+			LOG.debug("Video Status Received: {}",out);
+			if(out != null){
+				ReturnVideoStatus rvs = ReturnVideoStatus.getObject(out);
+				if(rvs != null && rvs.getState() != null && "normal".equals(rvs.getState())){
+					return true;
+				}
+			}
+			return false;
+		}catch(Exception e){
+			LOG.error(e.getMessage(),e);
+			return false;
+		}
+		
+	}
 
 	@Override
 	public void uploadmaterial(Properties properties, Connection con) {
@@ -412,7 +435,9 @@ public class YoukuMUVideo implements MUVideo {
 							cpstmt3.setString(2, viext.toJson().toString());
 							cpstmt3.setInt(3, localEntity.getVideoInfoId());
 							cpstmt3.executeUpdate();
-							videoUploadSucess=true;
+							if(checkVideoStatus(properties, vId)){
+								videoUploadSucess=true;
+							}
 						}
 					}else{
 						LOG.info("NOTUPLOADED TO YOUKU CDN {} ",localEntity.getCreativeName());
