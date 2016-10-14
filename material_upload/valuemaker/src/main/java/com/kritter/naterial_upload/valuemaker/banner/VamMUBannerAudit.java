@@ -47,7 +47,7 @@ public class VamMUBannerAudit implements MUBannerAudit {
 		setUsername(properties.getProperty("vam_username").toString());
 		setPassword(properties.getProperty("vam_password").toString());
 		setPubIncId(Integer.parseInt(properties.getProperty("vam_pubIncId").toString()));
-
+		header = new HashMap<String,String>();
 		String vam_url_prefix = properties.getProperty("vam_url_prefix").toString();
 		String vam_prefix_banner_audit = vam_url_prefix + properties.getProperty("vam_prefix_banner_audit").toString();
 		this.vamCreative = new VamCreative(null,vam_prefix_banner_audit);

@@ -219,14 +219,14 @@ public class VamMUBanner implements MUBanner {
 				java.net.URL url = new java.net.URL(vqe.getLanding_url());
 				String host = url.getHost();
 				String[] Adomain_list = {host};
+				VamMaterialUploadEntity bannerEntity = new VamMaterialUploadEntity(vqe.getCreativeGuid(),
+						"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),vqe.getWidth(),
+						vqe.getHeight(),1,1,6001,Adomain_list,materialurl,"title","test");
+
+				String newInfoStr = bannerEntity.toJson().toString();
 				if(rset.next()){
 					String info=rset.getString("info");
 					int adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
-
-					VamMaterialUploadEntity bannerEntity = new VamMaterialUploadEntity(vqe.getCreativeGuid(),
-							"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),vqe.getWidth(),
-							vqe.getHeight(),1,1,1,Adomain_list,materialurl,"title","test");
-					String newInfoStr = bannerEntity.toJson().toString();
 
 					cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerUpload);
 					cpstmt.setInt(2, vqe.getCampaignStatus());
@@ -257,11 +257,6 @@ public class VamMUBanner implements MUBanner {
 					cpstmt.setInt(9, vqe.getCreativeStatus());
 					cpstmt.setInt(10, vqe.getBannerId());
 					cpstmt.setTimestamp(11, new Timestamp(dateNow.getTime()));
-
-					VamMaterialUploadEntity bannerEntity = new VamMaterialUploadEntity(vqe.getCreativeGuid(),
-							"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),vqe.getWidth(),
-							vqe.getHeight(),1,1,6001,Adomain_list,materialurl,"title","test");;
-					String newInfoStr = bannerEntity.toJson().toString();
 
 					cpstmt.setString(12, newInfoStr);
 					cpstmt.executeUpdate();
