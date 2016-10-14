@@ -298,17 +298,16 @@ public class VamMUVideo implements MUVideo {
 				String host = url.getHost();
 				String[] Adomain_list = {host};
 
+				VamVideoMaterialUploadEntity videoEntity = new VamVideoMaterialUploadEntity(vqe.getCreativeGuid(),1,
+						"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),Adomain_list,vqe.getWidth(),
+						vqe.getHeight(),1,vqe.getDuration(),materialurl,null,0);
+				String newInfoStr = videoEntity.toJson().toString();
+
 				if(rset.next()){
 					String info=rset.getString("info");
 					int adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
-
 //							String id, Integer category, String landingpage,String[] adomain_list,Integer width,Integer height,
 //							Integer format,Integet duration,String fileurl,String advertiser,Integer creative_type)
-					VamVideoMaterialUploadEntity videoEntity = new VamVideoMaterialUploadEntity(vqe.getCreativeGuid(),1,
-							"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),Adomain_list,vqe.getWidth(),
-							vqe.getHeight(),1,vqe.getDuration(),materialurl,null,0);
-					String newInfoStr = videoEntity.toJson().toString();
-
 					cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoUpload);
 					cpstmt.setInt(2, vqe.getCampaignStatus());
 					cpstmt.setInt(3, vqe.getAdStatus());
@@ -338,10 +337,6 @@ public class VamMUVideo implements MUVideo {
 					cpstmt.setInt(9, vqe.getCreativeStatus());
 					cpstmt.setInt(10, vqe.getVideoInfoId());
 					cpstmt.setTimestamp(11, new Timestamp(dateNow.getTime()));
-					VamVideoMaterialUploadEntity videoEntity = new VamVideoMaterialUploadEntity(vqe.getCreativeGuid(),1,
-							"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),Adomain_list,vqe.getWidth(),
-							vqe.getHeight(),1,vqe.getDuration(),materialurl,null,0);
-					String newInfoStr = videoEntity.toJson().toString();
 					cpstmt.setString(12, newInfoStr);
 					cpstmt.executeUpdate();
 				}

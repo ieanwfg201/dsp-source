@@ -67,8 +67,7 @@ public class VamCreative extends VamInterface<VamMaterialUploadEntity,VamVideoMa
             String url = CREATIVE_GET_STATE_URL +"?id="+id;
             String vamResponse = getVamResponse(url,header);
             System.out.println(vamResponse);
-            return (String) MAPPER.readValue(vamResponse, new TypeReference<List<String>>() {
-            });
+            return vamResponse;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -80,8 +79,7 @@ public class VamCreative extends VamInterface<VamMaterialUploadEntity,VamVideoMa
             String url = CREATIVE_GET_STATE_URL +"?id="+id;
             String vamResponse = getVamResponse(url,header);
             System.out.println(vamResponse);
-            return (String) MAPPER.readValue(vamResponse, new TypeReference<List<String>>() {
-            });
+            return vamResponse;
         } catch (IOException e) {
             e.printStackTrace();
         }
