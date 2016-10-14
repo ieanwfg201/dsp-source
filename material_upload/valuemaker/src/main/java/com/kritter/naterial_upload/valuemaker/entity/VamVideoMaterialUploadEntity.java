@@ -34,7 +34,7 @@ public class VamVideoMaterialUploadEntity {
 	@Getter@Setter
 	public Integer duration;//视频创意时长
 	@Getter@Setter
-	public String[] fileurl;//存放于 DSP 的 CDN 上的视频素材 地址 URL。
+	public String fileurl;//存放于 DSP 的 CDN 上的视频素材 地址 URL。
 	@Getter@Setter
 	public String advertiser;//选填,广告主的中文名称
 	@Getter@Setter
@@ -44,7 +44,7 @@ public class VamVideoMaterialUploadEntity {
 	}
 
 	public VamVideoMaterialUploadEntity(String id, Integer category, String landingpage,String[] adomain_list,Integer width,Integer height,
-											   Integer format,Integer duration,String[] fileurl,String advertiser,Integer creative_type) {
+											   Integer format,Integer duration,String fileurl,String advertiser,Integer creative_type) {
 		super();
 		this.id=id;
 		this.category=category;
@@ -58,11 +58,7 @@ public class VamVideoMaterialUploadEntity {
 		this.height=height;
 		this.format=format;
 		this.duration=duration;
-		if(fileurl == null){
-			this.fileurl= new String[0];
-		}else{
-			this.fileurl = fileurl;
-		}
+		this.fileurl = fileurl;
 		this.advertiser=advertiser;
 		this.creative_type=creative_type;
 	}
