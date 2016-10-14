@@ -73,10 +73,10 @@ public class MaterialUploader {
             for (String str : split) {
                 switch (str) {
                     case "youku":
-                        /**System.out.println("YOUKU BEGIN");
+                        System.out.println("YOUKU BEGIN");
                         YoukuUploadExecutor yue = new YoukuUploadExecutor();
                         yue.execute(properties, con);
-                        System.out.println("YOUKU END");*/
+                        System.out.println("YOUKU END");
                         break;
                     case "cloudcross":
                         System.out.println("CLOUDCROSS BEGIN");
