@@ -128,7 +128,7 @@ public class EcpmBidCalculatorUsingBidder implements Job
                 responseAdInfo.setEcpmValue(ecpmValue);
             }
             finalResponseAdInfoSet.add(responseAdInfo);
-            ReqLog.errorWithDebugNew(logger, request, "Ecpm bid value calculated inside EcpmBidCalculatorUsingBidder as : {} for adunit id: {}",
+            ReqLog.debugWithDebugNew(logger, request, "Ecpm bid value calculated inside EcpmBidCalculatorUsingBidder as : {} for adunit id: {}",
                     responseAdInfo.getEcpmValue(), responseAdInfo.getAdId());
         }
 
