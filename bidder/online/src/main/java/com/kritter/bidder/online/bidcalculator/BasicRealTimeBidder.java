@@ -67,73 +67,59 @@ public class BasicRealTimeBidder implements RealTimeBidder
 
             Double alphaValueForThisAdFromOfflineLPSolver = null;
 
-            if(null != bidderDBEntity)
-                alphaValueForThisAdFromOfflineLPSolver = bidderDBEntity.getAlphaValueForDemandEntity(servedEntityInfo.getEntityId());
+            if(null != bidderDBEntity) {
+                alphaValueForThisAdFromOfflineLPSolver =
+                        bidderDBEntity.getAlphaValueForDemandEntity(servedEntityInfo.getEntityId());
+            }
 
-            logger.debug("Inside BasicRealTimeBidder, alpha value for adId:{} is: {}",
-                         servedEntityInfo.getEntityId(),alphaValueForThisAdFromOfflineLPSolver);
+            logger.debug("Inside BasicRealTimeBidder, alpha value for adId:{} is: {}", servedEntityInfo.getEntityId(),
+                    alphaValueForThisAdFromOfflineLPSolver);
 
             double optimizedBidValueOfAdForThisImpression = servedEntityInfo.getMaxBid();
 
-            if(servedEntityInfo.getMarketPlace().equals(MarketPlace.CPC))
-            {
+            if(servedEntityInfo.getMarketPlace().equals(MarketPlace.CPC)) {
                 if(null == alphaValueForThisAdFromOfflineLPSolver)
                     alphaValueForThisAdFromOfflineLPSolver = DEFAULT_ALPHA;
 
-                optimizedBidValueOfAdForThisImpression = (
-                                                          optimizedBidValueOfAdForThisImpression    *
-                                                          clickProbabilityOfEntityForThisImpression *
-                                                          1000
-                                                         );
+                optimizedBidValueOfAdForThisImpression = (optimizedBidValueOfAdForThisImpression *
+                        clickProbabilityOfEntityForThisImpression * 1000);
             }
-            else if(servedEntityInfo.getMarketPlace().equals(MarketPlace.CPM))
-            {
+            else if(servedEntityInfo.getMarketPlace().equals(MarketPlace.CPM)) {
                 if(null == alphaValueForThisAdFromOfflineLPSolver)
                     alphaValueForThisAdFromOfflineLPSolver = DEFAULT_ALPHA;
             }
-            else if(servedEntityInfo.getMarketPlace().equals(MarketPlace.CPD))
-            {
+            else if(servedEntityInfo.getMarketPlace().equals(MarketPlace.CPD)) {
                 if(null == alphaValueForThisAdFromOfflineLPSolver)
                     alphaValueForThisAdFromOfflineLPSolver = MAX_ALPHA;
 
-                optimizedBidValueOfAdForThisImpression = (
-                                                          optimizedBidValueOfAdForThisImpression    *
-                                                          clickProbabilityOfEntityForThisImpression *
-                                                          cpaProbabilityForEntityForThisImpression  *
-                                                          1000
-                                                         );
+                optimizedBidValueOfAdForThisImpression = (optimizedBidValueOfAdForThisImpression *
+                        clickProbabilityOfEntityForThisImpression * cpaProbabilityForEntityForThisImpression * 1000);
             }
 
             double alphaFactor = 1 - alphaValueForThisAdFromOfflineLPSolver;
 
             optimizedBidValueOfAdForThisImpression = optimizedBidValueOfAdForThisImpression * alphaFactor;
 
-            if(optimizedBidValueOfAdForThisImpression <= 0.0)
-            {
-                logger.debug("The optimized bid calculated inside BasicRealTimeBidder is negative: {} ,for entity id:{} ", optimizedBidValueOfAdForThisImpression, servedEntityInfo.getEntityId());
+            if(optimizedBidValueOfAdForThisImpression <= 0.0) {
+                logger.debug("The optimized bid calculated inside BasicRealTimeBidder is negative: {} ,for entity id:" +
+                        "{} ", optimizedBidValueOfAdForThisImpression, servedEntityInfo.getEntityId());
                 continue;
             }
 
             logger.debug("Optimized bid value calculated inside BasicRealTimeBidder as : {}", optimizedBidValueOfAdForThisImpression);
 
             //check for budget remaining of the entity, if less , then ad cant participate in auction.
-            if(
-               (servedEntityInfo.getDailyRemainingBudget() - optimizedBidValueOfAdForThisImpression) <
-               (Budget.min_budget)
-              )
-            {
-                logger.debug("ServedEntityInfo's budget is less than minimum value inside BasicRealTimeBidder for adid : {} ", servedEntityInfo.getEntityId());
+            if((servedEntityInfo.getDailyRemainingBudget() - (optimizedBidValueOfAdForThisImpression / 1000)) <
+                    Budget.min_budget) {
+                logger.debug("ServedEntityInfo's budget is less than the daily budget remaining inside " +
+                        "BasicRealTimeBidder for adid : {} ", servedEntityInfo.getEntityId());
                 continue;
             }
 
-            ExchangeBidWithEntityId exchangeBidWithAdId =
-                    new ExchangeBidWithEntityId(
-                                                servedEntityInfo.getEntityId(),
-                                                optimizedBidValueOfAdForThisImpression
-                                               );
+            ExchangeBidWithEntityId exchangeBidWithAdId = new ExchangeBidWithEntityId(servedEntityInfo.getEntityId(),
+                    optimizedBidValueOfAdForThisImpression);
 
             bidsToRespond.put(exchangeBidWithAdId.getEntityId(), exchangeBidWithAdId);
-
         }
 
         return bidsToRespond;
