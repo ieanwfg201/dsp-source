@@ -112,7 +112,7 @@ public class Targeting_profile {
     /** optional - jason array of lat lon radius files */
     private String lat_lon_radius_file = null;
     /** optional - jason array of deviceid files */
-    private boolean user_id_inc_exc=true;
+    private int user_id_inc_exc=0;
     private String deviceid_file = null;
     private String file_prefix_path = null;
     private int id ;
@@ -730,13 +730,13 @@ public class Targeting_profile {
 	public void setLat_lon_radius_unit(int lat_lon_radius_unit) {
 		this.lat_lon_radius_unit = lat_lon_radius_unit;
 	}
-    public boolean isUser_id_inc_exc() {
+
+	public int getUser_id_inc_exc() {
 		return user_id_inc_exc;
 	}
-	public void setUser_id_inc_exc(boolean user_id_inc_exc) {
+	public void setUser_id_inc_exc(int user_id_inc_exc) {
 		this.user_id_inc_exc = user_id_inc_exc;
 	}
-
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);

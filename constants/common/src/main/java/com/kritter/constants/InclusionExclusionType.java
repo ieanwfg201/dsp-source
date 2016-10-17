@@ -24,6 +24,10 @@ public enum InclusionExclusionType {
     InclusionExclusionType(int code) {
         this.code = code;
     }
+    public int getCode()
+    {
+        return this.code;
+    }
 
     public static InclusionExclusionType getEnum(int code) {
         return map.get(code);
