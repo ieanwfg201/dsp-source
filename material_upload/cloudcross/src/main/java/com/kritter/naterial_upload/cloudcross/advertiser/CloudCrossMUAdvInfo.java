@@ -148,9 +148,15 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
     }
 
     private String getIndustryIdByUiMMACode(Connection con, ResultSet rset) throws java.io.IOException, SQLException {
-        AdxAccountExt adxext = objectMapper.readValue(rset.getString("adxext"), AdxAccountExt.class);
+        Integer industryId = -1;
+        if (rset.getObject("firstind") != null) {
+            industryId = Integer.parseInt(rset.getString("firstind"));
+        }
+        if (rset.getObject("secondind") != null) {
+            industryId = Integer.parseInt(rset.getString("secondind"));
+        }
         PreparedStatement statement = con.prepareStatement(CloudCrossAdvInfoQuery.selectSupplyIndustryIdByUIMMACategoriesId);
-        statement.setInt(1, Integer.parseInt(adxext.getSecondInd()));
+        statement.setInt(1, industryId);
         ResultSet resultSet = statement.executeQuery();
 
         return resultSet.next() ? resultSet.getString("supplycode") : "-1";
@@ -175,6 +181,12 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                 pstmt.setInt(1, getPubIncId());
                 pstmt.setInt(2, ccae.getAdvertiserId());
                 ResultSet rset = pstmt.executeQuery();
+                CloudCrossAdvInfoLocaLMaterialUploadEntity ccalmue = new CloudCrossAdvInfoLocaLMaterialUploadEntity();
+                ccalmue.setAddress(null);
+                ccalmue.setBrand(null);
+                ccalmue.setContacts(null);
+                ccalmue.setName(ccae.getRegName());
+                ccalmue.setTel(null);
                 String newInfo = objectMapper.writeValueAsString(ccae);
                 if (rset.next()) {
                     String info = rset.getString("info");
@@ -183,7 +195,7 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                     if (info.equals(newInfo)) {
                         cpstmt.setInt(1, adxbasedexhangesstatus);
                     } else {
-                        cpstmt.setInt(1, AdxBasedExchangesStates.READY_TO_UPDATE.getCode());
+                        cpstmt.setInt(1, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
                     }
                     cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
                     cpstmt.setString(3, newInfo);
@@ -244,12 +256,7 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                     LOG.info(postBody);
                     List<CloudCrossAdvertiserEntity> list = new ArrayList<>();
                     list.add(objectMapper.readValue(postBody, CloudCrossAdvertiserEntity.class));
-                    List<CloudCrossResponse> responses = null;
-                    if (rset.getInt("adxbasedexhangesstatus") == 2) {
-                        responses = cloudCrossAdvertiser.add(list);
-                    } else {
-                        responses = cloudCrossAdvertiser.update(list);
-                    }
+                    List<CloudCrossResponse> responses = cloudCrossAdvertiser.add(list);
                     LOG.info(objectMapper.writeValueAsString(responses));
                     if (responses != null && responses.size() > 0) {
                         // [{"status":0,"success":{"index":1,"code":200,"message":"插入成功","bannerId":null,"field":null},"error":null}]
@@ -257,7 +264,8 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                         if (cloudCrossResponse != null) {
                             CloudCrossResponse.Success success = cloudCrossResponse.getSuccess();
                             CloudCrossError error = cloudCrossResponse.getError();
-                            if ((success != null && success.getCode() == 200)) {
+                            if ((success != null && success.getCode() == 200) &&
+                                    ((success != null && success.getMessage().equals("插入成功")))) {
                                 cpstmt = updatetAdvSuccess(con, cpstmt, internalId, errorCode);
                                 isSuccess = true;
                                 LOG.info("advertiser upload success!");
