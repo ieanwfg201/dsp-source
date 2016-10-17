@@ -249,31 +249,36 @@ public class YoukuMUAdvInfo implements MUAdvInfo {
 				try{
 					
 					YoukuAdvInfoUploadEntity ymmue = new YoukuAdvInfoUploadEntity();
-					ymmue.setAdvertiser(YoukuAdvInfoLocaLMaterialUploadEntity.getObject(rset.getString("info")));
-					ymmue.setDspid(properties.getProperty("youku_dsp_id").toString());
-					ymmue.setToken(properties.getProperty("youku_token").toString());
-					LOG.info("MATERIAL ADVINFO UPLOAD POSTBODY");
-					String postBody = ymmue.toJson().toString();
-					LOG.info(postBody);
-					
-					UrlPost urlPost = new UrlPost();
-					out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
-							properties.getProperty("youku_prefix_advinfo_upload"), postBody);
-					LOG.info("MATERIAL ADVINFO UPLOAD RESPONSE");
-					LOG.info(out);
-					if(out != null){
-						ReturnResultCode rrc = ReturnResultCode.getObject(out);
-						if(rrc.getResult()==0){
-							ReturnResultMessage rrm = ReturnResultMessage.getObject(out);
-							if(rrm.getResult()==0 && (rrm.getMessage() == null || rrm.getMessage().size()<1 )){
-								cpstmt = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId+""));
-								cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-								cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-								cpstmt.setString(3, out);
-								cpstmt.executeUpdate();
-								isSuccess=true;
+					YoukuAdvInfoLocaLMaterialUploadEntity localinfo = YoukuAdvInfoLocaLMaterialUploadEntity.getObject(rset.getString("info"));
+					if(localinfo.getFirstindustry() != null && localinfo.getSecondindustry()!=null){
+						ymmue.setAdvertiser(localinfo);
+						ymmue.setDspid(properties.getProperty("youku_dsp_id").toString());
+						ymmue.setToken(properties.getProperty("youku_token").toString());
+						LOG.info("MATERIAL ADVINFO UPLOAD POSTBODY");
+						String postBody = ymmue.toJson().toString();
+						LOG.info(postBody);
+
+						UrlPost urlPost = new UrlPost();
+						out = urlPost.urlpost(properties.getProperty("youku_url_prefix").toString()+
+								properties.getProperty("youku_prefix_advinfo_upload"), postBody);
+						LOG.info("MATERIAL ADVINFO UPLOAD RESPONSE");
+						LOG.info(out);
+						if(out != null){
+							ReturnResultCode rrc = ReturnResultCode.getObject(out);
+							if(rrc.getResult()==0){
+								ReturnResultMessage rrm = ReturnResultMessage.getObject(out);
+								if(rrm.getResult()==0 && (rrm.getMessage() == null || rrm.getMessage().size()<1 )){
+									cpstmt = con.prepareStatement(YoukuAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId+""));
+									cpstmt.setInt(1,AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+									cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+									cpstmt.setString(3, out);
+									cpstmt.executeUpdate();
+									isSuccess=true;
+								}
 							}
 						}
+					}else{
+						out="INDUSTRYCODEMISSING-DID NOT UPLOAD";
 					}
 				}catch(Exception e1){
 					LOG.error(e1.getMessage(),e1);
