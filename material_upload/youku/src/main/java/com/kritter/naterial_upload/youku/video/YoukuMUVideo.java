@@ -346,7 +346,7 @@ public class YoukuMUVideo implements MUVideo {
 		}
 	}
 
-	private boolean checkVideoStatus(Properties properties, String vId){
+	private String checkVideoStatus(Properties properties, String vId){
 		try{
 			UrlPost urlPost = new UrlPost();
 			String urlString=properties.getProperty("youku_video_status").toString();
@@ -358,14 +358,14 @@ public class YoukuMUVideo implements MUVideo {
 			LOG.debug("Video Status Received: {}",out);
 			if(out != null){
 				ReturnVideoStatus rvs = ReturnVideoStatus.getObject(out);
-				if(rvs != null && rvs.getState() != null && "normal".equals(rvs.getState())){
-					return true;
+				if(rvs != null && rvs.getState() != null){
+					return rvs.getState();
 				}
 			}
-			return false;
+			return null;
 		}catch(Exception e){
 			LOG.error(e.getMessage(),e);
-			return false;
+			return null;
 		}
 		
 	}
@@ -387,6 +387,8 @@ public class YoukuMUVideo implements MUVideo {
 			ResultSet rset = pstmt.executeQuery();
 			while(rset.next()){
 				boolean videoUploadSucess=false;
+				boolean transientStatus=false;
+				String uploadstatus=null;
 				List<YoukuMaterialUploadEntity> materialList = new LinkedList<YoukuMaterialUploadEntity>();
 				//System.out.println(rset.getString("info"));
 				YoukuVideoLocalMaterialUploadEntity localEntity = YoukuVideoLocalMaterialUploadEntity.getObject(rset.getString("info"));
@@ -435,8 +437,11 @@ public class YoukuMUVideo implements MUVideo {
 							cpstmt3.setString(2, viext.toJson().toString());
 							cpstmt3.setInt(3, localEntity.getVideoInfoId());
 							cpstmt3.executeUpdate();
-							if(checkVideoStatus(properties, vId)){
+							uploadstatus = checkVideoStatus(properties, vId);
+							if("normal".equals(uploadstatus)){
 								videoUploadSucess=true;
+							}else if("encoding".equals(uploadstatus) || "in_review".equals(uploadstatus)){
+								transientStatus=true;
 							}
 						}
 					}else{
@@ -486,15 +491,25 @@ public class YoukuMUVideo implements MUVideo {
 					LOG.error(e1.getMessage(),e1);
 				}
 				if(!isSuccess){
-					cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
-					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
-					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-					if(out==null){
-						out="";
+					if(!transientStatus){
+						cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
+						cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
+						cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+						if(uploadstatus==null){
+							uploadstatus="";
+						}
+						cpstmt1.setString(3, uploadstatus);
+						cpstmt1.executeUpdate();
+					}else{
+						cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
+						cpstmt1.setInt(1,AdxBasedExchangesStates.SUBMITTED.getCode());
+						cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+						if(uploadstatus==null){
+							uploadstatus="";
+						}
+						cpstmt1.setString(3, uploadstatus);
+						cpstmt1.executeUpdate();
 					}
-					cpstmt1.setString(3, out);
-
-					cpstmt1.executeUpdate();
 				}
 
 			}
