@@ -172,6 +172,7 @@ public class VamMUBanner implements MUBanner {
 				vqe.setWidth(rset.getInt("width"));
 				vqe.setHeight(rset.getInt("height"));
 				vqe.setCreativeGuid(rset.getString("creativeGuid"));
+                vqe.setCategory(rset.getInt("category"));
 				vamQueryEntityList.add(vqe);
 			}
 		}catch(Exception e){
@@ -221,7 +222,7 @@ public class VamMUBanner implements MUBanner {
 				String[] Adomain_list = {host};
 				VamMaterialUploadEntity bannerEntity = new VamMaterialUploadEntity(vqe.getCreativeGuid(),
 						"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),vqe.getWidth(),
-						vqe.getHeight(),1,1,6001,Adomain_list,materialurl,"title","test");
+						vqe.getHeight(),1,1,vqe.getCategory(),Adomain_list,materialurl,"title","test");
 
 				String newInfoStr = bannerEntity.toJson().toString();
 				if(rset.next()){
