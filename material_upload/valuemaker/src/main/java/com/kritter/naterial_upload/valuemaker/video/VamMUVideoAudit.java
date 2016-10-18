@@ -53,8 +53,9 @@ public class VamMUVideoAudit implements MUVideoAudit {
 	@Override
 	public void fetchMaterialAudit(Properties properties, Connection con) {
 		PreparedStatement pstmt = null;
-		PreparedStatement cpstmt = null;
 		PreparedStatement stmt = null;
+		PreparedStatement cpstmt = null;
+
 		try{
 			stmt = con.prepareStatement(VamVideoQuery.selectforAudit);
 			stmt.setInt(1,getPubIncId());
@@ -67,7 +68,7 @@ public class VamMUVideoAudit implements MUVideoAudit {
 			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
 				id = rset.getString("guid");
-				int internalid = rset.getInt("internalid");
+				int internalid = set.getInt("internalid");
 				if(id !=  null){
 					try{
 						String out = vamCreative.getVideoStateByIds(id,header);
@@ -119,11 +120,18 @@ public class VamMUVideoAudit implements MUVideoAudit {
 				} catch (SQLException e) {
 					LOG.error(e.getMessage(),e);
 				}
-				if(cpstmt != null){
+				if(stmt != null){
 					try {
-						cpstmt.close();
+						stmt.close();
 					} catch (SQLException e) {
 						LOG.error(e.getMessage(),e);
+					}
+					if(cpstmt != null){
+						try {
+							cpstmt.close();
+						} catch (SQLException e) {
+							LOG.error(e.getMessage(),e);
+						}
 					}
 				}
 			}

@@ -57,16 +57,21 @@ public class VamMUBannerAudit implements MUBannerAudit {
 	@Override
 	public void fetchMaterialAudit(Properties properties, Connection con) {
 		PreparedStatement pstmt = null;
+		PreparedStatement stmt = null;
 		PreparedStatement cpstmt = null;
+
 		try{
 			pstmt = con.prepareStatement(VamBannerQuery.selectforAudit);
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
+			stmt=con.prepareStatement(VamBannerQuery.selectCreativeGuid);
+			stmt.setInt(1,getPubIncId());
+			ResultSet set = stmt.executeQuery();
 			Timestamp ts = new Timestamp(new Date().getTime());
 			header.put("Content-Type", "application/json;charset=utf-8");
 			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
-				id = rset.getString("guid");
+				if(set.next()){id = set.getString("guid");}
 				int internalid = rset.getInt("internalid");
 				if(id !=  null){
 					try{
@@ -119,11 +124,18 @@ public class VamMUBannerAudit implements MUBannerAudit {
 				} catch (SQLException e) {
 					LOG.error(e.getMessage(),e);
 				}
-				if(cpstmt != null){
+				if(stmt != null){
 					try {
-						cpstmt.close();
+						stmt.close();
 					} catch (SQLException e) {
 						LOG.error(e.getMessage(),e);
+					}
+					if(cpstmt != null){
+						try {
+							cpstmt.close();
+						} catch (SQLException e) {
+							LOG.error(e.getMessage(),e);
+						}
 					}
 				}
 			}

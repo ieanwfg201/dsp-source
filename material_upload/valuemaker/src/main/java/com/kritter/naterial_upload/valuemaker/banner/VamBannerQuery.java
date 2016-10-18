@@ -46,10 +46,10 @@ public class VamBannerQuery {
             "    ) > ?) AS j1\n" +
             "  JOIN creative_banner AS j2   ON FIND_IN_SET( j2.id, REPLACE(REPLACE(j1.resource_uri_ids, '[', ''), ']', '' )  )\n" +
             "  left join mma_code_mma_ui_mapping um  on  um.ui_id=j1.secondind\n" +
-            "  left join supply_mma_mapping m  on m.exchangename='youku' and m.mma_category_code=um.code\n" +
+            "  left join supply_mma_mapping m  on m.exchangename='valuemaker' and m.mma_category_code=um.code\n" +
             "  ) AS result  \n" +
             "  LEFT JOIN creative_banner AS cb ON cb.id = result.`bannerId` \n" +
-            "  LEFT JOIN creative_slots AS cs ON cs.id = cb.slot_id\";";
+            "  LEFT JOIN creative_slots AS cs ON cs.id = cb.slot_id";
 
 
 	public static final String  getBannerUpload = "select * from banner_upload where "

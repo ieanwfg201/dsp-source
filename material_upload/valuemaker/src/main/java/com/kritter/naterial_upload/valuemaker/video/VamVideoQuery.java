@@ -13,7 +13,7 @@ public class VamVideoQuery {
             "d.format_id=4 and d.video_props is not null and d.video_props<>'' and d.video_props<>'[]' \n" +
             "and GREATEST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >? ) j1\n" +
             "left join mma_code_mma_ui_mapping um  on  um.ui_id=j1.secondind\n" +
-            "left join supply_mma_mapping m  on m.exchangename='youku' and m.mma_category_code=um.code";
+            "left join supply_mma_mapping m  on m.exchangename='valuemaker' and m.mma_category_code=um.code";
 	
 	public static final String  getVideoInfo = "select * from video_info where id=?";
 	
