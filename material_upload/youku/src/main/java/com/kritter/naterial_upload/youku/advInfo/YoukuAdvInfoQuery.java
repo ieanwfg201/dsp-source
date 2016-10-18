@@ -36,7 +36,7 @@ public class YoukuAdvInfoQuery {
 			+ " set adxbasedexhangesstatus=?,message=?,last_modified=? "
 			+ " where internalid in (<id>)";
 
-	public static final String  selectforAudit = "select * from advinfo_upload where pubIncId=? and (adxbasedexhangesstatus=7) ";
+	public static final String  selectforAudit = "select * from advinfo_upload where pubIncId=? and (adxbasedexhangesstatus=7 or adxbasedexhangesstatus=10) ";
 
 	public static final String  insert_material_state= "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
 	public static final String  update_material_state= "update material_upload_state set last_modified=? where materialtype=? and pubIncId=?";
