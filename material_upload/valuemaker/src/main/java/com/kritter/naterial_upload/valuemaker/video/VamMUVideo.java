@@ -235,6 +235,7 @@ public class VamMUVideo implements MUVideo {
 								vqe.setHeight(height);
 								vqe.setDuration(duration);
 								vqe.setCreativeGuid(creativeGuid);
+                                vqe.setCategory(rset.getInt("category"));
 								vamQueryEntityList.add(vqe);
 							}
 						}
@@ -298,7 +299,7 @@ public class VamMUVideo implements MUVideo {
 				String host = url.getHost();
 				String[] Adomain_list = {host};
 
-				VamVideoMaterialUploadEntity videoEntity = new VamVideoMaterialUploadEntity(vqe.getCreativeGuid(),1,
+				VamVideoMaterialUploadEntity videoEntity = new VamVideoMaterialUploadEntity(vqe.getCreativeGuid(),vqe.getCategory(),
 						"{!vam_click_url}{!dsp_click_url}"+vqe.getLanding_url(),Adomain_list,vqe.getWidth(),
 						vqe.getHeight(),1,vqe.getDuration(),materialurl,null,0);
 				String newInfoStr = videoEntity.toJson().toString();
