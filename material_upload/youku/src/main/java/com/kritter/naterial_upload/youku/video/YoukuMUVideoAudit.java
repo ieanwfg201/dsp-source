@@ -78,11 +78,11 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 									ReturnAuditRecord rar = rae.getMessage().getRecords().get(0);
 									if(rar != null){
 										cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
-										if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(rar.getReason())){
+										if("通过".equalsIgnoreCase(rar.getReason())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
-										}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(rar.getReason())){
+										}else if("不通过".equalsIgnoreCase(rar.getReason())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
-										}else if(AdxBasedExchangesStates.APPROVING.getName().equalsIgnoreCase(rar.getReason())){
+										}else if("待审核".equalsIgnoreCase(rar.getReason())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
 										}else{
 											cpstmt.setInt(1, rset.getInt("adxbasedexhangesstatus"));
@@ -97,6 +97,12 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
 									}
+								}else{
+									cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
+									cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
+									cpstmt.setString(2, rrc.getResult()+"--material URL doesn't exist: "+out);
+									cpstmt.setTimestamp(3, ts);
+									cpstmt.executeUpdate();
 								}
 							}else{
 								cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
