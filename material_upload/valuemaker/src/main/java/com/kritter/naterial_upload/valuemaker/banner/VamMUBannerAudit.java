@@ -17,6 +17,7 @@ import com.kritter.naterial_upload.valuemaker.entity.HttpUtils;
 
 import com.kritter.naterial_upload.valuemaker.entity.VamCreative;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,16 +57,22 @@ public class VamMUBannerAudit implements MUBannerAudit {
 	@Override
 	public void fetchMaterialAudit(Properties properties, Connection con) {
 		PreparedStatement pstmt = null;
+		PreparedStatement stmt = null;
 		PreparedStatement cpstmt = null;
+
 		try{
-			pstmt = con.prepareStatement(VamBannerQuery.selectCreativeGuid);
+			pstmt = con.prepareStatement(VamBannerQuery.selectforAudit);
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
+			stmt=con.prepareStatement(VamBannerQuery.selectCreativeGuid);
+			stmt.setInt(1,getPubIncId());
+			ResultSet set = stmt.executeQuery();
 			Timestamp ts = new Timestamp(new Date().getTime());
 			header.put("Content-Type", "application/json;charset=utf-8");
 			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
-				id = rset.getString("guid");
+				if(set.next()){id = set.getString("guid");}
+				int internalid = rset.getInt("internalid");
 				if(id !=  null){
 					try{
 						String out = vamCreative.getBannerStateByIds(id,header);
@@ -87,7 +94,7 @@ public class VamMUBannerAudit implements MUBannerAudit {
 							}
 
 							if(status_name != null){
-								cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
+								cpstmt = con.prepareStatement(StringUtils.replace(VamBannerQuery.updatetBannerStatusMessage, "<id>", internalid+""));
 								if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(status_name)){
 									cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
 								}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(status_name)){
@@ -117,11 +124,18 @@ public class VamMUBannerAudit implements MUBannerAudit {
 				} catch (SQLException e) {
 					LOG.error(e.getMessage(),e);
 				}
-				if(cpstmt != null){
+				if(stmt != null){
 					try {
-						cpstmt.close();
+						stmt.close();
 					} catch (SQLException e) {
 						LOG.error(e.getMessage(),e);
+					}
+					if(cpstmt != null){
+						try {
+							cpstmt.close();
+						} catch (SQLException e) {
+							LOG.error(e.getMessage(),e);
+						}
 					}
 				}
 			}

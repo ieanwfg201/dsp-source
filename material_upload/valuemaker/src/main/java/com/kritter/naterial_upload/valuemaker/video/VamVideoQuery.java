@@ -1,17 +1,19 @@
 package com.kritter.naterial_upload.valuemaker.video;
 
 public class VamVideoQuery {
-	public static final String  selectQuery =""
-			+ "select a.id as advId, a.name as advName,"
-			+ "b.id as campaignId,b.name as campaignName, "
-			+ "b.start_date as campaignStartDate, b.end_date as campaignEndDate, b.status_id as campaignStatus, "
-			+ "c.id as adId, c.name as adName, c.status_id as adStatus, c.landing_url as landing_url, "
-			+ "d.id as creativeId, d.label as creativeName,d.video_props  as video_props,"
-			+ "d.status_id as creativeStatus  "
-			+ "from account as a,campaign as b, ad as c, creative_container as d  "
-			+ "where  a.guid=b.account_guid and b.id=c.campaign_id and  c.creative_id=d.id and "
-			+ "d.format_id=4 and d.video_props is not null and d.video_props<>'' and d.video_props<>'[]' "
-			+ "and GREATEST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >? ";
+	public static final String  selectQuery ="" +
+            "select j1.*,m.supplycode category from (select a.id as advId, a.name as advName,\n" +
+            "b.id as campaignId,b.name as campaignName, \n" +
+            "b.start_date as campaignStartDate, b.end_date as campaignEndDate, b.status_id as campaignStatus, \n" +
+            "c.id as adId, c.name as adName, c.status_id as adStatus, c.landing_url as landing_url, \n" +
+            "d.id as creativeId, d.label as creativeName,d.video_props  as video_props,\n" +
+            "d.status_id as creativeStatus  \n" +
+            "from account as a,campaign as b, ad as c, creative_container as d  \n" +
+            "where  a.guid=b.account_guid and b.id=c.campaign_id and  c.creative_id=d.id and \n" +
+            "d.format_id=4 and d.video_props is not null and d.video_props<>'' and d.video_props<>'[]' \n" +
+            "and GREATEST(a.last_modified,b.last_modified,c.last_modified,d.last_modified) >? ) j1\n" +
+            "left join mma_code_mma_ui_mapping um  on  um.ui_id=j1.secondind\n" +
+            "left join supply_mma_mapping m  on m.exchangename='valuemaker' and m.mma_category_code=um.code";
 	
 	public static final String  getVideoInfo = "select * from video_info where id=?";
 	

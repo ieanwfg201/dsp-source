@@ -61,6 +61,8 @@ public class VamQueryEntity {
 	public String creativeGuid ;
 	@Getter@Setter
 	public Integer duration;
+    @Getter@Setter
+    public Integer category;
 
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();

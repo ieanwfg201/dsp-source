@@ -1,60 +1,55 @@
 package com.kritter.naterial_upload.valuemaker.banner;
 
 public class VamBannerQuery {
-	public static final String  selectQuery =
-			"SELECT result.*,cs.`width`,cs.`height` FROM  " +
-					"(SELECT  " +
-					"  j1.*, " +
-					"  j2.id AS bannerId, " +
-					"  j2.resource_uri AS resource_uri  " +
-					"FROM " +
-					"  (SELECT  " +
-					"    a.id AS advId, " +
-					"    a.name AS advName, " +
-					"    b.id AS campaignId, " +
-					"    b.name AS campaignName, " +
-					"    b.start_date AS campaignStartDate, " +
-					"    b.end_date AS campaignEndDate, " +
-					"    b.status_id AS campaignStatus, " +
-					"    c.id AS adId, " +
-					"    c.name AS adName, " +
-					"    c.status_id AS adStatus, " +
-					"    c.landing_url AS landing_url, " +
-					"    d.id AS creativeId, " +
-					"    d.label AS creativeName, " +
-					"    d.resource_uri_ids AS resource_uri_ids, " +
-					"    d.status_id AS creativeStatus,  " +
-					"    d.guid AS creativeGuid  " +
-					"  FROM " +
-					"    account AS a, " +
-					"    campaign AS b, " +
-					"    ad AS c, " +
-					"    creative_container AS d  " +
-					"  WHERE a.guid = b.account_guid  " +
-					"    AND b.id = c.campaign_id  " +
-					"    AND c.creative_id = d.id  " +
-					"    AND d.format_id = 2  " +
-					"    AND d.resource_uri_ids IS NOT NULL  " +
-					"    AND d.resource_uri_ids <> ''  " +
-					"    AND d.resource_uri_ids <> '[]'  " +
-					"    AND GREATEST( " +
-					"      a.last_modified, " +
-					"      b.last_modified, " +
-					"      c.last_modified, " +
-					"      d.last_modified " +
-					"    ) > ?) AS j1  " +
-					"  JOIN creative_banner AS j2  " +
-					"    ON FIND_IN_SET( " +
-					"      j2.id, " +
-					"      REPLACE( " +
-					"        REPLACE(j1.resource_uri_ids, '[', ''), " +
-					"        ']', " +
-					"        '' " +
-					"      ) " +
-					"    )) AS result  " +
-					"  LEFT JOIN creative_banner AS cb ON cb.id = result.`bannerId` " +
-					"  LEFT JOIN creative_slots AS cs ON cs.id = cb.slot_id";
-
+	public static final String  selectQuery ="\t\t\tSELECT result.*,cs.`width`,cs.`height` FROM  \n" +
+            "(SELECT  \n" +
+            "  j1.*, \n" +
+            "  j2.id AS bannerId, \n" +
+            "  j2.resource_uri AS resource_uri,\n" +
+            "  m.supplycode category\n" +
+            "FROM \n" +
+            "  (SELECT  \n" +
+            "    a.id AS advId, \n" +
+            "    a.name AS advName,\n" +
+            "    a.secondind AS secondind, \n" +
+            "    b.id AS campaignId, \n" +
+            "    b.name AS campaignName, \n" +
+            "    b.start_date AS campaignStartDate, \n" +
+            "    b.end_date AS campaignEndDate, \n" +
+            "    b.status_id AS campaignStatus, \n" +
+            "    c.id AS adId, \n" +
+            "    c.name AS adName, \n" +
+            "    c.status_id AS adStatus, \n" +
+            "    c.landing_url AS landing_url, \n" +
+            "    d.id AS creativeId, \n" +
+            "    d.label AS creativeName, \n" +
+            "    d.resource_uri_ids AS resource_uri_ids, \n" +
+            "    d.status_id AS creativeStatus,  \n" +
+            "    d.guid AS creativeGuid  \n" +
+            "  FROM \n" +
+            "    account AS a, \n" +
+            "    campaign AS b, \n" +
+            "    ad AS c, \n" +
+            "    creative_container AS d  \n" +
+            "  WHERE a.guid = b.account_guid  \n" +
+            "    AND b.id = c.campaign_id  \n" +
+            "    AND c.creative_id = d.id  \n" +
+            "    AND d.format_id = 2  \n" +
+            "    AND d.resource_uri_ids IS NOT NULL  \n" +
+            "    AND d.resource_uri_ids <> ''  \n" +
+            "    AND d.resource_uri_ids <> '[]'  \n" +
+            "    AND GREATEST( \n" +
+            "      a.last_modified, \n" +
+            "      b.last_modified, \n" +
+            "      c.last_modified, \n" +
+            "      d.last_modified \n" +
+            "    ) > ?) AS j1\n" +
+            "  JOIN creative_banner AS j2   ON FIND_IN_SET( j2.id, REPLACE(REPLACE(j1.resource_uri_ids, '[', ''), ']', '' )  )\n" +
+            "  left join mma_code_mma_ui_mapping um  on  um.ui_id=j1.secondind\n" +
+            "  left join supply_mma_mapping m  on m.exchangename='valuemaker' and m.mma_category_code=um.code\n" +
+            "  ) AS result  \n" +
+            "  LEFT JOIN creative_banner AS cb ON cb.id = result.`bannerId` \n" +
+            "  LEFT JOIN creative_slots AS cs ON cs.id = cb.slot_id";
 
 
 	public static final String  getBannerUpload = "select * from banner_upload where "
