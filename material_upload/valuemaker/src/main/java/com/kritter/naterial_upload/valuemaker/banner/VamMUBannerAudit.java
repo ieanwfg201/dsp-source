@@ -17,6 +17,7 @@ import com.kritter.naterial_upload.valuemaker.entity.HttpUtils;
 
 import com.kritter.naterial_upload.valuemaker.entity.VamCreative;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,7 @@ public class VamMUBannerAudit implements MUBannerAudit {
 		PreparedStatement pstmt = null;
 		PreparedStatement cpstmt = null;
 		try{
-			pstmt = con.prepareStatement(VamBannerQuery.selectCreativeGuid);
+			pstmt = con.prepareStatement(VamBannerQuery.selectforAudit);
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
 			Timestamp ts = new Timestamp(new Date().getTime());
@@ -66,6 +67,7 @@ public class VamMUBannerAudit implements MUBannerAudit {
 			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
 				id = rset.getString("guid");
+				int internalid = rset.getInt("internalid");
 				if(id !=  null){
 					try{
 						String out = vamCreative.getBannerStateByIds(id,header);
@@ -87,7 +89,7 @@ public class VamMUBannerAudit implements MUBannerAudit {
 							}
 
 							if(status_name != null){
-								cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
+								cpstmt = con.prepareStatement(StringUtils.replace(VamBannerQuery.updatetBannerStatusMessage, "<id>", internalid+""));
 								if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(status_name)){
 									cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
 								}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(status_name)){

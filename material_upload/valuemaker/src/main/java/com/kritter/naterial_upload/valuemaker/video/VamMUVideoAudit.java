@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 
 import com.kritter.naterial_upload.valuemaker.entity.HttpUtils;
 import com.kritter.naterial_upload.valuemaker.entity.VamCreative;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,11 @@ public class VamMUVideoAudit implements MUVideoAudit {
 	public void fetchMaterialAudit(Properties properties, Connection con) {
 		PreparedStatement pstmt = null;
 		PreparedStatement cpstmt = null;
+		PreparedStatement stmt = null;
 		try{
+			stmt = con.prepareStatement(VamVideoQuery.selectforAudit);
+			stmt.setInt(1,getPubIncId());
+			ResultSet set = pstmt.executeQuery();
 			pstmt = con.prepareStatement(VamVideoQuery.getVideoInfo);
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
@@ -62,6 +67,7 @@ public class VamMUVideoAudit implements MUVideoAudit {
 			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
 				id = rset.getString("guid");
+				int internalid = rset.getInt("internalid");
 				if(id !=  null){
 					try{
 						String out = vamCreative.getVideoStateByIds(id,header);
@@ -83,7 +89,7 @@ public class VamMUVideoAudit implements MUVideoAudit {
 							}
 
 							if(status_name != null){
-								cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
+								cpstmt = con.prepareStatement(StringUtils.replace(VamVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
 								if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(status_name)){
 									cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
 								}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(status_name)){
