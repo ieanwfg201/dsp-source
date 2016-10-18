@@ -284,7 +284,7 @@ public class YoukuMUVideo implements MUVideo {
 					String info=rset.getString("info");
 					YoukuVideoLocalMaterialUploadEntity oldymue=YoukuVideoLocalMaterialUploadEntity.getObject(info);
 					int adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
-					YoukuVideoLocalMaterialUploadEntity ymue=new YoukuVideoLocalMaterialUploadEntity(null,materialurl, yqe.getLanding_url(), 
+					YoukuVideoLocalMaterialUploadEntity ymue=new YoukuVideoLocalMaterialUploadEntity(oldymue.getYoukuurl(),materialurl, yqe.getLanding_url(), 
 							yqe.getAdvName(), campaignStartDate, campaignEndDate, null,yqe.getCreativeName(),yqe.getResource_uri(),
 							yqe.getVideoInfoId());
 					String newInfoStr = ymue.toJson().toString();
@@ -381,6 +381,7 @@ public class YoukuMUVideo implements MUVideo {
 		PreparedStatement cpstmt1 = null;
 		PreparedStatement cpstmt2 = null;
 		PreparedStatement cpstmt3 = null;
+		PreparedStatement localstmt = null;
 		try{
 			pstmt = con.prepareStatement(YoukuVideoQuery.selectforUpload);
 			pstmt.setInt(1,getPubIncId());
@@ -391,6 +392,7 @@ public class YoukuMUVideo implements MUVideo {
 				String uploadstatus=null;
 				List<YoukuMaterialUploadEntity> materialList = new LinkedList<YoukuMaterialUploadEntity>();
 				//System.out.println(rset.getString("info"));
+				int internalid=rset.getInt("internalid");
 				YoukuVideoLocalMaterialUploadEntity localEntity = YoukuVideoLocalMaterialUploadEntity.getObject(rset.getString("info"));
 				if(localEntity.getYoukuurl()==null || localEntity.getYoukuurl().equals("")){
 					YoukuNonWebVideoUploader ynvu = new YoukuNonWebVideoUploader();
@@ -415,6 +417,11 @@ public class YoukuMUVideo implements MUVideo {
 						}
 						String youkuUrl = properties.getProperty("youku_video_url").toString().replaceAll("<videoid>", vId);
 						localEntity.setYoukuurl(youkuUrl);
+						localstmt = con.prepareStatement(YoukuVideoQuery.updatetYoukuUrl);
+						localstmt.setString(1,localEntity.toJson().toString());
+						localstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+						localstmt.setInt(3, internalid);
+						localstmt.executeUpdate();
 						cpstmt2 = con.prepareStatement(YoukuVideoQuery.getVideoInfo);
 						cpstmt2.setInt(1, localEntity.getVideoInfoId());
 						ResultSet cpstmt2Rset = cpstmt2.executeQuery();
@@ -447,6 +454,17 @@ public class YoukuMUVideo implements MUVideo {
 					}else{
 						LOG.info("NOTUPLOADED TO YOUKU CDN {} ",localEntity.getCreativeName());
 					}
+				}else{
+					String vId=localEntity.getYoukuurl();
+					vId=StringUtils.replace(vId, "http://v.youku.com/v_show/id_", "");
+					vId=StringUtils.replace(vId, ".html", "");
+					uploadstatus = checkVideoStatus(properties, vId);
+					if("normal".equals(uploadstatus)){
+						videoUploadSucess=true;
+					}else if("encoding".equals(uploadstatus) || "in_review".equals(uploadstatus)){
+						transientStatus=true;
+					}
+					
 				}
 				if(localEntity.getYoukuurl()!=null && !localEntity.getYoukuurl().isEmpty()){
 					materialList.add(YoukuVideoLocalMaterialUploadEntity.createEntityforUpload(localEntity));
@@ -547,6 +565,13 @@ public class YoukuMUVideo implements MUVideo {
 				if(cpstmt3 != null){
 					try {
 						cpstmt3.close();
+					} catch (SQLException e) {
+						LOG.error(e.getMessage(),e);
+					}
+				}
+				if(localstmt != null){
+					try {
+						localstmt.close();
 					} catch (SQLException e) {
 						LOG.error(e.getMessage(),e);
 					}
