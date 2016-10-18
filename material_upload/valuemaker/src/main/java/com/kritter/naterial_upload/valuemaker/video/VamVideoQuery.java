@@ -2,7 +2,7 @@ package com.kritter.naterial_upload.valuemaker.video;
 
 public class VamVideoQuery {
 	public static final String  selectQuery ="" +
-            "select j1.*,m.supplycode category from (select a.id as advId, a.name as advName,\n" +
+            "select j1.*,m.supplycode category from (select a.id as advId, a.name as advName, a.secondind as secondind,\n" +
             "b.id as campaignId,b.name as campaignName, \n" +
             "b.start_date as campaignStartDate, b.end_date as campaignEndDate, b.status_id as campaignStatus, \n" +
             "c.id as adId, c.name as adName, c.status_id as adStatus, c.landing_url as landing_url, \n" +
