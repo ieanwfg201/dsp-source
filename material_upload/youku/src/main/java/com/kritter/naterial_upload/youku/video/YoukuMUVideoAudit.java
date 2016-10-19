@@ -78,16 +78,16 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 									ReturnAuditRecord rar = rae.getMessage().getRecords().get(0);
 									if(rar != null){
 										cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
-										if("通过".equalsIgnoreCase(rar.getReason())){
+										if("通过".equalsIgnoreCase(rar.getResult())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
-										}else if("不通过".equalsIgnoreCase(rar.getReason())){
+										}else if("不通过".equalsIgnoreCase(rar.getResult())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
-										}else if("待审核".equalsIgnoreCase(rar.getReason())){
+										}else if("待审核".equalsIgnoreCase(rar.getResult())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
 										}else{
 											cpstmt.setInt(1, rset.getInt("adxbasedexhangesstatus"));
 										}
-										cpstmt.setString(2, rar.getReason());
+										cpstmt.setString(2, rar.getResult()+"-"+rar.getReason());
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
 									}else{
