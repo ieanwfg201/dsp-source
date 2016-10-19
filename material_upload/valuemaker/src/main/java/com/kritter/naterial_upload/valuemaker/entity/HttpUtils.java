@@ -13,76 +13,87 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by moon on 16/9/6.
  */
 public class HttpUtils {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HttpUtils.class);
+
     static CloseableHttpClient httpClient = HttpClients.createDefault();
 
-    public static Integer post(String url, Object params,String username,String password) throws IOException {
+    public static Map<String, String> post(String url, Object params, String username, String password) throws IOException {
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(10000).setSocketTimeout(10000).setConnectionRequestTimeout(1000).build();
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(requestConfig);
 
         httpPost.setHeader("Content-Type", "application/json;charset=utf-8");
-        httpPost.setHeader("Authorization", "Basic " + authStringEnc(username,password));
-        Header[] hs=httpPost.getAllHeaders();
-        for (Header h : hs) {
-            System.out.println(h.getName() + ":" + h.getValue());
-        }
-        System.out.println(JSON.toJSONString(params));
+        httpPost.setHeader("Authorization", "Basic " + authStringEnc(username, password));
+        Header[] hs = httpPost.getAllHeaders();
+//        for (Header h : hs) {
+//            System.out.println(h.getName() + ":" + h.getValue());
+//        }
         httpPost.setEntity(new StringEntity(JSON.toJSONString(params), Consts.UTF_8));
 
         CloseableHttpResponse response = httpClient.execute(httpPost);
 
-        int responseStatus = response.getStatusLine().getStatusCode();
-        System.out.println(responseStatus);
-
         Header[] headers = response.getAllHeaders();
         for (Header h : headers) {
-            System.out.println(h.getName() + ":" + h.getValue());
+            LOG.debug(h.getName() + ":" + h.getValue());
         }
+
+        int responseStatus = response.getStatusLine().getStatusCode();
 
         HttpEntity responseEntity = response.getEntity();
         String result = EntityUtils.toString(responseEntity, Consts.UTF_8);
-        System.out.println(result);
         response.close();
-        return responseStatus;
+
+        Map<String, String> res = new HashMap<String, String>();
+        res.put("StatusCode", responseStatus + "");
+        res.put("ResponseStr", result);
+
+        return res;
     }
 
-    public static String get(String url,String username,String password) throws IOException {
+    public static Map<String, String> get(String url, String username, String password) throws IOException {
 
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(10000).setSocketTimeout(10000).setConnectionRequestTimeout(1000).build();
         HttpGet httpGet = new HttpGet(url);
         httpGet.setConfig(requestConfig);
 
         httpGet.setHeader("Content-Type", "application/json;charset=utf-8");
-        httpGet.setHeader("Authorization", "Basic " + authStringEnc(username,password));
+        httpGet.setHeader("Authorization", "Basic " + authStringEnc(username, password));
 
         CloseableHttpResponse response = httpClient.execute(httpGet);
 
-        int responseStatus = response.getStatusLine().getStatusCode();
-        System.out.println(responseStatus);
-
         Header[] headers = response.getAllHeaders();
         for (Header h : headers) {
-            System.out.println(h.getName() + ":" + h.getValue());
+            LOG.debug(h.getName() + ":" + h.getValue());
         }
+
+        int responseStatus = response.getStatusLine().getStatusCode();
 
         HttpEntity responseEntity = response.getEntity();
         String result = EntityUtils.toString(responseEntity, Consts.UTF_8);
-        System.out.println(result);
         response.close();
-        return result;
+
+        Map<String, String> res = new HashMap<String, String>();
+        res.put("StatusCode", responseStatus + "");
+        res.put("ResponseStr", result);
+
+        return res;
     }
 
-    public static String authStringEnc(String username,String password) {
-        String nameandpassword = username + ":" + password;
-        byte[] authEncBytes = Base64.encodeBase64(nameandpassword.getBytes());
+    private static String authStringEnc(String username, String password) {
+        String np = username + ":" + password;
+        byte[] authEncBytes = Base64.encodeBase64(np.getBytes());
         String authStringEnc = new String(authEncBytes);
         System.out.println(authStringEnc);
         return authStringEnc;
