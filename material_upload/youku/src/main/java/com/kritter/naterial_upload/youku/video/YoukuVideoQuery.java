@@ -34,7 +34,7 @@ public class YoukuVideoQuery {
 			+ " set adxbasedexhangesstatus=?,message=?,last_modified=? "
 			+ " where internalid in (<id>)";
 	public static final String  updatetYoukuUrl = "update video_upload"
-			+ " info=?,last_modified=? "
+			+ " set info=?,last_modified=? "
 			+ " where internalid =?";
 	public static final String  selectforAudit = "select * from video_upload where pubIncId=? and (adxbasedexhangesstatus=7 or adxbasedexhangesstatus=10) ";
 
