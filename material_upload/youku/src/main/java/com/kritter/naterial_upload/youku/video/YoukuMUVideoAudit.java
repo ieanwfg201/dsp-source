@@ -20,6 +20,7 @@ import com.kritter.naterial_upload.youku.entity.ReturnAuditRecord;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
 import com.kritter.naterial_upload.youku.entity.YoukuMaterialAuditEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuMaterialUploadEntity;
+import com.kritter.naterial_upload.youku.entity.YoukuVideoLocalMaterialUploadEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -51,7 +52,7 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 			ResultSet rset = pstmt.executeQuery();
 			Timestamp ts = new Timestamp(new Date().getTime());
 			while(rset.next()){
-				YoukuMaterialUploadEntity ymue = YoukuMaterialUploadEntity.getObject(rset.getString("info"));
+				YoukuVideoLocalMaterialUploadEntity ymue = YoukuVideoLocalMaterialUploadEntity.getObject(rset.getString("info"));
 				int internalid = rset.getInt("internalid");
 				if(ymue !=  null){
 					try{
@@ -59,7 +60,7 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 						ymae.setDspid(dspid);
 						ymae.setToken(token);
 						String urlArray[] = new String[1];
-						urlArray[0]=ymue.getUrl();
+						urlArray[0]=ymue.getYoukuurl();
 						ymae.setMaterialurl(urlArray);
 						String postBody= ymae.toJson().toString();
 						LOG.info("MATERIAL AUDIT POST");
