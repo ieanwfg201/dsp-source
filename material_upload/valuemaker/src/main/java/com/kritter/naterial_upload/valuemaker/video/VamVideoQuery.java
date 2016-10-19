@@ -15,7 +15,7 @@ public class VamVideoQuery {
             "left join mma_code_mma_ui_mapping um  on  um.ui_id=j1.secondind\n" +
             "left join supply_mma_mapping m  on m.exchangename='valuemaker' and m.mma_category_code=um.code";
 	
-	public static final String  getVideoInfo = "select * from video_info where id=?";
+	public static final String  getVideoInfo = "select * from video_info where account_guid = (select guid from account where id = ?)";
 	
 	public static final String  getVideoUpload = "select * from video_upload where "
 			+ "pubIncId=? and advIncId=? and campaignId=? and adId=? and creativeId=? and videoInfoId=?";

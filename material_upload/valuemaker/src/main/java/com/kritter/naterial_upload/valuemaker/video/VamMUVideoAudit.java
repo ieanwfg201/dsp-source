@@ -79,11 +79,11 @@ public class VamMUVideoAudit implements MUVideoAudit {
 							result = toMap(out);
 							String status = result.get("status").toString();
 							String status_name = null;
-							if("1".equals(status)){
+							if("1.0".equals(status)){
 								status_name = "APPROVING";
-							}else if ("2".equals(status)){
+							}else if ("2.0".equals(status)){
 								status_name = "APPROVED";
-							}else if("3".equals(status)){
+							}else if("3.0".equals(status)){
 								status_name = "REFUSED";
 							}else {
 								status_name = null;
@@ -142,8 +142,8 @@ public class VamMUVideoAudit implements MUVideoAudit {
 
 	public Map toMap(String jsonString){
 		Gson gson = new Gson();
-		Type type = new TypeToken<Map<String, String>>(){}.getType();
-		Map<String, String> map = gson.fromJson(jsonString, type);
+		Type type = new TypeToken<Map<String, Object>>(){}.getType();
+		Map<String, Object> map = gson.fromJson(jsonString, type);
 		return map;
 	}
 
