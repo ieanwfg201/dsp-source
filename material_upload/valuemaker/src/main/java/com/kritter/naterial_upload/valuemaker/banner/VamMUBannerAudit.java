@@ -144,8 +144,8 @@ public class VamMUBannerAudit implements MUBannerAudit {
 
 	public Map toMap(String jsonString){
 		Gson gson = new Gson();
-		Type type = new TypeToken<Map<String, String>>(){}.getType();
-		Map<String, String> map = gson.fromJson(jsonString, type);
+		Type type = new TypeToken<Map<String, Object>>(){}.getType();
+		Map<String, Object> map = gson.fromJson(jsonString, type);
 		return map;
 	}
 
