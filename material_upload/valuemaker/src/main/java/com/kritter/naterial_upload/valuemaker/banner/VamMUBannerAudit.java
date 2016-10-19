@@ -71,7 +71,9 @@ public class VamMUBannerAudit implements MUBannerAudit {
 			header.put("Content-Type", "application/json;charset=utf-8");
 			header.put("Authorization", "Basic " + vamCreative.authStringEnc(this.username,this.password));
 			while(rset.next()){
-				if(set.next()){id = set.getString("guid");}
+				if(set.next()){
+					id = set.getString("guid");
+				}
 				int internalid = rset.getInt("internalid");
 				if(id !=  null){
 					try{

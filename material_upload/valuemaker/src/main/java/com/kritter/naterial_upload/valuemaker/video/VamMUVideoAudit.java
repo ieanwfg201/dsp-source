@@ -89,24 +89,25 @@ public class VamMUVideoAudit implements MUVideoAudit {
 								status_name = null;
 							}
 
-							if(status_name != null){
-								if(set.next()){
+							if(status_name != null) {
+								if (set.next()) {
 									int internalid = set.getInt("internalid");
-									cpstmt = con.prepareStatement(StringUtils.replace(VamVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));}
-								if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(status_name)){
-									cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
-								}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(status_name)){
-									cpstmt.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
-								}else if(AdxBasedExchangesStates.APPROVING.getName().equalsIgnoreCase(status_name)){
-									cpstmt.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
-								}else{
-									cpstmt.setInt(1, rset.getInt("adxbasedexhangesstatus"));
-								}
-								cpstmt.setString(2, status_name);
-								cpstmt.setTimestamp(3, ts);
-								cpstmt.executeUpdate();
-							}
+									cpstmt = con.prepareStatement(StringUtils.replace(VamVideoQuery.updatetVideoStatusMessage, "<id>", internalid + ""));
 
+									if (AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(status_name)) {
+										cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
+									} else if (AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(status_name)) {
+										cpstmt.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
+									} else if (AdxBasedExchangesStates.APPROVING.getName().equalsIgnoreCase(status_name)) {
+										cpstmt.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
+									} else {
+										cpstmt.setInt(1, rset.getInt("adxbasedexhangesstatus"));
+									}
+									cpstmt.setString(2, status_name);
+									cpstmt.setTimestamp(3, ts);
+									cpstmt.executeUpdate();
+								}
+							}
 						}
 					}catch(Exception e1){
 						LOG.error(e1.getMessage(),e1);
