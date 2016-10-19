@@ -253,7 +253,7 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                 String errorCode = "";
                 try {
                     String postBody = rset.getString("info");
-                    LOG.info(postBody);
+                    LOG.debug(postBody);
                     List<CloudCrossAdvertiserEntity> list = new ArrayList<>();
                     list.add(objectMapper.readValue(postBody, CloudCrossAdvertiserEntity.class));
                     List<CloudCrossResponse> responses = cloudCrossAdvertiser.add(list);
@@ -264,12 +264,11 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                         if (cloudCrossResponse != null) {
                             CloudCrossResponse.Success success = cloudCrossResponse.getSuccess();
                             CloudCrossError error = cloudCrossResponse.getError();
-                            if ((success != null && success.getCode() == 200) &&
-                                    ((success != null && success.getMessage().equals("插入成功")))) {
+                            if (success != null && success.getCode() == 200 && success.getMessage().equals("插入成功")) {
                                 cpstmt = updatetAdvSuccess(con, cpstmt, internalId, errorCode);
                                 isSuccess = true;
                                 LOG.info("advertiser upload success!");
-                            } else if ((error != null && error.getCode() == 2001) && (error != null && error.getMessage().equals("插入重复"))) {
+                            } else if (error != null) {
                                 cpstmt = updatetAdvSuccess(con, cpstmt, internalId, errorCode);
                                 isSuccess = true;
                             } else {
