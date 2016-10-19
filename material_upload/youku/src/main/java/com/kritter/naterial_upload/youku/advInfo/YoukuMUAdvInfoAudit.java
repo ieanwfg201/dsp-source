@@ -73,16 +73,16 @@ public class YoukuMUAdvInfoAudit implements MUADvInfoAudit {
 								if(rae != null && rae.getMessage() != null &&
 										rae.getMessage().getState() != null ){
 									cpstmt = con.prepareStatement(StringUtils.replace(YoukuAdvInfoQuery.updatetAdvInfoStatusMessage, "<id>", internalid+""));
-									if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(rae.getMessage().getState())){
+									if("通过".equalsIgnoreCase(rae.getMessage().getState())){
 										cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
-									}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(rae.getMessage().getState())){
+									}else if("拒绝".equalsIgnoreCase(rae.getMessage().getState())){
 										cpstmt.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
-									}else if(AdxBasedExchangesStates.APPROVING.getName().equalsIgnoreCase(rae.getMessage().getState())){
+									}else if("待审核".equalsIgnoreCase(rae.getMessage().getState())){
 										cpstmt.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
 									}else{
 										cpstmt.setInt(1, rset.getInt("adxbasedexhangesstatus"));
 									}
-									cpstmt.setString(2, rae.getMessage().getState());
+									cpstmt.setString(2, rae.getMessage().getState()+"-"+rae.getMessage().getRefusereason());
 									cpstmt.setTimestamp(3, ts);
 									cpstmt.executeUpdate();
 								}else{

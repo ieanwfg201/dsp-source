@@ -159,7 +159,7 @@
                 @if("true" == deviceid_targeting){
                   <fieldset>
                      <legend>Deviceid Targeting</legend>
-					 @components.formElements.selectlist2(tpForm("user_id_inc_exc"), "DeviceId Inc/Exc", services.MetadataAPI.listIncTrue()) 
+					 @components.formElements.selectlist2(tpForm("user_id_inc_exc"), "DeviceId Inc/Exc", services.MetadataAPI.listIncExcTriState()) 
                      @components.formElements.fileinput(tpForm("deviceid_file"), '_label ->"Upload Deviceid File", 
 																			'_uploadHandler -> "handleGeotargetingFileUpload($files, 'deviceid_file')",
 																			'_fileFilter -> ".csv"  ) 

@@ -125,7 +125,7 @@ public class ExchangeCPM implements IPrepareTransaction {
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_INTR_Tbudget_NoF, BillingType.CPM);
                 preventTransation = true;
                 return;
-            }else if(pirr.getInternal_max_bid() > internal_total_remaining_budget){
+            }else if(pirr.getInternal_max_bid()/1000 > internal_total_remaining_budget){
                 /*Max Bid > internal total remaining*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_MAX_BID_GT_INTR_Tbudget, BillingType.CPM);
                 preventTransation = true;
@@ -136,7 +136,7 @@ public class ExchangeCPM implements IPrepareTransaction {
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_ADV_Tbudget_NoF, BillingType.CPM);
                 preventTransation = true;
                 return;
-            }else if(pirr.getAdvertiser_bid() > adv_total_remaining_budget ){
+            }else if(pirr.getAdvertiser_bid()/1000 > adv_total_remaining_budget ){
                 /*Max Bid > advertiser total remaining*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_MAX_BID_GT_ADV_Tbudget, BillingType.CPM);
                 preventTransation = true;
@@ -147,7 +147,7 @@ public class ExchangeCPM implements IPrepareTransaction {
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_INTR_Dbudget_NoF, BillingType.CPM);
                 preventTransation = true;
                 return;
-            }else if(pirr.getInternal_max_bid() > internal_daily_remaining_budget){
+            }else if(pirr.getInternal_max_bid()/1000 > internal_daily_remaining_budget){
                 /*Max Bid > internal daily remaining*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_MAX_BID_GT_INTR_Dbudget, BillingType.CPM);
                 preventTransation = true;
@@ -158,7 +158,7 @@ public class ExchangeCPM implements IPrepareTransaction {
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_ADV_Dbudget_NoF, BillingType.CPM);
                 preventTransation = true;
                 return;
-            }else if(pirr.getAdvertiser_bid() > adv_daily_remaining_budget ){
+            }else if(pirr.getAdvertiser_bid()/1000 > adv_daily_remaining_budget ){
                 /*Max Bid > adv daily remaining*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_MAX_BID_GT_ADV_Dbudget, BillingType.CPM);
                 preventTransation = true;
@@ -213,13 +213,13 @@ public class ExchangeCPM implements IPrepareTransaction {
                 preventTransation = true;
                 return;
             }
-            if(pirr.getAdvertiser_bid() > adv_balance){
+            if(pirr.getAdvertiser_bid()/1000 > adv_balance){
                 /*Advertiser Bid Greater than adv bal no fund*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_ADV_BID_GT_ADV_BAL, BillingType.CPM);
                 preventTransation = true;
                 return;
             }
-            if(pirr.getInternal_max_bid() > internal_balance){
+            if(pirr.getInternal_max_bid()/1000 > internal_balance){
                 /*Internal Bid Greater than adv bal no fund*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.EIMP_ADV_BID_GT_INT_BAL, BillingType.CPM);
                 preventTransation = true;

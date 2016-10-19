@@ -64,8 +64,8 @@
 				@if("true" == adx_ext) {
 				<fieldset>
 					<legend>For Adx Based</legend>
-					@components.formElements.selectlist2(accountForm("firstIndustryCode"), "1st Industry Code *", services.MetadataAPI.tier1mmaindustrySelectOption()  )
-					@components.formElements.selectlist2(accountForm("secondIndustryCode"), "2nd Industry Code *", services.MetadataAPI.tier2mmaindustrySelectOption()  )
+					@components.formElements.multiselectlist3(accountForm("firstIndustryCode"), '_label -> "1st Industry Code -Select Only One", '_row->true) 
+                     @components.formElements.multiselectlist3(accountForm("secondIndustryCode"), '_label -> "2nd Industry Code -Select Only One", '_row->true )
 				</fieldset>
 					
 				}
@@ -106,6 +106,7 @@
 				@components.formElements.hiddenfield(accountForm("action"))
 				@components.formElements.submitbutton("save", "Save")
 </form>
+<script src="@routes.Assets.at("javascripts/apps/multi_select_model_without_all.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("javascripts/apps/accountController.js")" type="text/javascript"></script>
 
 }

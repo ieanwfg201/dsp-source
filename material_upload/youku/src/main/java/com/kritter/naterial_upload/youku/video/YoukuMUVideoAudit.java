@@ -20,6 +20,7 @@ import com.kritter.naterial_upload.youku.entity.ReturnAuditRecord;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
 import com.kritter.naterial_upload.youku.entity.YoukuMaterialAuditEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuMaterialUploadEntity;
+import com.kritter.naterial_upload.youku.entity.YoukuVideoLocalMaterialUploadEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -51,7 +52,7 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 			ResultSet rset = pstmt.executeQuery();
 			Timestamp ts = new Timestamp(new Date().getTime());
 			while(rset.next()){
-				YoukuMaterialUploadEntity ymue = YoukuMaterialUploadEntity.getObject(rset.getString("info"));
+				YoukuVideoLocalMaterialUploadEntity ymue = YoukuVideoLocalMaterialUploadEntity.getObject(rset.getString("info"));
 				int internalid = rset.getInt("internalid");
 				if(ymue !=  null){
 					try{
@@ -59,7 +60,7 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 						ymae.setDspid(dspid);
 						ymae.setToken(token);
 						String urlArray[] = new String[1];
-						urlArray[0]=ymue.getUrl();
+						urlArray[0]=ymue.getYoukuurl();
 						ymae.setMaterialurl(urlArray);
 						String postBody= ymae.toJson().toString();
 						LOG.info("MATERIAL AUDIT POST");
@@ -78,16 +79,16 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 									ReturnAuditRecord rar = rae.getMessage().getRecords().get(0);
 									if(rar != null){
 										cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
-										if(AdxBasedExchangesStates.APPROVED.getName().equalsIgnoreCase(rar.getReason())){
+										if("通过".equalsIgnoreCase(rar.getResult())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
-										}else if(AdxBasedExchangesStates.REFUSED.getName().equalsIgnoreCase(rar.getReason())){
+										}else if("不通过".equalsIgnoreCase(rar.getResult())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
-										}else if(AdxBasedExchangesStates.APPROVING.getName().equalsIgnoreCase(rar.getReason())){
+										}else if("待审核".equalsIgnoreCase(rar.getResult())){
 											cpstmt.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
 										}else{
 											cpstmt.setInt(1, rset.getInt("adxbasedexhangesstatus"));
 										}
-										cpstmt.setString(2, rar.getReason());
+										cpstmt.setString(2, rar.getResult()+"-"+rar.getReason());
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
 									}else{
@@ -97,6 +98,12 @@ public class YoukuMUVideoAudit implements MUVideoAudit {
 										cpstmt.setTimestamp(3, ts);
 										cpstmt.executeUpdate();
 									}
+								}else{
+									cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
+									cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
+									cpstmt.setString(2, rrc.getResult()+"--material URL doesn't exist: "+out);
+									cpstmt.setTimestamp(3, ts);
+									cpstmt.executeUpdate();
 								}
 							}else{
 								cpstmt = con.prepareStatement(StringUtils.replace(YoukuVideoQuery.updatetVideoStatusMessage, "<id>", internalid+""));
