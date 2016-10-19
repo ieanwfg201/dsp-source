@@ -71,7 +71,7 @@ public class VamBannerQuery {
 	public static final String  updatetBannerStatusMessage = "update banner_upload"
 			+ " set adxbasedexhangesstatus=?,message=?,last_modified=? "
 			+ " where internalid in (<id>)";
-	public static final String  selectforAudit = "select * from banner_upload where pubIncId=? and (adxbasedexhangesstatus=7 or adxbasedexhangesstatus=12) ";
+	public static final String  selectforAudit = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=7 ";
 
 	public static final String  insert_material_state= "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
 	public static final String  update_material_state= "update material_upload_state set last_modified=? where materialtype=? and pubIncId=?";
@@ -89,5 +89,5 @@ public class VamBannerQuery {
 		System.out.println(selectQuery);
 	}
 
-	public static final String selectCreativeGuid = "SELECT b.guid FROM banner_upload AS a,creative_container AS b WHERE a.creativeId=b.id and a.pubIncId=? and (a.adxbasedexhangesstatus=7 or a.adxbasedexhangesstatus=12) ";
+	public static final String selectCreativeGuid = "SELECT b.guid FROM banner_upload AS a,creative_container AS b WHERE a.creativeId=b.id and a.pubIncId=? and a.adxbasedexhangesstatus=7 ";
 }
