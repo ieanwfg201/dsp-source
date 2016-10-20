@@ -1,10 +1,11 @@
 package com.kritter.naterial_upload.valuemaker.banner;
 
 public class VamBannerQuery {
-    public static final String selectQuery = "\t\t\tSELECT result.*,cs.`width`,cs.`height` FROM  \n" +
+    public static final String selectQuery = "SELECT result.*,cs.`width`,cs.`height` FROM  \n" +
             "(SELECT  \n" +
             "  j1.*, \n" +
             "  j2.id AS bannerId, \n" +
+            "  j2.guid AS creativeGuid, \n" +
             "  j2.resource_uri AS resource_uri,\n" +
             "  m.supplycode category\n" +
             "FROM \n" +
@@ -24,8 +25,7 @@ public class VamBannerQuery {
             "    d.id AS creativeId, \n" +
             "    d.label AS creativeName, \n" +
             "    d.resource_uri_ids AS resource_uri_ids, \n" +
-            "    d.status_id AS creativeStatus,  \n" +
-            "    d.guid AS creativeGuid  \n" +
+            "    d.status_id AS creativeStatus  \n" +
             "  FROM \n" +
             "    account AS a, \n" +
             "    campaign AS b, \n" +
@@ -62,7 +62,7 @@ public class VamBannerQuery {
 
     public static final String selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=2";
 
-    public static final String updatetBannerStatus = "update banner_upload set adxbasedexhangesstatus=?,last_modified=? where internalid=?";
+//    public static final String updatetBannerStatus = "update banner_upload set adxbasedexhangesstatus=?,last_modified=? where internalid=?";
 
     public static final String updatetBannerStatusMessage = "update banner_upload set adxbasedexhangesstatus=?,message=?,last_modified=?  where internalid=?";
 
