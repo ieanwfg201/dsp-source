@@ -54,20 +54,16 @@ public class VamMUVideo implements MUVideo {
     private LinkedList<VamQueryEntity> vamQueryEntityList;
     @Getter
     @Setter
-    private Map<String, String> header;
-    @Getter
-    @Setter
     private String vam_video_add_url;
 
     @Override
     public void init(Properties properties) {
         setDspid(properties.getProperty("vam_dsp_id").toString());
         setPubIncId(Integer.parseInt(properties.getProperty("vam_pubIncId").toString()));
-        this.dateNow = new Date();
-        this.header = new HashMap<String, String>();
+        setDateNow(new Date());
         setUsername(properties.getProperty("vam_username").toString());
         setPassword(properties.getProperty("vam_password").toString());
-        vam_video_add_url = properties.getProperty("vam_url_prefix").toString() + properties.getProperty("vam_prefix_video_add").toString();
+        setVam_video_add_url(properties.getProperty("vam_url_prefix").toString() + properties.getProperty("vam_prefix_video_add").toString());
     }
 
     @Override
@@ -116,7 +112,6 @@ public class VamMUVideo implements MUVideo {
         PreparedStatement updatestmt = null;
         try {
             pstmt = con.prepareStatement(VamVideoQuery.removedCreatives);
-            //pstmt.setString(1, getStartDateStr());
             ResultSet rset = pstmt.executeQuery();
             while (rset.next()) {
                 int internalid = rset.getInt("internalid");
