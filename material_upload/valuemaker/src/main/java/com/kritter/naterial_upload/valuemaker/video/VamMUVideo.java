@@ -197,10 +197,10 @@ public class VamMUVideo implements MUVideo {
                     isFirst = false;
                 }
                 String video_props = rset.getString("video_props");
-                int creativeId = rset.getInt("creativeId");
+                int creativeId = rset.getInt("creativeId"); //其实是creative_container的id
                 try {
                     VideoProps videoProps = VideoProps.getObject(video_props);
-                    if (videoProps != null || videoProps.getVideo_info() != null || videoProps.getVideo_info().length == 1) {
+                    if (videoProps == null || videoProps.getVideo_info() == null || videoProps.getVideo_info().length != 1) {
                         continue;
                     }
 
@@ -208,13 +208,13 @@ public class VamMUVideo implements MUVideo {
                     Integer width = videoProps.getWidth();
                     Integer height = videoProps.getHeight();
                     Integer duration = videoProps.getDuration();
-                    int accountId = Integer.parseInt(split[0]);
+                    int videoInfoId = Integer.parseInt(split[0]);
 
                     cpstmt = con.prepareStatement(VamVideoQuery.getVideoInfo);
-                    cpstmt.setInt(1, accountId); //videoInfoId就是account的id
+                    cpstmt.setInt(1, videoInfoId);
                     ResultSet cpRset = cpstmt.executeQuery();
                     if (!cpRset.next()) {
-                        LOG.info("video info video_props is of incorrect size: creative container {} , account id : {}", creativeId, accountId);
+                        LOG.info("video info not exist, id : {}", videoInfoId);
                     }
 
                     String resource_uri = cpRset.getString("resource_uri");
@@ -225,7 +225,9 @@ public class VamMUVideo implements MUVideo {
 
                     VamQueryEntity vqe = new VamQueryEntity();
 
-                    vqe.setVideoInfoId(accountId);
+                    vqe.setVideoInfoId(cpRset.getInt("id"));
+                    vqe.setCreativeGuid(cpRset.getString("guid"));
+
                     vqe.setAdvId(rset.getInt("advId"));
                     vqe.setAdvName(rset.getString("advName"));
                     vqe.setCampaignId(rset.getInt("campaignId"));
@@ -244,7 +246,6 @@ public class VamMUVideo implements MUVideo {
                     vqe.setWidth(width);
                     vqe.setHeight(height);
                     vqe.setDuration(duration);
-                    vqe.setCreativeGuid(cpRset.getString("guid"));
                     vqe.setCategory(rset.getInt("category"));
                     vamQueryEntityList.add(vqe);
                 } catch (Exception e) {
@@ -386,17 +387,20 @@ public class VamMUVideo implements MUVideo {
                     LOG.debug(info);
                     LOG.debug(JSON.toJSONString(result));
 
+                    //可能会重复上传,所以失败后不更新状态
                     if (result.get("StatusCode") != null && result.get("StatusCode").equals("200")) {
-                        cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatus);
+                        cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
                         cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                        cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(3, rset.getInt("internalId"));
+                        cpstmt.setString(2, JSON.toJSONString(result));
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, rset.getInt("internalId"));
                         cpstmt.executeUpdate();
                     } else {
-                        cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatus);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                        cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(3, rset.getInt("internalId"));
+                        cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setString(2, JSON.toJSONString(result));
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, rset.getInt("internalId"));
                         cpstmt.executeUpdate();
                     }
                 } catch (Exception e) {

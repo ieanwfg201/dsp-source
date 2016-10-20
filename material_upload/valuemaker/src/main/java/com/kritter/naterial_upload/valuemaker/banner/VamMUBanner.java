@@ -313,19 +313,20 @@ public class VamMUBanner implements MUBanner {
                     LOG.debug(JSON.toJSONString(result));
 
                     if (result.get("StatusCode") != null && result.get("StatusCode").equals("200")) {
-                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatus);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                        cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(3, rset.getInt("internalId"));
+                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setString(2, JSON.toJSONString(result));
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, rset.getInt("internalId"));
                         cpstmt.executeUpdate();
                     } else {
-                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatus);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                        cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(3, rset.getInt("internalId"));
+                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setString(2, JSON.toJSONString(result));
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, rset.getInt("internalId"));
                         cpstmt.executeUpdate();
                     }
-
                 } catch (Exception e) {
                     LOG.error(e.toString());
                 }
