@@ -9,6 +9,7 @@ import services.TPMetadataAPI;
 
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.Geo_Targeting_type;
+import com.kritter.constants.InclusionExclusionType;
 import com.kritter.constants.LatLonRadiusUnit;
 import com.kritter.constants.MetadataType;
 
@@ -194,10 +195,11 @@ public class TargetingDisplayFull extends TargetingDisplay{
     	return "";
     }
     public String deviceIdIncExc(){
-    	if(tp.isUser_id_inc_exc()){
-    		return "Inclusion";
+    	InclusionExclusionType ie = InclusionExclusionType.getEnum(tp.getUser_id_inc_exc());
+    	if(ie!=null){
+    		return ie.name();
     	}
-    	return "Exclusion";
+    	return "None";
     }
 
     public String getDeviceidfile(){

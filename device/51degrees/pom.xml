@@ -59,14 +59,7 @@
         <dependency>
             <groupId>com.51degrees</groupId>
             <artifactId>device-detection-core</artifactId>
-            <version>3.2.3.5-beta</version>
-            <!--
-                 Backup in external_libraries
-                 -->
-            <!--
-            <artifactId>device-detection-core</artifactId>
-            <version>3.2.2-SNAPSHOT</version>
-            -->
+            <version>3.2.9.2</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -79,6 +72,12 @@
             <groupId>com.kritter.constants</groupId>
             <artifactId>kritter-constants</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

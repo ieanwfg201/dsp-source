@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.mindrot.jbcrypt.BCrypt;
@@ -61,6 +62,19 @@ public class AccountCrud {
             }
         }
         return Payout.default_payout_percent_str;
+    }
+    
+    private static String generateIndData(String str){
+    	if(str !=null){
+    		str= StringUtils.replace(str, "[", "").replace("]", "").replace("{", "").replace("}", "");
+    		String strSplit[] = str.split(",");
+    		for(String s:strSplit){
+    			if(!"all".equalsIgnoreCase(s) && !"none".equalsIgnoreCase(s)){
+    				return s;
+    			}
+    		}
+    	}
+    	return "";
     }
     
     public static void populateAccount(Account account, ResultSet rset) throws Exception{
@@ -123,8 +137,14 @@ public class AccountCrud {
             }
             account.setContactdetail(rset.getString("contactdetail"));
             account.setBrand(rset.getString("brand"));
-            account.setFirstIndustryCode(rset.getString("firstind"));
-            account.setSecondIndustryCode(rset.getString("secondind"));
+            account.setFirstIndustryCode("["+rset.getString("firstind")+"]");
+            account.setSecondIndustryCode("["+rset.getString("secondind")+"]");
+            if(rset.getObject("open_rtb_ver_required")!= null){
+            	account.setOpen_rtb_ver_required(rset.getInt("open_rtb_ver_required"));
+            }
+            if(rset.getObject("third_party_demand_channel_type")!= null){
+            	account.setThird_party_demand_channel_type(rset.getInt("third_party_demand_channel_type"));
+            }
         }
     }
     private static String generateDemandProps(Account account){
@@ -346,8 +366,8 @@ public class AccountCrud {
             pstmt.setInt(44,account.getThird_party_demand_channel_type());
             pstmt.setString(45, account.getContactdetail());
             pstmt.setString(46, account.getBrand());
-            pstmt.setString(47, account.getFirstIndustryCode());
-            pstmt.setString(48, account.getSecondIndustryCode());
+            pstmt.setString(47, generateIndData(account.getFirstIndustryCode()));
+            pstmt.setString(48, generateIndData(account.getSecondIndustryCode()));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -909,8 +929,8 @@ public class AccountCrud {
             pstmt.setInt(41,account.getThird_party_demand_channel_type());
             pstmt.setString(42, account.getContactdetail());
             pstmt.setString(43, account.getBrand());
-            pstmt.setString(44, account.getFirstIndustryCode());
-            pstmt.setString(45, account.getSecondIndustryCode());
+            pstmt.setString(44, generateIndData(account.getFirstIndustryCode()));
+            pstmt.setString(45, generateIndData(account.getSecondIndustryCode()));
             pstmt.setInt(46, account.getId());
 
             int returnCode = pstmt.executeUpdate();

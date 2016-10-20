@@ -105,6 +105,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/adxbasedexchanges_metadata</module>
     <module>entity/freqcap_entity</module>
     <module>entity/ad_stats</module>
+    <module>entity/openrtb/2.0</module>
+    <module>entity/openrtb/2.1</module>
+    <module>entity/openrtb/2.2</module>
+    <module>entity/openrtb/2.3</module>
+    <module>entity/exchangethrift</module>
     <module>entity/req_res_entity</module>
     <module>entity/user</module>
     <module>entity/req_logging</module>
@@ -112,10 +117,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/mma_categories</module>
     <module>entity/ad_ext</module>
     <module>ex_int/utils</module>
-    <module>entity/openrtb/2.0</module>
-    <module>entity/openrtb/2.1</module>
-    <module>entity/openrtb/2.2</module>
-    <module>entity/openrtb/2.3</module>
     <module>ex_int/native_admarkup/2.3</module>
     <module>ex_int/video_admarkup</module>
     <module>ex_int/banner_admarkup/common</module>
@@ -153,6 +154,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>common_caches/adposition_cache</module>
     <module>common_caches/channel_cache</module>
     <module>common_caches/pmp</module>
+    <module>common_caches/thrift_logging_cache</module>
+    <module>common_caches/video_upload_cache</module>
+    <module>common_caches/banner_upload_cache</module>
+    <module>common_caches/advinfo_upload_cache</module>
+    <module>common_caches/adxbasedexchanges_metadata_cache</module>
     <module>adserving/mopub_req_enricher_2.3</module>
     <module>adserving/enricher_req_cloudcross_4_4_4</module>
     <module>adserving/youku_req_res_enricher</module>

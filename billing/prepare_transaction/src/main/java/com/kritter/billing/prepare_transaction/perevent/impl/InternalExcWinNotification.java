@@ -150,7 +150,7 @@ public class InternalExcWinNotification implements IPrepareTransaction {
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_INTR_Tbudget_NoF, BillingType.INTEXCWIN);
                 preventTransation = true;
                 return;
-            }else if(auction_price > internal_total_remaining_budget){
+            }else if(auction_price/1000 > internal_total_remaining_budget){
                 /*Max Bid > internal total remaining*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_MAX_BID_GT_INTR_Tbudget, BillingType.INTEXCWIN);
                 preventTransation = true;
@@ -161,7 +161,7 @@ public class InternalExcWinNotification implements IPrepareTransaction {
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_ADV_Tbudget_NoF, BillingType.INTEXCWIN);
                 preventTransation = true;
                 return;
-            }else if(auction_price > adv_total_remaining_budget ){
+            }else if(auction_price/1000 > adv_total_remaining_budget ){
                 /*Max Bid > advertiser total remaining*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_MAX_BID_GT_ADV_Tbudget, BillingType.INTEXCWIN);
                 preventTransation = true;
@@ -172,7 +172,7 @@ public class InternalExcWinNotification implements IPrepareTransaction {
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_INTR_Dbudget_NoF, BillingType.INTEXCWIN);
                 preventTransation = true;
                 return;
-            }else if(auction_price > internal_daily_remaining_budget){
+            }else if(auction_price/1000 > internal_daily_remaining_budget){
                 /*Max Bid > internal daily remaining*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_MAX_BID_GT_INTR_Dbudget, BillingType.INTEXCWIN);
                 preventTransation = true;
@@ -183,7 +183,7 @@ public class InternalExcWinNotification implements IPrepareTransaction {
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_ADV_Dbudget_NoF, BillingType.INTEXCWIN);
                 preventTransation = true;
                 return;
-            }else if(auction_price > adv_daily_remaining_budget ){
+            }else if(auction_price/1000 > adv_daily_remaining_budget ){
                 /*Max Bid > adv daily remaining*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_MAX_BID_GT_ADV_Dbudget, BillingType.INTEXCWIN);
                 preventTransation = true;
@@ -238,13 +238,13 @@ public class InternalExcWinNotification implements IPrepareTransaction {
                 preventTransation = true;
                 return;
             }
-            if(auction_price > adv_balance){
+            if(auction_price/1000 > adv_balance){
                 /*Advertiser Bid Greater than adv bal no fund*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_ADV_BID_GT_ADV_BAL, BillingType.INTEXCWIN);
                 preventTransation = true;
                 return;
             }
-            if(auction_price > internal_balance){
+            if(auction_price/1000 > internal_balance){
                 /*Internal Bid Greater than adv bal no fund*/
                 AddBilling.createNaddTerminatedBillingObject(billingLogList, pirr, BillingTerminationReason.INTWIN_ADV_BID_GT_INT_BAL, BillingType.INTEXCWIN);
                 preventTransation = true;

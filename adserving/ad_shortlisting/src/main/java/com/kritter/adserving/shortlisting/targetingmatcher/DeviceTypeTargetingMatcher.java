@@ -73,7 +73,12 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
             if(null != handsetMasterData)
                 deviceType = handsetMasterData.getDeviceType();
 
-            boolean adDoesNotTargetDeviceType = (null == deviceTypeTargetedArray || deviceTypeTargetedArray.length <= 0);
+            //if ad does not include any device type or includes both desktop and mobile.
+            boolean adDoesNotTargetDeviceType = (
+                                                 null == deviceTypeTargetedArray     ||
+                                                 deviceTypeTargetedArray.length <= 0 ||
+                                                 deviceTypeTargetedArray.length == 2
+                                                );
 
             //no device type detected and ad does not target any device type.
             if(null == deviceType && adDoesNotTargetDeviceType)
@@ -84,7 +89,11 @@ public class DeviceTypeTargetingMatcher implements TargetingMatcher
                 continue;
             }
 
-            short requestingDeviceTypeCode = (short)deviceType.getCode();
+            short requestingDeviceTypeCode = DeviceType.UNKNOWN.getCode();
+
+            if(null != deviceType)
+                requestingDeviceTypeCode = deviceType.getCode();
+
             logger.debug("DeviceTypeid from request: {} ", requestingDeviceTypeCode);
 
             if(adDoesNotTargetDeviceType)

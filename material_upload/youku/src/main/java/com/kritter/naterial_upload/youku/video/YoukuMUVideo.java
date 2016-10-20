@@ -284,7 +284,7 @@ public class YoukuMUVideo implements MUVideo {
 					String info=rset.getString("info");
 					YoukuVideoLocalMaterialUploadEntity oldymue=YoukuVideoLocalMaterialUploadEntity.getObject(info);
 					int adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
-					YoukuVideoLocalMaterialUploadEntity ymue=new YoukuVideoLocalMaterialUploadEntity(null,materialurl, yqe.getLanding_url(), 
+					YoukuVideoLocalMaterialUploadEntity ymue=new YoukuVideoLocalMaterialUploadEntity(oldymue.getYoukuurl(),materialurl, yqe.getLanding_url(), 
 							yqe.getAdvName(), campaignStartDate, campaignEndDate, null,yqe.getCreativeName(),yqe.getResource_uri(),
 							yqe.getVideoInfoId());
 					String newInfoStr = ymue.toJson().toString();
@@ -346,7 +346,7 @@ public class YoukuMUVideo implements MUVideo {
 		}
 	}
 
-	private boolean checkVideoStatus(Properties properties, String vId){
+	private String checkVideoStatus(Properties properties, String vId){
 		try{
 			UrlPost urlPost = new UrlPost();
 			String urlString=properties.getProperty("youku_video_status").toString();
@@ -358,14 +358,14 @@ public class YoukuMUVideo implements MUVideo {
 			LOG.debug("Video Status Received: {}",out);
 			if(out != null){
 				ReturnVideoStatus rvs = ReturnVideoStatus.getObject(out);
-				if(rvs != null && rvs.getState() != null && "normal".equals(rvs.getState())){
-					return true;
+				if(rvs != null && rvs.getState() != null){
+					return rvs.getState();
 				}
 			}
-			return false;
+			return null;
 		}catch(Exception e){
 			LOG.error(e.getMessage(),e);
-			return false;
+			return null;
 		}
 		
 	}
@@ -381,14 +381,18 @@ public class YoukuMUVideo implements MUVideo {
 		PreparedStatement cpstmt1 = null;
 		PreparedStatement cpstmt2 = null;
 		PreparedStatement cpstmt3 = null;
+		PreparedStatement localstmt = null;
 		try{
 			pstmt = con.prepareStatement(YoukuVideoQuery.selectforUpload);
 			pstmt.setInt(1,getPubIncId());
 			ResultSet rset = pstmt.executeQuery();
 			while(rset.next()){
 				boolean videoUploadSucess=false;
+				boolean transientStatus=false;
+				String uploadstatus=null;
 				List<YoukuMaterialUploadEntity> materialList = new LinkedList<YoukuMaterialUploadEntity>();
 				//System.out.println(rset.getString("info"));
+				int internalid=rset.getInt("internalid");
 				YoukuVideoLocalMaterialUploadEntity localEntity = YoukuVideoLocalMaterialUploadEntity.getObject(rset.getString("info"));
 				if(localEntity.getYoukuurl()==null || localEntity.getYoukuurl().equals("")){
 					YoukuNonWebVideoUploader ynvu = new YoukuNonWebVideoUploader();
@@ -413,6 +417,11 @@ public class YoukuMUVideo implements MUVideo {
 						}
 						String youkuUrl = properties.getProperty("youku_video_url").toString().replaceAll("<videoid>", vId);
 						localEntity.setYoukuurl(youkuUrl);
+						localstmt = con.prepareStatement(YoukuVideoQuery.updatetYoukuUrl);
+						localstmt.setString(1,localEntity.toJson().toString());
+						localstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+						localstmt.setInt(3, internalid);
+						localstmt.executeUpdate();
 						cpstmt2 = con.prepareStatement(YoukuVideoQuery.getVideoInfo);
 						cpstmt2.setInt(1, localEntity.getVideoInfoId());
 						ResultSet cpstmt2Rset = cpstmt2.executeQuery();
@@ -435,13 +444,27 @@ public class YoukuMUVideo implements MUVideo {
 							cpstmt3.setString(2, viext.toJson().toString());
 							cpstmt3.setInt(3, localEntity.getVideoInfoId());
 							cpstmt3.executeUpdate();
-							if(checkVideoStatus(properties, vId)){
+							uploadstatus = checkVideoStatus(properties, vId);
+							if("normal".equals(uploadstatus)){
 								videoUploadSucess=true;
+							}else if("encoding".equals(uploadstatus) || "in_review".equals(uploadstatus)){
+								transientStatus=true;
 							}
 						}
 					}else{
 						LOG.info("NOTUPLOADED TO YOUKU CDN {} ",localEntity.getCreativeName());
 					}
+				}else{
+					String vId=localEntity.getYoukuurl();
+					vId=StringUtils.replace(vId, "http://v.youku.com/v_show/id_", "");
+					vId=StringUtils.replace(vId, ".html", "");
+					uploadstatus = checkVideoStatus(properties, vId);
+					if("normal".equals(uploadstatus)){
+						videoUploadSucess=true;
+					}else if("encoding".equals(uploadstatus) || "in_review".equals(uploadstatus)){
+						transientStatus=true;
+					}
+					
 				}
 				if(localEntity.getYoukuurl()!=null && !localEntity.getYoukuurl().isEmpty()){
 					materialList.add(YoukuVideoLocalMaterialUploadEntity.createEntityforUpload(localEntity));
@@ -486,15 +509,25 @@ public class YoukuMUVideo implements MUVideo {
 					LOG.error(e1.getMessage(),e1);
 				}
 				if(!isSuccess){
-					cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
-					cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
-					cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-					if(out==null){
-						out="";
+					if(!transientStatus){
+						cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
+						cpstmt1.setInt(1,AdxBasedExchangesStates.UPLOADFAIL.getCode());
+						cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+						if(uploadstatus==null){
+							uploadstatus="";
+						}
+						cpstmt1.setString(3, uploadstatus);
+						cpstmt1.executeUpdate();
+					}else{
+						cpstmt1 = con.prepareStatement(YoukuVideoQuery.updatetVideoStatus.replaceAll("<id>", internalId));
+						cpstmt1.setInt(1,AdxBasedExchangesStates.SUBMITTED.getCode());
+						cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+						if(uploadstatus==null){
+							uploadstatus="";
+						}
+						cpstmt1.setString(3, uploadstatus);
+						cpstmt1.executeUpdate();
 					}
-					cpstmt1.setString(3, out);
-
-					cpstmt1.executeUpdate();
 				}
 
 			}
@@ -532,6 +565,13 @@ public class YoukuMUVideo implements MUVideo {
 				if(cpstmt3 != null){
 					try {
 						cpstmt3.close();
+					} catch (SQLException e) {
+						LOG.error(e.getMessage(),e);
+					}
+				}
+				if(localstmt != null){
+					try {
+						localstmt.close();
 					} catch (SQLException e) {
 						LOG.error(e.getMessage(),e);
 					}

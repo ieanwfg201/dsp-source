@@ -103,6 +103,32 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>com.kritter.entity.adxbasedexchanges_metadata</groupId>
+            <artifactId>kritter_entity_adxbasedexchanges_metadata</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>adxbasedexchanges_metadata_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>video_upload_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>banner_upload_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>advinfo_upload_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.common.caches</groupId>
             <artifactId>adposition_cache</artifactId>
             <version>1.0.0</version>

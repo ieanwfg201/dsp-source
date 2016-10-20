@@ -6,6 +6,7 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.entity.user.userid.InternalUserIdCreator;
 import com.kritter.entity.user.userid.UserIdUpdator;
+import com.kritter.utils.common.ThreadLocalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,5 +69,6 @@ public class UserIdUpdateJob implements Job {
         logger.debug("Given the list of external user ids, internal id : {}", internalUserId);
 
         userIdUpdator.updateUserId(externalUserIdStrs, internalUserId);
+        ThreadLocalUtils.cleanThreadLocalsOfCurrentThread(logger);
     }
 }

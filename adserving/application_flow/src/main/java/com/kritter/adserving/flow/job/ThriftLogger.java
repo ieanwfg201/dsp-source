@@ -311,7 +311,6 @@ public class ThriftLogger implements Job {
                     impression.setAdId(adEntity.getId());
                     impression.setCampaignId(adEntity.getCampaignIncId());
 
-
                     if(null!=adEntity.getCreativeId())
                         impression.setCreativeId(adEntity.getCreativeId());
 
@@ -324,8 +323,14 @@ public class ThriftLogger implements Job {
                     impression.setMarketplace((short)adEntity.getMarketPlace().getCode());
 
                     //set bid value from bidder if available
-                    if(null != responseAdInfo.getEcpmValue())
+                    // TODO : Remove once we have a proper solution in place
+                    if(null != responseAdInfo.getEcpmValue()) {
                         impression.setBidValue(responseAdInfo.getEcpmValue());
+                        campaign.increaseCurrentPayout(responseAdInfo.getEcpmValue() * 0.001);
+                        this.applicationLogger.debug("Increased campaign id {}'s current payout by {} amount. Current" +
+                                "burn now is {}.", campaign.getId(), responseAdInfo.getEcpmValue(),
+                                campaign.getCurrentPayout());
+                    }
 
                     adservingRequestResponse.addToImpressions(impression);
                     isRequestAFill = true;

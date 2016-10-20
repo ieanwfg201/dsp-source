@@ -9,9 +9,11 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.kritter.constants.Account_Type;
+import com.kritter.constants.OpenRTBVersion;
 import com.kritter.constants.Payment_type;
 import com.kritter.constants.Payout;
 import com.kritter.constants.StatusIdEnum;
+import com.kritter.constants.ThirdPartyDemandChannel;
 import com.kritter.entity.demand_props.DemandProps;
 
 import lombok.EqualsAndHashCode;
@@ -105,9 +107,9 @@ public class Account {
     @Getter@Setter
     private String demand_url = "";
     @Getter @Setter
-    private int open_rtb_ver_required = 0;
+    private int open_rtb_ver_required = OpenRTBVersion.VERSION_2_3.getCode();
     @Getter @Setter
-    private int third_party_demand_channel_type = 0;
+    private int third_party_demand_channel_type = ThirdPartyDemandChannel.STANDALONE_DSP_BIDDER.getCode();
     private String billing_name = "";
     private String billing_email="";
     @Getter@Setter

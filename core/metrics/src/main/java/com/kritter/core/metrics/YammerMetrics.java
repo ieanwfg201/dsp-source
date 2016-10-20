@@ -22,6 +22,10 @@ public class YammerMetrics {
     private static final String LATENCY_COUNTER_NAME = "latency";
     private static final String FAILURES_COUNTER_NAME = "failures";
 
+    private static final String COLON_INVOCATIONS_COUNTER_NAME = ":invocations";
+    private static final String COLON_LATENCY_COUNTER_NAME = ":latency";
+    private static final String COLON_FAILURES_COUNTER_NAME = ":failures";
+
     public void incrementTotalInvocations() {
         Counter counter = metricRegistry.counter(INVOCATIONS_COUNTER_NAME);
         counter.inc();
@@ -38,17 +42,23 @@ public class YammerMetrics {
     }
 
     public void incrementJobInvocations(String jobName) {
-        Counter counter = metricRegistry.counter(jobName + ":" + INVOCATIONS_COUNTER_NAME);
+        StringBuffer sb = new StringBuffer(jobName);
+        sb.append(COLON_INVOCATIONS_COUNTER_NAME);
+        Counter counter = metricRegistry.counter(sb.toString());
         counter.inc();
     }
 
     public void incrementJobLatency(String jobName, long millis) {
-        Counter counter = metricRegistry.counter(jobName + ":" + LATENCY_COUNTER_NAME);
+        StringBuffer sb = new StringBuffer(jobName);
+        sb.append(COLON_LATENCY_COUNTER_NAME);
+        Counter counter = metricRegistry.counter(sb.toString());
         counter.inc(millis);
     }
 
     public void incrementJobFailures(String jobName) {
-        Counter counter = metricRegistry.counter(jobName + ":" + FAILURES_COUNTER_NAME);
+        StringBuffer sb = new StringBuffer(jobName);
+        sb.append(COLON_FAILURES_COUNTER_NAME);
+        Counter counter = metricRegistry.counter(sb.toString());
         counter.inc();
     }
 
@@ -65,14 +75,20 @@ public class YammerMetrics {
     }
 
     public long getJobInvocations(String jobName) {
-        return metricRegistry.counter(jobName + ":" + INVOCATIONS_COUNTER_NAME).getCount();
+        StringBuffer sb = new StringBuffer(jobName);
+        sb.append(COLON_INVOCATIONS_COUNTER_NAME);
+        return metricRegistry.counter(sb.toString()).getCount();
     }
 
     public long getJobLatency(String jobName) {
-        return metricRegistry.counter(jobName + ":" + LATENCY_COUNTER_NAME).getCount();
+        StringBuffer sb = new StringBuffer(jobName);
+        sb.append(COLON_LATENCY_COUNTER_NAME);
+        return metricRegistry.counter(sb.toString()).getCount();
     }
 
     public long getJobFailures(String jobName) {
-        return metricRegistry.counter(jobName + ":" + FAILURES_COUNTER_NAME).getCount();
+        StringBuffer sb = new StringBuffer(jobName);
+        sb.append(COLON_FAILURES_COUNTER_NAME);
+        return metricRegistry.counter(sb.toString()).getCount();
     }
 }

@@ -117,7 +117,8 @@ public class EcpmBidCalculatorUsingBidder implements Job
             }
             
             if(!isBidSet){
-                ExchangeBidWithEntityId exchangeBidWithEntityId = exchangeBidWithEntityIdMap.get(responseAdInfo.getAdId());
+                ExchangeBidWithEntityId exchangeBidWithEntityId = exchangeBidWithEntityIdMap.get(
+                        responseAdInfo.getAdId());
                 if(null == exchangeBidWithEntityId) {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(responseAdInfo.getAdId(),
                             NoFillReason.CAMPAIGN_DATE_BUDGET.getValue(), this.adNoFillReasonMapKey, context);
@@ -128,8 +129,8 @@ public class EcpmBidCalculatorUsingBidder implements Job
                 responseAdInfo.setEcpmValue(ecpmValue);
             }
             finalResponseAdInfoSet.add(responseAdInfo);
-            ReqLog.errorWithDebugNew(logger, request, "Ecpm bid value calculated inside EcpmBidCalculatorUsingBidder as : {} for adunit id: {}",
-                    responseAdInfo.getEcpmValue(), responseAdInfo.getAdId());
+            ReqLog.debugWithDebugNew(logger, request, "Ecpm bid value calculated inside EcpmBidCalculatorUsingBidder " +
+                    "as : {} for adunit id: {}", responseAdInfo.getEcpmValue(), responseAdInfo.getAdId());
         }
 
         response.setResponseAdInfo(finalResponseAdInfoSet);
@@ -137,7 +138,8 @@ public class EcpmBidCalculatorUsingBidder implements Job
         if(finalResponseAdInfoSet.size() <= 0 && null == request.getNoFillReason())
         {
             request.setNoFillReason(NoFillReason.BIDDER_BID_NEGATIVE_ZERO);
-            ReqLog.errorWithDebugNew(logger, request, "Bidder bid is calculated as negative or zero in this request and no ad could get a positive ecpm value ");
+            ReqLog.errorWithDebugNew(logger, request, "Bidder bid is calculated as negative or zero in this request " +
+                    "and no ad could get a positive ecpm value ");
             
         }
     }

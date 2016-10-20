@@ -1,8 +1,10 @@
 package com.kritter.nosql.user.recenthistory;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.kritter.entity.user.recenthistory.RecentHistoryProvider;
 import com.kritter.user.thrift.struct.ImpressionEvent;
 import com.kritter.user.thrift.struct.RecentImpressionHistory;
+import com.kritter.utils.common.ThreadLocalUtils;
 import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
 import com.kritter.utils.nosql.common.NoSqlNamespaceTable;
@@ -19,6 +21,7 @@ import com.kritter.abstraction.cache.interfaces.ICache;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -77,7 +80,8 @@ public class UserRecentImpressionHistoryCache implements NoSqlNamespaceTable, IC
         this.attributeNameSet = new HashSet<String>();
         this.attributeNameSet.add(attributeNameImpressionHistory);
 
-        this.updaterService = Executors.newFixedThreadPool(threadCount);
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat(name + "-executor-%d").build();
+        this.updaterService = Executors.newFixedThreadPool(threadCount, namedThreadFactory);
     }
 
     /**
@@ -219,6 +223,8 @@ public class UserRecentImpressionHistoryCache implements NoSqlNamespaceTable, IC
                 userRecentImpressionHistoryCache.updateImpressionHistoryForUser(this.kritterUserId, this.eventSet);
             } catch (Exception e) {
                 logger.error("Exception occurred in recent history updater. {}", e);
+            } finally {
+                ThreadLocalUtils.cleanThreadLocalsOfCurrentThread(logger);
             }
         }
     }
@@ -277,6 +283,7 @@ public class UserRecentImpressionHistoryCache implements NoSqlNamespaceTable, IC
 
     @Override
     public void destroy() {
+        noSqlNamespaceOperationsInstance.destroy();
         updaterService.shutdown();
         try {
             if(!updaterService.awaitTermination(60, TimeUnit.SECONDS)) {

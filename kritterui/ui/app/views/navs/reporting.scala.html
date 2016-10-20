@@ -29,6 +29,10 @@
             <li><a href="/extsiterepoting/default"><i
                 class="fa fa-caret-right"></i><span data-i18n="ExtSiteAppReport"></span></a></li>
          }
+		@if("true" == Play.application().configuration().getString("exchange_report") )  {
+			<li><a href="/reporting/exchangereport"><i
+				class="fa fa-caret-right"></i><span data-i18n="DSPLandScape"></span></a></li>
+		}
         <li><a href="/fraudreport/default"><i
                 class="fa fa-caret-right"></i><span data-i18n="FraudReport"></span></a></li>
         <li><a href="/trackingEvent/default"><i

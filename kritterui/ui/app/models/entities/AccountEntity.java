@@ -8,9 +8,11 @@ import play.data.validation.Constraints.Required;
 
 import com.kritter.api.entity.account.Account;
 import com.kritter.constants.Account_Type;
+import com.kritter.constants.OpenRTBVersion;
 import com.kritter.constants.Payment_type;
 import com.kritter.constants.Payout;
 import com.kritter.constants.StatusIdEnum;
+import com.kritter.constants.ThirdPartyDemandChannel;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -71,8 +73,8 @@ public class AccountEntity {
     private int qps = 5;
     private int timeout = 200;
     private String demand_url = "";
-    private int open_rtb_ver_required = 0;
-    private int third_party_demand_channel_type = 0;
+    private int open_rtb_ver_required = OpenRTBVersion.VERSION_2_3.getCode();
+    private int third_party_demand_channel_type = ThirdPartyDemandChannel.STANDALONE_DSP_BIDDER.getCode();
     private String billing_name = "";
     private String billing_email="";
     private String ext="";

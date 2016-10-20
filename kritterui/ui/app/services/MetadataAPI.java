@@ -373,6 +373,14 @@ public class MetadataAPI {
 
 		return options;
 	}
+	public static List<SelectOption> listIncExcTriState(){
+		List<SelectOption> options = emptyOptions();
+		InclusionExclusionType[] types = InclusionExclusionType.values();
+		for (InclusionExclusionType pt : types) {
+			options.add(new SelectOption(pt.name(),  pt.getCode()+""));
+		} 
+		return options;
+	}
     public static List<SelectOption> freqCapOptions(){
         List<SelectOption> options = emptyOptions();
         options.add(new SelectOption("No", "false"));
@@ -2688,18 +2696,20 @@ public class MetadataAPI {
     public static List<SelectOption> openRTBVersions()
     {
         List<SelectOption> options = emptyOptions();
-        options.add(new SelectOption("RTB 2.0", String.valueOf(OpenRTBVersion.VERSION_2_0.getCode())));
-        options.add(new SelectOption("RTB 2.1", String.valueOf(OpenRTBVersion.VERSION_2_1.getCode())));
-        options.add(new SelectOption("RTB 2.2", String.valueOf(OpenRTBVersion.VERSION_2_2.getCode())));
-        options.add(new SelectOption("RTB 2.3", String.valueOf(OpenRTBVersion.VERSION_2_3.getCode())));
+        OpenRTBVersion[] types = OpenRTBVersion.values();
+        for (OpenRTBVersion type : types) {
+            options.add(new SelectOption(type.getName(),  type.getCode()+""));
+        } 
         return options;
     }
 
     public static List<SelectOption> thirdPartyDemandChannelTypes()
     {
         List<SelectOption> options = emptyOptions();
-        options.add(new SelectOption("Marketplace Of DSP", String.valueOf(ThirdPartyDemandChannel.MARKETPLACE_OF_DSP.getCode())));
-        options.add(new SelectOption("StandAlone DSP", String.valueOf(ThirdPartyDemandChannel.STANDALONE_DSP_BIDDER.getCode())));
+        ThirdPartyDemandChannel[] types = ThirdPartyDemandChannel.values();
+        for (ThirdPartyDemandChannel type : types) {
+            options.add(new SelectOption(type.name(),  type.getCode()+""));
+        } 
         return options;
     }
 }

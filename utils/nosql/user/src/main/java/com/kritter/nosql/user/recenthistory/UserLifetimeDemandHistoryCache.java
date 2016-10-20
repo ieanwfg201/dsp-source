@@ -1,8 +1,10 @@
 package com.kritter.nosql.user.recenthistory;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.kritter.abstraction.cache.interfaces.ICache;
 import com.kritter.entity.user.recenthistory.LifetimeDemandHistoryProvider;
 import com.kritter.user.thrift.struct.LifetimeDemandHistory;
+import com.kritter.utils.common.ThreadLocalUtils;
 import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class UserLifetimeDemandHistoryCache implements LifetimeDemandHistoryProvider, ICache {
@@ -59,7 +62,8 @@ public class UserLifetimeDemandHistoryCache implements LifetimeDemandHistoryProv
         this.attributeNameSet = new HashSet<String>();
         this.attributeNameSet.add(attributeNameHistory);
 
-        this.updaterService = Executors.newFixedThreadPool(threadCount);
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat(name + "-executor-%d").build();
+        this.updaterService = Executors.newFixedThreadPool(threadCount, namedThreadFactory);
     }
 
     @Override
@@ -193,12 +197,15 @@ public class UserLifetimeDemandHistoryCache implements LifetimeDemandHistoryProv
                 userLifetimeDemandHistoryCache.updateLifetimeDemandHistoryForUser(kritterUserId, demandEventCount);
             } catch (Exception e) {
                 logger.error("Exception occurred in recent history updater. {}", e);
+            } finally {
+                ThreadLocalUtils.cleanThreadLocalsOfCurrentThread(logger);
             }
         }
     }
 
     @Override
     public void destroy() {
+        noSqlNamespaceOperationsInstance.destroy();
         updaterService.shutdown();
         try {
             if(!updaterService.awaitTermination(60, TimeUnit.SECONDS)) {

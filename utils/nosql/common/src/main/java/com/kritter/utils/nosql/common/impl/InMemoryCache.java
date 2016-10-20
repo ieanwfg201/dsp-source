@@ -200,4 +200,9 @@ public class InMemoryCache implements NoSqlNamespaceOperations {
 
         return resMap;
     }
+
+    @Override
+    public void destroy() {
+
+    }
 }

@@ -76,6 +76,12 @@ public class ReportingController extends Controller{
 	        return ok(views.html.reporting.limitedReport.render(reportConfigForm.fill(rfe), 0, allow_wifi, ext_site_report_seperate));
 	}
 	@SecuredAction
+    public static Result exchangereport(){
+	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
+	        return ok(views.html.reporting.exchangereport.render(reportConfigForm.fill(rfe), 0));
+	}
+
+	@SecuredAction
     public static Result channelReport(){
 	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
 	        return ok(views.html.reporting.channelReport.render(reportConfigForm.fill(rfe), 0));
@@ -470,6 +476,12 @@ public class ReportingController extends Controller{
 	public static Result reportData(){
 	    return reportData(false, false, null, null,false,ReportingTableType.FIRSTLEVEL);
 	}
+    public static Result exchangereportData(){
+        return reportData(false, false, null, null,true,ReportingTableType.EXCHANGE);
+    }
+	public static Result exchangereportDataCSV(){
+        return reportDataCSV(null,true,ReportingTableType.EXCHANGE);
+    }
     public static Result channelreportData(){
         return reportData(false, false, null, null,true,ReportingTableType.CHANNEL);
     }

@@ -68,8 +68,14 @@ public class TargetingProfileEntity extends Entity{
     private String file_prefix_path = null;
     private int id;
     private int lat_lon_radius_unit = 0;
-    private boolean user_id_inc_exc=true;
+    private int user_id_inc_exc=0;
 
+	public int getUser_id_inc_exc() {
+		return user_id_inc_exc;
+	}
+	public void setUser_id_inc_exc(int user_id_inc_exc) {
+		this.user_id_inc_exc = user_id_inc_exc;
+	}
 	public MidpValue getMidp() {
         return midp;
     }
@@ -374,13 +380,6 @@ public class TargetingProfileEntity extends Entity{
 	public void setLat_lon_radius_unit(int lat_lon_radius_unit) {
 		this.lat_lon_radius_unit = lat_lon_radius_unit;
 	}
-    public boolean isUser_id_inc_exc() {
-		return user_id_inc_exc;
-	}
-	public void setUser_id_inc_exc(boolean user_id_inc_exc) {
-		this.user_id_inc_exc = user_id_inc_exc;
-	}
-
 	public Targeting_profile getEntity(){
     	Targeting_profile tp = new Targeting_profile();
     	BeanUtils.copyProperties(this, tp);
