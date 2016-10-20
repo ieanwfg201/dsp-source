@@ -29,25 +29,26 @@ public class HttpUtils {
 
     static CloseableHttpClient httpClient = HttpClients.createDefault();
 
-    public static Map<String, String> post(String url, Object params, String username, String password) throws IOException {
+    public static Map<String, String> post(String url, String params, String username, String password) throws IOException {
+        LOG.debug(url);
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(10000).setSocketTimeout(10000).setConnectionRequestTimeout(1000).build();
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(requestConfig);
 
         httpPost.setHeader("Content-Type", "application/json;charset=utf-8");
         httpPost.setHeader("Authorization", "Basic " + authStringEnc(username, password));
-        Header[] hs = httpPost.getAllHeaders();
+//        Header[] hs = httpPost.getAllHeaders();
 //        for (Header h : hs) {
 //            System.out.println(h.getName() + ":" + h.getValue());
 //        }
-        httpPost.setEntity(new StringEntity(JSON.toJSONString(params), Consts.UTF_8));
+        httpPost.setEntity(new StringEntity(params, Consts.UTF_8));
 
         CloseableHttpResponse response = httpClient.execute(httpPost);
 
-        Header[] headers = response.getAllHeaders();
-        for (Header h : headers) {
-            LOG.debug(h.getName() + ":" + h.getValue());
-        }
+//        Header[] headers = response.getAllHeaders();
+//        for (Header h : headers) {
+//            LOG.debug(h.getName() + ":" + h.getValue());
+//        }
 
         int responseStatus = response.getStatusLine().getStatusCode();
 
@@ -63,7 +64,7 @@ public class HttpUtils {
     }
 
     public static Map<String, String> get(String url, String username, String password) throws IOException {
-
+        LOG.debug(url);
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(10000).setSocketTimeout(10000).setConnectionRequestTimeout(1000).build();
         HttpGet httpGet = new HttpGet(url);
         httpGet.setConfig(requestConfig);
@@ -73,10 +74,10 @@ public class HttpUtils {
 
         CloseableHttpResponse response = httpClient.execute(httpGet);
 
-        Header[] headers = response.getAllHeaders();
-        for (Header h : headers) {
-            LOG.debug(h.getName() + ":" + h.getValue());
-        }
+//        Header[] headers = response.getAllHeaders();
+//        for (Header h : headers) {
+//            LOG.debug(h.getName() + ":" + h.getValue());
+//        }
 
         int responseStatus = response.getStatusLine().getStatusCode();
 
@@ -95,7 +96,6 @@ public class HttpUtils {
         String np = username + ":" + password;
         byte[] authEncBytes = Base64.encodeBase64(np.getBytes());
         String authStringEnc = new String(authEncBytes);
-        System.out.println(authStringEnc);
         return authStringEnc;
     }
 }

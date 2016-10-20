@@ -31,7 +31,7 @@ public class VamVideoQuery {
 
     public static final String updatetVideoStatusMessage = "update video_upload set adxbasedexhangesstatus=?,message=?,last_modified=?  where internalid=?";
 
-    public static final String selectforAudit = "select * from video_upload where pubIncId=? and adxbasedexhangesstatus=7";
+    public static final String selectforAudit = "select * from video_upload where pubIncId=? and adxbasedexhangesstatus in (7,9,10,11)";
 
     public static final String insert_material_state = "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
 

@@ -66,7 +66,7 @@ public class VamBannerQuery {
 
     public static final String updatetBannerStatusMessage = "update banner_upload set adxbasedexhangesstatus=?,message=?,last_modified=?  where internalid=?";
 
-    public static final String selectforAudit = "select * from banner_upload where pubIncId=? and (adxbasedexhangesstatus=7 or adxbasedexhangesstatus=12) ";
+    public static final String selectforAudit = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus in (7,9,10,11)";
 
     public static final String insert_material_state = "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
 

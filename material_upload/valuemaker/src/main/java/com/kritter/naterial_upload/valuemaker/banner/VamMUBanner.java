@@ -53,20 +53,16 @@ public class VamMUBanner implements MUBanner {
     private LinkedList<VamQueryEntity> vamQueryEntityList;
     @Getter
     @Setter
-    private Map<String, String> header;
-    @Getter
-    @Setter
     private String vam_material_add_url;
 
     @Override
     public void init(Properties properties) {
         setDspid(properties.getProperty("vam_dsp_id").toString());
         setPubIncId(Integer.parseInt(properties.getProperty("vam_pubIncId").toString()));
-        dateNow = new Date();
-        header = new HashMap<String, String>();
+        setDateNow(new Date());
         setUsername(properties.getProperty("vam_username").toString());
         setPassword(properties.getProperty("vam_password").toString());
-        vam_material_add_url = properties.getProperty("vam_url_prefix").toString() + properties.getProperty("vam_prefix_banner_add").toString();
+        setVam_material_add_url(properties.getProperty("vam_url_prefix").toString() + properties.getProperty("vam_prefix_banner_add").toString());
     }
 
     @Override
@@ -314,7 +310,7 @@ public class VamMUBanner implements MUBanner {
 
                     if (result.get("StatusCode") != null && result.get("StatusCode").equals("200")) {
                         cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, rset.getInt("internalId"));
