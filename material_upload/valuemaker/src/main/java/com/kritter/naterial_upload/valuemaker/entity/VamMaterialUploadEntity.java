@@ -50,7 +50,7 @@ public class VamMaterialUploadEntity {
     }
 
     public VamMaterialUploadEntity(String id, String landingpage, Integer width, Integer height, Integer format, Integer adtype,
-                                   Integer category, String[] adomain_list, String[] pic_urls, String title, String text) {
+                                      Integer category, String[] adomain_list, String[] pic_urls) {
         super();
         this.id = id;
         this.landingpage = landingpage;
@@ -61,8 +61,7 @@ public class VamMaterialUploadEntity {
         this.category = category;
         this.adomain_list = adomain_list;
         this.pic_urls = pic_urls;
-        this.title = title;
-        this.text = text;
     }
+
 
 }

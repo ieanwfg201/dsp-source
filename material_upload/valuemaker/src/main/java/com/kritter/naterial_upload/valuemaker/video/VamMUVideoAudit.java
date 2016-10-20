@@ -87,17 +87,20 @@ public class VamMUVideoAudit implements MUVideoAudit {
                             switch (status) {
                                 case 1:
                                     ps1.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
+                                    break;
                                 case 2:
                                     ps1.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
+                                    break;
                                 case 3:
                                     ps1.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
+                                    break;
                                 default:
                                     ps1.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
+                                    break;
                             }
                         }
                         ps1.executeUpdate();
                     }
-
                 } catch (Exception e) {
                     LOG.error(e.toString());
                 }
