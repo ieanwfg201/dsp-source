@@ -16,7 +16,8 @@ import com.kritter.kritterui.api.manual.common.GenerateBCryptPwd;
 import com.kritter.utils.dbconnector.DBConnector;
 
 public class CreateRootAccount {
-    private static void createRoot(String userid, String pwd, String dbtype,String dbhost, String dbport, String dbname, String dbuser, String dbpwd){
+    private static void createRoot(String userid, String pwd, String dbtype,String dbhost, String dbport, String dbname, String dbuser, String dbpwd,
+     String email){
     	String username="NewUser"+System.currentTimeMillis();
         Logger log = Logger.getLogger("my.logger");
         log.setLevel(Level.ALL);
@@ -30,7 +31,7 @@ public class CreateRootAccount {
         account.setCity("");
         account.setCompany_name("");
         account.setCountry("");
-        account.setEmail("newuser@newuser.com");
+        account.setEmail(email);
         account.setModified_by(1);
         account.setName(username);
         account.setPhone("9999999999");
@@ -71,12 +72,12 @@ public class CreateRootAccount {
     
     public static void main(String args[]){
        // createadmin("rohan1","rohan1","MYSQL","localhost","3306","kritter","root","password");
-        if(args.length != 8){
+        if(args.length != 9){
             System.out.println("######################INCORRECT USAGE#################################");
-            System.out.println("java -cp <classpath> com.kritter.kritterui.api.manual.createadmin.CreateRootAccount <userid> <userpwd> <dbtype> <dbhost> <dbport> <dbname> <dbuser> <dbpwd>");
+            System.out.println("java -cp <classpath> com.kritter.kritterui.api.manual.createadmin.CreateRootAccount <userid> <userpwd> <dbtype> <dbhost> <dbport> <dbname> <dbuser> <dbpwd> <email>");
             System.out.println("######################################################################");
         }else{
-        	createRoot(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+        	createRoot(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8]);
             
         }
     }
