@@ -55,14 +55,15 @@ public class ValidateCreativeSize {
 
                 creativeBannerList.add(creativeBanner);
             }
+            if(creativeBannerList.size()>0){
+            	Collections.sort(creativeBannerList,comparator);
+            	//done sorting banner uri ids on size.
 
-            Collections.sort(creativeBannerList,comparator);
-            //done sorting banner uri ids on size.
-
-            bannerUriIds = new Integer[creative.getBannerUriIds().length];
-            for(int i=0 ;i<creative.getBannerUriIds().length;i++)
-            {
-                bannerUriIds[i] = creativeBannerList.get(i).getId();
+            	bannerUriIds = new Integer[creativeBannerList.size()];
+            	for(int i=0 ;i<creative.getBannerUriIds().length;i++)
+            	{
+            		bannerUriIds[i] = creativeBannerList.get(i).getId();
+            	}
             }
         }
         return bannerUriIds;
