@@ -1,7 +1,9 @@
 package com.kritter.exchange.job;
 
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
+import com.kritter.adserving.thrift.struct.DspNoFill;
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.adserving.thrift.struct.ReqState;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO;
@@ -9,6 +11,7 @@ import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidResponseEntity;
 import com.kritter.common.site.entity.Site;
 import com.kritter.common_caches.pmp.*;
 import com.kritter.constants.*;
+import com.kritter.entity.exchangethrift.CreateExchangeThrift;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
@@ -254,7 +257,31 @@ public class ExchangeJob implements Job
 
             /*This map would store the ResponseAdInfo for each external DSP identified via advertiser guid */
             Map<String,ResponseAdInfo> dspGuidResponseAdInfoMap = new HashMap<String, ResponseAdInfo>();
+            CreateExchangeThrift createExchangeThrift = new CreateExchangeThrift(loggerName);
+            createExchangeThrift.setRequestId(request.getRequestId())
+            	.setPubincId(request.getSite().getPublisherIncId())
+            	.setSiteId(request.getSite().getSiteIncId())
+            	.setExtSupplyAttrInternalId(request.getExternalSupplyAttributesInternalId())
+            	.setExtSupplyId(request.getSite().getExternalSupplyId())
+            	.setFloor(request.getSite().getEcpmFloorValue())
+            	.setReqState(ReqState.HEALTHY)
+            	.setCountryId(request.getCountryUserInterfaceId())
+            	.setTime(request.getTime()/1000);
+            if(null!=request.getHandsetMasterData() &&
+                    null!=request.getHandsetMasterData().getDeviceOperatingSystemId())
+            	createExchangeThrift.setDeviceOsId(request.getHandsetMasterData().getDeviceOperatingSystemId());
+            else
+            	createExchangeThrift.setDeviceOsId(-1);
+            if(request.getSite().isNative()){
+            	createExchangeThrift.setFormatId((short)CreativeFormat.Native.getCode());
+            }else if(request.getSite().isVideo()){
+            	createExchangeThrift.setFormatId((short)CreativeFormat.VIDEO.getCode());
+            }else{
+                	createExchangeThrift.setFormatId((short)CreativeFormat.BANNER.getCode());
+            }
+            
 
+            
             for(ResponseAdInfo responseAdInfo: responseAdInfoSet)
             {
                 AccountEntity advEntity = this.accountCache.query(responseAdInfo.getAdvertiserGuid());
@@ -273,7 +300,11 @@ public class ExchangeJob implements Job
 
                 if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_3.getCode())
                 {
-                    bidRequestParentNodeDtoTwoDotThree = convertRequest2_3.convert(request, this.requestConvertversion, pubEntity, this.iabCategoriesCache,advEntity);
+                	if(request.isAggregatorOpenRTB()){
+                		bidRequestParentNodeDtoTwoDotThree = request.getOpenrtbObjTwoDotThree();
+                	}else{
+                		bidRequestParentNodeDtoTwoDotThree = convertRequest2_3.convert(request, this.requestConvertversion, pubEntity, this.iabCategoriesCache,advEntity);
+                	}
 
                     /*Add deal object to parent bid request if applicable.*/
                     addPMPEntityToParentBidRequestVersion2_3(bidRequestParentNodeDtoTwoDotThree,dealsForSite,advEntity,responseAdInfo.getAdId());
@@ -383,6 +414,7 @@ public class ExchangeJob implements Job
                         URI uri = new URI(advEntity.getDemand_url());
                         dspGuidUrlMap.put(responseAdInfo.getAdvertiserGuid(), uri);
                         dspGuidResponseAdInfoMap.put(responseAdInfo.getAdvertiserGuid(), responseAdInfo);
+                        createExchangeThrift.addDemand(responseAdInfo.getAdvertiserGuid(), advEntity.getAccountId(), responseAdInfo.getCampaignId(), responseAdInfo.getAdId());
                     }catch(Exception e){
                         logger.info("ExchangeJob: Incorrect URI {} for adv {}", advEntity.getDemand_url(), responseAdInfo.getAdvertiserGuid());
                         if(request.isRequestForSystemDebugging()){
@@ -410,6 +442,8 @@ public class ExchangeJob implements Job
                 }
                 emptyExchangeAds = true;
                 request.setNoFillReason(NoFillReason.EX_OD_EXEC_NULL);
+                createExchangeThrift.updateErrorReqState(ReqState.KEXEC_ERR);
+                request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
             Map<String,String> advResponseMap= null;
@@ -427,6 +461,8 @@ public class ExchangeJob implements Job
                 }
                 request.setNoFillReason(NoFillReason.EX_OD_API_INCORRECT);
                 emptyExchangeAds = true;
+                createExchangeThrift.updateErrorReqState(ReqState.ASYNC_ERR);
+                request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
             if(advResponseMap == null || advResponseMap.size() < 1){
@@ -436,6 +472,8 @@ public class ExchangeJob implements Job
                 }
                 emptyExchangeAds = true;
                 request.setNoFillReason(NoFillReason.EX_OD_RESP_EMPTY);
+                createExchangeThrift.updateAllTimeOut();
+                request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
 
@@ -484,17 +522,20 @@ public class ExchangeJob implements Job
                 }
                 emptyExchangeAds = true;
                 request.setNoFillReason(NoFillReason.EX_OD_BID_RESP_EMPTY);
+                createExchangeThrift.updateAllTimeOut();
+                request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
 
             WinEntity winEntity2_3 = null;
             WinEntity winEntity2_2 = null;
             WinEntity winEntity = null;
+            createExchangeThrift.updateAllTimeOut();
             if(ExchangeConstants.auction_strategy_second_price.equals(auctionStrategy))
             {
                 KAuction auction = new SecondPriceAuction();
-                winEntity2_3 = auction.getWinnerOpenRTB2_3(advBidResponseMap2_3, request);
-                winEntity2_2 = auction.getWinnerOpenRTB2_2(advBidResponseMap2_2, request);
+                winEntity2_3 = auction.getWinnerOpenRTB2_3(advBidResponseMap2_3, request,createExchangeThrift);
+                winEntity2_2 = auction.getWinnerOpenRTB2_2(advBidResponseMap2_2, request,createExchangeThrift);
             }
             else{
                 logger.info("ExchangeJob: auctionStrategy NF {}",auctionStrategy);
@@ -503,6 +544,8 @@ public class ExchangeJob implements Job
                 }
                 request.setNoFillReason(NoFillReason.EX_OD_AP_INCORRECT);
                 emptyExchangeAds = true;
+                createExchangeThrift.updateErrorReqState(ReqState.AUC_NF);
+                request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
 
@@ -526,8 +569,11 @@ public class ExchangeJob implements Job
                 }
                 request.setNoFillReason(NoFillReason.EX_OD_WIN_NULL);
                 emptyExchangeAds = true;
+                request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
+            createExchangeThrift.updateDemandState(winEntity.getAdvId(), DspNoFill.FILL);
+            createExchangeThrift.setWinprice(winEntity.getWin_price());
 
             Set<ResponseAdInfo> newResponseAdInfo  = new HashSet<ResponseAdInfo>();
             ResponseAdInfo newResponse = dspGuidResponseAdInfoMap.get(winEntity.getAdvId());
@@ -578,6 +624,7 @@ public class ExchangeJob implements Job
             responseCode = HttpServletResponse.SC_OK;
             fill = true;
             emptyExchangeAds = false;
+            request.setCreateExchangeThrift(createExchangeThrift);
         }catch(Exception e ){
             if(request != null){
                 request.setNoFillReason(NoFillReason.EX_OD_EXCEPTION);

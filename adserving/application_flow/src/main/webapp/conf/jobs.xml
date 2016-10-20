@@ -247,6 +247,13 @@
         <constructor-arg index="13" value="ad-nofill-map"/>
     </bean>    
 
+    <bean id="exchange_thrift_logger_job" class="com.kritter.adserving.flow.job.ExchangeThriftLogger">
+        <constructor-arg index="0" value="exchange_thrift_logger_job"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2"><ref bean="exchange_thrift_logging_cache"/></constructor-arg>
+        <constructor-arg index="3" value="req-object"/>
+    </bean>
+
     <bean id="ssp_job" class="com.kritter.adserving.flow.job.SspOrInHouse">
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1" value="ssp_job"/>

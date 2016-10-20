@@ -444,6 +444,12 @@ public class GeoCommonUtils
                 String ispUIName = rs.getString("isp_ui_name");
                 short isMarkedForDeletion = rs.getShort("is_marked_for_deletion");
 
+                if(
+                    null == countryName || null == ispName || null == ispUIName ||
+                    "".equalsIgnoreCase(countryName) || "".equalsIgnoreCase(ispName) || "".equalsIgnoreCase(ispUIName)
+                  )
+                    continue;
+
                 CountryIspUnique countryIspUnique = new CountryIspUnique(countryName,ispName,ispUIName);
                 IspMappingsValueEntity ispMappingsValueEntity =
                                     new IspMappingsValueEntity(countryIspUnique.prepareValue(),isMarkedForDeletion);
@@ -1177,15 +1183,29 @@ public class GeoCommonUtils
             UIInternetServiceProvider uiInternetServiceProvider = null;
 
             if(null != ispUiNameWithCountryValue)
-                uiInternetServiceProvider = ispUIDataAgainstISPUiNameAndCountryUiId.get
+            {
+                try
+                {
+                    logger.debug("ispUiNameWithCountryValue is: {} ", ispUiNameWithCountryValue);
+                    logger.debug("ispUIDataAgainstISPUiNameAndCountryUiId is null : {} ", (null == ispUIDataAgainstISPUiNameAndCountryUiId));
+                    logger.debug("Ui country is null : {} ", (null == uiCountry));
+                    logger.debug("country isp unique is null : {} ", (null == countryIspUnique));
+
+                    uiInternetServiceProvider = ispUIDataAgainstISPUiNameAndCountryUiId.get
+                            (
+                                    UIInternetServiceProvider.
+                                            prepareKeyToLookupISPUIEntry
                                                     (
-                                                     UIInternetServiceProvider.
-                                                        prepareKeyToLookupISPUIEntry
-                                                        (
                                                             uiCountry.getCountryId(),
                                                             countryIspUnique.getIspUiName()
-                                                        )
-                                                   );
+                                                    )
+                            );
+                }
+                catch (Exception e)
+                {
+                    logger.error("Exception inside GeoCommonUtils in constructing uiInternetServiceProvider ",e);
+                }
+            }
 
             if(null == uiInternetServiceProvider)
             {

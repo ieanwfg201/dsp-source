@@ -14,11 +14,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class InputReader {
-    private static final Logger logger = LoggerFactory.getLogger(InputReader.class);
+    private final Logger logger;
 
     private final PostImpressionConverter postImpressionConverter;
 
-    public InputReader(PostImpressionConverter postImpressionConverter) {
+    public InputReader(String loggerName, PostImpressionConverter postImpressionConverter) {
+        this.logger = LoggerFactory.getLogger(loggerName);
         this.postImpressionConverter = postImpressionConverter;
     }
 
@@ -87,6 +88,8 @@ public class InputReader {
                 logger.error("Exception closing the buffered reader : {}", ioe);
             }
         }
+
+        logger.debug("Number of logs in {} = {}", postImpressionLogFile, postImpressionRequestResponses.size());
     }
 
     public void readLogsFromDir(String dirPath,

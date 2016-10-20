@@ -9,11 +9,21 @@
     <packaging>jar</packaging>
     <name>auction_strategies_second_price</name>
     <dependencies>
-    <dependency>
-        <groupId>com.kritter.entity</groupId>
-        <artifactId>req_res_entity</artifactId>
-        <version>1.0.0</version>
-    </dependency>
+        <dependency>
+            <groupId>com.kritter.thrift</groupId>
+            <artifactId>structs</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.entity.exchangethrift</groupId>
+            <artifactId>kritter_entity_exchangethrift</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.entity</groupId>
+            <artifactId>req_res_entity</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>com.kritter.entity.winner</groupId>
             <artifactId>kritter_entity_winner</artifactId>

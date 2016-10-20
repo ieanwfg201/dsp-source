@@ -234,6 +234,26 @@
         </dependency>
         <dependency>
             <groupId>com.kritter.common.caches</groupId>
+            <artifactId>adxbasedexchanges_metadata_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>video_upload_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>banner_upload_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>advinfo_upload_cache</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
             <artifactId>adposition_cache</artifactId>
             <version>1.0.0</version>
         </dependency>
@@ -251,6 +271,11 @@
             <groupId>com.kritter.adserving</groupId>
             <artifactId>user</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>thrift_logging</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
     <organization>

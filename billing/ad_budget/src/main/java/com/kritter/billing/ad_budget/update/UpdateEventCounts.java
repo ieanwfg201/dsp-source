@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,14 +23,23 @@ import java.util.List;
 import java.util.Map;
 
 public class UpdateEventCounts {
-    private static final Logger logger = LoggerFactory.getLogger(UpdateEventCounts.class);
+    private final String loggerName;
+    private final Logger logger;
+    private static int BATCH_SIZE = 1000;
 
-    public static final String UPDATE_CAMPAIGN_IMPRESSION_COUNT = "UPDATE campaign_impressions_budget SET " +
-            "impressions_accrued = impressions_accrued + ?, last_modified = ? WHERE campaign_guid = (SELECT guid FROM campaign " +
-            "WHERE id = ?);";
+    public static final String UPDATE_CAMPAIGN_IMPRESSION_COUNT= "INSERT INTO campaign_impressions_budget " +
+            "(campaign_guid, impressions_accrued, last_modified, modified_by) VALUES ((select guid from campaign " +
+            "where id = ?), ?, now(), 1) ON DUPLICATE KEY UPDATE impressions_accrued = impressions_accrued + ?, " +
+            "last_modified = now()";
 
-    public static final String UPDATE_AD_IMPRESSION_COUNT = "UPDATE ad_budget SET impressions_accrued = " +
-            "impressions_accrued + ?, last_modified = ? WHERE ad_guid = (SELECT guid FROM ad WHERE id = ?);";
+    public static final String UPDATE_AD_IMPRESSION_COUNT= "INSERT INTO ad_budget (ad_guid, impressions_accrued, " +
+            "last_modified, modified_by) VALUES ((select guid from ad where id = ?), ?, now(), 1) ON DUPLICATE KEY " +
+            "UPDATE impressions_accrued = impressions_accrued + ?, last_modified = now()";
+
+    public UpdateEventCounts(String loggerName) {
+        this.loggerName = loggerName;
+        this.logger = LoggerFactory.getLogger(loggerName);
+    }
 
     /***
      * Updates ad budget given db connection, map containing ad id to event count mapping and query to run on the
@@ -55,17 +65,26 @@ public class UpdateEventCounts {
 
             preparedStatement = connection.prepareStatement(query);
 
+            int batchCount = 0;
             for(Map.Entry<Integer, Integer> entityEventCount : entityIdEventCountMap.entrySet()) {
                 int entityId = entityEventCount.getKey();
                 int count = entityEventCount.getValue();
-                preparedStatement.setInt(1, count);
-                preparedStatement.setTimestamp(2, timestamp);
-                preparedStatement.setInt(3, entityId);
+                preparedStatement.setInt(1, entityId);
+                preparedStatement.setInt(2, count);
+                preparedStatement.setInt(3, count);
                 preparedStatement.addBatch();
+                ++batchCount;
+
+                if(batchCount % BATCH_SIZE == 0) {
+                    preparedStatement.executeBatch();
+                    connection.commit();
+                    logger.debug("Committed {}'th batch of queries.", batchCount/BATCH_SIZE);
+                }
             }
 
             preparedStatement.executeBatch();
             connection.commit();
+            logger.debug("Committed last batch of queries.");
         } catch (SQLException sqle) {
             logger.error("Error in update of entity budgets : {}", sqle);
             throw new RuntimeException(sqle);
@@ -110,51 +129,66 @@ public class UpdateEventCounts {
         }
 
         // Read logs
-        InputReader reader = new InputReader(new PostImpressionConverter());
-        List<PostImpressionRequestResponse> postImpressionRequestResponses = new LinkedList<>();
-        reader.readLogsFromDir(inProcessDir, postImpressionRequestResponses);
+        InputReader reader = new InputReader(this.loggerName, new PostImpressionConverter());
+        // reader.readLogsFromDir(inProcessDir, postImpressionRequestResponses);
+
+        File directory = new File(inProcessDir);
+
+        File[] fileList = directory.listFiles();
+        if(fileList == null || fileList.length == 0) {
+            logger.debug("No files in the directory: ", inProcessDir);
+            return;
+        }
 
         EventCounter eventCounter = null;
         switch (entityType) {
             case CAMPAIGN:
-                eventCounter = new CampaignImpressionCounter();
+                eventCounter = new CampaignImpressionCounter(loggerName);
                 break;
             case AD:
-                eventCounter = new AdImpressionCounter();
+                eventCounter = new AdImpressionCounter(loggerName);
                 break;
             default:
                 throw new RuntimeException("Unsupported entity type : " + entityType.toString());
         }
 
-        // Get event counts per ad id
-        Map<Integer, Integer> entityIdEventCountMap = eventCounter.countEvents(postImpressionRequestResponses, eventType);
+        for (File file : fileList) {
+            logger.debug("Processing file : {}", file.getAbsolutePath());
+            List<PostImpressionRequestResponse> postImpressionRequestResponses = new LinkedList<>();
+            reader.readLogFile(file, postImpressionRequestResponses);
 
-        // Update in database
-        String query = null;
-        switch (entityType) {
-            case AD:
-                switch (eventType) {
-                    case RENDER:
-                        query = UPDATE_AD_IMPRESSION_COUNT;
-                        break;
-                    default:
-                        throw new RuntimeException("Unsupported event type : " + eventType.toString());
-                }
-                break;
-            case CAMPAIGN:
-                switch (eventType) {
-                    case RENDER:
-                        query = UPDATE_CAMPAIGN_IMPRESSION_COUNT;
-                        break;
-                    default:
-                        throw new RuntimeException("Unsupported event type : " + eventType.toString());
-                }
-                break;
-            default:
-                throw new RuntimeException("Unsupported entity type : " + entityType.toString());
+            // Get event counts per ad id
+            Map<Integer, Integer> entityIdEventCountMap = eventCounter.countEvents(postImpressionRequestResponses, eventType);
+            logger.debug("Entity count map has {} entries.", entityIdEventCountMap.size());
+
+            // Update in database
+            String query = null;
+            switch (entityType) {
+                case AD:
+                    switch (eventType) {
+                        case RENDER:
+                            query = UPDATE_AD_IMPRESSION_COUNT;
+                            break;
+                        default:
+                            throw new RuntimeException("Unsupported event type : " + eventType.toString());
+                    }
+                    break;
+                case CAMPAIGN:
+                    switch (eventType) {
+                        case RENDER:
+                            query = UPDATE_CAMPAIGN_IMPRESSION_COUNT;
+                            break;
+                        default:
+                            throw new RuntimeException("Unsupported event type : " + eventType.toString());
+                    }
+                    break;
+                default:
+                    throw new RuntimeException("Unsupported entity type : " + entityType.toString());
+            }
+
+            updateEntityBudget(connection, entityIdEventCountMap, query);
+            logger.debug("Done processing file : {}", file.getAbsolutePath());
         }
-
-        updateEntityBudget(connection, entityIdEventCountMap, query);
 
         // Finally move all the files from in process directory to done directory
         try {

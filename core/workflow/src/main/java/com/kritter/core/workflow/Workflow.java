@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
-public class Workflow {
+public class Workflow
+{
     private final JobSet initJobSet;
     @Getter
     private final CachePool cachePool;
@@ -39,8 +40,8 @@ public class Workflow {
 
     private boolean useMacAddressImplForUUID;
 
-    public Workflow(JobSet initJobSet, CachePool cachePool,boolean useMacAddressImplForUUID) {
-
+    public Workflow(JobSet initJobSet, CachePool cachePool,boolean useMacAddressImplForUUID)
+    {
         this.initJobSet = initJobSet;
         if(initJobSet == null)
             throw new RuntimeException("Init job set cannot be null");
@@ -53,38 +54,42 @@ public class Workflow {
         Map<String,ICache> cacheMap = this.cachePool.getCacheMap();
 
 
-        for(Map.Entry<String,ICache> entry: cacheMap.entrySet()){
-
+        for(Map.Entry<String,ICache> entry: cacheMap.entrySet())
+        {
             ICache cache = entry.getValue();
-            workflowLogger.debug(cache.getName());
-            workflowLogger.debug("Checking whether cache is refreshable for first time run.");
+            workflowLogger.debug("Checking whether cache is refreshable for first time run. : {} ",cache.getName());
 
             if(IRefreshable.class.isAssignableFrom(entry.getValue().getClass())){
 
-                workflowLogger.debug("The cache is refreshable,running refresh for first time."
-                                      + IRefreshable.class);
+                workflowLogger.debug("The cache is refreshable IRefreshable ,running refresh for first time for: {}",
+                                      cache.getName());
+
                 IRefreshable refreshableCache = (IRefreshable)entry.getValue();
-                try{
+
+                try
+                {
                     refreshableCache.refresh();
                 }
-                catch(RefreshException re){
-                    workflowLogger.error("Exception in refreshable cache first run", re);
-                    throw new RuntimeException("Exception in refreshable cache first run",re);
+                catch(RefreshException re)
+                {
+                    workflowLogger.error("Exception in refreshable cache first run ", re);
+                    throw new RuntimeException("Exception in refreshable cache first run ",re);
                 }
             }
         }
 
-        workflowLogger.debug("Going to run timer task for each of the refreshable cache.Total Cache map size is:");
-        workflowLogger.debug(String.valueOf(cacheMap.size()));
+        workflowLogger.debug("Going to run timer task for each of the refreshable cache.Total Cache map size is: {}",
+                              String.valueOf(cacheMap.size()));
 
-        for(Map.Entry<String,ICache> entry: cacheMap.entrySet()){
+        for(Map.Entry<String,ICache> entry: cacheMap.entrySet())
+        {
 
-            if(IRefreshable.class.isAssignableFrom(entry.getValue().getClass())){
-
+            if(IRefreshable.class.isAssignableFrom(entry.getValue().getClass()))
+            {
                 workflowLogger.debug("The cache is refreshable, assigning refresh method to timer thread.");
                 IRefreshable refreshableCache = (IRefreshable)entry.getValue();
                 CacheReloadTimerTask timerTask = new CacheReloadTimerTask(workflowLogger,refreshableCache,refreshableCache.getName());
-                Timer timer = new Timer();
+                Timer timer = new Timer("Timer-" + refreshableCache.getName());
                 timer.schedule(timerTask,0,refreshableCache.getRefreshInterval());
                 this.cacheReloadTimerList.add(timer);
                 workflowLogger.debug("Created and added timer task to list");
@@ -97,8 +102,8 @@ public class Workflow {
         this.useMacAddressImplForUUID = useMacAddressImplForUUID;
     }
 
-    public void executeRequest(HttpServletRequest request, HttpServletResponse response) {
-
+    public void executeRequest(HttpServletRequest request, HttpServletResponse response)
+    {
         Context context = new Context(this.useMacAddressImplForUUID);
         context.setValue(CONTEXT_REQUEST_KEY, request);
         context.setValue(CONTEXT_RESPONSE_KEY, response);
@@ -108,15 +113,13 @@ public class Workflow {
 
         JobSet currentJobSet = initJobSet;
 
-        if(workflowLogger.isDebugEnabled())
-            workflowLogger.debug("Starting job set: {} ", currentJobSet.getName());
+        workflowLogger.debug("Starting job set: {} ", currentJobSet.getName());
 
         while(currentJobSet != null)
         {
             boolean successCode = currentJobSet.execute(context, metrics);
 
-            if(workflowLogger.isDebugEnabled())
-                workflowLogger.debug("The current job set {} executed with success code as : {} ",currentJobSet.getName(), successCode);
+            workflowLogger.debug("The current job set {} executed with success code as : {} ",currentJobSet.getName(), successCode);
 
             if(!successCode)
                 metrics.incrementTotalFailures();

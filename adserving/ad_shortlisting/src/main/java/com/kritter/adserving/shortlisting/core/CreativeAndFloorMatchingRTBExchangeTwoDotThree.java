@@ -2,8 +2,10 @@ package com.kritter.adserving.shortlisting.core;
 
 import com.kritter.adserving.shortlisting.utils.CreativeUtils;
 import com.kritter.adserving.thrift.struct.NoFillReason;
-import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestDeviceDTO;
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
 import com.kritter.constants.OpenRTBParameters;
+import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
+import com.kritter.entity.reqres.entity.AdExchangeInfo;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.core.workflow.Context;
 import com.kritter.entity.reqres.entity.Request;
@@ -17,14 +19,18 @@ import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateFloorPr
 import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateNative;
 import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateRichMediaType;
 import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateVideo;
-import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionBannerObjectDTO;
-import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
-import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO;
+import com.kritter.common.caches.advinfo_upload_cache.AdvInfoUploadCache;
+import com.kritter.common.caches.advinfo_upload_cache.entity.AdvInfoUploadCacheEntity;
+import com.kritter.common.caches.adxbasedexchanges_metadata_cache.AdxBasedExchangesMetadataCache;
+import com.kritter.common.caches.adxbasedexchanges_metadata_cache.entity.AdxBasedMetadataCacheEntity;
+import com.kritter.common.caches.banner_upload_cache.BannerUploadCache;
 import com.kritter.common.caches.native_icon_cache.NativeIconCache;
 import com.kritter.common.caches.native_screenshot_cache.NativeScreenshotCache;
 import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
 import com.kritter.common.caches.video_info_cache.VideoInfoCache;
+import com.kritter.common.caches.video_upload_cache.VideoUploadCache;
 import com.kritter.common.site.entity.Site;
+import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.serving.demand.cache.*;
 import com.kritter.serving.demand.entity.*;
@@ -65,6 +71,13 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
     private String adNoFillReasonMapKey;
     private VideoInfoCache videoInfoCache;
     private List<Integer> openRTBBidRequestParameterCodeList;
+    private BannerUploadCache bannerUploadCache;
+    private VideoUploadCache videoUploadCache;
+    private AdvInfoUploadCache advInfoUploadCache;
+    private AdxBasedExchangesMetadataCache adxBasedExchangeMetadataCache;
+    private static final String CTRL_A = String.valueOf((char)1);
+
+
 
     public CreativeAndFloorMatchingRTBExchangeTwoDotThree(
                                                           String loggerName,
@@ -78,7 +91,11 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                                                           NativeScreenshotCache nativeScreenshotCache,
                                                           String adNoFillReasonMapKey,
                                                           VideoInfoCache videoInfoCache,
-                                                          List<Integer> openRTBBidRequestParameterCodeList
+                                                          List<Integer> openRTBBidRequestParameterCodeList,
+                                                          BannerUploadCache bannerUploadCache,
+                                                          VideoUploadCache videoUploadCache,
+                                                          AdvInfoUploadCache advInfoUploadCache,
+                                                          AdxBasedExchangesMetadataCache adxBasedExchangeMetadataCache
                                                          )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -94,6 +111,11 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
         this.videoInfoCache = videoInfoCache;
         this.openRTBBidRequestParameterCodeList = openRTBBidRequestParameterCodeList;
+        this.bannerUploadCache = bannerUploadCache;
+        this.videoUploadCache = videoUploadCache;
+        this.advInfoUploadCache = advInfoUploadCache;
+        this.adxBasedExchangeMetadataCache = adxBasedExchangeMetadataCache;
+
     }
 
     /**
@@ -160,16 +182,29 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
         Float averageFloorPrice = 0.0f;
         int averageFloorPriceCounter = 0;
         boolean bannerOrRichMediaRequired = false;
+        int pubIncId = request.getSite().getPublisherIncId();
+        AdxBasedExchangesMetadata adxBased = null;
+        if(this.adxBasedExchangeMetadataCache != null){
+        	AdxBasedMetadataCacheEntity ace = this.adxBasedExchangeMetadataCache.query(pubIncId+"");
+        	if(ace != null){
+        		adxBased = ace.getAbem();
+        	}
+        }
 
         for(BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs)
         {
+            /*Populate pmp information to our request object.*/
+            BidRequestPMPDTO bidRequestPMPDTO = bidRequestImpressionDTO.getBidRequestPMPDTO();
+            setPrivateDealInfoInRequest(bidRequestPMPDTO,request,bidRequestImpressionDTO.getBidRequestImpressionId());
+
             if(bidRequestImpressionDTO.getBidRequestImpressionNativeObjectDTO() != null){
                 ValidateNative.checkNative(bidRequestImpressionDTOs, site, request, logger, response, adEntityCache, creativeCache, nativeIconCache,
                         nativeScreenshotCache);
                 return;
             }
             if(bidRequestImpressionDTO.getBidRequestImpressionVideoObject()!= null){
-                ValidateVideo.checkVideo(bidRequestImpressionDTOs, site, request, logger, response, adEntityCache, creativeCache, videoInfoCache);
+                ValidateVideo.checkVideo(bidRequestImpressionDTOs, site, request, logger, response, adEntityCache, 
+                		creativeCache, videoInfoCache, adxBased, this.videoUploadCache, this.advInfoUploadCache);
                 return;
             }
             BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO =
@@ -235,6 +270,26 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                             responseAdInfo.getAdId());
                     continue;
                 }
+                if(adxBased != null && adxBased.isAdvertiser_upload()){
+                	int advId = adEntity.getAccountId();
+            		if(this.advInfoUploadCache == null){
+            			ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as advInfoUploadCache null", advId);
+            			continue;
+            		}
+            		AdvInfoUploadCacheEntity bue = this.advInfoUploadCache.query(pubIncId+CTRL_A+advId);
+                	if(bue ==null){
+                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as AdvInfoUploadCacheEntity  null", advId);
+            			continue;
+                	}
+                	if(bue.getMua() == null){
+                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  null", advId);
+            			continue;
+                	}
+                	if(AdxBasedExchangesStates.APPROVED.getCode() != bue.getMua().getAdxbasedexhangesstatus()){
+                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  not Approved", advId);
+            			continue;                        		
+                	}
+                }
 
                 int adId = adEntity.getAdIncId();
 
@@ -276,7 +331,8 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                 //first sort banner uri ids on size and then use.
                 List<CreativeBanner> creativeBannerList = new ArrayList<CreativeBanner>();
                 Integer bannerUriIds[] = ValidateCreativeSize.fetchBannerUids(logger, creative, 
-                        creativeBannerCache, creativeBannerList, comparator);
+                        creativeBannerCache, creativeBannerList, comparator,
+                        request, adxBased, this.bannerUploadCache);
                 /**
                  * Size check required only if bid request has size and if ad is not richmedia.
                  * Also if request has available width and height arrays then use them for size
@@ -300,11 +356,11 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
 
                 if(
                         isBannerAllowed                                 &&
-                                null != bannerUriIds                            &&
-                                bannerUriIds.length > 0                         &&
-                                requestSpecifiesSize                            &&
-                                !creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA)
-                        )
+                        null != bannerUriIds                            &&
+                        bannerUriIds.length > 0                         &&
+                        requestSpecifiesSize                            &&
+                        !creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA)
+                  )
                 {
                     logger.debug("Requesting width:{}, height:{}, creative's banners size:{} ",
                             width,height,creative.getBannerUriIds().length);
@@ -521,16 +577,12 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
 
                 Campaign campaign = campaignCache.query(adEntity.getCampaignIncId());
 
-                StringBuffer errorMessage = new StringBuffer();
                 if(null == campaign)
                 {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CAMPAIGN_NOT_FOUND.getValue(), this.adNoFillReasonMapKey, context);
 
-                    errorMessage.setLength(0);
-                    errorMessage.append("FATAL!!! campaign not found for adid: ");
-                    errorMessage.append(adEntity.getId());
-                    ReqLog.errorWithDebugNew(logger, request, errorMessage.toString());
+                    logger.error("FATAL!!! campaign not found for adid: {} , campaign's flight date and budget have already been checked.", adEntity.getId());
                     continue;
                 }
                 if(ValidateFloorPrice.validate(logger, request, bidRequestImpressionDTO, isBannerAllowed, 
@@ -541,7 +593,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                             NoFillReason.ECPM_FLOOR_UNMET.getValue(), this.adNoFillReasonMapKey, context);
 
                     ReqLog.debugWithDebugNew(logger, request, "Ad id : {} has ecpm {} while the floor is {}. The ad " +
-                            "doesn't meet ecpm floor, skipping it.", adId, responseAdInfo.getEcpmValue(),
+                            "doesn't meet ecpm floor or pmp condition, skipping it.", adId, responseAdInfo.getEcpmValue(),
                             bidRequestImpressionDTO.getBidFloorPrice());
 
                     if(null != bidRequestImpressionDTO.getBidFloorPrice())
@@ -665,7 +717,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
         if(
             requestedWidth.intValue()  >= creativeSlot.getCreativeSlotWidth()             &&
             requestedHeight.intValue() >= creativeSlot.getCreativeSlotHeight()            &&
-            interstitialMinimumWidth.intValue() <= creativeSlot.getCreativeSlotWidth()   &&
+            interstitialMinimumWidth.intValue() <= creativeSlot.getCreativeSlotWidth()    &&
             interstitialMinimumHeight.intValue() <= creativeSlot.getCreativeSlotHeight()
           )
         {
@@ -758,5 +810,164 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                 }
             }
         }
+    }
+
+    private void setPrivateDealInfoInRequest(
+                                              BidRequestPMPDTO bidRequestPMPDTO,
+                                              Request request,
+                                              String impressionId
+                                            )
+    {
+        if(null == bidRequestPMPDTO)
+        {
+            logger.debug("BidRequestPMPDTO missing in BidRequest, no deals can be run on this bid request");
+            return;
+        }
+
+        logger.debug("PrivateMarketplace entity is present inside bid request...");
+
+        if(
+           null != bidRequestPMPDTO.getPrivateAuctionDeals() &&
+           bidRequestPMPDTO.getPrivateAuctionDeals().length > 0
+          )
+        {
+            logger.debug("Deals are present in bid request and size is {} inside " +
+                         "CreativeAndFloorMatchingRTBExchangeTwoDotThree",
+                          bidRequestPMPDTO.getPrivateAuctionDeals().length);
+
+            for(BidRequestDealDTO deal : bidRequestPMPDTO.getPrivateAuctionDeals())
+            {
+                Double floor = null;
+                if(null != deal.getBidFloor())
+                    floor = deal.getBidFloor().doubleValue();
+
+                AdExchangeInfo.PrivateDealInfo privateDealInfo =
+                        new AdExchangeInfo.PrivateDealInfo
+                                                         (
+                                                          deal.getDealId(),
+                                                          floor,
+                                                          deal.getBidFloorCurrency(),
+                                                          deal.getAuctionType()
+                                                         );
+
+                request.addToAdExchangeInfoPrivateDealInfo(impressionId,privateDealInfo);
+            }
+        }
+        else
+            logger.debug("No deals to bid on inside CreativeAndFloorMatchingRTBExchangeTwoDotThree,the ads targeting " +
+                         "deals will be skipped/filtered.");
+
+    }
+
+    /**
+     * if ad is deal id targeted then run only on that deal id,
+     * if impression has deal id then only that deal id targeted
+     * ad can be selected.
+     * @param site
+     * @param adEntity
+     * @param request
+     * @return
+     */
+    public boolean doesImpressionHasPMPDealIdForAdUnit(
+                                                        String impressionId,
+                                                        Site site,
+                                                        AdEntity adEntity,
+                                                        Request request,
+                                                        ResponseAdInfo responseAdInfo
+                                                      )
+    {
+        ReqLog.infoWithDebugNew(logger, request, "Inside doesImpressionHasPMPDealIdForAdUnit of CreativeAndFloorMatchingRTBExchangeTwoDotThree ...");
+
+        Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet =
+                request.fetchPrivateDealInfoSetForImpressionId(impressionId);
+
+        boolean impressionNeedsPMPAds = ((null != privateDealInfoSet) && privateDealInfoSet.size() > 0);
+
+        String publisherId = site.getPublisherId();
+        Map<String,String[]> adUnitPMPDealIdInfoMap = adEntity.getTargetingProfile().getPmpDealIdInfoMap();
+
+        boolean adTargetsDealId = (null != adUnitPMPDealIdInfoMap && adUnitPMPDealIdInfoMap.size() > 0);
+
+        logger.debug("Ad: {} targets pmp deals : {} and impression has pmp info: {} of size ",
+                      adEntity.getAdGuid(), adTargetsDealId,impressionNeedsPMPAds,
+                      (null == privateDealInfoSet) ? 0: privateDealInfoSet.size());
+
+        String[] dealIdArrayForThisPublisher = null;
+
+        logger.debug("Getting deal map for publisher: {} ", publisherId);
+
+        if(null != adUnitPMPDealIdInfoMap)
+            dealIdArrayForThisPublisher = adUnitPMPDealIdInfoMap.get(publisherId);
+
+        logger.debug("Deal id array for publisher by this ad , length: {} ",
+                null == dealIdArrayForThisPublisher ? 0 : dealIdArrayForThisPublisher.length);
+
+        if(
+            impressionNeedsPMPAds && adTargetsDealId && null != dealIdArrayForThisPublisher &&
+            dealIdArrayForThisPublisher.length > 0
+          )
+        {
+            logger.debug("Impression Id:{} has deal id specified, looking if ad:{} is targeting deal id set: {} ",
+                          impressionId,adEntity.getAdGuid(),fetchDealIdString(privateDealInfoSet));
+
+            if(request.isRequestForSystemDebugging())
+            {
+                request.addDebugMessageForTestRequest
+                        (
+                         "Impression Id:"+impressionId+" has deal id specified, looking if " +
+                         "ad:"+adEntity.getAdGuid()+" is targeting deal id set:  "           +
+                          fetchDealIdString(privateDealInfoSet)
+                        );
+            }
+
+            for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
+            {
+                logger.debug("Private deal info from exchange : {} ", privateDealInfo.getDealId());
+
+                for(String dealIdByAd : dealIdArrayForThisPublisher)
+                {
+                    logger.debug("Private deal info from ad : {} ", dealIdByAd);
+
+                    if(
+                            privateDealInfo.getDealId().equalsIgnoreCase(dealIdByAd) &&
+                                    (null == privateDealInfo.getBidFloor() ||
+                                        (
+                                            null != privateDealInfo.getBidFloor() &&
+                                            privateDealInfo.getBidFloor().compareTo(responseAdInfo.getEcpmValue()) <= 0
+                                        )
+                                    )
+                            )
+                    {
+                        ReqLog.debugWithDebugNew(logger, request, "DealIdByAd: {} matches and fits deal id in impression:{} ",
+                                                 dealIdByAd,privateDealInfo.getDealId());
+                        responseAdInfo.setDealId(dealIdByAd);
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if(!impressionNeedsPMPAds && !adTargetsDealId)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private String fetchDealIdString(Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet)
+    {
+        if(null == privateDealInfoSet || privateDealInfoSet.size() <= 0)
+            return "";
+
+        StringBuffer sb = new StringBuffer();
+
+        for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
+        {
+            sb.append(privateDealInfo.getDealId());
+            sb.append(" , ");
+        }
+
+        return sb.toString();
     }
 }

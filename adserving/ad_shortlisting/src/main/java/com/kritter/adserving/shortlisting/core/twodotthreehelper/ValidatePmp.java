@@ -45,7 +45,7 @@ public class ValidatePmp {
 
         boolean adTargetsDealId = (null != adUnitPMPDealIdInfoMap && adUnitPMPDealIdInfoMap.size() > 0);
 
-        logger.debug("Ad: {} targets pmp deals : {} and impression has pmp info: {} of size ",
+        logger.debug("Ad: {} targets pmp deals : {} and impression has pmp info: {} of size : {} ",
                       adEntity.getAdGuid(), adTargetsDealId,impressionNeedsPMPAds,
                       (null == privateDealInfoSet) ? 0: privateDealInfoSet.size());
 

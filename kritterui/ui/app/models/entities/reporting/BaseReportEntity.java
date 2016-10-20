@@ -132,6 +132,13 @@ public class BaseReportEntity {
     public void setTotal_request(boolean total_request) {
         reportingEntity.setTotal_request(total_request);
     }
+    public boolean isTotal_floor() {
+        return reportingEntity.isTotal_floor();
+    }
+
+    public void setTotal_floor(boolean total_floor) {
+        reportingEntity.setTotal_floor(total_floor);
+    }
 
     public boolean isTotal_impression() {
         return reportingEntity.isTotal_impression();

@@ -23,6 +23,9 @@ public class ValidateFloorPrice {
 
         ReqLog.requestDebugNew(request, " Ecpm floor value asked by exchange is : "+bidFloorForImpression);
         //for the case of creative being banner.
+        logger.debug("isBannerAllowed: {} , bidFloorForImpression: {} , ecpmValueOfAd: {} , " +
+                     "creativeBanner is null ? : {} ", isBannerAllowed,bidFloorForImpression,
+                      responseAdInfo.getEcpmValue(), (null == creativeBannerToUse));
         if
                 (
                 isBannerAllowed                                                              &&
@@ -64,10 +67,17 @@ public class ValidateFloorPrice {
                                 null == bidFloorForImpression                                          ||
                                         (
                                                 null != bidFloorForImpression &&
-                                                        bidFloorForImpression.compareTo(responseAdInfo.getEcpmValue()) <= 0
+                                                bidFloorForImpression.compareTo(responseAdInfo.getEcpmValue()) <= 0
                                         )
                         )                                                                          &&
-                        creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA)
+                        creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA)              &&
+                        ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(
+                                                                        bidRequestImpressionDTO.getBidRequestImpressionId(),
+                                                                        request.getSite(),
+                                                                        adEntity,
+                                                                        request,
+                                                                        responseAdInfo,logger
+                                                                       )
                 )
         {
             ReqLog.debugWithDebugNew(logger, request, "Qualifying richmedia ad with qualifying ecpm value: {} found for impressionId: {} with bidFloor as: {} ",

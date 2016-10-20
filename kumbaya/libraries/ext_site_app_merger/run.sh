@@ -31,7 +31,7 @@ if [ "$3" = "" ]; then
 fi
 
 if [ "$4" = "" ]; then
-    dbname=optimad
+    dbname=kritter
 fi
 
 if [ "$5" = "" ]; then

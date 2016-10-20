@@ -11,7 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 public class AdImpressionCounter implements EventCounter {
-    private static final Logger logger = LoggerFactory.getLogger(EventCounter.class);
+    private final Logger logger;
+
+    public AdImpressionCounter(String loggerName) {
+        this.logger = LoggerFactory.getLogger(loggerName);
+    }
 
     /***
      * Take a list of post impression request response objects and the event type to count.

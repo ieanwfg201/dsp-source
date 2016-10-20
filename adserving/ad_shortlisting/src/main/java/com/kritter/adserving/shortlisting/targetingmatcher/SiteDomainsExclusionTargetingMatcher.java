@@ -100,12 +100,10 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
             {
                 //just in case if ad-domain is sub domain, and defined
                 //blocked domain is top level domain.
-                StringBuffer sb = new StringBuffer(DOT);
-                sb.append(blockedDomain);
-
-                if( blockedDomain.equalsIgnoreCase(adDomain) ||
-                		StringUtils.indexOf(sb.toString(), adDomain) != -1
-                        )
+                if(
+                    blockedDomain.equalsIgnoreCase(adDomain) ||
+                    blockedDomain.contains(adDomain)
+                  )
                 {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                             this.adNoFillReasonMapKey, context);

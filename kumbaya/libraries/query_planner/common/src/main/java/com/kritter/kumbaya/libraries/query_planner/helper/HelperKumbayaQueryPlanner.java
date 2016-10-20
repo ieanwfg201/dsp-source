@@ -145,6 +145,27 @@ public class HelperKumbayaQueryPlanner {
     		default:
     			return null;
     		}    		
+    	}else if(reportingDTableType == ReportingTableType.EXCHANGE){
+    		switch(frequency){
+    		case TODAY:
+    			return TABLE.exchange_hourly;
+    		case YESTERDAY:
+    			return TABLE.exchange_daily;
+    		case LAST7DAYS:
+    			return TABLE.exchange_daily;
+    		case CURRENTMONTH:
+    			return TABLE.exchange_daily;
+    		case LASTMONTH:
+    			return TABLE.exchange_daily;
+    		case ADMIN_INTERNAL_HOURLY:
+    			return TABLE.exchange_hourly;
+    		case DATERANGE:
+    			return TABLE.exchange_daily;
+    		case MONTHLY:
+    			return TABLE.exchange_daily;
+    		default:
+    			return null;
+    		}    		
     	}else if(reportingDTableType == ReportingTableType.FASTPATH){
     		return TABLE.fast_path;
     	}else{

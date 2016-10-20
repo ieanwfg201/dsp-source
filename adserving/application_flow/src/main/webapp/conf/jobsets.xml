@@ -116,6 +116,7 @@
         <constructor-arg>
             <list>
                 <ref bean="thrift_logger"/>
+                <ref bean="exchange_thrift_logger_job"/>
                 <ref bean="user_id_update_job"/>
             </list>
         </constructor-arg>

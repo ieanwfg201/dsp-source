@@ -93,18 +93,25 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
 
             Long updateTime = resultSet.getTimestamp("last_modified").getTime();
 
-            return new Campaign.CampaignBuilder(id,guid,accountId,
-                                                statusId,
-                                                startDate,endDate,
-                                                dailyBudgetRemaining,
-                                                campaignTotalBalance,
-                                                campaignAdvertiserDailyRemainingBudget,
-                                                campaignAdvertiserTotalRemainingBudget,
-                                                accountBalance,
-                                                accountAdvTotalBudget,
-                                                isMarkedForDeletion,
-                                                updateTime)
-                    .setFrequencyCap(frequencyCapStr)
+            return new Campaign.CampaignBuilder(
+                    id,
+                    guid,
+                    accountId,
+                    statusId,
+                    startDate,endDate,
+                    dailyBudgetRemaining,
+                    campaignTotalBalance,
+                    campaignAdvertiserDailyRemainingBudget,
+                    campaignAdvertiserTotalRemainingBudget,
+                    accountBalance,
+                    accountAdvTotalBudget,
+                    isMarkedForDeletion,
+                    updateTime
+            ).setFrequencyCap(frequencyCapStr)
+                    .setCampaignDailyBudget(campaignDailyBudget)
+                    .setAbsolutePayoutThreshold(absolutePayoutThreshold)
+                    .setPercentPayoutThreshold(percentPayoutThreshold)
+                    .setCampaignPayout(campaignPayout)
                     .build();
         }
         catch(Exception e)
