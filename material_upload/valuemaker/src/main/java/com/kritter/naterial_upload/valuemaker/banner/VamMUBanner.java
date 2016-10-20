@@ -217,14 +217,12 @@ public class VamMUBanner implements MUBanner {
                 ResultSet rset = pstmt.executeQuery();
                 String split[] = vqe.getResource_uri().split("/");
                 String[] materialurl = {properties.getProperty("cdn_url").toString() + split[split.length - 1]};
-                DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd");
-
                 java.net.URL url = new java.net.URL(vqe.getLanding_url());
                 String host = url.getHost();
                 String[] Adomain_list = {host};
                 VamMaterialUploadEntity bannerEntity = new VamMaterialUploadEntity(vqe.getCreativeGuid(),
                         "{!vam_click_url}{!dsp_click_url}" + vqe.getLanding_url(), vqe.getWidth(),
-                        vqe.getHeight(), 1, 1, vqe.getCategory(), Adomain_list, materialurl, "title", "test");
+                        vqe.getHeight(), 1, 1, vqe.getCategory(), Adomain_list, materialurl);
 
                 String newInfoStr = JSON.toJSONString(bannerEntity);
                 if (rset.next()) {
