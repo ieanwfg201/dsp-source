@@ -39,7 +39,8 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
     }
 
     @Override
-    public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context) {
+    public Set<Integer> shortlistAds(Set<Integer> adIdSet, Request request, Context context)
+    {
         logger.info("Inside filterAdIdsForCampaignFlightDatesAndBudget of AdTargetingMatcher...");
         ReqLog.requestDebugNew(request, "Inside filterAdIdsForCampaignFlightDatesAndBudget of AdTargetingMatcher...");
 
@@ -71,39 +72,83 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
 
             long currentTime = System.currentTimeMillis();
 
-            StringBuffer logMessage = new StringBuffer();
-
             if(
                     (campaign.getStartDate().getTime() <= currentTime) &&
-                            (campaign.getEndDate().getTime() >= currentTime) &&
-                            (campaign.getDailyBudgetRemaining() > Budget.min_budget) &&
-                            (campaign.getCampaignTotalBudgetRemaining() > Budget.min_budget) &&
-                            (campaign.getAccountTotalBudgetRemaining() > Budget.min_budget) &&
-                            (campaign.getAccountAdvertiserTotalBudgetRemaining() > Budget.min_budget) &&
-                            (campaign.getCampaignAdvertiserDailyRemainingBudget() > Budget.min_budget) &&
-                            (campaign.getCampaignAdvertiserTotalRemainingBudget() > Budget.min_budget)
-                    )
+                    (campaign.getEndDate().getTime() >= currentTime) &&
+                    (campaign.getDailyBudgetRemaining() > Budget.min_budget) &&
+                    (campaign.getCampaignTotalBudgetRemaining() > Budget.min_budget) &&
+                    (campaign.getAccountTotalBudgetRemaining() > Budget.min_budget) &&
+                    (campaign.getAccountAdvertiserTotalBudgetRemaining() > Budget.min_budget) &&
+                    (campaign.getCampaignAdvertiserDailyRemainingBudget() > Budget.min_budget) &&
+                    (campaign.getCampaignAdvertiserTotalRemainingBudget() > Budget.min_budget)
+              )
             {
-                logMessage.append("The campaign is valid to go ahead in terms of flight dates and budget values,CampaignId: ");
-                logMessage.append(campaign.getCampaignGuid());
+                // If campaign's payout currently exceeds the total burn, drop it.
+                // TODO : Remove once we have a proper solution in place
+                if(campaign.getCampaignDailyBudget() != null)
+                {
+                    double dailyBudgetRemaining = campaign.getDailyBudgetRemaining() == null ? 0.0 :
+                            campaign.getDailyBudgetRemaining();
+                    double currentCampaignPayout = campaign.getCampaignDailyBudget() - dailyBudgetRemaining -
+                            campaign.getCurrentPayout();
 
-                ReqLog.debugWithDebugNew(logger,request, logMessage.toString());
+                    ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, daily budget remaining : {}, " +
+                            "current campaign payout : {}, daily budget remaining : {}.", campaign.getId(),
+                            dailyBudgetRemaining, campaign.getCurrentPayout(), campaign.getCampaignDailyBudget());
+
+                    if(
+                        campaign.getAbsolutePayoutThreshold() != null &&
+                        currentCampaignPayout + campaign.getAbsolutePayoutThreshold() < campaign.getCampaignPayout()
+                      )
+                    {
+                        ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, current burn exceeds payout " +
+                                " by absolute threshold {}. Will get started again after cache refresh. Dropping it.",
+                                campaignId, campaign.getAbsolutePayoutThreshold());
+
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                this.adNoFillReasonMapKey, context);
+
+                        continue;
+                    }
+
+                    if( campaign.getPercentPayoutThreshold() != null &&
+                        currentCampaignPayout + campaign.getPercentPayoutThreshold() < campaign.getCampaignPayout()
+                      )
+                    {
+                        ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, current burn exceeds payout " +
+                                " by percent threshold {}. Will get started again after cache refresh. Dropping it.",
+                                campaignId, campaign.getPercentPayoutThreshold());
+
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                this.adNoFillReasonMapKey, context);
+
+                        continue;
+                    }
+                }
+                else
+                {
+                    ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, daily budget is null.",
+                                             campaign.getId());
+                }
+
+                ReqLog.debugWithDebugNew(logger,request,"The campaign is valid to go ahead in terms of flight dates " +
+                                         "and budget values,CampaignId: {} ",campaign.getCampaignGuid());
 
                 activeAdIds.add(adId);
             }
             else
             {
-                logMessage.setLength(0);
-                logMessage.append("The campaign FAILS flight dates and budget checks,CampaignId: ");
-                logMessage.append(campaign.getCampaignGuid());
-                
-                logger.debug(logMessage.toString());
-                if(request.isRequestForSystemDebugging()){
-                	request.addDebugMessageForTestRequest(logMessage.toString());
+                logger.debug("The campaign FAILS flight dates and budget checks,CampaignId: {} ",
+                              campaign.getCampaignGuid());
+
+                if(request.isRequestForSystemDebugging())
+                {
+                    request.addDebugMessageForTestRequest("The campaign FAILS flight dates and budget checks,CampaignId: ");
+                    request.addDebugMessageForTestRequest(campaign.getCampaignGuid());
                 }
 
                 AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
-                        this.adNoFillReasonMapKey, context);
+                                                              this.adNoFillReasonMapKey, context);
             }
         }
 

@@ -584,20 +584,21 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotZero implements CreativeAn
 
                 Campaign campaign = campaignCache.query(adEntity.getCampaignIncId());
 
-                StringBuffer errorMessage = new StringBuffer();
                 if(null == campaign)
                 {
-                    errorMessage.setLength(0);
-                    errorMessage.append("FATAL!!! campaign not found for adid: ");
-                    errorMessage.append(adEntity.getId());
-                    ReqLog.errorWithDebugNew(logger, request, errorMessage.toString());
+                    logger.error("FATAL!!! campaign not found for adid: {} , campaign's flight date and budget have already been checked.", adEntity.getId());
                     continue;
                 }
 
                 //lastly use bidfloor value of impression to see if ad qualifies.
                 Double bidFloorForImpression = bidRequestImpressionDTO.getBidFloorPrice();
 
-                ReqLog.requestDebugNew(request, " Ecpm floor value asked by exchange is : "+bidFloorForImpression);
+                logger.debug("Ecpm floor value asked by exchange is : {} ", bidFloorForImpression);
+                if(request.isRequestForSystemDebugging())
+                {
+                    request.addDebugMessageForTestRequest("Ecpm floor value asked by exchange is : ");
+                    request.addDebugMessageForTestRequest(String.valueOf(bidFloorForImpression));
+                }
 
                 boolean adFloorPriceMet = false;
                 //for the case of creative being banner.

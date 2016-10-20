@@ -1,9 +1,11 @@
 package com.kritter.nosql.user.recenthistory;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.kritter.abstraction.cache.interfaces.ICache;
 import com.kritter.entity.user.recenthistory.RecentClickHistoryProvider;
 import com.kritter.user.thrift.struct.ClickEvent;
 import com.kritter.user.thrift.struct.RecentClickHistory;
+import com.kritter.utils.common.ThreadLocalUtils;
 import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
 import com.kritter.utils.nosql.common.NoSqlNamespaceTable;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache, RecentClickHistoryProvider {
@@ -66,7 +69,8 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
         this.attributeNameSet = new HashSet<String>();
         this.attributeNameSet.add(clickHistoryAttributeName);
 
-        this.updaterService = Executors.newFixedThreadPool(threadCount);
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat(name + "-executor-%d").build();
+        this.updaterService = Executors.newFixedThreadPool(threadCount, namedThreadFactory);
     }
 
     /**
@@ -204,6 +208,8 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
                 userRecentClickHistoryCache.updateClickHistoryForUser(this.kritterUserId, this.eventSet);
             } catch (Exception e) {
                 logger.error("Exception occurred in recent history updater. {}", e);
+            } finally {
+                ThreadLocalUtils.cleanThreadLocalsOfCurrentThread(logger);
             }
         }
     }
@@ -262,6 +268,7 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
 
     @Override
     public void destroy() {
+        noSqlNamespaceOperationsInstance.destroy();
         updaterService.shutdown();
         try {
             if(!updaterService.awaitTermination(60, TimeUnit.SECONDS)) {

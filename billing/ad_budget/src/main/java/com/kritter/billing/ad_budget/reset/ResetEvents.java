@@ -22,8 +22,8 @@ public class ResetEvents {
             "campaign WHERE campaign.guid = campaign_impressions_budget.campaign_guid AND " +
             "campaign.status_id = 1";
 
-    private static String IMPRESSION_CAMPAIGN_BUDGET_RESET_QUERY = "UPDATE campaign_impressions_budget SET impressions_accrued=0, " +
-            "last_modified=? WHERE campaign_guid=?";
+    private static String IMPRESSION_CAMPAIGN_BUDGET_RESET_QUERY = "UPDATE campaign_impressions_budget SET " +
+            "impressions_accrued=0, last_modified=? WHERE campaign_guid=?";
 
     private static String IMPRESSION_AD_BUDGET_FETCH_QUERY = "SELECT ad_budget.ad_guid as entity_guid, " +
             "ad_budget.impression_cap as event_cap, ad_budget.time_window_hours as time_window_hours FROM ad_budget, " +
@@ -49,8 +49,8 @@ public class ResetEvents {
     }
 
     /***
-     * Fetches all entity budget rows from the database for active entities. The query for fetching the entity budget is also passed
-     * as an argument.
+     * Fetches all entity budget rows from the database for active entities. The query for fetching the entity budget
+     * is also passed as an argument.
      * @param connection Database connection
      * @param fetchQuery query to fetch entity budget. The result of the query must have rows such that they have three
      *                   columns with the following names :
@@ -94,8 +94,9 @@ public class ResetEvents {
     }
 
     /***
-     * Given an entity budget object and hour of day, determines whether the impressions accrued for this entity should be reset
-     * Time window duration must not be more than 24 hours.
+     * Given an entity budget object and hour of day, determines whether the impressions accrued for this entity should
+     * be reset
+     * <b>Time window duration must not be more than 24 hours.</b>
      * The impressions accrued field is reset in one of the following cases
      *    - If the current hour of day is divisible by the time window duration
      *    - Start of day (0th hour, which is anyways divisible by any time window duration. This is to highlight the
@@ -117,20 +118,21 @@ public class ResetEvents {
 
         // The impression cap is for the duration of the entity
         if(entityBudget.getTimeWindow() == 0) {
-            logger.debug("Time window for entity id : {} is 0. Impression cap for the entire duration of campaign, hence not resetting.", entityBudget.getEntityGuid());
+            logger.debug("Time window for entity id : {} is 0. Impression cap for the entire duration of campaign, " +
+                    "hence not resetting.", entityBudget.getEntityGuid());
             return false;
         }
 
         // If current hour of day is divisible by time window, reset budget
         if((currentHourOfDay % entityBudget.getTimeWindow()) == 0) {
-            logger.debug("Entity id : {}, time window : {}, current hour : {}. Resetting!!", entityBudget.getEntityGuid(),
-                    entityBudget.getTimeWindow(), currentHourOfDay);
+            logger.debug("Entity id : {}, time window : {}, current hour : {}. Resetting!!",
+                    entityBudget.getEntityGuid(), entityBudget.getTimeWindow(), currentHourOfDay);
             return true;
         }
 
         // If not divisible return false
-        logger.debug("Entity id : {}, time window : {}, current hour : {}. Not resetting!!", entityBudget.getEntityGuid(),
-                entityBudget.getTimeWindow(), currentHourOfDay);
+        logger.debug("Entity id : {}, time window : {}, current hour : {}. Not resetting!!",
+                entityBudget.getEntityGuid(), entityBudget.getTimeWindow(), currentHourOfDay);
         return false;
     }
 
@@ -207,8 +209,8 @@ public class ResetEvents {
     }
 
     /***
-     * Top level function which combines the functionality of the other functions. Fetches entity budgets from the database,
-     * finds which entities to reset impressions for and then resets the impressions for those entities
+     * Top level function which combines the functionality of the other functions. Fetches entity budgets from the
+     * database, finds which entities to reset impressions for and then resets the impressions for those entities
      * @param connection Database connection
      */
     public void readEntityBudgetsAndReset(Connection connection, PostImpressionEvent event, EntityType entity) {

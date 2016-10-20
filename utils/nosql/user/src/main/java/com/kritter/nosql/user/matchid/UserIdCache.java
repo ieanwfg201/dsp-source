@@ -1,11 +1,13 @@
 package com.kritter.nosql.user.matchid;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.kritter.abstraction.cache.interfaces.ICache;
 import com.kritter.constants.ExternalUserIdType;
 import com.kritter.entity.user.userid.InternalUserIdCreator;
 import com.kritter.entity.user.userid.UserIdProvider;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.entity.user.userid.UserIdUpdator;
+import com.kritter.utils.common.ThreadLocalUtils;
 import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
 import com.kritter.utils.nosql.common.NoSqlNamespaceTable;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -76,7 +79,10 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
         this.attributeNameSet.add(this.attributeNameUserId);
         this.priorityList = priorityList;
         this.threadCount = threadCount;
-        this.updatorService = Executors.newFixedThreadPool(this.threadCount);
+
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat(name + "-executor-%d").build();
+        this.updatorService = Executors.newFixedThreadPool(threadCount, namedThreadFactory);
+
         this.idTypesNotInPriorityList = new ArrayList<ExternalUserIdType>();
         for(ExternalUserIdType userIdType : ExternalUserIdType.values()) {
             if(!priorityList.contains(userIdType)) {
@@ -198,6 +204,7 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
         public void run() {
             logger.debug("Updating user id from runnable");
             userIdCache.updateInternalUserIdForExternalIds(externalUserIds, internalUserId);
+            ThreadLocalUtils.cleanThreadLocalsOfCurrentThread(logger);
         }
     }
 
@@ -231,7 +238,9 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
 
         NoSqlData attributeValue = new NoSqlData(this.primaryKeyDataType, internalUserId);
         Map<String, NoSqlData> attributeNameValueMap = new HashMap<String, NoSqlData>();
-        attributeNameValueMap.put(this.attributeNameUserId, attributeValue);
+
+        if(null != attributeValue && null != attributeValue.getValue())
+            attributeNameValueMap.put(this.attributeNameUserId, attributeValue);
 
         // Go through the set of external user ids and update the internal user id for each of them
         for(String externalUserId : externalUserIds)  {
@@ -262,6 +271,7 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
 
     @Override
     public void destroy() {
+        noSqlNamespaceOperationsInstance.destroy();
         // Shutdown the executor service
         updatorService.shutdown();
         try {

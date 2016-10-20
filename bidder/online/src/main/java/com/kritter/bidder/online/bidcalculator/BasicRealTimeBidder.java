@@ -111,7 +111,7 @@ public class BasicRealTimeBidder implements RealTimeBidder
             //check for budget remaining of the entity, if less , then ad cant participate in auction.
             if((servedEntityInfo.getDailyRemainingBudget() - (optimizedBidValueOfAdForThisImpression / 1000)) <
                     Budget.min_budget) {
-                logger.debug("ServedEntityInfo's budget is less than the daily budget remaining inside " +
+                logger.debug("ServedEntityInfo's remaining budget for the day is less than the calculated bid inside " +
                         "BasicRealTimeBidder for adid : {} ", servedEntityInfo.getEntityId());
                 continue;
             }

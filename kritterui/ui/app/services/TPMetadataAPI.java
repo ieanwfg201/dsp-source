@@ -17,7 +17,9 @@ import play.db.DB;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.kritter.adserving.thrift.struct.DspNoFill;
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.adserving.thrift.struct.ReqState;
 import com.kritter.api.entity.metadata.MetaField;
 import com.kritter.api.entity.metadata.MetaInput;
 import com.kritter.api.entity.metadata.MetaList;
@@ -791,6 +793,22 @@ public class TPMetadataAPI {
         ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
         NoFillReason nfr[] = NoFillReason.values();
         for (NoFillReason nfrval : nfr) {
+            optionNodes.add(new SelectOption(nfrval.name(), nfrval.name(), nfrval.name()).toJson());
+        }
+        return optionNodes;
+    }
+    public static ArrayNode reqState(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        ReqState nfr[] = ReqState.values();
+        for (ReqState nfrval : nfr) {
+            optionNodes.add(new SelectOption(nfrval.name(), nfrval.name(), nfrval.name()).toJson());
+        }
+        return optionNodes;
+    }
+    public static ArrayNode dspNofill(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        DspNoFill nfr[] = DspNoFill.values();
+        for (DspNoFill nfrval : nfr) {
             optionNodes.add(new SelectOption(nfrval.name(), nfrval.name(), nfrval.name()).toJson());
         }
         return optionNodes;

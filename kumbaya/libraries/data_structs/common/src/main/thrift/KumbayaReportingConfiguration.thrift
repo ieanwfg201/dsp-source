@@ -23,6 +23,8 @@ enum TABLE{
     channel_daily = 13,
     channel_monthly = 14,
     fast_path = 15,
+    exchange_hourly = 16,
+    exchange_daily = 17,
 }  
 
 struct SiteId {
@@ -493,6 +495,41 @@ struct AdvIncId {
     8: string return_prefix = 'advId'
 }
 
+struct CreativeFormatId {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'formatId',
+    3: string dim_table = ' creative_formats', 
+    4: string dim_column = 'id',
+    5: string dim_column_name = 'name',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'CreativeFormat',
+    8: string return_prefix = 'formatId'
+}
+
+struct Total_floor {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'total_floor',
+    6: MEMBERTYPE member_type = MEMBERTYPE.METRIC,
+    7: string uiname = 'TOTAL FLOOR',
+    8: string return_prefix = 'total_floor'
+}
+
+struct ReqState {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'reqState',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'ReqState',
+    8: string return_prefix = 'reqState'
+}
+
+struct DspNoFill {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'dspNoFill',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'DspNoFill',
+    8: string return_prefix = 'dspNoFill'
+}
+
 struct KumbayaReportingConfiguration{
     1: SiteId siteId = {'fact_table':TABLE.first_level, 'fact_column':'siteId', 'dim_table':'site', 'dim_column':'id', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'SITE NAME','return_prefix':'site','dim_guid':'guid'},
     2: DeviceId deviceId = {'fact_table':TABLE.first_level, 'fact_column':'deviceId', 'dim_table':'handset_detection_data', 'dim_column':'internal_id', 'dim_column_name':'marketing_name','member_type':MEMBERTYPE.DIMENSION, 'uiname':'Marketing Name','return_prefix':'device'},
@@ -544,5 +581,9 @@ struct KumbayaReportingConfiguration{
     48: ChannelId channelId = {'fact_table':TABLE.first_level, 'fact_column':'channelId', 'dim_table':'channel', 'dim_column':'internalid', 'dim_column_name':'channelname','member_type':MEMBERTYPE.DIMENSION,'uiname':'Channel','return_prefix':'channel'},
     49: AdpositionId adpositionId = {'fact_table':TABLE.first_level, 'fact_column':'adpositionId', 'dim_table':'ad_position', 'dim_column':'internalid', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'Adposition','return_prefix':'adposition'},
     50: Marketplace marketplace = {'fact_table':TABLE.first_level, 'fact_column':'marketplace', 'dim_table':'marketplace', 'dim_column':'id', 'dim_column_name':'pricing','member_type':MEMBERTYPE.DIMENSION,'uiname':'Marketplace','return_prefix':'marketplace'},
+    51: CreativeFormatId creativeFormatId = {'fact_table':TABLE.first_level, 'fact_column':'formatId', 'dim_table':'creative_formats', 'dim_column':'id', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'CreativeFormat','return_prefix':'formatId'},
+	52: Total_floor total_floor = {'fact_table' :TABLE.first_level, 'fact_column' : 'total_floor', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL FLOOR','return_prefix':'total_floor'},
+	53: ReqState reqState = {'fact_table':TABLE.first_level, 'fact_column':'reqState','member_type':MEMBERTYPE.DIMENSION, 'uiname':'ReqState','return_prefix':'reqState'},
+	54: DspNoFill dspNoFill = {'fact_table':TABLE.first_level, 'fact_column':'dspNoFill','member_type':MEMBERTYPE.DIMENSION, 'uiname':'DspNoFill','return_prefix':'dspNoFill'},
 }
 

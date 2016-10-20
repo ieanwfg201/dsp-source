@@ -6,6 +6,9 @@ import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestDeviceDT
 import com.kritter.constants.OpenRTBParameters;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.core.workflow.Context;
+import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
+import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
 import com.kritter.entity.reqres.entity.AdExchangeInfo;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
@@ -15,9 +18,17 @@ import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateVideo;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionBannerObjectDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO;
+import com.kritter.common.caches.advinfo_upload_cache.AdvInfoUploadCache;
+import com.kritter.common.caches.advinfo_upload_cache.entity.AdvInfoUploadCacheEntity;
+import com.kritter.common.caches.adxbasedexchanges_metadata_cache.AdxBasedExchangesMetadataCache;
+import com.kritter.common.caches.adxbasedexchanges_metadata_cache.entity.AdxBasedMetadataCacheEntity;
+import com.kritter.common.caches.banner_upload_cache.BannerUploadCache;
+import com.kritter.common.caches.banner_upload_cache.entity.BannerUploadCacheEntity;
 import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
 import com.kritter.common.caches.video_info_cache.VideoInfoCache;
+import com.kritter.common.caches.video_upload_cache.VideoUploadCache;
 import com.kritter.common.site.entity.Site;
+import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.serving.demand.cache.*;
 import com.kritter.serving.demand.entity.*;
@@ -56,6 +67,11 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
     private String adNoFillReasonMapKey;
     private VideoInfoCache videoInfoCache;
     private List<Integer> openRTBBidRequestParameterCodeList;
+    private BannerUploadCache bannerUploadCache;
+    private VideoUploadCache videoUploadCache;
+    private AdvInfoUploadCache advInfoUploadCache;
+    private AdxBasedExchangesMetadataCache adxBasedExchangeMetadataCache;
+    private static final String CTRL_A = String.valueOf((char)1);
 
     public CreativeAndFloorMatchingRTBExchangeTwoDotTwo(
                                                          String loggerName,
@@ -67,7 +83,11 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
                                                          CreativeSlotSizeCache creativeSlotSizeCache,
                                                          String adNoFillReasonMapKey,
                                                          VideoInfoCache videoInfoCache,
-                                                         List<Integer> openRTBBidRequestParameterCodeList
+                                                         List<Integer> openRTBBidRequestParameterCodeList,
+                                                         BannerUploadCache bannerUploadCache,
+                                                         VideoUploadCache videoUploadCache,
+                                                         AdvInfoUploadCache advInfoUploadCache,
+                                                         AdxBasedExchangesMetadataCache adxBasedExchangeMetadataCache
                                                         )
     {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -81,6 +101,10 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
         this.videoInfoCache = videoInfoCache;
         this.openRTBBidRequestParameterCodeList = openRTBBidRequestParameterCodeList;
+        this.bannerUploadCache = bannerUploadCache;
+        this.videoUploadCache = videoUploadCache;
+        this.advInfoUploadCache = advInfoUploadCache;
+        this.adxBasedExchangeMetadataCache = adxBasedExchangeMetadataCache;
     }
 
     /**
@@ -143,12 +167,20 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
         Float averageFloorPrice = 0.0f;
         int averageFloorPriceCounter = 0;
         boolean bannerOrRichMediaRequired = false;
+        int pubIncId = request.getSite().getPublisherIncId();
+        AdxBasedExchangesMetadata adxBased = null;
+        if(this.adxBasedExchangeMetadataCache != null){
+        	AdxBasedMetadataCacheEntity ace = this.adxBasedExchangeMetadataCache.query(pubIncId+"");
+        	if(ace != null){
+        		adxBased = ace.getAbem();
+        	}
+        }
 
         for(BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs)
         {
             if(bidRequestImpressionDTO.getBidRequestImpressionVideoObject()!= null){
                 ValidateVideo.checkVideo(bidRequestImpressionDTOs, request.getSite(), request, logger, response, adEntityCache, creativeCache,
-                		videoInfoCache);
+                		videoInfoCache, adxBased, this.videoUploadCache, this.advInfoUploadCache);
                 return;
             }
             BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO =
@@ -231,12 +263,31 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
             for(ResponseAdInfo responseAdInfo : response.getResponseAdInfo())
             {
                 AdEntity adEntity = adEntityCache.query(responseAdInfo.getAdId());
-
                 if(null == adEntity)
                 {
                     logger.error("AdEntity not found in cache,FATAL error!!! for adId: {} " +
                                      responseAdInfo.getAdId());
                     continue;
+                }
+                if(adxBased != null && adxBased.isAdvertiser_upload()){
+                	int advId = adEntity.getAccountId();
+            		if(this.advInfoUploadCache == null){
+            			ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as advInfoUploadCache null", advId);
+            			continue;
+            		}
+            		AdvInfoUploadCacheEntity bue = this.advInfoUploadCache.query(pubIncId+CTRL_A+advId);
+                	if(bue ==null){
+                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as AdvInfoUploadCacheEntity  null", advId);
+            			continue;
+                	}
+                	if(bue.getMua() == null){
+                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  null", advId);
+            			continue;
+                	}
+                	if(AdxBasedExchangesStates.APPROVED.getCode() != bue.getMua().getAdxbasedexhangesstatus()){
+                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  not Approved", advId);
+            			continue;                        		
+                	}
                 }
 
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
@@ -317,6 +368,25 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
                 {
                     for(Integer bannerId : creative.getBannerUriIds())
                     {
+                    	if(adxBased != null && adxBased.isBanner_upload()){
+                    		if(this.bannerUploadCache == null){
+                    			ReqLog.debugWithDebugNew(logger, request, "BannerId {} does not qualify as bannerupload cache null", bannerId);
+                    			continue;
+                    		}
+                    		BannerUploadCacheEntity bue = this.bannerUploadCache.query(pubIncId+CTRL_A+bannerId);
+                        	if(bue ==null){
+                        		ReqLog.debugWithDebugNew(logger, request, "BannerId {} does not qualify as BannerUploadCacheEntity  null", bannerId);
+                    			continue;
+                        	}
+                        	if(bue.getMub() == null){
+                        		ReqLog.debugWithDebugNew(logger, request, "BannerId {} does not qualify as MaterailBannerUploadEntity  null", bannerId);
+                    			continue;
+                        	}
+                        	if(AdxBasedExchangesStates.APPROVED.getCode() != bue.getMub().getAdxbasedexhangesstatus()){
+                        		ReqLog.debugWithDebugNew(logger, request, "BannerId {} does not qualify as MaterailBannerUploadEntity  not Approved", bannerId);
+                    			continue;                        		
+                        	}
+                    	}
                         CreativeBanner creativeBanner = creativeBannerCache.query(bannerId);
                         if(null == creativeBanner)
                         {
@@ -583,23 +653,24 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
 
                 Campaign campaign = campaignCache.query(adEntity.getCampaignIncId());
 
-                StringBuffer errorMessage = new StringBuffer();
                 if(null == campaign)
                 {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CAMPAIGN_NOT_FOUND.getValue(), this.adNoFillReasonMapKey, context);
 
-                    errorMessage.setLength(0);
-                    errorMessage.append("FATAL!!! campaign not found for adid: ");
-                    errorMessage.append(adEntity.getId());
-                    ReqLog.errorWithDebugNew(logger, request, errorMessage.toString());
+                    logger.error("FATAL!!! campaign not found for adid: {} , campaign's flight date and budget have already been checked.", adEntity.getId());
                     continue;
                 }
 
                 //lastly use bidfloor value of impression to see if ad qualifies.
                 Double bidFloorForImpression = bidRequestImpressionDTO.getBidFloorPrice();
 
-                ReqLog.requestDebugNew(request, " Ecpm floor value asked by exchange is : "+bidFloorForImpression);
+                logger.debug("Ecpm floor value asked by exchange is : {} ", bidFloorForImpression);
+                if(request.isRequestForSystemDebugging())
+                {
+                    request.addDebugMessageForTestRequest("Ecpm floor value asked by exchange is : ");
+                    request.addDebugMessageForTestRequest(String.valueOf(bidFloorForImpression));
+                }
 
                 boolean adFloorPriceMet = false;
                 //for the case of creative being banner.

@@ -82,15 +82,15 @@ public class DoBillingByFile {
                         if(pirr != null && pirr.getStatus() == PostImpressionTerminationReason.HEALTHY_REQUEST){
                             if(pirr.getEvent() == PostImpressionEvent.RENDER && pirr.getMarketplace_id() == MarketPlace.CPM.getCode()){
                                 pirrList.add(pirr);
-                            }if(pirr.getEvent() == PostImpressionEvent.CLICK && pirr.getMarketplace_id() == MarketPlace.CPC.getCode()){
+                            }else if(pirr.getEvent() == PostImpressionEvent.CLICK && pirr.getMarketplace_id() == MarketPlace.CPC.getCode()){
                                 pirrList.add(pirr);
-                            }if(pirr.getEvent() == PostImpressionEvent.CONVERSION && pirr.getMarketplace_id() == MarketPlace.CPD.getCode()){
+                            }else if(pirr.getEvent() == PostImpressionEvent.CONVERSION && pirr.getMarketplace_id() == MarketPlace.CPD.getCode()){
                                 pirrList.add(pirr);
-                            }if(pirr.getEvent() == PostImpressionEvent.WIN_NOTIFICATION){
+                            }else if(pirr.getEvent() == PostImpressionEvent.WIN_NOTIFICATION){
                                 pirrList.add(pirr);
-                            }if(pirr.getEvent() == PostImpressionEvent.INT_EXCHANGE_WIN){
+                            }else if(pirr.getEvent() == PostImpressionEvent.INT_EXCHANGE_WIN){
                                 pirrList.add(pirr);
-                            }if(pirr.getEvent() == PostImpressionEvent.BEVENT_CSCWIN){
+                            }else if(pirr.getEvent() == PostImpressionEvent.BEVENT_CSCWIN){
                                 pirrList.add(pirr);
                             }else{
                                 LOG.debug("NON BILLABLE EVENT: {} ",  pirr.toString());

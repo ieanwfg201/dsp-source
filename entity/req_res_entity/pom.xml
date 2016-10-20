@@ -10,6 +10,16 @@
     <name>entity_request_response_entity</name>
     <dependencies>
         <dependency>
+            <groupId>com.kritter.entity</groupId>
+            <artifactId>entity_openrtb_2_3</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.entity.exchangethrift</groupId>
+            <artifactId>kritter_entity_exchangethrift</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.thrift</groupId>
             <artifactId>structs</artifactId>
             <version>1.0.0</version>

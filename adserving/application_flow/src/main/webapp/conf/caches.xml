@@ -297,6 +297,13 @@
         <constructor-arg index="4"><ref bean="ad_stats_cache_props"/></constructor-arg>
     </bean>
 
+    <bean id="exchange_thrift_logging_cache" class="com.kritter.common.caches.thrift_logging.cache.ThriftLoggingCache">
+        <constructor-arg index="0" value="exchange_thrift_logging_cache"/>
+        <constructor-arg index="1" value="cache.logger"/>
+        <constructor-arg index="2" value="exchange.thriftlog"/>
+        <constructor-arg index="3" value="3"/>
+    </bean>
+
     <bean id="mma_cache" class="com.kritter.common.caches.mma_cache.MMACache">
         <constructor-arg index="0">
             <list>
@@ -305,6 +312,42 @@
         <constructor-arg index="1"><ref bean="mma_cache_properties"/></constructor-arg>
         <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
         <constructor-arg index="3" value="mma_cache"/>
+    </bean>
+    <bean id="adxbasedexchanges_metadata_cache" class="com.kritter.common.caches.adxbasedexchanges_metadata_cache.AdxBasedExchangesMetadataCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="adxbasedexchanges_metadata_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="adxbasedexchanges_metadata_cache"/>
+    </bean>
+    <bean id="video_upload_cache" class="com.kritter.common.caches.video_upload_cache.VideoUploadCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="video_upload_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="video_upload_cache"/>
+    </bean>
+    <bean id="banner_upload_cache" class="com.kritter.common.caches.banner_upload_cache.BannerUploadCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="banner_upload_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="banner_upload_cache"/>
+    </bean>
+    <bean id="advinfo_upload_cache" class="com.kritter.common.caches.advinfo_upload_cache.AdvInfoUploadCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="advinfo_upload_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="advinfo_upload_cache"/>
     </bean>
     <bean id="adposition_cache" class="com.kritter.common.caches.adposition_cache.AdPositionCache">
         <constructor-arg index="0">
@@ -439,6 +482,10 @@
                 <ref bean="req_logging_cache"/>
                 <ref bean="ad_stats_cache"/>
 				<ref bean="mma_cache"/>
+                <ref bean="adxbasedexchanges_metadata_cache"/>
+                <ref bean="video_upload_cache"/>
+                <ref bean="banner_upload_cache"/>
+                <ref bean="advinfo_upload_cache"/>
 				<ref bean="adposition_cache"/>
 				<ref bean="channel_cache"/>
                 <ref bean="handset_manufacturer_cache"/>
@@ -740,6 +787,42 @@ GROUP BY id;]]></prop>
          <props>
            <prop key="refresh_interval">30000</prop>
            <prop key="query"><![CDATA[select c.exchangeid as id, a.supplycode as supplycode, b.ui_id as ui_id, a.last_modified as last_modified from supply_mma_mapping as a, mma_code_mma_ui_mapping as b,mma_exchangename_id_mapping as c  where a.mma_category_code = b.code and a.exchangename=c.exchangename and (a.last_modified >= '$last_modified' or b.last_modified >= '$last_modified' or c.last_modified >= '$last_modified') ]]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+    <bean id="adxbasedexchanges_metadata_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[ select * from adxbasedexchanges_metadata where last_modified >= '$last_modified' ]]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+    <bean id="video_upload_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select a.*,b.video_upload  from video_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  a.last_modified>='$last_modified' or b.last_modified>='$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+    <bean id="banner_upload_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select a.*,b.banner_upload  from banner_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  a.last_modified>='$last_modified' or b.last_modified>='$last_modified']]></prop>
+         </props>
+       </constructor-arg>
+   </bean>
+
+    <bean id="advinfo_upload_cache_properties" class="java.util.Properties">
+      <constructor-arg>
+         <props>
+           <prop key="refresh_interval">30000</prop>
+           <prop key="query"><![CDATA[select a.*,b.advertiser_upload  from advinfo_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  a.last_modified>='$last_modified' or b.last_modified>='$last_modified']]></prop>
          </props>
        </constructor-arg>
    </bean>

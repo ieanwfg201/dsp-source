@@ -7,6 +7,7 @@ import com.kritter.constants.BidRequestImpressionType;
 import com.kritter.constants.ConnectionType;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.InternetServiceProvider;
+import com.kritter.entity.exchangethrift.CreateExchangeThrift;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.utils.common.url.URLFieldFactory;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 import java.util.*;
 
 import com.kritter.constants.INVENTORY_SOURCE;
+import com.kritter.constants.OpenRTBVersion;
 import com.kritter.device.common.entity.HandsetMasterData;
 
 /**
@@ -179,8 +181,17 @@ public class Request
 
     @Getter @Setter
     private boolean passbackUsingFormatter = false;
-
+    
+    @Getter @Setter
+    private boolean aggregatorOpenRTB = false;
+    @Getter @Setter
+    private OpenRTBVersion aggregatorversion;
+    @Getter @Setter
+    private com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO openrtbObjTwoDotThree;
     //contains all request enrichment related error codes.
+    @Getter @Setter
+    private CreateExchangeThrift createExchangeThrift;
+
     public enum REQUEST_ENRICHMENT_ERROR_CODE
     {
         NO_ERROR(1,"ROK"),

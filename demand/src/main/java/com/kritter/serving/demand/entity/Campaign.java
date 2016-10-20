@@ -4,6 +4,7 @@ import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.entity.freqcap_entity.FreqCap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -30,6 +31,11 @@ public class Campaign implements IUpdatableEntity<Integer>
     private final Double accountTotalBudgetRemaining;
     private final Double accountAdvertiserTotalBudgetRemaining;
     private final FreqCap frequencyCap;
+    private final Double campaignDailyBudget;
+    private final Double absolutePayoutThreshold;
+    private final Double percentPayoutThreshold;
+    private final Double campaignPayout;
+    private double currentPayout;
 
     private final boolean markedForDeletion;
     private final Long modificationTime;
@@ -51,12 +57,21 @@ public class Campaign implements IUpdatableEntity<Integer>
         this.frequencyCap = campaignBuilder.frequencyCap;
         this.markedForDeletion = campaignBuilder.isMarkedForDeletion;
         this.modificationTime = campaignBuilder.updateTime;
+        this.campaignDailyBudget = campaignBuilder.campaignDailyBudget;
+        this.absolutePayoutThreshold = campaignBuilder.absolutePayoutThreshold;
+        this.percentPayoutThreshold = campaignBuilder.percentPayoutThreshold;
+        this.campaignPayout = campaignBuilder.campaignPayout;
+        this.currentPayout = 0.0;
     }
 
     @Override
     public Integer getId()
     {
         return this.campaignIncId;
+    }
+
+    public synchronized void increaseCurrentPayout(double incrementalPayout) {
+        currentPayout += incrementalPayout;
     }
 
     public static class CampaignBuilder
@@ -74,6 +89,10 @@ public class Campaign implements IUpdatableEntity<Integer>
         private final Double accountTotalBudgetRemaining;
         private final Double accountAdvertiserTotalBudgetRemaining;
         private FreqCap frequencyCap;
+        private Double campaignDailyBudget;
+        private Double absolutePayoutThreshold;
+        private Double percentPayoutThreshold;
+        private Double campaignPayout;
 
         private boolean isMarkedForDeletion;
         private Long updateTime;
@@ -105,9 +124,37 @@ public class Campaign implements IUpdatableEntity<Integer>
             this.updateTime = updateTime;
         }
 
+        public CampaignBuilder setCampaignDailyBudget(Double campaignDailyBudget) {
+            if(campaignDailyBudget != null) {
+                this.campaignDailyBudget = campaignDailyBudget;
+            }
+            return this;
+        }
+
         public CampaignBuilder setFrequencyCap(String frequencyCapStr) throws Exception {
             if(frequencyCapStr != null && !frequencyCapStr.isEmpty()) {
                 this.frequencyCap = FreqCap.getObject(frequencyCapStr);
+            }
+            return this;
+        }
+
+        public CampaignBuilder setAbsolutePayoutThreshold(Double absolutePayoutThreshold) throws Exception {
+            if(absolutePayoutThreshold != null) {
+                this.absolutePayoutThreshold = absolutePayoutThreshold;
+            }
+            return this;
+        }
+
+        public CampaignBuilder setPercentPayoutThreshold(Double percentPayoutThreshold) throws Exception {
+            if(percentPayoutThreshold != null) {
+                this.percentPayoutThreshold = percentPayoutThreshold;
+            }
+            return this;
+        }
+
+        public CampaignBuilder setCampaignPayout(Double campaignPayout) throws Exception {
+            if(campaignPayout != null) {
+                this.campaignPayout = campaignPayout;
             }
             return this;
         }

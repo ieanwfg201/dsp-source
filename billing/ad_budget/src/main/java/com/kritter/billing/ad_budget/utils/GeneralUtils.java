@@ -8,11 +8,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class GeneralUtils {
-    public static void configureLogger(String confPath){
+    public static void configureLogger(String confPath) {
         FileInputStream fileInputStream = null;
         try {
-            File file = new File(confPath);
-            fileInputStream = new FileInputStream(file);
+            fileInputStream = new FileInputStream(new File(confPath));
             PropertyConfigurator.configure(fileInputStream);
         } catch(Exception e) {
             e.printStackTrace();
@@ -27,12 +26,11 @@ public class GeneralUtils {
         }
     }
 
-    public static Properties readProperties(String confPath){
+    public static Properties readProperties(String confPath) {
         FileInputStream fileInputStream = null;
         Properties properties = new Properties();
         try {
-            File file = new File(confPath);
-            fileInputStream = new FileInputStream(file);
+            fileInputStream = new FileInputStream(new File(confPath));
             properties.load(fileInputStream);
         } catch(Exception e) {
             e.printStackTrace();

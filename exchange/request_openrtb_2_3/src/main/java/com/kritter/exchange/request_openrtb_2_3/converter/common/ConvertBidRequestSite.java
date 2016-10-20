@@ -1,5 +1,7 @@
 package com.kritter.exchange.request_openrtb_2_3.converter.common;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -28,7 +30,25 @@ public class ConvertBidRequestSite {
         BidRequestSiteDTO site = new BidRequestSiteDTO();
         site.setSiteIdOnExchange(request.getSite().getSiteGuid());
         site.setSiteName(request.getSite().getName());
-        site.setSiteDomain(request.getSite().getSiteUrl());
+
+        if(null != request.getSite().getSiteUrl())
+        {
+            URL url = null;
+            String domain = null;
+            try
+            {
+                url = new URL(request.getSite().getSiteUrl());
+                domain = url.getHost();
+            }
+            catch (MalformedURLException mue)
+            {
+            }
+            if(null != domain)
+                site.setSiteDomain(domain);
+
+            site.setSitePageURL(request.getSite().getSiteUrl());
+        }
+
         ConvertErrorEnum convertErrorEnum = ConvertErrorEnum.HEALTHY_CONVERT;
         convertErrorEnum = ConvertBidRequestPub.convert(request, site, version);
         if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){

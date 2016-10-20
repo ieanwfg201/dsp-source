@@ -6,6 +6,7 @@ import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import fiftyone.mobile.detection.Match;
 import fiftyone.mobile.detection.factories.MemoryFactory;
+import fiftyone.mobile.detection.factories.StreamFactory;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +20,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.commons.io.IOUtils;
 
-public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache {
+public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache
+{
     public static final String HARDWARE_VENDOR_KEY = "HardwareVendor";
     public static final String HARDWARE_MODEL_KEY = "HardwareModel";
     public static final String HARDWARE_MARKETING_KEY = "HardwareName";
@@ -43,25 +46,62 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache {
     private Provider provider;
 
     public FiftyOneDegreesFileCache(String name, String loggerName, Properties properties)
-            throws InitializationException {
+                                                                                    throws InitializationException
+    {
         super(LoggerFactory.getLogger(loggerName), properties);
         this.logger = LoggerFactory.getLogger(loggerName);
         this.name = name;
     }
 
     @Override
-    protected void refreshFile(File file) throws RefreshException {
+    protected void refreshFile(File file) throws RefreshException
+    {
         logger.debug("Inside refresh file of {}", this.name);
-        if(file == null) {
+
+        if(file == null)
+        {
             logger.error("File provided for fifty one degrees file cache refresh is null");
             return;
         }
 
-        try {
-            provider = new Provider(MemoryFactory.create(new FileInputStream(file)));
-            logger.debug("Refreshed FiftyOneDegreesFileCache");
-        } catch (IOException ioe) {
+        FileInputStream fiftyOneDegreesDataFileInputStream = null;
+
+        try
+        {
+            fiftyOneDegreesDataFileInputStream = new FileInputStream(file);
+
+            //read bytes from the input data file.
+            byte[] data = IOUtils.toByteArray(fiftyOneDegreesDataFileInputStream);
+            Provider updatedProvider    = new Provider(StreamFactory.create(data));
+
+            //close previous data set.
+            if(null != provider && null != provider.dataSet && null != updatedProvider)
+            {
+                provider.dataSet.close();
+                provider = null;
+            }
+
+            if(null != updatedProvider)
+                provider = updatedProvider;
+
+            logger.debug("Refreshed FiftyOneDegreesFileCache as part of its timer task.");
+        }
+        catch (IOException ioe)
+        {
             throw new RefreshException(ioe);
+        }
+        finally
+        {
+            try
+            {
+                fiftyOneDegreesDataFileInputStream.close();
+
+                logger.debug("Successfully closed input stream as well inside FiftyOneDegreesFileCache");
+            }
+            catch (IOException ioe)
+            {
+                logger.error("IOException in closing 51 degrees data file input stream ", ioe);
+            }
         }
     }
 
@@ -70,32 +110,35 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache {
     @EqualsAndHashCode
     @Getter @Setter
     public static class HandsetInfo {
-        private String brandName;
-        private String modelName;
-        private String marketingName;
-        private String deviceOs;
-        private String deviceOsVersion;
-        private String browserName;
-        private String browserVersion;
-        private boolean isTablet;
-        private boolean isWirelessDevice;
-        private boolean j2meMidp2;
-        private String resolutionWidth;
-        private String resolutionHeight;
-        private boolean ajaxSupportJava;
-        private boolean isBot;
-        private String deviceType;
-    }
+                                        private String brandName;
+                                        private String modelName;
+                                        private String marketingName;
+                                        private String deviceOs;
+                                        private String deviceOsVersion;
+                                        private String browserName;
+                                        private String browserVersion;
+                                        private boolean isTablet;
+                                        private boolean isWirelessDevice;
+                                        private boolean j2meMidp2;
+                                        private String resolutionWidth;
+                                        private String resolutionHeight;
+                                        private boolean ajaxSupportJava;
+                                        private boolean isBot;
+                                        private String deviceType;
+                                    }
 
-    public HandsetInfo getHandsetInfo(String userAgent) {
-        if(userAgent == null) {
-            logger.debug("null user agent sent to query");
+    public HandsetInfo getHandsetInfo(String userAgent)
+    {
+        if(userAgent == null || null == provider || null == provider.dataSet || provider.dataSet.getDisposed())
+        {
+            logger.debug("Null user agent or Provider not available inside FiftyOneDegreesFileCache, cannot detect.");
             return null;
         }
 
         HandsetInfo handsetInfo = null;
 
-        try {
+        try
+        {
             Match match = provider.match(userAgent);
 
             handsetInfo = new HandsetInfo();
@@ -116,7 +159,9 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache {
                     .setDeviceType(match.getValues(DEVICE_TYPE_KEY).toString());
 
             logger.debug("Handset info for user agent : {} is {}", handsetInfo);
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe)
+        {
             logger.error("Error finding handset info for user agent : {}. Error : {}", userAgent, ioe);
         }
 
@@ -124,13 +169,18 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache {
     }
 
     @Override
-    protected void release() throws ProcessingException {
-        try {
-            if (provider != null) {
+    protected void release() throws ProcessingException
+    {
+        try
+        {
+            if (provider != null)
+            {
                 provider.dataSet.close();
             }
-        } catch (IOException ioe) {
-            logger.error("Exception releasing resources in release of FiftyOneDegreesFileCache : {}", ioe);
+        }
+        catch (IOException ioe)
+        {
+            logger.error("Exception releasing resources in release of FiftyOneDegreesFileCache.", ioe);
         }
     }
 }
