@@ -215,11 +215,30 @@ public class ReportingEntity {
 	private List<String> nofillReason = null;
 	/**
 	 * mandatory - default null - null means not required, empty list means all
+	 * required, String 
+	 * list signifies filters
+	 */
+	private List<String> reqState = null;
+	/**
+	 * mandatory - default null - null means not required, empty list means all
+	 * required, String 
+	 * list signifies filters
+	 */
+	private List<String> dspNoFill = null;
+	/**
+	 * mandatory - default null - null means not required, empty list means all
 	 * required, integer - browserid element in list signifies filters
 	 */
 	private List<Integer> browserId = null;
 	/** mandatory - default false - used by hierarchical reporting */
 	private boolean browserId_clickable = false;
+	/**
+	 * mandatory - default null - null means not required, empty list means all
+	 * required, integer - browserid element in list signifies filters
+	 */
+	private List<Integer> formatId = null;
+	/** mandatory - default false - used by hierarchical reporting */
+	private boolean formatId_clickable = false;
 
 	/** metrics set to true if required */
 	private boolean selectallmetric = true;
@@ -261,6 +280,8 @@ public class ReportingEntity {
 	private boolean billedclicks = false;
 	/** metrics set to true if required */
 	private boolean billedcsc = false;
+	/** metrics set to true if required */
+	private boolean total_floor = false;
 
 	/** derived metrics */
 	/** metrics set to true if required */
@@ -372,10 +393,14 @@ public class ReportingEntity {
 	private int billedECPM_order_sequence = -1;
 	/** sequence no */
 	private int billedEIPM_order_sequence = -1;
+	/** sequence no */
+	private int total_floor_order_sequence = -1;
+
 	/** default false - return GUID */
 	private boolean returnGuid = false;
 	/** default false - return AdGUID */
 	private boolean returnAdGuid = false;
+	private boolean returnSiteGuid = false;
 	/** to be used for charts */
 	private int top_n = 5;
 	/** to be used for charts has to be a negative number */
@@ -393,6 +418,55 @@ public class ReportingEntity {
 	private String csvDelimiter = ",";
 	/** set true when Total is required in downloads */
 	private boolean rollup = false;
+
+	
+	public List<String> getReqState() {
+		return reqState;
+	}
+
+	public void setReqState(List<String> reqState) {
+		this.reqState = reqState;
+	}
+
+	public List<String> getDspNoFill() {
+		return dspNoFill;
+	}
+
+	public void setDspNoFill(List<String> dspNoFill) {
+		this.dspNoFill = dspNoFill;
+	}
+
+	public List<Integer> getFormatId() {
+		return formatId;
+	}
+
+	public void setFormatId(List<Integer> formatId) {
+		this.formatId = formatId;
+	}
+
+	public boolean isFormatId_clickable() {
+		return formatId_clickable;
+	}
+
+	public void setFormatId_clickable(boolean formatId_clickable) {
+		this.formatId_clickable = formatId_clickable;
+	}
+
+	public boolean isTotal_floor() {
+		return total_floor;
+	}
+
+	public void setTotal_floor(boolean total_floor) {
+		this.total_floor = total_floor;
+	}
+
+	public int getTotal_floor_order_sequence() {
+		return total_floor_order_sequence;
+	}
+
+	public void setTotal_floor_order_sequence(int total_floor_order_sequence) {
+		this.total_floor_order_sequence = total_floor_order_sequence;
+	}
 
 	public List<Integer> getMarketplace() {
 		return marketplace;
@@ -480,6 +554,13 @@ public class ReportingEntity {
 
 	public void setReturnAdGuid(boolean returnAdGuid) {
 		this.returnAdGuid = returnAdGuid;
+	}
+	public boolean isReturnSiteGuid() {
+		return returnSiteGuid;
+	}
+
+	public void setReturnSiteGuid(boolean returnSiteGuid) {
+		this.returnSiteGuid = returnSiteGuid;
 	}
 
 	public boolean isTotal_request() {

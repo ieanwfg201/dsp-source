@@ -562,23 +562,24 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
 
                 Campaign campaign = campaignCache.query(adEntity.getCampaignIncId());
 
-                StringBuffer errorMessage = new StringBuffer();
                 if(null == campaign)
                 {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.CAMPAIGN_NOT_FOUND.getValue(), this.adNoFillReasonMapKey, context);
 
-                    errorMessage.setLength(0);
-                    errorMessage.append("FATAL!!! campaign not found for adid: ");
-                    errorMessage.append(adEntity.getId());
-                    ReqLog.errorWithDebugNew(logger, request, errorMessage.toString());
+                    logger.error("FATAL!!! campaign not found for adid: {} , campaign's flight date and budget have already been checked.", adEntity.getId());
                     continue;
                 }
 
                 //lastly use bidfloor value of impression to see if ad qualifies.
                 Double bidFloorForImpression = bidRequestImpressionDTO.getBidFloorPrice();
 
-                ReqLog.requestDebugNew(request, " Ecpm floor value asked by exchange is : "+bidFloorForImpression);
+                logger.debug("Ecpm floor value asked by exchange is : {} ", bidFloorForImpression);
+                if(request.isRequestForSystemDebugging())
+                {
+                    request.addDebugMessageForTestRequest("Ecpm floor value asked by exchange is : ");
+                    request.addDebugMessageForTestRequest(String.valueOf(bidFloorForImpression));
+                }
 
                 boolean adFloorPriceMet = false;
                 //for the case of creative being banner.
@@ -801,111 +802,6 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
         return sb.toString();
     }
 
-    /**
-     * if ad is deal id targeted then run only on that deal id,
-     * if impression has deal id then only that deal id targeted
-     * ad can be selected.
-     * @param site
-     * @param adEntity
-     * @param request
-     * @return
-     */
-    public boolean doesImpressionHasPMPDealIdForAdUnit(
-                                                       String impressionId,
-                                                       Site site,
-                                                       AdEntity adEntity,
-                                                       Request request,
-                                                       ResponseAdInfo responseAdInfo
-                                                      )
-    {
-        ReqLog.infoWithDebugNew(logger, request, "Inside doesImpressionHasPMPDealIdForAdUnit of CreativeAndFloorMatchingRTBExchangeTwoDotOne ...");
-
-        Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet =
-                                                    request.fetchPrivateDealInfoSetForImpressionId(impressionId);
-
-        boolean impressionNeedsPMPAds = ((null != privateDealInfoSet) && privateDealInfoSet.size() > 0);
-
-        String publisherId = site.getPublisherId();
-        Map<String,String[]> adUnitPMPDealIdInfoMap = adEntity.getTargetingProfile().getPmpDealIdInfoMap();
-
-        boolean adTargetsDealId = (null != adUnitPMPDealIdInfoMap && adUnitPMPDealIdInfoMap.size() > 0);
-
-        logger.debug("Ad: {} targets pmp deals : {} and impression has pmp info: {} of size ",
-                      adEntity.getAdGuid(), adTargetsDealId,impressionNeedsPMPAds,
-                      (null == privateDealInfoSet) ? 0: privateDealInfoSet.size());
-
-        String[] dealIdArrayForThisPublisher = null;
-
-        logger.debug("Getting deal map for publisher: {} ", publisherId);
-
-        if(null != adUnitPMPDealIdInfoMap)
-            dealIdArrayForThisPublisher = adUnitPMPDealIdInfoMap.get(publisherId);
-
-        logger.debug("Deal id array for publisher by this ad , length: {} ",
-                      null == dealIdArrayForThisPublisher ? 0 : dealIdArrayForThisPublisher.length);
-
-        if( impressionNeedsPMPAds && adTargetsDealId && null != dealIdArrayForThisPublisher &&
-            dealIdArrayForThisPublisher.length > 0
-          )
-        {
-        	logger.debug("Impression Id:{} has deal id specified, looking if ad:{} is targeting deal id set: {} ",
-                    impressionId,adEntity.getAdGuid(),fetchDealIdString(privateDealInfoSet));
-            if(request.isRequestForSystemDebugging()){
-            	request.addDebugMessageForTestRequest("Impression Id:"+impressionId+" has deal id specified, looking if "
-            			+ "ad:"+adEntity.getAdGuid()+" is targeting deal id set:  "+fetchDealIdString(privateDealInfoSet));
-            }
-
-            for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
-            {
-                logger.debug("Private deal info from exchange : {} ", privateDealInfo.getDealId());
-
-                for(String dealIdByAd : dealIdArrayForThisPublisher)
-                {
-                    logger.debug("Private deal info from ad : {} ", dealIdByAd);
-
-                    if(
-                       privateDealInfo.getDealId().equalsIgnoreCase(dealIdByAd) &&
-                       (null == privateDealInfo.getBidFloor() ||
-                        (
-                            null != privateDealInfo.getBidFloor() &&
-                            privateDealInfo.getBidFloor().compareTo(responseAdInfo.getEcpmValue()) <= 0
-                        )
-                       )
-                      )
-                    {
-                        ReqLog.debugWithDebugNew(logger, request, "DealIdByAd: {} matches and fits deal id in impression:{} ",
-                                      dealIdByAd,privateDealInfo.getDealId());
-                        responseAdInfo.setDealId(dealIdByAd);
-                        return true;
-                    }
-                }
-            }
-        }
-
-        if(!impressionNeedsPMPAds && !adTargetsDealId)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private String fetchDealIdString(Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet)
-    {
-        if(null == privateDealInfoSet || privateDealInfoSet.size() <= 0)
-            return "";
-
-        StringBuffer sb = new StringBuffer();
-
-        for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
-        {
-            sb.append(privateDealInfo.getDealId());
-            sb.append(" , ");
-        }
-
-        return sb.toString();
-    }
-
     /*The following function sets attributes from bid request that need to be passed in the
      * postimpression URLs.*/
     private void setURLFieldsFromBidRequest(BidRequestParentNodeDTO bidRequestParentNodeDTO, Request request)
@@ -953,5 +849,110 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                 }
             }
         }
+    }
+
+    /**
+     * if ad is deal id targeted then run only on that deal id,
+     * if impression has deal id then only that deal id targeted
+     * ad can be selected.
+     * @param site
+     * @param adEntity
+     * @param request
+     * @return
+     */
+    public boolean doesImpressionHasPMPDealIdForAdUnit(
+            String impressionId,
+            Site site,
+            AdEntity adEntity,
+            Request request,
+            ResponseAdInfo responseAdInfo
+    )
+    {
+        ReqLog.infoWithDebugNew(logger, request, "Inside doesImpressionHasPMPDealIdForAdUnit of CreativeAndFloorMatchingRTBExchangeTwoDotOne ...");
+
+        Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet =
+                request.fetchPrivateDealInfoSetForImpressionId(impressionId);
+
+        boolean impressionNeedsPMPAds = ((null != privateDealInfoSet) && privateDealInfoSet.size() > 0);
+
+        String publisherId = site.getPublisherId();
+        Map<String,String[]> adUnitPMPDealIdInfoMap = adEntity.getTargetingProfile().getPmpDealIdInfoMap();
+
+        boolean adTargetsDealId = (null != adUnitPMPDealIdInfoMap && adUnitPMPDealIdInfoMap.size() > 0);
+
+        logger.debug("Ad: {} targets pmp deals : {} and impression has pmp info: {} of size ",
+                adEntity.getAdGuid(), adTargetsDealId,impressionNeedsPMPAds,
+                (null == privateDealInfoSet) ? 0: privateDealInfoSet.size());
+
+        String[] dealIdArrayForThisPublisher = null;
+
+        logger.debug("Getting deal map for publisher: {} ", publisherId);
+
+        if(null != adUnitPMPDealIdInfoMap)
+            dealIdArrayForThisPublisher = adUnitPMPDealIdInfoMap.get(publisherId);
+
+        logger.debug("Deal id array for publisher by this ad , length: {} ",
+                null == dealIdArrayForThisPublisher ? 0 : dealIdArrayForThisPublisher.length);
+
+        if( impressionNeedsPMPAds && adTargetsDealId && null != dealIdArrayForThisPublisher &&
+                dealIdArrayForThisPublisher.length > 0
+                )
+        {
+            logger.debug("Impression Id:{} has deal id specified, looking if ad:{} is targeting deal id set: {} ",
+                    impressionId,adEntity.getAdGuid(),fetchDealIdString(privateDealInfoSet));
+            if(request.isRequestForSystemDebugging()){
+                request.addDebugMessageForTestRequest("Impression Id:"+impressionId+" has deal id specified, looking if "
+                        + "ad:"+adEntity.getAdGuid()+" is targeting deal id set:  "+fetchDealIdString(privateDealInfoSet));
+            }
+
+            for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
+            {
+                logger.debug("Private deal info from exchange : {} ", privateDealInfo.getDealId());
+
+                for(String dealIdByAd : dealIdArrayForThisPublisher)
+                {
+                    logger.debug("Private deal info from ad : {} ", dealIdByAd);
+
+                    if(
+                            privateDealInfo.getDealId().equalsIgnoreCase(dealIdByAd) &&
+                                    (null == privateDealInfo.getBidFloor() ||
+                                            (
+                                                    null != privateDealInfo.getBidFloor() &&
+                                                            privateDealInfo.getBidFloor().compareTo(responseAdInfo.getEcpmValue()) <= 0
+                                            )
+                                    )
+                            )
+                    {
+                        ReqLog.debugWithDebugNew(logger, request, "DealIdByAd: {} matches and fits deal id in impression:{} ",
+                                dealIdByAd,privateDealInfo.getDealId());
+                        responseAdInfo.setDealId(dealIdByAd);
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if(!impressionNeedsPMPAds && !adTargetsDealId)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private String fetchDealIdString(Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet)
+    {
+        if(null == privateDealInfoSet || privateDealInfoSet.size() <= 0)
+            return "";
+
+        StringBuffer sb = new StringBuffer();
+
+        for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
+        {
+            sb.append(privateDealInfo.getDealId());
+            sb.append(" , ");
+        }
+
+        return sb.toString();
     }
 }

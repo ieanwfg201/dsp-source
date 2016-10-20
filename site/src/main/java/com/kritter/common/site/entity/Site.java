@@ -41,7 +41,7 @@ public class Site implements IUpdatableEntity<String>
     private String applicationId;
     @Getter
     private Short appStoreId;
-    @Getter
+    @Getter @Setter
     private Short[] categoriesArray;
     @Getter @Setter
     private Short[] categoriesArrayForInclusionExclusion;

@@ -8,7 +8,8 @@ public enum ReportingTableType
             FIRSTLEVEL(1,"FIRSTLEVEL"),
             CHANNEL(2,"CHANNEL"),
             ADPOSITION(3,"ADPOSITION"),
-            FASTPATH(4,"FASTPATH");
+            FASTPATH(4,"FASTPATH"),
+            EXCHANGE(5,"EXCHANGE");
             private int code;
             private String name;
             private static Map<Integer, ReportingTableType> map = new HashMap<Integer, ReportingTableType>();

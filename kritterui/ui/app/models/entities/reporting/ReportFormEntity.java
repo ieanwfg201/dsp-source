@@ -251,6 +251,20 @@ public class ReportFormEntity extends BaseReportEntity{
     public void setNofillReason(String nofillReason) { 
         reportingEntity.setNofillReason(stringToStringIdList(nofillReason));
     }
+    public String getReqState() {
+        return stringIdListToString(reportingEntity.getReqState());
+    }
+
+    public void setReqState(String reqState) { 
+        reportingEntity.setReqState(stringToStringIdList(reqState));
+    }
+    public String getDspNofill() {
+        return stringIdListToString(reportingEntity.getDspNoFill());
+    }
+
+    public void setDspNofill(String dspNofill) { 
+        reportingEntity.setDspNoFill(stringToStringIdList(dspNofill));
+    }
 	public String getMarketplace() {
 		return idListToString(reportingEntity.getMarketplace());
 	}
@@ -258,5 +272,14 @@ public class ReportFormEntity extends BaseReportEntity{
 	public void setMarketplace(String marketplace) { 
 		reportingEntity.setMarketplace(stringToIdList(marketplace));
 	}
+	
+	public String getFormatId() {
+		return idListToString(reportingEntity.getFormatId());
+	}
+
+	public void setFormatId(String formatId) { 
+		reportingEntity.setFormatId(stringToIdList(formatId));
+	}
+
 
 }

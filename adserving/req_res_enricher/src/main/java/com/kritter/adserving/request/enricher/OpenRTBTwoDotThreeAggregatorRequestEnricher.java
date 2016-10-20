@@ -15,6 +15,7 @@ import com.kritter.constants.ConnectionType;
 import com.kritter.constants.DefaultCurrency;
 import com.kritter.constants.FormatterIds;
 import com.kritter.constants.INVENTORY_SOURCE;
+import com.kritter.constants.OpenRTBVersion;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.VideoMimeTypes;
@@ -225,6 +226,9 @@ public class OpenRTBTwoDotThreeAggregatorRequestEnricher implements RequestEnric
             if(null != entity.getBidRequestImpressionArray() && entity.getBidRequestImpressionArray().length > 0){
             	request.setRequestedNumberOfAds(1);/*NOTE only one ad allowed*/
             	BidRequestImpressionDTO impEntity = entity.getBidRequestImpressionArray()[0];
+            	if(impEntity.getBidRequestImpressionId() == null || impEntity.getBidRequestImpressionId().isEmpty()){
+            		impEntity.setBidRequestImpressionId(requestId+":1");
+            	}
             	if(impEntity.getBidFloorPrice()!=null){
             		bidFloor=impEntity.getBidFloorPrice();
             		if(impEntity.getBidRequestImpressionVideoObject() != null){
@@ -253,6 +257,9 @@ public class OpenRTBTwoDotThreeAggregatorRequestEnricher implements RequestEnric
                     logger.debug("\texternal user id = {}", externalUserId);
                 }
             }
+            request.setAggregatorOpenRTB(true);
+            request.setAggregatorversion(OpenRTBVersion.VERSION_2_3);
+            request.setOpenrtbObjTwoDotThree(entity);
         }catch(Exception e){
         	logger.error(e.getMessage(),e);
         	request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.REQUEST_MALFORMED);

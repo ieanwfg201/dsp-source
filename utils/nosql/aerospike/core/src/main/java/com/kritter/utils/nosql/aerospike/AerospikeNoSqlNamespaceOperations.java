@@ -374,6 +374,14 @@ public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperatio
         return null;
     }
 
+    @Override
+    public void destroy() {
+        if(this.aerospikeAsyncClient != null) {
+            this.aerospikeAsyncClient.close();
+            this.aerospikeAsyncClient = null;
+        }
+    }
+
     public static void main(String[] args) {
         AerospikeNoSqlNamespaceOperations noSqlNamespaceOperations = new AerospikeNoSqlNamespaceOperations("local",
                 "localhost", 3000, 10, 1000);

@@ -27,11 +27,13 @@ import com.kritter.kumbaya.libraries.data_structs.common.ConnectionType;
 import com.kritter.kumbaya.libraries.data_structs.common.Conversion;
 import com.kritter.kumbaya.libraries.data_structs.common.CountryCarrierId;
 import com.kritter.kumbaya.libraries.data_structs.common.CountryId;
+import com.kritter.kumbaya.libraries.data_structs.common.CreativeFormatId;
 import com.kritter.kumbaya.libraries.data_structs.common.DemandCharges;
 import com.kritter.kumbaya.libraries.data_structs.common.DeviceManufacturerId;
 import com.kritter.kumbaya.libraries.data_structs.common.DeviceModelId;
 import com.kritter.kumbaya.libraries.data_structs.common.DeviceOsId;
 import com.kritter.kumbaya.libraries.data_structs.common.Device_type;
+import com.kritter.kumbaya.libraries.data_structs.common.DspNoFill;
 import com.kritter.kumbaya.libraries.data_structs.common.Earning;
 import com.kritter.kumbaya.libraries.data_structs.common.ExchangePayout;
 import com.kritter.kumbaya.libraries.data_structs.common.ExchangeRevenue;
@@ -43,6 +45,7 @@ import com.kritter.kumbaya.libraries.data_structs.common.NetworkRevenue;
 import com.kritter.kumbaya.libraries.data_structs.common.NofillReason;
 import com.kritter.kumbaya.libraries.data_structs.common.PubIncId;
 import com.kritter.kumbaya.libraries.data_structs.common.PublisherId;
+import com.kritter.kumbaya.libraries.data_structs.common.ReqState;
 import com.kritter.kumbaya.libraries.data_structs.common.SiteId;
 import com.kritter.kumbaya.libraries.data_structs.common.Site_hygiene;
 import com.kritter.kumbaya.libraries.data_structs.common.StateId;
@@ -53,6 +56,7 @@ import com.kritter.kumbaya.libraries.data_structs.common.Total_bidValue;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_click;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_csc;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_event_type;
+import com.kritter.kumbaya.libraries.data_structs.common.Total_floor;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_impression;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_request;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_win;
@@ -187,11 +191,12 @@ public class DBQueryPlanner implements IQueryPlanner {
         
         if(reportingEntity.getSiteId() != null){
             SiteId entity = kReportingConfiguration.getSiteId();
+            boolean siteGuid= reportingEntity.isReturnGuid() || reportingEntity.isReturnSiteGuid();
             aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getSiteId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    reportingEntity.isReturnGuid(),entity.getDim_guid(), reportingEntity.isSiteId_clickable(), reportingEntity.isSiteId_just_filter());
+                    siteGuid,entity.getDim_guid(), reportingEntity.isSiteId_clickable(), reportingEntity.isSiteId_just_filter());
         }
         if(reportingEntity.getChannelId() != null){
             ChannelId entity = kReportingConfiguration.getChannelId();
@@ -326,7 +331,14 @@ public class DBQueryPlanner implements IQueryPlanner {
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
                     false,null, reportingEntity.isCityId_clickable(), false);
         }
-
+        if(reportingEntity.getFormatId() != null){
+            CreativeFormatId entity = kReportingConfiguration.getCreativeFormatId();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getFormatId(), table_name, 
+                    entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
+                    returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
+                    false,null, reportingEntity.isFormatId_clickable(), false);
+        }
         if(reportingEntity.getConnection_type() != null){
             ConnectionType entity = kReportingConfiguration.getConnectionType() ;
             aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
@@ -345,6 +357,20 @@ public class DBQueryPlanner implements IQueryPlanner {
             NofillReason entity = kReportingConfiguration.getNofillReason();
             aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, table_name, aliasCounter);
             HelperKumbayaQueryPlanner.populateFromFactTable(entity.return_prefix, reportingEntity.getNofillReason(), table_name, 
+                    entity.getFact_column(), kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
+                    korderbyHashSet, headerList, entity.getUiname(), false);
+        }
+        if(reportingEntity.getReqState() != null){
+            ReqState entity = kReportingConfiguration.getReqState();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, table_name, aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromFactTable(entity.return_prefix, reportingEntity.getReqState(), table_name, 
+                    entity.getFact_column(), kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
+                    korderbyHashSet, headerList, entity.getUiname(), false);
+        }
+        if(reportingEntity.getDspNoFill() != null){
+            DspNoFill entity = kReportingConfiguration.getDspNoFill();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, table_name, aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromFactTable(entity.return_prefix, reportingEntity.getDspNoFill(), table_name, 
                     entity.getFact_column(), kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
                     korderbyHashSet, headerList, entity.getUiname(), false);
         }
@@ -393,6 +419,13 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateMetric(entity.getReturn_prefix(), true, table_name,  entity.getFact_column(), METRICTYPE.SUM,
                     kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, HeaderType.DOUBLE, 
                     entity.getUiname(), reportingEntity.getTotal_win_bidValue_order_sequence(), korderbyTreeMap, reportingEntity.getChartType(),
+                    pieProjection);
+        }
+        if(reportingEntity.isTotal_floor()){
+            Total_floor entity = kReportingConfiguration.getTotal_floor();
+            HelperKumbayaQueryPlanner.populateMetric(entity.getReturn_prefix(), true, table_name,  entity.getFact_column(), METRICTYPE.SUM,
+                    kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, HeaderType.DOUBLE, 
+                    entity.getUiname(), reportingEntity.getTotal_floor_order_sequence(), korderbyTreeMap, reportingEntity.getChartType(),
                     pieProjection);
         }
         if(reportingEntity.iseCPW()){

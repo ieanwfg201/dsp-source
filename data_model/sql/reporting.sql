@@ -861,3 +861,63 @@ ALTER table first_level_limited add column marketplace int  default -1 after bil
 ALTER table first_level_limited_daily add column marketplace int  default -1 after billedcsc;
 ALTER table first_level_limited_monthly add column marketplace int  default -1 after billedcsc;
 ALTER table first_level_limited_yearly add column marketplace int  default -1 after billedcsc;
+
+
+CREATE TABLE `exchange_hourly` (
+  `processing_time` datetime DEFAULT NULL,
+  `impression_time` timestamp NOT NULL ,
+  `pubId` int(11) DEFAULT NULL,
+  `siteId` int(11) DEFAULT NULL,
+  `deviceOsId` int(11) DEFAULT NULL,
+  `countryId` int(11) DEFAULT NULL,
+  `ext_site` int(11) DEFAULT NULL,
+  `advId` int(11) DEFAULT NULL,
+  `campaignId` int(11) DEFAULT NULL,
+  `adId` int(11) DEFAULT NULL,
+  `formatId` int(11) DEFAULT NULL,
+  `reqState` varchar(16) DEFAULT NULL,
+  `dspNoFill` varchar(16) DEFAULT NULL,
+  `total_floor` double DEFAULT '0',
+  `total_win_bidValue` double DEFAULT '0',
+  `total_bidValue` double DEFAULT '0',
+  `total_request` long NOT NULL,
+  `total_impression` long NOT NULL,
+  KEY `exchange_hourly_impression_time` (`impression_time`),
+  KEY `exchange_hourly_pubId` (`pubId`),
+  KEY `exchange_hourly_siteId` (`siteId`),
+  KEY `exchange_hourly_deviceOsId` (`deviceOsId`),
+  KEY `exchange_hourly_countryId` (`countryId`),
+  KEY `exchange_hourly_adId` (`adId`),
+  KEY `exchange_hourly_campaignId` (`campaignId`),
+  KEY `exchange_hourly_advId` (`advId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `exchange_daily` (
+  `processing_time` datetime DEFAULT NULL,
+  `impression_time` timestamp NOT NULL ,
+  `pubId` int(11) DEFAULT NULL,
+  `siteId` int(11) DEFAULT NULL,
+  `deviceOsId` int(11) DEFAULT NULL,
+  `countryId` int(11) DEFAULT NULL,
+  `ext_site` int(11) DEFAULT NULL,
+  `advId` int(11) DEFAULT NULL,
+  `campaignId` int(11) DEFAULT NULL,
+  `adId` int(11) DEFAULT NULL,
+  `formatId` int(11) DEFAULT NULL,
+  `reqState` varchar(16) DEFAULT NULL,
+  `dspNoFill` varchar(16) DEFAULT NULL,
+  `total_floor` double DEFAULT '0',
+  `total_win_bidValue` double DEFAULT '0',
+  `total_bidValue` double DEFAULT '0',
+  `total_request` long NOT NULL,
+  `total_impression` long NOT NULL,
+  KEY `exchange_daily_impression_time` (`impression_time`),
+  KEY `exchange_daily_pubId` (`pubId`),
+  KEY `exchange_daily_siteId` (`siteId`),
+  KEY `exchange_daily_deviceOsId` (`deviceOsId`),
+  KEY `exchange_daily_countryId` (`countryId`),
+  KEY `exchange_daily_adId` (`adId`),
+  KEY `exchange_daily_campaignId` (`campaignId`),
+  KEY `exchange_daily_advId` (`advId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

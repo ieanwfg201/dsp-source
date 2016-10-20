@@ -47,4 +47,8 @@ public interface NoSqlNamespaceOperations
                                                                                Set<NoSqlData> primaryKeyValues,
                                                                                Set<String> attributes);
 
+    /**
+     * Method to release all the resources held by the cache
+     */
+    public void destroy();
 }

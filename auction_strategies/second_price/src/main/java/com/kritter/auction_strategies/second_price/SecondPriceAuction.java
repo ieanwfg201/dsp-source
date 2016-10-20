@@ -2,7 +2,9 @@ package com.kritter.auction_strategies.second_price;
 
 import java.util.Map;
 
+import com.kritter.entity.exchangethrift.CreateExchangeThrift;
 import com.kritter.entity.reqres.entity.Request;
+import com.kritter.adserving.thrift.struct.DspNoFill;
 import com.kritter.auction_strategies.common.KAuction;
 import com.kritter.auction_strategies.validation.ValidateBestPrice;
 import com.kritter.auction_strategies.validation.ValidateBidResponse;
@@ -16,7 +18,7 @@ public class SecondPriceAuction implements KAuction {
 
     @Override
     public WinEntity getWinnerOpenRTB2_3(
-            Map<String, BidResponseEntity> bidderResponses, Request request)
+            Map<String, BidResponseEntity> bidderResponses, Request request,CreateExchangeThrift cet)
                     throws Exception {
         if(bidderResponses == null || request ==null || request.getSite() == null || bidderResponses.size() < 1){
             return null;
@@ -37,6 +39,8 @@ public class SecondPriceAuction implements KAuction {
 
             if(ValidateBidResponse.validate(entity, request)){
                 if(ValidateFloor.validate(entity, request)){
+                	cet.updateDemandState(key, DspNoFill.LOWBID);
+                	cet.updateDemandBid(key, entity.getBidResponseSeatBid()[0].getBidResponseBidEntities()[0].getPrice());
                     if(ValidateBestPrice.validate(entity, firstPrice)){
                         winKey = key;
                         if(firstPrice != 0.0){
@@ -47,7 +51,11 @@ public class SecondPriceAuction implements KAuction {
                     }else if (ValidateSecondBestPrice.validate(entity, secondPrice)){
                         secondPrice = entity.getBidResponseSeatBid()[0].getBidResponseBidEntities()[0].getPrice();
                     }
+                }else{
+                	cet.updateDemandState(key, DspNoFill.FLOORUNMET);
                 }
+            }else{
+            	cet.updateDemandState(key, DspNoFill.RESPERROR);
             }
         }
         if(winKey != null){
@@ -68,7 +76,8 @@ public class SecondPriceAuction implements KAuction {
 
     @Override
     public WinEntity getWinnerOpenRTB2_2(
-            Map<String, com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity> bidderResponses, Request request)
+            Map<String, com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity> bidderResponses, Request request,
+            CreateExchangeThrift cet)
             throws Exception {
         if(bidderResponses == null || request ==null || request.getSite() == null || bidderResponses.size() < 1){
             return null;
@@ -87,6 +96,8 @@ public class SecondPriceAuction implements KAuction {
             }
 
             if(ValidateBidResponse.validate(entity, request)){
+            	cet.updateDemandState(key, DspNoFill.LOWBID);
+            	cet.updateDemandBid(key, entity.getBidResponseSeatBid()[0].getBidResponseBidEntities()[0].getPrice());
                 if(ValidateFloor.validate(entity, request)){
                     if(ValidateBestPrice.validate(entity, firstPrice)){
                         winKey = key;
@@ -98,7 +109,11 @@ public class SecondPriceAuction implements KAuction {
                     }else if (ValidateSecondBestPrice.validate(entity, secondPrice)){
                         secondPrice = entity.getBidResponseSeatBid()[0].getBidResponseBidEntities()[0].getPrice();
                     }
+                }else{
+                	cet.updateDemandState(key, DspNoFill.FLOORUNMET);
                 }
+            }else{
+            	cet.updateDemandState(key, DspNoFill.RESPERROR);
             }
         }
         if(winKey != null){

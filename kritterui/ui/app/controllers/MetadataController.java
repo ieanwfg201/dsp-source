@@ -65,6 +65,16 @@ public class MetadataController extends Controller{
             ArrayNode nofillReasonOptions = TPMetadataAPI.nofillReasonList(); 
             return ok(nofillReasonOptions);
         }
+        @SecuredAction
+        public static Result reqState(){
+            ArrayNode nofillReasonOptions = TPMetadataAPI.reqState(); 
+            return ok(nofillReasonOptions);
+        }
+        @SecuredAction
+        public static Result dspNofill(){
+            ArrayNode nofillReasonOptions = TPMetadataAPI.dspNofill(); 
+            return ok(nofillReasonOptions);
+        }
         
         @SecuredAction
         public static Result postImpEvent(){

@@ -51,6 +51,10 @@ public class ConnectionTypeDetectionCache extends AbstractFileStatsReloadableCac
 
         try {
             DatabaseReader tempMaxmindDbReader = new DatabaseReader.Builder(file).build();
+
+            if(null != maxmindDbReader)
+                maxmindDbReader.close();
+
             maxmindDbReader = tempMaxmindDbReader;
             logger.debug("Successfully refreshed {} cache", this.getName());
         } catch (IOException ioe) {
@@ -95,6 +99,16 @@ public class ConnectionTypeDetectionCache extends AbstractFileStatsReloadableCac
     }
 
     @Override
-    protected void release() throws ProcessingException {
+    protected void release() throws ProcessingException
+    {
+        try
+        {
+            if (null != maxmindDbReader)
+                maxmindDbReader.close();
+        }
+        catch (IOException ioe)
+        {
+            logger.error("IOException in closing connection type detection cache maxmind db reader",ioe);
+        }
     }
 }

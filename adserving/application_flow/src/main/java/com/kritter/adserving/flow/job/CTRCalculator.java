@@ -91,13 +91,10 @@ public class CTRCalculator implements Job
         for(ResponseAdInfo responseAdInfo : responseAdInfos)
         {
             //if ad is not of type CPC or CPD then skip it.
-            if(
-                  !(
-                    responseAdInfo.getMarketPlace().getCode() == MarketPlace.CPC.getCode() ||
-                    responseAdInfo.getMarketPlace().getCode() == MarketPlace.CPD.getCode()
-                   )
-              )
+            int marketPlaceCode =  responseAdInfo.getMarketPlace().getCode();
+            if(!(marketPlaceCode == MarketPlace.CPC.getCode() || marketPlaceCode == MarketPlace.CPD.getCode())) {
                 continue;
+            }
 
             int[] dimensionValues = new int[this.dimensionNames.length];
             int counter = 0;
@@ -106,24 +103,16 @@ public class CTRCalculator implements Job
             {
                 Integer dimensionValue = null;
 
-                try
-                {
-                    dimensionValue = fetchDimensionValueForDimension(
-                                                                     request,
-                                                                     response,
-                                                                     dimensionName,
-                                                                     responseAdInfo
-                                                                    );
+                try {
+                    dimensionValue = fetchDimensionValueForDimension(request, response, dimensionName, responseAdInfo);
 
-                }
-                catch (IOException ioe)
-                {
-                    ReqLog.errorWithDebugNew(logger, request, "IOException inside CTRCalculator ",ioe);
+                } catch (IOException ioe) {
+                    ReqLog.errorWithDebugNew(logger, request, "IOException inside CTRCalculator ", ioe);
                 }
 
                 int value = (null == dimensionValue ? DEFAULT_DIM_VALUE : dimensionValue);
 
-                ReqLog.debugWithDebugNew(logger, request, "Dimension Name: {} and value: {}", dimensionName, value );
+                ReqLog.debugWithDebugNew(logger, request, "Dimension Name: {} and value: {}", dimensionName, value);
                 dimensionValues[counter++] = value;
             }
 

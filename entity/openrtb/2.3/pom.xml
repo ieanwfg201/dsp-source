@@ -41,6 +41,11 @@
           <scope>test</scope>
           <version>6.8.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.kritter.entity.common</groupId>
+            <artifactId>entity_common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <organization>
         <name>Kritter</name>
