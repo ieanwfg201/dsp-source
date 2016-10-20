@@ -401,13 +401,14 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
                         creativeBannerList.add(creativeBanner);
                     }
 
-                    Collections.sort(creativeBannerList,comparator);
-                    //done sorting banner uri ids on size.
-
-                    bannerUriIds = new Integer[creative.getBannerUriIds().length];
-                    for(int i=0 ;i<creative.getBannerUriIds().length;i++)
-                    {
-                        bannerUriIds[i] = creativeBannerList.get(i).getId();
+                    if(creativeBannerList.size()>0){
+                        Collections.sort(creativeBannerList,comparator);
+                        //done sorting banner uri ids on size.
+                    	bannerUriIds = new Integer[creativeBannerList.size()];
+                    	for(int i=0 ;i<creative.getBannerUriIds().length;i++)
+                    	{
+                        	bannerUriIds[i] = creativeBannerList.get(i).getId();
+                    	}
                     }
                 }
 
