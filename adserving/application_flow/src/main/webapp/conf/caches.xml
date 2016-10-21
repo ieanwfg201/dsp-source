@@ -804,7 +804,7 @@ GROUP BY id;]]></prop>
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select a.*,b.video_upload  from video_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  a.last_modified>='$last_modified' or b.last_modified>='$last_modified']]></prop>
+           <prop key="query"><![CDATA[select a.*,b.video_upload  from video_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  (a.last_modified>='$last_modified' or b.last_modified>='$last_modified')]]></prop>
          </props>
        </constructor-arg>
    </bean>
@@ -813,7 +813,7 @@ GROUP BY id;]]></prop>
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select a.*,b.banner_upload  from banner_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  a.last_modified>='$last_modified' or b.last_modified>='$last_modified']]></prop>
+           <prop key="query"><![CDATA[select a.*,b.banner_upload  from banner_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  (a.last_modified>='$last_modified' or b.last_modified>='$last_modified')]]></prop>
          </props>
        </constructor-arg>
    </bean>
@@ -822,7 +822,7 @@ GROUP BY id;]]></prop>
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select a.*,b.advertiser_upload  from advinfo_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  a.last_modified>='$last_modified' or b.last_modified>='$last_modified']]></prop>
+           <prop key="query"><![CDATA[select a.*,b.advertiser_upload  from advinfo_upload as a , adxbasedexchanges_metadata as b where a.pubIncId=b.pubIncId and  (a.last_modified>='$last_modified' or b.last_modified>='$last_modified')]]></prop>
          </props>
        </constructor-arg>
    </bean>
