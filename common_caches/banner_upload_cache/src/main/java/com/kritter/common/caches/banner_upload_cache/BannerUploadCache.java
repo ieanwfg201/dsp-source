@@ -46,7 +46,7 @@ public class BannerUploadCache extends AbstractDBStatsReloadableQueryableCache<S
             mub.setAdxbasedexhangesstatus(resultSet.getInt("adxbasedexhangesstatus"));
             mub.setPubIncId(resultSet.getInt("pubIncId"));
             isMarkedForDeletion=resultSet.getBoolean("banner_upload");
-            BannerUploadCacheEntity vice = new BannerUploadCacheEntity(mub, lastModified, isMarkedForDeletion);
+            BannerUploadCacheEntity vice = new BannerUploadCacheEntity(mub, lastModified, !isMarkedForDeletion);
             return vice;
         } catch(Exception e) {
             addToErrorMap(internalId+"id", "Exception while processing BannerUploadCacheEntity entry: " + internalId);

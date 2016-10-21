@@ -45,7 +45,7 @@ public class AdvInfoUploadCache extends AbstractDBStatsReloadableQueryableCache<
             mua.setPubIncId(resultSet.getInt("pubIncId"));
             mua.setAdxbasedexhangesstatus(resultSet.getInt("adxbasedexhangesstatus"));
             isMarkedForDeletion=resultSet.getBoolean("advertiser_upload");
-            AdvInfoUploadCacheEntity vice = new AdvInfoUploadCacheEntity(mua, lastModified, isMarkedForDeletion);
+            AdvInfoUploadCacheEntity vice = new AdvInfoUploadCacheEntity(mua, lastModified, !isMarkedForDeletion);
             return vice;
         } catch(Exception e) {
             addToErrorMap(internalId+"id", "Exception while processing VideoUploadCacheEntity entry: " + internalId);
