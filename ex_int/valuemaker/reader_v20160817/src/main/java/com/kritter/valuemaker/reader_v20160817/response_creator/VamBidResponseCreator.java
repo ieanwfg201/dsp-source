@@ -72,7 +72,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
     }
 
-    private void writeEmptyResponse(HttpServletResponse httpServletResponse, int totalProcessingTime) throws IOException {
+    private void writeEmptyResponse(HttpServletResponse httpServletResponse) throws IOException {
         httpServletResponse.setStatus(204);
         httpServletResponse.getOutputStream().close();
     }
@@ -84,121 +84,127 @@ public class VamBidResponseCreator implements IBidResponseCreator {
             int totalProcessingTime
     ) throws IOException, BidResponseException {
 
-        Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();
-        if (null == impressionIdsToRespondFor) {
-            logger.debug("There is no impression ids to respond for inside VamBidResponseCreator");
-        }
+        try {
 
-        Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
-
-        //只取一个
-        for (String impressionId : impressionIdsToRespondFor) {
-            Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
-            if (null == responseAdInfos || responseAdInfos.size() <= 0) {
-                logger.debug("ResponseAdInfo Size is 0 inside VamBidResponseCreator , writing nofill...");
-                continue;
+            Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();
+            if (null == impressionIdsToRespondFor) {
+                logger.debug("There is no impression ids to respond for inside VamBidResponseCreator");
             }
-            //sort and pick the one with highest ecpm value.
-            List<ResponseAdInfo> list = new ArrayList<ResponseAdInfo>();
-            for (ResponseAdInfo responseAdInfoTemp : responseAdInfos) {
-                if (responseAdInfoTemp.getCreative().getCreativeFormat().equals(CreativeFormat.BANNER)) {
-                    list.add(responseAdInfoTemp);
-                } else if (responseAdInfoTemp.getCreative().getCreativeFormat().equals(CreativeFormat.VIDEO)) {
-                    list.add(responseAdInfoTemp);
+
+            Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
+
+            //只取一个
+            for (String impressionId : impressionIdsToRespondFor) {
+                Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
+                if (null == responseAdInfos || responseAdInfos.size() <= 0) {
+                    logger.debug("ResponseAdInfo Size is 0 inside VamBidResponseCreator , writing nofill...");
+                    continue;
                 }
-            }
-
-            if (null == list || list.size() <= 0) {
-                logger.debug("There is no banner to be served inside VamBidResponseCreator , writing nofill...");
-                continue;
-            }
-
-            Collections.sort(list, comparator);
-
-            ResponseAdInfo responseAdInfoToUse = list.get(0);
-            responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues(responseAdInfoToUse, list, randomPicker);
-            Creative creative = responseAdInfoToUse.getCreative();
-
-            int maxPrice = responseAdInfoToUse.getEcpmValue().intValue() * 100;
-            response.addResponseAdInfoAsFinalForImpressionId(impressionId, responseAdInfoToUse);
-            String creativeId = creative.getCreativeGuid();
-            if (null != responseAdInfoToUse.getCreativeBanner()) {
-                creativeId = responseAdInfoToUse.getCreativeBanner().getGuid();
-            }
-
-            String clickUri = CreativeFormatterUtils.prepareClickUri
-                    (
-                            logger,
-                            request,
-                            responseAdInfoToUse,
-                            response.getBidderModelId(),
-                            urlVersion,
-                            request.getInventorySource(),
-                            response.getSelectedSiteCategoryId(),
-                            secretKey
-                    );
-
-            //win_url
-            StringBuffer winNotificationURLBuffer = new StringBuffer(postImpressionBaseWinApiUrl);
-            winNotificationURLBuffer.append(clickUri);
-            String win_url = winNotificationURLBuffer.toString();
-
-            //clk_url
-            StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
-            clickUrl.append(clickUri);
-            String clk_url = clickUrl.toString();
-
-            //show_url
-            StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
-            cscBeaconUrl.append(clickUri);
-            String show_url = cscBeaconUrl.toString();
-
-            BidRequestVam bidRequestVam = (BidRequestVam) request.getBidRequest();
-            VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
-            VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
-
-            AdEntity adEntity = adEntityCache.query(responseAdInfoToUse.getAdId());
-            if (null == adEntity) {
-                logger.error("AdEntity not found in cache inside BidRequestResponseCreatorCloudCross adId:{} ", responseAdInfoToUse.getAdId());
-                continue;
-            }
-
-            StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
-            macroClickUrl.append(clickUri);
-
-            ExtTracker extTracker = adEntity.getExtTracker();
-            List<String> clkTracker = new ArrayList<String>();
-            List<String> impTracker = new ArrayList<String>();
-
-            if (extTracker != null && extTracker.getClickTracker() != null) {
-                List<String> extClickTracker = extTracker.getClickTracker();
-                for (String str : extClickTracker) {
-                    clkTracker.add(MarkUpHelper.adTagMacroReplace(str, request, responseAdInfoToUse, response, "", macroClickUrl.toString(), extTracker.getClickMacro(), extTracker.getClickMacroQuote(), ""));
+                //sort and pick the one with highest ecpm value.
+                List<ResponseAdInfo> list = new ArrayList<ResponseAdInfo>();
+                for (ResponseAdInfo responseAdInfoTemp : responseAdInfos) {
+                    if (responseAdInfoTemp.getCreative().getCreativeFormat().equals(CreativeFormat.BANNER)) {
+                        list.add(responseAdInfoTemp);
+                    } else if (responseAdInfoTemp.getCreative().getCreativeFormat().equals(CreativeFormat.VIDEO)) {
+                        list.add(responseAdInfoTemp);
+                    }
                 }
-            }
 
-            if (extTracker != null && extTracker.getImpTracker() != null) {
-                List<String> extImpTracker = extTracker.getImpTracker();
-                for (String str : extImpTracker) {
-                    impTracker.add(MarkUpHelper.adTagMacroReplace(str, request, responseAdInfoToUse, response, "", macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), ""));
+                if (null == list || list.size() <= 0) {
+                    logger.debug("There is no banner to be served inside VamBidResponseCreator , writing nofill...");
+                    continue;
                 }
+
+                Collections.sort(list, comparator);
+
+                ResponseAdInfo responseAdInfoToUse = list.get(0);
+                responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues(responseAdInfoToUse, list, randomPicker);
+                Creative creative = responseAdInfoToUse.getCreative();
+
+                int maxPrice = responseAdInfoToUse.getEcpmValue().intValue() * 100;
+                response.addResponseAdInfoAsFinalForImpressionId(impressionId, responseAdInfoToUse);
+                String creativeId = creative.getCreativeGuid();
+                if (null != responseAdInfoToUse.getCreativeBanner()) {
+                    creativeId = responseAdInfoToUse.getCreativeBanner().getGuid();
+                }
+
+                String clickUri = CreativeFormatterUtils.prepareClickUri
+                        (
+                                logger,
+                                request,
+                                responseAdInfoToUse,
+                                response.getBidderModelId(),
+                                urlVersion,
+                                request.getInventorySource(),
+                                response.getSelectedSiteCategoryId(),
+                                secretKey
+                        );
+
+                //win_url
+                StringBuffer winNotificationURLBuffer = new StringBuffer(postImpressionBaseWinApiUrl);
+                winNotificationURLBuffer.append(clickUri);
+                String win_url = winNotificationURLBuffer.toString();
+
+                //clk_url
+                StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
+                clickUrl.append(clickUri);
+                String clk_url = clickUrl.toString();
+
+                //show_url
+                StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
+                cscBeaconUrl.append(clickUri);
+                String show_url = cscBeaconUrl.toString();
+
+                BidRequestVam bidRequestVam = (BidRequestVam) request.getBidRequest();
+                VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
+                VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
+
+                AdEntity adEntity = adEntityCache.query(responseAdInfoToUse.getAdId());
+                if (null == adEntity) {
+                    logger.error("AdEntity not found in cache inside BidRequestResponseCreatorCloudCross adId:{} ", responseAdInfoToUse.getAdId());
+                    continue;
+                }
+
+                StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
+                macroClickUrl.append(clickUri);
+
+                ExtTracker extTracker = adEntity.getExtTracker();
+                List<String> clkTracker = new ArrayList<String>();
+                List<String> impTracker = new ArrayList<String>();
+
+                if (extTracker != null && extTracker.getClickTracker() != null) {
+                    List<String> extClickTracker = extTracker.getClickTracker();
+                    for (String str : extClickTracker) {
+                        clkTracker.add(MarkUpHelper.adTagMacroReplace(str, request, responseAdInfoToUse, response, "", macroClickUrl.toString(), extTracker.getClickMacro(), extTracker.getClickMacroQuote(), ""));
+                    }
+                }
+
+                if (extTracker != null && extTracker.getImpTracker() != null) {
+                    List<String> extImpTracker = extTracker.getImpTracker();
+                    for (String str : extImpTracker) {
+                        impTracker.add(MarkUpHelper.adTagMacroReplace(str, request, responseAdInfoToUse, response, "", macroClickUrl.toString(), extTracker.getImpMacro(), extTracker.getImpMacroQuote(), ""));
+                    }
+                }
+
+                VamRealtimeBidding.VamResponse vamBidResponse = ConvertResponse.convert(
+                        vamRequest,
+                        creativeId,
+                        maxPrice,
+                        win_url,
+                        clk_url,
+                        show_url,
+                        clkTracker,
+                        impTracker
+                );
+
+                ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+                servletOutputStream.write(vamBidResponse.toByteArray());
+                servletOutputStream.close();
+                break;
             }
-
-            VamRealtimeBidding.VamResponse vamBidResponse = ConvertResponse.convert(
-                    vamRequest,
-                    creativeId,
-                    maxPrice,
-                    win_url,
-                    clk_url,
-                    show_url,
-                    clkTracker,
-                    impTracker
-            );
-
-            ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
-            servletOutputStream.write(vamBidResponse.toByteArray());
-            servletOutputStream.close();
-            break;
+        } catch (Exception e) {
+            logger.error("IOException inside VamBidResponseCreator ", e);
+            writeEmptyResponse(httpServletResponse);
         }
 
     }
@@ -223,7 +229,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         if (!(requestObject instanceof Request) || !(responseObject instanceof Response) || !(contextObject instanceof Context)) {
             logger.error("Request/Response objects are not passed inside VamBidResponseCreator,writing no-fill");
             try {
-                writeEmptyResponse(httpServletResponse, 0);
+                writeEmptyResponse(httpServletResponse);
             } catch (IOException ioe) {
                 logger.error("IOException inside VamBidResponseCreator ", ioe);
             }
@@ -235,7 +241,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         if (null == impressionIdsToRespondFor) {
             logger.debug("There is no impression ids to respond for inside BidRequestResponseCreatorVam");
             try {
-                writeEmptyResponse(httpServletResponse, 0);
+                writeEmptyResponse(httpServletResponse);
             } catch (IOException ioe) {
                 logger.error("IOException inside VamBidResponseCreator ", ioe);
             }

@@ -21,13 +21,7 @@ public class ConvertRequest {
         UUIDGenerator uuidGenerator= new UUIDGenerator();
         bidRequestImpressionDTO.setBidRequestImpressionId(uuidGenerator.generateUniversallyUniqueIdentifier().toString());
 
-        BidRequestPMPDTO bidRequestPMPDTO = new BidRequestPMPDTO();
-        BidRequestDealDTO bidRequestDealDTO = new BidRequestDealDTO();
-        bidRequestPMPDTO.setPrivateAuctionDeals(new BidRequestDealDTO[]{bidRequestDealDTO});
-        bidRequestImpressionDTO.setBidRequestPMPDTO(bidRequestPMPDTO);
-
         openrtbRequest.setBidRequestImpressionArray(new BidRequestImpressionDTO[]{bidRequestImpressionDTO});
-
 
         BidRequestSiteDTO bidRequestSiteDTO = new BidRequestSiteDTO();
         openrtbRequest.setBidRequestSite(bidRequestSiteDTO);
@@ -103,14 +97,21 @@ public class ConvertRequest {
         //vertical,data_source,data_source,premium_price
 
         if (request.getPmpInfoCount() > 0 && request.getPmpInfo(0) != null) {
-            openrtbRequest.getBidRequestImpressionArray()[0].getBidRequestPMPDTO().setPrivateAuction(0);
+
+            BidRequestPMPDTO bidRequestPMPDTO = new BidRequestPMPDTO();
+            bidRequestPMPDTO.setPrivateAuction(0);
+
+            BidRequestDealDTO bidRequestDealDTO = new BidRequestDealDTO();
+
             VamRequest.PmpInfo pmpInfo = request.getPmpInfo(0);
             if (pmpInfo.hasDealId()) {
-                openrtbRequest.getBidRequestImpressionArray()[0].getBidRequestPMPDTO().getPrivateAuctionDeals()[0].setDealId(String.valueOf(pmpInfo.getDealId()));
+                bidRequestDealDTO.setDealId(String.valueOf(pmpInfo.getDealId()));
             }
             if (pmpInfo.hasPreferPrice()) {
-                openrtbRequest.getBidRequestImpressionArray()[0].getBidRequestPMPDTO().getPrivateAuctionDeals()[0].setBidFloor((float) pmpInfo.getPreferPrice() / 100);
+                bidRequestDealDTO.setBidFloor((float) pmpInfo.getPreferPrice() / 100);
             }
+            bidRequestPMPDTO.setPrivateAuctionDeals(new BidRequestDealDTO[]{bidRequestDealDTO});
+            bidRequestImpressionDTO.setBidRequestPMPDTO(bidRequestPMPDTO);
         }
 
 
