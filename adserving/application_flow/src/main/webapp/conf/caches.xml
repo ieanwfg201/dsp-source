@@ -593,10 +593,18 @@ FROM
                    (SELECT value
                     FROM payout_threshold_metadata
                     WHERE name = "campaign_absolute_payout_threshold")) AS cmpgn_abs_threshold,
+          IFNULL(campaign_payout_threshold.last_modified,
+                   (SELECT last_modified
+                    FROM payout_threshold_metadata
+                    WHERE name = "campaign_absolute_payout_threshold")) AS cmpgn_abs_last_modified,
           IFNULL(campaign_payout_threshold.percentage_threshold,
                    (SELECT value
                     FROM payout_threshold_metadata
-                    WHERE name = "campaign_percentage_payout_threshold")) AS cmpgn_percent_threshold
+                    WHERE name = "campaign_percentage_payout_threshold")) AS cmpgn_percent_threshold,
+          IFNULL(campaign_payout_threshold.last_modified,
+                   (SELECT last_modified
+                    FROM payout_threshold_metadata
+                    WHERE name = "campaign_percent_payout_threshold")) AS cmpgn_percent_last_modified
    FROM campaign
    LEFT JOIN campaign_impressions_budget ON campaign.guid = campaign_impressions_budget.campaign_guid
    LEFT JOIN campaign_payout_threshold ON campaign.id = campaign_payout_threshold.campaign_id
@@ -616,7 +624,9 @@ WHERE c.id=cb.campaign_id
        OR (c.campaign_imp_budget_last_modified IS NOT NULL
            AND c.campaign_imp_budget_last_modified >= '$last_modified')
        OR (c.campaign_payout_last_modified IS NOT NULL
-           AND c.campaign_payout_last_modified >= '$last_modified'))
+           AND c.campaign_payout_last_modified >= '$last_modified')
+       OR c.cmpgn_abs_last_modified >= '$last_modified'
+       OR c.cmpgn_percent_last_modified >= '$last_modified')
 GROUP BY id;]]></prop>
          </props>
        </constructor-arg>
