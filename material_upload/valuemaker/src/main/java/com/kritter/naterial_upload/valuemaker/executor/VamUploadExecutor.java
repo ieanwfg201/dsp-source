@@ -19,8 +19,8 @@ public class VamUploadExecutor  extends UploadExecutorImpl implements UploadExec
 		super.checkJobs(properties, con, pubInc);
 		VamMUBanner muBanner = new VamMUBanner();
 		super.executeMaterialBannerUpload(properties, muBanner, con, pubInc );
-		VamMUBannerAudit muBannerAudit = new VamMUBannerAudit();
-		super.executeMaterialBannerAudit(properties, muBannerAudit, con, pubInc);
+//		VamMUBannerAudit muBannerAudit = new VamMUBannerAudit();
+//		super.executeMaterialBannerAudit(properties, muBannerAudit, con, pubInc);
 		VamMUVideo muVideo = new VamMUVideo();
 		super.executeMaterialVideoUpload(properties, muVideo, con, pubInc);
 		VamMUVideoAudit muVideoAudit = new VamMUVideoAudit();

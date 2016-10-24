@@ -29,7 +29,7 @@ public class ConvertResponse {
             vamBidBuilder.setId(vamRequest.getDisplay(0).getId());
         }
         vamBidBuilder.setWinnoticeUrl(win_url);
-        vamBidBuilder.setCmflag(1); //TODO cookie map是否需要打开
+        vamBidBuilder.setCmflag(0);
 
 //        vamBidBuilder.addAdvertiserName("");//该字段暂未使用
 
@@ -71,12 +71,12 @@ public class ConvertResponse {
             }
 
             //TODO
-            VamRealtimeBidding.VamResponse.Bid.Video.Event.Builder eventBuilder = VamRealtimeBidding.VamResponse.Bid.Video.Event.newBuilder();
-            eventBuilder.setEventName("");
-            eventBuilder.setTrackUrl("");
-            eventBuilder.setOffset("");
+//            VamRealtimeBidding.VamResponse.Bid.Video.Event.Builder eventBuilder = VamRealtimeBidding.VamResponse.Bid.Video.Event.newBuilder();
+//            eventBuilder.setEventName("");
+//            eventBuilder.setTrackUrl("");
+//            eventBuilder.setOffset("");
 
-            videoBuilder.addEvents(eventBuilder);
+//            videoBuilder.addEvents(eventBuilder);
             vamBidBuilder.setVideoBidding(videoBuilder);
         } else {
             return null;
