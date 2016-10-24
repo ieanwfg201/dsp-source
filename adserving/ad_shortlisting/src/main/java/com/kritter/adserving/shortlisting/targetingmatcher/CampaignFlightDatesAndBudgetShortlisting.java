@@ -111,18 +111,19 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
                         continue;
                     }
 
-                    if( campaign.getPercentPayoutThreshold() != null &&
-                        currentCampaignPayout + campaign.getPercentPayoutThreshold() < campaign.getCampaignPayout()
-                      )
-                    {
-                        ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, current burn exceeds payout " +
-                                " by percent threshold {}. Will get started again after cache refresh. Dropping it.",
-                                campaignId, campaign.getPercentPayoutThreshold());
+                    if(campaign.getPercentPayoutThreshold() != null) {
+                        double percentThreshold =
+                                campaign.getPercentPayoutThreshold() * campaign.getCampaignDailyBudget() / 100;
+                        if (currentCampaignPayout + percentThreshold < campaign.getCampaignPayout()) {
+                            ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, current burn exceeds payout " +
+                                            " by percent threshold {}. Will get started again after cache refresh. Dropping it.",
+                                    campaignId, campaign.getPercentPayoutThreshold());
 
-                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
-                                this.adNoFillReasonMapKey, context);
+                            AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                    this.adNoFillReasonMapKey, context);
 
-                        continue;
+                            continue;
+                        }
                     }
                 }
                 else
