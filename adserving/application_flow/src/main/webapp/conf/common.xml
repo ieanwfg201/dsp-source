@@ -494,7 +494,7 @@
     </bean>
     <bean id="cloud_cross_bid_request_reader_4_4_4" class="com.kritter.bidreqres.reader.cloudcross4_4_4.BidRequestReaderCloudCross">
         <constructor-arg index="0" value="adserving.application"/>
-        <constructor-arg index="1" value="cloud-cross-guid"/>
+        <constructor-arg index="1" value="cloudcross"/>
     </bean>
 
     <bean id="mopub_request_enricher_2_3" class="com.kritter.adexchange.mopub.enricher.MoPubRequestEnricher2_3">
@@ -536,7 +536,7 @@
             <map>
                 <entry key="mopub-pub-guid" value-ref="mopub_request_enricher_2_3"/>
                 <entry key="youku" value-ref="youku_request_enricher"/>
-                <entry key="cloud-cross-guid" value-ref="cloud_cross_request_enricher_4_4_4"/>
+                <entry key="cloudcross" value-ref="cloud_cross_request_enricher_4_4_4"/>
                 <entry key="valuemaker" value-ref="valuemaker_request_enricher"/>
             </map>
         </constructor-arg>
