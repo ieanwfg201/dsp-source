@@ -18,7 +18,9 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Properties;
 
 public class VamMUVideo implements MUVideo {
     private static final Logger LOG = LoggerFactory.getLogger(VamMUVideo.class);
@@ -199,6 +201,7 @@ public class VamMUVideo implements MUVideo {
                         continue;
                     }
 
+                    int mime = videoProps.getMime();
                     String split[] = videoProps.getVideo_info()[0].replaceAll("\\[", "").replaceAll("]", "").split(",");
                     Integer width = videoProps.getWidth();
                     Integer height = videoProps.getHeight();
@@ -242,6 +245,7 @@ public class VamMUVideo implements MUVideo {
                     vqe.setHeight(height);
                     vqe.setDuration(duration);
                     vqe.setCategory(rset.getInt("category"));
+                    vqe.setMime(mime);
                     vamQueryEntityList.add(vqe);
                 } catch (Exception e) {
                     LOG.error(e.toString());
@@ -302,7 +306,14 @@ public class VamMUVideo implements MUVideo {
                 String host = url.getHost();
                 String[] adomain_list = {host};
 
-                VamVideoMaterialUploadEntity videoEntity = new VamVideoMaterialUploadEntity(vqe.getCreativeGuid(), vqe.getCategory(), "{!vam_click_url}{!dsp_click_url}" + vqe.getLanding_url(), adomain_list, vqe.getWidth(), vqe.getHeight(), 1, vqe.getDuration(), materialurl, vqe.getAdvName(), 0);
+                int mime = 0;
+                if (vqe.getMime() != null && vqe.getMime() == 1) {
+                    mime = 5;
+                } else if (vqe.getMime() != null && vqe.getMime() == 2) {
+                    mime = 6;
+                }
+
+                VamVideoMaterialUploadEntity videoEntity = new VamVideoMaterialUploadEntity(vqe.getCreativeGuid(), vqe.getCategory(), "{!vam_click_url}{!dsp_click_url}" + vqe.getLanding_url(), adomain_list, vqe.getWidth(), vqe.getHeight(), mime, vqe.getDuration(), materialurl, vqe.getAdvName(), 0);
                 String newInfoStr = JSON.toJSONString(videoEntity);
 
                 if (rset.next()) {
