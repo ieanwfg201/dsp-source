@@ -63,6 +63,8 @@ public class VamQueryEntity {
 	public Integer duration;
     @Getter@Setter
     public Integer category;
+    @Getter@Setter
+    public Integer mime;
 
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
