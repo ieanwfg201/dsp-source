@@ -593,7 +593,7 @@ var directvideoController = function ($scope, $http,  $modalInstance, FileUpload
         name: 'imageFilter',
         fn: function(item /*{File|FileLikeObject}*/, options) {
             var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
-            return '|flv|mp4|m3u8|ts|3gp|mov|avi|wmv'.indexOf(type) !== -1;
+            return '|x-flv|x-mpegURL|MP2T|3gpp|quicktime|x-msvideo|x-ms-wmv|flv|mp4|m3u8|ts|3gp|mov|avi|wmv'.indexOf(type) !== -1;
         }
     });
     
