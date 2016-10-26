@@ -187,7 +187,9 @@ public class CampaignController extends Controller{
 		BeanUtils.copyProperties(campaign, campaignEntity);
 		BeanUtils.copyProperties(campaignBudget, campaignBudgetEntity);
 		if(campaignPayout!=null && campaignPayout.getCampaign_id() != null){
-			BeanUtils.copyProperties(campaignPayout, campaignPayoutEntity);
+			campaignPayoutEntity.setAbsolute_threshold(campaignPayout.getAbsolute_threshold());
+			campaignPayoutEntity.setPercentage_threshold(campaignPayout.getPercentage_threshold());
+			campaignPayoutEntity.setCampaign_id_payout(campaignPayout.getCampaign_id());
 		}
 		
 		return ok(views.html.advt.campaign.campaignForm.render(campaignFormTemplate.fill(campaignEntity), 
