@@ -74,7 +74,7 @@
 					<legend>Payout Threshold</legend>
 					
 					<div>
-						@components.formElements.hiddenfield(campaignPayoutForm("campaign_id") )
+						@components.formElements.hiddenfield(campaignPayoutForm("campaign_id_payout") )
                         @components.formElements.modelcurrencyinput(campaignPayoutForm("absolute_threshold"), "Absolute Threshold (-1 means default)" )
                         @components.formElements.modelcurrencyinput(campaignPayoutForm("percentage_threshold"), "Percentage Threshold(-1 means default)" )
 					</div>

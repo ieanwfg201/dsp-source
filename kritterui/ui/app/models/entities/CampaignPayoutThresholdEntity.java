@@ -11,7 +11,7 @@ import lombok.Setter;
 public class CampaignPayoutThresholdEntity {
 	
 	@Getter@Setter
-    private int campaign_id = -1;
+    private int campaign_id_payout = -1;
     @Getter@Setter
     private float absolute_threshold = -1.0f;
     @Getter@Setter
@@ -19,7 +19,7 @@ public class CampaignPayoutThresholdEntity {
     
     public CampaignPayoutThreshold getEntity(){
     	CampaignPayoutThreshold entity=new CampaignPayoutThreshold();
-    	entity.setCampaign_id(this.campaign_id);
+    	entity.setCampaign_id(this.campaign_id_payout);
     	entity.setAbsolute_threshold(this.absolute_threshold);
     	entity.setPercentage_threshold(this.percentage_threshold);
     	return entity;
