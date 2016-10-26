@@ -219,7 +219,6 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             String ip = cloudCrossBidRequestDeviceDTO.getIpV4AddressClosestToDevice();
             if(null == ip || ip.isEmpty())
             {
-                ip=ip.trim();
                 ip = cloudCrossBidRequestDeviceDTO.getIpV6Address();
                 if(ip == null || ip.isEmpty()){
                     logger.debug("Country and InternetServiceProvider could not be detected inside YoukuRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
