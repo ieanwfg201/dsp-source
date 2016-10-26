@@ -129,11 +129,11 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             HandsetMasterData handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
 
             if (null == handsetMasterData) {
-                this.logger.warn("Device detection failed inside YoukuRequestEnricher, proceeding with  undetected handset,{}", userAgent);
+                this.logger.warn("Device detection failed inside VamRequestEnricher, proceeding with  undetected handset,{}", userAgent);
             } else {
                 logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
                 if (handsetMasterData.isBot()) {
-                    this.logger.error("Device detected is BOT inside YoukuRequestEnricher, cannot proceed further");
+                    this.logger.error("Device detected is BOT inside VamRequestEnricher, cannot proceed further");
                     request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
                     return request;
                 }
