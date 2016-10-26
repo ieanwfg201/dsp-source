@@ -287,8 +287,8 @@ public class CampaignController extends Controller{
 					if(msg.getError_code()==0){ 
 						if(!campaignPayoutForm.hasErrors() && campaign !=null){
 							campaignPayoutEntity = campaignPayoutForm.get();
-							if(campaignPayoutEntity.getCampaign_id()<1){			
-								campaignPayoutEntity.setCampaign_id(campaign.getId());
+							if(campaignPayoutEntity.getCampaign_id_payout()<1){			
+								campaignPayoutEntity.setCampaign_id_payout(campaign.getId());
 								msg = ApiDef.insert_campaign_payout_threshold(con, campaignPayoutEntity.getEntity());
 							}else{
 								CampaignPayoutThreshold campaignPayout = campaignPayoutEntity.getEntity();
