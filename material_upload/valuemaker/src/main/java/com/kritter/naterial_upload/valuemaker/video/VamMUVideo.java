@@ -224,7 +224,7 @@ public class VamMUVideo implements MUVideo {
                     VamQueryEntity vqe = new VamQueryEntity();
 
                     vqe.setVideoInfoId(cpRset.getInt("id"));
-                    vqe.setCreativeGuid(cpRset.getString("guid"));
+                    vqe.setCreativeGuid(rset.getString("creativeGuid"));
 
                     vqe.setAdvId(rset.getInt("advId"));
                     vqe.setAdvName(rset.getString("advName"));
