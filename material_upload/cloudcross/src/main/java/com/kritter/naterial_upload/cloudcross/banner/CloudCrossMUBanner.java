@@ -207,7 +207,8 @@ public class CloudCrossMUBanner implements MUBanner {
                     cpstmt.setInt(3, cqe.getAdStatus());
                     cpstmt.setInt(4, cqe.getCreativeStatus());
                     cpstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
-                    if (newInfoStr.equals(info)) {
+                    String oldInfo = clearPublisherParamBannerId(info);
+                    if (newInfoStr.equals(oldInfo)) {
                         cpstmt.setInt(1, adxbasedexhangesstatus);
                         cpstmt.setString(6, info);
                     } else {
@@ -265,6 +266,12 @@ public class CloudCrossMUBanner implements MUBanner {
         }
     }
 
+    private String clearPublisherParamBannerId(String info) throws java.io.IOException {
+        CloudCrossBannerEntity readValue = objectMapper.readValue(info, CloudCrossBannerEntity.class);
+        readValue.setBannerId(null);
+        return objectMapper.writeValueAsString(readValue);
+    }
+
 
     @Override
     public void uploadmaterial(Properties properties, Connection con) {
@@ -308,7 +315,7 @@ public class CloudCrossMUBanner implements MUBanner {
                     cpstmt1 = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
                     cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
                     cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                    cpstmt.setString(3, objectMapper.writeValueAsString(info));
+                    cpstmt1.setString(3, objectMapper.writeValueAsString(info));
                     cpstmt1.executeUpdate();
                 }
             }
