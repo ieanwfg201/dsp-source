@@ -9,13 +9,13 @@ import java.util.List;
 
 public class ConvertRequest {
 
-    static VamBidRequestParentNodeDTO openrtbRequest = new VamBidRequestParentNodeDTO();
-
     public static VamBidRequestParentNodeDTO convert(VamRequest request) {
 
         if (request == null) {
             return null;
         }
+
+        VamBidRequestParentNodeDTO openrtbRequest = new VamBidRequestParentNodeDTO();
 
         BidRequestImpressionDTO bidRequestImpressionDTO = new BidRequestImpressionDTO();
         UUIDGenerator uuidGenerator= new UUIDGenerator();
