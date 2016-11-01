@@ -6,7 +6,7 @@ public class VamVideoQuery {
             "b.id as campaignId,b.name as campaignName, \n" +
             "b.start_date as campaignStartDate, b.end_date as campaignEndDate, b.status_id as campaignStatus, \n" +
             "c.id as adId, c.name as adName, c.status_id as adStatus, c.landing_url as landing_url, \n" +
-            "d.guid as creativeGuid, d.id as creativeId, d.label as creativeName,d.video_props  as video_props,\n" +
+            "d.guid as creativeGuid ,d.id as creativeId, d.label as creativeName,d.video_props  as video_props,\n" +
             "d.status_id as creativeStatus  \n" +
             "from account as a,campaign as b, ad as c, creative_container as d  \n" +
             "where  a.guid=b.account_guid and b.id=c.campaign_id and  c.creative_id=d.id and \n" +
