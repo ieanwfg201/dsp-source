@@ -63,7 +63,6 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
         setToken(properties.getProperty("cloudcross_token"));
         setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId")));
         dateNow = new Date();
-        LOG.info("cloudcross_dsp_id:" + getDspid() + ", cloudcross_token:" + getToken() + ",cloudcross_pubIncId:" + getPubIncId());
         String creative_dspid_token = "?dspId=" + getDspid() + "&token=" + getToken();
         String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix");
         String advertiser_add_url = cloudcross_url_prefix + properties.getProperty("cloudcross_prefix_advertiser_add") + creative_dspid_token;

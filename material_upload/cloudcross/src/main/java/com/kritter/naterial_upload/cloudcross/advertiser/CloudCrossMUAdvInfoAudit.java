@@ -39,7 +39,6 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
         setDspid(properties.getProperty("cloudcross_dsp_id"));
         setToken(properties.getProperty("cloudcross_token"));
         setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId")));
-        LOG.info("cloudcross_dsp_id:" + getDspid() + ", cloudcross_token:" + getToken() + ",cloudcross_pubIncId:" + getPubIncId());
 
         String creative_dspid_token = "?dspId=" + this.getDspid() + "&token=" + this.getToken();
         String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix");
