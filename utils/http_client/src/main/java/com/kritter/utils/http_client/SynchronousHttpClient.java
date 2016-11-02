@@ -55,7 +55,7 @@ public class SynchronousHttpClient {
             return apiResponse;
         }
 
-        logger.debug("Server URL to be used for http call is: {} ", httpRequest.getServerURL());
+//        logger.debug("Server URL to be used for http call is: {} ", httpRequest.getServerURL());
 
         HttpURLConnection httpURLConnection = null;
         InputStream inputStream = null;
