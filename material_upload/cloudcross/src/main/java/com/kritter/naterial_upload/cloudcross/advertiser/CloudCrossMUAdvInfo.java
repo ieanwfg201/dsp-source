@@ -239,7 +239,7 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
         if (!isPerformTransaction()) {
             return;
         }
-        LOG.info("UPLOADING MATERIAL");
+        LOG.info("UPLOADING ADVINFO FOR CLOUDCROSS");
         PreparedStatement pstmt = null;
         PreparedStatement cpstmt = null;
         PreparedStatement cpstmt1 = null;
@@ -253,9 +253,17 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                 String errorCode = "";
                 try {
                     String postBody = rset.getString("info");
-                    LOG.debug(postBody);
+                    LOG.info("CLOUDCROSS UPLOADING ADVINFO POSTBODY:" + postBody);
                     List<CloudCrossAdvertiserEntity> list = new ArrayList<>();
-                    list.add(objectMapper.readValue(postBody, CloudCrossAdvertiserEntity.class));
+                    CloudCrossAdvertiserEntity entity = objectMapper.readValue(postBody, CloudCrossAdvertiserEntity.class);
+                    entity.setHomepage("null");
+                    entity.setTel("null");
+                    entity.setEmail("null");
+                    entity.setLicencePath("null");
+                    entity.setIdPath("null");
+                    entity.setOrgPath("null");
+                    entity.setCpiPath("null");
+                    list.add(entity);
                     List<CloudCrossResponse> responses = cloudCrossAdvertiser.add(list);
                     LOG.info(objectMapper.writeValueAsString(responses));
                     if (responses != null && responses.size() > 0) {
@@ -265,12 +273,20 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                             CloudCrossResponse.Success success = cloudCrossResponse.getSuccess();
                             CloudCrossError error = cloudCrossResponse.getError();
                             if (success != null && success.getCode() == 200 && success.getMessage().equals("插入成功")) {
-                                cpstmt = updatetAdvSuccess(con, cpstmt, internalId, errorCode);
+                                cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId + ""));
+                                cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+                                cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                                cpstmt.setString(3, success.getMessage());
+                                cpstmt.executeUpdate();
                                 isSuccess = true;
                                 LOG.info("advertiser upload success!");
                             } else if (error != null) {
-                                cpstmt = updatetAdvSuccess(con, cpstmt, internalId, errorCode);
-                                isSuccess = true;
+                                cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId + ""));
+                                cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
+                                cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                                cpstmt.setString(3, error.getMessage());
+                                cpstmt.executeUpdate();
+                                isSuccess = false;
                             } else {
 
                                 if (error != null && StringUtils.isNotEmpty(error.getMessage())) {

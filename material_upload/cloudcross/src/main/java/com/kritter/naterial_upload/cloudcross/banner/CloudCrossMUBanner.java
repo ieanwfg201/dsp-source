@@ -278,7 +278,7 @@ public class CloudCrossMUBanner implements MUBanner {
         if (!isPerformTransaction()) {
             return;
         }
-        LOG.info("UPLOADING MATERIAL");
+        LOG.info("UPLOADING BANNER FOR CLOUDCROSS");
         PreparedStatement pstmt = null;
         PreparedStatement cpstmt = null;
         PreparedStatement cpstmt1 = null;
@@ -290,13 +290,14 @@ public class CloudCrossMUBanner implements MUBanner {
             StringBuffer sBuff = new StringBuffer("");
             while (rset.next()) {
                 //System.out.println(rset.getString("info"));
-                CloudCrossBannerEntity info = objectMapper.readValue(rset.getString("info"), CloudCrossBannerEntity.class);
+                String infoByDB = rset.getString("info");
+                CloudCrossBannerEntity info = objectMapper.readValue(infoByDB, CloudCrossBannerEntity.class);
                 materialList.add(info);
+                LOG.info("CLOUDCROSS BANNER UPLOAD RESPONSE:" + infoByDB);
 
                 boolean isSuccess = false;
                 //[{"status":0,"success":{"message":"插入成功","index":1,"bannerId":32,"code":200}},{"status":0,"success":{"message":"插入成功","index":2,"code":200}}]
                 List<CloudCrossResponse> add = cloudCrossCreative.add(materialList);
-                LOG.info("MATERIAL BANNER UPLOAD RESPONSE");
                 String out = objectMapper.writeValueAsString(add);
                 LOG.info(out);
                 if (out != null && add != null && add.size() > 0) {
@@ -384,36 +385,36 @@ public class CloudCrossMUBanner implements MUBanner {
 
     @Override
     public void removeDisassociatedCreative(Properties properties, Connection con) {
-        if(!isPerformTransaction()){
+        if (!isPerformTransaction()) {
             return;
         }
         PreparedStatement pstmt = null;
         PreparedStatement updatestmt = null;
-        try{
+        try {
             pstmt = con.prepareStatement(CloudCrossBannerQuery.removedCreativesQuery);
             pstmt.setString(1, getStartDateStr());
             ResultSet rset = pstmt.executeQuery();
-            while(rset.next()){
-                updatestmt=con.prepareStatement(CloudCrossBannerQuery.updateRemovedCreatives);
+            while (rset.next()) {
+                updatestmt = con.prepareStatement(CloudCrossBannerQuery.updateRemovedCreatives);
                 updatestmt.setInt(1, rset.getInt("internalid"));
                 updatestmt.executeUpdate();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             setPerformTransaction(false);
-            LOG.error(e.getMessage(),e);
-        }finally{
-            if(pstmt != null){
+            LOG.error(e.getMessage(), e);
+        } finally {
+            if (pstmt != null) {
                 try {
                     pstmt.close();
                 } catch (SQLException e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
-            if(updatestmt != null){
+            if (updatestmt != null) {
                 try {
                     updatestmt.close();
                 } catch (SQLException e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
         }
