@@ -5,6 +5,7 @@ import RTB.VamRealtimeBidding;
 import com.kritter.bidrequest.entity.IBidResponse;
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.bidrequest.response_creator.IBidResponseCreator;
+import com.kritter.common.caches.iab.categories.IABCategoriesCache;
 import com.kritter.constants.CreativeFormat;
 import com.kritter.constants.ExternalUserIdType;
 import com.kritter.core.workflow.Context;
@@ -51,12 +52,19 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     private String macroPostImpressionBaseClickUrl;
     private String trackingEventUrl;
 
+    private String notificationUrlSuffix;
+    private String notificationUrlBidderBidPriceMacro;
+    private IABCategoriesCache iabCategoriesCache;
+
     public VamBidResponseCreator(
             String loggerName,
             ServerConfig serverConfig,
             String secretKey,
             int urlVersion,
-            AdEntityCache adEntityCache
+            String notificationUrlSuffix,
+            String notificationUrlBidderBidPriceMacro,
+            AdEntityCache adEntityCache,
+            IABCategoriesCache iabCategoriesCache
     ) {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.objectMapper = new ObjectMapper();
@@ -70,6 +78,10 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
         this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
         this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+
+        this.notificationUrlSuffix = notificationUrlSuffix;
+        this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
+        this.iabCategoriesCache = iabCategoriesCache;
     }
 
     private void writeEmptyResponse(HttpServletResponse httpServletResponse) throws IOException {
@@ -144,6 +156,14 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                 //win_url
                 StringBuffer winNotificationURLBuffer = new StringBuffer(postImpressionBaseWinApiUrl);
                 winNotificationURLBuffer.append(clickUri);
+
+                String suffixToAdd = notificationUrlSuffix;
+                suffixToAdd = suffixToAdd.replace(
+                        notificationUrlBidderBidPriceMacro,
+                        String.valueOf(responseAdInfoToUse.getEcpmValue())
+                );
+                winNotificationURLBuffer.append(suffixToAdd);
+
                 String win_url = winNotificationURLBuffer.toString();
 
                 //clk_url
