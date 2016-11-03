@@ -28,6 +28,17 @@ public class CloudCrossBidRequestParentNodeDTO extends BidRequestParentNodeDTO {
     @Setter
     private CloudCrossBidRequestImpressionDTO[] cloudCrossBidRequestImpressionDTOs;
 
+    @JsonProperty("wseat")
+    @Setter
+    private String bidderSeatIds;
+
+    @Override
+    public String[] getBidderSeatIds() {
+        String[] strings = new String[1];
+        strings[0] = bidderSeatIds;
+        return strings;
+    }
+
     @JsonProperty("user")
     @Getter
     @Setter

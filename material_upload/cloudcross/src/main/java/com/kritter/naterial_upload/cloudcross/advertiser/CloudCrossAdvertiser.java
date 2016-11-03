@@ -1,14 +1,11 @@
 package com.kritter.naterial_upload.cloudcross.advertiser;
 
 import com.kritter.naterial_upload.cloudcross.abstracts.CloudCrossInterface;
-import com.kritter.naterial_upload.cloudcross.banner.CloudCrossMUBanner;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertieseStateResponseEntiry;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiseResponseEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiserEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
 import org.codehaus.jackson.type.TypeReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +14,6 @@ import java.util.List;
  * Created by hamlin on 16-7-29.
  */
 public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertiserEntity, CloudCrossAdvertiseResponseEntity, CloudCrossAdvertieseStateResponseEntiry> {
-    private static final Logger LOG = LoggerFactory.getLogger(CloudCrossMUBanner.class);
     public String ADVERTISER_ADD_URL;
     public String ADVERTISER_UPDATE_URL;
     public String ADVERTISER_GET_ALL;
@@ -37,9 +33,7 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
     public List<CloudCrossResponse> add(List<CloudCrossAdvertiserEntity> cloudCrossAdvertisers) {
         String response;
         try {
-            LOG.info("MATERIAL BANNER UPLOAD POSTBODY");
             String body = "request=" + MAPPER.writeValueAsString(cloudCrossAdvertisers);
-            LOG.info(body);
             response = getCloudCrossResponse(ADVERTISER_ADD_URL, body);
 
             //noinspection unchecked
