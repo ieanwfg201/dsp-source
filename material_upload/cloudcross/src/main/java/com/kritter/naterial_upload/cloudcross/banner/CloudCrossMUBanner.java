@@ -278,12 +278,8 @@ public class CloudCrossMUBanner implements MUBanner {
         if (!isPerformTransaction()) {
             return;
         }
-        LOG.info("UPLOADING BANNER FOR CLOUDCROSS");
-        PreparedStatement pstmt = null;
-        PreparedStatement cpstmt = null;
-        PreparedStatement cpstmt1 = null;
-        try {
-            pstmt = con.prepareStatement(CloudCrossBannerQuery.selectforUpload);
+        LOG.info("BEGIN UPLOAD BANNER FOR CLOUDCROSS");
+        try (PreparedStatement pstmt = con.prepareStatement(CloudCrossBannerQuery.selectforUpload)) {
             pstmt.setInt(1, getPubIncId());
             ResultSet rset = pstmt.executeQuery();
             List<CloudCrossBannerEntity> materialList = new LinkedList<>();
@@ -304,47 +300,27 @@ public class CloudCrossMUBanner implements MUBanner {
                     CloudCrossResponse cloudCrossResponse = add.get(0);
                     if (cloudCrossResponse != null && cloudCrossResponse.getSuccess() != null && cloudCrossResponse.getSuccess().getCode() == 200) {
                         info.setBannerId(cloudCrossResponse.getSuccess().getBannerId());
-                        cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", Integer.toString(rset.getInt("internalId"))));
-                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                        cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                        cpstmt.setString(3, objectMapper.writeValueAsString(info));
-                        cpstmt.executeUpdate();
-                        isSuccess = true;
+                        try (PreparedStatement cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", Integer.toString(rset.getInt("internalId"))))) {
+                            cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+                            cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                            cpstmt.setString(3, objectMapper.writeValueAsString(info));
+                            cpstmt.executeUpdate();
+                            isSuccess = true;
+                        }
                     }
                 }
                 if (!isSuccess) {
-                    cpstmt1 = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()));
-                    cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
-                    cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                    cpstmt1.setString(3, objectMapper.writeValueAsString(info));
-                    cpstmt1.executeUpdate();
+                    try (PreparedStatement cpstmt1 = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()))) {
+                        cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
+                        cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                        cpstmt1.setString(3, objectMapper.writeValueAsString(info));
+                        cpstmt1.executeUpdate();
+                    }
                 }
             }
         } catch (Exception e) {
             setPerformTransaction(false);
             LOG.error(e.getMessage(), e);
-        } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    LOG.error(e.getMessage(), e);
-                }
-                if (cpstmt != null) {
-                    try {
-                        cpstmt.close();
-                    } catch (SQLException e) {
-                        LOG.error(e.getMessage(), e);
-                    }
-                }
-                if (cpstmt1 != null) {
-                    try {
-                        cpstmt1.close();
-                    } catch (SQLException e) {
-                        LOG.error(e.getMessage(), e);
-                    }
-                }
-            }
         }
 
     }
@@ -388,35 +364,18 @@ public class CloudCrossMUBanner implements MUBanner {
         if (!isPerformTransaction()) {
             return;
         }
-        PreparedStatement pstmt = null;
-        PreparedStatement updatestmt = null;
-        try {
-            pstmt = con.prepareStatement(CloudCrossBannerQuery.removedCreativesQuery);
+        try (PreparedStatement pstmt = con.prepareStatement(CloudCrossBannerQuery.removedCreativesQuery)) {
             pstmt.setString(1, getStartDateStr());
             ResultSet rset = pstmt.executeQuery();
             while (rset.next()) {
-                updatestmt = con.prepareStatement(CloudCrossBannerQuery.updateRemovedCreatives);
-                updatestmt.setInt(1, rset.getInt("internalid"));
-                updatestmt.executeUpdate();
+                try (PreparedStatement updatestmt = con.prepareStatement(CloudCrossBannerQuery.updateRemovedCreatives)) {
+                    updatestmt.setInt(1, rset.getInt("internalid"));
+                    updatestmt.executeUpdate();
+                }
             }
         } catch (Exception e) {
             setPerformTransaction(false);
             LOG.error(e.getMessage(), e);
-        } finally {
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    LOG.error(e.getMessage(), e);
-                }
-            }
-            if (updatestmt != null) {
-                try {
-                    updatestmt.close();
-                } catch (SQLException e) {
-                    LOG.error(e.getMessage(), e);
-                }
-            }
         }
     }
 

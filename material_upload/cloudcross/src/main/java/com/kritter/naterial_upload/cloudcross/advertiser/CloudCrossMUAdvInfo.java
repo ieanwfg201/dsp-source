@@ -154,9 +154,11 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
         if (rset.getObject("secondind") != null) {
             industryId = Integer.parseInt(rset.getString("secondind"));
         }
-        PreparedStatement statement = con.prepareStatement(CloudCrossAdvInfoQuery.selectSupplyIndustryIdByUIMMACategoriesId);
-        statement.setInt(1, industryId);
-        ResultSet resultSet = statement.executeQuery();
+        ResultSet resultSet;
+        try (PreparedStatement statement = con.prepareStatement(CloudCrossAdvInfoQuery.selectSupplyIndustryIdByUIMMACategoriesId)) {
+            statement.setInt(1, industryId);
+            resultSet = statement.executeQuery();
+        }
 
         return resultSet.next() ? resultSet.getString("supplycode") : "-1";
     }
@@ -241,7 +243,6 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
         LOG.info("UPLOADING ADVINFO FOR CLOUDCROSS");
         PreparedStatement pstmt = null;
         PreparedStatement cpstmt = null;
-        PreparedStatement cpstmt1 = null;
         try {
             pstmt = con.prepareStatement(CloudCrossAdvInfoQuery.selectforUpload);
             pstmt.setInt(1, getPubIncId());
@@ -301,11 +302,12 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                     LOG.error(e1.getMessage(), e1);
                 }
                 if (!isSuccess) {
-                    cpstmt1 = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId + ""));
-                    cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
-                    cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                    cpstmt1.setString(3, errorCode);
-                    cpstmt1.executeUpdate();
+                    try (PreparedStatement cpstmt1 = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvinfoStatus.replaceAll("<id>", internalId + ""))) {
+                        cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
+                        cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
+                        cpstmt1.setString(3, errorCode);
+                        cpstmt1.executeUpdate();
+                    }
                 }
 
             }
@@ -322,13 +324,6 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
                 if (cpstmt != null) {
                     try {
                         cpstmt.close();
-                    } catch (SQLException e) {
-                        LOG.error(e.getMessage(), e);
-                    }
-                }
-                if (cpstmt1 != null) {
-                    try {
-                        cpstmt1.close();
                     } catch (SQLException e) {
                         LOG.error(e.getMessage(), e);
                     }
