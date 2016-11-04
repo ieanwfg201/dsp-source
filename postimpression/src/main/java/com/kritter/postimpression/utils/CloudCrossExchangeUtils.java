@@ -199,6 +199,6 @@ public class CloudCrossExchangeUtils extends AdExchangeUtils {
     @Override
     public Double decodeWinBidPrice(String price) {
         price = decry_RC4(price, this.decryKey);
-        return Double.parseDouble(StringUtils.isEmpty(price) ? "0" : price);
+        return Double.parseDouble(StringUtils.isEmpty(price) ? "0" : price) / 100;
     }
 }

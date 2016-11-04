@@ -300,20 +300,24 @@ public class CloudCrossMUBanner implements MUBanner {
                     CloudCrossResponse cloudCrossResponse = add.get(0);
                     if (cloudCrossResponse != null && cloudCrossResponse.getSuccess() != null && cloudCrossResponse.getSuccess().getCode() == 200) {
                         info.setBannerId(cloudCrossResponse.getSuccess().getBannerId());
-                        try (PreparedStatement cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", Integer.toString(rset.getInt("internalId"))))) {
+                        try (PreparedStatement cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus)) {
                             cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
                             cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
                             cpstmt.setString(3, objectMapper.writeValueAsString(info));
+                            cpstmt.setInt(4,getPubIncId());
+                            cpstmt.setInt(5,rset.getInt("bannerId"));
                             cpstmt.executeUpdate();
                             isSuccess = true;
                         }
                     }
                 }
                 if (!isSuccess) {
-                    try (PreparedStatement cpstmt1 = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus.replaceAll("<id>", sBuff.toString()))) {
+                    try (PreparedStatement cpstmt1 = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus)) {
                         cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
                         cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
                         cpstmt1.setString(3, objectMapper.writeValueAsString(info));
+                        cpstmt1.setInt(4,getPubIncId());
+                        cpstmt1.setInt(5,rset.getInt("bannerId"));
                         cpstmt1.executeUpdate();
                     }
                 }
