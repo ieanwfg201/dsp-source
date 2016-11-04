@@ -97,11 +97,16 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <scope>compile</scope>
       <optional>false</optional>
     </dependency>
-      <dependency>
+    <dependency>
           <groupId>ant</groupId>
           <artifactId>ant</artifactId>
           <version>1.6.5</version>
-      </dependency>
+    </dependency>
+    <dependency>
+          <groupId>com.kritter.common.caches</groupId>
+          <artifactId>iab_categories</artifactId>
+          <version>1.0.0</version>
+    </dependency>
   </dependencies>
   <organization>
     <name>Kritter</name>
