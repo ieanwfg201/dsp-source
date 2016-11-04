@@ -43,6 +43,7 @@ public class BannerUploadCache extends AbstractDBStatsReloadableQueryableCache<S
             internalId = resultSet.getInt("internalid");
             mub.setCreativeId(resultSet.getInt("creativeId"));
             mub.setBannerId(resultSet.getInt("bannerId"));
+            mub.setAdId(resultSet.getInt("adId"));
             mub.setAdxbasedexhangesstatus(resultSet.getInt("adxbasedexhangesstatus"));
             mub.setPubIncId(resultSet.getInt("pubIncId"));
             isMarkedForDeletion=resultSet.getBoolean("banner_upload");

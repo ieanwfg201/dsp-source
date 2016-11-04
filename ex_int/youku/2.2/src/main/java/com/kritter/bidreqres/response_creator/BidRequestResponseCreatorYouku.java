@@ -443,14 +443,14 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     		return null;
     	}
     	if(responseAdInfo.getVideoInfo().getExt() == null ||
-    			responseAdInfo.getVideoInfo().getExt().getExtCDNUrl() == null){
+    			responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl() == null){
     		logger.error("Video Info  is null inside VideoAdMarkUp,cannot format ad, for adid: " +
     				responseAdInfo.getAdId());
     		return null;
     	}
     	
     	BidResponseBidExtYoukuEntity bidResponseBidExtYoukuEntity = new BidResponseBidExtYoukuEntity();
-    	bidResponseBidExtYoukuEntity.setLdp(responseAdInfo.getVideoInfo().getExt().getExtCDNUrl());
+    	bidResponseBidExtYoukuEntity.setLdp(responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl());
     	String impTrackerArray[] = null;
     	if(extTracker != null && extTracker.getImpTracker() != null){
     		impTrackerArray = new String[1+extTracker.getImpTracker().size()];

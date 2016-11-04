@@ -93,10 +93,10 @@
                 <constructor-arg index="1" value="cache.logger"/>
                 <constructor-arg index="2"><ref bean="mad_ua_file_cache_props"/></constructor-arg>
         </bean>
-       
+
 	<bean id="ad_entity_cache" class="com.kritter.serving.demand.cache.AdEntityCache">
 	    <constructor-arg index="0">
-		<list> 
+		<list>
                     <value>com.kritter.serving.demand.index.CountryIdIndex</value>
                     <value>com.kritter.serving.demand.index.CountryCarrierIdIndex</value>
                     <value>com.kritter.serving.demand.index.BrandIdIndex</value>
@@ -207,7 +207,7 @@
             <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="native_screenshot_cache"/>
         </bean>
-        
+
 	<bean id="site_cache" class="com.kritter.common.site.cache.SiteCache">
 	    <constructor-arg index="0">
 		<list>
@@ -247,7 +247,7 @@
 	    <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="lr_ctr_data_cache"/>
         </bean>
-         
+
         <bean id="lr_csr_data_cache" class="com.kritter.adserving.prediction.cache.LogisticRegressionCSRDBCache">
             <constructor-arg index="0">
                 <list>
@@ -267,7 +267,7 @@
             <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
             <constructor-arg index="3" value="mnc_mcc_data_cache"/>
         </bean>
-  
+
         <bean id="iab_categories_cache" class="com.kritter.common.caches.iab.categories.IABCategoriesCache">
             <constructor-arg index="0">
                 <list>
@@ -548,8 +548,8 @@
          </props>
       </constructor-arg>
     </bean>
- 
-    <bean id="ad_entity_cache_properties" class="java.util.Properties"> 
+
+    <bean id="ad_entity_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
@@ -684,7 +684,7 @@ GROUP BY id;]]></prop>
          </props>
        </constructor-arg>
    </bean>
-  
+
    <bean id="site_meta_data_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -693,7 +693,7 @@ GROUP BY id;]]></prop>
          </props>
        </constructor-arg>
    </bean>
- 
+
    <bean id="offline_bidder_data_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -703,7 +703,7 @@ GROUP BY id;]]></prop>
          </props>
       </constructor-arg>
    </bean>
- 
+
    <bean id="lr_ctr_data_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -781,7 +781,7 @@ GROUP BY id;]]></prop>
          </props>
        </constructor-arg>
    </bean>
-  
+
     <bean id="mma_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>

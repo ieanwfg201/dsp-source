@@ -222,7 +222,7 @@
         <constructor-arg index="8">
             <map>
                 <entry key="mopub-pub-guid" value-ref="mopub_response_creator_2_3"/>
-                <entry key="cloud-cross-guid" value-ref="cloud_cross_response_creator_4_4_4"/>
+                <entry key="cloudcross" value-ref="cloud_cross_response_creator_4_4_4"/>
                 <entry key="youku" value-ref="youku_response_creator"/>
                 <entry key="valuemaker" value-ref="valuemaker_response_creator"/>
             </map>

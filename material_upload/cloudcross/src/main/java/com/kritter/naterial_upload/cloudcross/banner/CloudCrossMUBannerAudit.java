@@ -67,11 +67,8 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
                     try {
                         List<String> ids = new ArrayList<>();
                         ids.add(Integer.toString(ccbe.getBannerId()));
-                        LOG.info("MATERIAL AUDIT POST");
                         List<CloudCrossBannerStateResponseEntiry> stateByIds = cloudCrossCreative.getStateByIds(ids);
-                        LOG.info("MATERIAL AUDIT RETURN");
                         if (stateByIds != null && stateByIds.size() > 0) {
-                            LOG.info(objectMapper.writeValueAsString(stateByIds));
                             //[{"refuseReason":"","bannerId":33,"state":1,"stateValue":"待检查","advertiserId":123,"dspId":6},{"refuseReason":"","bannerId":34,"state":1,"stateValue":"待检查","advertiserId":123,"dspId":6}]
                             // 状态（0通过，1待检查，2检查未通过）
                             CloudCrossBannerStateResponseEntiry stateResponseEntiry = stateByIds.get(0);

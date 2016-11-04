@@ -228,7 +228,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
 //        impid 必须 string 对应的曝光 ID
         bidResponseBidCloudCrossDTO.setRequestImpressionId(bidRequestImpressionId);
 //        price 必须 integer 竞投价格,单位为人民币分
-        bidResponseBidCloudCrossDTO.setPrice(responseAdInfo.getEcpmValue().floatValue());
+        bidResponseBidCloudCrossDTO.setPrice(responseAdInfo.getEcpmValue().floatValue() * 100);
 //        curl 可选 [string] 点击监测地址 这里处理第三方的监播地址
         StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
         macroClickUrl.append(clickUri);

@@ -33,7 +33,6 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
     public List<CloudCrossResponse> add(List<CloudCrossBannerEntity> banner) {
         try {
             String cloudCrossResponse = getCloudCrossResponse(CREATIVE_ADD_URL, "request=" + MAPPER.writeValueAsString(banner));
-            System.out.println(cloudCrossResponse);
             return MAPPER.readValue(cloudCrossResponse, new TypeReference<List<CloudCrossResponse>>() {
             });
         } catch (Exception e) {
@@ -46,7 +45,6 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
     public List<CloudCrossResponse> update(List<CloudCrossBannerEntity> banner) {
         try {
             String response = getCloudCrossResponse(CREATIVE_UPDATE_URL, "request=" + MAPPER.writeValueAsString(banner));
-            System.out.println(response);
             return (List<CloudCrossResponse>) MAPPER.readValue(response, new TypeReference<List<CloudCrossResponse>>() {
             });
         } catch (IOException e) {
@@ -89,7 +87,6 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
 
         {
             String response = getCloudCrossResponse(url, "request=" + idsStr);
-            System.out.println(response);
             return (List<CloudCrossBannerResponseEntity>) MAPPER.readValue(response, new TypeReference<List<CloudCrossBannerResponseEntity>>() {
             });
         } catch (
@@ -108,7 +105,6 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
         String idsStr = buildBody(ids, "bannerIds");
         try {
             String cloudCrossResponse = getCloudCrossResponse(CREATIVE_GET_ALL_BANNERIDS_STATE, "request=" + idsStr);
-            System.out.println(cloudCrossResponse);
             return (List<CloudCrossBannerStateResponseEntiry>) MAPPER.readValue(cloudCrossResponse, new TypeReference<List<CloudCrossBannerStateResponseEntiry>>() {
             });
         } catch (IOException e) {

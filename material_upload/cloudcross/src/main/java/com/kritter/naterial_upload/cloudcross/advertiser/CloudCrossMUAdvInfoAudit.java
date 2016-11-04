@@ -39,7 +39,6 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
         setDspid(properties.getProperty("cloudcross_dsp_id"));
         setToken(properties.getProperty("cloudcross_token"));
         setPubIncId(Integer.parseInt(properties.getProperty("cloudcross_pubIncId")));
-        LOG.info("cloudcross_dsp_id:" + getDspid() + ", cloudcross_token:" + getToken() + ",cloudcross_pubIncId:" + getPubIncId());
 
         String creative_dspid_token = "?dspId=" + this.getDspid() + "&token=" + this.getToken();
         String cloudcross_url_prefix = properties.getProperty("cloudcross_url_prefix");
@@ -52,7 +51,6 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
     @Override
     public void fetchMaterialAudit(Properties properties, Connection con) {
         PreparedStatement pstmt = null;
-        PreparedStatement cpstmt = null;
         try {
             pstmt = con.prepareStatement(CloudCrossAdvInfoQuery.selectforAudit);
             pstmt.setInt(1, getPubIncId());
@@ -73,31 +71,33 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
                             // [{"refuseReason":"","state":1,"stateValue":"待检查","advertiserId":23,"dspId":6}]
                             CloudCrossAdvertieseStateResponseEntiry advertieseStateResponseEntiry = stateByIds.get(0);
                             if (advertieseStateResponseEntiry != null && StringUtils.isNotEmpty(advertieseStateResponseEntiry.getStateValue())) {
-                                cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvInfoStatusMessage.replace("<id>", Integer.toString(internalId)));
-                                // 状态（0通过，1待检查，2检查未通过）
-                                switch (advertieseStateResponseEntiry.getState()) {
-                                    case 0:
-                                        cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
-                                        break;
-                                    case 2:
-                                        cpstmt.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
-                                        break;
-                                    case 1:
-                                        cpstmt.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
-                                        break;
-                                    default:
-                                        cpstmt.setInt(1, rset.getInt("adxbasedexhangesstatus"));
-                                        break;
+                                try (PreparedStatement cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvInfoStatusMessage.replace("<id>", Integer.toString(internalId)))) {
+                                    // 状态（0通过，1待检查，2检查未通过）
+                                    switch (advertieseStateResponseEntiry.getState()) {
+                                        case 0:
+                                            cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
+                                            break;
+                                        case 2:
+                                            cpstmt.setInt(1, AdxBasedExchangesStates.REFUSED.getCode());
+                                            break;
+                                        case 1:
+                                            cpstmt.setInt(1, AdxBasedExchangesStates.APPROVING.getCode());
+                                            break;
+                                        default:
+                                            cpstmt.setInt(1, rset.getInt("adxbasedexhangesstatus"));
+                                            break;
+                                    }
+                                    cpstmt.setString(2, advertieseStateResponseEntiry.getStateValue());
+                                    cpstmt.setTimestamp(3, ts);
+                                    cpstmt.executeUpdate();
                                 }
-                                cpstmt.setString(2, advertieseStateResponseEntiry.getStateValue());
-                                cpstmt.setTimestamp(3, ts);
-                                cpstmt.executeUpdate();
                             } else {
-                                cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvInfoStatusMessage);
-                                cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
-                                cpstmt.setString(2, response + "--AUDIT MESSAGE NOT PRSESENT");
-                                cpstmt.setTimestamp(3, ts);
-                                cpstmt.executeUpdate();
+                                try (PreparedStatement cpstmt = con.prepareStatement(CloudCrossAdvInfoQuery.updatetAdvInfoStatusMessage)) {
+                                    cpstmt.setInt(1, AdxBasedExchangesStates.AUDITORGETFAIL.getCode());
+                                    cpstmt.setString(2, response + "--AUDIT MESSAGE NOT PRSESENT");
+                                    cpstmt.setTimestamp(3, ts);
+                                    cpstmt.executeUpdate();
+                                }
                             }
 
                         }
@@ -114,13 +114,6 @@ public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
                     pstmt.close();
                 } catch (SQLException e) {
                     LOG.error(e.getMessage(), e);
-                }
-                if (cpstmt != null) {
-                    try {
-                        cpstmt.close();
-                    } catch (SQLException e) {
-                        LOG.error(e.getMessage(), e);
-                    }
                 }
             }
         }

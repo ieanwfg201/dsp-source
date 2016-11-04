@@ -182,17 +182,15 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             }
 
             HandsetMasterData handsetMasterData = null;
-            if(userAgent != null && !userAgent.isEmpty()){
+            if (userAgent != null && !userAgent.isEmpty()) {
                 handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
             }
 
-            if(null == handsetMasterData)
-            {
+            if (null == handsetMasterData) {
                 this.logger.debug("Device detection failed inside CloudCrossRequestEnricher, proceeding with  undetected handset");
-            }else {
+            } else {
                 logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
-                if(handsetMasterData.isBot())
-                {
+                if (handsetMasterData.isBot()) {
                     this.logger.error("Device detected is BOT inside CloudCrossRequestEnricher, cannot proceed further");
                     request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
                     return request;
@@ -217,11 +215,9 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
 
             /******************************************* ip extraction and connection type detection*********************/
             String ip = cloudCrossBidRequestDeviceDTO.getIpV4AddressClosestToDevice();
-            if(null == ip || ip.isEmpty())
-            {
-                ip=ip.trim();
+            if (null == ip || ip.isEmpty()) {
                 ip = cloudCrossBidRequestDeviceDTO.getIpV6Address();
-                if(ip == null || ip.isEmpty()){
+                if (ip == null || ip.isEmpty()) {
                     logger.debug("Country and InternetServiceProvider could not be detected inside YoukuRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
                 }
             }
@@ -407,6 +403,8 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
     }
 
     private Short findIABContentCategoryInternalId(String contentCategoryCode) {
+        if (StringUtils.isEmpty(contentCategoryCode))
+            return null;
         IABCategoryEntity iabCategoryEntity = this.iabCategoriesCache.query(contentCategoryCode);
         if (null != iabCategoryEntity)
             return iabCategoryEntity.getInternalId();

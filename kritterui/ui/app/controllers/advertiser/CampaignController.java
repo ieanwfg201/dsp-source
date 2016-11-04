@@ -187,7 +187,9 @@ public class CampaignController extends Controller{
 		BeanUtils.copyProperties(campaign, campaignEntity);
 		BeanUtils.copyProperties(campaignBudget, campaignBudgetEntity);
 		if(campaignPayout!=null && campaignPayout.getCampaign_id() != null){
-			BeanUtils.copyProperties(campaignPayout, campaignPayoutEntity);
+			campaignPayoutEntity.setAbsolute_threshold(campaignPayout.getAbsolute_threshold());
+			campaignPayoutEntity.setPercentage_threshold(campaignPayout.getPercentage_threshold());
+			campaignPayoutEntity.setCampaign_id_payout(campaignPayout.getCampaign_id());
 		}
 		
 		return ok(views.html.advt.campaign.campaignForm.render(campaignFormTemplate.fill(campaignEntity), 
@@ -287,8 +289,8 @@ public class CampaignController extends Controller{
 					if(msg.getError_code()==0){ 
 						if(!campaignPayoutForm.hasErrors() && campaign !=null){
 							campaignPayoutEntity = campaignPayoutForm.get();
-							if(campaignPayoutEntity.getCampaign_id()<1){			
-								campaignPayoutEntity.setCampaign_id(campaign.getId());
+							if(campaignPayoutEntity.getCampaign_id_payout()<1){			
+								campaignPayoutEntity.setCampaign_id_payout(campaign.getId());
 								msg = ApiDef.insert_campaign_payout_threshold(con, campaignPayoutEntity.getEntity());
 							}else{
 								CampaignPayoutThreshold campaignPayout = campaignPayoutEntity.getEntity();
