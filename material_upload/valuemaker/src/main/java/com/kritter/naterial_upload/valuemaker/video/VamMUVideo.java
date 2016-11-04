@@ -395,7 +395,7 @@ public class VamMUVideo implements MUVideo {
                     }
                     String crid = "";
                     JSONObject infoObj = JSON.parseObject(info);
-                    crid = infoObj.getString("crid");
+                    crid = infoObj.getString("id");
                     if (crid == null) {
                         continue;
                     }
