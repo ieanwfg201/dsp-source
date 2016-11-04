@@ -44,6 +44,7 @@
     <bean id="cloud_cross_win_price_decry_utils" class="com.kritter.postimpression.utils.CloudCrossExchangeUtils">
         <constructor-arg index="0" ref="server_config"/>
         <constructor-arg index="1" value="cloud_cross_token"/>
+        <constructor-arg index="2" value="postimpression.application"/>
     </bean>
 
     <bean id="win_notification_url_reader" class="com.kritter.postimpression.urlreader.impl.ExchangeWinNoticeUrlReader">
