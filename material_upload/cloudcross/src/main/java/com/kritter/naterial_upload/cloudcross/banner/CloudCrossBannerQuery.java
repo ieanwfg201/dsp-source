@@ -67,15 +67,15 @@ public class CloudCrossBannerQuery {
             + " set adxbasedexhangesstatus=?,campaignStatus=?"
             + ",adStatus=?,creativeStatus=?,last_modified=?,info=? "
             + " where internalid=?";
-    public static final String selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=2";
+    public static final String selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=2 GROUP BY bannerid,pubIncId";
 
     public static final String updatetBannerStatus = "update banner_upload"
             + " set adxbasedexhangesstatus=?,last_modified=?,info=? "
-            + " where internalid in (<id>)";
+            + " where pubIncId=? AND bannerId = ?";
     public static final String updatetBannerStatusMessage = "update banner_upload"
             + " set adxbasedexhangesstatus=?,message=?,last_modified=? "
-            + " where internalid in (<id>)";
-    public static final String selectforAudit = "select * from banner_upload where pubIncId=?  AND adxbasedexhangesstatus IN (7, 10, 12)";
+            + " where pubIncId=? AND bannerId = ?";
+    public static final String selectforAudit = "select * from banner_upload where pubIncId=?  AND adxbasedexhangesstatus IN (7, 10, 12) GROUP BY bannerid,pubIncId";
 
     public static final String insert_material_state = "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
     public static final String update_material_state = "update material_upload_state set last_modified=? where materialtype=? and pubIncId=?";

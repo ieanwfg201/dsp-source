@@ -3,15 +3,19 @@ package com.kritter.postimpression.utils;
 import com.kritter.utils.common.AdExchangeUtils;
 import com.kritter.utils.common.ServerConfig;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by hamlin on 16-9-9.
  */
 public class CloudCrossExchangeUtils extends AdExchangeUtils {
+    private Logger logger;
     private String decryKey;
 
-    public CloudCrossExchangeUtils(ServerConfig serverConfig, String cloudCrossToken) {
+    public CloudCrossExchangeUtils(ServerConfig serverConfig, String cloudCrossToken, String loggerName) {
         this.decryKey = serverConfig.getValueForKey(cloudCrossToken);
+        logger = LoggerFactory.getLogger(loggerName);
     }
 
     public static String decry_RC4(byte[] data, String key) {
@@ -199,6 +203,11 @@ public class CloudCrossExchangeUtils extends AdExchangeUtils {
     @Override
     public Double decodeWinBidPrice(String price) {
         price = decry_RC4(price, this.decryKey);
-        return Double.parseDouble(StringUtils.isEmpty(price) ? "0" : price);
+        try {
+            return Double.parseDouble(StringUtils.isEmpty(price) ? "0" : price) / 100;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return 0.0;
+        }
     }
 }

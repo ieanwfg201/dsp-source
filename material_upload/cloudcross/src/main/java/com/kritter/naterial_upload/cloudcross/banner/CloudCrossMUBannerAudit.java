@@ -73,7 +73,7 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
                             // 状态（0通过，1待检查，2检查未通过）
                             CloudCrossBannerStateResponseEntiry stateResponseEntiry = stateByIds.get(0);
                             if (stateResponseEntiry != null && StringUtils.isNotEmpty(stateResponseEntiry.getStateValue())) {
-                                String updatetBannerStatusMessage = CloudCrossBannerQuery.updatetBannerStatusMessage.replace("<id>", Integer.toString(rset.getInt("internalid")));
+                                String updatetBannerStatusMessage = CloudCrossBannerQuery.updatetBannerStatusMessage;
                                 cpstmt = con.prepareStatement(updatetBannerStatusMessage);
                                 switch (stateResponseEntiry.getState()) {
                                     case 0:
@@ -90,6 +90,8 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
                                 }
                                 cpstmt.setString(2, stateResponseEntiry.getStateValue());
                                 cpstmt.setTimestamp(3, ts);
+                                cpstmt.setInt(4, getPubIncId());
+                                cpstmt.setInt(5, rset.getInt("bannerId"));
                                 cpstmt.executeUpdate();
 
                             }
