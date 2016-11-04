@@ -45,6 +45,7 @@
         <constructor-arg index="0" ref="server_config"/>
         <constructor-arg index="1" value="cloud_cross_token"/>
     </bean>
+    <bean id="vam_win_price_decry_utils" class="com.kritter.postimpression.utils.ValuemakerExchangeUtils"></bean>
 
     <bean id="win_notification_url_reader" class="com.kritter.postimpression.urlreader.impl.ExchangeWinNoticeUrlReader">
         <constructor-arg index="0" value="postimpression.application"/>
@@ -60,6 +61,7 @@
                 <entry key="cloudcross" value-ref="cloud_cross_win_price_decry_utils"/>
                 <entry key="youku"><ref bean="youku_exchange_utils"/></entry>
                 <entry key="cloudcross" value-ref="cloud_cross_win_price_decry_utils"/>
+                <entry key="vam" value-ref="vam_win_price_decry_utils"/>
             </map>
         </constructor-arg>
         <constructor-arg index="9"><ref bean="site_cache"/></constructor-arg>
