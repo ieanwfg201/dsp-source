@@ -1,6 +1,7 @@
 package com.kritter.naterial_upload.valuemaker.video;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
 import com.kritter.entity.video_props.VideoProps;
@@ -18,9 +19,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class VamMUVideo implements MUVideo {
     private static final Logger LOG = LoggerFactory.getLogger(VamMUVideo.class);
@@ -386,9 +385,42 @@ public class VamMUVideo implements MUVideo {
             pstmt.setInt(1, getPubIncId());
             ResultSet rset = pstmt.executeQuery();
 
+            Map<String, String> checkDeplicates = new HashMap<>();
             while (rset.next()) {
                 try {
+
                     String info = rset.getString("info");
+                    if (info == null) {
+                        continue;
+                    }
+                    String crid = "";
+                    JSONObject infoObj = JSON.parseObject(info);
+                    crid = infoObj.getString("crid");
+                    if (crid == null) {
+                        continue;
+                    }
+
+                    String c = checkDeplicates.get(crid);
+                    if (c != null) {
+                    }
+                    if (c != null && c.equals("1")) { //把已经上传成功的物料状态也改成APPROVED
+                        cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
+                        cpstmt.setString(2, "deplicated crid,approved");
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, rset.getInt("internalId"));
+                        cpstmt.executeUpdate();
+                        continue;
+                    } else if (c != null && !c.equals("1")) { //如果没有上传成功,也同步更新状态
+                        cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setString(2, "deplicated crid," + c);
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, rset.getInt("internalId"));
+                        cpstmt.executeUpdate();
+                        continue;
+                    }
+
                     Map<String, String> result = HttpUtils.post(vam_video_add_url, info, username, password);
                     LOG.debug(info);
                     LOG.debug(JSON.toJSONString(result));
@@ -401,6 +433,7 @@ public class VamMUVideo implements MUVideo {
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, rset.getInt("internalId"));
                         cpstmt.executeUpdate();
+                        checkDeplicates.put(crid, "1"); //提交成功
                     } else {
                         cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
                         cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
@@ -408,6 +441,7 @@ public class VamMUVideo implements MUVideo {
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, rset.getInt("internalId"));
                         cpstmt.executeUpdate();
+                        checkDeplicates.put(crid, JSON.toJSONString(result)); //fail
                     }
                 } catch (Exception e) {
                     LOG.error(e.toString());

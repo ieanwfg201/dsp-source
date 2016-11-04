@@ -1,6 +1,7 @@
 package com.kritter.naterial_upload.valuemaker.banner;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
 import com.kritter.material_upload.common.banner.MUBanner;
@@ -299,9 +300,39 @@ public class VamMUBanner implements MUBanner {
             pstmt.setInt(1, getPubIncId());
             ResultSet rset = pstmt.executeQuery();
 
+            Map<String, String> checkDeplicates = new HashMap<>();
             while (rset.next()) {
                 try {
                     String info = rset.getString("info");
+                    if (info == null) {
+                        continue;
+                    }
+                    String crid = "";
+                    JSONObject infoObj = JSON.parseObject(info);
+                    crid = infoObj.getString("crid");
+                    if (crid == null) {
+                        continue;
+                    }
+
+                    String c = checkDeplicates.get(crid);
+                    if (c != null && c.equals("1")) { //把已经上传成功的物料状态也改成APPROVED
+                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
+                        cpstmt.setString(2, "deplicated crid,approved");
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, rset.getInt("internalId"));
+                        cpstmt.executeUpdate();
+                        continue;
+                    } else if (c != null && !c.equals("1")) { //如果没有上传成功,也同步更新状态
+                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setString(2, "deplicated crid," + c);
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, rset.getInt("internalId"));
+                        cpstmt.executeUpdate();
+                        continue;
+                    }
+
                     Map<String, String> result = HttpUtils.post(vam_material_add_url, info, username, password);
                     LOG.debug(info);
                     LOG.debug(JSON.toJSONString(result));
@@ -313,6 +344,7 @@ public class VamMUBanner implements MUBanner {
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, rset.getInt("internalId"));
                         cpstmt.executeUpdate();
+                        checkDeplicates.put(crid, "1"); //提交成功
                     } else {
                         cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
                         cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
@@ -320,6 +352,7 @@ public class VamMUBanner implements MUBanner {
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, rset.getInt("internalId"));
                         cpstmt.executeUpdate();
+                        checkDeplicates.put(crid, JSON.toJSONString(result)); //提交不通过的原因
                     }
                 } catch (Exception e) {
                     LOG.error(e.toString());
