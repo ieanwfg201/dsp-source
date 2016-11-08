@@ -282,9 +282,9 @@ public class CloudCrossMUBanner implements MUBanner {
         try (PreparedStatement pstmt = con.prepareStatement(CloudCrossBannerQuery.selectforUpload)) {
             pstmt.setInt(1, getPubIncId());
             ResultSet rset = pstmt.executeQuery();
-            List<CloudCrossBannerEntity> materialList = new LinkedList<>();
             StringBuffer sBuff = new StringBuffer("");
             while (rset.next()) {
+                List<CloudCrossBannerEntity> materialList = new LinkedList<>();
                 //System.out.println(rset.getString("info"));
                 String infoByDB = rset.getString("info");
                 CloudCrossBannerEntity info = objectMapper.readValue(infoByDB, CloudCrossBannerEntity.class);
@@ -304,8 +304,8 @@ public class CloudCrossMUBanner implements MUBanner {
                             cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
                             cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
                             cpstmt.setString(3, objectMapper.writeValueAsString(info));
-                            cpstmt.setInt(4,getPubIncId());
-                            cpstmt.setInt(5,rset.getInt("bannerId"));
+                            cpstmt.setInt(4, getPubIncId());
+                            cpstmt.setInt(5, rset.getInt("bannerId"));
                             cpstmt.executeUpdate();
                             isSuccess = true;
                         }
@@ -316,8 +316,8 @@ public class CloudCrossMUBanner implements MUBanner {
                         cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
                         cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
                         cpstmt1.setString(3, objectMapper.writeValueAsString(info));
-                        cpstmt1.setInt(4,getPubIncId());
-                        cpstmt1.setInt(5,rset.getInt("bannerId"));
+                        cpstmt1.setInt(4, getPubIncId());
+                        cpstmt1.setInt(5, rset.getInt("bannerId"));
                         cpstmt1.executeUpdate();
                     }
                 }
