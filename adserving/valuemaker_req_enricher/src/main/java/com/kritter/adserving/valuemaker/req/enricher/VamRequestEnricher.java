@@ -5,7 +5,8 @@ import com.kritter.adserving.adexchange.request.enricher.RTBExchangeRequestReade
 import com.kritter.adserving.request.utils.EnricherUtils;
 import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
-import com.kritter.common.caches.iab.categories.IABCategoriesCache;
+import com.kritter.common.caches.mma_cache.MMACache;
+import com.kritter.common.caches.mma_cache.entity.MMACacheEntity;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
@@ -17,14 +18,8 @@ import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.geo.common.entity.Country;
-import com.kritter.geo.common.entity.CountryIspUiDataUsingMccMnc;
 import com.kritter.geo.common.entity.InternetServiceProvider;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
-import com.kritter.geo.common.entity.reader.ISPDetectionCache;
-import com.kritter.geo.common.entity.reader.MncMccCountryISPDetectionCache;
-import com.kritter.utils.databasemanager.DatabaseManager;
-import com.kritter.utils.uuid.mac.UUIDGenerator;
-import com.kritter.valuemaker.reader_v20160817.entity.BidRequestVam;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 import com.kritter.valuemaker.reader_v20160817.reader.VamBidRequestReader;
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,37 +37,25 @@ import java.util.Set;
  */
 public class VamRequestEnricher implements RTBExchangeRequestReader {
     private Logger logger;
-    private String auctioneerId;
-    private UUIDGenerator uuidGenerator;
     private VamBidRequestReader vamBidRequestReader;
     private SiteCache siteCache;
     private HandsetDetectionProvider handsetDetectionProvider;
     private CountryDetectionCache countryDetectionCache;
-    private MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache;
-    private ISPDetectionCache ispDetectionCache;
-    private IABCategoriesCache iabCategoriesCache;
+    private MMACache mMACache;
 
     public VamRequestEnricher(String loggerName,
-                              String auctioneerId,
                               VamBidRequestReader vamBidRequestReader,
                               SiteCache siteCache,
                               HandsetDetectionProvider handsetDetectionProvider,
-                              IABCategoriesCache iabCategoriesCache,
-                              MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache,
                               CountryDetectionCache countryDetectionCache,
-                              ISPDetectionCache ispDetectionCache,
-                              DatabaseManager databaseManager,
-                              String datasource) {
+                              MMACache mMACache
+    ) {
         this.logger = LoggerFactory.getLogger(loggerName);
-        this.auctioneerId = auctioneerId;
-        this.uuidGenerator = new UUIDGenerator();
         this.vamBidRequestReader = vamBidRequestReader;
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;
         this.countryDetectionCache = countryDetectionCache;
-        this.mncMccCountryISPDetectionCache = mncMccCountryISPDetectionCache;
-        this.iabCategoriesCache = iabCategoriesCache;
-        this.ispDetectionCache = ispDetectionCache;
+        this.mMACache = mMACache;
     }
 
     @Override
@@ -81,28 +66,18 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                                             boolean logBidRequest,
                                             String publisherId) throws Exception {
 
-        Request request = null;
         try {
-            request = new Request(requestId, INVENTORY_SOURCE.RTB_EXCHANGE);
 
-            /*For valuemaker exchange the response body has to be written inside its own response creator adaptor*/
-            request.setWriteResponseInsideExchangeAdaptor(true);
+            IBidRequest iBidRequest = this.vamBidRequestReader.convertBidRequestPayloadToBusinessObject(httpServletRequest.getInputStream());
 
-            VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = this.vamBidRequestReader.readAndConvertBidRequestPayLoadToOpenRTB_2_3(httpServletRequest.getInputStream());
+            Request request = new Request(requestId, INVENTORY_SOURCE.RTB_EXCHANGE);
+            request.setWriteResponseInsideExchangeAdaptor(true);//response body has to be written inside
+            request.setBidRequest(iBidRequest);
 
-            String uniqueInternalBidRequestId = uuidGenerator.generateUniversallyUniqueIdentifier().toString();
-            IBidRequest bidRequestVam = new BidRequestVam(auctioneerId, uniqueInternalBidRequestId, vamBidRequestParentNodeDTO);
-            request.setBidRequest(bidRequestVam);
-
-            /**
-             * Set site object, generally there will be only one site for valuemaker(any exchange for that matter).
-             */
+            //fetch site object
             String siteIdFromBidRequest = StringUtils.substringAfterLast(httpServletRequest.getRequestURI(), "/");
-
             logger.debug("SiteId received from bid request URL: {} ", siteIdFromBidRequest);
-
             Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest);
-
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));
 
             if (null != site)
@@ -113,6 +88,9 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 this.logger.error("Requesting site from Valuemaker is not fit or is not found in cache . siteid: {} ", siteIdFromBidRequest);
                 return request;
             }
+
+            VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) request.getBidRequest().getBidRequestParentNodeDTO();
+
 
             /***********************Detect handset of the request.Use the user agent from bid request.*******************/
             /***********************************DETECT HANDSET BY USERAGENT**********************************************/
@@ -149,27 +127,20 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             if (null != ip) {
                 request.setIpAddressUsedForDetection(ip);
                 country = findCountry(ip);
-                internetServiceProvider = findCarrierEntity(ip);
                 request.setCountry(country);
-                request.setInternetServiceProvider(internetServiceProvider);
             }
             BidRequestGeoDTO bidRequestGeoDTO = vamBidRequestDeviceDTO.getGeoObject();
 
-            String mncMccCode = vamBidRequestDeviceDTO.getCarrier();
-            CountryIspUiDataUsingMccMnc countryIspUiDataUsingMccMnc = null;
-            logger.debug("MCC MNC codes combination received from cloudCross bid request is {} ", mncMccCode);
-            //use mnc mcc,if not
-            if (null != mncMccCode) {
-                countryIspUiDataUsingMccMnc = mncMccCountryISPDetectionCache.query(mncMccCode);
+            if (vamBidRequestDeviceDTO.getConnectionType() != null) {
+                ConnectionType connectionType = ConnectionType.getEnum(vamBidRequestDeviceDTO.getConnectionType().shortValue());
+                if (connectionType != null) {
+                    request.setConnectionType(connectionType);
+                } else {
+                    request.setConnectionType(ConnectionType.UNKNOWN);
+                }
+            } else {
+                request.setConnectionType(ConnectionType.UNKNOWN);
             }
-            //if mnc mcc not present or location not detected use ip address to find location.
-            if (null != countryIspUiDataUsingMccMnc && null != countryIspUiDataUsingMccMnc.getCountryUiId() && null != countryIspUiDataUsingMccMnc.getIspUiId()) {
-                request.setCountryUserInterfaceId(countryIspUiDataUsingMccMnc.getCountryUiId());
-                request.setCarrierUserInterfaceId(countryIspUiDataUsingMccMnc.getIspUiId());
-                logger.debug("Using MCC-MNC combination: {} , countryUiId: {} , ispUiId: {} ", mncMccCode, countryIspUiDataUsingMccMnc.getCountryUiId(), countryIspUiDataUsingMccMnc.getIspUiId());
-            }
-
-            request.setConnectionType(ConnectionType.getEnum(vamBidRequestDeviceDTO.getConnectionType().shortValue()));
 
             /************************Location detection completes,country,isp,connectiontype******************************/
 
@@ -190,10 +161,39 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             /***************************Set extra available parameters*********************************************/
             populateRequestObjectForExtraParameters(vamBidRequestParentNodeDTO, request);
             /******************************************************************************************************/
+
+
+            //转换battrbattr
+            List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
+            if (battr != null && battr.size() != 0) {
+                List<Integer> newBattr = new ArrayList<Integer>();
+                for (Integer i : battr) {
+                    MMACacheEntity mmaCacheEntity = mMACache.query(i + "");//TODO
+                    if (mmaCacheEntity != null) {
+                        newBattr.add(mmaCacheEntity.getUi_id());
+                    }
+                }
+                Integer[] b = new Integer[]{newBattr.size()};
+                newBattr.toArray(b);
+
+                if (vamBidRequestParentNodeDTO.getBidRequestImpressionArray() != null && vamBidRequestParentNodeDTO.getBidRequestImpressionArray().length > 0) {
+                    BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0].getBidRequestImpressionVideoObject();
+                    if (bidRequestImpressionVideoObjectDTO != null) {
+                        bidRequestImpressionVideoObjectDTO.setBlockedCreativeAttributes(b);
+                    }
+                    BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0].getBidRequestImpressionBannerObject();
+                    if (bidRequestImpressionBannerObjectDTO != null) {
+                        bidRequestImpressionVideoObjectDTO.setBlockedCreativeAttributes(b);
+                    }
+                }
+
+            }
+            return request;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return request;
+
     }
 
     private Country findCountry(String ip) {
@@ -206,18 +206,6 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         }
 
         return country;
-    }
-
-    private InternetServiceProvider findCarrierEntity(String ip) {
-        InternetServiceProvider internetServiceProvider = null;
-
-        try {
-            internetServiceProvider = this.ispDetectionCache.fetchISPForIpAddress(ip);
-        } catch (Exception e) {
-            logger.error("Exception inside VamRequestEnricher in fetching isp ", e);
-        }
-
-        return internetServiceProvider;
     }
 
     /**
@@ -239,7 +227,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         String applicationId = null;
 
         String appOrSite = vamBidRequestParentNodeDTO.getAppOrSite();
-        if (appOrSite != null || appOrSite.equals("app")) {
+        if (appOrSite != null && appOrSite.equals("app")) {
             sitePlatform = SITE_PLATFORM.APP.getPlatform();
             applicationId = vamBidRequestAppDTO.getApplicationIdOnExchange();
         } else {
@@ -346,4 +334,5 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             }
         }
     }
+
 }

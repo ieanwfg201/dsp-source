@@ -52,19 +52,17 @@ public class VamBannerQuery {
             "  LEFT JOIN creative_slots AS cs ON cs.id = cb.slot_id";
 
 
-    public static final String getBannerUpload = "select * from banner_upload where "
-            + "pubIncId=? and advIncId=? and campaignId=? and adId=? and creativeId=? and bannerId=?";
+    public static final String getBannerUpload = "select * from banner_upload where pubIncId=? and advIncId=? and campaignId=? and adId=? and creativeId=? and bannerId=?";
+
     public static final String insertBannerUpload = "insert into banner_upload"
             + "(pubIncId,adxbasedexhangesstatus,advIncId,campaignId,campaignStatus"
             + ",adId,adStatus,creativeId,creativeStatus,bannerId,last_modified,info) "
             + "values(?,?,?,?,?,?,?,?,?,?,?,?)";
     public static final String updatetBannerUpload = "update banner_upload set adxbasedexhangesstatus=?,campaignStatus=?,adStatus=?,creativeStatus=?,last_modified=?,info=? where internalid=?";
 
-    public static final String selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=2";
+    public static final String selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus in (2,15) GROUP BY pubIncId,bannerId,adxbasedexhangesstatus";
 
-//    public static final String updatetBannerStatus = "update banner_upload set adxbasedexhangesstatus=?,last_modified=? where internalid=?";
-
-    public static final String updatetBannerStatusMessage = "update banner_upload set adxbasedexhangesstatus=?,message=?,last_modified=?  where internalid=?";
+    public static final String updatetBannerStatusMessage = "update banner_upload set adxbasedexhangesstatus=?,message=?,last_modified=? where pubIncId=? and bannerId=? and adxbasedexhangesstatus=?";
 
     public static final String selectforAudit = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus in (7,9,10,11)";
 

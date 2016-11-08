@@ -1,7 +1,6 @@
 package com.kritter.naterial_upload.valuemaker.video;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
 import com.kritter.entity.video_props.VideoProps;
@@ -56,6 +55,9 @@ public class VamMUVideo implements MUVideo {
     @Getter
     @Setter
     private String vam_video_add_url;
+    @Getter
+    @Setter
+    private String vam_video_update_url;
 
     @Override
     public void init(Properties properties) {
@@ -65,6 +67,7 @@ public class VamMUVideo implements MUVideo {
         setUsername(properties.getProperty("vam_username").toString());
         setPassword(properties.getProperty("vam_password").toString());
         setVam_video_add_url(properties.getProperty("vam_url_prefix").toString() + properties.getProperty("vam_prefix_video_add").toString());
+        setVam_video_update_url(properties.getProperty("vam_url_prefix").toString() + properties.getProperty("vam_prefix_video_update").toString());
     }
 
     @Override
@@ -323,7 +326,7 @@ public class VamMUVideo implements MUVideo {
                     if (newInfoStr.equals(info)) {
                         cpstmt.setInt(1, adxbasedexhangesstatus);
                     } else {
-                        cpstmt.setInt(1, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
+                        cpstmt.setInt(1, AdxBasedExchangesStates.READY_TO_UPDATE.getCode());
                     }
                     cpstmt.setInt(2, vqe.getCampaignStatus());
                     cpstmt.setInt(3, vqe.getAdStatus());
@@ -393,55 +396,37 @@ public class VamMUVideo implements MUVideo {
                     if (info == null) {
                         continue;
                     }
-                    String crid = "";
-                    JSONObject infoObj = JSON.parseObject(info);
-                    crid = infoObj.getString("id");
-                    if (crid == null) {
-                        continue;
+
+                    String url = "";
+                    Integer adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
+                    if (adxbasedexhangesstatus != null && adxbasedexhangesstatus.equals(AdxBasedExchangesStates.READY_TO_UPDATE.getCode())) {
+                        url = vam_video_update_url;
+                    } else {
+                        url = vam_video_add_url;
                     }
 
-                    String c = checkDeplicates.get(crid);
-                    if (c != null) {
-                    }
-                    if (c != null && c.equals("1")) { //把已经上传成功的物料状态也改成APPROVED
-                        cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
-                        cpstmt.setString(2, "deplicated crid,approved");
-                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(4, rset.getInt("internalId"));
-                        cpstmt.executeUpdate();
-                        continue;
-                    } else if (c != null && !c.equals("1")) { //如果没有上传成功,也同步更新状态
-                        cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
-                        cpstmt.setString(2, "deplicated crid," + c);
-                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(4, rset.getInt("internalId"));
-                        cpstmt.executeUpdate();
-                        continue;
-                    }
-
-                    Map<String, String> result = HttpUtils.post(vam_video_add_url, info, username, password);
+                    Map<String, String> result = HttpUtils.post(url, info, username, password);
                     LOG.debug(info);
                     LOG.debug(JSON.toJSONString(result));
 
-                    //可能会重复上传,所以失败后不更新状态
                     if (result.get("StatusCode") != null && result.get("StatusCode").equals("200")) {
                         cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
                         cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(4, rset.getInt("internalId"));
+                        cpstmt.setInt(4, getPubIncId());
+                        cpstmt.setInt(5, rset.getInt("bannerId"));
+                        cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
-                        checkDeplicates.put(crid, "1"); //提交成功
                     } else {
                         cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
                         cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(4, rset.getInt("internalId"));
+                        cpstmt.setInt(4, getPubIncId());
+                        cpstmt.setInt(5, rset.getInt("bannerId"));
+                        cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
-                        checkDeplicates.put(crid, JSON.toJSONString(result)); //fail
                     }
                 } catch (Exception e) {
                     LOG.error(e.toString());
