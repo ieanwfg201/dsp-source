@@ -25,7 +25,7 @@ public class VamVideoQuery {
             + "values(?,?,?,?,?,?,?,?,?,?,?,?)";
     public static final String updatetVideoUpload = "update video_upload set adxbasedexhangesstatus=?,campaignStatus=?,adStatus=?,creativeStatus=?,last_modified=?,info=? where internalid=?";
 
-    public static final String selectforUpload = "select * from video_upload where pubIncId=? and adxbasedexhangesstatus in (2,15) GROUP BY pubIncId,videoInfoId,adxbasedexhangesstatus";
+    public static final String selectforUpload = "select * from video_upload where pubIncId=? and adxbasedexhangesstatus=? GROUP BY pubIncId,videoInfoId";
 
     public static final String updatetVideoStatusMessage = "update video_upload set adxbasedexhangesstatus=?,message=?,last_modified=?  where pubIncId=? and videoInfoId=? and adxbasedexhangesstatus=?";
 

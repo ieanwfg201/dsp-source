@@ -1,7 +1,6 @@
 package com.kritter.naterial_upload.valuemaker.banner;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
 import com.kritter.material_upload.common.banner.MUBanner;
@@ -305,8 +304,10 @@ public class VamMUBanner implements MUBanner {
         PreparedStatement pstmt = null;
         PreparedStatement cpstmt = null;
         try {
+            //add
             pstmt = con.prepareStatement(VamBannerQuery.selectforUpload);
             pstmt.setInt(1, getPubIncId());
+            pstmt.setInt(2, AdxBasedExchangesStates.SUBMITTED.getCode());
             ResultSet rset = pstmt.executeQuery();
 
             while (rset.next()) {
@@ -316,15 +317,7 @@ public class VamMUBanner implements MUBanner {
                         continue;
                     }
 
-                    String url = "";
-                    Integer adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
-                    if (adxbasedexhangesstatus != null && adxbasedexhangesstatus.equals(AdxBasedExchangesStates.READY_TO_UPDATE.getCode())) {
-                        url = vam_material_update_url;
-                    } else {
-                        url = vam_material_add_url;
-                    }
-
-                    Map<String, String> result = HttpUtils.post(url, info, username, password);
+                    Map<String, String> result = HttpUtils.post(vam_material_add_url, info, username, password);
                     LOG.debug(info);
                     LOG.debug(JSON.toJSONString(result));
 
@@ -350,6 +343,49 @@ public class VamMUBanner implements MUBanner {
                 } catch (Exception e) {
                     LOG.error(e.toString());
                 }
+
+            }
+
+            //update
+            pstmt = con.prepareStatement(VamBannerQuery.selectforUpload);
+            pstmt.setInt(1, getPubIncId());
+            pstmt.setInt(2, AdxBasedExchangesStates.READY_TO_UPDATE.getCode());
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                try {
+                    String info = rset.getString("info");
+                    if (info == null) {
+                        continue;
+                    }
+
+                    Map<String, String> result = HttpUtils.post(vam_material_update_url, info, username, password);
+                    LOG.debug(info);
+                    LOG.debug(JSON.toJSONString(result));
+
+                    if (result.get("StatusCode") != null && result.get("StatusCode").equals("200")) {
+                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
+                        cpstmt.setString(2, JSON.toJSONString(result));
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, getPubIncId());
+                        cpstmt.setInt(5, rset.getInt("bannerId"));
+                        cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
+                        cpstmt.executeUpdate();
+                    } else {
+                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setString(2, JSON.toJSONString(result));
+                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
+                        cpstmt.setInt(4, getPubIncId());
+                        cpstmt.setInt(5, rset.getInt("bannerId"));
+                        cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
+                        cpstmt.executeUpdate();
+                    }
+                } catch (Exception e) {
+                    LOG.error(e.toString());
+                }
+
             }
         } catch (Exception e) {
             setPerformTransaction(false);

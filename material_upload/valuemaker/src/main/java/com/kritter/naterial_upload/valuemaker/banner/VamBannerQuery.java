@@ -60,7 +60,7 @@ public class VamBannerQuery {
             + "values(?,?,?,?,?,?,?,?,?,?,?,?)";
     public static final String updatetBannerUpload = "update banner_upload set adxbasedexhangesstatus=?,campaignStatus=?,adStatus=?,creativeStatus=?,last_modified=?,info=? where internalid=?";
 
-    public static final String selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus in (2,15) GROUP BY pubIncId,bannerId,adxbasedexhangesstatus";
+    public static final String selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=? GROUP BY pubIncId,bannerId";
 
     public static final String updatetBannerStatusMessage = "update banner_upload set adxbasedexhangesstatus=?,message=?,last_modified=? where pubIncId=? and bannerId=? and adxbasedexhangesstatus=?";
 
