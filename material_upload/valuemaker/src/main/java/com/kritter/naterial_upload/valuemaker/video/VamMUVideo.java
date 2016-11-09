@@ -388,7 +388,6 @@ public class VamMUVideo implements MUVideo {
             pstmt.setInt(1, getPubIncId());
             ResultSet rset = pstmt.executeQuery();
 
-            Map<String, String> checkDeplicates = new HashMap<>();
             while (rset.next()) {
                 try {
 
@@ -415,7 +414,7 @@ public class VamMUVideo implements MUVideo {
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, getPubIncId());
-                        cpstmt.setInt(5, rset.getInt("bannerId"));
+                        cpstmt.setInt(5, rset.getInt("videoInfoId"));
                         cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
                     } else {
@@ -424,7 +423,7 @@ public class VamMUVideo implements MUVideo {
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, getPubIncId());
-                        cpstmt.setInt(5, rset.getInt("bannerId"));
+                        cpstmt.setInt(5, rset.getInt("videoInfoId"));
                         cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
                     }
