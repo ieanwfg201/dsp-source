@@ -331,8 +331,14 @@ public class VamMUBanner implements MUBanner {
                         cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
                     } else {
+                        //如果重复上传,就不设置成error
+                        Integer status = AdxBasedExchangesStates.ERROR.getCode();
+                        String responseStr = result.get("ResponseStr");
+                        if (responseStr != null && JSON.parseObject(responseStr).get("status").equals("1002")) { //物料id重复
+                            status = AdxBasedExchangesStates.APPROVED.getCode();
+                        }
                         cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setInt(1, status);
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, getPubIncId());
@@ -373,14 +379,8 @@ public class VamMUBanner implements MUBanner {
                         cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
                     } else {
-                        //如果重复上传,就不设置成error
-                        Integer status = AdxBasedExchangesStates.ERROR.getCode();
-                        String responseStr = result.get("ResponseStr");
-                        if (responseStr != null && JSON.parseObject(responseStr).get("status").equals("1002")) { //物料id重复
-                            status = AdxBasedExchangesStates.APPROVED.getCode();
-                        }
                         cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
-                        cpstmt.setInt(1, status);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, getPubIncId());

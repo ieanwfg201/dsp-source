@@ -414,8 +414,13 @@ public class VamMUVideo implements MUVideo {
                         cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
                     } else {
+                        Integer status = AdxBasedExchangesStates.ERROR.getCode();
+                        String responseStr = result.get("ResponseStr");
+                        if (responseStr != null && JSON.parseObject(responseStr).get("status").equals("1002")) { //物料id重复
+                            status = AdxBasedExchangesStates.APPROVED.getCode();
+                        }
                         cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
+                        cpstmt.setInt(1, status);
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, getPubIncId());
@@ -455,13 +460,8 @@ public class VamMUVideo implements MUVideo {
                         cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
                     } else {
-                        Integer status = AdxBasedExchangesStates.ERROR.getCode();
-                        String responseStr = result.get("ResponseStr");
-                        if (responseStr != null && JSON.parseObject(responseStr).get("status").equals("1002")) { //物料id重复
-                            status = AdxBasedExchangesStates.APPROVED.getCode();
-                        }
                         cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
-                        cpstmt.setInt(1, status);
+                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
                         cpstmt.setInt(4, getPubIncId());
