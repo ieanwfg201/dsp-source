@@ -207,8 +207,7 @@ public class CloudCrossMUBanner implements MUBanner {
                     cpstmt.setInt(3, cqe.getAdStatus());
                     cpstmt.setInt(4, cqe.getCreativeStatus());
                     cpstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
-                    String oldInfo = clearPublisherParamBannerId(info);
-                    if (newInfoStr.equals(oldInfo)) {
+                    if (newInfoStr.equals(info)) {
                         cpstmt.setInt(1, adxbasedexhangesstatus);
                         cpstmt.setString(6, info);
                     } else {
@@ -284,26 +283,20 @@ public class CloudCrossMUBanner implements MUBanner {
             ResultSet rset = pstmt.executeQuery();
             StringBuffer sBuff = new StringBuffer("");
             while (rset.next()) {
-                List<CloudCrossBannerEntity> materialList = new LinkedList<>();
-                //System.out.println(rset.getString("info"));
                 String infoByDB = rset.getString("info");
                 CloudCrossBannerEntity info = objectMapper.readValue(infoByDB, CloudCrossBannerEntity.class);
-                materialList.add(info);
                 LOG.info("CLOUDCROSS BANNER UPLOAD RESPONSE:" + infoByDB);
-
                 boolean isSuccess = false;
                 //[{"status":0,"success":{"message":"插入成功","index":1,"bannerId":32,"code":200}},{"status":0,"success":{"message":"插入成功","index":2,"code":200}}]
-                List<CloudCrossResponse> add = cloudCrossCreative.add(materialList);
-                String out = objectMapper.writeValueAsString(add);
-                LOG.info(out);
-                if (out != null && add != null && add.size() > 0) {
+                List<CloudCrossResponse> add = cloudCrossCreative.add(info);
+                LOG.info(objectMapper.writeValueAsString(add));
+                if (add != null && !add.isEmpty()) {
                     CloudCrossResponse cloudCrossResponse = add.get(0);
                     if (cloudCrossResponse != null && cloudCrossResponse.getSuccess() != null && cloudCrossResponse.getSuccess().getCode() == 200) {
-                        info.setBannerId(cloudCrossResponse.getSuccess().getBannerId());
                         try (PreparedStatement cpstmt = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus)) {
                             cpstmt.setInt(1, AdxBasedExchangesStates.UPLOADSUCCESS.getCode());
                             cpstmt.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                            cpstmt.setString(3, objectMapper.writeValueAsString(info));
+                            cpstmt.setString(3, objectMapper.writeValueAsString(cloudCrossResponse));
                             cpstmt.setInt(4, getPubIncId());
                             cpstmt.setInt(5, rset.getInt("bannerId"));
                             cpstmt.executeUpdate();
@@ -315,7 +308,7 @@ public class CloudCrossMUBanner implements MUBanner {
                     try (PreparedStatement cpstmt1 = con.prepareStatement(CloudCrossBannerQuery.updatetBannerStatus)) {
                         cpstmt1.setInt(1, AdxBasedExchangesStates.UPLOADFAIL.getCode());
                         cpstmt1.setTimestamp(2, new Timestamp(dateNow.getTime()));
-                        cpstmt1.setString(3, objectMapper.writeValueAsString(info));
+                        cpstmt1.setString(3, "");
                         cpstmt1.setInt(4, getPubIncId());
                         cpstmt1.setInt(5, rset.getInt("bannerId"));
                         cpstmt1.executeUpdate();

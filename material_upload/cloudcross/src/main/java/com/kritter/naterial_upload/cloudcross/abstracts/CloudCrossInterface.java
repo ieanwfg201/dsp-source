@@ -8,7 +8,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,12 +43,14 @@ public abstract class CloudCrossInterface<T, E, W> {
     }
 
     public abstract List<CloudCrossResponse> add(List<T> entity);
+    public abstract List<CloudCrossResponse> add(T entity);
 
     public abstract List<CloudCrossResponse> update(List<T> entity);
 
     public abstract List<E> queryByIds(List<String> ids, boolean isByBannerId);
 
     public abstract List<W> getStateByIds(List<String> ids);
+    public abstract List<W> getStateById(Integer id);
 
 
 }
