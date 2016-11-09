@@ -9,6 +9,7 @@ import org.codehaus.jackson.type.TypeReference;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -39,6 +40,13 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public List<CloudCrossResponse> add(CloudCrossBannerEntity entity) {
+        List<CloudCrossBannerEntity> materialList = new LinkedList<>();
+        materialList.add(entity);
+        return add(materialList);
     }
 
     @Override
@@ -113,5 +121,11 @@ public class CloudCrossCreative extends CloudCrossInterface<CloudCrossBannerEnti
         return null;
     }
 
+    @Override
+    public List<CloudCrossBannerStateResponseEntiry> getStateById(Integer id) {
+        List<String> ids = new ArrayList<>();
+        ids.add(Integer.toString(id));
+        return getStateByIds(ids);
+    }
 
 }
