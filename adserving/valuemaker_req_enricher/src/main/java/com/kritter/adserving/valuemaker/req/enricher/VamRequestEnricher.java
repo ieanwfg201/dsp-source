@@ -43,6 +43,8 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
     private CountryDetectionCache countryDetectionCache;
     private MMACache mMACache;
 
+    private static final String CTRL_A = String.valueOf((char) 1);
+
     public VamRequestEnricher(String loggerName,
                               VamBidRequestReader vamBidRequestReader,
                               SiteCache siteCache,
@@ -122,7 +124,6 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             /*******************************DETECT COUNTRY CARRIER USING MNC MCC or IP*****************************/
             //ip非必填
             String ip = vamBidRequestDeviceDTO.getIpV4AddressClosestToDevice();
-            InternetServiceProvider internetServiceProvider = null;
             Country country = null;
             if (null != ip) {
                 request.setIpAddressUsedForDetection(ip);
@@ -168,7 +169,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             if (battr != null && battr.size() != 0) {
                 List<Integer> newBattr = new ArrayList<Integer>();
                 for (Integer i : battr) {
-                    MMACacheEntity mmaCacheEntity = mMACache.query(i + "");//TODO
+                    MMACacheEntity mmaCacheEntity = mMACache.query(site.getPublisherIncId() + CTRL_A + i);
                     if (mmaCacheEntity != null) {
                         newBattr.add(mmaCacheEntity.getUi_id());
                     }
