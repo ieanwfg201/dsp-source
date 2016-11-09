@@ -15,13 +15,7 @@ import com.kritter.device.common.HandsetDetectionProvider;
 import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.user.userid.ExternalUserId;
-import com.kritter.geo.common.entity.Country;
-import com.kritter.geo.common.entity.CountryIspUiDataUsingMccMnc;
-import com.kritter.geo.common.entity.InternetServiceProvider;
-import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
-import com.kritter.geo.common.entity.reader.ISPDetectionCache;
-import com.kritter.geo.common.entity.reader.MncMccCountryISPDetectionCache;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,9 +37,6 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
     private SiteCache siteCache;
     private HandsetDetectionProvider handsetDetectionProvider;
     private IABCategoriesCache iabCategoriesCache;
-    private MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache;
-    private CountryDetectionCache countryDetectionCache;
-    private ISPDetectionCache ispDetectionCache;
     private IConnectionTypeDetectionCache connectionTypeDetectionCache;
     private static final String ENCODING = "UTF-8";
 
@@ -53,19 +44,13 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
                                           IBidRequestReader cloudCrossBidRequestReader,
                                           SiteCache siteCache,
                                           HandsetDetectionProvider handsetDetectionProvider,
-                                          IABCategoriesCache iabCategoriesCache,
-                                          MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache,
-                                          CountryDetectionCache countryDetectionCache,
-                                          ISPDetectionCache ispDetectionCache
+                                          IABCategoriesCache iabCategoriesCache
     ) {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.cloudCrossBidRequestReader = cloudCrossBidRequestReader;
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;
         this.iabCategoriesCache = iabCategoriesCache;
-        this.mncMccCountryISPDetectionCache = mncMccCountryISPDetectionCache;
-        this.countryDetectionCache = countryDetectionCache;
-        this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = null;
     }
 
@@ -74,9 +59,6 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
                                           SiteCache siteCache,
                                           HandsetDetectionProvider handsetDetectionProvider,
                                           IABCategoriesCache iabCategoriesCache,
-                                          MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache,
-                                          CountryDetectionCache countryDetectionCache,
-                                          ISPDetectionCache ispDetectionCache,
                                           IConnectionTypeDetectionCache connectionTypeDetectionCache
     ) {
         this.logger = LoggerFactory.getLogger(loggerName);
@@ -84,9 +66,6 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;
         this.iabCategoriesCache = iabCategoriesCache;
-        this.mncMccCountryISPDetectionCache = mncMccCountryISPDetectionCache;
-        this.countryDetectionCache = countryDetectionCache;
-        this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = connectionTypeDetectionCache;
     }
 
@@ -198,25 +177,10 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             }
             request.setHandsetMasterData(handsetMasterData);
 
-            /*******************************DETECT COUNTRY CARRIER USING MNC MCC or IP*****************************/
 
-            //detect country and carrier and enrich request object with the same.
-            //the cloudCross format is mnc-mcc as desired by us.
-            String mncMccCode = cloudCrossBidRequestDeviceDTO.getCarrier();
-            CountryIspUiDataUsingMccMnc countryIspUiDataUsingMccMnc = null;
-            Country country;
-            InternetServiceProvider internetServiceProvider;
-
-            logger.debug("MCC MNC codes combination received from cloudCross bid request is {} ", mncMccCode);
-
-            //use mnc mcc,if not
-            if (null != mncMccCode)
-                countryIspUiDataUsingMccMnc = mncMccCountryISPDetectionCache.query(mncMccCode);
-
-            /******************************************* ip extraction and connection type detection*********************/
-            String ip = cloudCrossBidRequestDeviceDTO.getIpV4AddressClosestToDevice();
+            String ip = cloudCrossBidRequestDeviceDTO != null ? cloudCrossBidRequestDeviceDTO.getIpV4AddressClosestToDevice() : null;
             if (null == ip || ip.isEmpty()) {
-                ip = cloudCrossBidRequestDeviceDTO.getIpV6Address();
+                ip = cloudCrossBidRequestDeviceDTO != null ? cloudCrossBidRequestDeviceDTO.getIpV6Address() : null;
                 if (ip == null || ip.isEmpty()) {
                     logger.debug("Country and InternetServiceProvider could not be detected inside YoukuRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
                 }
@@ -233,29 +197,10 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             }
             /******************************************* ip extraction and  connection type detection ends***************/
 
-            //if mnc mcc not present or location not detected use ip address to find location.
-            if (null == countryIspUiDataUsingMccMnc) {
-                logger.debug("No entry could be found for mcc-mnc combination: {} , using ip: {} , for location detection. "
-                        , mncMccCode, ip);
-                country = findCountry(ip);
-                internetServiceProvider = findCarrierEntity(ip);
-                request.setCountry(country);
-                request.setInternetServiceProvider(internetServiceProvider);
-            } else if (null != countryIspUiDataUsingMccMnc.getCountryUiId() && null != countryIspUiDataUsingMccMnc.getIspUiId()) {
-                request.setCountryUserInterfaceId(countryIspUiDataUsingMccMnc.getCountryUiId());
-                request.setCarrierUserInterfaceId(countryIspUiDataUsingMccMnc.getIspUiId());
 
-                logger.debug(
-                        "Using MCC-MNC combination: {} , countryUiId: {} , ispUiId: {} ",
-                        mncMccCode,
-                        countryIspUiDataUsingMccMnc.getCountryUiId(),
-                        countryIspUiDataUsingMccMnc.getIspUiId()
-                );
-            }
-            /******************************************************************************************************/
 
             /************************** Set lat-long if available in the request **********************************/
-            BidRequestGeoDTO bidRequestGeoDTO = cloudCrossBidRequestDeviceDTO.getGeoObject();
+            BidRequestGeoDTO bidRequestGeoDTO = cloudCrossBidRequestDeviceDTO != null ? cloudCrossBidRequestDeviceDTO.getGeoObject() : null;
             if (null != bidRequestGeoDTO &&
                     null != bidRequestGeoDTO.getGeoLongitude() &&
                     null != bidRequestGeoDTO.getGeoLatitude()) {
@@ -279,7 +224,7 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
         EnricherUtils.populateUserIdsFromBidRequestDeviceDTO(cloudCrossBidRequestDeviceDTO, request);
         EnricherUtils.populateUserIdsFromBidRequestUserDTO(cloudCrossBidRequestUserDTO, request);
         Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
-        if (externalUserIds == null || externalUserIds.size() == 0) {
+        if (externalUserIds == null || externalUserIds.isEmpty()) {
             logger.debug("External user ids empty or not present");
         } else {
             logger.debug("External user ids found.");
@@ -321,14 +266,6 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             logger.error("Site/App not found in request, site/app both not present inside CloudCrossRequestEnricher...aborting request....");
             return null;
         }
-        if (null != contentCategoriesSiteApp) {
-            categoriesArray = findIABContentCategoryInternalIdArray(contentCategoriesSiteApp);
-        }
-
-        String blockedIABCategories[] = cloudCrossBidRequestParentNodeDTO.getBlockedAdvertiserCategoriesForBidRequest();
-        Short[] categoriesArrayIncExc = null;
-        if (null != blockedIABCategories)
-            categoriesArrayIncExc = findIABContentCategoryInternalIdArray(blockedIABCategories);
 
         //creative attributes to exclude come at banner/video level for each impression required
         //in the bid response for the bid request, hence set null here and in workflow where
@@ -348,7 +285,7 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
                 (
                         site.getSiteIncId(), site.getSiteGuid(), site.getName(),
                         site.getPublisherIncId(), site.getPublisherId(), siteUrl,
-                        categoriesArray, categoriesArrayIncExc, true,
+                        categoriesArray, null, true,
                         site.getHygieneList(), site.getOptInHygieneList(), creativeAttributesIncExc,
                         isCreativeAttributesForExclusion, sitePlatform, site.getStatus(),
                         cloudCrossBidRequestParentNodeDTO.getBlockedAdvertiserDomainsForBidRequest(),
@@ -410,61 +347,4 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             return iabCategoryEntity.getInternalId();
         return null;
     }
-
-    private Short[] findIABContentCategoryInternalIdArray(String[] contentCategoryArray) {
-        //find iTunes categories if any and modify original array.
-        List<String> contentCategoriesFinal = new ArrayList<String>();
-
-        for (String category : contentCategoryArray) {
-            String[] iabCategories = ITunesCategoryMappingToIAB.fetchIABCategoryArrayForITunesContentCategory(category);
-            if (null != iabCategories) {
-                Collections.addAll(contentCategoriesFinal, iabCategories);
-            }
-            //else it must be IAB category.
-            else {
-                contentCategoriesFinal.add(category);
-            }
-        }
-
-        contentCategoryArray = contentCategoriesFinal.toArray(new String[contentCategoriesFinal.size()]);
-
-        Set<Short> contentCategoriesSet = new HashSet<Short>();
-        for (String categoryCode : contentCategoryArray) {
-            Short internalId = findIABContentCategoryInternalId(categoryCode);
-
-            if (null == internalId)
-                logger.debug("The iab category could not be found in internal database for code: {} ", categoryCode);
-            else
-                contentCategoriesSet.add(internalId);
-        }
-
-        if (contentCategoriesSet.size() > 0)
-            return contentCategoriesSet.toArray(new Short[contentCategoriesSet.size()]);
-        return null;
-    }
-
-    private Country findCountry(String ip) {
-        Country country = null;
-
-        try {
-            country = this.countryDetectionCache.findCountryForIpAddress(ip);
-        } catch (Exception e) {
-            logger.error("Exception inside CloudCrossRequestEnricher in fetching country ", e);
-        }
-
-        return country;
-    }
-
-    private InternetServiceProvider findCarrierEntity(String ip) {
-        InternetServiceProvider internetServiceProvider = null;
-
-        try {
-            internetServiceProvider = this.ispDetectionCache.fetchISPForIpAddress(ip);
-        } catch (Exception e) {
-            logger.error("Exception inside CloudCrossRequestEnricher in fetching isp ", e);
-        }
-
-        return internetServiceProvider;
-    }
-
 }

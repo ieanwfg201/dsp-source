@@ -8,6 +8,7 @@ import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
 import org.codehaus.jackson.type.TypeReference;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -111,5 +112,19 @@ public class CloudCrossAdvertiser extends CloudCrossInterface<CloudCrossAdvertis
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public List<CloudCrossResponse> add(CloudCrossAdvertiserEntity entity) {
+        ArrayList<CloudCrossAdvertiserEntity> list = new ArrayList<>(1);
+        list.add(entity);
+        return add(list);
+    }
+
+    @Override
+    public List<CloudCrossAdvertieseStateResponseEntiry> getStateById(Integer id) {
+        List<String> list = new ArrayList<>(1);
+        list.add(Integer.toString(id));
+        return getStateByIds(list);
     }
 }

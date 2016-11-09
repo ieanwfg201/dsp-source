@@ -70,7 +70,7 @@ public class CloudCrossBannerQuery {
     public static final String selectforUpload = "select * from banner_upload where pubIncId=? and adxbasedexhangesstatus=2 GROUP BY bannerid,pubIncId";
 
     public static final String updatetBannerStatus = "update banner_upload"
-            + " set adxbasedexhangesstatus=?,last_modified=?,info=? "
+            + " set adxbasedexhangesstatus=?,last_modified=?,message=? "
             + " where pubIncId=? AND bannerId = ?";
     public static final String updatetBannerStatusMessage = "update banner_upload"
             + " set adxbasedexhangesstatus=?,message=?,last_modified=? "
