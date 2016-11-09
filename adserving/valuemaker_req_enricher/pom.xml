@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
              <groupId>com.kritter.common.caches</groupId>
-             <artifactId>iab_categories</artifactId>
+             <artifactId>mma_cache</artifactId>
              <version>1.0.0</version>
         </dependency>
         <dependency>

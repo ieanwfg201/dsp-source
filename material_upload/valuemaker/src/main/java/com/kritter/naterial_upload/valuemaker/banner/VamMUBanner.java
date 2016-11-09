@@ -18,7 +18,9 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Properties;
 
 public class VamMUBanner implements MUBanner {
     private static final Logger LOG = LoggerFactory.getLogger(VamMUBanner.class);
@@ -55,6 +57,9 @@ public class VamMUBanner implements MUBanner {
     @Getter
     @Setter
     private String vam_material_add_url;
+    @Getter
+    @Setter
+    private String vam_material_update_url;
 
     @Override
     public void init(Properties properties) {
@@ -64,6 +69,7 @@ public class VamMUBanner implements MUBanner {
         setUsername(properties.getProperty("vam_username").toString());
         setPassword(properties.getProperty("vam_password").toString());
         setVam_material_add_url(properties.getProperty("vam_url_prefix").toString() + properties.getProperty("vam_prefix_banner_add").toString());
+        setVam_material_update_url(properties.getProperty("vam_url_prefix").toString() + properties.getProperty("vam_prefix_banner_update").toString());
     }
 
     @Override
@@ -216,16 +222,20 @@ public class VamMUBanner implements MUBanner {
                 pstmt.setInt(5, vqe.getCreativeId());
                 pstmt.setInt(6, vqe.getBannerId());
                 ResultSet rset = pstmt.executeQuery();
+
                 String split[] = vqe.getResource_uri().split("/");
                 String[] materialurl = {properties.getProperty("cdn_url").toString() + split[split.length - 1]};
+
                 java.net.URL url = new java.net.URL(vqe.getLanding_url());
                 String host = url.getHost();
                 String[] Adomain_list = {host};
+
                 VamMaterialUploadEntity bannerEntity = new VamMaterialUploadEntity(vqe.getCreativeGuid(),
                         "{!vam_click_url}{!dsp_click_url}" + vqe.getLanding_url(), vqe.getWidth(),
                         vqe.getHeight(), 1, 1, vqe.getCategory(), Adomain_list, materialurl);
 
                 String newInfoStr = JSON.toJSONString(bannerEntity);
+
                 if (rset.next()) {
                     String info = rset.getString("info");
                     int adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
@@ -235,11 +245,11 @@ public class VamMUBanner implements MUBanner {
                     cpstmt.setInt(3, vqe.getAdStatus());
                     cpstmt.setInt(4, vqe.getCreativeStatus());
                     cpstmt.setTimestamp(5, new Timestamp(dateNow.getTime()));
-                    if (newInfoStr.equals(info)) {
+                    if (newInfoStr.equals(info)) { //主要判断landingpage是否一致
                         cpstmt.setInt(1, adxbasedexhangesstatus);
                         cpstmt.setString(6, info);
                     } else {
-                        cpstmt.setInt(1, AdxBasedExchangesStates.READYTOSUBMIT.getCode());
+                        cpstmt.setInt(1, AdxBasedExchangesStates.READY_TO_UPDATE.getCode());
                         cpstmt.setString(6, newInfoStr);
                     }
                     cpstmt.setInt(7, rset.getInt("internalid"));
@@ -259,7 +269,6 @@ public class VamMUBanner implements MUBanner {
                     cpstmt.setInt(9, vqe.getCreativeStatus());
                     cpstmt.setInt(10, vqe.getBannerId());
                     cpstmt.setTimestamp(11, new Timestamp(dateNow.getTime()));
-
                     cpstmt.setString(12, newInfoStr);
                     cpstmt.executeUpdate();
                 }
@@ -300,40 +309,22 @@ public class VamMUBanner implements MUBanner {
             pstmt.setInt(1, getPubIncId());
             ResultSet rset = pstmt.executeQuery();
 
-            Map<String, String> checkDeplicates = new HashMap<>();
             while (rset.next()) {
                 try {
                     String info = rset.getString("info");
                     if (info == null) {
                         continue;
                     }
-                    String crid = "";
-                    JSONObject infoObj = JSON.parseObject(info);
-                    crid = infoObj.getString("id");
-                    if (crid == null) {
-                        continue;
+
+                    String url = "";
+                    Integer adxbasedexhangesstatus = rset.getInt("adxbasedexhangesstatus");
+                    if (adxbasedexhangesstatus != null && adxbasedexhangesstatus.equals(AdxBasedExchangesStates.READY_TO_UPDATE.getCode())) {
+                        url = vam_material_update_url;
+                    } else {
+                        url = vam_material_add_url;
                     }
 
-                    String c = checkDeplicates.get(crid);
-                    if (c != null && c.equals("1")) { //把已经上传成功的物料状态也改成APPROVED
-                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
-                        cpstmt.setString(2, "deplicated crid,approved");
-                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(4, rset.getInt("internalId"));
-                        cpstmt.executeUpdate();
-                        continue;
-                    } else if (c != null && !c.equals("1")) { //如果没有上传成功,也同步更新状态
-                        cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
-                        cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
-                        cpstmt.setString(2, "deplicated crid," + c);
-                        cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(4, rset.getInt("internalId"));
-                        cpstmt.executeUpdate();
-                        continue;
-                    }
-
-                    Map<String, String> result = HttpUtils.post(vam_material_add_url, info, username, password);
+                    Map<String, String> result = HttpUtils.post(url, info, username, password);
                     LOG.debug(info);
                     LOG.debug(JSON.toJSONString(result));
 
@@ -342,17 +333,19 @@ public class VamMUBanner implements MUBanner {
                         cpstmt.setInt(1, AdxBasedExchangesStates.APPROVED.getCode());
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(4, rset.getInt("internalId"));
+                        cpstmt.setInt(4, getPubIncId());
+                        cpstmt.setInt(5, rset.getInt("bannerId"));
+                        cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
-                        checkDeplicates.put(crid, "1"); //提交成功
                     } else {
                         cpstmt = con.prepareStatement(VamBannerQuery.updatetBannerStatusMessage);
                         cpstmt.setInt(1, AdxBasedExchangesStates.ERROR.getCode());
                         cpstmt.setString(2, JSON.toJSONString(result));
                         cpstmt.setTimestamp(3, new Timestamp(dateNow.getTime()));
-                        cpstmt.setInt(4, rset.getInt("internalId"));
+                        cpstmt.setInt(4, getPubIncId());
+                        cpstmt.setInt(5, rset.getInt("bannerId"));
+                        cpstmt.setInt(6, rset.getInt("adxbasedexhangesstatus"));
                         cpstmt.executeUpdate();
-                        checkDeplicates.put(crid, JSON.toJSONString(result)); //提交不通过的原因
                     }
                 } catch (Exception e) {
                     LOG.error(e.toString());
