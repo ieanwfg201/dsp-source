@@ -54,13 +54,26 @@ public class CloudCrossMUBannerAudit implements MUBannerAudit {
             ResultSet rset = pstmt.executeQuery();
             Timestamp ts = new Timestamp(new Date().getTime());
             while (rset.next()) {
-                CloudCrossResponse ccbe = objectMapper.readValue(rset.getString("message"), CloudCrossResponse.class);
                 Integer bannerId;
-
-                if (ccbe == null || ccbe.getSuccess() == null || (bannerId = ccbe.getSuccess().getBannerId()) == 0) {
-                    LOG.warn("banner id is null or zero!");
+                String message = rset.getString("message");
+                // old message not is json , so ignore it.
+                if (!message.contains("{"))
                     continue;
+                if (message.contains("refuseReason")) {
+                    CloudCrossBannerStateResponseEntiry ccbe = objectMapper.readValue(message, CloudCrossBannerStateResponseEntiry.class);
+                    if (ccbe == null || ccbe.getBannerId() == null || (bannerId = ccbe.getBannerId()) == 0) {
+                        LOG.warn("banner id is null or zero!");
+                        continue;
+                    }
+                } else {
+                    CloudCrossResponse ccbe = objectMapper.readValue(message, CloudCrossResponse.class);
+                    if (ccbe == null || ccbe.getSuccess() == null || (bannerId = ccbe.getSuccess().getBannerId()) == 0) {
+                        LOG.warn("banner id is null or zero!");
+                        continue;
+                    }
                 }
+
+
                 //[{"refuseReason":"","bannerId":33,"state":1,"stateValue":"待检查","advertiserId":123,"dspId":6},{"refuseReason":"","bannerId":34,"state":1,"stateValue":"待检查","advertiserId":123,"dspId":6}]
                 // 状态（0通过，1待检查，2检查未通过）
                 List<CloudCrossBannerStateResponseEntiry> responseEntirys = cloudCrossCreative.getStateById(bannerId);
