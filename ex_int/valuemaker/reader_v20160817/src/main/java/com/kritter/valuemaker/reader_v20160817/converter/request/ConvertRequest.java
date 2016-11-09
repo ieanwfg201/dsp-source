@@ -15,82 +15,82 @@ public class ConvertRequest {
             return null;
         }
 
-        VamBidRequestParentNodeDTO openrtbRequest = new VamBidRequestParentNodeDTO();
+        VamBidRequestParentNodeDTO bidRequestParentNodeDTO = new VamBidRequestParentNodeDTO();
 
         BidRequestImpressionDTO bidRequestImpressionDTO = new BidRequestImpressionDTO();
-        UUIDGenerator uuidGenerator= new UUIDGenerator();
+        UUIDGenerator uuidGenerator = new UUIDGenerator();
         bidRequestImpressionDTO.setBidRequestImpressionId(uuidGenerator.generateUniversallyUniqueIdentifier().toString());
 
-        openrtbRequest.setBidRequestImpressionArray(new BidRequestImpressionDTO[]{bidRequestImpressionDTO});
+        bidRequestParentNodeDTO.setBidRequestImpressionArray(new BidRequestImpressionDTO[]{bidRequestImpressionDTO});
 
         BidRequestSiteDTO bidRequestSiteDTO = new BidRequestSiteDTO();
-        openrtbRequest.setBidRequestSite(bidRequestSiteDTO);
+        bidRequestParentNodeDTO.setBidRequestSite(bidRequestSiteDTO);
 
         BidRequestAppDTO bidRequestAppDTO = new BidRequestAppDTO();
-        openrtbRequest.setBidRequestApp(bidRequestAppDTO);
+        bidRequestParentNodeDTO.setBidRequestApp(bidRequestAppDTO);
 
         BidRequestDeviceDTO bidRequestDeviceDTO = new BidRequestDeviceDTO();
-        openrtbRequest.setBidRequestDevice(bidRequestDeviceDTO);
+        bidRequestParentNodeDTO.setBidRequestDevice(bidRequestDeviceDTO);
 
         BidRequestUserDTO bidRequestUserDTO = new BidRequestUserDTO();
-        openrtbRequest.setBidRequestUser(bidRequestUserDTO);
+        bidRequestParentNodeDTO.setBidRequestUser(bidRequestUserDTO);
 
 
         if (request.hasId()) {
-            openrtbRequest.setBidRequestId(request.getId());
+            bidRequestParentNodeDTO.setBidRequestId(request.getId());
         }
         if (request.hasTMax()) {
-            openrtbRequest.setMaxTimeoutForBidSubmission(request.getTMax());
+            bidRequestParentNodeDTO.setMaxTimeoutForBidSubmission(request.getTMax());
         }
 
         if (request.hasCookie()) {
-            openrtbRequest.getBidRequestUser().setConsumerCustomData(request.getCookie());
+            bidRequestParentNodeDTO.getBidRequestUser().setConsumerCustomData(request.getCookie());
         }
         if (request.hasUserAgent()) {
-            openrtbRequest.getBidRequestDevice().setDeviceUserAgent(request.getUserAgent());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceUserAgent(request.getUserAgent());
         }
 
         if (request.hasDnt()) {
             if (request.getDnt()) {
-                openrtbRequest.getBidRequestDevice().setDoNotTrackDevice(1);
+                bidRequestParentNodeDTO.getBidRequestDevice().setDoNotTrackDevice(1);
             } else {
-                openrtbRequest.getBidRequestDevice().setDoNotTrackDevice(0);
+                bidRequestParentNodeDTO.getBidRequestDevice().setDoNotTrackDevice(0);
             }
         }
 
         if (request.hasIp()) {
-            openrtbRequest.getBidRequestDevice().setIpV4AddressClosestToDevice(request.getIp());
+            bidRequestParentNodeDTO.getBidRequestDevice().setIpV4AddressClosestToDevice(request.getIp());
         }
 
         if (request.hasLanguage()) {
-            openrtbRequest.getBidRequestDevice().setBrowserLanguage(request.getLanguage());
+            bidRequestParentNodeDTO.getBidRequestDevice().setBrowserLanguage(request.getLanguage());
         }
 
         if (request.hasDeviceType()) {
             switch (request.getDeviceType().getNumber()) {
                 case 1:
-                    openrtbRequest.getBidRequestDevice().setDeviceType(2);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(2);
                 case 2:
-                    openrtbRequest.getBidRequestDevice().setDeviceType(1);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(1);
                 case 3:
-                    openrtbRequest.getBidRequestDevice().setDeviceType(1);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(1);
                 case 4:
-                    openrtbRequest.getBidRequestDevice().setDeviceType(3);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(3);
             }
         }
 
 
         if (request.hasMediaId()) {
-            openrtbRequest.getBidRequestSite().setSiteIdOnExchange(request.getDomain());
+            bidRequestParentNodeDTO.getBidRequestSite().setSiteIdOnExchange(request.getDomain());
         }
         if (request.hasDomain()) {
-            openrtbRequest.getBidRequestSite().setSiteDomain(request.getDomain());
+            bidRequestParentNodeDTO.getBidRequestSite().setSiteDomain(request.getDomain());
         }
         if (request.hasPage()) {
-            openrtbRequest.getBidRequestSite().setSitePageURL(request.getPage());
+            bidRequestParentNodeDTO.getBidRequestSite().setSitePageURL(request.getPage());
         }
         if (request.hasReferer()) {
-            openrtbRequest.getBidRequestSite().setRefererURL(request.getReferer());
+            bidRequestParentNodeDTO.getBidRequestSite().setRefererURL(request.getReferer());
         }
 
 
@@ -116,26 +116,26 @@ public class ConvertRequest {
 
 
         if (request.getDisplayCount() > 0 && request.getDisplay(0) != null) {
-            display(openrtbRequest, request.getDisplay(0));
+            display(bidRequestParentNodeDTO, request.getDisplay(0));
         } else if (request.hasVamVideo()) {
-            video(openrtbRequest, request.getVamVideo());
+            video(bidRequestParentNodeDTO, request.getVamVideo());
         } else if (request.hasVamMobile()) {
-            mobile(openrtbRequest, request.getVamMobile());
+            mobile(bidRequestParentNodeDTO, request.getVamMobile());
         } else if (request.hasVamMobileVideo()) {
-            mobileVideo(openrtbRequest, request.getVamMobileVideo());
+            mobileVideo(bidRequestParentNodeDTO, request.getVamMobileVideo());
         } else {
-            return openrtbRequest;
+            return bidRequestParentNodeDTO;
         }
 
 
-        openrtbRequest.setExtensionObject(request);
+        bidRequestParentNodeDTO.setExtensionObject(request);
 
-        return openrtbRequest;
+        return bidRequestParentNodeDTO;
     }
 
-    private static void display(VamBidRequestParentNodeDTO openrtbRequest, VamRequest.Display display) {
-        openrtbRequest.setAppOrSite("site");
-        BidRequestImpressionDTO impressionDTO = openrtbRequest.getBidRequestImpressionArray()[0];
+    private static void display(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Display display) {
+        bidRequestParentNodeDTO.setAppOrSite("site");
+        BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = new BidRequestImpressionBannerObjectDTO();
         if (display.hasAdspaceId()) {
             impressionDTO.setAdTagOrPlacementId(String.valueOf(display.getAdspaceId()));
@@ -151,9 +151,7 @@ public class ConvertRequest {
         if (display.hasHeight()) {
             bidRequestImpressionBannerObjectDTO.setBannerHeightInPixels(display.getHeight());
         }
-        //adformat
-
-//        adform
+        //adformat,adform
 
         if (display.getExcludedCatCount() > 0) {
             List<Integer> excluded_cat = display.getExcludedCatList();
@@ -162,21 +160,22 @@ public class ConvertRequest {
                 battr[i] = excluded_cat.get(i).shortValue();
             }
             bidRequestImpressionBannerObjectDTO.setBlockedCreativeAttributes(battr);
+            bidRequestParentNodeDTO.setBattr(display.getExcludedCatList());
         }
 
         if (display.getExcludedAdvCount() > 0) {
             String[] excluded_adv = new String[]{};
             excluded_adv = display.getExcludedAdvList().toArray(excluded_adv);
-            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
+            bidRequestParentNodeDTO.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
         }
 
         impressionDTO.setBidRequestImpressionBannerObject(bidRequestImpressionBannerObjectDTO);
 
     }
 
-    private static void mobile(VamBidRequestParentNodeDTO openrtbRequest, VamRequest.Mobile mobile) {
-        openrtbRequest.setAppOrSite("app");
-        BidRequestImpressionDTO impressionDTO = openrtbRequest.getBidRequestImpressionArray()[0];
+    private static void mobile(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Mobile mobile) {
+        bidRequestParentNodeDTO.setAppOrSite("app");
+        BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = new BidRequestImpressionBannerObjectDTO();
         if (mobile.hasAdspaceId()) {
             impressionDTO.setAdTagOrPlacementId(String.valueOf(mobile.getAdspaceId()));
@@ -193,90 +192,89 @@ public class ConvertRequest {
         //adformat
 
         if (mobile.hasBrand()) {
-            openrtbRequest.getBidRequestDevice().setDeviceManufacturer(mobile.getBrand());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceManufacturer(mobile.getBrand());
         }
         if (mobile.hasModel()) {
-            openrtbRequest.getBidRequestDevice().setDeviceModel(mobile.getModel());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceModel(mobile.getModel());
         }
 
         if (mobile.hasOs()) {
             switch (mobile.getOs()) {
                 case 0:
-                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Other");
                 case 1:
-                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("iOS");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("iOS");
                 case 2:
-                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Android");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Android");
                 default:
-                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Other");
             }
         }
         if (mobile.hasOsVersion()) {
-            openrtbRequest.getBidRequestDevice().setDeviceOperatingSystemVersion(mobile.getOsVersion());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystemVersion(mobile.getOsVersion());
         }
 
 
         if (mobile.hasImei()) {
-            openrtbRequest.getBidRequestDevice().setMD5HashedDeviceId(mobile.getImei());
+            bidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDeviceId(mobile.getImei());
         }
 
         if (mobile.hasMac()) {
-            openrtbRequest.getBidRequestDevice().setHashedMD5MacAddressOfDevice(mobile.getMac());
+            bidRequestParentNodeDTO.getBidRequestDevice().setHashedMD5MacAddressOfDevice(mobile.getMac());
         }
         if (mobile.hasAid()) {
-            openrtbRequest.getBidRequestDevice().setMD5HashedDevicePlatformId(mobile.getAid());
+            bidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDevicePlatformId(mobile.getAid());
         }
         //aaid
 
         if (mobile.hasIDFA()) {
-            openrtbRequest.getBidRequestDevice().setIfa(mobile.getIDFA());
+            bidRequestParentNodeDTO.getBidRequestDevice().setIfa(mobile.getIDFA());
         }
         //OpenUDID
         //source
         if (mobile.hasPgn()) {
-            openrtbRequest.getBidRequestApp().setApplicationBundleName(mobile.getPgn());
+            bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobile.getPgn());
         }
         if (mobile.hasAppName()) {
-            openrtbRequest.getBidRequestApp().setApplicationName(mobile.getAppName());
+            bidRequestParentNodeDTO.getBidRequestApp().setApplicationName(mobile.getAppName());
         }
 
         if (mobile.hasScreenWidth()) {
-            openrtbRequest.getBidRequestDevice().setDevicePhysicalWidthInPixels(mobile.getScreenWidth());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDevicePhysicalWidthInPixels(mobile.getScreenWidth());
         }
         if (mobile.hasScreenHeight()) {
-            openrtbRequest.getBidRequestDevice().setDevicePhysicalHeightInPixels(mobile.getScreenHeight());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDevicePhysicalHeightInPixels(mobile.getScreenHeight());
         }
 
         if (mobile.hasNetwork()) {
             switch (mobile.getNetwork()) {
                 case 0:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(0);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(0);
                 case 1:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(2);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(2);
                 case 2:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(4);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(4);
                 case 3:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(5);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(5);
                 case 4:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(6);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(6);
                 default:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(0);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(0);
             }
         }
 
-        //TODO 字母是否这么写
         if (mobile.hasOperateId()) {
             switch (mobile.getOperateId()) {
                 case 0:
-                    openrtbRequest.getBidRequestDevice().setCarrier("UNKNOWN");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("5");
                 case 1:
-                    openrtbRequest.getBidRequestDevice().setCarrier("Mobile");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("1");
                 case 2:
-                    openrtbRequest.getBidRequestDevice().setCarrier("Unicom");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("2");
                 case 3:
-                    openrtbRequest.getBidRequestDevice().setCarrier("Telecom");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("3");
                 default:
-                    openrtbRequest.getBidRequestDevice().setCarrier("UNKNOWN");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("4");
             }
         }
 
@@ -288,7 +286,7 @@ public class ConvertRequest {
             if (mobile.getCorner().hasLongitude()) {
                 bidRequestGeoDTO.setGeoLongitude(mobile.getCorner().getLongitude());
             }
-            openrtbRequest.getBidRequestDevice().setGeoObject(bidRequestGeoDTO);
+            bidRequestParentNodeDTO.getBidRequestDevice().setGeoObject(bidRequestGeoDTO);
         }
 
         if (mobile.hasFullScreen()) {
@@ -299,27 +297,26 @@ public class ConvertRequest {
             }
         }
         //ad_location
-        //TODO code需要转换
         if (mobile.hasAppCategory()) {
-//            openrtbRequest.getBidRequestApp().setContentCategoriesApplication();
+            bidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(new String[]{String.valueOf(mobile.getAppCategory())});
         }
         //adform
         //mpn
         if (mobile.hasGender()) {
             switch (mobile.getGender()) {
                 case 0:
-                    openrtbRequest.getBidRequestUser().setGender("O");
+                    bidRequestParentNodeDTO.getBidRequestUser().setGender("O");
                 case 1:
-                    openrtbRequest.getBidRequestUser().setGender("M");
+                    bidRequestParentNodeDTO.getBidRequestUser().setGender("M");
                 case 2:
-                    openrtbRequest.getBidRequestUser().setGender("F");
+                    bidRequestParentNodeDTO.getBidRequestUser().setGender("F");
                 default:
-                    openrtbRequest.getBidRequestUser().setGender("O");
+                    bidRequestParentNodeDTO.getBidRequestUser().setGender("O");
 
             }
         }
         if (mobile.hasBd()) {
-            openrtbRequest.getBidRequestUser().setYearOfBirth(mobile.getBd());
+            bidRequestParentNodeDTO.getBidRequestUser().setYearOfBirth(mobile.getBd());
         }
         //screen_level
 
@@ -327,9 +324,9 @@ public class ConvertRequest {
 
     }
 
-    private static void video(VamBidRequestParentNodeDTO openrtbRequest, VamRequest.Video video) {
-        openrtbRequest.setAppOrSite("site");
-        BidRequestImpressionDTO impressionDTO = openrtbRequest.getBidRequestImpressionArray()[0];
+    private static void video(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Video video) {
+        bidRequestParentNodeDTO.setAppOrSite("site");
+        BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = new BidRequestImpressionVideoObjectDTO();
         if (video.hasAdspaceId()) {
             impressionDTO.setAdTagOrPlacementId(String.valueOf(video.getAdspaceId()));
@@ -387,7 +384,7 @@ public class ConvertRequest {
         }
 //        video_adformat
         if (video.hasKeyword()) {
-            openrtbRequest.getBidRequestApp().setAppKeywordsCSV(video.getKeyword());
+            bidRequestParentNodeDTO.getBidRequestApp().setAppKeywordsCSV(video.getKeyword());
         }
         if (video.getExcludedCatCount() > 0) {
             List<Integer> excluded_cat = video.getExcludedCatList();
@@ -396,21 +393,22 @@ public class ConvertRequest {
                 battr[i] = excluded_cat.get(i);
             }
             bidRequestImpressionVideoObjectDTO.setBlockedCreativeAttributes(battr);
+            bidRequestParentNodeDTO.setBattr(video.getExcludedCatList());
         }
 
         if (video.getExcludedAdvCount() > 0) {
             String[] excluded_adv = new String[]{};
             excluded_adv = video.getExcludedAdvList().toArray(excluded_adv);
-            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
+            bidRequestParentNodeDTO.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
         }
 //        ad_tech
         impressionDTO.setBidRequestImpressionVideoObject(bidRequestImpressionVideoObjectDTO);
 
     }
 
-    private static void mobileVideo(VamBidRequestParentNodeDTO openrtbRequest, VamRequest.Mobile_Video mobileVideo) {
-        openrtbRequest.setAppOrSite("app");
-        BidRequestImpressionDTO impressionDTO = openrtbRequest.getBidRequestImpressionArray()[0];
+    private static void mobileVideo(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Mobile_Video mobileVideo) {
+        bidRequestParentNodeDTO.setAppOrSite("app");
+        BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = new BidRequestImpressionVideoObjectDTO();
         if (mobileVideo.hasAdspaceId()) {
             impressionDTO.setAdTagOrPlacementId(String.valueOf(mobileVideo.getAdspaceId()));
@@ -421,89 +419,88 @@ public class ConvertRequest {
         //adformat
 
         if (mobileVideo.hasBrand()) {
-            openrtbRequest.getBidRequestDevice().setDeviceManufacturer(mobileVideo.getBrand());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceManufacturer(mobileVideo.getBrand());
         }
         if (mobileVideo.hasModel()) {
-            openrtbRequest.getBidRequestDevice().setDeviceModel(mobileVideo.getModel());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceModel(mobileVideo.getModel());
         }
 
         if (mobileVideo.hasOs()) {
             switch (mobileVideo.getOs()) {
                 case 0:
-                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Other");
                 case 1:
-                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("iOS");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("iOS");
                 case 2:
-                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Android");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Android");
                 default:
-                    openrtbRequest.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Other");
             }
         }
         if (mobileVideo.hasOsVersion()) {
-            openrtbRequest.getBidRequestDevice().setDeviceOperatingSystemVersion(mobileVideo.getOsVersion());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystemVersion(mobileVideo.getOsVersion());
         }
 
         if (mobileVideo.hasImei()) {
-            openrtbRequest.getBidRequestDevice().setMD5HashedDeviceId(mobileVideo.getImei());
+            bidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDeviceId(mobileVideo.getImei());
         }
 
         if (mobileVideo.hasMac()) {
-            openrtbRequest.getBidRequestDevice().setHashedMD5MacAddressOfDevice(mobileVideo.getMac());
+            bidRequestParentNodeDTO.getBidRequestDevice().setHashedMD5MacAddressOfDevice(mobileVideo.getMac());
         }
         if (mobileVideo.hasAid()) {
-            openrtbRequest.getBidRequestDevice().setMD5HashedDevicePlatformId(mobileVideo.getAid());
+            bidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDevicePlatformId(mobileVideo.getAid());
         }
         //aaid
 
         if (mobileVideo.hasIDFA()) {
-            openrtbRequest.getBidRequestDevice().setIfa(mobileVideo.getIDFA());
+            bidRequestParentNodeDTO.getBidRequestDevice().setIfa(mobileVideo.getIDFA());
         }
         //OpenUDID
         //source
         if (mobileVideo.hasPgn()) {
-            openrtbRequest.getBidRequestApp().setApplicationBundleName(mobileVideo.getPgn());
+            bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobileVideo.getPgn());
         }
         if (mobileVideo.hasAppName()) {
-            openrtbRequest.getBidRequestApp().setApplicationName(mobileVideo.getAppName());
+            bidRequestParentNodeDTO.getBidRequestApp().setApplicationName(mobileVideo.getAppName());
         }
 
         if (mobileVideo.hasScreenWidth()) {
-            openrtbRequest.getBidRequestDevice().setDevicePhysicalWidthInPixels(mobileVideo.getScreenWidth());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDevicePhysicalWidthInPixels(mobileVideo.getScreenWidth());
         }
         if (mobileVideo.hasScreenHeight()) {
-            openrtbRequest.getBidRequestDevice().setDevicePhysicalHeightInPixels(mobileVideo.getScreenHeight());
+            bidRequestParentNodeDTO.getBidRequestDevice().setDevicePhysicalHeightInPixels(mobileVideo.getScreenHeight());
         }
 
         if (mobileVideo.hasNetwork()) {
             switch (mobileVideo.getNetwork()) {
                 case 0:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(0);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(0);
                 case 1:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(2);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(2);
                 case 2:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(4);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(4);
                 case 3:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(5);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(5);
                 case 4:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(6);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(6);
                 default:
-                    openrtbRequest.getBidRequestDevice().setConnectionType(0);
+                    bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(0);
             }
         }
 
-        //TODO 字母是否这么写
         if (mobileVideo.hasOperateId()) {
             switch (mobileVideo.getOperateId()) {
                 case 0:
-                    openrtbRequest.getBidRequestDevice().setCarrier("UNKNOWN");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("5");
                 case 1:
-                    openrtbRequest.getBidRequestDevice().setCarrier("Mobile");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("1");
                 case 2:
-                    openrtbRequest.getBidRequestDevice().setCarrier("Unicom");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("2");
                 case 3:
-                    openrtbRequest.getBidRequestDevice().setCarrier("Telecom");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("3");
                 default:
-                    openrtbRequest.getBidRequestDevice().setCarrier("UNKNOWN");
+                    bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("4");
             }
         }
 
@@ -515,25 +512,25 @@ public class ConvertRequest {
             if (mobileVideo.getCorner().hasLongitude()) {
                 bidRequestGeoDTO.setGeoLongitude(mobileVideo.getCorner().getLongitude());
             }
-            openrtbRequest.getBidRequestDevice().setGeoObject(bidRequestGeoDTO);
+            bidRequestParentNodeDTO.getBidRequestDevice().setGeoObject(bidRequestGeoDTO);
         }
         //mpn
 
         if (mobileVideo.hasGender()) {
             switch (mobileVideo.getGender()) {
                 case 0:
-                    openrtbRequest.getBidRequestUser().setGender("O");
+                    bidRequestParentNodeDTO.getBidRequestUser().setGender("O");
                 case 1:
-                    openrtbRequest.getBidRequestUser().setGender("M");
+                    bidRequestParentNodeDTO.getBidRequestUser().setGender("M");
                 case 2:
-                    openrtbRequest.getBidRequestUser().setGender("F");
+                    bidRequestParentNodeDTO.getBidRequestUser().setGender("F");
                 default:
-                    openrtbRequest.getBidRequestUser().setGender("O");
+                    bidRequestParentNodeDTO.getBidRequestUser().setGender("O");
 
             }
         }
         if (mobileVideo.hasBd()) {
-            openrtbRequest.getBidRequestUser().setYearOfBirth(mobileVideo.getBd());
+            bidRequestParentNodeDTO.getBidRequestUser().setYearOfBirth(mobileVideo.getBd());
         }
 
         if (mobileVideo.hasLinear()) {
@@ -587,7 +584,7 @@ public class ConvertRequest {
         // adformat
 
         if (mobileVideo.hasKeyword()) {
-            openrtbRequest.getBidRequestApp().setAppKeywordsCSV(mobileVideo.getKeyword());
+            bidRequestParentNodeDTO.getBidRequestApp().setAppKeywordsCSV(mobileVideo.getKeyword());
         }
 
         if (mobileVideo.getExcludedCatCount() > 0) {
@@ -597,12 +594,13 @@ public class ConvertRequest {
                 battr[i] = excluded_cat.get(i);
             }
             bidRequestImpressionVideoObjectDTO.setBlockedCreativeAttributes(battr);
+            bidRequestParentNodeDTO.setBattr(mobileVideo.getExcludedCatList());
         }
 
         if (mobileVideo.getExcludedAdvCount() > 0) {
             String[] excluded_adv = new String[]{};
             excluded_adv = mobileVideo.getExcludedAdvList().toArray(excluded_adv);
-            openrtbRequest.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
+            bidRequestParentNodeDTO.setBlockedAdvertiserDomainsForBidRequest(excluded_adv);
         }
         impressionDTO.setBidRequestImpressionVideoObject(bidRequestImpressionVideoObjectDTO);
 

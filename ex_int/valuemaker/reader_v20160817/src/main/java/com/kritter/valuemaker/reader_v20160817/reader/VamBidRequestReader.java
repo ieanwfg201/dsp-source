@@ -4,7 +4,9 @@ import RTB.VamRealtimeBidding;
 import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.exception.BidRequestException;
 import com.kritter.bidrequest.reader.IBidRequestReader;
+import com.kritter.utils.uuid.mac.UUIDGenerator;
 import com.kritter.valuemaker.reader_v20160817.converter.request.ConvertRequest;
+import com.kritter.valuemaker.reader_v20160817.entity.BidRequestVam;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -19,17 +21,16 @@ import java.io.InputStream;
 public class VamBidRequestReader implements IBidRequestReader {
 
     private Logger logger;
-    private Logger bidRequestLogger;
+    private String auctioneerId;
+    private UUIDGenerator uuidGenerator;
 
-    public VamBidRequestReader(String loggerName, String bidRequestLoggerName) {
+    public VamBidRequestReader(String loggerName, String auctioneerId) {
         this.logger = LoggerFactory.getLogger(loggerName);
-        this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
+        this.auctioneerId = auctioneerId;
+        this.uuidGenerator = new UUIDGenerator();
     }
 
-    /**
-     * This method converts google valuemaker bid request payload into open rtb 2.3 object.
-     */
-    public VamBidRequestParentNodeDTO readAndConvertBidRequestPayLoadToOpenRTB_2_3(InputStream vamRequestInputStream) throws IOException {
+    public IBidRequest convertBidRequestPayloadToBusinessObject(InputStream vamRequestInputStream) throws IOException {
         if (null == vamRequestInputStream) {
             return null;
         }
@@ -39,9 +40,13 @@ public class VamBidRequestReader implements IBidRequestReader {
         } catch (Exception e) {
             logger.error(e.toString());
         }
-        bidRequestLogger.debug(bidRequest.toString());
+        logger.debug(bidRequest.toString());
 
-        return ConvertRequest.convert(bidRequest);
+        VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = ConvertRequest.convert(bidRequest);
+        String uniqueInternalBidRequestId = uuidGenerator.generateUniversallyUniqueIdentifier().toString();
+        IBidRequest iBidRequest = new BidRequestVam(auctioneerId, uniqueInternalBidRequestId, vamBidRequestParentNodeDTO);
+
+        return iBidRequest;
     }
 
     @Override
