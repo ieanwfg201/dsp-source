@@ -416,7 +416,7 @@ public class VamMUVideo implements MUVideo {
                     } else {
                         Integer status = AdxBasedExchangesStates.ERROR.getCode();
                         String responseStr = result.get("ResponseStr");
-                        if (responseStr != null && JSON.parseObject(responseStr).get("status").equals("1002")) { //物料id重复
+                        if (responseStr != null && JSON.parseObject(responseStr).getString("status").equals("1002")) { //物料id重复
                             status = AdxBasedExchangesStates.APPROVED.getCode();
                         }
                         cpstmt = con.prepareStatement(VamVideoQuery.updatetVideoStatusMessage);
