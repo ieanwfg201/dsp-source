@@ -141,7 +141,7 @@ public class ConvertRequest {
             impressionDTO.setAdTagOrPlacementId(String.valueOf(display.getAdspaceId()));
         }
         if (display.hasBidfloor()) {
-            impressionDTO.setBidFloorPrice((double) display.getBidfloor() / 100);
+//            impressionDTO.setBidFloorPrice((double) display.getBidfloor() / 100);
         }
         //screen_level
         //id固定为1
@@ -181,7 +181,7 @@ public class ConvertRequest {
             impressionDTO.setAdTagOrPlacementId(String.valueOf(mobile.getAdspaceId()));
         }
         if (mobile.hasBidfloor()) {
-            impressionDTO.setBidFloorPrice((double) mobile.getBidfloor() / 100);
+//            impressionDTO.setBidFloorPrice((double) mobile.getBidfloor() / 100);
         }
         if (mobile.hasWidth()) {
             bidRequestImpressionBannerObjectDTO.setBannerWidthInPixels(mobile.getWidth());
@@ -332,7 +332,7 @@ public class ConvertRequest {
             impressionDTO.setAdTagOrPlacementId(String.valueOf(video.getAdspaceId()));
         }
         if (video.hasBidfloor()) {
-            impressionDTO.setBidFloorPrice((double) video.getBidfloor() / 100);
+//            impressionDTO.setBidFloorPrice((double) video.getBidfloor() / 100);
         }
 
         if (video.hasLinear()) {
@@ -414,7 +414,7 @@ public class ConvertRequest {
             impressionDTO.setAdTagOrPlacementId(String.valueOf(mobileVideo.getAdspaceId()));
         }
         if (mobileVideo.hasBidfloor()) {
-            impressionDTO.setBidFloorPrice((double) mobileVideo.getBidfloor() / 100);
+//            impressionDTO.setBidFloorPrice((double) mobileVideo.getBidfloor() / 100);
         }
         //adformat
 
