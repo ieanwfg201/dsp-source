@@ -66,7 +66,8 @@ public class RTBExchangeRequestEnricher implements RequestEnricher
                                 adExchangeIdentifier);
 
         /*Fetch whether bid request needs to be logged*/
-        ReqLoggingCacheEntity reqLoggingCacheEntity = reqLoggingCache.query(adExchangeIdentifier);
+        String reqLogIdentifier = requestURIParts[requestURIParts.length-1];
+        ReqLoggingCacheEntity reqLoggingCacheEntity = reqLoggingCache.query(reqLogIdentifier);
         boolean logBidRequest = false;
         if(null != reqLoggingCacheEntity)
             logBidRequest = reqLoggingCacheEntity.isEnable();
