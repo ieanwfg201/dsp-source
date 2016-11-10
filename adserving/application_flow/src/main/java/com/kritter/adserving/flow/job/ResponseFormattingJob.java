@@ -4,9 +4,6 @@ import com.kritter.adserving.formatting.JSONFormatter;
 import com.kritter.adserving.formatting.VASTFormatter;
 import com.kritter.adserving.formatting.XHTMLFormatter;
 import com.kritter.adserving.formatting.XMLFormatter;
-import com.kritter.entity.reqres.entity.Request;
-import com.kritter.entity.reqres.entity.Response;
-import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.entity.IBidResponse;
 import com.kritter.bidrequest.exception.BidResponseException;
@@ -22,17 +19,16 @@ import com.kritter.constants.SITE_PASSBACK_TYPE;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.utils.common.ApplicationGeneralUtils;
-
+import com.kritter.entity.reqres.entity.Request;
+import com.kritter.entity.reqres.entity.Response;
+import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -232,16 +228,17 @@ public class ResponseFormattingJob implements Job{
         }
         else
         {
-            Response response = (Response)context.getValue(this.responseObjectKey);
-            Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfo();
-
-            if(null == responseAdInfos)
-                responseAdInfos = new HashSet<ResponseAdInfo>();
-
-            logger.debug("AdId info size inside ResponseFormattingJob: {} ", responseAdInfos.size());
-
             try
             {
+                Response response = (Response)context.getValue(this.responseObjectKey);
+                Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfo();
+
+                if(null == responseAdInfos)
+                    responseAdInfos = new HashSet<ResponseAdInfo>();
+
+                logger.debug("AdId info size inside ResponseFormattingJob: {} ", responseAdInfos.size());
+
+
                 if(null == request.getResponseFormat())
                     request.setResponseFormat(FormatterIds.XHTML_FORMATTER_ID);
 
@@ -331,6 +328,7 @@ public class ResponseFormattingJob implements Job{
             catch(Exception e)
             {
                 this.logger.error("Exception inside execute() of ResponseFormattingJob ",e);
+                writeNoBidResponseToExchange(httpServletResponse);
             }
         }
 

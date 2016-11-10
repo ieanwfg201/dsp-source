@@ -7,17 +7,21 @@ import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestGeoDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.reader.IBidRequestReader;
-import com.kritter.common.caches.iab.categories.IABCategoriesCache;
-import com.kritter.common.caches.iab.categories.entity.IABCategoryEntity;
+import com.kritter.common.caches.mma_cache.MMACache;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
-import com.kritter.constants.*;
+import com.kritter.constants.ExternalUserIdType;
+import com.kritter.constants.INVENTORY_SOURCE;
+import com.kritter.constants.SITE_PLATFORM;
+import com.kritter.constants.StatusIdEnum;
 import com.kritter.device.common.HandsetDetectionProvider;
 import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.user.userid.ExternalUserId;
-import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
+import com.kritter.geo.common.entity.Country;
+import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.utils.common.ApplicationGeneralUtils;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -25,8 +29,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 将云联的请求参数信息转成我们自己的request对象
@@ -37,38 +43,25 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
     private IBidRequestReader cloudCrossBidRequestReader;
     private SiteCache siteCache;
     private HandsetDetectionProvider handsetDetectionProvider;
-    private IABCategoriesCache iabCategoriesCache;
-    private IConnectionTypeDetectionCache connectionTypeDetectionCache;
+    private CountryDetectionCache countryDetectionCache;
+    private MMACache mmaCache;
     private static final String ENCODING = "UTF-8";
 
     public CloudCrossRequestEnricher4_4_4(String loggerName,
                                           IBidRequestReader cloudCrossBidRequestReader,
                                           SiteCache siteCache,
                                           HandsetDetectionProvider handsetDetectionProvider,
-                                          IABCategoriesCache iabCategoriesCache
+                                          CountryDetectionCache countryDetectionCache,
+                                          MMACache mmaCache
     ) {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.cloudCrossBidRequestReader = cloudCrossBidRequestReader;
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;
-        this.iabCategoriesCache = iabCategoriesCache;
-        this.connectionTypeDetectionCache = null;
+        this.countryDetectionCache = countryDetectionCache;
+        this.mmaCache = mmaCache;
     }
 
-    public CloudCrossRequestEnricher4_4_4(String loggerName,
-                                          IBidRequestReader cloudCrossBidRequestReader,
-                                          SiteCache siteCache,
-                                          HandsetDetectionProvider handsetDetectionProvider,
-                                          IABCategoriesCache iabCategoriesCache,
-                                          IConnectionTypeDetectionCache connectionTypeDetectionCache
-    ) {
-        this.logger = LoggerFactory.getLogger(loggerName);
-        this.cloudCrossBidRequestReader = cloudCrossBidRequestReader;
-        this.siteCache = siteCache;
-        this.handsetDetectionProvider = handsetDetectionProvider;
-        this.iabCategoriesCache = iabCategoriesCache;
-        this.connectionTypeDetectionCache = connectionTypeDetectionCache;
-    }
 
     @Override
     public Request validateAndEnrichRequest(String requestId, HttpServletRequest httpServletRequest, Logger logger, Logger bidRequestLogger, boolean logBidRequest, String publisherId) throws Exception {
@@ -152,6 +145,7 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
             CloudCrossBidRequestParentNodeDTO cloudCrossBidRequestParentNodeDTO =
                     (CloudCrossBidRequestParentNodeDTO) request.getBidRequest().getBidRequestParentNodeDTO();
 
+
             /******************************DETECT HANDSET BY USERAGENT**********************************************/
             String userAgent = null;
             CloudCrossBidRequestDeviceDTO cloudCrossBidRequestDeviceDTO =
@@ -180,22 +174,47 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
 
 
             String ip = cloudCrossBidRequestDeviceDTO != null ? cloudCrossBidRequestDeviceDTO.getIpV4AddressClosestToDevice() : null;
-            if (null == ip || ip.isEmpty()) {
+            if (StringUtils.isEmpty(ip)) {
                 ip = cloudCrossBidRequestDeviceDTO != null ? cloudCrossBidRequestDeviceDTO.getIpV6Address() : null;
-                if (ip == null || ip.isEmpty()) {
+                if (StringUtils.isEmpty(ip)) {
                     logger.debug("Country and InternetServiceProvider could not be detected inside YoukuRequestEnricher as mnc-mcc lookup failed as well as ip address not present...");
                 }
             }
-
-            request.setIpAddressUsedForDetection(ip);
-
-            if (connectionTypeDetectionCache != null) {
-                // Get the connection type for this ip
-                request.setConnectionType(this.connectionTypeDetectionCache.getConnectionType(ip));
-            } else {
-                // Default to unknown if the cache is not present
-                request.setConnectionType(ConnectionType.UNKNOWN);
+            if (StringUtils.isNotEmpty(ip)) {
+                request.setIpAddressUsedForDetection(ip);
+                request.setCountry(findCountry(ip));
             }
+
+            Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
+            if (externalUserIds == null) {
+                externalUserIds = new HashSet<>();
+                request.setExternalUserIds(externalUserIds);
+            }
+
+            Integer siteIncId = request.getSite().getSiteIncId();
+            String uuidType = cloudCrossBidRequestDeviceDTO.getUuidType();
+            String uuid = cloudCrossBidRequestDeviceDTO.getUuid();
+            if (!StringUtils.isEmpty(uuidType)) {
+                switch (uuidType) {
+                    case "mac":
+                        if (!StringUtils.isEmpty(uuid)) {
+                            externalUserIds.add(new ExternalUserId(ExternalUserIdType.MAC, siteIncId, uuid));
+                            externalUserIds.add(new ExternalUserId(ExternalUserIdType.MAC_MD5_DEVICE_ID, siteIncId, getMD5(uuid)));
+                        }
+                        break;
+                    case "idfa":
+                        if (!StringUtils.isEmpty(uuid))
+                            externalUserIds.add(new ExternalUserId(ExternalUserIdType.IFA_USER_ID, siteIncId, uuid));
+                        break;
+                    case "imei":
+                        if (!StringUtils.isEmpty(uuid))
+                            externalUserIds.add(new ExternalUserId(ExternalUserIdType.MD5_DEVICE_ID, siteIncId, getMD5(uuid)));
+                        externalUserIds.add(new ExternalUserId(ExternalUserIdType.DEVICE_ID, siteIncId, uuid));
+                        break;
+                }
+            }
+
+
             /******************************************* ip extraction and  connection type detection ends***************/
 
             BidRequestImpressionDTO[] impressionArray = cloudCrossBidRequestParentNodeDTO.getBidRequestImpressionArray();
@@ -347,12 +366,41 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
         return siteToUse;
     }
 
-    private Short findIABContentCategoryInternalId(String contentCategoryCode) {
-        if (StringUtils.isEmpty(contentCategoryCode))
+    public String getMD5(String s) {
+
+        if (s == null) {
+            return s;
+        }
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            String digest = getDigest(s, md);
+            return digest;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             return null;
-        IABCategoryEntity iabCategoryEntity = this.iabCategoriesCache.query(contentCategoryCode);
-        if (null != iabCategoryEntity)
-            return iabCategoryEntity.getInternalId();
-        return null;
+        }
+
+
+    }
+
+    public String getDigest(String s, MessageDigest md)
+            throws Exception {
+
+        md.reset();
+        byte[] digest = md.digest(s.getBytes());
+        String result = new String(Hex.encodeHex(digest));
+        return result;
+    }
+
+    private Country findCountry(String ip) {
+        Country country = null;
+
+        try {
+            country = this.countryDetectionCache.findCountryForIpAddress(ip);
+        } catch (Exception e) {
+            logger.error("Exception inside VamRequestEnricher in fetching country ", e);
+        }
+
+        return country;
     }
 }
