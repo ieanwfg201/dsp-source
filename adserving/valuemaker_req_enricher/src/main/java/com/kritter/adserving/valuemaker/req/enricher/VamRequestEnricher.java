@@ -1,6 +1,7 @@
 package com.kritter.adserving.valuemaker.req.enricher;
 
 
+import RTB.VamRealtimeBidding;
 import com.kritter.adserving.adexchange.request.enricher.RTBExchangeRequestReader;
 import com.kritter.adserving.request.utils.EnricherUtils;
 import com.kritter.bidrequest.entity.IBidRequest;
@@ -18,7 +19,6 @@ import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.geo.common.entity.Country;
-import com.kritter.geo.common.entity.InternetServiceProvider;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 import com.kritter.valuemaker.reader_v20160817.reader.VamBidRequestReader;
@@ -76,6 +76,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             request.setWriteResponseInsideExchangeAdaptor(true);//response body has to be written inside
             request.setBidRequest(iBidRequest);
 
+
             //fetch site object
             String siteIdFromBidRequest = StringUtils.substringAfterLast(httpServletRequest.getRequestURI(), "/");
             logger.debug("SiteId received from bid request URL: {} ", siteIdFromBidRequest);
@@ -93,6 +94,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
             VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) request.getBidRequest().getBidRequestParentNodeDTO();
 
+            convertPrice(vamBidRequestParentNodeDTO);
 
             /***********************Detect handset of the request.Use the user agent from bid request.*******************/
             /***********************************DETECT HANDSET BY USERAGENT**********************************************/
@@ -164,30 +166,19 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             /******************************************************************************************************/
 
 
-            //转换battrbattr
+            //转换battr
             List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
             if (battr != null && battr.size() != 0) {
-                List<Integer> newBattr = new ArrayList<Integer>();
+                List<String> newBattr = new ArrayList<String>();
                 for (Integer i : battr) {
                     MMACacheEntity mmaCacheEntity = mMACache.query(site.getPublisherIncId() + CTRL_A + i);
                     if (mmaCacheEntity != null) {
-                        newBattr.add(mmaCacheEntity.getUi_id());
+                        newBattr.add(String.valueOf(mmaCacheEntity.getUi_id()));
                     }
                 }
-                Integer[] b = new Integer[]{newBattr.size()};
+                String[] b = new String[newBattr.size()];
                 newBattr.toArray(b);
-
-                if (vamBidRequestParentNodeDTO.getBidRequestImpressionArray() != null && vamBidRequestParentNodeDTO.getBidRequestImpressionArray().length > 0) {
-                    BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0].getBidRequestImpressionVideoObject();
-                    if (bidRequestImpressionVideoObjectDTO != null) {
-                        bidRequestImpressionVideoObjectDTO.setBlockedCreativeAttributes(b);
-                    }
-                    BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0].getBidRequestImpressionBannerObject();
-                    if (bidRequestImpressionBannerObjectDTO != null) {
-                        bidRequestImpressionVideoObjectDTO.setBlockedCreativeAttributes(b);
-                    }
-                }
-
+                vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(b);
             }
             return request;
         } catch (Exception e) {
@@ -334,6 +325,25 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 request.setIpAddressUsedForDetection(vamBidRequestDeviceDTO.getIpV6Address());
             }
         }
+    }
+
+
+    private void convertPrice(VamBidRequestParentNodeDTO bidRequestParentNodeDTO) {
+        VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) bidRequestParentNodeDTO.getExtensionObject();
+        BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
+
+        double price = 0.0;
+        if (vamRequest.getDisplayCount() > 0 && vamRequest.getDisplay(0) != null && vamRequest.getDisplay(0).hasBidfloor()) {
+            price = (double) vamRequest.getDisplay(0).getBidfloor() / 100;
+        } else if (vamRequest.hasVamVideo() && vamRequest.getVamVideo().hasBidfloor()) {
+            price = (double) vamRequest.getVamVideo().getBidfloor() / 100;
+        } else if (vamRequest.hasVamMobile() && vamRequest.getVamMobile().hasBidfloor()) {
+            price = (double) vamRequest.getVamMobile().getBidfloor() / 100;
+        } else if (vamRequest.hasVamMobileVideo() && vamRequest.getVamMobileVideo().hasBidfloor()) {
+            price = (double) vamRequest.getVamMobileVideo().getBidfloor() / 100;
+        }
+
+        impressionDTO.setBidFloorPrice(price);
     }
 
 }
