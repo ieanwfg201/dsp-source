@@ -20,6 +20,7 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
+import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 import com.kritter.valuemaker.reader_v20160817.reader.VamBidRequestReader;
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +52,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                               HandsetDetectionProvider handsetDetectionProvider,
                               CountryDetectionCache countryDetectionCache,
                               MMACache mMACache
+
     ) {
         this.logger = LoggerFactory.getLogger(loggerName);
         this.vamBidRequestReader = vamBidRequestReader;
@@ -76,7 +78,6 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             request.setWriteResponseInsideExchangeAdaptor(true);//response body has to be written inside
             request.setBidRequest(iBidRequest);
 
-
             //fetch site object
             String siteIdFromBidRequest = StringUtils.substringAfterLast(httpServletRequest.getRequestURI(), "/");
             logger.debug("SiteId received from bid request URL: {} ", siteIdFromBidRequest);
@@ -95,6 +96,16 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) request.getBidRequest().getBidRequestParentNodeDTO();
 
             convertPrice(vamBidRequestParentNodeDTO);
+
+            if (logBidRequest) {
+                StringBuffer sb = new StringBuffer();
+                sb.append(publisherId);
+                sb.append(ApplicationGeneralUtils.EXCHANGE_BID_REQUEST_DELIM);
+                sb.append(requestId);
+                sb.append(ApplicationGeneralUtils.EXCHANGE_BID_REQUEST_DELIM);
+                sb.append(vamBidRequestParentNodeDTO.getExtensionObject().toString());
+                bidRequestLogger.debug(sb.toString());
+            }
 
             /***********************Detect handset of the request.Use the user agent from bid request.*******************/
             /***********************************DETECT HANDSET BY USERAGENT**********************************************/
