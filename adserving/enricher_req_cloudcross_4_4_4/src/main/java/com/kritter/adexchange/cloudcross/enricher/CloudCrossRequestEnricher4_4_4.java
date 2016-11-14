@@ -8,6 +8,7 @@ import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestGeoDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.reader.IBidRequestReader;
 import com.kritter.common.caches.mma_cache.MMACache;
+import com.kritter.common.caches.mma_cache.entity.MMACacheEntity;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ExternalUserIdType;
@@ -34,11 +35,13 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+
 /**
  * 将云联的请求参数信息转成我们自己的request对象
  * Created by hamlin on 7/5/16.
  */
 public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader {
+    private static final String CTRL_A = String.valueOf((char) 1);
     private Logger logger;
     private IBidRequestReader cloudCrossBidRequestReader;
     private SiteCache siteCache;
@@ -279,20 +282,31 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
 
         String siteUrl = null != cloudCrossBidRequestSiteDTO ? cloudCrossBidRequestSiteDTO.getSitePageURL() : null;
         Short[] categoriesArray = null;
-        String[] contentCategoriesSiteApp;
         Short sitePlatform;
         String applicationId = null;
         if (null != cloudCrossBidRequestSiteDTO) {
-            contentCategoriesSiteApp = cloudCrossBidRequestSiteDTO.getContentCategoriesForSite();
             sitePlatform = SITE_PLATFORM.WAP.getPlatform();
         } else if (null != cloudCrossBidRequestAppDTO) {
-            contentCategoriesSiteApp = cloudCrossBidRequestAppDTO.getContentCategoriesApplication();
             sitePlatform = SITE_PLATFORM.APP.getPlatform();
             applicationId = cloudCrossBidRequestAppDTO.getApplicationIdOnExchange();
         } else {
             logger.error("Site/App not found in request, site/app both not present inside CloudCrossRequestEnricher...aborting request....");
             return null;
         }
+        Integer[] mmaCatgories = null;
+        // cat, app category
+        if (cloudCrossBidRequestAppDTO != null) {
+            String[] cat = cloudCrossBidRequestAppDTO.getContentCategoriesApplication();
+            mmaCatgories = buildMMAFromMMACache(site.getPublisherIncId(), mmaCatgories, cat);
+        }
+
+        // bcat
+        Integer[] mmaIndustryCodes = null;
+        if (cloudCrossBidRequestParentNodeDTO != null) {
+            String[] bcat = cloudCrossBidRequestParentNodeDTO.getBlockedAdvertiserCategoriesForBidRequest();
+            mmaIndustryCodes = buildMMAFromMMACache(site.getPublisherIncId(), mmaIndustryCodes, bcat);
+        }
+
 
         //creative attributes to exclude come at banner/video level for each impression required
         //in the bid response for the bid request, hence set null here and in workflow where
@@ -361,9 +375,24 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
         siteToUse.setExternalPageUrl(externalAppPageUrl);
         siteToUse.setExternalAppBundle(externalAppBundle);
         siteToUse.setExternalCategories(externalCategories);
+        siteToUse.setMmaindustrCodeExclude(true);
+        siteToUse.setMmaindustryCode(mmaIndustryCodes);
+        siteToUse.setMmaCatgories(mmaCatgories);
         /******************************************************************************************************/
 
         return siteToUse;
+    }
+
+    private Integer[] buildMMAFromMMACache(Integer publisherId, Integer[] mmaCatgories, String[] cat) {
+        if (cat != null && cat.length > 0) {
+            int length = cat.length;
+            mmaCatgories = new Integer[length];
+            for (int i = 0; i < length; i++) {
+                MMACacheEntity mmaCacheEntity = mmaCache.query(publisherId + CTRL_A + Integer.valueOf(cat[i]));
+                mmaCatgories[i] = mmaCacheEntity == null ? 0 : mmaCacheEntity.getUi_id();
+            }
+        }
+        return mmaCatgories;
     }
 
     public String getMD5(String s) {

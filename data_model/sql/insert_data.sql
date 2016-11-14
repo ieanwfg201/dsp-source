@@ -793,6 +793,8 @@ INSERT INTO site (guid,NAME,pub_id,pub_guid,site_url,categories_list,category_li
     ('cloudcross','cloudcross',(SELECT id FROM account WHERE guid='cloudcross'),'cloudcross','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,NOW(),1,'')
 ON DUPLICATE KEY UPDATE id = VALUES(id);
 
+INSERT INTO mma_exchangename_id_mapping VALUES('cloudcross',(SELECT id FROM account WHERE guid = 'cloudcross'),'cloudcross',NOW(),NOW());
+
 insert into payout_threshold_metadata (name, value) values
 ("campaign_absolute_payout_threshold", 2.5),
 ("campaign_percentage_payout_threshold", 0.10)
