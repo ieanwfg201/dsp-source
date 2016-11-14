@@ -74,6 +74,9 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
             IBidRequest iBidRequest = this.vamBidRequestReader.convertBidRequestPayloadToBusinessObject(httpServletRequest.getInputStream());
 
+            VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) iBidRequest.getBidRequestParentNodeDTO();
+            convertPrice(vamBidRequestParentNodeDTO);
+
             Request request = new Request(requestId, INVENTORY_SOURCE.RTB_EXCHANGE);
             request.setWriteResponseInsideExchangeAdaptor(true);//response body has to be written inside
             request.setBidRequest(iBidRequest);
@@ -92,10 +95,6 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 this.logger.error("Requesting site from Valuemaker is not fit or is not found in cache . siteid: {} ", siteIdFromBidRequest);
                 return request;
             }
-
-            VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) request.getBidRequest().getBidRequestParentNodeDTO();
-
-            convertPrice(vamBidRequestParentNodeDTO);
 
             if (logBidRequest) {
                 StringBuffer sb = new StringBuffer();
@@ -176,7 +175,6 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             populateRequestObjectForExtraParameters(vamBidRequestParentNodeDTO, request);
             /******************************************************************************************************/
 
-
             //转换battr
             List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
             if (battr != null && battr.size() != 0) {
@@ -243,7 +241,9 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         Short appStoreId = 0;
         //keep floor value as 0.0, since its per impression, so for each impression
         //this value should be used and compared with ecpm value of each adunit.
-        double ecpmFloorValue = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0].getBidFloorPrice();
+
+        Double bidFloorValue = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0].getBidFloorPrice();
+        double ecpmFloorValue = bidFloorValue == null ? 0.0 : bidFloorValue;
 
         //Create a new site and set all attributes, take hygiene from the one found in cache.
         Site siteToUse = new Site.SiteEntityBuilder
