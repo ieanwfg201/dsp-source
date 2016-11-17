@@ -158,9 +158,8 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
         try (PreparedStatement statement = con.prepareStatement(CloudCrossAdvInfoQuery.selectSupplyIndustryIdByUIMMACategoriesId)) {
             statement.setInt(1, industryId);
             resultSet = statement.executeQuery();
+            return resultSet.next() ? resultSet.getString("supplycode") : "-1";
         }
-
-        return resultSet.next() ? resultSet.getString("supplycode") : "-1";
     }
 
     @Override
