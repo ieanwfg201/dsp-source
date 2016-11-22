@@ -281,6 +281,21 @@ public class MarkUpHelper {
                       		strTemp = StringUtils.replace(strTemp,ADTagMacros.MAC.getName(),defaultReplace);
                       	}
                       	break;
+                      case MACMD5:
+                          if(!userIdPopulated){
+                              useridMap=getUserId(request.getExternalUserIds());
+                              userIdPopulated=true;
+                          }
+                          if(useridMap != null){
+                              if(useridMap.get(ExternalUserIdType.MAC_MD5_DEVICE_ID) != null){
+                                  strTemp = StringUtils.replace(strTemp,ADTagMacros.MACMD5.getName(),quote+useridMap.get(ExternalUserIdType.MAC_MD5_DEVICE_ID)+quote);
+                              }else{
+                                  strTemp = StringUtils.replace(strTemp,ADTagMacros.MACMD5.getName(),defaultReplace);
+                              }
+                          }else{
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.MACMD5.getName(),defaultReplace);
+                          }
+                          break;
                       case IDFA:
                       	if(!userIdPopulated){
                       		useridMap=getUserId(request.getExternalUserIds());
