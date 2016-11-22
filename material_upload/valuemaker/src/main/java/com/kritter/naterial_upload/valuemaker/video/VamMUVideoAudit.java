@@ -79,7 +79,9 @@ public class VamMUVideoAudit implements MUVideoAudit {
 
                         ps1.setString(2, result.get("ResponseStr") == null ? "" : result.get("ResponseStr"));
                         ps1.setTimestamp(3, new Timestamp(new Date().getTime()));
-                        ps1.setInt(4, st.getInt("internalid"));
+                        ps1.setInt(4, getPubIncId());
+                        ps1.setInt(5, st.getInt("videoInfoId"));
+                        ps1.setInt(6, st.getInt("adxbasedexhangesstatus"));
 
                         String responseStr = result.get("ResponseStr");
                         if (responseStr != null) {
