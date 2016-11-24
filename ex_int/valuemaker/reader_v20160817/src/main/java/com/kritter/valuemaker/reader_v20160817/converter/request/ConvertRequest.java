@@ -225,12 +225,15 @@ public class ConvertRequest {
         if (mobile.hasAid()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDevicePlatformId(mobile.getAid());
         }
-        //aaid
-
+        if (mobile.hasAaid()) {
+            bidRequestParentNodeDTO.getBidRequestDevice().setAaidMd5(mobile.getAaid());
+        }
         if (mobile.hasIDFA()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setIfa(mobile.getIDFA());
         }
-        //OpenUDID
+        if (mobile.hasOpenUDID()) {
+            bidRequestParentNodeDTO.getBidRequestDevice().setOpenUDIDMd5(mobile.getOpenUDID());
+        }
         //source
         if (mobile.hasPgn()) {
             bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobile.getPgn());
@@ -451,12 +454,15 @@ public class ConvertRequest {
         if (mobileVideo.hasAid()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDevicePlatformId(mobileVideo.getAid());
         }
-        //aaid
-
+        if (mobileVideo.hasAaid()) {
+            bidRequestParentNodeDTO.getBidRequestDevice().setAaidMd5(mobileVideo.getAaid());
+        }
         if (mobileVideo.hasIDFA()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setIfa(mobileVideo.getIDFA());
         }
-        //OpenUDID
+        if (mobileVideo.hasOpenUDID()) {
+            bidRequestParentNodeDTO.getBidRequestDevice().setOpenUDIDMd5(mobileVideo.getIDFA());
+        }
         //source
         if (mobileVideo.hasPgn()) {
             bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobileVideo.getPgn());
