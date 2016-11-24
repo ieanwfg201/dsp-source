@@ -386,6 +386,36 @@ public class MarkUpHelper {
                       		strTemp = StringUtils.replace(strTemp,ADTagMacros.UDID.getName(),defaultReplace);
                       	}
                       	break;
+                      case AAIDMD5:
+                          if(!userIdPopulated){
+                              useridMap=getUserId(request.getExternalUserIds());
+                              userIdPopulated=true;
+                          }
+                          if(useridMap != null){
+                              if(useridMap.get(ExternalUserIdType.AAIDMD5) != null){
+                                  strTemp = StringUtils.replace(strTemp,ADTagMacros.AAIDMD5.getName(),quote+useridMap.get(ExternalUserIdType.AAIDMD5)+quote);
+                              }else{
+                                  strTemp = StringUtils.replace(strTemp,ADTagMacros.AAIDMD5.getName(),defaultReplace);
+                              }
+                          }else{
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.AAIDMD5.getName(),defaultReplace);
+                          }
+                          break;
+                      case OpenUDIDMD5:
+                          if(!userIdPopulated){
+                              useridMap=getUserId(request.getExternalUserIds());
+                              userIdPopulated=true;
+                          }
+                          if(useridMap != null){
+                              if(useridMap.get(ExternalUserIdType.OpenUDIDMD5) != null){
+                                  strTemp = StringUtils.replace(strTemp,ADTagMacros.OpenUDIDMD5.getName(),quote+useridMap.get(ExternalUserIdType.OpenUDIDMD5)+quote);
+                              }else{
+                                  strTemp = StringUtils.replace(strTemp,ADTagMacros.OpenUDIDMD5.getName(),defaultReplace);
+                              }
+                          }else{
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.MACMD5.getName(),defaultReplace);
+                          }
+                          break;
                       default:
                           break;
                   }

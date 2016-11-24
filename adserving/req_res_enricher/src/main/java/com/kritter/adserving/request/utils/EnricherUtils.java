@@ -207,6 +207,26 @@ public class EnricherUtils {
             externalUserIds.add(new ExternalUserId(ExternalUserIdType.MAC_MD5_DEVICE_ID, siteIncId,
                     bidRequestDeviceDTO.getHashedMD5MacAddressOfDevice()));
         }
+        if(bidRequestDeviceDTO.getAaid() != null &&
+                !bidRequestDeviceDTO.getAaid().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.AAID, siteIncId,
+                    bidRequestDeviceDTO.getAaid()));
+        }
+        if(bidRequestDeviceDTO.getAaidMd5() != null &&
+                !bidRequestDeviceDTO.getAaidMd5().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.AAIDMD5, siteIncId,
+                    bidRequestDeviceDTO.getAaidMd5()));
+        }
+        if(bidRequestDeviceDTO.getOpenUDID() != null &&
+                !bidRequestDeviceDTO.getOpenUDID().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.OpenUDIDMD5, siteIncId,
+                    bidRequestDeviceDTO.getOpenUDID()));
+        }
+        if(bidRequestDeviceDTO.getOpenUDIDMd5() != null &&
+                !bidRequestDeviceDTO.getOpenUDIDMd5().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.OpenUDIDMD5, siteIncId,
+                    bidRequestDeviceDTO.getOpenUDIDMd5()));
+        }
     }
 
     public static void populateUserIdsFromBidRequestUserDTO(

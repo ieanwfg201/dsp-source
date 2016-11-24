@@ -403,4 +403,36 @@ public class BidRequestDeviceDTO {
     public Object getExtensionObject(){
         return extensionObject;
     }
+
+    @JsonProperty("aaid")
+    @Setter
+    private String aaid;
+    @JsonIgnore
+    public String getAaid(){
+        return aaid;
+    }
+
+    @JsonProperty("aaidMd5")
+    @Setter
+    private String aaidMd5;
+    @JsonIgnore
+    public String getAaidMd5(){
+        return aaidMd5;
+    }
+
+    @JsonProperty("openUDID")
+    @Setter
+    private String openUDID;
+    @JsonIgnore
+    public String getOpenUDID(){
+        return openUDID;
+    }
+
+    @JsonProperty("openUDIDMd5")
+    @Setter
+    private String openUDIDMd5;
+    @JsonIgnore
+    public String getOpenUDIDMd5(){
+        return openUDIDMd5;
+    }
 }
