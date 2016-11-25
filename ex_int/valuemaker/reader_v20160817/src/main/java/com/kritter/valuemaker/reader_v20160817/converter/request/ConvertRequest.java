@@ -5,6 +5,7 @@ import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConvertRequest {
@@ -380,12 +381,29 @@ public class ConvertRequest {
             }
         }
 
-        if (video.getMimesCount() > 0) {
-            String[] mimeTypes = new String[]{};
-            mimeTypes = video.getMimesList().toArray(mimeTypes);
-            bidRequestImpressionVideoObjectDTO.setMimeTypesSupported(mimeTypes);
+        if (video.getVideoAdformatCount() > 0) {
+            List<VamRequest.Video.ADFORMAT> adformats = video.getVideoAdformatList();
+            if (adformats != null && adformats.size() != 0) {
+                String[] mimeTypes = new String[]{};
+                List<String> list = new ArrayList<String>();
+                for (VamRequest.Video.ADFORMAT af : adformats) {
+                    switch (af.getNumber()) {
+                        case 3:
+                            list.add("video/x-swx-shockwave-flash");
+                            break;
+                        case 5:
+                            list.add("video/x-flv");
+                            break;
+                        case 6:
+                            list.add("video/mp4");
+                            break;
+                    }
+                }
+                mimeTypes = list.toArray(mimeTypes);
+                bidRequestImpressionVideoObjectDTO.setMimeTypesSupported(mimeTypes);
+            }
         }
-//        video_adformat
+
         if (video.hasKeyword()) {
             bidRequestParentNodeDTO.getBidRequestApp().setAppKeywordsCSV(video.getKeyword());
         }
@@ -581,13 +599,30 @@ public class ConvertRequest {
             }
         }
 
-        if (mobileVideo.getMimesCount() > 0) {
-            String[] mimeTypes = new String[]{};
-            mimeTypes = mobileVideo.getMimesList().toArray(mimeTypes);
-            bidRequestImpressionVideoObjectDTO.setMimeTypesSupported(mimeTypes);
+        // mines
+        if (mobileVideo.getAdformatCount() > 0) {
+            List<VamRequest.Mobile_Video.ADFORMAT> adformats = mobileVideo.getAdformatList();
+            if (adformats != null && adformats.size() != 0) {
+                String[] mimeTypes = new String[]{};
+                List<String> list = new ArrayList<String>();
+                for (VamRequest.Mobile_Video.ADFORMAT af : adformats) {
+                    switch (af.getNumber()) {
+                        case 3:
+                            list.add("video/x-swx-shockwave-flash");
+                            break;
+                        case 5:
+                            list.add("video/x-flv");
+                            break;
+                        case 6:
+                            list.add("video/mp4");
+                            break;
+                    }
+                }
+                mimeTypes = list.toArray(mimeTypes);
+                bidRequestImpressionVideoObjectDTO.setMimeTypesSupported(mimeTypes);
+            }
         }
 
-        // adformat
 
         if (mobileVideo.hasKeyword()) {
             bidRequestParentNodeDTO.getBidRequestApp().setAppKeywordsCSV(mobileVideo.getKeyword());
