@@ -94,7 +94,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 Site s = this.siteCache.query(siteIdFromBidRequest);
                 if (s != null) {
                     for (int i = 0; i < battr.size(); i++) {
-                        MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + i);
+                        MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + battr.get(i));
                         if (mmaCacheEntity != null) {
                             mmaIndustryCodes1[i] = mmaCacheEntity.getUi_id();
                             mmaIndustryCodes2[i] = String.valueOf(mmaCacheEntity.getUi_id());
