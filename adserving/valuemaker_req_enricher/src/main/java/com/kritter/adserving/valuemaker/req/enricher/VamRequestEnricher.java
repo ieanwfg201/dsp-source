@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -84,8 +83,30 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             //fetch site object
             String siteIdFromBidRequest = StringUtils.substringAfterLast(httpServletRequest.getRequestURI(), "/");
             logger.debug("SiteId received from bid request URL: {} ", siteIdFromBidRequest);
-            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest);
+
+            //转换bcat
+            Integer[] mmaIndustryCodes1 = null;
+            String[] mmaIndustryCodes2 = null;
+            List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
+            if (battr != null && battr.size() != 0) {
+                mmaIndustryCodes1 = new Integer[battr.size()];
+                mmaIndustryCodes2 = new String[battr.size()];
+                Site s = this.siteCache.query(siteIdFromBidRequest);
+                if (s != null) {
+                    for (int i = 0; i < battr.size(); i++) {
+                        MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + i);
+                        if (mmaCacheEntity != null) {
+                            mmaIndustryCodes1[i] = mmaCacheEntity.getUi_id();
+                            mmaIndustryCodes2[i] = String.valueOf(mmaCacheEntity.getUi_id());
+                        }
+                    }
+                    vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(mmaIndustryCodes2);
+                }
+            }
+
+            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, mmaIndustryCodes1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));
+
 
             if (null != site)
                 request.setSite(site);
@@ -175,20 +196,6 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             populateRequestObjectForExtraParameters(vamBidRequestParentNodeDTO, request);
             /******************************************************************************************************/
 
-            //转换battr
-            List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
-            if (battr != null && battr.size() != 0) {
-                List<String> newBattr = new ArrayList<String>();
-                for (Integer i : battr) {
-                    MMACacheEntity mmaCacheEntity = mMACache.query(site.getPublisherIncId() + CTRL_A + i);
-                    if (mmaCacheEntity != null) {
-                        newBattr.add(String.valueOf(mmaCacheEntity.getUi_id()));
-                    }
-                }
-                String[] b = new String[newBattr.size()];
-                newBattr.toArray(b);
-                vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(b);
-            }
             return request;
         } catch (Exception e) {
             e.printStackTrace();
@@ -213,7 +220,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
      * All attributes must be set at runtime except hygiene ,which
      * should be taken from the entity as present in the database.
      */
-    private Site fetchSiteEntityForVamRequest(Request request, String siteIdFromBidRequest) {
+    private Site fetchSiteEntityForVamRequest(Request request, String siteIdFromBidRequest, Integer[] mmaIndustryCodes) {
         Site site = this.siteCache.query(siteIdFromBidRequest);
 
         if (null == site)
@@ -299,6 +306,8 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         siteToUse.setExternalPageUrl(externalAppPageUrl);
         siteToUse.setExternalAppBundle(externalAppBundle);
         siteToUse.setExternalCategories(externalCategories);
+        siteToUse.setMmaindustrCodeExclude(true);
+        siteToUse.setMmaindustryCode(mmaIndustryCodes);
         /******************************************************************************************************/
 
         return siteToUse;
