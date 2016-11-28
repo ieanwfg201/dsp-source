@@ -71,12 +71,16 @@ public class ConvertRequest {
             switch (request.getDeviceType().getNumber()) {
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(2);
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(1);
+                    break;
                 case 3:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(1);
+                    break;
                 case 4:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(3);
+                    break;
             }
         }
 
@@ -203,12 +207,16 @@ public class ConvertRequest {
             switch (mobile.getOs()) {
                 case 0:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                    break;
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("iOS");
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Android");
+                    break;
                 default:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                    break;
             }
         }
         if (mobile.hasOsVersion()) {
@@ -254,16 +262,22 @@ public class ConvertRequest {
             switch (mobile.getNetwork()) {
                 case 0:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(0);
+                    break;
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(2);
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(4);
+                    break;
                 case 3:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(5);
+                    break;
                 case 4:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(6);
+                    break;
                 default:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(0);
+                    break;
             }
         }
 
@@ -271,14 +285,19 @@ public class ConvertRequest {
             switch (mobile.getOperateId()) {
                 case 0:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("5");
+                    break;
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("1");
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("2");
+                    break;
                 case 3:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("3");
+                    break;
                 default:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("4");
+                    break;
             }
         }
 
@@ -310,12 +329,16 @@ public class ConvertRequest {
             switch (mobile.getGender()) {
                 case 0:
                     bidRequestParentNodeDTO.getBidRequestUser().setGender("O");
+                    break;
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestUser().setGender("M");
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestUser().setGender("F");
+                    break;
                 default:
                     bidRequestParentNodeDTO.getBidRequestUser().setGender("O");
+                    break;
 
             }
         }
@@ -369,14 +392,19 @@ public class ConvertRequest {
             switch (video.getVideoAdform()) {
                 case 0:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(0);
+                    break;
                 case 1:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(-1);
+                    break;
                 case 2:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(-2);
+                    break;
                 case 4:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(1);
+                    break;
                 default:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(1);
+                    break;
 
             }
         }
@@ -450,12 +478,16 @@ public class ConvertRequest {
             switch (mobileVideo.getOs()) {
                 case 0:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                    break;
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("iOS");
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Android");
+                    break;
                 default:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystem("Other");
+                    break;
             }
         }
         if (mobileVideo.hasOsVersion()) {
@@ -500,16 +532,22 @@ public class ConvertRequest {
             switch (mobileVideo.getNetwork()) {
                 case 0:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(0);
+                    break;
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(2);
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(4);
+                    break;
                 case 3:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(5);
+                    break;
                 case 4:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(6);
+                    break;
                 default:
                     bidRequestParentNodeDTO.getBidRequestDevice().setConnectionType(0);
+                    break;
             }
         }
 
@@ -517,14 +555,19 @@ public class ConvertRequest {
             switch (mobileVideo.getOperateId()) {
                 case 0:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("5");
+                    break;
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("1");
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("2");
+                    break;
                 case 3:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("3");
+                    break;
                 default:
                     bidRequestParentNodeDTO.getBidRequestDevice().setCarrier("4");
+                    break;
             }
         }
 
@@ -544,12 +587,16 @@ public class ConvertRequest {
             switch (mobileVideo.getGender()) {
                 case 0:
                     bidRequestParentNodeDTO.getBidRequestUser().setGender("O");
+                    break;
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestUser().setGender("M");
+                    break;
                 case 2:
                     bidRequestParentNodeDTO.getBidRequestUser().setGender("F");
+                    break;
                 default:
                     bidRequestParentNodeDTO.getBidRequestUser().setGender("O");
+                    break;
 
             }
         }
@@ -587,14 +634,19 @@ public class ConvertRequest {
             switch (mobileVideo.getVideoAdform()) {
                 case 0:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(0);
+                    break;
                 case 1:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(-1);
+                    break;
                 case 2:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(-2);
+                    break;
                 case 4:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(1);
+                    break;
                 default:
                     bidRequestImpressionVideoObjectDTO.setStartDelayInSeconds(1);
+                    break;
 
             }
         }
