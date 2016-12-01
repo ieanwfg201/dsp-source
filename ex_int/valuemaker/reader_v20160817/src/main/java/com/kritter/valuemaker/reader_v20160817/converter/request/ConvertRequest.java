@@ -243,7 +243,9 @@ public class ConvertRequest {
         if (mobile.hasOpenUDID()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setOpenUDIDMd5(mobile.getOpenUDID());
         }
-        //source
+        if (mobile.hasSource() && mobile.getSource() != 1) {
+            bidRequestParentNodeDTO.setAppOrSite("site");
+        }
         if (mobile.hasPgn()) {
             bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobile.getPgn());
         }
@@ -513,7 +515,9 @@ public class ConvertRequest {
         if (mobileVideo.hasOpenUDID()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setOpenUDIDMd5(mobileVideo.getIDFA());
         }
-        //source
+        if (mobileVideo.hasSource() && mobileVideo.getSource() != 1) {
+            bidRequestParentNodeDTO.setAppOrSite("site");
+        }
         if (mobileVideo.hasPgn()) {
             bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobileVideo.getPgn());
         }
