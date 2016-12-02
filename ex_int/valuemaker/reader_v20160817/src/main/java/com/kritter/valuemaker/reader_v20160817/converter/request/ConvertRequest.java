@@ -2,6 +2,7 @@ package com.kritter.valuemaker.reader_v20160817.converter.request;
 
 import RTB.VamRealtimeBidding.VamRequest;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
+import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 
@@ -139,7 +140,7 @@ public class ConvertRequest {
     }
 
     private static void display(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Display display) {
-        bidRequestParentNodeDTO.setAppOrSite("site");
+        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
         BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = new BidRequestImpressionBannerObjectDTO();
         if (display.hasAdspaceId()) {
@@ -179,7 +180,7 @@ public class ConvertRequest {
     }
 
     private static void mobile(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Mobile mobile) {
-        bidRequestParentNodeDTO.setAppOrSite("app");
+        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.APP);
         BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = new BidRequestImpressionBannerObjectDTO();
         if (mobile.hasAdspaceId()) {
@@ -244,7 +245,7 @@ public class ConvertRequest {
             bidRequestParentNodeDTO.getBidRequestDevice().setOpenUDIDMd5(mobile.getOpenUDID());
         }
         if (mobile.hasSource() && mobile.getSource() != 1) {
-            bidRequestParentNodeDTO.setAppOrSite("site");
+            bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
         }
         if (mobile.hasPgn()) {
             bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobile.getPgn());
@@ -354,7 +355,7 @@ public class ConvertRequest {
     }
 
     private static void video(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Video video) {
-        bidRequestParentNodeDTO.setAppOrSite("site");
+        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
         BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = new BidRequestImpressionVideoObjectDTO();
         if (video.hasAdspaceId()) {
@@ -458,7 +459,7 @@ public class ConvertRequest {
     }
 
     private static void mobileVideo(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Mobile_Video mobileVideo) {
-        bidRequestParentNodeDTO.setAppOrSite("app");
+        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.APP);
         BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = new BidRequestImpressionVideoObjectDTO();
         if (mobileVideo.hasAdspaceId()) {
@@ -516,7 +517,7 @@ public class ConvertRequest {
             bidRequestParentNodeDTO.getBidRequestDevice().setOpenUDIDMd5(mobileVideo.getIDFA());
         }
         if (mobileVideo.hasSource() && mobileVideo.getSource() != 1) {
-            bidRequestParentNodeDTO.setAppOrSite("site");
+            bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
         }
         if (mobileVideo.hasPgn()) {
             bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobileVideo.getPgn());
