@@ -234,8 +234,8 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         Short sitePlatform;
         String applicationId = null;
 
-        String appOrSite = vamBidRequestParentNodeDTO.getAppOrSite();
-        if (appOrSite != null && appOrSite.equals("app")) {
+        SITE_PLATFORM sp = vamBidRequestParentNodeDTO.getSitePlatform();
+        if (sp != null && sp.getPlatform() == SITE_PLATFORM.APP.getPlatform()) {
             sitePlatform = SITE_PLATFORM.APP.getPlatform();
             applicationId = vamBidRequestAppDTO.getApplicationIdOnExchange();
         } else {

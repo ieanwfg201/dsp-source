@@ -810,3 +810,20 @@ ON DUPLICATE KEY UPDATE guid = VALUES(guid);
 INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) values
 ('openx2_3','openx2_3',(select id from account where guid='openx2_3'),'openx2_3','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,'')
 ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+
+
+-- add exchangename mapping
+INSERT INTO mma_exchangename_id_mapping (exchangename,exchangeid,exchangeguid,last_modified) VALUES('valuemaker',68,'vam',NOW());
+
+-- modify mma cagetory name
+UPDATE mma_categories SET NAME="食品饮料",last_modified=NOW() WHERE CODE='12002007';
+
+-- add creative slot
+INSERT INTO creative_slots(id,width,height,`description`,`modified_by`,`created_on`,`last_modified`,`is_deprecated`) VALUE (48,640,110,"640X110",1,now(),now(),0);
+INSERT INTO creative_slots(id,width,height,`description`,`modified_by`,`created_on`,`last_modified`,`is_deprecated`) VALUE (49,640,140,"640X140",1,now(),now(),0);
+INSERT INTO creative_slots(id,width,height,`description`,`modified_by`,`created_on`,`last_modified`,`is_deprecated`) VALUE (50,640,160,"640X160",1,now(),now(),0);
+INSERT INTO creative_slots(id,width,height,`description`,`modified_by`,`created_on`,`last_modified`,`is_deprecated`) VALUE (51,640,200,"640X200",1,now(),now(),0);
+INSERT INTO creative_slots(id,width,height,`description`,`modified_by`,`created_on`,`last_modified`,`is_deprecated`) VALUE (52,640,168,"640X168",1,now(),now(),0);
+INSERT INTO creative_slots(id,width,height,`description`,`modified_by`,`created_on`,`last_modified`,`is_deprecated`) VALUE (53,532,108,"532X108",1,now(),now(),0);
+
