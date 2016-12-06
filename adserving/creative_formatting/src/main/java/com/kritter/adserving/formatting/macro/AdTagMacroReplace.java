@@ -430,7 +430,7 @@ public class AdTagMacroReplace {
                                 strTemp = StringUtils.replace(strTemp,ADTagMacros.OpenUDIDMD5.getName(),defaultReplace);
                             }
                         }else{
-                            strTemp = StringUtils.replace(strTemp,ADTagMacros.MACMD5.getName(),defaultReplace);
+                            strTemp = StringUtils.replace(strTemp,ADTagMacros.OpenUDIDMD5.getName(),defaultReplace);
                         }
                         break;
                     default:

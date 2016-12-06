@@ -280,22 +280,22 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         String[] externalCategories = null;
         String externalAppBundle = null;
 
-        if (sp != null && sp.getPlatform() == SITE_PLATFORM.APP.getPlatform()) { //app
-            externalSupplyUrl = vamBidRequestAppDTO.getApplicationStoreUrl();
-            externalSupplyId = vamBidRequestAppDTO.getApplicationBundleName();
-            externalSupplyName = vamBidRequestAppDTO.getApplicationName();
-            externalSupplyDomain = vamBidRequestAppDTO.getApplicationBundleName();
-            externalAppVersion = vamBidRequestAppDTO.getApplicationVersion();
-            if (vamBidRequestAppDTO.getContentCategoriesApplication() != null) {
-                externalCategories = vamBidRequestAppDTO.getContentCategoriesApplication();
-            }
-            externalAppBundle = vamBidRequestAppDTO.getApplicationBundleName();
-        } else {
+        if (null != vamBidRequestSiteDTO) {
             externalSupplyUrl = vamBidRequestSiteDTO.getSitePageURL();
             externalSupplyId = vamBidRequestSiteDTO.getSiteIdOnExchange();
             externalSupplyName = vamBidRequestSiteDTO.getSiteName();
             externalSupplyDomain = vamBidRequestSiteDTO.getSiteDomain();
             externalAppPageUrl = vamBidRequestSiteDTO.getSitePageURL();
+        } else if (null != vamBidRequestAppDTO) {
+            externalSupplyUrl = vamBidRequestAppDTO.getApplicationStoreUrl();
+            externalSupplyId = vamBidRequestAppDTO.getApplicationBundleName();
+            externalSupplyName = vamBidRequestAppDTO.getApplicationName();
+            externalSupplyDomain = vamBidRequestAppDTO.getApplicationDomain();
+            externalAppVersion = vamBidRequestAppDTO.getApplicationVersion();
+            if (vamBidRequestAppDTO.getContentCategoriesApplication() != null) {
+                externalCategories = vamBidRequestAppDTO.getContentCategoriesApplication();
+            }
+            externalAppBundle = vamBidRequestAppDTO.getApplicationBundleName();
         }
 
         siteToUse.setExternalSupplyDomain(externalSupplyDomain);
