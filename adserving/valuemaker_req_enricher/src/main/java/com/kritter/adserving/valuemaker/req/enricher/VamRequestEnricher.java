@@ -288,7 +288,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             externalAppPageUrl = vamBidRequestSiteDTO.getSitePageURL();
         } else if (null != vamBidRequestAppDTO) {
             externalSupplyUrl = vamBidRequestAppDTO.getApplicationStoreUrl();
-            externalSupplyId = vamBidRequestAppDTO.getApplicationIdOnExchange();
+            externalSupplyId = vamBidRequestAppDTO.getApplicationBundleName();
             externalSupplyName = vamBidRequestAppDTO.getApplicationName();
             externalSupplyDomain = vamBidRequestAppDTO.getApplicationDomain();
             externalAppVersion = vamBidRequestAppDTO.getApplicationVersion();
