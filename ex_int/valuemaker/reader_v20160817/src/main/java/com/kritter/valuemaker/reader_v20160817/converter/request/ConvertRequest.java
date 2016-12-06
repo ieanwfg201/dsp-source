@@ -118,7 +118,6 @@ public class ConvertRequest {
     }
 
     private static void display(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest vamRequest) {
-        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
         convertBidRequestSite(bidRequestParentNodeDTO, vamRequest);
 
         VamRequest.Display display = vamRequest.getDisplay(0);
@@ -166,10 +165,8 @@ public class ConvertRequest {
         VamRequest.Mobile mobile = vamRequest.getVamMobile();
 
         if (mobile.hasSource() && mobile.getSource() != 1) {
-            bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
             convertBidRequestSite(bidRequestParentNodeDTO, vamRequest);
         } else {
-            bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.APP);
             BidRequestAppDTO bidRequestAppDTO = new BidRequestAppDTO();
             if (mobile.hasPgn()) {
                 bidRequestAppDTO.setApplicationBundleName(mobile.getPgn());
@@ -341,7 +338,6 @@ public class ConvertRequest {
     }
 
     private static void video(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest vamRequest) {
-        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
         convertBidRequestSite(bidRequestParentNodeDTO, vamRequest);
 
         VamRequest.Video video = vamRequest.getVamVideo();
@@ -450,10 +446,8 @@ public class ConvertRequest {
         VamRequest.Mobile_Video mobileVideo = vamRequest.getVamMobileVideo();
 
         if (mobileVideo.hasSource() && mobileVideo.getSource() != 1) {
-            bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
             convertBidRequestSite(bidRequestParentNodeDTO, vamRequest);
         } else {
-            bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.APP);
             BidRequestAppDTO bidRequestAppDTO = new BidRequestAppDTO();
             if (mobileVideo.hasPgn()) {
                 bidRequestAppDTO.setApplicationBundleName(mobileVideo.getPgn());

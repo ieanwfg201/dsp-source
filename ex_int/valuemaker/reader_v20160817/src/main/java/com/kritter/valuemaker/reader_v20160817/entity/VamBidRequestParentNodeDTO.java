@@ -13,10 +13,6 @@ public class VamBidRequestParentNodeDTO extends BidRequestParentNodeDTO {
 
     @Setter
     @Getter
-    private SITE_PLATFORM sitePlatform; //app or site
-
-    @Setter
-    @Getter
     private List<Integer> battr;
 
 }
