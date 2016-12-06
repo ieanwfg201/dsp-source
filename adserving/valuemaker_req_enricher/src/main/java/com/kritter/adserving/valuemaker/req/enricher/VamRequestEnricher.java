@@ -280,22 +280,22 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         String[] externalCategories = null;
         String externalAppBundle = null;
 
-        if (null != vamBidRequestSiteDTO) {
-            externalSupplyUrl = vamBidRequestSiteDTO.getSitePageURL();
-            externalSupplyId = vamBidRequestSiteDTO.getSiteIdOnExchange();
-            externalSupplyName = vamBidRequestSiteDTO.getSiteName();
-            externalSupplyDomain = vamBidRequestSiteDTO.getSiteDomain();
-            externalAppPageUrl = vamBidRequestSiteDTO.getSitePageURL();
-        } else if (null != vamBidRequestAppDTO) {
+        if (sp != null && sp.getPlatform() == SITE_PLATFORM.APP.getPlatform()) { //app
             externalSupplyUrl = vamBidRequestAppDTO.getApplicationStoreUrl();
-            externalSupplyId = vamBidRequestAppDTO.getApplicationIdOnExchange();
+            externalSupplyId = vamBidRequestAppDTO.getApplicationBundleName();
             externalSupplyName = vamBidRequestAppDTO.getApplicationName();
-            externalSupplyDomain = vamBidRequestAppDTO.getApplicationDomain();
+            externalSupplyDomain = vamBidRequestAppDTO.getApplicationBundleName();
             externalAppVersion = vamBidRequestAppDTO.getApplicationVersion();
             if (vamBidRequestAppDTO.getContentCategoriesApplication() != null) {
                 externalCategories = vamBidRequestAppDTO.getContentCategoriesApplication();
             }
             externalAppBundle = vamBidRequestAppDTO.getApplicationBundleName();
+        } else {
+            externalSupplyUrl = vamBidRequestSiteDTO.getSitePageURL();
+            externalSupplyId = vamBidRequestSiteDTO.getSiteIdOnExchange();
+            externalSupplyName = vamBidRequestSiteDTO.getSiteName();
+            externalSupplyDomain = vamBidRequestSiteDTO.getSiteDomain();
+            externalAppPageUrl = vamBidRequestSiteDTO.getSitePageURL();
         }
 
         siteToUse.setExternalSupplyDomain(externalSupplyDomain);
