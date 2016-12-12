@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -103,6 +104,26 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                     vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(mmaIndustryCodes2);
                 }
             }
+
+            //app category
+            BidRequestAppDTO appDTO = vamBidRequestParentNodeDTO.getBidRequestApp();
+            if (appDTO != null && appDTO.getContentCategoriesApplication() != null && appDTO.getContentCategoriesApplication().length > 0) {
+                String[] contentCategoriesApplication = appDTO.getContentCategoriesApplication();
+                List<String> appCategoryList = new ArrayList<String>();
+                Site s = this.siteCache.query(siteIdFromBidRequest);
+                if (s != null) {
+                    for (int i = 0; i < contentCategoriesApplication.length; i++) {
+                        MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + contentCategoriesApplication[i]);
+                        if (mmaCacheEntity != null) {
+                            appCategoryList.add(String.valueOf(mmaCacheEntity.getUi_id()));
+                        }
+                    }
+                    String[] appCategroyArray = new String[appCategoryList.size()];
+                    appCategroyArray = appCategoryList.toArray(appCategroyArray);
+                    vamBidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(appCategroyArray);
+                }
+            }
+
 
             Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, mmaIndustryCodes1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));
