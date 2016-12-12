@@ -320,6 +320,12 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
         //keep floor value as 0.0, since its per impression, so for each impression
         //this value should be used and compared with ecpm value of each adunit.
         double ecpmFloorValue = 0.0;
+        if (cloudCrossBidRequestParentNodeDTO != null
+                && cloudCrossBidRequestParentNodeDTO.getBidRequestImpressionArray() != null
+                && cloudCrossBidRequestParentNodeDTO.getBidRequestImpressionArray().length > 0
+                && cloudCrossBidRequestParentNodeDTO.getBidRequestImpressionArray()[0] != null) {
+            ecpmFloorValue = cloudCrossBidRequestParentNodeDTO.getBidRequestImpressionArray()[0].getBidFloorPrice();
+        }
 
         //Create a new site and set all attributes, take hygiene from the one found in cache.
         Site siteToUse = new Site.SiteEntityBuilder
