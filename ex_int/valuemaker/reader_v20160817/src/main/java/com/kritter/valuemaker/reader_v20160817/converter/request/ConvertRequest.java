@@ -11,9 +11,9 @@ import java.util.List;
 
 public class ConvertRequest {
 
-    public static VamBidRequestParentNodeDTO convert(VamRequest request) {
+    public static VamBidRequestParentNodeDTO convert(VamRequest vamRequest) {
 
-        if (request == null) {
+        if (vamRequest == null) {
             return null;
         }
 
@@ -25,11 +25,6 @@ public class ConvertRequest {
 
         bidRequestParentNodeDTO.setBidRequestImpressionArray(new BidRequestImpressionDTO[]{bidRequestImpressionDTO});
 
-        BidRequestSiteDTO bidRequestSiteDTO = new BidRequestSiteDTO();
-        bidRequestParentNodeDTO.setBidRequestSite(bidRequestSiteDTO);
-
-        BidRequestAppDTO bidRequestAppDTO = new BidRequestAppDTO();
-        bidRequestParentNodeDTO.setBidRequestApp(bidRequestAppDTO);
 
         BidRequestDeviceDTO bidRequestDeviceDTO = new BidRequestDeviceDTO();
         bidRequestParentNodeDTO.setBidRequestDevice(bidRequestDeviceDTO);
@@ -38,38 +33,38 @@ public class ConvertRequest {
         bidRequestParentNodeDTO.setBidRequestUser(bidRequestUserDTO);
 
 
-        if (request.hasId()) {
-            bidRequestParentNodeDTO.setBidRequestId(request.getId());
+        if (vamRequest.hasId()) {
+            bidRequestParentNodeDTO.setBidRequestId(vamRequest.getId());
         }
-        if (request.hasTMax()) {
-            bidRequestParentNodeDTO.setMaxTimeoutForBidSubmission(request.getTMax());
-        }
-
-        if (request.hasCookie()) {
-            bidRequestParentNodeDTO.getBidRequestUser().setConsumerCustomData(request.getCookie());
-        }
-        if (request.hasUserAgent()) {
-            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceUserAgent(request.getUserAgent());
+        if (vamRequest.hasTMax()) {
+            bidRequestParentNodeDTO.setMaxTimeoutForBidSubmission(vamRequest.getTMax());
         }
 
-        if (request.hasDnt()) {
-            if (request.getDnt()) {
+        if (vamRequest.hasCookie()) {
+            bidRequestParentNodeDTO.getBidRequestUser().setConsumerCustomData(vamRequest.getCookie());
+        }
+        if (vamRequest.hasUserAgent()) {
+            bidRequestParentNodeDTO.getBidRequestDevice().setDeviceUserAgent(vamRequest.getUserAgent());
+        }
+
+        if (vamRequest.hasDnt()) {
+            if (vamRequest.getDnt()) {
                 bidRequestParentNodeDTO.getBidRequestDevice().setDoNotTrackDevice(1);
             } else {
                 bidRequestParentNodeDTO.getBidRequestDevice().setDoNotTrackDevice(0);
             }
         }
 
-        if (request.hasIp()) {
-            bidRequestParentNodeDTO.getBidRequestDevice().setIpV4AddressClosestToDevice(request.getIp());
+        if (vamRequest.hasIp()) {
+            bidRequestParentNodeDTO.getBidRequestDevice().setIpV4AddressClosestToDevice(vamRequest.getIp());
         }
 
-        if (request.hasLanguage()) {
-            bidRequestParentNodeDTO.getBidRequestDevice().setBrowserLanguage(request.getLanguage());
+        if (vamRequest.hasLanguage()) {
+            bidRequestParentNodeDTO.getBidRequestDevice().setBrowserLanguage(vamRequest.getLanguage());
         }
 
-        if (request.hasDeviceType()) {
-            switch (request.getDeviceType().getNumber()) {
+        if (vamRequest.hasDeviceType()) {
+            switch (vamRequest.getDeviceType().getNumber()) {
                 case 1:
                     bidRequestParentNodeDTO.getBidRequestDevice().setDeviceType(2);
                     break;
@@ -86,30 +81,16 @@ public class ConvertRequest {
         }
 
 
-        if (request.hasMediaId()) {
-            bidRequestParentNodeDTO.getBidRequestSite().setSiteIdOnExchange(request.getDomain());
-        }
-        if (request.hasDomain()) {
-            bidRequestParentNodeDTO.getBidRequestSite().setSiteDomain(request.getDomain());
-        }
-        if (request.hasPage()) {
-            bidRequestParentNodeDTO.getBidRequestSite().setSitePageURL(request.getPage());
-        }
-        if (request.hasReferer()) {
-            bidRequestParentNodeDTO.getBidRequestSite().setRefererURL(request.getReferer());
-        }
-
-
         //vertical,data_source,data_source,premium_price
 
-        if (request.getPmpInfoCount() > 0 && request.getPmpInfo(0) != null) {
+        if (vamRequest.getPmpInfoCount() > 0 && vamRequest.getPmpInfo(0) != null) {
 
             BidRequestPMPDTO bidRequestPMPDTO = new BidRequestPMPDTO();
             bidRequestPMPDTO.setPrivateAuction(0);
 
             BidRequestDealDTO bidRequestDealDTO = new BidRequestDealDTO();
 
-            VamRequest.PmpInfo pmpInfo = request.getPmpInfo(0);
+            VamRequest.PmpInfo pmpInfo = vamRequest.getPmpInfo(0);
             if (pmpInfo.hasDealId()) {
                 bidRequestDealDTO.setDealId(String.valueOf(pmpInfo.getDealId()));
             }
@@ -121,26 +102,26 @@ public class ConvertRequest {
         }
 
 
-        if (request.getDisplayCount() > 0 && request.getDisplay(0) != null) {
-            display(bidRequestParentNodeDTO, request.getDisplay(0));
-        } else if (request.hasVamVideo()) {
-            video(bidRequestParentNodeDTO, request.getVamVideo());
-        } else if (request.hasVamMobile()) {
-            mobile(bidRequestParentNodeDTO, request.getVamMobile());
-        } else if (request.hasVamMobileVideo()) {
-            mobileVideo(bidRequestParentNodeDTO, request.getVamMobileVideo());
-        } else {
-            return bidRequestParentNodeDTO;
+        if (vamRequest.getDisplayCount() > 0 && vamRequest.getDisplay(0) != null) {
+            display(bidRequestParentNodeDTO, vamRequest);
+        } else if (vamRequest.hasVamVideo()) {
+            video(bidRequestParentNodeDTO, vamRequest);
+        } else if (vamRequest.hasVamMobile()) {
+            mobile(bidRequestParentNodeDTO, vamRequest);
+        } else if (vamRequest.hasVamMobileVideo()) {
+            mobileVideo(bidRequestParentNodeDTO, vamRequest);
         }
 
-
-        bidRequestParentNodeDTO.setExtensionObject(request);
+        bidRequestParentNodeDTO.setExtensionObject(vamRequest);
 
         return bidRequestParentNodeDTO;
     }
 
-    private static void display(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Display display) {
-        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
+    private static void display(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest vamRequest) {
+        convertBidRequestSite(bidRequestParentNodeDTO, vamRequest);
+
+        VamRequest.Display display = vamRequest.getDisplay(0);
+
         BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = new BidRequestImpressionBannerObjectDTO();
         if (display.hasAdspaceId()) {
@@ -179,8 +160,26 @@ public class ConvertRequest {
 
     }
 
-    private static void mobile(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Mobile mobile) {
-        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.APP);
+    private static void mobile(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest vamRequest) {
+
+        VamRequest.Mobile mobile = vamRequest.getVamMobile();
+
+        if (mobile.hasSource() && mobile.getSource() != 1) {
+            convertBidRequestSite(bidRequestParentNodeDTO, vamRequest);
+        } else {
+            BidRequestAppDTO bidRequestAppDTO = new BidRequestAppDTO();
+            if (mobile.hasPgn()) {
+                bidRequestAppDTO.setApplicationBundleName(mobile.getPgn());
+            }
+            if (mobile.hasAppName()) {
+                bidRequestAppDTO.setApplicationName(mobile.getAppName());
+            }
+            if (mobile.hasAppCategory()) {
+                bidRequestAppDTO.setContentCategoriesApplication(new String[]{String.valueOf(mobile.getAppCategory())});
+            }
+            bidRequestParentNodeDTO.setBidRequestApp(bidRequestAppDTO);
+        }
+
         BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionBannerObjectDTO bidRequestImpressionBannerObjectDTO = new BidRequestImpressionBannerObjectDTO();
         if (mobile.hasAdspaceId()) {
@@ -223,12 +222,9 @@ public class ConvertRequest {
         if (mobile.hasOsVersion()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystemVersion(mobile.getOsVersion());
         }
-
-
         if (mobile.hasImei()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDeviceId(mobile.getImei());
         }
-
         if (mobile.hasMac()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setHashedMD5MacAddressOfDevice(mobile.getMac());
         }
@@ -244,16 +240,6 @@ public class ConvertRequest {
         if (mobile.hasOpenUDID()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setOpenUDIDMd5(mobile.getOpenUDID());
         }
-        if (mobile.hasSource() && mobile.getSource() != 1) {
-            bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
-        }
-        if (mobile.hasPgn()) {
-            bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobile.getPgn());
-        }
-        if (mobile.hasAppName()) {
-            bidRequestParentNodeDTO.getBidRequestApp().setApplicationName(mobile.getAppName());
-        }
-
         if (mobile.hasScreenWidth()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setDevicePhysicalWidthInPixels(mobile.getScreenWidth());
         }
@@ -323,9 +309,6 @@ public class ConvertRequest {
             }
         }
         //ad_location
-        if (mobile.hasAppCategory()) {
-            bidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(new String[]{String.valueOf(mobile.getAppCategory())});
-        }
         //adform
         //mpn
         if (mobile.hasGender()) {
@@ -354,8 +337,11 @@ public class ConvertRequest {
 
     }
 
-    private static void video(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Video video) {
-        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
+    private static void video(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest vamRequest) {
+        convertBidRequestSite(bidRequestParentNodeDTO, vamRequest);
+
+        VamRequest.Video video = vamRequest.getVamVideo();
+
         BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = new BidRequestImpressionVideoObjectDTO();
         if (video.hasAdspaceId()) {
@@ -435,9 +421,6 @@ public class ConvertRequest {
             }
         }
 
-        if (video.hasKeyword()) {
-            bidRequestParentNodeDTO.getBidRequestApp().setAppKeywordsCSV(video.getKeyword());
-        }
         if (video.getExcludedCatCount() > 0) {
             List<Integer> excluded_cat = video.getExcludedCatList();
             Integer[] battr = new Integer[excluded_cat.size()];
@@ -458,8 +441,24 @@ public class ConvertRequest {
 
     }
 
-    private static void mobileVideo(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest.Mobile_Video mobileVideo) {
-        bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.APP);
+    private static void mobileVideo(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest vamRequest) {
+
+        VamRequest.Mobile_Video mobileVideo = vamRequest.getVamMobileVideo();
+
+        if (mobileVideo.hasSource() && mobileVideo.getSource() != 1) {
+            convertBidRequestSite(bidRequestParentNodeDTO, vamRequest);
+        } else {
+            BidRequestAppDTO bidRequestAppDTO = new BidRequestAppDTO();
+            if (mobileVideo.hasPgn()) {
+                bidRequestAppDTO.setApplicationBundleName(mobileVideo.getPgn());
+            }
+            if (mobileVideo.hasAppName()) {
+                bidRequestAppDTO.setApplicationName(mobileVideo.getAppName());
+            }
+            bidRequestParentNodeDTO.setBidRequestApp(bidRequestAppDTO);
+        }
+
+
         BidRequestImpressionDTO impressionDTO = bidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
         BidRequestImpressionVideoObjectDTO bidRequestImpressionVideoObjectDTO = new BidRequestImpressionVideoObjectDTO();
         if (mobileVideo.hasAdspaceId()) {
@@ -496,11 +495,9 @@ public class ConvertRequest {
         if (mobileVideo.hasOsVersion()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setDeviceOperatingSystemVersion(mobileVideo.getOsVersion());
         }
-
         if (mobileVideo.hasImei()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setMD5HashedDeviceId(mobileVideo.getImei());
         }
-
         if (mobileVideo.hasMac()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setHashedMD5MacAddressOfDevice(mobileVideo.getMac());
         }
@@ -516,16 +513,6 @@ public class ConvertRequest {
         if (mobileVideo.hasOpenUDID()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setOpenUDIDMd5(mobileVideo.getIDFA());
         }
-        if (mobileVideo.hasSource() && mobileVideo.getSource() != 1) {
-            bidRequestParentNodeDTO.setSitePlatform(SITE_PLATFORM.WAP);
-        }
-        if (mobileVideo.hasPgn()) {
-            bidRequestParentNodeDTO.getBidRequestApp().setApplicationBundleName(mobileVideo.getPgn());
-        }
-        if (mobileVideo.hasAppName()) {
-            bidRequestParentNodeDTO.getBidRequestApp().setApplicationName(mobileVideo.getAppName());
-        }
-
         if (mobileVideo.hasScreenWidth()) {
             bidRequestParentNodeDTO.getBidRequestDevice().setDevicePhysicalWidthInPixels(mobileVideo.getScreenWidth());
         }
@@ -680,11 +667,6 @@ public class ConvertRequest {
             }
         }
 
-
-        if (mobileVideo.hasKeyword()) {
-            bidRequestParentNodeDTO.getBidRequestApp().setAppKeywordsCSV(mobileVideo.getKeyword());
-        }
-
         if (mobileVideo.getExcludedCatCount() > 0) {
             List<Integer> excluded_cat = mobileVideo.getExcludedCatList();
             Integer[] battr = new Integer[excluded_cat.size()];
@@ -702,6 +684,25 @@ public class ConvertRequest {
         }
         impressionDTO.setBidRequestImpressionVideoObject(bidRequestImpressionVideoObjectDTO);
 
+    }
+
+
+    //bidrequestsite 和bidrequestapp 只能有一个不为null
+    private static void convertBidRequestSite(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest vamRequest) {
+        BidRequestSiteDTO bidRequestSiteDTO = new BidRequestSiteDTO();
+
+        if (vamRequest.hasDomain()) {
+            bidRequestSiteDTO.setSiteIdOnExchange(vamRequest.getDomain());
+            bidRequestSiteDTO.setSiteDomain(vamRequest.getDomain());
+        }
+        if (vamRequest.hasPage()) {
+            bidRequestSiteDTO.setSitePageURL(vamRequest.getPage());
+        }
+        if (vamRequest.hasReferer()) {
+            bidRequestSiteDTO.setRefererURL(vamRequest.getReferer());
+        }
+
+        bidRequestParentNodeDTO.setBidRequestSite(bidRequestSiteDTO);
     }
 
 

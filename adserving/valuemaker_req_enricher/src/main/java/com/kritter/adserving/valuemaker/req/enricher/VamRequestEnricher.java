@@ -234,8 +234,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         Short sitePlatform;
         String applicationId = null;
 
-        SITE_PLATFORM sp = vamBidRequestParentNodeDTO.getSitePlatform();
-        if (sp != null && sp.getPlatform() == SITE_PLATFORM.APP.getPlatform()) {
+        if (null != vamBidRequestAppDTO) {
             sitePlatform = SITE_PLATFORM.APP.getPlatform();
             applicationId = vamBidRequestAppDTO.getApplicationIdOnExchange();
         } else {
@@ -288,7 +287,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             externalAppPageUrl = vamBidRequestSiteDTO.getSitePageURL();
         } else if (null != vamBidRequestAppDTO) {
             externalSupplyUrl = vamBidRequestAppDTO.getApplicationStoreUrl();
-            externalSupplyId = vamBidRequestAppDTO.getApplicationIdOnExchange();
+            externalSupplyId = vamBidRequestAppDTO.getApplicationBundleName();
             externalSupplyName = vamBidRequestAppDTO.getApplicationName();
             externalSupplyDomain = vamBidRequestAppDTO.getApplicationDomain();
             externalAppVersion = vamBidRequestAppDTO.getApplicationVersion();
