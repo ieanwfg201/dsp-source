@@ -21,7 +21,8 @@ public class ServerConfig
     public static final String MACRO_CLICK_URL_PREFIX = "macro-click-url-prefix";
     public static final String trackingEventUrl_PREFIX = "tracking-event-url-prefix";
     public static final String beventUrl_PREFIX = "bevent-url-prefix";
-    
+    public Boolean isHttps = false;
+
     public static final String DELIMITER = String.valueOf((char)1);
     public static final String DELIMITER_EQUAL_TO = "=";
 
@@ -86,6 +87,15 @@ public class ServerConfig
                     throw new Exception("The line in server config file is corrupt... " + line +
                             " , file path being" + serverPropertiesFilePath);
             }
+
+            isHttps = Boolean.valueOf(getValueForKey("tracking_https_enabled"));
+            if(isHttps == true)
+                for(Map.Entry<String,String> entry:configMap.entrySet()){
+                    if(entry.getValue().indexOf("http:") != -1){
+                        String value = entry.getValue().replaceAll("http:","https:");
+                        configMap.put(entry.getKey(),value);
+                    }
+                }
         }
         finally
         {

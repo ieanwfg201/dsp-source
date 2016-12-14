@@ -84,8 +84,58 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             //fetch site object
             String siteIdFromBidRequest = StringUtils.substringAfterLast(httpServletRequest.getRequestURI(), "/");
             logger.debug("SiteId received from bid request URL: {} ", siteIdFromBidRequest);
-            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest);
+
+            //转换bcat
+            Integer[] mmaIndustryCodes1 = null;
+            String[] mmaIndustryCodes2 = null;
+            List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
+            if (battr != null && battr.size() != 0) {
+                mmaIndustryCodes1 = new Integer[battr.size()];
+                mmaIndustryCodes2 = new String[battr.size()];
+                Site s = this.siteCache.query(siteIdFromBidRequest);
+                if (s != null) {
+                    for (int i = 0; i < battr.size(); i++) {
+                        MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + battr.get(i));
+                        if (mmaCacheEntity != null) {
+                            mmaIndustryCodes1[i] = mmaCacheEntity.getUi_id();
+                            mmaIndustryCodes2[i] = String.valueOf(mmaCacheEntity.getUi_id());
+                        }
+                    }
+                    vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(mmaIndustryCodes2);
+                }
+            }
+
+            //app category
+            BidRequestAppDTO appDTO = vamBidRequestParentNodeDTO.getBidRequestApp();
+            if (appDTO != null && appDTO.getContentCategoriesApplication() != null && appDTO.getContentCategoriesApplication().length > 0) {
+                String[] contentCategoriesApplication = appDTO.getContentCategoriesApplication();
+                List<String> appCategoryList = new ArrayList<String>();
+                Site s = this.siteCache.query(siteIdFromBidRequest);
+                if (s != null) {
+                    for (int i = 0; i < contentCategoriesApplication.length; i++) {
+                        MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + contentCategoriesApplication[i]);
+                        if (mmaCacheEntity != null) {
+                            appCategoryList.add(String.valueOf(mmaCacheEntity.getUi_id()));
+                        }
+                    }
+                    String[] appCategroyArray = new String[appCategoryList.size()];
+                    appCategroyArray = appCategoryList.toArray(appCategroyArray);
+                    vamBidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(appCategroyArray);
+                }
+            }
+
+
+            String adpositionid = null;
+            if (vamBidRequestParentNodeDTO.getAllImpressions() > 0) {
+                BidRequestImpressionDTO impressionDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
+                if (impressionDTO != null && impressionDTO.getAdTagOrPlacementId() != null) {
+                    adpositionid = impressionDTO.getAdTagOrPlacementId();
+                }
+            }
+
+            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));
+
 
             if (null != site)
                 request.setSite(site);
@@ -175,20 +225,6 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             populateRequestObjectForExtraParameters(vamBidRequestParentNodeDTO, request);
             /******************************************************************************************************/
 
-            //转换battr
-            List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
-            if (battr != null && battr.size() != 0) {
-                List<String> newBattr = new ArrayList<String>();
-                for (Integer i : battr) {
-                    MMACacheEntity mmaCacheEntity = mMACache.query(site.getPublisherIncId() + CTRL_A + i);
-                    if (mmaCacheEntity != null) {
-                        newBattr.add(String.valueOf(mmaCacheEntity.getUi_id()));
-                    }
-                }
-                String[] b = new String[newBattr.size()];
-                newBattr.toArray(b);
-                vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(b);
-            }
             return request;
         } catch (Exception e) {
             e.printStackTrace();
@@ -213,7 +249,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
      * All attributes must be set at runtime except hygiene ,which
      * should be taken from the entity as present in the database.
      */
-    private Site fetchSiteEntityForVamRequest(Request request, String siteIdFromBidRequest) {
+    private Site fetchSiteEntityForVamRequest(Request request, String siteIdFromBidRequest, String adpositionid, Integer[] mmaIndustryCodes) {
         Site site = this.siteCache.query(siteIdFromBidRequest);
 
         if (null == site)
@@ -227,8 +263,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         Short sitePlatform;
         String applicationId = null;
 
-        String appOrSite = vamBidRequestParentNodeDTO.getAppOrSite();
-        if (appOrSite != null && appOrSite.equals("app")) {
+        if (null != vamBidRequestAppDTO) {
             sitePlatform = SITE_PLATFORM.APP.getPlatform();
             applicationId = vamBidRequestAppDTO.getApplicationIdOnExchange();
         } else {
@@ -261,6 +296,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 .setIsAdvertiserIdListExcluded(site.isAdvertiserIdListExcluded())
                 .setCampaignInclusionExclusionSchemaMap(site.getCampaignInclusionExclusionSchemaMap())
                 .setIsRichMediaAllowed(site.isRichMediaAllowed())
+                .setAdPosition(adpositionid)
                 .build();
 
         /***************************************external supply attributes*************************************/
@@ -281,7 +317,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             externalAppPageUrl = vamBidRequestSiteDTO.getSitePageURL();
         } else if (null != vamBidRequestAppDTO) {
             externalSupplyUrl = vamBidRequestAppDTO.getApplicationStoreUrl();
-            externalSupplyId = vamBidRequestAppDTO.getApplicationIdOnExchange();
+            externalSupplyId = vamBidRequestAppDTO.getApplicationBundleName();
             externalSupplyName = vamBidRequestAppDTO.getApplicationName();
             externalSupplyDomain = vamBidRequestAppDTO.getApplicationDomain();
             externalAppVersion = vamBidRequestAppDTO.getApplicationVersion();
@@ -299,6 +335,8 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         siteToUse.setExternalPageUrl(externalAppPageUrl);
         siteToUse.setExternalAppBundle(externalAppBundle);
         siteToUse.setExternalCategories(externalCategories);
+        siteToUse.setMmaindustrCodeExclude(true);
+        siteToUse.setMmaindustryCode(mmaIndustryCodes);
         /******************************************************************************************************/
 
         return siteToUse;
