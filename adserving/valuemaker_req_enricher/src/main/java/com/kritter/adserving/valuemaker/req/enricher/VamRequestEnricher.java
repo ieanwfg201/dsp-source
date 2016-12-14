@@ -125,7 +125,15 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             }
 
 
-            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, mmaIndustryCodes1);
+            String adpositionid = null;
+            if (vamBidRequestParentNodeDTO.getAllImpressions() > 0) {
+                BidRequestImpressionDTO impressionDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
+                if (impressionDTO != null && impressionDTO.getAdTagOrPlacementId() != null) {
+                    adpositionid = impressionDTO.getAdTagOrPlacementId();
+                }
+            }
+
+            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));
 
 
@@ -241,7 +249,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
      * All attributes must be set at runtime except hygiene ,which
      * should be taken from the entity as present in the database.
      */
-    private Site fetchSiteEntityForVamRequest(Request request, String siteIdFromBidRequest, Integer[] mmaIndustryCodes) {
+    private Site fetchSiteEntityForVamRequest(Request request, String siteIdFromBidRequest, String adpositionid, Integer[] mmaIndustryCodes) {
         Site site = this.siteCache.query(siteIdFromBidRequest);
 
         if (null == site)
@@ -288,6 +296,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 .setIsAdvertiserIdListExcluded(site.isAdvertiserIdListExcluded())
                 .setCampaignInclusionExclusionSchemaMap(site.getCampaignInclusionExclusionSchemaMap())
                 .setIsRichMediaAllowed(site.isRichMediaAllowed())
+                .setAdPosition(adpositionid)
                 .build();
 
         /***************************************external supply attributes*************************************/
