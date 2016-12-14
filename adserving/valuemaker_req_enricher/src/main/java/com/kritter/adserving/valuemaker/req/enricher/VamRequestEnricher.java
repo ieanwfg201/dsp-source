@@ -106,34 +106,36 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             }
 
             //app category
+            Integer[] appCategoryList1 = null;
+            List<String> appCategoryList2 = new ArrayList<String>();
             BidRequestAppDTO appDTO = vamBidRequestParentNodeDTO.getBidRequestApp();
             if (appDTO != null && appDTO.getContentCategoriesApplication() != null && appDTO.getContentCategoriesApplication().length > 0) {
                 String[] contentCategoriesApplication = appDTO.getContentCategoriesApplication();
-                List<String> appCategoryList = new ArrayList<String>();
+
                 Site s = this.siteCache.query(siteIdFromBidRequest);
                 if (s != null) {
+                    appCategoryList1 = new Integer[contentCategoriesApplication.length];
                     for (int i = 0; i < contentCategoriesApplication.length; i++) {
                         MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + contentCategoriesApplication[i]);
                         if (mmaCacheEntity != null) {
-                            appCategoryList.add(String.valueOf(mmaCacheEntity.getUi_id()));
+                            appCategoryList1[i] = mmaCacheEntity.getUi_id();
+                            appCategoryList2.add(String.valueOf(mmaCacheEntity.getUi_id()));
                         }
                     }
-                    String[] appCategroyArray = new String[appCategoryList.size()];
-                    appCategroyArray = appCategoryList.toArray(appCategroyArray);
+                    String[] appCategroyArray = new String[appCategoryList2.size()];
+                    appCategroyArray = appCategoryList2.toArray(appCategroyArray);
                     vamBidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(appCategroyArray);
                 }
             }
 
 
             String adpositionid = null;
-            if (vamBidRequestParentNodeDTO.getAllImpressions() > 0) {
-                BidRequestImpressionDTO impressionDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
-                if (impressionDTO != null && impressionDTO.getAdTagOrPlacementId() != null) {
-                    adpositionid = impressionDTO.getAdTagOrPlacementId();
-                }
+            BidRequestImpressionDTO impressionDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
+            if (impressionDTO != null && impressionDTO.getAdTagOrPlacementId() != null) {
+                adpositionid = impressionDTO.getAdTagOrPlacementId();
             }
 
-            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1);
+            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1, appCategoryList1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));
 
 
@@ -249,7 +251,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
      * All attributes must be set at runtime except hygiene ,which
      * should be taken from the entity as present in the database.
      */
-    private Site fetchSiteEntityForVamRequest(Request request, String siteIdFromBidRequest, String adpositionid, Integer[] mmaIndustryCodes) {
+    private Site fetchSiteEntityForVamRequest(Request request, String siteIdFromBidRequest, String adpositionid, Integer[] mmaIndustryCodes, Integer[] appCategoryList) {
         Site site = this.siteCache.query(siteIdFromBidRequest);
 
         if (null == site)
@@ -335,6 +337,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         siteToUse.setExternalPageUrl(externalAppPageUrl);
         siteToUse.setExternalAppBundle(externalAppBundle);
         siteToUse.setExternalCategories(externalCategories);
+        siteToUse.setMmaCatgories(appCategoryList);
         siteToUse.setMmaindustrCodeExclude(true);
         siteToUse.setMmaindustryCode(mmaIndustryCodes);
         /******************************************************************************************************/
