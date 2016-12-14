@@ -67,8 +67,8 @@ public class MMATargetingFilterMatcher implements TargetingMatcher {
         Integer[] mmaindustryCode = request.getSite().getMmaindustryCode();
         boolean mmaindustrCodeExclude = request.getSite().isMmaindustrCodeExclude();
         Integer[] mmaindustrCodeExcInc = request.getSite().getMmaindustryCode();
-        if (mmaindustrCodeExcInc == null || mmaindustrCodeExcInc.length == 0)
-            return adIdSet;
+//        if (mmaindustrCodeExcInc == null || mmaindustrCodeExcInc.length == 0)
+//            return adIdSet;
         for (Integer adId : adIdSet) {
             AdEntity adEntity = adEntityCache.query(adId);
             if (null == adEntity) {
