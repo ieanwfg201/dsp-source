@@ -1670,7 +1670,8 @@ public class MetadataAPI {
                 ext_site_list = ApiDef.various_get_ext_site(con, ext_site_input);
                 List<Ext_site> ext_sites = ext_site_list.getExt_site_list();
                 for (Ext_site ext_site:ext_sites) {
-                    siteOptions.add(new SelectOption(ext_site.getExt_supply_name(), ext_site.getPub_inc_id()+"|"+ext_site.getSite_inc_id()+"|"+ext_site.getId()).toJson());
+                    siteOptions.add(new SelectOption(ext_site.getExt_supply_id(), ext_site.getPub_inc_id()+"|"+ext_site.getSite_inc_id()+"|"+ext_site.getId()).toJson());
+                    //siteOptions.add(new SelectOption(ext_site.getExt_supply_name(), ext_site.getPub_inc_id()+"|"+ext_site.getSite_inc_id()+"|"+ext_site.getId()).toJson());
                 }
             }
         }catch(Exception e){
