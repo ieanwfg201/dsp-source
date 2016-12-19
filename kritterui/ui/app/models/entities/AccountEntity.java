@@ -79,9 +79,9 @@ public class AccountEntity {
     private String billing_email="";
     private String ext="";
     private boolean adxbased=false;
-    @Getter@Setter
+    @Required@Getter@Setter
     private String contactdetail="";
-    @Getter@Setter
+    @Required@Getter@Setter
     private String brand="";
     @Getter@Setter
     private String firstIndustryCode;
