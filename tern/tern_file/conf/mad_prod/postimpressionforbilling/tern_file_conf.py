@@ -8,7 +8,7 @@ source_file_pattern = 'postimpression-thrift.log.2*'
 #SOURCE FILE PATTERN in DB#
 source_file_pattern_db = '%postimpression-thrift.log%'
 #DESTINATION HOST PORT#
-destination_list = {'admin.mad.com' : 22}
+destination_list = {'billing.mad.com' : 22}
 #LOG DIRECTORY#
 logdir = '/var/log/kritter/tern_file/postimpressionforbilling'
 

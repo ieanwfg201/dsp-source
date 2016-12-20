@@ -59,7 +59,7 @@ public class ValidateCreativeSize {
                 //done sorting banner uri ids on size.
 
                 bannerUriIds = new Integer[creativeBannerList.size()];
-                for (int i = 0; i < creative.getBannerUriIds().length; i++) {
+                for (int i = 0; i < creativeBannerList.size(); i++) {
                     bannerUriIds[i] = creativeBannerList.get(i).getId();
                 }
             }

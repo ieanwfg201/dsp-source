@@ -92,7 +92,7 @@
                 <entry key="2" value-ref="creative_floor_matching_rtb_exchange_two_dot_one"/>
                 <entry key="3" value-ref="creative_floor_matching_rtb_exchange_two_dot_two"/>
                 <entry key="4" value-ref="creative_floor_matching_rtb_exchange_two_dot_three"/>
-            </map>    
+            </map>
         </constructor-arg>
     </bean>
 
@@ -119,7 +119,7 @@
                  <value><![CDATA[creativeid]]></value>
                  <value><![CDATA[creativetype]]></value>
             </list>
-        </constructor-arg>        
+        </constructor-arg>
         <constructor-arg index="5"><ref bean="lr_ctr_data_cache"/></constructor-arg>
         <constructor-arg index="6" value="1"/>
         <constructor-arg index="7" value="0.003"/>
@@ -203,7 +203,7 @@
         <constructor-arg index="2" value="req-object"/>
         <constructor-arg index="3" value="ecpm_calc_traffic_var"/>
     </bean>
- 
+
     <bean id="traffic_assigner_rank_calc" class="com.kritter.adserving.flow.job.TrafficAssignerToRankingJobs">
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1" value="traffic_assigner_rank_calc"/>
@@ -222,7 +222,9 @@
         <constructor-arg index="8">
             <map>
                 <entry key="mopub-pub-guid" value-ref="mopub_response_creator_2_3"/>
+                <entry key="cloudcross" value-ref="cloud_cross_response_creator_4_4_4"/>
                 <entry key="youku" value-ref="youku_response_creator"/>
+                <entry key="valuemaker" value-ref="valuemaker_response_creator"/>
             </map>
         </constructor-arg>
         <constructor-arg index="9" value="KRITTER_INVENTORY_SRC"/>
@@ -245,7 +247,7 @@
         <constructor-arg index="11"><ref bean="req_logging_cache"/></constructor-arg>
         <constructor-arg index="12"><ref bean="ad_stats_cache"/></constructor-arg>
         <constructor-arg index="13" value="ad-nofill-map"/>
-    </bean>    
+    </bean>
 
     <bean id="exchange_thrift_logger_job" class="com.kritter.adserving.flow.job.ExchangeThriftLogger">
         <constructor-arg index="0" value="exchange_thrift_logger_job"/>
@@ -270,7 +272,7 @@
         <constructor-arg index="8"><ref bean="creative_cache"/></constructor-arg>
         <constructor-arg index="9"><ref bean="account_cache"/></constructor-arg>
     </bean>
-    
+
     <bean id="exchange_job" class="com.kritter.exchange.job.ExchangeJob">
         <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1" value="exchange_job"/>

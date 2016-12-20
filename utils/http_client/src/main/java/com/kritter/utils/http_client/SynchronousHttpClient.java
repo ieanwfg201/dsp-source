@@ -3,6 +3,7 @@ package com.kritter.utils.http_client;
 import com.kritter.utils.http_client.entity.HttpRequest;
 import com.kritter.utils.http_client.entity.HttpResponse;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +25,7 @@ import java.util.Map;
  * b. connectTimeOut : 100 (time in milliseconds, if used in applications like SSP)
  * c. readTimeOut : 50 (time in milliseconds, if used in applications like SSP)
  */
-public class SynchronousHttpClient
-{
+public class SynchronousHttpClient {
     private Logger logger;
 
     private static final String UTF_ENCODING = "UTF-8";
@@ -34,28 +34,28 @@ public class SynchronousHttpClient
     private static final String MAXCONNECTIONS_HTTP_SYSTEM_PROPERTY = "http.maxConnections";
 
     public SynchronousHttpClient(
-                                 String loggerName,
-                                 int maxConnectionsPerRoute
-                                )
-    {
+            String loggerName,
+            int maxConnectionsPerRoute
+    ) {
         /*Set system properties to keep alive connections and enable pooling,define maxConnectionsPerRoute as well.*/
-        System.setProperty(KEEPALIVE_HTTP_SYSTEM_PROPERTY     ,"true");
-        System.setProperty(MAXCONNECTIONS_HTTP_SYSTEM_PROPERTY,String.valueOf(maxConnectionsPerRoute));
-
-        this.logger = LoggerFactory.getLogger(loggerName);
+        System.setProperty(KEEPALIVE_HTTP_SYSTEM_PROPERTY, "true");
+        System.setProperty(MAXCONNECTIONS_HTTP_SYSTEM_PROPERTY, String.valueOf(maxConnectionsPerRoute));
+        if (StringUtils.isNotEmpty(loggerName)) {
+            this.logger = LoggerFactory.getLogger(loggerName);
+        } else {
+            this.logger = LoggerFactory.getLogger(this.getClass());
+        }
     }
 
-    public HttpResponse fetchResponseFromThirdPartyServer(HttpRequest httpRequest)
-    {
+    public HttpResponse fetchResponseFromThirdPartyServer(HttpRequest httpRequest) {
         HttpResponse apiResponse = null;
 
-        if(null == httpRequest.getServerURL())
-        {
+        if (null == httpRequest.getServerURL()) {
             logger.error("The requested server url is null inside SynchronousHttpClient, cannot proceed...");
             return apiResponse;
         }
 
-        logger.debug("Server URL to be used for http call is: {} ", httpRequest.getServerURL());
+//        logger.debug("Server URL to be used for http call is: {} ", httpRequest.getServerURL());
 
         HttpURLConnection httpURLConnection = null;
         InputStream inputStream = null;
@@ -63,11 +63,10 @@ public class SynchronousHttpClient
         int responseCode = 404;
         String responseContentType = null;
 
-        try
-        {
+        try {
             URL url = new URL(httpRequest.getServerURL());
             //Since keep alive is true, get connection from tcp connection pool.
-            httpURLConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
 
             httpURLConnection.setRequestMethod(httpRequest.getRequestMethod().getMethod());
 
@@ -75,10 +74,8 @@ public class SynchronousHttpClient
             httpURLConnection.setConnectTimeout(httpRequest.getConnectTimeOut());
             httpURLConnection.setReadTimeout(httpRequest.getReadTimeOut());
 
-            if(null != httpRequest.getHeaderValuesToSet())
-            {
-                for(Map.Entry<String,String> entry : httpRequest.getHeaderValuesToSet().entrySet())
-                {
+            if (null != httpRequest.getHeaderValuesToSet()) {
+                for (Map.Entry<String, String> entry : httpRequest.getHeaderValuesToSet().entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
 
@@ -91,8 +88,7 @@ public class SynchronousHttpClient
             //send post body data
             httpURLConnection.setDoOutput(DO_OUTPUT);
 
-            if(null != httpRequest.getPostBodyPayload())
-            {
+            if (null != httpRequest.getPostBodyPayload()) {
                 DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
                 wr.writeBytes(httpRequest.getPostBodyPayload());
                 wr.flush();
@@ -108,50 +104,38 @@ public class SynchronousHttpClient
             IOUtils.copy(inputStream, stringWriter, UTF_ENCODING);
 
 
-            if(!stringWriter.toString().isEmpty())
+            if (!stringWriter.toString().isEmpty())
                 responseFromThirdPartyserver = stringWriter.toString();
 
             responseCode = httpURLConnection.getResponseCode();
             responseContentType = httpURLConnection.getContentType();
-        }
-        catch (Exception e)
-        {
-            if(null != httpURLConnection)
-            {
-                try
-                {
+        } catch (Exception e) {
+            if (null != httpURLConnection) {
+                try {
                     responseCode = httpURLConnection.getResponseCode();
                     responseFromThirdPartyserver = null;
-                }
-                catch (IOException ioe)
-                {
+                } catch (IOException ioe) {
                     logger.debug("IOException inside SynchronousHttpClient , while fetching response code", ioe);
                 }
             }
 
-            logger.error("Exception inside SynchronousHttpClient ",e);
-        }
-        finally
-        {
-            if(null != inputStream)
-            {
+            logger.error("Exception inside SynchronousHttpClient ", e);
+        } finally {
+            if (null != inputStream) {
                 //This will trigger system resources cleanup, connection may/maynot get closed.
-                try
-                {
+                try {
                     inputStream.close();
-                }
-                catch(IOException ioe)
-                {
-                    logger.error("IOException in Http connector in closing input stream",ioe);
+                } catch (IOException ioe) {
+                    logger.error("IOException in Http connector in closing input stream", ioe);
                 }
             }
             //Return connection to idle pool, jdk internally cleans up idle connections
             //This is must so that there are no CLOSE_WAIT scenarios.
-            if(null != httpURLConnection)
+            if (null != httpURLConnection)
                 httpURLConnection.disconnect();
         }
 
-        apiResponse = new HttpResponse(responseCode,responseFromThirdPartyserver,responseContentType);
+        apiResponse = new HttpResponse(responseCode, responseFromThirdPartyserver, responseContentType);
         return apiResponse;
     }
 
@@ -159,10 +143,10 @@ public class SynchronousHttpClient
     /**
      * This function is called when client is no longer needed at all.
      * Most probably at the time of application shutdown.
+     *
      * @throws Exception
      */
-    public void releaseResources()
-    {
+    public void releaseResources() {
 
     }
 }

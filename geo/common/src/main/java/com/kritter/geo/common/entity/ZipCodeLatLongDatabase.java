@@ -292,7 +292,7 @@ public class ZipCodeLatLongDatabase<T extends ZipCodeLatLongDatabase.ZipCodeInfo
      *            to find neighbors of.
      * @return unmodifiable collection of T neighbors.
      */
-    //@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public Collection<T> nearestNeighbourSearch(int K, T value) {
         if (value == null)
             return null;
