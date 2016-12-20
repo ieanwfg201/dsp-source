@@ -691,17 +691,15 @@ public class ConvertRequest {
     private static void convertBidRequestSite(VamBidRequestParentNodeDTO bidRequestParentNodeDTO, VamRequest vamRequest) {
         BidRequestSiteDTO bidRequestSiteDTO = new BidRequestSiteDTO();
 
-        if (vamRequest.hasMediaId()) {
-            bidRequestParentNodeDTO.getBidRequestSite().setSiteIdOnExchange(vamRequest.getDomain());
-        }
         if (vamRequest.hasDomain()) {
-            bidRequestParentNodeDTO.getBidRequestSite().setSiteDomain(vamRequest.getDomain());
+            bidRequestSiteDTO.setSiteIdOnExchange(vamRequest.getDomain());
+            bidRequestSiteDTO.setSiteDomain(vamRequest.getDomain());
         }
         if (vamRequest.hasPage()) {
-            bidRequestParentNodeDTO.getBidRequestSite().setSitePageURL(vamRequest.getPage());
+            bidRequestSiteDTO.setSitePageURL(vamRequest.getPage());
         }
         if (vamRequest.hasReferer()) {
-            bidRequestParentNodeDTO.getBidRequestSite().setRefererURL(vamRequest.getReferer());
+            bidRequestSiteDTO.setRefererURL(vamRequest.getReferer());
         }
 
         bidRequestParentNodeDTO.setBidRequestSite(bidRequestSiteDTO);
