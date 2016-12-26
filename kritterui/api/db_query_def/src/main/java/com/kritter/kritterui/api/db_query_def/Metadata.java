@@ -8,7 +8,7 @@ public class Metadata {
     public static final String get_ui_country = "select id as id, country_name as name,entity_id_set as entity_id_set from ui_targeting_country where id != -1 order by country_name";
     public static final String get_isp_country = "select id as id, isp_ui_name as name , entity_id_set as entity_id_set from ui_targeting_isp " +
     		" where country_ui_id in (<id>)";
-    public static final String get_isp_all_country = "select id as id, isp_ui_name as name , entity_id_set as entity_id_set from ui_targeting_isp ";
+    public static final String get_isp_all_country = "select id as id, isp_ui_name as name , entity_id_set as entity_id_set from ui_targeting_isp where id != -1 order by isp_ui_name";
 
 
     public static final String get_creative_slots = "select id as id, concat_ws('*', width, height) as name,description as description from creative_slots";
