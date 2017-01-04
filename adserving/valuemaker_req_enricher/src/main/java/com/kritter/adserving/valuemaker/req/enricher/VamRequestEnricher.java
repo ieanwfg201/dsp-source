@@ -15,6 +15,7 @@ import com.kritter.constants.INVENTORY_SOURCE;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.device.common.HandsetDetectionProvider;
+import com.kritter.device.common.entity.HandsetCapabilities;
 import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.user.userid.ExternalUserId;
@@ -172,16 +173,28 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
             HandsetMasterData handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
 
-            if (null == handsetMasterData) {
-                this.logger.warn("Device detection failed inside VamRequestEnricher, proceeding with  undetected handset,{}", userAgent);
-            } else {
-                logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
-                if (handsetMasterData.isBot()) {
-                    this.logger.error("Device detected is BOT inside VamRequestEnricher, cannot proceed further");
-                    request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
-                    return request;
+            if (handsetMasterData == null || handsetMasterData.isBot()) {
+                HandsetCapabilities handsetCapabilities = new HandsetCapabilities();
+                handsetCapabilities.setIsTablet(false);
+                handsetCapabilities.setMidp2(false);
+                handsetCapabilities.setResolutionWidth(-1);
+                handsetCapabilities.setResolutionHeight(-1);
+
+                //1.ios,2.android
+                int os = -1;
+                VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
+                if (vamRequest.hasVamMobile() && vamRequest.getVamMobile().hasOs()) {
+                    os = vamRequest.getVamMobile().getOs();
+                } else if (vamRequest.hasVamMobileVideo() && vamRequest.getVamMobileVideo().hasOs()) {
+                    os = vamRequest.getVamMobile().getOs();
                 }
+
+                handsetMasterData = new HandsetMasterData(-1, -1, "-1", os, "-1", -1, null, handsetCapabilities);
+                handsetMasterData.setBot(false);
+                handsetMasterData.setDeviceType(null);
+                handsetMasterData.setDeviceJavascriptCompatible(true);
             }
+
             request.setHandsetMasterData(handsetMasterData);
             /************************************Done detecting handset****************************************************/
 
