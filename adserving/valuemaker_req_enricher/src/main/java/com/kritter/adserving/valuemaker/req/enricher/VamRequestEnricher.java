@@ -180,13 +180,34 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 handsetCapabilities.setResolutionWidth(-1);
                 handsetCapabilities.setResolutionHeight(-1);
 
-                //1.ios,2.android
+                //万流客1.adnroid,2.ios,自己的平台1.ios,2.android
                 int os = -1;
                 VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
                 if (vamRequest.hasVamMobile() && vamRequest.getVamMobile().hasOs()) {
-                    os = vamRequest.getVamMobile().getOs();
+                    switch (vamRequest.getVamMobile().getOs()) {
+                        case 1:
+                            os = 2;
+                            break;
+                        case 2:
+                            os = 1;
+                            break;
+                        default:
+                            os = -1;
+                            break;
+                    }
+
                 } else if (vamRequest.hasVamMobileVideo() && vamRequest.getVamMobileVideo().hasOs()) {
-                    os = vamRequest.getVamMobile().getOs();
+                    switch (vamRequest.getVamMobileVideo().getOs()) {
+                        case 1:
+                            os = 2;
+                            break;
+                        case 2:
+                            os = 1;
+                            break;
+                        default:
+                            os = -1;
+                            break;
+                    }
                 }
 
                 handsetMasterData = new HandsetMasterData(-1, -1, "-1", os, "-1", -1, null, handsetCapabilities);
