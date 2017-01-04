@@ -84,6 +84,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
         this.iabCategoriesCache = iabCategoriesCache;
+        this.serverConfig = serverConfig;
     }
 
     private void writeEmptyResponse(HttpServletResponse httpServletResponse) throws IOException {
