@@ -67,8 +67,8 @@ public class MMATargetingFilterMatcher implements TargetingMatcher {
         Integer[] mmaindustryCode = request.getSite().getMmaindustryCode();
         boolean mmaindustrCodeExclude = request.getSite().isMmaindustrCodeExclude();
         Integer[] mmaindustrCodeExcInc = request.getSite().getMmaindustryCode();
-        if (mmaindustrCodeExcInc == null || mmaindustrCodeExcInc.length == 0)
-            return adIdSet;
+//        if (mmaindustrCodeExcInc == null || mmaindustrCodeExcInc.length == 0)
+//            return adIdSet;
         for (Integer adId : adIdSet) {
             AdEntity adEntity = adEntityCache.query(adId);
             if (null == adEntity) {
@@ -158,11 +158,35 @@ public class MMATargetingFilterMatcher implements TargetingMatcher {
                 if (breakBool) {
                     continue;
                 }
-                if (!mma_cat_Exclude && inclusionFound) {
-                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
-                            this.adNoFillReasonMapKey, context);
-                    continue;
+
+
+//                include && foud    true 无广告
+//                include && notfoud  false 返回广告
+//                exclude && foud  false 返回广告
+//                exclude && notfoud  false 返回广告
+//              改成
+//                include && foud    false 返回广告
+//                include && notfoud  true 无广告
+//                exclude && foud  true 无广告
+//                exclude && notfoud  false 返回广告
+                if(mma_cat_Exclude){
+                    if(inclusionFound){
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                this.adNoFillReasonMapKey, context);
+                        continue;
+                    }
+                }else{
+                    if(!inclusionFound){
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                this.adNoFillReasonMapKey, context);
+                        continue;
+                    }
                 }
+//                if (!mma_cat_Exclude && inclusionFound) {
+//                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+//                            this.adNoFillReasonMapKey, context);
+//                    continue;
+//                }
             }
             shortlistedAdIdSet.add(adId);
 
