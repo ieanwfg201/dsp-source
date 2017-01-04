@@ -7,8 +7,11 @@ import com.kritter.device.common.detector.HandsetOperatingSystemCache;
 import com.kritter.device.mad.MadFileCache.HandsetInfo;
 import com.kritter.device.common.entity.*;
 import lombok.Getter;
+import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.security.MessageDigest;
 
 public class MadHandsetDetector implements HandsetDetectionProvider {
     private static Logger logger = LoggerFactory.getLogger("cache.logger");
@@ -53,16 +56,24 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
     }
 
     public HandsetMasterData detectHandsetForUserAgent(String userAgentIn) throws Exception {
-    	String userAgent=userAgentIn;
+    	String userAgentMD5 = null;
     	if(userAgentIn != null){
-    		userAgent=userAgentIn.trim().toLowerCase();
+            try{
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                userAgentMD5 = getDigest(userAgentIn,md);
+            }catch(Exception e){
+                logger.error("create md5 value error for user agent {}",userAgentIn,e);
+            }
     	}
-        HandsetInfo handsetInfo = madFileCache.getHandsetInfo(userAgent);
+
+
+
+        HandsetInfo handsetInfo = madFileCache.getHandsetInfo(userAgentMD5);
         if(handsetInfo == null) {
-            logger.debug("null handset info got for user agent");
+            logger.debug("null handset info got for user agent {}[md5 value:{}]",userAgentIn,userAgentMD5);
             return null;
         } else {
-            logger.debug("Handset info for user agent : {} = {}", userAgent, handsetInfo);
+            logger.debug("Handset info for user agent : {}[md5 value:{}]= {}", userAgentIn,userAgentMD5, handsetInfo);
         }
 
         HandsetManufacturerData handsetManufacturerData = handsetManufacturerCache.query(
@@ -124,5 +135,14 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
         handsetMasterData.setDeviceType(null);
         handsetMasterData.setDeviceJavascriptCompatible(handsetInfo.isAjaxSupportJava());
         return handsetMasterData;
+    }
+
+    public String getDigest(String s , MessageDigest md)
+            throws Exception {
+
+        md.reset();
+        byte[] digest = md.digest(s.getBytes());
+        String result = new String(Hex.encodeHex(digest));
+        return result;
     }
 }
