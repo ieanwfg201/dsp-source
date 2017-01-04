@@ -1,7 +1,6 @@
 package com.kritter.postimpression.utils;
 
 import com.kritter.utils.common.AdExchangeUtils;
-import com.kritter.utils.common.ServerConfig;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +12,8 @@ public class CloudCrossExchangeUtils extends AdExchangeUtils {
     private Logger logger;
     private String decryKey;
 
-    public CloudCrossExchangeUtils(ServerConfig serverConfig, String cloudCrossToken, String loggerName) {
-        this.decryKey = serverConfig.getValueForKey(cloudCrossToken);
+    public CloudCrossExchangeUtils(String cloudCrossToken, String loggerName) {
+        this.decryKey = cloudCrossToken;
         logger = LoggerFactory.getLogger(loggerName);
     }
 

@@ -80,7 +80,7 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
                     }else{
                         handSetInfo.setWirelessDevice(false);
                     }
-                    tempdataMap.put(strSplit[0].toLowerCase().trim(), handSetInfo);
+                    tempdataMap.put(strSplit[1].toLowerCase().trim(), handSetInfo);
                 }
 
             }
@@ -129,14 +129,14 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
         private String deviceType;
     }
 
-    public HandsetInfo getHandsetInfo(String userAgent) {
-        if(userAgent == null) {
+    public HandsetInfo getHandsetInfo(String userAgentMD5) {
+        if(userAgentMD5 == null) {
             logger.debug("null user agent sent to query");
             return null;
         }
         HandsetInfo handsetInfo = null;
         if(dataMap != null){
-            handsetInfo = dataMap.get(userAgent);
+            handsetInfo = dataMap.get(userAgentMD5);
         }
         logger.debug("Handset info for user agent : {} is {}", handsetInfo);
         return handsetInfo;
