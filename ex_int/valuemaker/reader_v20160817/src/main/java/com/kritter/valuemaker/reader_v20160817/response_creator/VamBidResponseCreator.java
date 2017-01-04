@@ -84,6 +84,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
         this.iabCategoriesCache = iabCategoriesCache;
+        this.serverConfig = serverConfig;
     }
 
     private void writeEmptyResponse(HttpServletResponse httpServletResponse) throws IOException {
@@ -103,11 +104,13 @@ public class VamBidResponseCreator implements IBidResponseCreator {
             VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
             VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
             int secure = vamRequest.getSecure();
-            this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX,secure);
-            this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX,secure);
-            this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX,secure);
-            this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX,secure);
-            this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX,secure);
+            if(secure == 1) {
+                postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX, secure);
+                postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX, secure);
+                postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX, secure);
+                macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX, secure);
+                trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX, secure);
+            }
 
             Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();
             if (null == impressionIdsToRespondFor) {
