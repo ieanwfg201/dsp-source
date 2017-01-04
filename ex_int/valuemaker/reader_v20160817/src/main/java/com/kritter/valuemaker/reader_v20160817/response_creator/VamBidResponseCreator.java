@@ -55,6 +55,8 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     private String notificationUrlSuffix;
     private String notificationUrlBidderBidPriceMacro;
     private IABCategoriesCache iabCategoriesCache;
+    private ServerConfig serverConfig;
+
 
     public VamBidResponseCreator(
             String loggerName,
@@ -97,6 +99,15 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     ) throws IOException, BidResponseException {
 
         try {
+            BidRequestVam bidRequestVam = (BidRequestVam) request.getBidRequest();
+            VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
+            VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
+            int secure = vamRequest.getSecure();
+            this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX,secure);
+            this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX,secure);
+            this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX,secure);
+            this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX,secure);
+            this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX,secure);
 
             Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();
             if (null == impressionIdsToRespondFor) {
@@ -175,10 +186,6 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                 StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
                 cscBeaconUrl.append(clickUri);
                 String show_url = cscBeaconUrl.toString();
-
-                BidRequestVam bidRequestVam = (BidRequestVam) request.getBidRequest();
-                VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
-                VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
 
                 AdEntity adEntity = adEntityCache.query(responseAdInfoToUse.getAdId());
                 if (null == adEntity) {
