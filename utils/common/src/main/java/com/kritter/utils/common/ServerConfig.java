@@ -116,16 +116,17 @@ public class ServerConfig
 
     public String getValueForKey(String key,int secure)
     {
+        Map<String,String> configMap2 = new HashMap<String, String>();
         if(null != configMap)
         {
             if(secure == 1){
                 for(Map.Entry<String,String> entry:configMap.entrySet()){
                     if(entry.getValue().indexOf("http:") != -1){
                         String value = entry.getValue().replaceAll("http:","https:");
-                        configMap.put(entry.getKey(),value);
+                        configMap2.put(entry.getKey(),value);
                     }
                 }
-                return this.configMap.get(key);
+                return configMap2.get(key);
             }else{
                 return this.configMap.get(key);
             }
