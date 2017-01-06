@@ -20,7 +20,7 @@ public class ValidateCreativeSize {
 	private static final String CTRL_A = String.valueOf((char)1);
     public static Integer[] fetchBannerUids(Logger logger, Creative creative, CreativeBannerCache creativeBannerCache,
             List<CreativeBanner> creativeBannerList, Comparator<CreativeBanner> comparator,Request request,
-            AdxBasedExchangesMetadata adxBased, BannerUploadCache bannerUploadCache){
+            AdxBasedExchangesMetadata adxBased, BannerUploadCache bannerUploadCache, ResponseAdInfo responseAdInfo){
         Integer bannerUriIds[] = null;
         if(null != creative.getBannerUriIds())
         {
@@ -31,7 +31,7 @@ public class ValidateCreativeSize {
             			ReqLog.debugWithDebugNew(logger, request, "BannerId {} does not qualify as bannerupload cache null", bannerId);
             			continue;
             		}
-            		BannerUploadCacheEntity bue = bannerUploadCache.query(request.getSite().getPublisherIncId()+CTRL_A+bannerId);
+            		BannerUploadCacheEntity bue = bannerUploadCache.query(request.getSite().getPublisherIncId()+CTRL_A + responseAdInfo.getAdId() + CTRL_A +bannerId);
                 	if(bue ==null){
                 		ReqLog.debugWithDebugNew(logger, request, "BannerId {} does not qualify as BannerUploadCacheEntity  null", bannerId);
             			continue;
