@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Set;
+
 @ToString
 public class MMACacheEntity implements IUpdatableEntity<String>{
     private static final String CTRL_A = String.valueOf((char)1);
@@ -16,11 +18,11 @@ public class MMACacheEntity implements IUpdatableEntity<String>{
     @Getter@Setter
     private String supplycode;
     @Getter@Setter
-    private int ui_id;
+    private Set<Integer> ui_id;
     @Getter@Setter
     private long lastModified;
     
-    public MMACacheEntity(int id, String supplycode, int ui_id, long lastModified, boolean isMarkedForDeletion){
+    public MMACacheEntity(int id, String supplycode, Set<Integer> ui_id, long lastModified, boolean isMarkedForDeletion){
         this.markedForDeletion = isMarkedForDeletion;
         this.supplyid = id;
         this.supplycode=supplycode;

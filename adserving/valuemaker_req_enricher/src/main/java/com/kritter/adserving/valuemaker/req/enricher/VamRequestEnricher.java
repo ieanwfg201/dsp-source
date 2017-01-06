@@ -97,9 +97,11 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 if (s != null) {
                     for (int i = 0; i < battr.size(); i++) {
                         MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + battr.get(i));
-                        if (mmaCacheEntity != null) {
-                            mmaIndustryCodes1[i] = mmaCacheEntity.getUi_id();
-                            mmaIndustryCodes2[i] = String.valueOf(mmaCacheEntity.getUi_id());
+                        if (mmaCacheEntity != null && mmaCacheEntity.getUi_id()!=null) {
+                            for (Integer uiId : mmaCacheEntity.getUi_id()){
+                                mmaIndustryCodes1[i] = uiId;
+                                mmaIndustryCodes2[i] = String.valueOf(uiId);
+                            }
                         }
                     }
                     vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(mmaIndustryCodes2);
@@ -118,9 +120,11 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                     appCategoryList1 = new Integer[contentCategoriesApplication.length];
                     for (int i = 0; i < contentCategoriesApplication.length; i++) {
                         MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + contentCategoriesApplication[i]);
-                        if (mmaCacheEntity != null) {
-                            appCategoryList1[i] = mmaCacheEntity.getUi_id();
-                            appCategoryList2.add(String.valueOf(mmaCacheEntity.getUi_id()));
+                        if (mmaCacheEntity != null && mmaCacheEntity.getUi_id()!=null) {
+                            for (Integer uiId : mmaCacheEntity.getUi_id()){
+                                appCategoryList1[i] = uiId;
+                                appCategoryList2.add(String.valueOf(uiId));
+                            }
                         }
                     }
                     String[] appCategroyArray = new String[appCategoryList2.size()];
@@ -173,7 +177,17 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
             HandsetMasterData handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
 
-            if (handsetMasterData == null || handsetMasterData.isBot()) {
+            if(handsetMasterData != null && handsetMasterData.isBot())
+            {
+                this.logger.error("Device detected is BOT inside MoPubRequestEnricher, can not proceed further");
+                request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
+                return request;
+            }
+
+            //ua exist ,os unknow
+            boolean flag = handsetMasterData !=null && handsetMasterData.getDeviceOperatingSystemId()!=null && handsetMasterData.getDeviceOperatingSystemId().equals(-1);
+
+            if(flag || handsetMasterData == null || handsetMasterData.getDeviceOperatingSystemId() == null){
                 HandsetCapabilities handsetCapabilities = new HandsetCapabilities();
                 handsetCapabilities.setIsTablet(false);
                 handsetCapabilities.setMidp2(false);
@@ -184,30 +198,9 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 int os = -1;
                 VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
                 if (vamRequest.hasVamMobile() && vamRequest.getVamMobile().hasOs()) {
-                    switch (vamRequest.getVamMobile().getOs()) {
-                        case 1:
-                            os = 2;
-                            break;
-                        case 2:
-                            os = 1;
-                            break;
-                        default:
-                            os = -1;
-                            break;
-                    }
-
+                    os=convertOs(vamRequest.getVamMobile().getOs());
                 } else if (vamRequest.hasVamMobileVideo() && vamRequest.getVamMobileVideo().hasOs()) {
-                    switch (vamRequest.getVamMobileVideo().getOs()) {
-                        case 1:
-                            os = 2;
-                            break;
-                        case 2:
-                            os = 1;
-                            break;
-                        default:
-                            os = -1;
-                            break;
-                    }
+                    os=convertOs(vamRequest.getVamMobileVideo().getOs());
                 }
 
                 handsetMasterData = new HandsetMasterData(-1, -1, "-1", os, "-1", -1, null, handsetCapabilities);
@@ -432,4 +425,20 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         impressionDTO.setBidFloorPrice(price);
     }
 
+    //convert valuemaker os
+    private int convertOs(int os){
+        int i = -1;
+        switch (os) {
+            case 1:
+                i = 2;
+                break;
+            case 2:
+                i = 1;
+                break;
+            default:
+                i = -1;
+                break;
+        }
+        return i;
+    }
 }
