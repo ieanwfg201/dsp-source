@@ -326,7 +326,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotFour implements CreativeAn
                 List<CreativeBanner> creativeBannerList = new ArrayList<CreativeBanner>();
                 Integer bannerUriIds[] = ValidateCreativeSize.fetchBannerUids(logger, creative, 
                         creativeBannerCache, creativeBannerList, comparator,
-                        request, adxBased, this.bannerUploadCache);
+                        request, adxBased, this.bannerUploadCache,responseAdInfo);
                 /**
                  * Size check required only if bid request has size and if ad is not richmedia.
                  * Also if request has available width and height arrays then use them for size
