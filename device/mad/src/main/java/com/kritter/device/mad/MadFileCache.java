@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import net.openhft.chronicle.map.ChronicleMap;
+import net.openhft.chronicle.map.ChronicleMapBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,7 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
     private Logger logger;
     @Getter
     private final String name;
-    private ConcurrentHashMap<String, HandsetInfo> dataMap = null;
+    private ChronicleMap<String, HandsetInfo> dataMap = null;
 
     public MadFileCache(String name, String loggerName, Properties properties)
             throws InitializationException {
@@ -46,7 +48,12 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
             fr = new FileReader(file);
             br = new BufferedReader(fr);
             String str;
-            ConcurrentHashMap<String, HandsetInfo> tempdataMap = new ConcurrentHashMap<String, MadFileCache.HandsetInfo>();
+            ChronicleMap<String, HandsetInfo> tempdataMap = ChronicleMapBuilder
+                    .of(String.class, HandsetInfo.class)
+                    .name("HandsetInfo-Cache-Map")
+                    .averageKeySize(32)
+                    .create();
+//            ConcurrentHashMap<String, HandsetInfo> tempdataMap = new ConcurrentHashMap<String, MadFileCache.HandsetInfo>();
             while((str = br.readLine()) != null){
                 /**
                  * ua<CTRLA>md5(ua)<CTRLA>is_tablet<CTRLA>is_wireless_device<CTRLA>brand_name
@@ -84,7 +91,7 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
                 }
 
             }
-            
+            dataMap.close();
             dataMap=tempdataMap;
             logger.debug("Refreshed MadFileCache");
         } catch (Exception ioe) {
