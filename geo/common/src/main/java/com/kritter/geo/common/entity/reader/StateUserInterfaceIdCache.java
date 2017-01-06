@@ -9,8 +9,8 @@ import com.kritter.geo.common.entity.StateUserInterfaceId;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class StateUserInterfaceIdCache extends AbstractDBStatsReloadableQueryableCache<Integer,StateUserInterfaceId>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter
     private final String name;
 

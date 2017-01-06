@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import javax.xml.bind.Unmarshaller;
 
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.constants.VideoBidResponseProtocols;
 import com.kritter.entity.vast.normal.threedotzero.CreateVastNormalThreeDotZero;

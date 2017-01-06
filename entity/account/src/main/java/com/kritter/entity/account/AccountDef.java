@@ -41,9 +41,10 @@ public class AccountDef
     /*The open rtb version this third party demand channel will accept.*/
     @Getter @Setter
     private OpenRTBVersion openRTBVersion;
-    
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public static AccountDef getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static AccountDef getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

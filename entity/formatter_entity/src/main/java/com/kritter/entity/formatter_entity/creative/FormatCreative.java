@@ -14,8 +14,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import com.kritter.constants.CreativeFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,21 +26,23 @@ import lombok.Setter;
 public class FormatCreative {
     private Logger logger;
     private static final String HTML_LINE_BREAK = "<br>";
-    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
+
     @Getter@Setter
     private List<CreativeFormatEntity> creativeArray = new LinkedList<CreativeFormatEntity>();
     
     public FormatCreative(String loggerName){
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
     }
     
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static FormatCreative getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static FormatCreative getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
@@ -144,10 +146,9 @@ public class FormatCreative {
     public String writeJson(){
         String str = "[]";
         OutputStream out = new ByteArrayOutputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Inclusion.NON_NULL);
+
         try {
-            mapper.writeValue(out, this.creativeArray);
+            objectMapper.writeValue(out, this.creativeArray);
             return out.toString();
         } catch (Exception e) {
             logger.error(e.getMessage(),e);

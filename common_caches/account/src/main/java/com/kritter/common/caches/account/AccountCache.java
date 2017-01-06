@@ -11,8 +11,8 @@ import com.kritter.constants.ThirdPartyDemandChannel;
 import com.kritter.entity.demand_props.DemandProps;
 import com.kritter.entity.supply_props.SupplyProps;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -26,7 +26,7 @@ import java.util.Properties;
  */
 public class AccountCache extends AbstractDBStatsReloadableQueryableCache<String, AccountEntity>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private final String name;
 
     public AccountCache(List<Class> secIndexKeyClassList,

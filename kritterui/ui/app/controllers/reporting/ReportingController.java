@@ -80,7 +80,16 @@ public class ReportingController extends Controller{
 	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
 	        return ok(views.html.reporting.exchangereport.render(reportConfigForm.fill(rfe), 0));
 	}
-
+	@SecuredAction
+    public static Result trackingevent(){
+	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
+	        return ok(views.html.reporting.trackingevent.render(reportConfigForm.fill(rfe), 0));
+	}
+	@SecuredAction
+    public static Result fraudevent(){
+	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
+	        return ok(views.html.reporting.fraudevent.render(reportConfigForm.fill(rfe), 0));
+	}
 	@SecuredAction
     public static Result channelReport(){
 	    ReportFormEntity rfe = new ReportFormEntity(new ReportingEntity());
@@ -482,6 +491,18 @@ public class ReportingController extends Controller{
 	public static Result exchangereportDataCSV(){
         return reportDataCSV(null,true,ReportingTableType.EXCHANGE);
     }
+    public static Result trackingeventData(){
+        return reportData(false, false, null, null,true,ReportingTableType.TRACKINGEVENT);
+    }
+	public static Result trackingeventDataCSV(){
+        return reportDataCSV(null,true,ReportingTableType.TRACKINGEVENT);
+    }
+    public static Result fraudeventData(){
+        return reportData(false, false, null, null,true,ReportingTableType.FRAUD);
+    }
+	public static Result fraudeventDataCSV(){
+        return reportDataCSV(null,true,ReportingTableType.FRAUD);
+    }
     public static Result channelreportData(){
         return reportData(false, false, null, null,true,ReportingTableType.CHANNEL);
     }
@@ -523,6 +544,9 @@ public class ReportingController extends Controller{
 				    if("".equals(reportingEntity.getStart_time_str())){
 				        return ok(result);
 				    }
+				}
+				if(ReportingTableType.TRACKINGEVENT == reportTableType){
+					reportingEntity.setTevent(new LinkedList<String>());
 				}
 				if(isLimited){
 				    reportingEntity.setReportingDIMTypeEnum(ReportingDIMTypeEnum.LIMITED);

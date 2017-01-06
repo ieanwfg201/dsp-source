@@ -2,10 +2,9 @@ package com.kritter.postimpression.enricher_fraud;
 
 import com.kritter.core.workflow.Context;
 import com.kritter.postimpression.enricher_fraud.checker.OnlineEnricherAndFraudCheck;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Iterator;
 import java.util.List;
@@ -24,12 +23,12 @@ public class NoFraudParamEnricherAndFraudProcessor implements OnlineEnricherAndF
                                                     List<OnlineEnricherAndFraudCheck> onlineEnricherAndFraudChecks
                                                    )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.onlineEnricherAndFraudChecks = onlineEnricherAndFraudChecks;
     }
 
     @Override
-    public OnlineFraudUtils.ONLINE_FRAUD_REASON performOnlineFraudChecks(Context context)
+    public ONLINE_FRAUD_REASON performOnlineFraudChecks(Context context)
     {
     	if(onlineEnricherAndFraudChecks == null){
     		return ONLINE_FRAUD_REASON.HEALTHY_REQUEST;

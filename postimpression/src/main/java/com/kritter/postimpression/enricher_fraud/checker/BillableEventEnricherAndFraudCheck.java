@@ -1,10 +1,10 @@
 package com.kritter.postimpression.enricher_fraud.checker;
 
 import com.kritter.core.workflow.Context;
-import com.kritter.postimpression.entity.Request;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.kritter.entity.postimpression.entity.Request;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class is responsible to check whether the received url is tampered with
@@ -20,7 +20,7 @@ public class BillableEventEnricherAndFraudCheck implements OnlineEnricherAndFrau
 	public BillableEventEnricherAndFraudCheck(String signature,String loggerName, 
 	        String postImpressionRequestObjectKey){
         this.signature = signature;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
 	}
 

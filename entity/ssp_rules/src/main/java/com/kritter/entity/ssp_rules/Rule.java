@@ -51,8 +51,9 @@ public class Rule {
             return false;
         return true;
     }
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         return toJson(objectMapper);
     }
     public JsonNode toJson(ObjectMapper objectMapper){
@@ -60,7 +61,6 @@ public class Rule {
         return jsonNode;
     }
     public static Rule getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static Rule getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

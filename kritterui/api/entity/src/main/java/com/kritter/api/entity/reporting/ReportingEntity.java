@@ -227,6 +227,24 @@ public class ReportingEntity {
 	private List<String> dspNoFill = null;
 	/**
 	 * mandatory - default null - null means not required, empty list means all
+	 * required, String 
+	 * list signifies filters
+	 */
+	private List<String> terminationReason = null;
+	/**
+	 * mandatory - default null - null means not required, empty list means all required, String list signifies filters
+	 */
+	private List<String> tevent = null;
+	/**
+	 * mandatory - default null - null means not required, empty list means all required, String list signifies filters
+	 */
+	private List<String> postimpevent = null;
+	/**
+	 * mandatory - default null - null means not required, empty list means all required, String list signifies filters
+	 */
+	private List<String> teventtype = null;
+	/**
+	 * mandatory - default null - null means not required, empty list means all
 	 * required, integer - browserid element in list signifies filters
 	 */
 	private List<Integer> browserId = null;
@@ -243,7 +261,13 @@ public class ReportingEntity {
 	/** metrics set to true if required */
 	private boolean selectallmetric = true;
 	/** metrics set to true if required */
+	private boolean total_event = false;
+	/** metrics set to true if required */
+	private boolean total_count = false;
+	/** metrics set to true if required */
 	private boolean total_request = false;
+	/** metrics set to true if required */
+	private boolean total_request_to_dsp = false;
 	/** metrics set to true if required */
 	private boolean total_impression = false;
 	/** metrics set to true if required */
@@ -322,7 +346,13 @@ public class ReportingEntity {
 	/** true means descending otherwise by default ascending */
 	private boolean order_by_desc = true;
 	/** sequence no */
+	private int total_event_order_sequence = -1;
+	/** sequence no */
+	private int total_count_order_sequence = -1;
+	/** sequence no */
 	private int total_request_order_sequence = -1;
+	/** sequence no */
+	private int total_request_to_dsp_order_sequence = -1;
 	/** sequence no */
 	private int total_impression_order_sequence = -1;
 	/** sequence no */
@@ -420,6 +450,77 @@ public class ReportingEntity {
 	private boolean rollup = false;
 
 	
+	public boolean isTotal_request_to_dsp() {
+		return total_request_to_dsp;
+	}
+
+	public void setTotal_request_to_dsp(boolean total_request_to_dsp) {
+		this.total_request_to_dsp = total_request_to_dsp;
+	}
+
+	public int getTotal_request_to_dsp_order_sequence() {
+		return total_request_to_dsp_order_sequence;
+	}
+
+	public void setTotal_request_to_dsp_order_sequence(int total_request_to_dsp_order_sequence) {
+		this.total_request_to_dsp_order_sequence = total_request_to_dsp_order_sequence;
+	}
+
+	public List<String> getTerminationReason() {
+		return terminationReason;
+	}
+
+	public void setTerminationReason(List<String> terminationReason) {
+		this.terminationReason = terminationReason;
+	}
+
+	public List<String> getTevent() {
+		return tevent;
+	}
+
+	public void setTevent(List<String> tevent) {
+		this.tevent = tevent;
+	}
+
+	public List<String> getTeventtype() {
+		return teventtype;
+	}
+
+	public void setTeventtype(List<String> teventtype) {
+		this.teventtype = teventtype;
+	}
+
+	public boolean isTotal_event() {
+		return total_event;
+	}
+
+	public void setTotal_event(boolean total_event) {
+		this.total_event = total_event;
+	}
+
+	public int getTotal_event_order_sequence() {
+		return total_event_order_sequence;
+	}
+
+	public void setTotal_event_order_sequence(int total_event_order_sequence) {
+		this.total_event_order_sequence = total_event_order_sequence;
+	}
+	public boolean isTotal_count() {
+		return total_count;
+	}
+
+	public void setTotal_count(boolean total_count) {
+		this.total_count = total_count;
+	}
+
+	public int getTotal_count_order_sequence() {
+		return total_count_order_sequence;
+	}
+
+	public void setTotal_count_order_sequence(int total_count_order_sequence) {
+		this.total_count_order_sequence = total_count_order_sequence;
+	}
+
 	public List<String> getReqState() {
 		return reqState;
 	}
@@ -1649,6 +1750,14 @@ public class ReportingEntity {
 
 	public void setCityId_clickable(boolean cityId_clickable) {
 		this.cityId_clickable = cityId_clickable;
+	}
+
+	public List<String> getPostimpevent() {
+		return postimpevent;
+	}
+
+	public void setPostimpevent(List<String> postimpevent) {
+		this.postimpevent = postimpevent;
 	}
 
 	public JsonNode toJson() {

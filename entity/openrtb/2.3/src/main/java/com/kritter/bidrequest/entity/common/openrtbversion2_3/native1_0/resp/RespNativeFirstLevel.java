@@ -24,7 +24,7 @@ public class RespNativeFirstLevel {
     
     @JsonProperty("link")
     @Setter@Getter    
-    private Object link=1;
+    private Object link;
     
     @JsonProperty("imptrackers")
     @Setter    

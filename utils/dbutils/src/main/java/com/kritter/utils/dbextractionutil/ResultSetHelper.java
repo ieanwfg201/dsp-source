@@ -2,7 +2,7 @@ package com.kritter.utils.dbextractionutil;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.ResultSet;

@@ -7,7 +7,7 @@ import com.kritter.constants.APIFrameworks;
 import com.kritter.constants.ContentDeliveryMethods;
 import com.kritter.constants.ConvertErrorEnum;
 import com.kritter.constants.VASTCompanionTypes;
-import com.kritter.constants.VideoAdPos;
+import com.kritter.constants.AdPositionsOpenRTB;
 import com.kritter.constants.VideoBidResponseProtocols;
 import com.kritter.constants.VideoBoxing;
 import com.kritter.constants.VideoMaxExtended;
@@ -62,7 +62,7 @@ public class ConvertBidRequestImpVideo {
         if(supplyVideo.getStartDelay() != null && supplyVideo.getStartDelay() > -3){
         	video.setStartDelayInSeconds(supplyVideo.getStartDelay());
         }
-        if(supplyVideo.getPos() != null && VideoAdPos.Unknown.getCode() != supplyVideo.getPos()){
+        if(supplyVideo.getPos() != null && AdPositionsOpenRTB.Unknown.getCode() != supplyVideo.getPos()){
         	video.setAdPosition(supplyVideo.getPos() );
         }
         if(supplyVideo.getPlaybackmethod() != null){

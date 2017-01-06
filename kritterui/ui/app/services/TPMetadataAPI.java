@@ -38,9 +38,11 @@ import com.kritter.constants.RetargetingSegmentEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.SupplySourceEnum;
 import com.kritter.constants.SupplySourceTypeEnum;
+import com.kritter.constants.TEventType;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.kritterui.api.def.ApiDef;
 import com.kritter.postimpression.thrift.struct.PostImpressionEvent;
+import com.kritter.postimpression.thrift.struct.PostImpressionTerminationReason;
 
 public class TPMetadataAPI {
 
@@ -809,6 +811,22 @@ public class TPMetadataAPI {
         ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
         DspNoFill nfr[] = DspNoFill.values();
         for (DspNoFill nfrval : nfr) {
+            optionNodes.add(new SelectOption(nfrval.name(), nfrval.name(), nfrval.name()).toJson());
+        }
+        return optionNodes;
+    }
+    public static ArrayNode terminationReasonPostimp(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        PostImpressionTerminationReason nfr[] = PostImpressionTerminationReason.values();
+        for (PostImpressionTerminationReason nfrval : nfr) {
+            optionNodes.add(new SelectOption(nfrval.name(), nfrval.name(), nfrval.name()).toJson());
+        }
+        return optionNodes;
+    }
+    public static ArrayNode teventtype(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        TEventType nfr[] = TEventType.values();
+        for (TEventType nfrval : nfr) {
             optionNodes.add(new SelectOption(nfrval.name(), nfrval.name(), nfrval.name()).toJson());
         }
         return optionNodes;

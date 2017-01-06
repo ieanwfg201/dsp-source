@@ -8,8 +8,8 @@ import com.kritter.abstraction.cache.abstractions.AbstractDBStatsReloadableQuery
 import com.kritter.adserving.prediction.entity.LogisticRegressionCTRModelEntity;
 import com.kritter.adserving.prediction.entity.LogisticRegressionCTRModelEntity.CTRData;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.util.List;
 import java.util.Properties;
 import java.sql.ResultSet;
@@ -24,7 +24,7 @@ public class LogisticRegressionCTRDBCache extends AbstractDBStatsReloadableQuery
     public static final String DIMENSION_VALUE_DELIMITER_KEY = "dim-value-delimiter";
     public static final String DIMENSION_COEFFICIENT_DELIMITER_KEY = "dim-coeff-delimiter";
 
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private String name;
 
     private int othersId;

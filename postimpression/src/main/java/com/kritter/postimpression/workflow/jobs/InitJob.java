@@ -1,16 +1,17 @@
 package com.kritter.postimpression.workflow.jobs;
 
 import com.kritter.core.workflow.Context;
+import com.kritter.constants.POSTIMPRESSION_EVENT_URL_PREFIX;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.utils.PostImpressionUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.common.url.URLFieldFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -33,17 +34,21 @@ public class InitJob implements Job{
     private String uriKey;
     private String postImpressionRequestObjectKey;
     private PostImpressionUtils postImpressionUtils;
+    private String userSyncKey;
 
-
-    public InitJob(String name,String loggerName,String uriKey,
+    public InitJob(String name,
+                   String loggerName,
+                   String uriKey,
                    String postImpressionRequestObjectKey,
-                   PostImpressionUtils postImpressionUtils)
+                   PostImpressionUtils postImpressionUtils,
+                   String userSyncKey)
     {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.uriKey = uriKey;
         this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
         this.postImpressionUtils = postImpressionUtils;
+        this.userSyncKey = userSyncKey;
     }
 
     @Override
@@ -72,151 +77,163 @@ public class InitJob implements Job{
         try
         {
             /************************TRACKING_URL_FROM_THIRD_PARTY *******************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     TRACKING_URL_FROM_THIRD_PARTY.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Third party Tracking url.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.TRACKING_URL_FROM_THIRD_PARTY);
             }
             /***********************************************************************************/
 
             /************************THIRD_PARTY_CLICK_ALIAS_URL *******************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     THIRD_PARTY_CLICK_ALIAS_URL.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is third party alias click url.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.THIRD_PARTY_CLICK_ALIAS_URL);
             }
             /************************************************************************************/
 
             /************************CLICK*******************************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     CLICK.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Inhouse click url.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.CLICK);
             }
             /************************MACRO_CLICK*******************************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     MACRO_CLICK.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Inhouse macro click url.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.MACRO_CLICK);
             }
             /***********************************************************************************/
 
             /************************CLICK*******************************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     CONVERSION_FEEDBACK.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Conversion S2S URL from third party!!!.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.CONVERSION_FEEDBACK);
             }
             /***********************************************************************************/
 
             /************************CSC********************************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     CSC.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Inhouse CSC url.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.CSC);
             }
             /***********************************************************************************/
 
             /************************WIN_NOTIFICATION*******************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     WIN_NOTIFICATION.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Win notification url.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.WIN_NOTIFICATION);
             }
             /***********************************************************************************/
 
             /************************WIN_API_NOTIFICATION*******************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     WIN_API_NOTIFICATION.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Win API notification url.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.WIN_API_NOTIFICATION);
             }
             /***********************************************************************************/
             /************************USR for Cookie Drop and Retargeting Segment*******************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     USR.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is usr url for cookie drop and segment .");
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.USR);
             }
             /***********************************************************************************/
 
             /************************INT_EXCHANGE_WIN***********************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     INT_EXCHANGE_WIN.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is exchange win url.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.INT_EXCHANGE_WIN);
             }
             /***********************************************************************************/
 
             /************************CLICK*******************************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     COOKIE_BASED_CONV_JS.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Cookie based Conversion js from advertiser.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.COOKIE_BASED_CONV_JS);
             }
             /***********************************************************************************/
 
             /************************Tracking event*********************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     TEVENT.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Tevent.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.TEVENT);
             }
             /***********************************************************************************/
 
             /************************BTracking event********************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     BEVENT.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is Bevent.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.BEVENT);
             }
             /***********************************************************************************/
             /************************NOFRDP event********************************************/
-            if(requestURI.startsWith(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
                     NOFRDP.getUrlIdentifierPrefix()))
             {
                 logger.debug("Inside InitJob, Event url is NOFRDP.");
 
-                request = new Request(context.getUuid().toString(),PostImpressionEventUrlReader.
+                request = new Request(context.getUuid().toString(),
                         POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP);
+            }
+            /***********************************************************************************/
+
+            /************************USERSYNC event********************************************/
+            if(requestURI.startsWith(POSTIMPRESSION_EVENT_URL_PREFIX.
+                    USERSYNC.getUrlIdentifierPrefix()))
+            {
+                logger.debug("Inside InitJob, Event url is USERSYNC.");
+
+                request = new Request(context.getUuid().toString(),
+                        POSTIMPRESSION_EVENT_URL_PREFIX.USERSYNC);
+                context.setValue(this.userSyncKey, true);
             }
             /***********************************************************************************/
         }

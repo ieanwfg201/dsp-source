@@ -15,14 +15,13 @@ import com.kritter.constants.StatusIdEnum;
 import com.kritter.device.common.HandsetDetectionProvider;
 import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.utils.common.ApplicationGeneralUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.kritter.utils.common.CookieUtils;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.kritter.constants.INVENTORY_SOURCE;
 
@@ -54,6 +53,10 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
     private CountryDetectionCache countryDetectionCache;
     private ISPDetectionCache ispDetectionCache;
     private IConnectionTypeDetectionCache connectionTypeDetectionCache;
+    private String widthParameterName;
+    private String heightParameterName;
+    private String dspCookiePrefix;
+    private String exactBannerSizeParameterName;
 
     public DirectPublisherRequestEnricher(
                                           String loggerName,
@@ -73,10 +76,11 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
                                           HandsetDetectionProvider handsetDetectionProvider,
                                           CountryDetectionCache countryDetectionCache,
                                           ISPDetectionCache ispDetectionCache,
-                                          String kritterCookieIdName
+                                          String kritterCookieIdName,
+                                          String dspCookiePrefix
                                          )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.userAgentParameterName = userAgentParameterName;
         this.operaMiniUserAgentSubString = operaMiniUserAgentSubString;
         this.operaMiniUAHeaderNames = operaMiniUAHeaderNames;
@@ -95,6 +99,7 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = null;
         this.kritterCookieIdName = kritterCookieIdName;
+        this.dspCookiePrefix = dspCookiePrefix;
     }
 
     public DirectPublisherRequestEnricher(
@@ -116,10 +121,11 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
                                           CountryDetectionCache countryDetectionCache,
                                           ISPDetectionCache ispDetectionCache,
                                           IConnectionTypeDetectionCache connectionTypeDetectionCache,
-                                          String kritterCookieIdName
+                                          String kritterCookieIdName,
+                                          String dspCookiePrefix
                                          )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.userAgentParameterName = userAgentParameterName;
         this.operaMiniUserAgentSubString = operaMiniUserAgentSubString;
         this.operaMiniUAHeaderNames = operaMiniUAHeaderNames;
@@ -138,6 +144,58 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = connectionTypeDetectionCache;
         this.kritterCookieIdName = kritterCookieIdName;
+        this.dspCookiePrefix = dspCookiePrefix;
+    }
+
+    public DirectPublisherRequestEnricher(
+                                            String loggerName,
+                                            String userAgentParameterName,
+                                            String operaMiniUserAgentSubString,
+                                            String[] operaMiniUAHeaderNames,
+                                            String remoteAddressHeaderName,
+                                            String xffHeaderName,
+                                            List<String> privateAddressPrefixList,
+                                            String siteIdParameterName,
+                                            String numberOfAdsParameterName,
+                                            String latitudeParameterName,
+                                            String longitudeParameterName,
+                                            String invocationCodeVersionParameterName,
+                                            String responseFormatParameterName,
+                                            SiteCache siteCache,
+                                            HandsetDetectionProvider handsetDetectionProvider,
+                                            CountryDetectionCache countryDetectionCache,
+                                            ISPDetectionCache ispDetectionCache,
+                                            IConnectionTypeDetectionCache connectionTypeDetectionCache,
+                                            String kritterCookieIdName,
+                                            String widthParameterName,
+                                            String heightParameterName,
+                                            String dspCookiePrefix,
+                                            String exactBannerSizeParameterName
+                                         )
+    {
+        this.logger = LogManager.getLogger(loggerName);
+        this.userAgentParameterName = userAgentParameterName;
+        this.operaMiniUserAgentSubString = operaMiniUserAgentSubString;
+        this.operaMiniUAHeaderNames = operaMiniUAHeaderNames;
+        this.remoteAddressHeaderName = remoteAddressHeaderName;
+        this.xffHeaderName = xffHeaderName;
+        this.privateAddressPrefixList = privateAddressPrefixList;
+        this.siteIdParameterName = siteIdParameterName;
+        this.numberOfAdsParameterName = numberOfAdsParameterName;
+        this.latitudeParameterName = latitudeParameterName;
+        this.longitudeParameterName = longitudeParameterName;
+        this.invocationCodeVersionParameterName = invocationCodeVersionParameterName;
+        this.responseFormatParameterName = responseFormatParameterName;
+        this.siteCache = siteCache;
+        this.handsetDetectionProvider = handsetDetectionProvider;
+        this.countryDetectionCache = countryDetectionCache;
+        this.ispDetectionCache = ispDetectionCache;
+        this.connectionTypeDetectionCache = connectionTypeDetectionCache;
+        this.kritterCookieIdName = kritterCookieIdName;
+        this.widthParameterName = widthParameterName;
+        this.heightParameterName = heightParameterName;
+        this.dspCookiePrefix = dspCookiePrefix;
+        this.exactBannerSizeParameterName = exactBannerSizeParameterName;
     }
 
     @Override
@@ -153,6 +211,16 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         String xffHeader = httpServletRequest.getHeader(this.xffHeaderName);
         String siteId = httpServletRequest.getParameter(this.siteIdParameterName);
         String userAgentFromRequest = httpServletRequest.getParameter(this.userAgentParameterName);
+        String width = null;
+        if(null != this.widthParameterName)
+            width = httpServletRequest.getParameter(this.widthParameterName);
+        String height = null;
+        if(null != this.heightParameterName)
+            height = httpServletRequest.getParameter(this.heightParameterName);
+        String exactBanner = null;
+        if(null != this.exactBannerSizeParameterName){
+        	exactBanner = httpServletRequest.getParameter(this.exactBannerSizeParameterName);
+        }
 
         this.logger.debug(" UserAgent from Request: {}, Remote address: {}, Site id : {}", userAgentFromRequest, remoteAddress, siteId);
 
@@ -178,6 +246,8 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         String requestingLatitude = httpServletRequest.getParameter(this.latitudeParameterName);
         String requestingLongitude = httpServletRequest.getParameter(this.longitudeParameterName);
         String requestingUserId = fetchAdvertisingCookieFromEndUser(httpServletRequest);
+        Map<String, String> dspCookies = CookieUtils.fetchPrefixCookiesFromRequest(httpServletRequest, dspCookiePrefix,
+                this.logger);
 
         int numberOfAds = 0;
         Double requestingLatitudeValue = null;
@@ -261,6 +331,22 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
                 logger.debug("Cookie not received in the request. External user ids empty");
             }
 
+            if(dspCookies != null) {
+                Map<Integer, String> dspIdToUserIdMap = getDspIdUserIdMap(dspCookies);
+                if(dspIdToUserIdMap != null) {
+                    for(Map.Entry<Integer, String> entry : dspIdToUserIdMap.entrySet()) {
+                        int dspId = entry.getKey();
+                        String userId = entry.getValue();
+                        logger.debug("Dsp id : {}, user id : {}.", dspId, userId);
+                        ExternalUserId externalUserId = new ExternalUserId(ExternalUserIdType.DSPBUYERUID, dspId,
+                                userId);
+                        externalUserIds.add(externalUserId);
+                    }
+                } else {
+                    logger.debug("Dsp id to user id map is null.");
+                }
+            }
+
             //set user agent to request object.
             request.setUserAgent(userAgent);
 
@@ -282,11 +368,36 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
             logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
 
             request.setHandsetMasterData(handsetMasterData);
+
             //also set requested slot size.
             int[] requiredWidths = new int[1];
             int[] requiredHeights = new int[1];
-            requiredWidths[0] = handsetMasterData.getHandsetCapabilityObject().getResolutionWidth();
-            requiredHeights[0] = handsetMasterData.getHandsetCapabilityObject().getResolutionHeight();
+
+            boolean dimensionsForBannerAvailableFromRequest = false;
+
+            try
+            {
+                if(null!= width && null!=height && !width.isEmpty() && !height.isEmpty())
+                {
+                    requiredWidths[0] = Integer.valueOf(width);
+                    requiredHeights[0] = Integer.valueOf(height);
+                    if(exactBanner != null && !exactBanner.isEmpty() && exactBanner.equals("1")){
+                    	request.setExactBannerSizeRequired(true);
+                    }
+                    dimensionsForBannerAvailableFromRequest = true;
+                }
+            }
+            catch (NumberFormatException nfe)
+            {
+                logger.debug("Inside DirectPublisherRequestEnricher Requesting width,height has invalid value : width:{} height:{} " ,
+                              width , height);
+            }
+
+            if(!dimensionsForBannerAvailableFromRequest)
+            {
+                requiredWidths[0] = handsetMasterData.getHandsetCapabilityObject().getResolutionWidth();
+                requiredHeights[0] = handsetMasterData.getHandsetCapabilityObject().getResolutionHeight();
+            }
 
             request.setRequestedSlotWidths(requiredWidths);
             request.setRequestedSlotHeights(requiredHeights);
@@ -340,6 +451,34 @@ public class DirectPublisherRequestEnricher implements RequestEnricher
         }
 
         return request;
+    }
+
+    private Map<Integer, String> getDspIdUserIdMap(Map<String, String> dspCookieId) {
+        if(dspCookieId == null) {
+            this.logger.debug("DSP cookie id map is null.");
+            return null;
+        }
+        if(dspCookieId.isEmpty()) {
+            this.logger.debug("DSP cookie id map is empty.");
+            return null;
+        }
+
+        Map<Integer, String> dspIdToUserIdMap = new HashMap<Integer, String>();
+        for(Map.Entry<String, String> entry : dspCookieId.entrySet()) {
+            String dspIdWithPrefix = entry.getKey();
+            String userId = entry.getValue();
+
+            this.logger.debug("DSP id with prefix : {}, user id {}.", dspIdWithPrefix, userId);
+            // The dspIdWithPrefix is formatted as <dsp cookie prefix><dsp inc id>.
+            // If the dspCookiePrefix is "dspid_" and dsp inc id is 10, the dspIdWithPrefix would be : dspid_10
+            // Remove the dspCookiePrefix (which is dspid_) to extract the dsp inc id
+            int dspId = Integer.parseInt(dspIdWithPrefix.split(dspCookiePrefix)[1]);
+            this.logger.debug("DSP inc id : {}.", dspId);
+
+            dspIdToUserIdMap.put(dspId, userId);
+        }
+
+        return dspIdToUserIdMap;
     }
 
     private String findCorrectUserAgent(HttpServletRequest httpServletRequest)

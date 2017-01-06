@@ -78,6 +78,7 @@ public class AdCrud {
             ad.setComment(rset.getString("comment"));
             ad.setCreated_on(rset.getTimestamp("created_on").getTime());
             ad.setTracking_partner(TrackingPartner.getEnum(rset.getInt("tracking_partner")));
+            ad.setProtocol(rset.getInt("protocol"));
             if(tp_name){
                 ad.setTargeting_profile_name(rset.getString("targeting_profile_name"));
             }
@@ -617,6 +618,7 @@ public class AdCrud {
             pstmt.setString(25, generateExternalTracker(ad));
             pstmt.setString(26, generateExt(ad));
             pstmt.setString(27, generateFreqCap(ad));
+            pstmt.setInt(28, ad.getProtocol());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -865,7 +867,8 @@ public class AdCrud {
             pstmt.setString(23, generateExternalTracker(ad));
             pstmt.setString(24, generateExt(ad));
             pstmt.setString(25, generateFreqCap(ad));
-            pstmt.setInt(26, ad.getId());
+            pstmt.setInt(26, ad.getProtocol());
+            pstmt.setInt(27, ad.getId());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

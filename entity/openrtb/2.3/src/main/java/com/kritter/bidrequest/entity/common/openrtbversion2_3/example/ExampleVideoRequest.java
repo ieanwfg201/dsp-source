@@ -196,9 +196,12 @@ public class ExampleVideoRequest {
 		 */
 		return parent;
 	}
+
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+	static {
+		objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+	}
     public JsonNode toJson(BidRequestParentNodeDTO b){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(b);
         return jsonNode;
     }

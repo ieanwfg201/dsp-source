@@ -2,7 +2,7 @@ package com.kritter.abstraction.cache.entities;
 
 import com.kritter.abstraction.cache.interfaces.IRefreshable;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.util.TimerTask;
 

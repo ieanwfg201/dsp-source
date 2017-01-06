@@ -17,13 +17,13 @@ public class BannerUploadCacheEntity implements IUpdatableEntity<String>{
     private long lastModified;
     @Getter@Setter
     private MaterialUploadBanner mub;
-
+    
     public BannerUploadCacheEntity(MaterialUploadBanner mub, long lastModified, boolean isMarkedForDeletion){
         this.markedForDeletion = isMarkedForDeletion;
         this.mub = mub;
         this.lastModified = lastModified;
     }
-
+    
     @Override
     public String getId() {
     	return  this.mub.getPubIncId()+CTRL_A+this.mub.getAdId()+CTRL_A+this.mub.getBannerId();

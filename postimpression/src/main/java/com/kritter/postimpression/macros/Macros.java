@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.kritter.constants.ConnectionType;
 import com.kritter.constants.DeviceType;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ConversionUrlData;
 import com.kritter.utils.common.url.URLField;

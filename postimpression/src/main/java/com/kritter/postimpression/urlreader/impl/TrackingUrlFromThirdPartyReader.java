@@ -1,18 +1,14 @@
 package com.kritter.postimpression.urlreader.impl;
 
 import com.kritter.core.workflow.Context;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.utils.PostImpressionUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.dbconnector.DBConnector;
-import lombok.Getter;
-import org.slf4j.Logger;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;

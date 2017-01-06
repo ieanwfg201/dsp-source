@@ -6,13 +6,12 @@ import com.kritter.common.site.entity.Site;
 import com.kritter.common.site.entity.SiteIncIdSecondaryKey;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.utils.PostImpressionUtils;
 import com.kritter.utils.common.AdExchangeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class ExchangeWinNoticeUrlReader implements PostImpressionEventUrlReader
                                       String auctionImpressionIdParameterName
                                      )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
         this.postImpressionUtils = postImpressionUtils;
         this.bidPriceParameterName = bidPriceParameterName;
@@ -67,7 +66,7 @@ public class ExchangeWinNoticeUrlReader implements PostImpressionEventUrlReader
                                       SiteCache siteCache
                                      )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
         this.postImpressionUtils = postImpressionUtils;
         this.bidPriceParameterName = bidPriceParameterName;
@@ -103,6 +102,12 @@ public class ExchangeWinNoticeUrlReader implements PostImpressionEventUrlReader
         if(null != site)
         {
             adExchangeUtils = adExchangeUtilsMap.get(site.getPublisherId());
+            logger.debug("Site : {}, publisher id : {}.", site.getId(), site.getPublisherId());
+            if(adExchangeUtils == null) {
+                logger.debug("No ad exchange util found.");
+            } else {
+                logger.debug("Ad exchange util found.");
+            }
         }
 
         //read extra request parameters and set into request object.

@@ -1,6 +1,8 @@
 package com.kritter.exchange.request_openrtb_2_3.converter.common;
 
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestGeoDTO;
+import com.kritter.constants.ConnectionType;
+import com.kritter.constants.DeviceType;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestDeviceDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO;
@@ -31,6 +33,53 @@ public class ConvertBidRequestDevice {
             bidRequestGeoDTO.setCountry(request.getCountry().getCountryCodeThreeLetter());
             device.setGeoObject(bidRequestGeoDTO);
         }
+
+        /**************************************************************************************************************/
+        /****************Set extra parameters that might be required for better enrichment of bid request**************
+         ****************and can be helpful for DSP to make better decision while bidding.*****************************/
+        if(null != request.getBidRequestDeviceCarrier())
+            device.setCarrier(request.getBidRequestDeviceCarrier());
+        if(null != request.getBidRequestDeviceLanguage())
+            device.setBrowserLanguage(request.getBidRequestDeviceLanguage());
+        if(null != request.getHandsetMasterData())
+        {
+            if(null != request.getHandsetMasterData().getModelName())
+                device.setDeviceModel(request.getHandsetMasterData().getModelName());
+            if(null != request.getHandsetMasterData().getManufacturerName())
+                device.setDeviceManufacturer(request.getHandsetMasterData().getManufacturerName());
+            if(null != request.getHandsetMasterData().getOsName())
+                device.setDeviceOperatingSystem(request.getHandsetMasterData().getOsName());
+            if(null != request.getHandsetMasterData().getDeviceOperatingSystemVersion())
+                device.setDeviceOperatingSystemVersion(request.getHandsetMasterData().getDeviceOperatingSystemVersion());
+            if(null != request.getHandsetMasterData().getMarketingName())
+                device.setDeviceHardwareVersion(request.getHandsetMasterData().getMarketingName());
+            if(null != request.getHandsetMasterData().getHandsetCapabilityObject())
+            {
+                device.setDevicePhysicalWidthInPixels(request.getHandsetMasterData().getHandsetCapabilityObject().getResolutionWidth());
+                device.setDevicePhysicalHeightInPixels(request.getHandsetMasterData().getHandsetCapabilityObject().getResolutionHeight());
+            }
+
+            Integer deviceType = null;
+            if(null != request.getHandsetMasterData().getDeviceType())
+            {
+                if(request.getHandsetMasterData().getDeviceType().getCode() == DeviceType.DESKTOP.getCode())
+                    deviceType = 2;
+                if(request.getHandsetMasterData().getDeviceType().getCode() == DeviceType.MOBILE.getCode())
+                    deviceType = 1;
+            }
+            if(null != deviceType)
+                device.setDeviceType(deviceType);
+        }
+
+        if(null != request.getConnectionType())
+        {
+            if(request.getConnectionType().getId() == ConnectionType.CARRIER.getId())
+                device.setConnectionType(5);
+            if(request.getConnectionType().getId() == ConnectionType.WIFI.getId())
+                device.setConnectionType(2);
+        }
+        /***********************************************Done setting extra parameters**********************************/
+        /**************************************************************************************************************/
 
         bidRequest.setBidRequestDevice(device);
         return ConvertErrorEnum.HEALTHY_CONVERT;

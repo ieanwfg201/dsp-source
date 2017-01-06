@@ -12,8 +12,8 @@ import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,7 +35,7 @@ public class SiteDomainsExclusionTargetingMatcher implements TargetingMatcher {
     public SiteDomainsExclusionTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
                                                 String adNoFillReasonMapKey) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }

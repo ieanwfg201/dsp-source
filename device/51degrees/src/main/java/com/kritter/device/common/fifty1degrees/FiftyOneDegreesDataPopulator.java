@@ -18,8 +18,8 @@ import fiftyone.mobile.detection.entities.Profile;
 import fiftyone.mobile.detection.factories.MemoryFactory;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,7 +88,7 @@ public class FiftyOneDegreesDataPopulator implements HandsetPopulationProvider {
                                         DatabaseManager databaseManager,
                                         String dataLoadMasterNodeParam,
                                         ServerConfig serverConfig) throws Exception {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.fiftyOneDegreesFilesDirectory = fiftyOneDegreesFilesDirectory;
         this.databaseManager = databaseManager;
         this.versionPattern = Pattern.compile(versionPatternRegex);

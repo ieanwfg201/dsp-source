@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.kritter.billing.budget_reset.common.BillingResetType;
 import com.kritter.billing.budget_reset.common.IReset;
 import com.kritter.billing.budget_reset.update_all.DBBudgetReset;
-import com.kritter.utils.dbconnector.DBConnector;
+import com.kritter.billing.dbconnector.DBConnector;
 
 public class BudgetReset {
     private static final Logger LOG = LoggerFactory.getLogger(BudgetReset.class);

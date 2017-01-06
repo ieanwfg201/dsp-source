@@ -14,12 +14,12 @@ import com.kritter.constants.StatusIdEnum;
 import com.kritter.entity.native_props.NativeProps;
 import com.kritter.entity.video_supply_props.VideoSupplyProps;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 import com.kritter.abstraction.cache.abstractions.AbstractDBStatsReloadableQueryableCache;
 import com.kritter.common.site.entity.SecondaryIndexBuilder;
 import com.kritter.common.site.entity.Site;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class keeps site entities in memory. The repository initialization may
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SiteCache extends AbstractDBStatsReloadableQueryableCache<String, Site>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
 	private final String name;
 
 	public SiteCache(List<Class> secIndexKeyClassList,

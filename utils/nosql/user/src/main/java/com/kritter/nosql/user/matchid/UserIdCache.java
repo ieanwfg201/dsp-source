@@ -11,10 +11,11 @@ import com.kritter.utils.common.ThreadLocalUtils;
 import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
 import com.kritter.utils.nosql.common.NoSqlNamespaceTable;
+import com.kritter.utils.nosql.common.SignalingNotificationObject;
 import lombok.Getter;
 import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -48,10 +49,12 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
     private Set<String> attributeNameSet;
     @Getter @NonNull
     private List<ExternalUserIdType> priorityList;
-    private ExecutorService updatorService;
+    // private ExecutorService updatorService;
     private List<ExternalUserIdType> idTypesNotInPriorityList;
+    /*
     @Getter
     private final int threadCount;
+    */
 
     /**
      * @param name Name of the cache
@@ -67,7 +70,7 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
                        List<ExternalUserIdType> priorityList,
                        int threadCount) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
 
         this.noSqlNamespaceOperationsInstance = noSqlNamespaceOperationsInstance;
 
@@ -78,10 +81,10 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
         this.attributeNameSet = new HashSet<String>();
         this.attributeNameSet.add(this.attributeNameUserId);
         this.priorityList = priorityList;
-        this.threadCount = threadCount;
+        // this.threadCount = threadCount;
 
-        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat(name + "-executor-%d").build();
-        this.updatorService = Executors.newFixedThreadPool(threadCount, namedThreadFactory);
+        // ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat(name + "-executor-%d").build();
+        /// this.updatorService = Executors.newFixedThreadPool(threadCount, namedThreadFactory);
 
         this.idTypesNotInPriorityList = new ArrayList<ExternalUserIdType>();
         for(ExternalUserIdType userIdType : ExternalUserIdType.values()) {
@@ -144,10 +147,10 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
      * @return internal user id
      */
     @Override
-    public String getInternalUserId(Set<ExternalUserId> userIds) {
+    public void getInternalUserId(Set<ExternalUserId> userIds, SignalingNotificationObject<Map<String, NoSqlData>> noSqlDataMap) {
         if(userIds == null || userIds.size() == 0) {
             logger.debug("No user information present in the request. Returning null user id.");
-            return null;
+            return;
         }
 
         logger.debug("Attribute names : ");
@@ -157,32 +160,30 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
 
         if(this.noSqlNamespaceOperationsInstance == null) {
             logger.debug("Matching/de-duplication database not available. Internal user id is null.");
-            return null;
+            return;
         }
 
         ExternalUserId highestPriorityUserId = getHighestPriorityId(userIds);
+        logger.debug("Highest priority user id : {}.", highestPriorityUserId.toString());
 
         try {
             NoSqlData noSqlData = new NoSqlData(this.primaryKeyDataType, highestPriorityUserId.toString());
-            Map<String, NoSqlData> queryResult = this.noSqlNamespaceOperationsInstance.fetchSingleRecordAttributes(
-                    this.namespaceName, this.tableName, noSqlData, this.attributeNameSet);
+            this.noSqlNamespaceOperationsInstance.fetchSingleRecordAttributesAsync(this.namespaceName, this.tableName,
+                    noSqlData, this.attributeNameSet, noSqlDataMap);
 
-            if(queryResult == null || queryResult.size() == 0) {
-                logger.debug("Matching/de-duplication table doesn't have entry corresponding to the supplied user ids.");
-                return null;
-            }
-
+            /*
             NoSqlData kritterUserIdNoSqlData = queryResult.get(this.attributeNameUserId);
             if(kritterUserIdNoSqlData == null) {
                 logger.debug("Could not find entry corresponding to user id : {}", highestPriorityUserId.toString());
-                return null;
+                return;
             }
 
             logger.debug("Found internal user id {}", kritterUserIdNoSqlData.getValue());
             return (String) kritterUserIdNoSqlData.getValue();
+            */
         } catch (Exception e) {
             logger.debug("Error occurred while fetching matched/de-duplicated user id. {}", e);
-            return null;
+            return;
         }
     }
 
@@ -214,9 +215,12 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
         if(externalUserIds == null || externalUserIds.size() == 0 || internalUserId == null)
             return;
 
+        updateInternalUserIdForExternalIds(externalUserIds, internalUserId);
+        /*
         UserIdRunnable userIdRunnable = new UserIdRunnable(this.logger, this, externalUserIds, internalUserId);
         logger.debug("Submitting task to executor service for internal user id {}", internalUserId);
         updatorService.submit(userIdRunnable);
+        */
     }
 
     /**
@@ -249,8 +253,12 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
 
             logger.debug("For external user id : {}, inserting internal id : {}", externalUserId, internalUserId);
 
+            /*
             this.noSqlNamespaceOperationsInstance.updateAttributesInThisNamespace(this.namespaceName, this.tableName,
                     primaryKeyValue, attributeNameValueMap);
+                    */
+            this.noSqlNamespaceOperationsInstance.updateAttributesInThisNamespaceAsync(this.namespaceName,
+                    this.tableName, primaryKeyValue, attributeNameValueMap);
         }
     }
 
@@ -272,6 +280,7 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
     @Override
     public void destroy() {
         noSqlNamespaceOperationsInstance.destroy();
+        /*
         // Shutdown the executor service
         updatorService.shutdown();
         try {
@@ -284,5 +293,6 @@ public class UserIdCache implements NoSqlNamespaceTable, ICache, UserIdProvider,
             updatorService.shutdownNow();
             Thread.currentThread().interrupt();
         }
+        */
     }
 }

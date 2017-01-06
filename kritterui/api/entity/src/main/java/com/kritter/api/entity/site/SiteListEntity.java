@@ -32,8 +32,10 @@ public class SiteListEntity {
     private SiteAPIEnum siteApiEnum = SiteAPIEnum.none;
     /** optional */
     private String billing_rules_json = "{\"payout\":"+Payout.default_payout_percent_str+"}";
+    /** optional */
+    private String url = "" ;
 
-    @Override
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -147,6 +149,13 @@ public class SiteListEntity {
     public void setBilling_rules_json(String billing_rules_json) {
         this.billing_rules_json = billing_rules_json;
     }
+    public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);

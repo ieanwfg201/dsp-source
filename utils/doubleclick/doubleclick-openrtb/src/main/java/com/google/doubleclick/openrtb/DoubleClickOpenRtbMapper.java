@@ -65,8 +65,8 @@ import com.google.protos.adx.NetworkBid;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.security.SignatureException;
 import java.util.Calendar;
@@ -89,7 +89,7 @@ import javax.inject.Singleton;
 public class DoubleClickOpenRtbMapper implements OpenRtbMapper<
     NetworkBid.BidRequest, NetworkBid.BidResponse,
     NetworkBid.BidRequest.Builder, NetworkBid.BidResponse.Builder> {
-  private static final Logger logger = LoggerFactory.getLogger(DoubleClickOpenRtbMapper.class);
+  private static final Logger logger = LogManager.getLogger(DoubleClickOpenRtbMapper.class);
   private static final String YOUTUBE_AFV_USER_ID = "afv_user_id_";
   private static final Pattern SEMITRANSPARENT_CHANNEL =
       Pattern.compile("pack-(brand|semi|anon)-([^\\-]+)::(.+)");

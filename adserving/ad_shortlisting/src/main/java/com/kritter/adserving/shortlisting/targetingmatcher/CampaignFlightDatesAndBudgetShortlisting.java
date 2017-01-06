@@ -12,8 +12,8 @@ import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Campaign;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,7 +32,7 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
     public CampaignFlightDatesAndBudgetShortlisting(String name, String loggerName, AdEntityCache adEntityCache,
                                                     CampaignCache campaignCache, String adNoFillReasonMapKey) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.campaignCache = campaignCache;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
@@ -89,35 +89,35 @@ public class CampaignFlightDatesAndBudgetShortlisting implements TargetingMatche
                 {
                     double dailyBudgetRemaining = campaign.getDailyBudgetRemaining() == null ? 0.0 :
                             campaign.getDailyBudgetRemaining();
-                    double currentCampaignPayout = campaign.getCampaignDailyBudget() - dailyBudgetRemaining -
-                            campaign.getCurrentPayout();
+                    double campaignBurn = campaign.getCampaignDailyBudget() - dailyBudgetRemaining;
+                    double totalPotentialPayout = campaign.getCampaignPayout() + campaign.getCurrentPayout();
 
                     ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, daily budget remaining : {}, " +
                             "current campaign payout : {}, daily budget remaining : {}.", campaign.getId(),
                             dailyBudgetRemaining, campaign.getCurrentPayout(), campaign.getCampaignDailyBudget());
 
-                    if(
-                        campaign.getAbsolutePayoutThreshold() != null &&
-                        currentCampaignPayout + campaign.getAbsolutePayoutThreshold() < campaign.getCampaignPayout()
-                      )
-                    {
-                        ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, current burn exceeds payout " +
-                                " by absolute threshold {}. Will get started again after cache refresh. Dropping it.",
-                                campaignId, campaign.getAbsolutePayoutThreshold());
+                    if(campaign.getAbsolutePayoutThreshold() != null && campaign.getAbsolutePayoutThreshold() > 0) {
+                        if(campaignBurn + campaign.getAbsolutePayoutThreshold() < totalPotentialPayout) {
+                            ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, current payout {} " +
+                                    "exceeds burn {} by absolute threshold {}. Will get started again after cache " +
+                                    "refresh. Dropping it.", campaignId, totalPotentialPayout, campaignBurn,
+                                    campaign.getAbsolutePayoutThreshold());
 
-                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
-                                this.adNoFillReasonMapKey, context);
+                            AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                                    this.adNoFillReasonMapKey, context);
 
-                        continue;
+                            continue;
+                        }
                     }
 
-                    if(campaign.getPercentPayoutThreshold() != null) {
+                    if(campaign.getPercentPayoutThreshold() != null && campaign.getPercentPayoutThreshold() > 0) {
                         double percentThreshold =
                                 campaign.getPercentPayoutThreshold() * campaign.getCampaignDailyBudget() / 100;
-                        if (currentCampaignPayout + percentThreshold < campaign.getCampaignPayout()) {
-                            ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, current burn exceeds payout " +
-                                            " by percent threshold {}. Will get started again after cache refresh. Dropping it.",
-                                    campaignId, campaign.getPercentPayoutThreshold());
+                        if (campaignBurn + percentThreshold < totalPotentialPayout) {
+                            ReqLog.debugWithDebugNew(logger, request, "For campaign id : {}, current payout {} " +
+                                    "exceeds burn {} by percent threshold {}. Will get started again after cache " +
+                                    "refresh. Dropping it.", campaignId, totalPotentialPayout, campaignBurn,
+                                    campaign.getPercentPayoutThreshold());
 
                             AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
                                     this.adNoFillReasonMapKey, context);

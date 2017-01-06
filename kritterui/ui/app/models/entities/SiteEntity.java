@@ -6,7 +6,7 @@ import com.kritter.api.entity.site.Site;
 import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.Payout;
 import com.kritter.constants.SITE_PLATFORM;
-import com.kritter.constants.VideoAdPos;
+import com.kritter.constants.AdPositionsOpenRTB;
 import com.kritter.constants.VideoLinearity;
 
 import lombok.Getter;
@@ -106,7 +106,7 @@ public class SiteEntity extends Entity{
 	@Getter@Setter
 	private String strdelivery;
 	@Getter@Setter
-	private Integer pos = VideoAdPos.Unknown.getCode();
+	private Integer pos = AdPositionsOpenRTB.Unknown.getCode();
 	@Getter@Setter
 	private String strapi;
 	@Getter@Setter

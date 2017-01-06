@@ -4,6 +4,7 @@ import com.kritter.abstraction.cache.interfaces.ISecondaryIndex;
 import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -17,6 +18,8 @@ public class IspUserInterfaceId implements IUpdatableEntity<Integer>
     private Integer ispUserInterfaceId;
     @Getter
     private Set<Integer> ispIdSet;
+    @Getter @Setter
+    private String ispUIName;
     @Getter
     private Timestamp modifiedOn;
 

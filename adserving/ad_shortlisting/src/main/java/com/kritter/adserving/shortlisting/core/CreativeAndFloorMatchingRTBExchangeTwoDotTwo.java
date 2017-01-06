@@ -14,7 +14,7 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.reqres.log.ReqLog;
-import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateVideo;
+import com.kritter.adserving.shortlisting.core.openrtbhelper.ValidateVideo;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionBannerObjectDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO;
@@ -37,8 +37,8 @@ import com.kritter.utils.common.SetUtils;
 import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.common.url.URLFieldProcessingException;
 import org.apache.commons.lang.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -90,7 +90,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
                                                          AdxBasedExchangesMetadataCache adxBasedExchangeMetadataCache
                                                         )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.creativeBannerCache = creativeBannerCache;
         this.creativeCache = creativeCache;
         this.adEntityCache = adEntityCache;
@@ -786,19 +786,19 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
         {
             request.setNoFillReason(NoFillReason.CREATIVE_ATTR);
 
-            ReqLog.debugWithDebugNew(logger, request, "NoFill found as creative attributes inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
+            ReqLog.debugWithDebugNew(logger, request, "NoFill found as creative attributes inside CreativeAndFloorMatchingRTBExchangeTwoDotTwo");
         }
 
         if(!creativeFoundForRequestedSlot && null == request.getNoFillReason())
         {
             request.setNoFillReason(NoFillReason.CREATIVE_SIZE);
-            ReqLog.debugWithDebugNew(logger, request, "NoFill found as creative size inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
+            ReqLog.debugWithDebugNew(logger, request, "NoFill found as creative size inside CreativeAndFloorMatchingRTBExchangeTwoDotTwo");
         }
 
         if(!floorPriceMet && null == request.getNoFillReason())
         {
             request.setNoFillReason(NoFillReason.ECPM_FLOOR_UNMET);
-            ReqLog.debugWithDebugNew(logger, request, "NoFill found as ecpm floor unmet inside CreativeAndFloorMatchingRTBExchangeTwoDotOne");
+            ReqLog.debugWithDebugNew(logger, request, "NoFill found as ecpm floor unmet inside CreativeAndFloorMatchingRTBExchangeTwoDotTwo");
         }
 
         //set to request all the requesting slotids.

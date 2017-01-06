@@ -17,7 +17,7 @@ import com.kritter.postimpression.thrift.struct.Billing;
 import com.kritter.postimpression.thrift.struct.BillingTerminationReason;
 import com.kritter.postimpression.thrift.struct.BillingType;
 import com.kritter.postimpression.thrift.struct.PostImpressionRequestResponse;
-import com.kritter.utils.pub_payout_serde.ReadPayout;
+import com.kritter.billing.pub_payout_serde.ReadPayout;
 
 public class DirectPublisherCPM implements IPrepareTransaction {
 

@@ -211,6 +211,20 @@ public class MarkUpHelper {
                           String a = quote+System.nanoTime()+quote;
                           strTemp = StringUtils.replace(strTemp,ADTagMacros.RANDOM.getName(),a);
                           break;
+                      case EXTAPPID:
+                          if(request.getSite() != null && request.getSite().getExternalSupplyId() != null){
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.EXTAPPID.getName(),quote+request.getSite().getExternalSupplyId()+quote);
+                          }else{
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.EXTAPPID.getName(),defaultReplace);
+                          }
+                          break;
+                      case EXTSITEID:
+                          if(request.getSite() != null && request.getSite().getExternalSupplyId() != null){
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.EXTSITEID.getName(),quote+request.getSite().getExternalSupplyId()+quote);
+                          }else{
+                              strTemp = StringUtils.replace(strTemp,ADTagMacros.EXTSITEID.getName(),defaultReplace);
+                          }
+                          break;                          
                       case CACHEBUSTER:
                           String b = quote+System.nanoTime()+quote;
                           strTemp = StringUtils.replace(strTemp,ADTagMacros.CACHEBUSTER.getName(),b);

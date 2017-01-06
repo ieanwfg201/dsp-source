@@ -132,6 +132,27 @@ public class BaseReportEntity {
     public void setTotal_request(boolean total_request) {
         reportingEntity.setTotal_request(total_request);
     }
+    public boolean isTotal_request_to_dsp() {
+        return reportingEntity.isTotal_request_to_dsp();
+    }
+
+    public void setTotal_request_to_dsp(boolean total_request_to_dsp) {
+        reportingEntity.setTotal_request_to_dsp(total_request_to_dsp);
+    }
+    public boolean isTotal_event() {
+        return reportingEntity.isTotal_event();
+    }
+
+    public void setTotal_event(boolean total_event) {
+        reportingEntity.setTotal_event(total_event);
+    }
+    public boolean isTotal_count() {
+        return reportingEntity.isTotal_count();
+    }
+
+    public void setTotal_count(boolean total_count) {
+        reportingEntity.setTotal_count(total_count);
+    }
     public boolean isTotal_floor() {
         return reportingEntity.isTotal_floor();
     }

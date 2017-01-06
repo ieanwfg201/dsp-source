@@ -22,6 +22,7 @@ import com.kritter.constants.ReportingDIMTypeEnum;
 @EqualsAndHashCode
 public class UserReport
 {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Getter@Setter
     private LinkedList<Integer> advId = null;
@@ -73,12 +74,10 @@ public class UserReport
 
 
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static UserReport getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static UserReport getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

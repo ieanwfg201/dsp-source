@@ -17,8 +17,8 @@ import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.constants.ExternalUserIdType;
 import com.kritter.utils.common.ApplicationGeneralUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
@@ -49,6 +49,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
     private String longitudeParameterName;
     private String widthParameterName;
     private String heightParameterName;
+    private String exactBannerSizeParameterName = "eb";
     private String richMediaParameterName;
     private String bidFloorParameterName;
     private SiteCache siteCache;
@@ -84,7 +85,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
                                      String bidFloorParameterName
                                      )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.userAgentParameterName = userAgentParameterName;
         this.operaMiniUserAgentSubString = operaMiniUserAgentSubString;
         this.operaMiniUAHeaderNames = operaMiniUAHeaderNames;
@@ -137,7 +138,7 @@ public class AggregatorRequestEnricher implements RequestEnricher
                                      String bidFloorParameterName
                                     )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.userAgentParameterName = userAgentParameterName;
         this.operaMiniUserAgentSubString = operaMiniUserAgentSubString;
         this.operaMiniUAHeaderNames = operaMiniUAHeaderNames;
@@ -211,6 +212,10 @@ public class AggregatorRequestEnricher implements RequestEnricher
         String richMediaParameterNameValue = httpServletRequest.getParameter(this.richMediaParameterName);
         String width = httpServletRequest.getParameter(this.widthParameterName);
         String height = httpServletRequest.getParameter(this.heightParameterName);
+        String exactBanner = null;
+        if(null != this.exactBannerSizeParameterName){
+        	exactBanner = httpServletRequest.getParameter(this.exactBannerSizeParameterName);
+        }
         String bidFloorValue = httpServletRequest.getParameter(this.bidFloorParameterName);
 
         int numberOfAds = 0;
@@ -377,6 +382,9 @@ public class AggregatorRequestEnricher implements RequestEnricher
                 {
                     requiredWidths[0] = Integer.valueOf(width);
                     requiredHeights[0] = Integer.valueOf(height);
+                    if(exactBanner != null && !exactBanner.isEmpty() && exactBanner.equals("1")){
+                    	request.setExactBannerSizeRequired(true);
+                    }
                     dimensionsForBannerAvailableFromRequest = true;
                 }
             }

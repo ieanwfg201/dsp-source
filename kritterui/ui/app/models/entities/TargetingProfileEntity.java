@@ -69,7 +69,84 @@ public class TargetingProfileEntity extends Entity{
     private int id;
     private int lat_lon_radius_unit = 0;
     private int user_id_inc_exc=0;
+    private boolean audience_targeting=false;
+	private boolean audience_genderincl=false;
+    private String audience_gender = "[]";
+	private boolean audience_agerangeinc=false;
+    private String audience_agerange = "[]";
+	private boolean audience_catinc=false;
+    private String audience_tier1_cat = "[]";
+    private String audience_tier2_cat = "[]";
+    private String audience_tier3_cat = "[]";
+    private String audience_tier4_cat = "[]";
+    private String audience_tier5_cat = "[]";
 
+	public boolean isAudience_targeting() {
+		return audience_targeting;
+	}
+	public void setAudience_targeting(boolean audience_targeting) {
+		this.audience_targeting = audience_targeting;
+	}
+	public boolean isAudience_genderincl() {
+		return audience_genderincl;
+	}
+	public void setAudience_genderincl(boolean audience_genderincl) {
+		this.audience_genderincl = audience_genderincl;
+	}
+	public String getAudience_gender() {
+		return audience_gender;
+	}
+	public void setAudience_gender(String audience_gender) {
+		this.audience_gender = audience_gender;
+	}
+	public boolean isAudience_agerangeinc() {
+		return audience_agerangeinc;
+	}
+	public void setAudience_agerangeinc(boolean audience_agerangeinc) {
+		this.audience_agerangeinc = audience_agerangeinc;
+	}
+	public String getAudience_agerange() {
+		return audience_agerange;
+	}
+	public void setAudience_agerange(String audience_agerange) {
+		this.audience_agerange = audience_agerange;
+	}
+	public boolean isAudience_catinc() {
+		return audience_catinc;
+	}
+	public void setAudience_catinc(boolean audience_catinc) {
+		this.audience_catinc = audience_catinc;
+	}
+	public String getAudience_tier1_cat() {
+		return audience_tier1_cat;
+	}
+	public void setAudience_tier1_cat(String audience_tier1_cat) {
+		this.audience_tier1_cat = audience_tier1_cat;
+	}
+	public String getAudience_tier2_cat() {
+		return audience_tier2_cat;
+	}
+	public void setAudience_tier2_cat(String audience_tier2_cat) {
+		this.audience_tier2_cat = audience_tier2_cat;
+	}
+	public String getAudience_tier3_cat() {
+		return audience_tier3_cat;
+	}
+	public void setAudience_tier3_cat(String audience_tier3_cat) {
+		this.audience_tier3_cat = audience_tier3_cat;
+	}
+	public String getAudience_tier4_cat() {
+		return audience_tier4_cat;
+	}
+	public void setAudience_tier4_cat(String audience_tier4_cat) {
+		this.audience_tier4_cat = audience_tier4_cat;
+	}
+	public String getAudience_tier5_cat() {
+		return audience_tier5_cat;
+	}
+	public void setAudience_tier5_cat(String audience_tier5_cat) {
+		this.audience_tier5_cat = audience_tier5_cat;
+	}
 	public int getUser_id_inc_exc() {
 		return user_id_inc_exc;
 	}

@@ -9,12 +9,11 @@ import com.kritter.geo.common.entity.reader.CountryUserInterfaceIdCache;
 import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPUserInterfaceIdCache;
-import com.kritter.postimpression.entity.Request;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
-import com.kritter.constants.ConnectionType;
+import com.kritter.entity.postimpression.entity.Request;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
 import com.kritter.utils.common.ApplicationGeneralUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -56,7 +55,7 @@ public class LocationEnricherAndFraudCheck implements OnlineEnricherAndFraudChec
                                         ) throws Exception
     {
 		this.signature = signature;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
 		this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
         this.remoteAddressHeaderName = remoteAddressHeaderName;
         this.xffHeaderName = xffHeaderName;
@@ -86,7 +85,7 @@ public class LocationEnricherAndFraudCheck implements OnlineEnricherAndFraudChec
                                         ) throws Exception
     {
 		this.signature = signature;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
 		this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
         this.remoteAddressHeaderName = remoteAddressHeaderName;
         this.xffHeaderName = xffHeaderName;

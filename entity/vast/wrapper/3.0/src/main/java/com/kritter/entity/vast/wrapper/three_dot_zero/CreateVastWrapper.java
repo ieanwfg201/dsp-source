@@ -8,7 +8,7 @@ import java.util.List;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.constants.TEvent;
 import com.kritter.constants.TEventType;

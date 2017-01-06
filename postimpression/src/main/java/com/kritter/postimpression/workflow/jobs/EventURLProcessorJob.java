@@ -19,8 +19,8 @@ import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
 import com.kritter.entity.user.userid.UserIdUpdator;
 import com.kritter.postimpression.enricher_fraud.*;
-import com.kritter.postimpression.entity.Request;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
+import com.kritter.entity.postimpression.entity.Request;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.urlreader.impl.*;
 import com.kritter.postimpression.utils.PostImpressionUtils;
@@ -37,8 +37,8 @@ import com.kritter.utils.common.ConversionUrlData;
 import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.cookie_sync.common.CookieSyncManager;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -171,7 +171,7 @@ public class EventURLProcessorJob implements Job
     {
         this.name = name;
         this.loggerName = loggerName;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
         this.uriKey = uriKey;
         this.clickUrlReader = clickUrlReader;
@@ -286,10 +286,10 @@ public class EventURLProcessorJob implements Job
         }
 
         if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CLICK
+                POSTIMPRESSION_EVENT_URL_PREFIX.CLICK
                 .getUrlIdentifierPrefix()) || 
         		( (postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
                         .getUrlIdentifierPrefix())) && (NoFraudPostImpEvents.clk == postImpressionRequest.getNfrdpType())))
         {
              /*Use property from instance to see if double underscores need to be replaced.*/
@@ -302,7 +302,7 @@ public class EventURLProcessorJob implements Job
             {
             	ONLINE_FRAUD_REASON onlineFraudReason = null;
             	if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
                         .getUrlIdentifierPrefix())){
             		
             		if(this.nofraudParamUrlReader == null){
@@ -533,7 +533,7 @@ public class EventURLProcessorJob implements Job
                 logger.error("Exception inside EventURLProcessorJob", e);
             }
         }else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.MACRO_CLICK
+                POSTIMPRESSION_EVENT_URL_PREFIX.MACRO_CLICK
                 .getUrlIdentifierPrefix()))
         {
              /*Use property from instance to see if double underscores need to be replaced.*/
@@ -672,16 +672,16 @@ public class EventURLProcessorJob implements Job
         }
         //in case of csc write one by one pixel gif image.
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CSC
+                POSTIMPRESSION_EVENT_URL_PREFIX.CSC
                 .getUrlIdentifierPrefix()) || ( (postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
                         .getUrlIdentifierPrefix())) && (NoFraudPostImpEvents.csc == postImpressionRequest.getNfrdpType())))
         {
             try
             {
             	ONLINE_FRAUD_REASON onlineFraudReason = null;
             	if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
                         .getUrlIdentifierPrefix())){
             		if(this.nofraudParamUrlReader == null){
             			logger.error("nofraudParamUrlReader is null inside EventURLProcessorJob");
@@ -958,7 +958,7 @@ public class EventURLProcessorJob implements Job
          * CONVERSION FEEDBACK EVENT BASED ON S2S API CALL.
          **/
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CONVERSION_FEEDBACK
+                POSTIMPRESSION_EVENT_URL_PREFIX.CONVERSION_FEEDBACK
                 .getUrlIdentifierPrefix()))
         {
             /*Use property from instance to see if double underscores need to be replaced.*/
@@ -1001,7 +1001,7 @@ public class EventURLProcessorJob implements Job
          *
          * */
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.COOKIE_BASED_CONV_JS
+                POSTIMPRESSION_EVENT_URL_PREFIX.COOKIE_BASED_CONV_JS
                 .getUrlIdentifierPrefix()))
         {
              /*Use property from instance to see if double underscores need to be replaced.*/
@@ -1029,16 +1029,16 @@ public class EventURLProcessorJob implements Job
             }
         }
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.WIN_NOTIFICATION
+                POSTIMPRESSION_EVENT_URL_PREFIX.WIN_NOTIFICATION
                 .getUrlIdentifierPrefix()) || ( (postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
                         .getUrlIdentifierPrefix())) && (NoFraudPostImpEvents.win == postImpressionRequest.getNfrdpType())))
         {
             try
             {
             	ONLINE_FRAUD_REASON onlineFraudReason = null;
             	if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                        PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
+                        POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP
                         .getUrlIdentifierPrefix())){
             		if(this.nofraudParamUrlReader == null){
             			logger.error("nofraudParamUrlReader is null inside EventURLProcessorJob");
@@ -1070,7 +1070,7 @@ public class EventURLProcessorJob implements Job
             }
         }
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.WIN_API_NOTIFICATION
+                POSTIMPRESSION_EVENT_URL_PREFIX.WIN_API_NOTIFICATION
                 .getUrlIdentifierPrefix()))
         {
             try
@@ -1093,7 +1093,7 @@ public class EventURLProcessorJob implements Job
             }
         }
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.INT_EXCHANGE_WIN
+                POSTIMPRESSION_EVENT_URL_PREFIX.INT_EXCHANGE_WIN
                 .getUrlIdentifierPrefix()))
         {
             try
@@ -1116,7 +1116,7 @@ public class EventURLProcessorJob implements Job
             }
         }
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.TEVENT
+                POSTIMPRESSION_EVENT_URL_PREFIX.TEVENT
                 .getUrlIdentifierPrefix()))
         {
             try
@@ -1138,11 +1138,11 @@ public class EventURLProcessorJob implements Job
             }
             catch(Exception e)
             {
-                logger.error("Exception inside EventURLProcessorJob while processing win notification url",e);
+                logger.error("Exception inside EventURLProcessorJob while processing tracking event notification url",e);
             }
         }
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.BEVENT
+                POSTIMPRESSION_EVENT_URL_PREFIX.BEVENT
                 .getUrlIdentifierPrefix()))
         {
             try
@@ -1168,7 +1168,7 @@ public class EventURLProcessorJob implements Job
             }
         }
         else if(postImpressionRequest.getPostImpressionEvent().getUrlIdentifierPrefix().equals(
-                PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.USR
+                POSTIMPRESSION_EVENT_URL_PREFIX.USR
                         .getUrlIdentifierPrefix()))
         {
             if(this.usrUrlReader == null || this.usrEnricherFraudProcessor == null) {

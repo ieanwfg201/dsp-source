@@ -16,13 +16,16 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.winner.WinEntity;
+import com.kritter.exchange.dsp.util.BidRequestModifier;
 import com.kritter.exchange.formatting.FormatDspResponse;
 import com.kritter.exchange.request_openrtb_2_3.converter.v1.Convert;
 import com.kritter.exchange.response_openrtb_2_3.converter.v1.ConvertResponse;
 import com.kritter.fanoutinfra.apiclient.common.KHttpClient;
+import com.kritter.fanoutinfra.apiclient.common.KHttpResponse;
 import com.kritter.fanoutinfra.apiclient.ning.NingClient;
 import com.kritter.fanoutinfra.executorservice.common.KExecutor;
 import com.kritter.formatterutil.CreativeFormatterUtils;
+import com.kritter.utils.common.CookieUtils;
 import com.kritter.utils.common.ServerConfig;
 import com.kritter.auction_strategies.common.KAuction;
 import com.kritter.auction_strategies.second_price.SecondPriceAuction;
@@ -33,12 +36,12 @@ import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
 
-import com.kritter.utils.common.dsp.BidRequestModifier;
+import com.kritter.utils.uuid.mac.UUIDGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -74,6 +77,14 @@ public class ExchangeJob implements Job
     private ThirdPartyConnectionDSPMappingCache thirdPartyConnectionDSPMappingCache;
     private DSPAndAdvertiserMappingCache dspAndAdvertiserMappingCache;
     private Map<String,BidRequestModifier> bidRequestModifierMap;
+    private UUIDGenerator uuidGenerator;
+    private String cookieExchangeUserId;
+    private int cookieExpiryInSeconds;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
+
     public ExchangeJob(
                         String loggerName,
                         String jobName,
@@ -90,11 +101,13 @@ public class ExchangeJob implements Job
                         AccountCache accountCache,
                         IABCategoriesCache iabCategoriesCache,
                         ServerConfig serverConfig,
-                        String exchange_rule_var
+                        String exchange_rule_var,
+                        String cookieExchangeUserId,
+                        int cookieExpiryInSeconds
                       )
     {
         this.loggerName = loggerName;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.jobName = jobName;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;
@@ -103,13 +116,16 @@ public class ExchangeJob implements Job
         this.requestConvertversion = requestConvertversion;
         this.errorOrEmptyResponse = errorOrEmptyResponse;
         this.maxConnectionPerHost = maxConnectionPerHost;
-        this.maxConnection = maxConnectionPerHost;
+        this.maxConnection = maxConnection;
         this.auctionStrategy= auctionStrategy;
         this.accountCache = accountCache;
         this.iabCategoriesCache = iabCategoriesCache;
         this.exchangeInternalWinUrl = serverConfig.getValueForKey(ServerConfig.EXCHANGE_INTERNAL_WIN_API_URL_PREFIX);
         this.secretKey = secretKey;
         this.exchange_rule_var = exchange_rule_var;
+        this.uuidGenerator = new UUIDGenerator();
+        this.cookieExchangeUserId = cookieExchangeUserId;
+        this.cookieExpiryInSeconds = cookieExpiryInSeconds;
     }
 
     public ExchangeJob(
@@ -132,11 +148,13 @@ public class ExchangeJob implements Job
                         PrivateMarketPlaceDealCache privateMarketPlaceDealCache,
                         ThirdPartyConnectionDSPMappingCache thirdPartyConnectionDSPMappingCache,
                         DSPAndAdvertiserMappingCache dspAndAdvertiserMappingCache,
-                        Map<String,BidRequestModifier> bidRequestModifierMap
+                        Map<String,BidRequestModifier> bidRequestModifierMap,
+                        String cookieExchangeUserId,
+                        int cookieExpiryInSeconds
                       )
     {
         this.loggerName = loggerName;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.jobName = jobName;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;
@@ -145,7 +163,7 @@ public class ExchangeJob implements Job
         this.requestConvertversion = requestConvertversion;
         this.errorOrEmptyResponse = errorOrEmptyResponse;
         this.maxConnectionPerHost = maxConnectionPerHost;
-        this.maxConnection = maxConnectionPerHost;
+        this.maxConnection = maxConnection;
         this.auctionStrategy= auctionStrategy;
         this.accountCache = accountCache;
         this.iabCategoriesCache = iabCategoriesCache;
@@ -156,6 +174,9 @@ public class ExchangeJob implements Job
         this.thirdPartyConnectionDSPMappingCache = thirdPartyConnectionDSPMappingCache;
         this.dspAndAdvertiserMappingCache = dspAndAdvertiserMappingCache;
         this.bidRequestModifierMap = bidRequestModifierMap;
+        this.uuidGenerator = new UUIDGenerator();
+        this.cookieExchangeUserId = cookieExchangeUserId;
+        this.cookieExpiryInSeconds = cookieExpiryInSeconds;
     }
     @Override
     public String getName()
@@ -280,12 +301,17 @@ public class ExchangeJob implements Job
                 	createExchangeThrift.setFormatId((short)CreativeFormat.BANNER.getCode());
             }
             
+            /*keep one map for type of request methods per dsp*/
+            Map<String,KHttpClient.REQUEST_METHOD> requestMethodPerDsp = new HashMap<String,KHttpClient.REQUEST_METHOD>();
 
-            
             for(ResponseAdInfo responseAdInfo: responseAdInfoSet)
             {
                 AccountEntity advEntity = this.accountCache.query(responseAdInfo.getAdvertiserGuid());
-
+                BidRequestModifier<Object> bidRequestModifierForMethod = null;
+                if(null != this.bidRequestModifierMap)
+                    bidRequestModifierForMethod = this.bidRequestModifierMap.get(responseAdInfo.getAdvertiserGuid());
+                if(null != bidRequestModifierForMethod)
+                    requestMethodPerDsp.put(responseAdInfo.getAdvertiserGuid(),bidRequestModifierForMethod.getRequestMethod());
                 /****************************First form bid request as per the version required***********************/
                 BidRequestParentNodeDTO bidRequestParentNodeDtoTwoDotThree = null;
                 com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO
@@ -295,6 +321,11 @@ public class ExchangeJob implements Job
                 {
                     logger.error("There is no open rtb version required defined for advid: {} ,skipping calling dsp",
                                   advEntity.getGuid());
+                    if(request.isRequestForSystemDebugging()){
+                        request.addDebugMessageForTestRequest("skipping calling dsp. There is no open rtb version required defined for advid: "
+                        		+
+                                advEntity.getGuid());
+                    }
                     continue;
                 }
 
@@ -303,7 +334,8 @@ public class ExchangeJob implements Job
                 	if(request.isAggregatorOpenRTB()){
                 		bidRequestParentNodeDtoTwoDotThree = request.getOpenrtbObjTwoDotThree();
                 	}else{
-                		bidRequestParentNodeDtoTwoDotThree = convertRequest2_3.convert(request, this.requestConvertversion, pubEntity, this.iabCategoriesCache,advEntity);
+                		bidRequestParentNodeDtoTwoDotThree = convertRequest2_3.convert(request,
+                                this.requestConvertversion, pubEntity, this.iabCategoriesCache,advEntity);
                 	}
 
                     /*Add deal object to parent bid request if applicable.*/
@@ -327,8 +359,7 @@ public class ExchangeJob implements Job
                         bidRequestParentNodeDtoTwoDotThree = bidRequestModifier.modifyBidRequest(bidRequestParentNodeDtoTwoDotThree);
                     /*****************************Bid modification completed**************************************/
 
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+
                     JsonNode jsonNode = objectMapper.valueToTree(bidRequestParentNodeDtoTwoDotThree);
 
                     if (jsonNode == null) {
@@ -354,12 +385,8 @@ public class ExchangeJob implements Job
                 }
                 else if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_2.getCode())
                 {
-                    bidRequestParentNodeDtoTwoDotTwo = convertRequest2_2.convert(
-                                                                                 request,
-                                                                                 this.requestConvertversion,
-                                                                                 pubEntity,
-                                                                                 this.iabCategoriesCache
-                                                                                );
+                    bidRequestParentNodeDtoTwoDotTwo = convertRequest2_2.convert( request, this.requestConvertversion,
+                            pubEntity, this.iabCategoriesCache, advEntity);
 
                     /*Add deal object to parent bid request if applicable.*/
                     addPMPEntityToParentBidRequestVersion2_2(bidRequestParentNodeDtoTwoDotTwo,dealsForSite,advEntity,responseAdInfo.getAdId());
@@ -382,8 +409,6 @@ public class ExchangeJob implements Job
                         bidRequestParentNodeDtoTwoDotTwo = bidRequestModifier.modifyBidRequest(bidRequestParentNodeDtoTwoDotTwo);
                     /*****************************Bid modification completed**************************************/
 
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
                     JsonNode jsonNode = objectMapper.valueToTree(bidRequestParentNodeDtoTwoDotTwo);
 
                     if (jsonNode == null) {
@@ -424,6 +449,15 @@ public class ExchangeJob implements Job
                 }
             }
 
+            // If site platform is wap or mobile web, drop a cookie on the browser.
+            if(request.getSite().getSitePlatform() == 1 || request.getSite().getSitePlatform() == 2) {
+                if(request.getUserId() == null) {
+                    String advertisingCookie = this.uuidGenerator.generateUniversallyUniqueIdentifier().toString();
+                    CookieUtils.setCookie(httpServletResponse, this.logger, this.cookieExchangeUserId,
+                            advertisingCookie, cookieExpiryInSeconds);
+                }
+            }
+
             if(dspGuidUrlMap.size() < 1){
                 logger.info("ExchangeJob: dspGuidUrlMap size < 1");
                 if(request.isRequestForSystemDebugging()){
@@ -434,7 +468,7 @@ public class ExchangeJob implements Job
                 return;
             }
             
-            KExecutor kexecutor = KExecutor.getKExecutor(loggerName);
+            KExecutor kexecutor = KExecutor.getSingletonInstanceNonBlocking(loggerName);
             if(kexecutor == null){
                 logger.info("ExchangeJob: kexecutor is null ");
                 if(request.isRequestForSystemDebugging()){
@@ -446,14 +480,14 @@ public class ExchangeJob implements Job
                 request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
-            Map<String,String> advResponseMap= null;
+            Map<String,KHttpResponse> advResponseMap= null;
 
             /*This is where open rtb bid request payload is sent to external bidder*/
             if(ExchangeConstants.ningApiClient.equals(httpClientName)){
                 KHttpClient k = new NingClient(loggerName);
-                advResponseMap = kexecutor.call(dspGuidUrlMap, k, bidRequestPayloadPerDSP,
+                advResponseMap = kexecutor.callNonBlocking(dspGuidUrlMap, k, bidRequestPayloadPerDSP,
                                                 requestTimeoutMillis, this.maxConnectionPerHost,
-                                                this.maxConnection);
+                                                this.maxConnection,requestMethodPerDsp);
             }else{
                 logger.info("ExchangeJob: httpClientName NF {} ",httpClientName);
                 if(request.isRequestForSystemDebugging()){
@@ -465,6 +499,7 @@ public class ExchangeJob implements Job
                 request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
+            /**Check if total map is empty or null then mark as empty for all DSP*/
             if(advResponseMap == null || advResponseMap.size() < 1){
                 logger.info("ExchangeJob: advResponseMap == null || advResponseMap.size() < 1");
                 if(request.isRequestForSystemDebugging()){
@@ -472,9 +507,45 @@ public class ExchangeJob implements Job
                 }
                 emptyExchangeAds = true;
                 request.setNoFillReason(NoFillReason.EX_OD_RESP_EMPTY);
-                createExchangeThrift.updateAllTimeOut();
+                createExchangeThrift.updateAllEmpty();
                 request.setCreateExchangeThrift(createExchangeThrift);
                 return;
+            }
+            else if(null != advResponseMap && advResponseMap.size() > 0)
+            {
+                boolean noResponseAtAll = true;
+                logger.info("ExchangeJob: advResponseMap is available and advResponseMap.size() > 0");
+                if(request.isRequestForSystemDebugging())
+                {
+                    request.addDebugMessageForTestRequest("ExchangeJob: advResponseMap is available and advResponseMap.size() > 0");
+                }
+                for(String keyAdvGuid : advResponseMap.keySet())
+                {
+                    KHttpResponse kHttpResponse = advResponseMap.get(keyAdvGuid);
+
+                    if(kHttpResponse.getResponseStatusCode() == 504)
+                        createExchangeThrift.updateDSPTimeOut(keyAdvGuid);
+
+                    else if(
+                            kHttpResponse.getResponseStatusCode() == 200 &&
+                            (null == kHttpResponse.getResponsePayload()  || "".equals(kHttpResponse.getResponsePayload()))
+                           )
+                        createExchangeThrift.updateDSPEmptyResponse(keyAdvGuid);
+                    else if(
+                            kHttpResponse.getResponseStatusCode() == 200 &&
+                            null != kHttpResponse.getResponsePayload()   &&
+                            !"".equals(kHttpResponse.getResponsePayload())
+                           )
+                        noResponseAtAll = false;
+                }
+
+                if(noResponseAtAll)
+                {
+                    emptyExchangeAds = true;
+                    request.setNoFillReason(NoFillReason.EX_OD_RESP_EMPTY);
+                    request.setCreateExchangeThrift(createExchangeThrift);
+                    return;
+                }
             }
 
             /*Keep map for responses as per the open rtb version.*/
@@ -491,7 +562,7 @@ public class ExchangeJob implements Job
                 AccountEntity advEntity = this.accountCache.query(key);
                 if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_3.getCode())
                 {
-                    BidResponseEntity bidResponseEntity2_3 = convertResponse2_3.convert(advResponseMap.get(key));
+                    BidResponseEntity bidResponseEntity2_3 = convertResponse2_3.convert(advResponseMap.get(key).getResponsePayload());
                     if(bidResponseEntity2_3 == null){
                         logger.info("ExchangeJob: bidResponseEntity for adv {}",key);
                         if(request.isRequestForSystemDebugging()){
@@ -503,34 +574,27 @@ public class ExchangeJob implements Job
                 }
                 else if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_2.getCode())
                 {
-                    com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity bidResponseEntity2_2 = convertResponse2_2.convert(advResponseMap.get(key));
-                    if(bidResponseEntity2_2 == null){
+                    com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity bidResponseEntity2_2 =
+                                                            convertResponse2_2.convert(advResponseMap.get(key).getResponsePayload());
+                    if(bidResponseEntity2_2 == null)
+                    {
                         logger.info("ExchangeJob: bidResponseEntity for adv {}",key);
-                        if(request.isRequestForSystemDebugging()){
+                        if(request.isRequestForSystemDebugging())
+                        {
                             request.addDebugMessageForTestRequest("ExchangeJob: bidResponseEntity for adv " + key);
                         }
-                    }else {
+                    }
+                    else
+                    {
                         advBidResponseMap2_2.put(key, bidResponseEntity2_2);
                     }
                 }
             }
 
-            if(advBidResponseMap2_3.size()<1 && advBidResponseMap2_2.size()<1){
-                logger.info("ExchangeJob: advBidResponseMap.size()<1");
-                if(request.isRequestForSystemDebugging()){
-                    request.addDebugMessageForTestRequest("ExchangeJob: advBidResponseMap.size()<1");
-                }
-                emptyExchangeAds = true;
-                request.setNoFillReason(NoFillReason.EX_OD_BID_RESP_EMPTY);
-                createExchangeThrift.updateAllTimeOut();
-                request.setCreateExchangeThrift(createExchangeThrift);
-                return;
-            }
-
             WinEntity winEntity2_3 = null;
             WinEntity winEntity2_2 = null;
             WinEntity winEntity = null;
-            createExchangeThrift.updateAllTimeOut();
+
             if(ExchangeConstants.auction_strategy_second_price.equals(auctionStrategy))
             {
                 KAuction auction = new SecondPriceAuction();
@@ -595,16 +659,14 @@ public class ExchangeJob implements Job
             }
             if(request.isRequestForSystemDebugging() && winEntity != null){
                 request.addDebugMessageForTestRequest("ExchangeJob BIDRESPONSE");
-                ObjectMapper objectMapper1 = new ObjectMapper();
-                objectMapper1.setSerializationInclusion(Inclusion.NON_NULL);
                 if(null != winEntity.getWinnerBidResponse2_3())
                 {
-                    JsonNode jsonNode1 = objectMapper1.valueToTree(winEntity.getWinnerBidResponse2_3());
+                    JsonNode jsonNode1 = objectMapper.valueToTree(winEntity.getWinnerBidResponse2_3());
                     request.addDebugMessageForTestRequest(jsonNode1.toString());
                 }
                 else if(null != winEntity.getWinnerBidResponse2_2())
                 {
-                    JsonNode jsonNode1 = objectMapper1.valueToTree(winEntity.getWinnerBidResponse2_2());
+                    JsonNode jsonNode1 = objectMapper.valueToTree(winEntity.getWinnerBidResponse2_2());
                     request.addDebugMessageForTestRequest(jsonNode1.toString());
                 }
             }
@@ -637,17 +699,21 @@ public class ExchangeJob implements Job
             }
         }finally{
             try {
-                if(emptyExchangeAds){
+                if(emptyExchangeAds && !passback){
                     emptyExchangeAds(response);
                 }
                 if(defaultToKritter || (passback==true && fill==false )){
+                    Set<ResponseAdInfo> newResponseAdInfo  = new HashSet<ResponseAdInfo>();
+                    response.setResponseAdInfo(newResponseAdInfo);
+                    Set<String> shortlistedAd = new HashSet<String>();
+                    response.setShortlistedAdIdSet(shortlistedAd);
                     context.setValue(this.exchange_rule_var,1);
                 }else{
                     context.setValue(this.exchange_rule_var,2);
                     if(request.isRequestForSystemDebugging()){
-                        writeResponseToUser(httpServletResponse,request.getDebugRequestBuffer().toString(),responseCode);
+                        writeResponseToUser(httpServletResponse,request.getDebugRequestBuffer().toString(),responseCode,true);
                     }else{
-                        writeResponseToUser(httpServletResponse,formattedResponse,responseCode);
+                        writeResponseToUser(httpServletResponse,formattedResponse,responseCode,false);
                     }
                 }
             } catch (IOException e) {
@@ -672,10 +738,18 @@ public class ExchangeJob implements Job
     
     private void writeResponseToUser(HttpServletResponse httpServletResponse,
             String content,
-            int responseCode) throws IOException {
+            int responseCode,boolean isRequestforSystemDebugging) throws IOException {
 
         httpServletResponse.setStatus(responseCode);
         if(responseCode==HttpServletResponse.SC_NO_CONTENT){
+        	if(isRequestforSystemDebugging){
+        		 OutputStream os = httpServletResponse.getOutputStream();
+        	        if(null == content)
+        	            content = errorOrEmptyResponse;
+        	        os.write(content.getBytes());
+        	        os.flush();
+        	        os.close();
+        	}
             return;
         }
         OutputStream os = httpServletResponse.getOutputStream();

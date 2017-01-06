@@ -16,8 +16,9 @@ import com.kritter.user.thrift.struct.ImpressionEvent;
 import com.kritter.user.thrift.struct.RecentImpressionHistory;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import java.util.*;
 
@@ -39,7 +40,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
                               RecentHistoryProvider recentHistoryProvider,
                               String adNoFillReasonMapKey) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.recentHistoryProvider = recentHistoryProvider;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
@@ -151,7 +152,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
         result[0] = maxCap;
         result[1] = timeWindowInHour;
         ReqLog.debugWithDebugNew(logger, request, "Ad id : {} specifies impression cap, maximum cap = {} and time " +
-                "window = {}.", maxCap, timeWindowInHour);
+                "window = {}.", adEntity.getAdIncId() ,maxCap, timeWindowInHour);
         return result;
     }
 
@@ -239,7 +240,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
         if(kritterUserId == null || null == recentHistoryProvider) {
             Set<Integer> frequencyCappedAds = getFrequencyCappedAds(adIdSet, request);
             for(Integer adId : frequencyCappedAds) {
-                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(),
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, NoFillReason.USER_ID_ABSENT.getValue(),
                         this.adNoFillReasonMapKey, context);
             }
 
@@ -253,7 +254,7 @@ public class FrequencyCapFilter implements TargetingMatcher {
 
             Set<Integer> shortlistedAdIdSet = getNonFrequencyCappedAds(adIdSet, request);
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
-                request.setNoFillReason(noFillReason);
+                request.setNoFillReason(NoFillReason.USER_ID_ABSENT);
             return shortlistedAdIdSet;
         }
 

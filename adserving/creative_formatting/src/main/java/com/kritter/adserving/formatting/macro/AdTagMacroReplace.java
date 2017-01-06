@@ -253,6 +253,20 @@ public class AdTagMacroReplace {
                             strTemp = StringUtils.replace(strTemp,ADTagMacros.REFERER.getName(),defaultReplace);
                         }
                     	break;
+                    case EXTAPPID:
+                        if(request.getSite() != null && request.getSite().getExternalSupplyId() != null){
+                            strTemp = StringUtils.replace(strTemp,ADTagMacros.EXTAPPID.getName(),quote+request.getSite().getExternalSupplyId()+quote);
+                        }else{
+                            strTemp = StringUtils.replace(strTemp,ADTagMacros.EXTAPPID.getName(),defaultReplace);
+                        }
+                        break;
+                    case EXTSITEID:
+                        if(request.getSite() != null && request.getSite().getExternalSupplyId() != null){
+                            strTemp = StringUtils.replace(strTemp,ADTagMacros.EXTSITEID.getName(),quote+request.getSite().getExternalSupplyId()+quote);
+                        }else{
+                            strTemp = StringUtils.replace(strTemp,ADTagMacros.EXTSITEID.getName(),defaultReplace);
+                        }
+                        break;
                     case IMEI:
                     	if(!userIdPopulated){
                     		useridMap=getUserId(request.getExternalUserIds());

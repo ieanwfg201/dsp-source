@@ -125,6 +125,8 @@ CHANNEL_MISMATCH = 96,           /*Channel Targeting fail*/
 VIDEO_DEMAND_PROPS_NF= 97,       /*VideoDemandProps Absent*/
 VIDEO_SUPPLY_PROPS_NF= 98,       /*VideoSupplyProps Absent*/
 USER_ID_INC_EXC_FILTER = 99,     /*User Id Inclusion/Exclusion filter applied*/
+SSL_TRAFFIC_FILTER = 100,        /* Ad landing page is not https and the traffic is ssl enabled */
+USER_ID_ABSENT = 101,            /* Ad is user targeted but user id is not present in the request */
 }
 
 /**
@@ -237,4 +239,5 @@ struct AdservingRequestResponse {
 58: optional i32 channelId,     /*channel internal id*/
 59: optional double bidFloor,   /*bid floor of ad-request,for network supply either from api request or from site,in ad-exchange case from bidrequest*/
 60: optional map<string,double> dsp_bid_price, /*map of dsp guid and bid price offered by them during auction/pmp-deal*/
+61: optional list<string> deal_ids, /*list of deal ids that were present in the bid request of an ad-exchange*/
 }

@@ -10,7 +10,7 @@ import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
 import lombok.Getter;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

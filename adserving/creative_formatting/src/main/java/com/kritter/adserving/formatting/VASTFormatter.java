@@ -10,8 +10,8 @@ import com.kritter.constants.ExternalUserIdType;
 import com.kritter.constants.VideoBidResponseProtocols;
 import com.kritter.constants.VideoMimeTypes;
 import com.kritter.utils.common.ApplicationGeneralUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
@@ -52,7 +52,7 @@ public class VASTFormatter implements CreativesFormatter{
                          AdEntityCache adEntityCache,
                          ServerConfig serverConfig)
     {
-		this.logger = LoggerFactory.getLogger(loggerName);
+		this.logger = LogManager.getLogger(loggerName);
 		this.loggerName = loggerName;
 		this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
 		this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);

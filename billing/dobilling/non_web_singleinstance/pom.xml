@@ -25,8 +25,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>com.kritter.utils.pub_payout_serde</groupId>
-      <artifactId>kritter_utils_pub_payout_serde</artifactId>
+  <groupId>com.kritter.billing.pub_payout_serde</groupId>
+  <artifactId>kritter_billing_pub_payout_serde</artifactId>
       <version>1.0.0</version>
     </dependency>
     <dependency>

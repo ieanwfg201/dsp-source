@@ -179,6 +179,11 @@ insert into marketplace (id,pricing,description,modified_by,created_on,last_modi
 (3,'CPD','Cost per download/Acquisition in dollars',1,now(),now(),false)
 ON DUPLICATE KEY UPDATE id = VALUES(id);
 
+insert into inclusion_exclusion_type (id, name) values
+(0, "None"),
+(1, "Inclusion"),
+(2, "Exclusion")
+ON DUPLICATE KEY UPDATE id = VALUES(id);
 
 insert into targeting_profile (
     guid,
@@ -779,12 +784,6 @@ insert into marketplace (id,pricing,description,modified_by,created_on,last_modi
 (-1,'NF','No Ad Found for Request',1,now(),now(),false)
 ON DUPLICATE KEY UPDATE id = VALUES(id);
 
-insert into inclusion_exclusion_type (id, name) values
-(0, "None"),
-(1, "Inclusion"),
-(2, "Exclusion")
-ON DUPLICATE KEY UPDATE id = VALUES(id);
-
 insert into payout_threshold_metadata (name, value) values
 ("campaign_absolute_payout_threshold", 2.5),
 ("campaign_percentage_payout_threshold", 0.10)
@@ -800,3 +799,48 @@ ON DUPLICATE KEY UPDATE guid = VALUES(guid);
 INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) values
 ('openx2_3','openx2_3',(select id from account where guid='openx2_3'),'openx2_3','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,'')
 ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+insert into account (guid,status,type_id,name,userid,password,email,address,country,city,phone,modified_by,created_on,last_modified,inventory_source, company_name) values
+('mopub2_3',1,2,'mopub2_3','mopub2_3','$2a$10$NRxVckXVGU0gzk77jIBIZOgdgUwoNwylRqHERcjBAPKv4pAhFokZu','mopub2_3@mopub.com','','United States','New York','0123456',1,now(),now(),2,'mopub')
+ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) values
+('mopub2_3','mopub2_3',(select id from account where guid='mopub2_3'),'mopub2_3','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,'')
+ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+-- The ids entered here should not conflict with the sql under creative_slot folder
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values
+(41,320,480,'',1,now(),now(),false),
+(42,480,320,'',1,now(),now(),false),
+(43,120,600,'',1,now(),now(),false),
+(44,468,60,'',1,now(),now(),false)
+ON DUPLICATE KEY UPDATE id = VALUES(id);
+
+update creative_attributes set value='Adobe Flash'  where id=17;
+
+insert into creative_attributes(id,value, modified_by,created_on,last_modified) values (91,'Banner Only', 1,now(),now());
+
+update creative_container set creative_attr = replace(creative_attr,'[17]','[91]');
+
+update creative_container set creative_attr = replace(creative_attr,'[17,','[91,');
+update creative_container set creative_attr = replace(creative_attr,',17]',',91]');
+update creative_container set creative_attr = replace(creative_attr,',17,',',91,');
+-- Mnaually verify all 17 has been replaced by 91
+
+update site set creative_attr_inc_exc = replace(creative_attr_inc_exc,'[17,','[91,');
+update site set creative_attr_inc_exc = replace(creative_attr_inc_exc,',17]',',91]');
+update site set creative_attr_inc_exc = replace(creative_attr_inc_exc,',17,',',91,');
+-- Mnaually verify all 17 has been replaced by 91
+
+insert into formats_attributes_mapping(creative_formats_id,creative_attributes_id,last_modified,modified_by) values(2,91,now(),1);
+insert into formats_attributes_mapping(creative_formats_id,creative_attributes_id,last_modified,modified_by) values(3,91,now(),1);
+
+insert into account (guid,status,type_id,name,userid,password,email,address,country,city,phone,modified_by,created_on,last_modified,inventory_source, company_name) values
+('bidswitch24',1,2,'bidswitch24','bidswitch24','$2a$10$NRxVckXVGU0gzk77jIBIZOgdgUwoNwylRqHERcjBAPKv4pAhFokZu','bidswitch24@bidswitch24.com','','United States','New York','0123456',1,now(),now(),2,'mopub')
+ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) values
+('bidswitch24','bidswitch24',(select id from account where guid='bidswitch24'),'bidswitch24','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,'')
+ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+

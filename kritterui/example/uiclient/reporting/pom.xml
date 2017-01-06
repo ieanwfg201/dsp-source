@@ -15,6 +15,16 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <version>0.3m</version>
     </dependency>
     <dependency>
+        <groupId>com.kritter.kritterui.example.uiclient.account</groupId>
+        <artifactId>kritter_kritterui_example_uiclient_account</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>com.kritter.kritterui.example.uiclient.common</groupId>
+        <artifactId>kritter_kritterui_example_uiclient_common</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.kritterui.api.entity</groupId>
         <artifactId>kritter_kritterui_api_entity</artifactId>
         <version>1.0.0</version>

@@ -15,8 +15,8 @@ import com.kritter.serving.demand.entity.TargetingProfile;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -35,7 +35,7 @@ public class SupplyInclusionExclusionTargetingMatcher implements TargetingMatche
                                                     ExternalSupplyAttributesCache externalSupplyAttributesCache,
                                                     String adNoFillReasonMapKey) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.externalSupplyAttributesCache = externalSupplyAttributesCache;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;

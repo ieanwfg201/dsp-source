@@ -4,8 +4,8 @@ import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.constants.ExternalUserIdType;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.kritter.entity.formatter_entity.creative.FormatCreative;
 import com.kritter.entity.reqres.entity.Request;
@@ -49,7 +49,7 @@ public class JSONFormatter implements CreativesFormatter{
                          CreativeSlotCache creativeSlotCache,
                          ServerConfig serverConfig)
     {
-		this.logger = LoggerFactory.getLogger(loggerName);
+		this.logger = LogManager.getLogger(loggerName);
 		this.loggerName = loggerName;
 		this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
 		this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);

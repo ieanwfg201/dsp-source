@@ -12,13 +12,7 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.reqres.log.ReqLog;
-import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateBlockedCreativeType;
-import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateCreativeAttribute;
-import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateCreativeSize;
-import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateFloorPrice;
-import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateNative;
-import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateRichMediaType;
-import com.kritter.adserving.shortlisting.core.twodotthreehelper.ValidateVideo;
+import com.kritter.adserving.shortlisting.core.openrtbhelper.*;
 import com.kritter.common.caches.advinfo_upload_cache.AdvInfoUploadCache;
 import com.kritter.common.caches.advinfo_upload_cache.entity.AdvInfoUploadCacheEntity;
 import com.kritter.common.caches.adxbasedexchanges_metadata_cache.AdxBasedExchangesMetadataCache;
@@ -38,8 +32,8 @@ import com.kritter.serving.demand.entity.*;
 import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.common.url.URLFieldProcessingException;
 import org.apache.commons.lang.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -98,7 +92,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                                                           AdxBasedExchangesMetadataCache adxBasedExchangeMetadataCache
                                                          )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.creativeBannerCache = creativeBannerCache;
         this.creativeCache = creativeCache;
         this.adEntityCache = adEntityCache;
@@ -494,18 +488,19 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                                     bannerId,creativeSlot.getCreativeSlotWidth(),
                                     creativeSlot.getCreativeSlotHeight(),width,height);
                         }
-                        	logger.debug("StrictBannerSize: {} , request interstitial : {} , isCreativeEqualToRequestSize: {}, isCreativeSizeLessThanEqualRequestSize:{} ",
-                                          strictBannerSize,request.isInterstitialBidRequest(),
-                                          isCreativeSlotEqualsRequestingSlot(creativeSlot,width,height),
-                                          isCreativeSlotFitForRequestingSlot(creativeSlot,width,height));
 
-                        	if(request.isRequestForSystemDebugging())
-                            {
-                        		request.addDebugMessageForTestRequest("StrictBannerSize: "+strictBannerSize+" , "
-                        				+ "request interstitial : "+request.isInterstitialBidRequest()+" , "
-                        						+ "isCreativeEqualToRequestSize: "+isCreativeSlotEqualsRequestingSlot(creativeSlot,width,height)+
-                        						", isCreativeSizeLessThanEqualRequestSize: "+isCreativeSlotFitForRequestingSlot(creativeSlot,width,height));
-                        	}
+                        logger.debug("StrictBannerSize: {} , request interstitial : {} , isCreativeEqualToRequestSize: {}, isCreativeSizeLessThanEqualRequestSize:{} ",
+                                      strictBannerSize,request.isInterstitialBidRequest(),
+                                      isCreativeSlotEqualsRequestingSlot(creativeSlot,width,height),
+                                      isCreativeSlotFitForRequestingSlot(creativeSlot,width,height));
+
+                        if(request.isRequestForSystemDebugging())
+                        {
+                            request.addDebugMessageForTestRequest("StrictBannerSize: "+strictBannerSize+" , "
+                                    + "request interstitial : "+request.isInterstitialBidRequest()+" , "
+                                            + "isCreativeEqualToRequestSize: "+isCreativeSlotEqualsRequestingSlot(creativeSlot,width,height)+
+                                            ", isCreativeSizeLessThanEqualRequestSize: "+isCreativeSlotFitForRequestingSlot(creativeSlot,width,height));
+                        }
                     }
 
                     if(!sizeCheckForBanner)
@@ -527,6 +522,8 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                 //if creative is richmedia then allow the creative if flow comes till here.
                 else if(creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
                 {
+                    logger.debug("Richmedia creative type being up for selection in CreativeAndFloorMatchingRTBExchangeTwoDotThree");
+
                     // Rich media not allowed, skip this ad.
                     if(!isRichmediaAllowed) {
                         AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
@@ -543,6 +540,28 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                         creativeFoundForRequestedSlot = false;
                     } else {
                         creativeFoundForRequestedSlot = true;
+                    }
+
+                    /* Set height and width for which richmedia ad found, since there is no check for
+                     * richmedia size against requesting width and height, so any value would do.
+                     * Use values from request.
+                     */
+                    logger.debug("Requesting width Array is null : {} and requesting height array is null : {} from" +
+                                 " bid request ",
+                                  (null == widthArrayForImpressionId) , (null == heightArrayForImpressionId));
+
+                    if(null != widthArrayForImpressionId && widthArrayForImpressionId.length > 0)
+                        responseAdInfo.setRequestingWidthForWhichCreativeFound(widthArrayForImpressionId[0]);
+
+                    if(null != heightArrayForImpressionId && heightArrayForImpressionId.length > 0)
+                        responseAdInfo.setRequestingHeightForWhichCreativeFound(heightArrayForImpressionId[0]);
+
+                    if(null != widthArrayForImpressionId && null != heightArrayForImpressionId &&
+                       widthArrayForImpressionId.length > 0 && heightArrayForImpressionId.length > 0)
+                    {
+                        logger.debug("Width value is: {} and height value is : {} from BidRequest",
+                                widthArrayForImpressionId[0],
+                                heightArrayForImpressionId[0]);
                     }
                 }
                 //if request did not have any size specified and is not richmedia creative then just
@@ -561,6 +580,8 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
 
                     // Banner allowed. Check further
                     creativeBannerToUse = creativeBannerCache.query(bannerUriIds[0]);
+                    CreativeSlot creativeSlot = creativeSlotCache.query(creativeBannerToUse.getSlotId());
+                    responseAdInfo.setCreativeSlot(creativeSlot);
                     creativeFoundForRequestedSlot = true;
                 }
 
@@ -586,9 +607,13 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotThree implements CreativeA
                     continue;
                 }
                 if(ValidateFloorPrice.validate(logger, request, bidRequestImpressionDTO, isBannerAllowed, 
-                        creativeBannerToUse, adEntity, responseAdInfo, isRichmediaAllowed, creative, response)){
+                                               creativeBannerToUse, adEntity, responseAdInfo, isRichmediaAllowed,
+                                               creative, response,creativeSlotCache))
+                {
                     floorPriceMet=true;
-                } else {
+                }
+                else
+                {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId,
                             NoFillReason.ECPM_FLOOR_UNMET.getValue(), this.adNoFillReasonMapKey, context);
 

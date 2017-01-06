@@ -10,6 +10,11 @@
     <name>device_wurfl</name>
     <dependencies>
         <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>metrics</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>2.0</version>

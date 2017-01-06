@@ -26,7 +26,9 @@ public enum ExternalUserIdType {
     MAC("mac", false), /*MAC address of the device; Clear Text*/
     UDID("udid", false), /*udid*/
     OPENUDID("oudid", false), /*OpenUdid*/
-    AAID("aaid", false) /*aaid*/;
+    AAID("aaid", false) /*aaid*/,
+    DSPBUYERUID("dspuid", true) /*In case when we're acting as an exchange, gives the userid for the DSP's who're the
+    buyers of impression*/;
 
     @Getter
     private String typeName;

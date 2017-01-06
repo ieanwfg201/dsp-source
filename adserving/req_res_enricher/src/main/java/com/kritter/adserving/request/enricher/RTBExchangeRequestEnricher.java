@@ -5,8 +5,8 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.req_logging.ReqLoggingCache;
 import com.kritter.req_logging.ReqLoggingCacheEntity;
 import com.kritter.utils.common.ApplicationGeneralUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -29,9 +29,9 @@ public class RTBExchangeRequestEnricher implements RequestEnricher
                                       String bidRequestLoggerName,
                                       ReqLoggingCache reqLoggingCache)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.rtbExchangeRequestReaderMap = rtbExchangeRequestReaderMap;
-        this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
+        this.bidRequestLogger = LogManager.getLogger(bidRequestLoggerName);
         this.reqLoggingCache = reqLoggingCache;
     }
 

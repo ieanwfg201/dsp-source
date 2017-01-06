@@ -7,8 +7,8 @@ import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.entity.user.userid.InternalUserIdCreator;
 import com.kritter.entity.user.userid.UserIdUpdator;
 import com.kritter.utils.common.ThreadLocalUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class UserIdUpdateJob implements Job {
                            String requestObjectKey,
                            InternalUserIdCreator internalUserIdCreator,
                            UserIdUpdator userIdUpdator) {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
         this.requestObjectKey = requestObjectKey;
         this.internalUserIdCreator = internalUserIdCreator;
@@ -44,7 +44,8 @@ public class UserIdUpdateJob implements Job {
         Request request = (Request)context.getValue(requestObjectKey);
 
         if(null == request) {
-            logger.error("Request, Response are null inside {}", this.name);
+            // logger.error("Request, Response are null inside {}", this.name);
+            context.setTerminated(true);
             return;
         }
 

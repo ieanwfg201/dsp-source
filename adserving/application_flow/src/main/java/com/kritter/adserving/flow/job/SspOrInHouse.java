@@ -23,8 +23,8 @@ import com.kritter.serving.demand.cache.CreativeCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
 import com.kritter.serving.demand.index.AdGuidIndex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,7 +62,7 @@ public class SspOrInHouse implements Job
     )
     {
 
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.jobName = jobName;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;

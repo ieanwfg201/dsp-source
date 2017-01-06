@@ -4,8 +4,8 @@ import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.util.Date;
@@ -19,7 +19,7 @@ import static junit.framework.Assert.assertEquals;
  */
 public class TestFileStatsReloadableCache
 {
-    private final static Logger logger = LoggerFactory.getLogger(TestFileStatsReloadableCache.class);
+    private final static Logger logger = LogManager.getLogger(TestFileStatsReloadableCache.class);
     private final long sysTime = new Date().getTime(), sysTime2 = sysTime + 2000L, sysTime3 = sysTime2 + 2000L;
 
     @Before

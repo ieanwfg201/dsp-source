@@ -20,6 +20,7 @@ import lombok.Setter;
 public class CreativeFormatEntity {
     private static final String CDATA_PREFIX                = "<![CDATA[";
     private static final String CDATA_SUFFIX                = "]]>";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Getter@Setter
     private String img; /** For Banner */
@@ -47,12 +48,10 @@ public class CreativeFormatEntity {
     private Double ecpmValue;
     
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static CreativeFormatEntity getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static CreativeFormatEntity getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

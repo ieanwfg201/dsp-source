@@ -1,7 +1,7 @@
 package com.kritter.postimpression.enricher_fraud;
 
+import com.kritter.constants.ONLINE_FRAUD_REASON;
 import com.kritter.core.workflow.Context;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils;
 
 /**
  * This interface is to be implemented by any class grouping
@@ -15,5 +15,5 @@ import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils;
 
 public interface OnlineEnricherAndFraudCheckGroupProcessor
 {
-    public OnlineFraudUtils.ONLINE_FRAUD_REASON performOnlineFraudChecks(Context context);
+    public ONLINE_FRAUD_REASON performOnlineFraudChecks(Context context);
 }

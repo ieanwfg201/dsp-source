@@ -1,9 +1,13 @@
 package com.kritter.api.entity.account;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+
 
 import com.kritter.api.entity.response.msg.Message;
 
@@ -58,6 +62,12 @@ public class AccountList {
     public void setMsg(Message msg) {
         this.msg = msg;
     }
+    public static AccountList getObject(String str) throws JsonParseException, JsonMappingException, IOException{
+        ObjectMapper objectMapper = new ObjectMapper();
+        AccountList entity = objectMapper.readValue(str, AccountList.class);
+        return entity;
+    }
+
     public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);

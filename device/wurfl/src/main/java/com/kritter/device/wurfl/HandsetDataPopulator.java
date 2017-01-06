@@ -17,8 +17,8 @@ import net.sourceforge.wurfl.core.WURFLEngine;
 import net.sourceforge.wurfl.core.WURFLUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,7 +95,7 @@ public class HandsetDataPopulator implements HandsetPopulationProvider
                                 ServerConfig serverConfig
                                ) throws Exception
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.sqlInsertQueriesBatchSize = sqlInsertQueriesBatchSize;
         this.wurflFilesDirectory = wurflFilesDirectory;
         this.jacksonObjectMapper = new ObjectMapper();

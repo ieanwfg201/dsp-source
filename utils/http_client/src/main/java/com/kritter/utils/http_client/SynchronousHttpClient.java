@@ -3,8 +3,8 @@ package com.kritter.utils.http_client;
 import com.kritter.utils.http_client.entity.HttpRequest;
 import com.kritter.utils.http_client.entity.HttpResponse;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class SynchronousHttpClient
         System.setProperty(KEEPALIVE_HTTP_SYSTEM_PROPERTY     ,"true");
         System.setProperty(MAXCONNECTIONS_HTTP_SYSTEM_PROPERTY,String.valueOf(maxConnectionsPerRoute));
 
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
     }
 
     public HttpResponse fetchResponseFromThirdPartyServer(HttpRequest httpRequest)

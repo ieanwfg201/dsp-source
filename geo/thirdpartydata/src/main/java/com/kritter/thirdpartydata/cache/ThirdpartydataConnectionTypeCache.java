@@ -8,8 +8,8 @@ import java.math.BigInteger;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentSkipListMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import com.kritter.abstraction.cache.abstractions.AbstractFileStatsReloadableCache;
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
@@ -29,9 +29,9 @@ public class ThirdpartydataConnectionTypeCache extends AbstractFileStatsReloadab
     private ConcurrentSkipListMap<BigInteger, ThirdpartydataConnectionType> connectionTypeMap;
 
     public ThirdpartydataConnectionTypeCache(String name, String loggerName, Properties properties) throws InitializationException {
-        super(LoggerFactory.getLogger(loggerName), properties);
+        super(LogManager.getLogger(loggerName), properties);
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
     }
 
     @Override

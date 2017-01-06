@@ -1,4 +1,9 @@
-@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String, state_city:String, mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String,deviceid_targeting:String)
+@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,
+	show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String, state_city:String, 
+	mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String,deviceid_targeting:String,
+	audience_targeting:String,audience_gender_targeting:String,audience_age_range_targeting:String,
+	audience_cat_targeting:String,audience_cattier1_targeting:String,audience_cattier2_targeting:String,
+	audience_cattier3_targeting:String,audience_cattier4_targeting:String,audience_cattier5_targeting:String)
 
 @main2("Create Targeting Profile") {@navs.navadvt(tpDisplay.getAccountGuid())}{@navs.breadcrumbs(tpDisplay.getBreadCrumbPaths())}{
 
@@ -165,6 +170,41 @@
 																			'_fileFilter -> ".csv"  ) 
                   </fieldset>
                 }
+                @if("true" == audience_targeting) {
+                	<fieldset>
+					 <legend>Audience</legend>
+					 @components.formElements.selectlist2(tpForm("audience_targeting"), "Audience Targeting Enabled", 
+                        services.MetadataAPI.yesNoOptions(), '_ngSync->true)
+					 <div id="audience_targeting" ng-show="audience_targeting=='true'" ng-if="audience_targeting=='true'">
+					 	@if("true" == audience_gender_targeting) {
+					 	@components.formElements.selectlist2(tpForm("audience_genderincl"), "Include(true)/Exclude(false) Gender", services.MetadataAPI.listIncTrue())
+					 	@components.formElements.multiselectlist3(tpForm("audience_gender"), '_label ->"Target Gender", '_row->true)
+					 	}
+					 	@if("true" == audience_age_range_targeting) {
+					 	@components.formElements.selectlist2(tpForm("audience_agerangeinc"), "Include(true)/Exclude(false) AgeRange", services.MetadataAPI.listIncTrue())
+					 	@components.formElements.multiselectlist3(tpForm("audience_agerange"), '_label ->"Target AgeRange", '_row->true)
+					 	}
+					 	@if("true" == audience_cat_targeting) {
+					 	@components.formElements.selectlist2(tpForm("audience_catinc"), "Include(true)/Exclude(false) Category", services.MetadataAPI.listIncTrue())
+					 		@if("true" == audience_cattier1_targeting) {
+					 		@components.formElements.multiselectlist3(tpForm("audience_tier1_cat"), '_label ->"Target Tier1 Category", '_row->true)
+					 		}
+					 		@if("true" == audience_cattier2_targeting) {
+					 		@components.formElements.multiselectlist3(tpForm("audience_tier2_cat"), '_label ->"Target Tier2 Category", '_row->true)
+					 		}
+					 		@if("true" == audience_cattier3_targeting) {
+					 		@components.formElements.multiselectlist3(tpForm("audience_tier3_cat"), '_label ->"Target Tier3 Category", '_row->true)
+					 		}
+					 		@if("true" == audience_cattier4_targeting) {
+					 		@components.formElements.multiselectlist3(tpForm("audience_tier4_cat"), '_label ->"Target Tier4 Category", '_row->true)
+					 		}
+					 		@if("true" == audience_cattier5_targeting) {
+					 		@components.formElements.multiselectlist3(tpForm("audience_tier5_cat"), '_label ->"Target Tier5 Category", '_row->true)
+					 		}
+					 	}
+					 </div>
+					</fieldset>
+                }	
                 @if("true" == mma_required){
 				 <fieldset>
 					 <legend>MMA</legend>

@@ -8,8 +8,8 @@ import com.kritter.adserving.request.enricher.RTBExchangeRequestEnricher;
 import com.kritter.adserving.request.enricher.RequestEnricher;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import com.kritter.constants.INVENTORY_SOURCE;
@@ -46,7 +46,7 @@ public class RequestProcessor
                             OpenRTBTwoDotThreeAggregatorRequestEnricher openrtbtwodotthreeRequestEnricher
                            )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.inventorySourceHeader = inventorySourceHeader;
         this.directPublisherRequestEnricher = directPublisherRequestEnricher;
         this.aggregatorRequestEnricher = aggregatorRequestEnricher;

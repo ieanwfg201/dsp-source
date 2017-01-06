@@ -22,17 +22,17 @@ public class AdExt {
     private HashSet<Integer> mma_tier1;
     @Getter@Setter
     private HashSet<Integer> mma_tier2;
-    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
     
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static AdExt getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
     public static AdExt getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

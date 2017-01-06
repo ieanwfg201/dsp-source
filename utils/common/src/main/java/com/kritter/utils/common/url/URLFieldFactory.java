@@ -2,6 +2,8 @@ package com.kritter.utils.common.url;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ public class URLFieldFactory
     private String generatedField;
     private int previousPositionForStringFields;
     private int secondCategoryFieldPosition;
+    private static final Logger logger = LogManager.getLogger("adserving.application");
 
     public URLFieldFactory()
     {
@@ -98,8 +101,11 @@ public class URLFieldFactory
             String value = (String)fieldValue;
 
             if((value.length() * 8) > urlField.getUrlFieldProperties().getLength())
-                throw new URLFieldProcessingException("String value " + value + " is not fitting inside size: " +
-                                                       urlField.getUrlFieldProperties().getLength());
+            {
+                logger.error("String value: {} is not fitting inside size: {} , skipping it in setting to URL fields " +
+                             "in URLFieldFactory",value,urlField.getUrlFieldProperties().getLength());
+                return;
+            }
 
             maxLength = (value.length() + 2) * 8;
 

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!-- Don't forget to set system property
+-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+     to make all loggers asynchronous. -->
+
+<!-- Configuration status is debug means print all startup messages to catalina while initiating log4j--> 
+<Configuration status="WARN">
+  <Appenders>
+
+    <!-- Async Loggers will auto-flush in batches, so switch off immediateFlush. -->
+    <RollingFile name="adserving.application.root.file" fileName="/var/log/kritter/adserving/adserving-server-root.log" 
+                 filePattern="/var/log/kritter/adserving/adserving-server-root.log.%d{yyyy-MM-dd-HH}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="adserving.application.file" fileName="/var/log/kritter/adserving/adserving-server-application.log" 
+                 filePattern="/var/log/kritter/adserving/adserving-server-application.log.%d{yyyy-MM-dd-HH}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="cache.logger.file" fileName="/var/log/kritter/adserving/adserving-cache.log" 
+                 filePattern="/var/log/kritter/adserving/adserving-cache.log.%d{yyyy-MM-dd-HH}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="workflow.logger.file" fileName="/var/log/kritter/adserving/adserving-workflow.log" 
+                 filePattern="/var/log/kritter/adserving/adserving-workflow.log.%d{yyyy-MM-dd-HH}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="adserving.thriftlog.file" fileName="/var/log/kritter/adserving/data/adserving-thrift.log" 
+                 filePattern="/var/log/kritter/adserving/data/adserving-thrift.log.%d{yyyy-MM-dd-HH-mm}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <!--Pattern><![CDATA[]]></Pattern-->
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="bid.req.logger.file" fileName="/var/log/kritter/adserving/raw_requests/bid.log" 
+                 filePattern="/var/log/kritter/adserving/raw_requests/bid.log.%d{yyyy-MM-dd-HH-mm}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="adserving.application.adx.file" fileName="/var/log/kritter/adserving/raw_requests/adserving-adx.log" 
+                 filePattern="/var/log/kritter/adserving/raw_requests/adserving-adx.log.%d{yyyy-MM-dd-HH-mm}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <!--Pattern><![CDATA[]]></Pattern-->
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="adstats.thriftlog.file" fileName="/var/log/kritter/adserving/adstats/adstats-thrift.log" 
+                 filePattern="/var/log/kritter/adserving/adstats/adstats-thrift.log.%d{yyyy-MM-dd-HH-mm}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <!--Pattern><![CDATA[]]></Pattern-->
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="exchange.thriftlog.file" fileName="/var/log/kritter/adserving/exchange/exchange-thrift.log" 
+                 filePattern="/var/log/kritter/adserving/exchange/exchange-thrift.log.%d{yyyy-MM-dd-HH-mm}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <!--Pattern><![CDATA[]]></Pattern-->
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+  </Appenders>
+
+  <Loggers>
+
+    <Logger name="adserving.application" level="DEBUG" additivity="false">
+        <AppenderRef ref="adserving.application.file"/>
+    </Logger>
+
+    <Logger name="cache.logger" level="DEBUG" additivity="false">
+        <AppenderRef ref="cache.logger.file"/>
+    </Logger>
+
+    <Logger name="workflow.logger" level="DEBUG" additivity="false">
+        <AppenderRef ref="workflow.logger.file"/>
+    </Logger>
+
+    <Logger name="adserving.thriftlog" level="DEBUG" additivity="false">
+        <AppenderRef ref="adserving.thriftlog.file"/>
+    </Logger>
+
+    <Logger name="bid.req.logger" level="DEBUG" additivity="false">
+        <AppenderRef ref="bid.req.logger.file"/>
+    </Logger>
+
+    <Logger name="adserving.application.adx" level="DEBUG" additivity="false">
+        <AppenderRef ref="adserving.application.adx.file"/>
+    </Logger>
+
+    <Logger name="adstats.thriftlog" level="DEBUG" additivity="false">
+        <AppenderRef ref="adstats.thriftlog.file"/>
+    </Logger>
+
+    <Logger name="exchange.thriftlog" level="DEBUG" additivity="false">
+        <AppenderRef ref="exchange.thriftlog.file"/>
+    </Logger>
+
+    <Logger name="adserving.root" level="DEBUG" additivity="false">
+        <AppenderRef ref="adserving.application.root.file"/>
+    </Logger>
+
+    <Root level="DEBUG" includeLocation="false">
+       <AppenderRef ref="adserving.application.root.file"/>
+    </Root>
+  </Loggers>
+  
+</Configuration>

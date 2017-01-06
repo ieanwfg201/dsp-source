@@ -74,7 +74,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>fraud</module>
     <module>userreport</module>
     <module>ad_stats</module>
-    <module>tracking_event</module>
     <module>ssp</module>
     <module>parent_account</module>
     <module>retargeting_segment</module>
@@ -84,6 +83,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>adxbasedexchanges_metadata</module>
     <module>payout_threshold</module>
     <module>qualification</module>
+    <module>audience_metadata</module>
+    <module>audience_definition</module>
   	<module>def</module>
     <module>manual</module>
     <module>deal</module>

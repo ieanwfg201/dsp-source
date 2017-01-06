@@ -2,8 +2,8 @@ package com.kritter.geo.entity.populator;
 
 import com.kritter.geo.common.ThirdPartyDataLoader;
 import com.kritter.utils.common.ServerConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 
@@ -40,7 +40,7 @@ public class DataLoaderExecutor
                               ServerConfig serverConfig
                              ) throws Exception
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.thirdPartyDataLoaderInstances = thirdPartyDataLoaders;
         this.dataLoadMasterNode = Boolean.valueOf(serverConfig.getValueForKey(dataLoadMasterNodeParam));
 

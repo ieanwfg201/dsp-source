@@ -11,8 +11,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.joda.time.DateTime;
 
 import java.util.*;
@@ -41,10 +41,10 @@ public class AdStatsCache extends AbstractStatsReloadableCache {
     public AdStatsCache(String name, String loggerName, String adStatsThriftLoggerName, int threadCount,
                         Properties properties)
             throws InitializationException {
-        super(LoggerFactory.getLogger(loggerName), properties);
+        super(LogManager.getLogger(loggerName), properties);
         this.name = name;
-        this.applicationLogger = LoggerFactory.getLogger(loggerName);
-        this.adStatsThriftLogger = LoggerFactory.getLogger(adStatsThriftLoggerName);
+        this.applicationLogger = LogManager.getLogger(loggerName);
+        this.adStatsThriftLogger = LogManager.getLogger(adStatsThriftLoggerName);
         this.readWriteLock = new ReentrantReadWriteLock();
         this.perHourRequests = new ConcurrentHashMap<Long, AtomicLong>();
         this.timestampToAdNofillReasonCountMap = new ConcurrentHashMap<Long, ConcurrentMap<Integer,

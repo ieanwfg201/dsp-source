@@ -23,8 +23,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.commons.codec.binary.Base64;
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
@@ -59,7 +59,7 @@ import javax.inject.Inject;
 * This class, and all nested classes / subclasses, are threadsafe.
 */
 public class DoubleClickCrypto {
-  private static final Logger logger = LoggerFactory.getLogger(DoubleClickCrypto.class);
+  private static final Logger logger = LogManager.getLogger(DoubleClickCrypto.class);
   public static final String KEY_ALGORITHM = "HmacSHA1";
 
   /** Initialization vector offset in the crypto package. */

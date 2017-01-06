@@ -20,7 +20,7 @@ import com.kritter.constants.MarketPlace;
 import com.kritter.postimpression.thrift.struct.PostImpressionEvent;
 import com.kritter.postimpression.thrift.struct.PostImpressionRequestResponse;
 import com.kritter.postimpression.thrift.struct.PostImpressionTerminationReason;
-import com.kritter.utils.dbconnector.DBConnector;
+import com.kritter.billing.dbconnector.DBConnector;
 
 public class DoBillingByFile {
 

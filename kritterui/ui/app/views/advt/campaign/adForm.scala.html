@@ -31,6 +31,7 @@
 						@components.formElements.hiddenfield(adForm("account_guid"))
 						@components.formElements.textinput(adForm("name"),'_label -> "Name *")
 						@components.formElements.textinput(adForm("landing_url"),'_label ->"Landing Url *")
+                        @components.formElements.selectlist2(adForm("protocol"),"LandingPageProtocols *", services.DataAPI.getProtocol() )						  
 						@if("true" == allow_adomain ){   						
 						  @components.formElements.textinput(adForm("adv_domain"),'_label ->"Advertiser Domain *")
 						}                       

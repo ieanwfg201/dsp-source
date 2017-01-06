@@ -5,8 +5,8 @@ import com.kritter.adserving.request.reader.RequestProcessor;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +23,7 @@ public class InitJob implements Job
     private RequestProcessor requestProcessor;
     private String isRequestForSystemDebuggingHeaderName;
     private String inventorySourceHeader;
+    private String sslRequestHeader;
 
     public InitJob(
                    String loggerName,
@@ -30,15 +31,17 @@ public class InitJob implements Job
                    String requestObjectKey,
                    RequestProcessor requestProcessor,
                    String isRequestForSystemDebuggingHeaderName,
-                   String inventorySourceHeader
+                   String inventorySourceHeader,
+                   String sslRequestHeader
                   )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = jobName;
         this.requestObjectKey = requestObjectKey;
         this.requestProcessor = requestProcessor;
         this.isRequestForSystemDebuggingHeaderName = isRequestForSystemDebuggingHeaderName;
         this.inventorySourceHeader = inventorySourceHeader;
+        this.sslRequestHeader = sslRequestHeader;
     }
 
     @Override
@@ -95,6 +98,15 @@ public class InitJob implements Job
                 {
                     request.setRequestAsDebugSystemForSupplyDemandMatching(false);
                 }
+            }
+
+            String sslRequest = httpServletRequest.getHeader(this.sslRequestHeader);
+            if(null != sslRequest) {
+                context.setValue(this.sslRequestHeader, Boolean.valueOf(sslRequest));
+                this.logger.debug("Value for secure request header : {} is {}", this.sslRequestHeader, sslRequest);
+            } else {
+                context.setValue(this.sslRequestHeader, false);
+                this.logger.debug("Value for secure request header : {} is false", this.sslRequestHeader);
             }
 
             this.logger.debug("Finished getting workflow request object from RequestProcessor,Enrichment complete.");
