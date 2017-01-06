@@ -15,6 +15,7 @@ import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.serving.demand.cache.CreativeBannerCache;
 import com.kritter.serving.demand.entity.Creative;
 import com.kritter.serving.demand.entity.CreativeBanner;
+import com.kritter.entity.reqres.entity.ResponseAdInfo;
 
 public class ValidateCreativeSize {
 	private static final String CTRL_A = String.valueOf((char)1);
