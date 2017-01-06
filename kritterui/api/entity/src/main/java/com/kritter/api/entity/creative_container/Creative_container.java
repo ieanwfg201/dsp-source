@@ -114,6 +114,8 @@ public class Creative_container {
     private String direct_videos;
     @Getter@Setter
     private String comment;
+    @Getter@Setter
+    private String slot_info="[]";
 
     @Override
 	public int hashCode() {

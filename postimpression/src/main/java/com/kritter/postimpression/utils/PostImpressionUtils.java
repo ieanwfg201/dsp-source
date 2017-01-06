@@ -3,12 +3,12 @@ package com.kritter.postimpression.utils;
 
 import com.kritter.constants.ConnectionType;
 import com.kritter.constants.error.ErrorEnum;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,7 +52,7 @@ public class PostImpressionUtils
                                String terminationReasonKey,String jspAccessUserName,String jspAccessPassword,
                                boolean isUUIDBasedOnMacAddress)
     {
-        this.applicationLogger = LoggerFactory.getLogger(loggerName);
+        this.applicationLogger = LogManager.getLogger(loggerName);
         this.uriFieldsDelimiter = uriFieldsDelimiter;
         this.requestIdAdIdDelimiter = requestIdAdIdDelimiter;
         this.thirdPartyClickUrlSuffix = thirdPartyClickUrlSuffix;
@@ -277,7 +277,12 @@ public class PostImpressionUtils
                 throw new RuntimeException("Impression id received in ClickUrl is malformed.Has adid missing.");
 
             String adservingRequestId = impressionIdSplitForAdId[0];
-            Integer adId = Integer.valueOf(impressionIdSplitForAdId[1],16);
+
+            Integer adId = -1;
+
+            String adIdStrValue = impressionIdSplitForAdId[1];
+            if(null != adIdStrValue && !"-1".equalsIgnoreCase(adIdStrValue))
+                adId = Integer.valueOf(impressionIdSplitForAdId[1],16);
 
             postImpressionRequest.setUrlVersion(urlVersion);
             postImpressionRequest.setInventorySource(inventorySource);

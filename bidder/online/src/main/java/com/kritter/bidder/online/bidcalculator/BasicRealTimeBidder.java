@@ -6,8 +6,8 @@ import com.kritter.bidder.online.entity.BidderDataDBEntity;
 import com.kritter.bidder.online.entity.ServedEntityInfo;
 import com.kritter.constants.Budget;
 import com.kritter.constants.MarketPlace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -42,7 +42,7 @@ public class BasicRealTimeBidder implements RealTimeBidder
                                int bidderModelId
                               )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.servedEntityBidderDataDBCache = servedEntityBidderDataDBCache;
         this.bidderModelId = bidderModelId;
     }

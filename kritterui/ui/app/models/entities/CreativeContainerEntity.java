@@ -95,6 +95,8 @@ public class CreativeContainerEntity extends Entity{
     private String trackingStr = "[]";
     @Getter@Setter
     private String direct_videos = "[]";
+    @Getter@Setter
+    private String slot_info = "[]";
     
     public String getExt_resource_url() {
         return ext_resource_url;

@@ -1,7 +1,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+       default-lazy-init="true">
 
     <bean id="initJobset" class="com.kritter.core.workflow.JobSet">
         <constructor-arg value="adserving-init-jobset"></constructor-arg>
@@ -13,6 +14,8 @@
                 <ref bean="init_job"/>
                 <ref bean="user_id_fetch_job"/>
                 <ref bean="ad_targeting_matcher_job"/>
+                <ref bean="user_id_join_job"/>
+                <ref bean="user_targeting_matcher_job"/>
                 <ref bean="supply_demand_matcher_job"/>
                 <ref bean="ctr_calculator_using_logistic_cache"/>
                 <ref bean="csr_calculator_using_logistic_cache"/>

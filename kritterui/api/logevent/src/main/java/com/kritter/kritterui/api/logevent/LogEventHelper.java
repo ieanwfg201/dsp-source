@@ -96,9 +96,6 @@ public class LogEventHelper {
         if(logEntity.isIpAddress()){
             populateNonWhere("ipAddress", "ipAddress");
         }
-        if(logEntity.isUserAgent()){
-            populateNonWhere("userAgent", "userAgent");
-        }
         if(logEntity.isxForwardedFor()){
             populateNonWhere("xForwardedFor", "xForwardedFor");
         }
@@ -200,6 +197,9 @@ public class LogEventHelper {
         }
         if(logEntity.isExternalSiteAppId()){
             populateNonWhere("externalSiteAppId", "externalSiteAppId");
+        }
+        if(logEntity.isUserAgent()){
+            populateNonWhere("userAgent", "userAgent");
         }
         return createQuery(logEntity);
     }

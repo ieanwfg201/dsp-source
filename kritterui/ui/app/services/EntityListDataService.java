@@ -26,6 +26,7 @@ import com.kritter.api.entity.adpositionget.AdpositionGetList;
 import com.kritter.api.entity.adpositionget.AdpositionGetListEntity;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadatList;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadataListEntity;
+import com.kritter.api.entity.audience.AudienceMetadataList;
 import com.kritter.api.entity.campaign.Campaign;
 import com.kritter.api.entity.campaign.CampaignList;
 import com.kritter.api.entity.campaign.CampaignListEntity;
@@ -60,6 +61,7 @@ import com.kritter.constants.AdAPIEnum;
 import com.kritter.constants.AdpositionGetQueryEnum;
 import com.kritter.constants.AdxBasedExchangesMetadataQueryEnum;
 import com.kritter.constants.AdxBasedExchangesStates;
+import com.kritter.constants.AudienceMetadataQueryType;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.CreativeContainerAPIEnum;
 import com.kritter.constants.Ext_siteEnum;
@@ -80,6 +82,8 @@ import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
+import com.kritter.entity.audience_metadata.AudienceMetadata;
+import com.kritter.entity.audience_metadata.AudienceMetadataInput;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 import com.kritter.kritterui.api.def.ApiDef;
 
@@ -435,6 +439,18 @@ public class EntityListDataService {
                         		qualificationList.getEntity_list().size()); 
                     }else{
                         entityList = new EntityList<Qualification>(new ArrayList<Qualification>(), 0);
+                    }
+                    break;
+                case audiencemetadata:
+            		AudienceMetadataInput audienceMetadataInputEntity = new AudienceMetadataInput();
+            		audienceMetadataInputEntity.setQueryType(AudienceMetadataQueryType.list_all);
+            		AudienceMetadataList audienceMetadataList = null;
+            		audienceMetadataList = ApiDef.various_get_audience_metadata(con, audienceMetadataInputEntity);
+                    if(audienceMetadataList.getMsg().getError_code()==0){ 
+                        entityList = new EntityList<AudienceMetadata>(audienceMetadataList.getList() ,
+                        		audienceMetadataList.getList().size()); 
+                    }else{
+                        entityList = new EntityList<AudienceMetadata>(new ArrayList<AudienceMetadata>(), 0);
                     }
                     break;
 				default:

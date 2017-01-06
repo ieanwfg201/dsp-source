@@ -24,8 +24,8 @@ import com.kritter.utils.common.SetUtils;
 import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.common.url.URLFieldProcessingException;
 import org.apache.commons.lang.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -66,7 +66,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotOne implements CreativeAnd
                                                         List<Integer> openRTBBidRequestParameterCodeList
                                                        )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.creativeBannerCache = creativeBannerCache;
         this.creativeCache = creativeCache;
         this.adEntityCache = adEntityCache;

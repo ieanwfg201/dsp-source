@@ -6,8 +6,8 @@ import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,7 +36,7 @@ public class AdRankingSelectionJob implements Job
                                  AdRankingSelection adRankingSelection
                                 )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.jobName = jobName;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;

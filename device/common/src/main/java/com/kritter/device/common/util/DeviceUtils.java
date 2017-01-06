@@ -17,6 +17,7 @@ public class DeviceUtils
     public static final String FIFTYONE_DEGREES_DEVICE_TYPE_DESKTOP = "Desktop";
     public static final String FIFTYONE_DEGREES_DEVICE_TYPE_MOBILE  = "Mobile";
     public static final String FIFTYONE_DEGREES_DEVICE_TYPE_SMARTPHONE  = "SmartPhone";
+    public static final String FIFTYONE_DEGREES_DEVICE_TYPE_TABLET  = "Tablet";
     private static final String WURFL_FILE_NAME_PREFIX = "wurfl";
     private static final String FIFTYONEDEGREES_FILE_NAME_PREFIX = "51degrees";
     private static final String UNDERSCORE = "_";
@@ -144,12 +145,22 @@ public class DeviceUtils
         return masterDataKeySet;
     }
 
-    public static DeviceType getDeviceTypeFrom51DegreesDeviceType(String fiftyOneDegreesDeviceType) {
-        if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_DESKTOP.toLowerCase())) {
+    public static DeviceType getDeviceTypeFrom51DegreesDeviceType(String fiftyOneDegreesDeviceType)
+    {
+        if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_DESKTOP.toLowerCase()))
+        {
             return DeviceType.DESKTOP;
-        } else if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_MOBILE.toLowerCase())) {
+        }
+        else if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_MOBILE.toLowerCase()))
+        {
             return DeviceType.MOBILE;
-        }else if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_SMARTPHONE.toLowerCase())) {
+        }
+        else if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_SMARTPHONE.toLowerCase()))
+        {
+            return DeviceType.MOBILE;
+        }
+        else if(fiftyOneDegreesDeviceType.toLowerCase().equals(FIFTYONE_DEGREES_DEVICE_TYPE_TABLET.toLowerCase()))
+        {
             return DeviceType.MOBILE;
         }
         return null;

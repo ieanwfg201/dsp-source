@@ -3,15 +3,16 @@ package com.kritter.adserving.flow;
 import com.kritter.common.caches.ext_supply_attr_cache.ExternalSupplyAttributesCache;
 import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
 import com.kritter.common.site.cache.SiteMetaDataLoader;
-import com.kritter.constants.LoggingResource;
 import com.kritter.core.workflow.Workflow;
 import com.kritter.device.common.HandsetPopulationProvider;
+import com.kritter.device.common.realtime.cache.RealTimeUsageHandsetCache;
 import com.kritter.fanoutinfra.executorservice.common.KExecutor;
 import com.kritter.geo.common.entity.reader.*;
 import com.kritter.geo.common.entity.writer.IspMappingsLoader;
 import com.kritter.geo.entity.populator.DataLoaderExecutor;
 import com.mysql.jdbc.AbandonedConnectionCleanupThread;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LifeCycle;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +35,7 @@ public class PreImpressionContextListener implements ServletContextListener
     private ISPDetectionCache ispDetectionCache;
     private StateDetectionCache stateDetectionCache;
     private CityDetectionCache cityDetectionCache;
+    private RealTimeUsageHandsetCache realTimeUsageHandsetCache;
     private HandsetPopulationProvider handsetPopulationProvider;
     private CustomIPFileDetectionCache customIPFileDetectionCache;
     private CreativeSlotSizeCache creativeSlotSizeCache;
@@ -50,12 +52,12 @@ public class PreImpressionContextListener implements ServletContextListener
 
         System.out.println("Servlet Context Initialization event received, going to initialize ad serving...");
 
-        String log4jFilePath = servletContext.getInitParameter(LoggingResource.LOG4J_PROPERTIES_ADSERVING_KEY);
+        /*Enable synchronous logging using log4j2*/
+        System.setProperty("log4j.configurationFile","/var/data/kritter/log4j2.xml");
+        System.setProperty("Log4jContextSelector","org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
+        ((LifeCycle) LogManager.getContext()).start();
 
-        System.out.println("Configure log4j in ad serving using properties file path " + log4jFilePath);
-        PropertyConfigurator.configure(log4jFilePath);
-
-        System.out.println("Done configuring log4j, now initializing the entire ad serving Workflow");
+        System.out.println("Done configuring log4j2, now initializing the entire ad serving Workflow");
 
         Properties properties = new Properties();
         properties.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
@@ -82,10 +84,11 @@ public class PreImpressionContextListener implements ServletContextListener
         {
             this.stateDetectionCache       = (StateDetectionCache) this.beanFactory.getBean("state_detector");
             this.cityDetectionCache        = (CityDetectionCache) this.beanFactory.getBean("city_detector");
+            this.realTimeUsageHandsetCache = (RealTimeUsageHandsetCache)this.beanFactory.getBean("real_time_handset_cache");
         }
         catch (Exception e)
         {
-            System.out.println("Exception in fetching state ,city beans,must not be defined, no error " +
+            System.out.println("State,City or RealTimeHandsetCache beans must not be defined, no error " +
                                 e.getMessage());
         }
 
@@ -98,6 +101,9 @@ public class PreImpressionContextListener implements ServletContextListener
     public void contextDestroyed(ServletContextEvent servletContextEvent)
     {
         System.out.println("Calling destroy of PreImpressionContextListener...");
+
+        /*shutdown log4j2 system.*/
+        ((LifeCycle) LogManager.getContext()).stop();
 
         this.preImpressionWorkflow.destroy();
         if(null != this.geoDataLoaderExecutor)
@@ -112,6 +118,8 @@ public class PreImpressionContextListener implements ServletContextListener
             this.stateDetectionCache.releaseResources();
         if(null != this.cityDetectionCache)
             this.cityDetectionCache.releaseResources();
+        if(null != this.realTimeUsageHandsetCache)
+            this.realTimeUsageHandsetCache.releaseResources();
         if(null != this.handsetPopulationProvider)
             this.handsetPopulationProvider.releaseResources();
         if(null != this.customIPFileDetectionCache)

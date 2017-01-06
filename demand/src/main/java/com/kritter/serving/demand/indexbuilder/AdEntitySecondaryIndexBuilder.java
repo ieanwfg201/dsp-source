@@ -6,8 +6,8 @@ import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
 import com.kritter.serving.demand.index.*;
 import com.kritter.utils.entity.TargetingProfileLocationEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class AdEntitySecondaryIndexBuilder {
 
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
 
     public static ISecondaryIndexWrapper getIndex(Class className, AdEntity entity)
     {

@@ -33,8 +33,8 @@ import com.kritter.constants.CreativeFormat;
 import com.kritter.constants.DemandPreference;
 import com.kritter.constants.DemandType;
 import com.kritter.utils.common.SetUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -78,7 +78,7 @@ public class CreativeTargetingMatcher
                                     VideoInfoCache videoInfoCache
     )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.creativeBannerCache = creativeBannerCache;
         this.creativeCache = creativeCache;
         this.adEntityCache = adEntityCache;
@@ -135,9 +135,18 @@ public class CreativeTargetingMatcher
         }
         if(width != -1 && height != -1)
         {
-            short requestedSlotId = this.creativeSlotSizeCache.fetchClosestSlotIdForSize(width,height);
-            if(-1 != requestedSlotId)
-                 requestedSlotIdList.add(requestedSlotId);
+        	if(request.isExactBannerSizeRequired()){
+        		short requestedSlotId = this.creativeSlotSizeCache.fetchSlotIdForExactSize(width,height);
+        		if(-1 != requestedSlotId){
+        			requestedSlotIdList.add(requestedSlotId);
+        		}
+        		
+        	}else{
+        		short requestedSlotId = this.creativeSlotSizeCache.fetchClosestSlotIdForSize(width,height);
+        		if(-1 != requestedSlotId){
+        			requestedSlotIdList.add(requestedSlotId);
+        		}
+        	}
         }
         request.setRequestedSlotIdList(requestedSlotIdList);
 
@@ -307,7 +316,9 @@ public class CreativeTargetingMatcher
                                  creativeSlot.getCreativeSlotWidth(),creativeSlot.getCreativeSlotHeight(),
                                  requestedWidths[0],requestedHeights[0]);
 
-                    if(isCreativeSlotFitForRequestingSlot(creativeSlot,requestedWidths,requestedHeights))
+                    if((!request.isExactBannerSizeRequired() && isCreativeSlotFitForRequestingSlot(creativeSlot,requestedWidths,requestedHeights))
+                    		|| (request.isExactBannerSizeRequired()
+                    				&& isCreativeSlotExactMatchForRequestingSlot(creativeSlot,requestedWidths,requestedHeights)))
                     {
                         sizeCheckForBanner = true;
 
@@ -507,9 +518,45 @@ public class CreativeTargetingMatcher
                     // Rich media allowed on site
                     ReqLog.debugWithDebugNew(logger, request, "Site allows richmedia ads and handset is javascript compatible, allowing ad: {} ",
                                  adEntity.getAdGuid());
-                    responseAdInfo.setRichMediaAdIsCompatibleForAdserving(true);
-                    richMediaAdFound = true;
-                    responseAdInfoSetForUse.add(responseAdInfo);
+
+                    /*check that if richmedia has size specified through admin interface, check it to match requested
+                    * size.*/
+                    if(
+                       null != responseAdInfo.getCreative()                                       &&
+                       null != responseAdInfo.getCreative().getSlotIdFromCreativeContainer()      &&
+                       responseAdInfo.getCreative().getSlotIdFromCreativeContainer().length > 0
+                      )
+                    {
+                        Integer slotId = responseAdInfo.getCreative().getSlotIdFromCreativeContainer()[0];
+
+                        CreativeSlot creativeSlot = creativeSlotCache.query(slotId.shortValue());
+
+                        ReqLog.debugWithDebugNew(logger,request,"Richmedia creative slot size is specified inside "   +
+                                                 "CreativeTargetingMatcher, creative id: {} and slot size, width:{}," +
+                                                 "height : {}",creative.getId(),
+                                                  creativeSlot.getCreativeSlotWidth(),
+                                                  creativeSlot.getCreativeSlotHeight());
+
+                        /*check for size match*/
+                        if(
+                           width >= creativeSlot.getCreativeSlotWidth().intValue()    &&
+                           height >= creativeSlot.getCreativeSlotHeight().intValue()
+                          )
+                        {
+                            ReqLog.debugWithDebugNew(logger,request,"Requesting width:{} and requesting height: {} " +
+                                                     "match found in richmedia " +
+                                                     "creative id: {} ", width,height,creative.getId());
+                            responseAdInfo.setRichMediaAdIsCompatibleForAdserving(true);
+                            richMediaAdFound = true;
+                            responseAdInfoSetForUse.add(responseAdInfo);
+                        }
+                    }
+                    else
+                    {
+                        responseAdInfo.setRichMediaAdIsCompatibleForAdserving(true);
+                        richMediaAdFound = true;
+                        responseAdInfoSetForUse.add(responseAdInfo);
+                    }
                 }
             }
             /*if text ad then just allow*/
@@ -571,5 +618,19 @@ public class CreativeTargetingMatcher
 
         return false;
     }
+    private boolean isCreativeSlotExactMatchForRequestingSlot(
+            CreativeSlot creativeSlot,
+            int requestedWidths[],
+            int requestedHeights[]){
+    	for(int i=0; i < requestedWidths.length; i++){
+    		if(	requestedWidths[i] == creativeSlot.getCreativeSlotWidth() &&
+    				requestedHeights[i] == creativeSlot.getCreativeSlotHeight()
+    				){
+    			return true;
+    		}
+    	}
+
+    	return false;
+	}
 
 }

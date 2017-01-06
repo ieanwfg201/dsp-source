@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.kritter.constants.*;
 import models.formelements.SelectOption;
 import play.Logger;
@@ -23,6 +25,7 @@ import com.kritter.api.entity.account.ListEntity;
 import com.kritter.api.entity.ad.Ad;
 import com.kritter.api.entity.ad.AdList;
 import com.kritter.api.entity.ad.AdListEntity;
+import com.kritter.api.entity.audience.AudienceDefinitionList;
 import com.kritter.api.entity.campaign.Campaign;
 import com.kritter.api.entity.campaign.CampaignList;
 import com.kritter.api.entity.campaign.CampaignListEntity;
@@ -40,6 +43,8 @@ import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.site.SiteList;
 import com.kritter.api.entity.site.SiteListEntity;
 import com.kritter.constants.tracking_partner.TrackingPartner;
+import com.kritter.entity.audience_definition.AudienceDefinition;
+import com.kritter.entity.audience_definition.AudienceDefinitionInput;
 import com.kritter.entity.demand_props.DemandProps;
 import com.kritter.entity.payout_threshold.DefaultPayoutThreshold;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
@@ -237,15 +242,15 @@ public class MetadataAPI {
     }
     public static List<SelectOption> videopos(){
         List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
-        VideoAdPos[] types = VideoAdPos.values();
-        for (VideoAdPos type : types) {
+        AdPositionsOpenRTB[] types = AdPositionsOpenRTB.values();
+        for (AdPositionsOpenRTB type : types) {
             selectOptions.add(new SelectOption(type.getName(),  type.getCode()+""));
         } 
         return selectOptions;
     }
     public static String videoposbyid(Integer i){
     	if(i!= null){
-    		VideoAdPos v = VideoAdPos.getEnum(i);
+    		AdPositionsOpenRTB v = AdPositionsOpenRTB.getEnum(i);
     		if(v !=null){
     			return v.getName();
     		}
@@ -508,6 +513,118 @@ public class MetadataAPI {
         } 
         return selectOptions;
     }
+    public static ArrayNode getDemadPreferenceArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        DemandPreference[] types = DemandPreference.values();
+        for (DemandPreference type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getDemadTypeArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        DemandType[] types = DemandType.values();
+        for (DemandType type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getIoStatusNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        IOStatus[] types = IOStatus.values();
+        for (IOStatus type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getFreqDurationNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        FreqDuration[] types = FreqDuration.values();
+        for (FreqDuration type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getStatusIdArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        StatusIdEnum[] types = StatusIdEnum.values();
+        for (StatusIdEnum type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getVideoBoxingArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        VideoBoxing[] types = VideoBoxing.values();
+        for (VideoBoxing type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getVideoMaxExtendedArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        VideoMaxExtended[] types = VideoMaxExtended.values();
+        for (VideoMaxExtended type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getVideoDemandTypeArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        VideoDemandType[] types = VideoDemandType.values();
+        for (VideoDemandType type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getBidTypeArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        BidType[] types = BidType.values();
+        for (BidType type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getAppStoreIdArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        APP_STORE_ID[] types = APP_STORE_ID.values();
+        for (APP_STORE_ID type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getAppStoreId()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getVideoLinearityArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        VideoLinearity[] types = VideoLinearity.values();
+        for (VideoLinearity type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getAPIFrameworksArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        APIFrameworks[] types = APIFrameworks.values();
+        for (APIFrameworks type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getVASTCompanionTypesArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        VASTCompanionTypes[] types = VASTCompanionTypes.values();
+        for (VASTCompanionTypes type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
+    public static ArrayNode getVideoAdPossArrayNode(){
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        AdPositionsOpenRTB[] types = AdPositionsOpenRTB.values();
+        for (AdPositionsOpenRTB type : types) {
+                optionNodes.add(new SelectOption(type.name(),type.getCode()+"").toJson());
+        } 
+        return optionNodes;
+    }
     public static ArrayNode getInvSourceArrayNode(){
         ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
         INVENTORY_SOURCE[] types = INVENTORY_SOURCE.values();
@@ -714,6 +831,42 @@ public class MetadataAPI {
         return ll;
         
     }
+	public static List<String> getSlotinfo(String ids) { 
+		Connection con = null;
+		List<String> l = new LinkedList<String>();
+ 		try {
+ 			if(ids == null){
+ 				return l;
+ 			}
+ 			String idlist = ids.trim();
+ 			if(idlist.equals("")){
+ 				return l;
+ 			}
+ 			idlist = StringUtils.replace(idlist,"[","");
+ 			idlist = StringUtils.replace(idlist,"]","");
+ 			
+ 			con = DB.getConnection();
+			MetaInput metaInput = new MetaInput();
+			metaInput.setQuery_id_list(idlist);
+			MetaList mlist = ApiDef.get_metalist(con, MetadataType.CREATIVE_SLOTS_BY_ID, metaInput);
+			List<MetaField> mfields = mlist.getMetaFieldList();
+			for (MetaField metaField : mfields) {
+				l.add(metaField.getName()+metaField.getDescription());
+			}
+			return l;
+		} catch (Exception e) {
+			Logger.error("Exception encountered", e);
+			return l;
+		}finally{
+			try {
+				if(con != null){
+					con.close();
+				}
+			} catch (Exception e2) {
+				Logger.error("Failed to close DB connection", e2);
+			}
+		}
+	}
         public static List<String> getValues(MetadataType type, String ids){
 		List<String> values = new ArrayList<String>();
 		List<MetaField> mfields  = new ArrayList<MetaField>();
@@ -1186,12 +1339,19 @@ public class MetadataAPI {
 	}
     public static ArrayNode device_type(){ 
         ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
-
         DeviceType[] types = DeviceType.values();
         for (DeviceType type : types) {
             if(type != DeviceType.UNKNOWN){
                 optionNodes.add(new SelectOption(type.name(), type.getCode()+"").toJson());
             }
+        }
+        return optionNodes; 
+    }
+    public static ArrayNode deviceTypeEnumArrayNode(){ 
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        DeviceType[] types = DeviceType.values();
+        for (DeviceType type : types) {
+        	optionNodes.add(new SelectOption(type.name(), type.getCode()+"").toJson());
         }
         return optionNodes; 
     }
@@ -1323,6 +1483,14 @@ public class MetadataAPI {
        
        public static ArrayNode activeAdvIdsArray(){
            List<SelectOption> options  =  activeAdvIdsList(Account_Type.directadvertiser);
+           ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+           for (SelectOption option : options) {
+               optionNodes.add(option.toJson());
+           }
+           return optionNodes;
+       }
+       public static ArrayNode activeAdvGuidArray(){
+           List<SelectOption> options  =  activeAdvGuidList(Account_Type.directadvertiser);
            ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
            for (SelectOption option : options) {
                optionNodes.add(option.toJson());
@@ -1696,6 +1864,15 @@ public class MetadataAPI {
     public static List<SelectOption> activeAdminList(){
         return activeAdminList(Account_Type.root);
     }
+    public static ArrayNode activeAdminArray(){
+        List<SelectOption> options  =  activeAdminList(Account_Type.root);
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        for (SelectOption option : options) {
+            optionNodes.add(option.toJson());
+        }
+        return optionNodes;
+
+    }
 	
 	public static List<SelectOption> activeAccountListWithId(Account_Type accountType){
 
@@ -1798,10 +1975,9 @@ public class MetadataAPI {
             accList = ApiDef.listExchangesByStatus(con, lEntity);
             List<Account> accounts = accList.getAccount_list();
             accountOptions.add(new SelectOption("",""));
-            for (Account account : accounts) {
-                    if(account.getName().contains("Smaato")){
-                        accountOptions.add(new SelectOption(account.getName(), account.getGuid()));
-                    }
+            for (Account account : accounts) 
+            {
+                accountOptions.add(new SelectOption(account.getName(), account.getGuid()));
             }
         }catch(Exception e){
             Logger.error("Error in fetching account list", e);
@@ -1862,6 +2038,36 @@ public class MetadataAPI {
             List<Account> accounts = accList.getAccount_list();
             for (Account account : accounts) {
                     accountOptions.add(new SelectOption(account.getName(), account.getId()+""));
+            }
+        }catch(Exception e){
+            Logger.error("Error in fetching account list", e);
+        }
+        finally{
+            try {
+                if(con != null){
+                    con.close();
+                }
+            } catch (SQLException e) { 
+                Logger.error("Error in closing DB connection",e);
+            }
+        }
+        return accountOptions;
+    }
+    public static List<SelectOption> activeAdvGuidList(Account_Type accountType){
+        Connection con = null;
+        List<SelectOption> accountOptions = new ArrayList<SelectOption>();
+        try{
+            con = DB.getConnection(true);       
+            ListEntity lEntity = new ListEntity();
+            lEntity.setAccount_type(accountType);
+            lEntity.setStatus(StatusIdEnum.Active);
+            lEntity.setPage_no(PageConstants.start_index);
+            lEntity.setPage_size(Integer.MAX_VALUE);
+            AccountList accList = null;
+            accList = ApiDef.listAccountByStatus(con, lEntity);
+            List<Account> accounts = accList.getAccount_list();
+            for (Account account : accounts) {
+                    accountOptions.add(new SelectOption(account.getName(), account.getGuid()));
             }
         }catch(Exception e){
             Logger.error("Error in fetching account list", e);
@@ -1948,7 +2154,6 @@ public class MetadataAPI {
         try{
             con = DB.getConnection(true);       
             ListEntity lEntity = new ListEntity();
-            lEntity.setAccount_type(accountType);
             lEntity.setStatus(StatusIdEnum.Active);
             lEntity.setPage_no(PageConstants.start_index);
             lEntity.setPage_size(Integer.MAX_VALUE);
@@ -2099,7 +2304,14 @@ public class MetadataAPI {
         return optionNodes;
 
     }
+    public static ArrayNode reportingDIMTypeEnumArrayNode(){       
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        for (ReportingDIMTypeEnum macro : ReportingDIMTypeEnum.values()) {
+            optionNodes.add(new SelectOption(macro.getName(), macro.getCode()+"").toJson());
+        }
+        return optionNodes;
 
+    }
 	public static List<SelectOption> creativeAttributesList(){
 		List<MetaField> mfields =fetchCreativeAttributes(-1);
 		List<SelectOption>  selectOptions = new ArrayList<SelectOption>();
@@ -2713,4 +2925,125 @@ public class MetadataAPI {
         } 
         return options;
     }
+    
+	public static ArrayNode audience_gender(){
+	    ArrayNode options = new ArrayNode(JsonNodeFactory.instance);
+	    Connection con = null;
+	    try{
+	    	con = DB.getConnection(true);
+	    	AudienceDefinitionInput entity = new AudienceDefinitionInput();
+	    	entity.setAudience_type(AudienceMetadata.Gender.getCode());
+	    	entity.setQueryType(AudienceDefinitionQueryType.list_by_type);
+	    	AudienceDefinitionList list  = ApiDef.various_get_audience_definition(con, entity);
+	    	if(list != null && list.getList() != null){
+	    		for(AudienceDefinition ad:list.getList()){
+	    			options.add(new SelectOption(ad.getName(), ad.getInternalid()+"").toJson());
+	    		}
+	    	}
+		    return options;
+	    }catch (Exception e) {
+			Logger.error("Exception encountered", e);
+		    return options;
+		}finally{
+			try {
+				if(con != null){
+					con.close();
+				}
+			} catch (Exception e2) {
+				Logger.error("Failed to close DB connection", e2);
+			}
+		}
+	}
+	public static ArrayNode audience_agerange(){
+	    ArrayNode options = new ArrayNode(JsonNodeFactory.instance);
+	    Connection con = null;
+	    try{
+	    	con = DB.getConnection(true);
+	    	AudienceDefinitionInput entity = new AudienceDefinitionInput();
+	    	entity.setAudience_type(AudienceMetadata.AgeRange.getCode());
+	    	entity.setQueryType(AudienceDefinitionQueryType.list_by_type);
+	    	AudienceDefinitionList list  = ApiDef.various_get_audience_definition(con, entity);
+	    	if(list != null && list.getList() != null){
+	    		for(AudienceDefinition ad:list.getList()){
+	    			options.add(new SelectOption(ad.getName(), ad.getInternalid()+"").toJson());
+	    		}
+	    	}
+		    return options;
+	    }catch (Exception e) {
+			Logger.error("Exception encountered", e);
+		    return options;
+		}finally{
+			try {
+				if(con != null){
+					con.close();
+				}
+			} catch (Exception e2) {
+				Logger.error("Failed to close DB connection", e2);
+			}
+		}
+	}
+	public static ArrayNode audience_tier_cat(int tier){
+	    ArrayNode options = new ArrayNode(JsonNodeFactory.instance);
+	    Connection con = null;
+	    try{
+	    	con = DB.getConnection(true);
+	    	AudienceDefinitionInput entity = new AudienceDefinitionInput();
+	    	entity.setAudience_tier(tier);
+	    	entity.setQueryType(AudienceDefinitionQueryType.list_cat_by_tier);
+	    	AudienceDefinitionList list  = ApiDef.various_get_audience_definition(con, entity);
+	    	if(list != null && list.getList() != null){
+	    		for(AudienceDefinition ad:list.getList()){
+	    			options.add(new SelectOption(ad.getName(), ad.getInternalid()+"").toJson());
+	    		}
+	    	}
+		    return options;
+	    }catch (Exception e) {
+			Logger.error("Exception encountered", e);
+		    return options;
+		}finally{
+			try {
+				if(con != null){
+					con.close();
+				}
+			} catch (Exception e2) {
+				Logger.error("Failed to close DB connection", e2);
+			}
+		}
+	}
+	public static List<String> audience_definition_list(String ids){
+		List<String> audlist = new LinkedList<String>();
+	    Connection con = null;
+	    if(ids==null || ids.isEmpty()){
+	    	return audlist;
+	    }
+	    String idInput=StringUtils.replace(StringUtils.replace(ids,"[", ""),"]","");
+	    if(idInput.isEmpty()){
+	    	return audlist;
+	    }
+	    try{
+	    	con = DB.getConnection(true);
+	    	AudienceDefinitionInput entity = new AudienceDefinitionInput();
+	    	entity.setIds(idInput);
+	    	entity.setQueryType(AudienceDefinitionQueryType.list_by_ids);
+	    	AudienceDefinitionList list  = ApiDef.various_get_audience_definition(con, entity);
+	    	if(list != null && list.getList() != null){
+	    		for(AudienceDefinition ad:list.getList()){
+	    			audlist.add(ad.getName());
+	    		}
+	    	}
+		    return audlist;
+	    }catch (Exception e) {
+			Logger.error("Exception encountered", e);
+		    return audlist;
+		}finally{
+			try {
+				if(con != null){
+					con.close();
+				}
+			} catch (Exception e2) {
+				Logger.error("Failed to close DB connection", e2);
+			}
+		}
+	}
+
 }

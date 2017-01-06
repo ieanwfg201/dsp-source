@@ -7,8 +7,8 @@ import lombok.Getter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class TestQueryableCache
         private boolean allTargeted = false;
     }
 
-    private static Logger logger = LoggerFactory.getLogger(TestQueryableCache.class);
+    private static Logger logger = LogManager.getLogger(TestQueryableCache.class);
 
     @Rule
     public ExpectedException exception = ExpectedException.none();

@@ -2,6 +2,8 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+OPTIONS        /*all                           controllers.CorsApplication.preflight(all)
+
 # Home page
 GET     /                           controllers.Application.index() 
 GET     /algo-center                controllers.Application.algoCenter()
@@ -217,12 +219,12 @@ POST   /extsitereport/data                                       controllers.ext
 POST   /extsitereport/data/CSV                                   controllers.extsitereport.ExtSiteReportController.reportDataCSV()
 GET    /iddefinition/default                                     controllers.iddefinition.IddefinitionController.iddefinition()
 POST   /iddefinition/getiddefinition                             controllers.iddefinition.IddefinitionController.getiddefinition()
-GET    /fraudreport/default                                      controllers.fraudreport.FraudReportController.fraudReport()
-POST   /fraudreport/data                                         controllers.fraudreport.FraudReportController.reportData()
-POST   /fraudreport/data/CSV                                     controllers.fraudreport.FraudReportController.reportDataCSV()
-GET    /trackingEvent/default                                    controllers.tracking_event.TrackingEventController.trackingEventReport()
-POST   /trackingEvent/data                                       controllers.tracking_event.TrackingEventController.reportData()
-POST   /trackingEvent/data/CSV                                   controllers.tracking_event.TrackingEventController.reportDataCSV()
+GET    /reporting/trackingevent                                  controllers.reporting.ReportingController.trackingevent()
+POST   /reporting/trackingeventdata                              controllers.reporting.ReportingController.trackingeventData()
+POST   /reporting/trackingeventdata/CSV                          controllers.reporting.ReportingController.trackingeventDataCSV()
+GET    /reporting/fraudevent                                  	 controllers.reporting.ReportingController.fraudevent()
+POST   /reporting/fraudeventdata                              	 controllers.reporting.ReportingController.fraudeventData()
+POST   /reporting/fraudeventdata/CSV                             controllers.reporting.ReportingController.fraudeventDataCSV()
 GET    /userreport/default                                       controllers.userreport.UserReportController.userReport()
 POST   /userreport/data                                          controllers.userreport.UserReportController.reportData()
 POST   /userreport/data/CSV                                      controllers.userreport.UserReportController.reportDataCSV()
@@ -260,6 +262,8 @@ POST   /reportingapi/monitoring/publishers                                      
 POST   /reportingapi/monitoring/overall                                           controllers.reporting.ReportingController.monitoringOverall()
 
 #API
+POST   /api/v1/tracking                                            controllers.api.v1.KAPI.tracking()
+POST   /api/v1/pubcreativetrackinreport                            controllers.api.v1.KAPI.pubcreativetrackinreport()
 POST   /api/v1/reporting                                           controllers.api.v1.KAPI.reporting()
 POST   /api/v1/reportingwithId                                     controllers.api.v1.KAPI.reportingwithId()
 #Allowed accountType - pub, adv#
@@ -294,6 +298,9 @@ GET   /api/v1/dashboard/:actionType/:accountGuid                  controllers.ap
 #Allowed actionType - create, update, getbyids, getbyaccountguids, deletesavedquery
 POST   /api/v1/savedquery/:actionType                             controllers.api.v1.KAPI.savedquery(actionType:String)
 POST   /api/v1/meta/secondlevelpost/:metatype                     controllers.api.v1.KAPI.metasecondlevelpost(metatype:String)
+#Allowed actionType - create, edit, get, list#
+POST   /api/v1/videoinfo/:actionType                          	  controllers.api.v1.KAPI.videoinfo(actionType:String)
+POST   /api/v1/videoupload/:accountGuid                           controllers.api.v1.KAPI.videoupload(accountGuid:String)
 
 
 # ISP MAPPINGS
@@ -344,6 +351,8 @@ GET     /metadata/options/browsers       							controllers.MetadataController.b
 GET     /metadata/options/nofillReason                              controllers.MetadataController.nofillReason()
 GET     /metadata/options/reqState	                                controllers.MetadataController.reqState()
 GET     /metadata/options/dspNofill                                 controllers.MetadataController.dspNofill()
+GET     /metadata/options/terminationReasonPostimp                  controllers.MetadataController.terminationReasonPostimp()
+GET     /metadata/options/teventtype                                controllers.MetadataController.teventtype()
 GET     /metadata/options/postimp_event                             controllers.MetadataController.postImpEvent()
 GET     /metadata/options/operating-systems   						controllers.MetadataController.operatingSystems() 
 GET     /metadata/options/countries   								controllers.MetadataController.countries() 
@@ -383,6 +392,15 @@ GET     /metadata/options/videodelivery                          	controllers.Me
 GET     /metadata/options/videoapi                          		controllers.MetadataController.videoapi()     
 GET     /metadata/options/tpdspidlist/:adv_guid                     controllers.MetadataController.third_party_demand_channel_dspid_list(adv_guid:String)
 GET     /metadata/options/tpadvidlist/:adv_guid                     controllers.MetadataController.third_party_demand_channel_advid_list(adv_guid:String)
+
+GET     /metadata/options/audience_gender                          		controllers.MetadataController.audience_gender()     
+GET     /metadata/options/audience_agerange                          	controllers.MetadataController.audience_agerange()     
+GET     /metadata/options/audience_tier1_cat                          	controllers.MetadataController.audience_tier1_cat()     
+GET     /metadata/options/audience_tier2_cat                          	controllers.MetadataController.audience_tier2_cat()     
+GET     /metadata/options/audience_tier3_cat                          	controllers.MetadataController.audience_tier3_cat()     
+GET     /metadata/options/audience_tier4_cat                          	controllers.MetadataController.audience_tier4_cat()     
+GET     /metadata/options/audience_tier5_cat                          	controllers.MetadataController.audience_tier5_cat()     
+
 
 # Login page
 GET     /login                      securesocial.controllers.LoginPage.login
@@ -441,6 +459,9 @@ GET   /adxbasedexchanges/advinfoupload/list                         controllers.
 GET   /adxbasedexchanges/advinfoupload/updatesingle/:id/:action     controllers.adxbasedexchanges.MaterialAdvInfoController.updatesingle(id:Int, action:String)
 GET   /adxbasedexchanges/advinfoupload/updatemultiple/:action     	controllers.adxbasedexchanges.MaterialAdvInfoController.updatemultiple(action:String, ids: Option[String])
 
+# Audience
+GET   /audience/audiencemetadata/updatesingle/:id/:action      		controllers.audience.AudienceMetadataController.updatesingle(id:Int, action:String)
+GET   /audience/audiencemetadata/list						   		controllers.audience.AudienceMetadataController.list()
 
 #PMP
 GET    /pmp/default                                            controllers.deal.DealController.getDealForm()

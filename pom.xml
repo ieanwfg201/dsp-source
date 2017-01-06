@@ -50,6 +50,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>constants/tracking_partner</module>
     <module>wurfl</module>
     <module>api_caller</module>
+    <module>external_libraries/SSRTBPriceCrypter</module>
     <module>entity/native_props</module>
     <module>entity/video_props</module>
     <module>entity/video_supply_props</module>
@@ -61,6 +62,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/userreports</module>
     <module>entity/algomodel</module>
     <module>entity/pmp</module>
+    <module>entity/audience_metadata</module>
+    <module>entity/audience_definition</module>
     <module>utils/common</module>
     <module>utils/state_manager</module>
     <module>utils/targeting</module>
@@ -109,6 +112,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/openrtb/2.1</module>
     <module>entity/openrtb/2.2</module>
     <module>entity/openrtb/2.3</module>
+    <module>entity/openrtb/2.4</module>
     <module>entity/exchangethrift</module>
     <module>entity/req_res_entity</module>
     <module>entity/user</module>
@@ -116,6 +120,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>entity/external_tracker</module>
     <module>entity/mma_categories</module>
     <module>entity/ad_ext</module>
+    <module>entity/postimpression</module>
     <module>ex_int/utils</module>
     <module>ex_int/native_admarkup/2.3</module>
     <module>ex_int/video_admarkup</module>
@@ -155,6 +160,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>common_caches/channel_cache</module>
     <module>common_caches/pmp</module>
     <module>common_caches/thrift_logging_cache</module>
+    <module>common_caches/metrics</module>
     <module>common_caches/video_upload_cache</module>
     <module>common_caches/banner_upload_cache</module>
     <module>common_caches/advinfo_upload_cache</module>

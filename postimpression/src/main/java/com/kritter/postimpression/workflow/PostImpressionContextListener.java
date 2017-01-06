@@ -10,6 +10,8 @@ import com.kritter.geo.entity.populator.DataLoaderExecutor;
 import com.kritter.postimpression.cache.ConversionEventIdStorageCache;
 import com.kritter.postimpression.cache.EventIdStorageCache;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LifeCycle;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -45,10 +47,10 @@ public class PostImpressionContextListener implements ServletContextListener
 
         System.out.println("Postimpression context initialization event received, going for initialization...");
 
-        String log4jFilePath = servletContext.getInitParameter(LoggingResource.LOG4J_PROPERTIES_POSTIMPRESSION_KEY);
-
-        System.out.println("Configure log4j in postimpression using properties file path " + log4jFilePath);
-        PropertyConfigurator.configure(log4jFilePath);
+        /*Enable synchronous logging using log4j2*/
+        System.setProperty("log4j.configurationFile","/var/data/kritter/log4j2-postimpression.xml");
+        System.setProperty("Log4jContextSelector","org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
+        ((LifeCycle) LogManager.getContext()).start();
 
         System.out.println("Done configuring log4j, now intializing the entire Postimpression Workflow");
 
@@ -82,6 +84,8 @@ public class PostImpressionContextListener implements ServletContextListener
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent)
     {
+        ((LifeCycle) LogManager.getContext()).stop();
+
         this.postImpressionWorkflow.destroy();
 
         if(null != this.geoDataLoaderExecutor)

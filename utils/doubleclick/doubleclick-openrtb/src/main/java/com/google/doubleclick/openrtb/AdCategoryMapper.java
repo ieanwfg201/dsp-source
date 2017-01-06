@@ -21,8 +21,8 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.io.CharStreams;
 import com.google.openrtb.OpenRtb.ContentCategory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  * and OpenRTB's IAB-based {@link ContentCategory}.
  */
 public class AdCategoryMapper {
-  private static final Logger logger = LoggerFactory.getLogger(AdCategoryMapper.class);
+  private static final Logger logger = LogManager.getLogger(AdCategoryMapper.class);
   private static ImmutableSet<ContentCategory>[] dcToOpenrtb;
   private static ImmutableSetMultimap<ContentCategory, Integer> openrtbToDc;
 

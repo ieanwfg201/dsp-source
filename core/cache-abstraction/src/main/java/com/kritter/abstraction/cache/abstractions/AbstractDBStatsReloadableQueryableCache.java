@@ -7,7 +7,7 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.List;

@@ -13,8 +13,8 @@ import com.kritter.entity.video_props.VideoProps;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.Properties;
  */
 public class CreativeCache extends AbstractDBStatsReloadableQueryableCache<Integer,Creative>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter private final String name;
 
     public CreativeCache(List<Class> secIndexKeyClassList, Properties props,
@@ -72,29 +72,44 @@ public class CreativeCache extends AbstractDBStatsReloadableQueryableCache<Integ
             }
             String creative_macro = resultSet.getString("creative_macro");
             CreativeMacro creativeMacro = null;
-            if(creative_macro != null){
+
+            if(creative_macro != null)
+            {
                 String creative_macro_trim = creative_macro.trim();
-                if(!"".equals(creative_macro_trim)){
-                    try{
+                if(!"".equals(creative_macro_trim))
+                {
+                    try
+                    {
                         creativeMacro = CreativeMacro.getObject(creative_macro_trim);
-                    }catch(Exception e){
+                    }
+                    catch(Exception e)
+                    {
                         logger.error(e.getMessage(), e);
                     }
                 }
             }
+
             String video_props = resultSet.getString("video_props");
             VideoProps videoProps = null;
-            if(video_props != null){
+
+            if(video_props != null)
+            {
                 String video_props_trim = video_props.trim();
-                if(!"".equals(video_props_trim)){
-                    try{
+                if(!"".equals(video_props_trim))
+                {
+                    try
+                    {
                         videoProps = VideoProps.getObject(video_props_trim);
-                    }catch(Exception e){
+                    }
+                    catch(Exception e)
+                    {
                         logger.error(e.getMessage(), e);
                     }
                 }
             }
-            
+
+            Integer[] slotIdsFromCreativeContainer = ResultSetHelper.getResultSetIntegerArray(resultSet,"slot_info");
+
             Long lastModified = resultSet.getTimestamp("last_modified").getTime();
             return new Creative.CreativeEntityBuilder(id, guid, accountId,
                                                       CreativeFormat.getCreativeFormats(formatId),
@@ -105,6 +120,7 @@ public class CreativeCache extends AbstractDBStatsReloadableQueryableCache<Integ
                                                       .setText(text)
                                                       .setBannerUriIds(bannerUriIds)
                                                       .setExternalResourceURL(externalResourceURL)
+                                                      .setSlotInfo(slotIdsFromCreativeContainer)
                                                       .build();
         }
         catch(Exception e)

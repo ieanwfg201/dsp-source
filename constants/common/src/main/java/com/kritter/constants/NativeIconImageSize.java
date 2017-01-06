@@ -5,10 +5,11 @@ import java.util.Map;
 
 public enum NativeIconImageSize {
 
-    I75x75(1,"75*75"),
+    I75x75(0,"75*75"),
     I80x80(1,"80*80"),
     I150x150(2,"150*150"),
-    I300x300(3,"300*300");
+    I300x300(3,"300*300"),
+    I50x50(4,"50*50");;
     
     private int code;
     private String name;

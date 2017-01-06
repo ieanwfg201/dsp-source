@@ -164,6 +164,10 @@ echo "mkdir -p /var/data/kritter/log_readytoprocess/adstats"
 mkdir -p /var/data/kritter/log_readytoprocess/adstats
 chown -R $4:$5 /var/data/kritter/log_readytoprocess/adstats
 
+echo "mkdir -p /var/data/kritter/log_readytoprocess/exchange"
+mkdir -p /var/data/kritter/log_readytoprocess/exchange
+chown -R $4:$5 /var/data/kritter/log_readytoprocess/exchange
+
 
 echo "mkdir -p /var/data/kritter/bidder/offline_bidder/cpm_cpm/rev_max"
 mkdir -p /var/data/kritter/bidder/offline_bidder/cpm_cpm/rev_max
@@ -219,14 +223,30 @@ echo "mkdir -p /var/log/kritter/tern_file/adstats"
 mkdir -p /var/log/kritter/tern_file/adstats
 chown -R $4:$5 /var/log/kritter/tern_file/adstats
 
+echo "mkdir -p /var/log/kritter/tern_file/exchange"
+mkdir -p /var/log/kritter/tern_file/exchange
+chown -R $4:$5 /var/log/kritter/tern_file/exchange
+
+
 echo "mkdir -p /var/data/kritter/tern_file/destination/adstats"
 mkdir -p /var/data/kritter/tern_file/destination/adstats
 chown -R $4:$5 /var/data/kritter/tern_file/destination/adstats
+
+echo "mkdir -p /var/data/kritter/tern_file/destination/exchange"
+mkdir -p /var/data/kritter/tern_file/destination/exchange
+chown -R $4:$5 /var/data/kritter/tern_file/destination/exchange
+
 
 echo "mkdir -p /var/data/kritter/tern_file/db/adstats"
 mkdir -p /var/data/kritter/tern_file/db/adstats
 chown -R $4:$5 /var/data/kritter/tern_file/db/adstats
 su - $4 -c "python /usr/share/kritter/tern/tern_file/lib/journal/create_journal.py '/usr/share/kritter/tern/tern_file/sql/setup.sql' '/var/data/kritter/tern_file/db/adstats' 'tern_journal.db'"
+
+echo "mkdir -p /var/data/kritter/tern_file/db/exchange"
+mkdir -p /var/data/kritter/tern_file/db/exchange
+chown -R $4:$5 /var/data/kritter/tern_file/db/exchange
+su - $4 -c "python /usr/share/kritter/tern/tern_file/lib/journal/create_journal.py '/usr/share/kritter/tern/tern_file/sql/setup.sql' '/var/data/kritter/tern_file/db/exchange' 'tern_journal.db'"
+
 
 echo "mkdir -p /var/log/kritter/tern_file/postimpression"
 mkdir -p /var/log/kritter/tern_file/postimpression

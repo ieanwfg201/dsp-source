@@ -219,4 +219,47 @@ public class TargetingDisplayFull extends TargetingDisplay{
     	}
     	return "";
     }
+    public String getAudGenderInc(){
+    	if(tp.isAudience_catinc()){
+    		return "Inclusion";
+    	}
+    	return "Exclusion";
+    }
+    public String getAudAgeRangeInc(){
+    	if(tp.isAudience_agerangeinc()){
+    		return "Inclusion";
+    	}
+    	return "Exclusion";
+    }
+    public String getAudCatInc(){
+    	if(tp.isAudience_catinc()){
+    		return "Inclusion";
+    	}
+    	return "Exclusion";
+    }
+	public List<String> getAudGenderList(){ 
+		return MetadataAPI.audience_definition_list(tp.getAudience_gender());
+	}
+	public List<String> getAgeRangeList(){ 
+		return MetadataAPI.audience_definition_list(tp.getAudience_agerange());
+	}
+	public List<String> getAgeCatTierList(int i){ 
+		if(i==1){
+			return MetadataAPI.audience_definition_list(tp.getAudience_tier1_cat());
+		}
+		if(i==2){
+			return MetadataAPI.audience_definition_list(tp.getAudience_tier2_cat());
+		}
+		if(i==3){
+			return MetadataAPI.audience_definition_list(tp.getAudience_tier3_cat());
+		}
+		if(i==4){
+			return MetadataAPI.audience_definition_list(tp.getAudience_tier4_cat());
+		}
+		if(i==5){
+			return MetadataAPI.audience_definition_list(tp.getAudience_tier5_cat());
+		}
+		return new LinkedList<String>();
+	}
+
 }

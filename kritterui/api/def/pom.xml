@@ -10,6 +10,16 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritterui_api_def</name>
   <dependencies>
     <dependency>
+        <groupId>com.kritter.kritterui.api.audience_definition</groupId>
+        <artifactId>kritter_kritterui_api_audience_definition</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>com.kritter.kritterui.api.audience_metadata</groupId>
+        <artifactId>kritter_kritterui_api_audience_metadata</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>com.kritter.kritterui.api.qualification</groupId>
         <artifactId>kritter_kritterui_api_qualification</artifactId>
         <version>1.0.0</version>
@@ -92,11 +102,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <dependency>
         <groupId>com.kritter.kritterui.api.fraud</groupId>
         <artifactId>kritter_kritterui_api_fraud</artifactId>
-        <version>1.0.0</version>
-    </dependency>
-    <dependency>
-        <groupId>com.kritter.kritterui.api.tracking_event</groupId>
-        <artifactId>kritter_kritterui_api_tracking_event</artifactId>
         <version>1.0.0</version>
     </dependency>
     <dependency>

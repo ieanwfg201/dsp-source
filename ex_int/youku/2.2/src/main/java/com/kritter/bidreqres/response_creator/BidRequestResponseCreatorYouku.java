@@ -23,8 +23,8 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ServerConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.util.*;
@@ -63,7 +63,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
                                             AdEntityCache adEntityCache
                                            )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
         this.postImpressionBaseClickUrl = PREFIX_AS_SIGNED_CLICK_URL + this.postImpressionBaseClickUrl;
         this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);

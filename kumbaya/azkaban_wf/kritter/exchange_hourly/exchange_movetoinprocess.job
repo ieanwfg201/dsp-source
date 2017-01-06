@@ -1,0 +1,6 @@
+# exchange_movetoinprocess.job
+
+type=command
+dependencies=exchange_init
+command=mkdir -p ${exchange_readytoprocess_path}/"${process_time_dir}"
+command.1=sh exchange_movetoinprocess.sh ${exchange_input_path} ${exchange_readytoprocess_path}/"${process_time_dir}" "${process_time}" "${process_time_dir}" "${exchange_code_path}"

@@ -2,8 +2,8 @@ package com.kritter.exchange.response_openrtb_2_3.converter.common;
 
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidResponseEntity;
 import com.kritter.constants.ConvertErrorEnum;
@@ -33,7 +33,7 @@ public class ConvertBidResponse {
         }
     }
      public static void main(String args[]){
-         Logger logger = LoggerFactory.getLogger("bals");
+         Logger logger = LogManager.getLogger("bals");
          String str = "{"+
     "\"id\": \"0102f1ff-768a-2d01-557c-bfca1403dcb9\","+
     "\"seatbid\": [{"+

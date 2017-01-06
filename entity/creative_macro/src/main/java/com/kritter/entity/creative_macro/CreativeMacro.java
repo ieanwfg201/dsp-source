@@ -16,6 +16,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @EqualsAndHashCode
 public class CreativeMacro
 {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Getter@Setter
     private LinkedList<Integer> macroIds = new LinkedList<Integer>();
@@ -23,12 +24,11 @@ public class CreativeMacro
     private int quote = 0;
     
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
+
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static CreativeMacro getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static CreativeMacro getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

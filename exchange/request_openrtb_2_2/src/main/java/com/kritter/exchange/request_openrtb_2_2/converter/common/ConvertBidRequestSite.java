@@ -3,11 +3,13 @@ package com.kritter.exchange.request_openrtb_2_2.converter.common;
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestSiteDTO;
+import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestContentDTO;
 import com.kritter.common.caches.iab.categories.IABCategoriesCache;
 import com.kritter.common.caches.iab.index.IABIDIndex;
 import com.kritter.constants.ConvertErrorEnum;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.entity.reqres.entity.Request;
+import com.kritter.utils.common.ApplicationGeneralUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -76,8 +78,55 @@ public class ConvertBidRequestSite {
             site.setContentCategoriesForSite(new String[]{});
         }
 
+        /********************************************************************************
+         * Set more parameters to site for better enrichment and to allow DSP to decide
+         * better bids on more information provided.
+         * *****************************************************************************/
+        if(null != request.getBidRequestSiteSectioncat())
+        {
+            site.setContentCategoriesSubsectionSite(request.getBidRequestSiteSectioncat());
+            site.setPageContentCategories(request.getBidRequestSiteSectioncat());
+        }
+
+        if(null != request.getBidRequestSiteKeywords())
+            site.setSiteKeywordsCSV(request.getBidRequestSiteKeywords());
+
+        /**add content object if attributes available*/
+        BidRequestContentDTO contentDTO = new BidRequestContentDTO();
+        String contentId = generateContentIdFromSiteURL(request.getSite().getSiteUrl());
+        if(null != contentId)
+            contentDTO.setContentUniqueId(contentId);
+
+        if(null != request.getBidRequestSiteKeywords())
+            contentDTO.setContentKeywordsCSV(request.getBidRequestSiteKeywords());
+        if(null != request.getBidRequestSiteContentContext())
+            contentDTO.setContentContext(request.getBidRequestSiteContentContext());
+        if(null != request.getBidRequestSiteContentLanguage())
+            contentDTO.setContentLanguage(request.getBidRequestSiteContentLanguage());
+        site.setBidRequestContent(contentDTO);
+        /**********************************************************************************/
+
         bidRequest.setBidRequestSite(site);
         
         return ConvertErrorEnum.HEALTHY_CONVERT;
+    }
+
+    private static String generateContentIdFromSiteURL(String siteURL)
+    {
+        if(null != siteURL)
+        {
+            String md5ValueForURL = null;
+            try
+            {
+                md5ValueForURL = ApplicationGeneralUtils.generateMD5OfUrl(siteURL);
+            }
+            catch (Exception e)
+            {
+            }
+
+            return md5ValueForURL;
+        }
+
+        return null;
     }
 }

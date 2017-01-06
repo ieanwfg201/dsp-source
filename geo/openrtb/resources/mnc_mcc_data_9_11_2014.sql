@@ -185,7 +185,6 @@ insert into mcc_mnc (mcc,mnc,country_code,country_name,network_name) values
 ("202","05","GR","Greece","Vodafone"),
 ("427","05","QA","Qatar","Ministry of Interior"),
 ("456","09","KH","Cambodia","Beeline"),
-("246","02","LT","Lithuania","BITĖ"),
 ("260","10","PL","Poland","Sferia"),
 ("440","69","JP","Japan","NTT DoCoMo"),
 ("621","20","NG","Nigeria","Airtel"),

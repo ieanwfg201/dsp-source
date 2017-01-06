@@ -9,8 +9,8 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.common.caches.video_upload_cache.entity.VideoUploadCacheEntity;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.Properties;
  */
 public class VideoUploadCache extends AbstractDBStatsReloadableQueryableCache<String, VideoUploadCacheEntity>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private String name;
 
     public VideoUploadCache(List<Class> secIndexKeyClassList, Properties props,

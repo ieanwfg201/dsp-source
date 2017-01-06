@@ -1,10 +1,18 @@
-@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String,deviceid_targeting:String)
+@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String,
+channel_required:String,lat_lon_file:String,deviceid_targeting:String,
+audience_targeting:String,audience_gender_targeting:String,audience_age_range_targeting:String,
+	audience_cat_targeting:String,audience_cattier1_targeting:String,audience_cattier2_targeting:String,
+	audience_cattier3_targeting:String,audience_cattier4_targeting:String,audience_cattier5_targeting:String)
 
 @main2("Targeting Home") {@navs.navadvt(tp.getAccountGuid())}{@navs.breadcrumbs(tp.getBreadCrumbPaths())}{
 
     @components.containers.panel("Targeting Summary-"+ tp.getName()){
         <div>
-            @advt.targeting.targetingHomeContent(tp,retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting)
+            @advt.targeting.targetingHomeContent(tp,retargeting_flow_enabled,mma_required,adposition_required,channel_required,
+            lat_lon_file,deviceid_targeting,
+            audience_targeting,audience_gender_targeting,audience_age_range_targeting,
+	audience_cat_targeting,audience_cattier1_targeting,audience_cattier2_targeting,
+	audience_cattier3_targeting,audience_cattier4_targeting,audience_cattier5_targeting)
        </div>
     }
 }

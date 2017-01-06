@@ -6,8 +6,8 @@ import com.kritter.constants.ConvertErrorEnum;
 import com.kritter.constants.DefaultCurrency;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ConvertBidResponse {
      public static ConvertEntity convert(String str, ObjectMapper objectMapper, Logger logger){
@@ -33,7 +33,7 @@ public class ConvertBidResponse {
         }
     }
      public static void main(String args[]){
-         Logger logger = LoggerFactory.getLogger("bals");
+         Logger logger = LogManager.getLogger("bals");
          String str = "{"+
     "\"id\": \"0102f1ff-768a-2d01-557c-bfca1403dcb9\","+
     "\"seatbid\": [{"+

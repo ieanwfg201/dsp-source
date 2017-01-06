@@ -3,7 +3,7 @@ package com.kritter.abstraction.cache.abstractions;
 import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Date;
 import java.util.List;

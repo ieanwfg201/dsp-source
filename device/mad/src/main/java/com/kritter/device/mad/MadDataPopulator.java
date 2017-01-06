@@ -11,8 +11,8 @@ import com.kritter.utils.databasemanager.DatabaseManager;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -71,7 +71,7 @@ public class MadDataPopulator implements HandsetPopulationProvider {
                                         DatabaseManager databaseManager,
                                         String dataLoadMasterNodeParam,
                                         ServerConfig serverConfig) throws Exception {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.madFilesDirectory = madFilesDirectory;
         this.databaseManager = databaseManager;
         this.versionPattern = Pattern.compile(versionPatternRegex);

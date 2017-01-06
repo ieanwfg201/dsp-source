@@ -3,8 +3,8 @@ package com.kritter.adserving.flow.job;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class sets a variable in request context so as to
@@ -28,7 +28,7 @@ public class TrafficAssignerToEcpmBidCalculator implements Job
                                               String variableName
                                              )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = jobName;
         this.requestObjectKey = requestObjectKey;
         this.variableName = variableName;

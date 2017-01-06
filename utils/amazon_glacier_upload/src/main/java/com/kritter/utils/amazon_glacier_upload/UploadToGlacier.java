@@ -10,8 +10,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -30,7 +30,7 @@ import com.amazonaws.util.BinaryUtils;
 
 
 public class UploadToGlacier {   
-    private static final Logger LOG = LoggerFactory.getLogger(UploadToGlacier.class);
+    private static final Logger LOG = LogManager.getLogger(UploadToGlacier.class);
     // This example works for part sizes up to 1 GB.
     public static String partSize = "1048576"; // 1 MB.
     public static AmazonGlacierClient client;

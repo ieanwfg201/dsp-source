@@ -23,8 +23,8 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -54,6 +54,10 @@ public class ResponseFormattingJob implements Job{
     private SiteMetaDataCache siteMetaDataCache;
     private VASTFormatter vastFormatter;
 
+    private static final String CONTENT_LENGTH_HEADER = "Content-Length";
+    private static final String CONTENT_LENGTH_HEADER_ZERO_VALUE = "2";
+    private static final String EMPTY_RESPONSE_TO_EXCHANGE = "{}";
+
     public ResponseFormattingJob(
                                  String loggerName,
                                  String jobName,
@@ -69,7 +73,7 @@ public class ResponseFormattingJob implements Job{
                                  VASTFormatter vastFormatter
                                 )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = jobName;
         this.requestObjectKey = requestObjectKey;
         this.errorOrEmptyResponse = errorOrEmptyResponse;
@@ -126,7 +130,14 @@ public class ResponseFormattingJob implements Job{
             {
                 logger.debug("Inventory source is RTB Exchange, writing no bid to exchange, the enrichment error is : {} ",errorName);
 
-                writeNoBidResponseToExchange(httpServletResponse);
+                try
+                {
+                    writeNoBidResponseToExchange(httpServletResponse);
+                }
+                catch (Exception e)
+                {
+                    logger.error("Exception writing no bid response",e);
+                }
             }
             //may be possible that error name is not null and request is not null.
             else
@@ -149,7 +160,7 @@ public class ResponseFormattingJob implements Job{
         {
             try
             {
-                logger.debug("Inventory source is RTB Exchange inside ResponseFormattingJob...");
+                logger.debug("Inventory source is RTB Exchange inside ResponseFormattingJob using adaptor...");
 
                 Response response = (Response)context.getValue(this.responseObjectKey);
 
@@ -196,7 +207,13 @@ public class ResponseFormattingJob implements Job{
             catch (Exception e)
             {
                 logger.error("Exception inside ResponseFormattingJob ", e);
-                writeNoBidResponseToExchange(httpServletResponse);
+
+                try
+                {
+                    writeNoBidResponseToExchange(httpServletResponse);
+                }
+                catch (Exception ioe)
+                {}
             }
         }
         else if(null != request &&
@@ -205,7 +222,7 @@ public class ResponseFormattingJob implements Job{
         {
             try
             {
-                logger.debug("Inventory source is RTB Exchange inside ResponseFormattingJob...");
+                logger.debug("Inventory source is RTB Exchange inside ResponseFormattingJob using exchange adaptor...");
 
                 Response response = (Response)context.getValue(this.responseObjectKey);
 
@@ -342,9 +359,6 @@ public class ResponseFormattingJob implements Job{
         {
             try
             {
-                if(responseCode != HttpServletResponse.SC_FOUND)
-                    httpServletResponse.setStatus(responseCode);
-
                 writeResponseToUser(httpServletResponse,responseContent,responseCode);
             }
             catch(IOException e)
@@ -358,27 +372,27 @@ public class ResponseFormattingJob implements Job{
                                      String content,
                                      int responseCode) throws IOException
     {
-        if(responseCode == HttpServletResponse.SC_FOUND)
-        {
-            logger.debug("Response being sent to user is redirect to the url {} ",
-                         content);
-            httpServletResponse.sendRedirect(content);
-        }
-        else
-        {
-            OutputStream os = httpServletResponse.getOutputStream();
 
-            if(null == content)
-                content = errorOrEmptyResponse;
+        httpServletResponse.setStatus(responseCode);
+        OutputStream os = httpServletResponse.getOutputStream();
 
-            os.write(content.getBytes());
-            os.flush();
-            os.close();
-        }
+        if(null == content)
+            content = errorOrEmptyResponse;
+
+        logger.debug("Writing following content to http servlet response : {}", content);
+
+        os.write(content.getBytes());
+        os.flush();
+        //os.close();
     }
 
-    private void writeNoBidResponseToExchange(HttpServletResponse httpServletResponse)
+    private void writeNoBidResponseToExchange(HttpServletResponse httpServletResponse) throws IOException
     {
         httpServletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        //httpServletResponse.addHeader(CONTENT_LENGTH_HEADER,CONTENT_LENGTH_HEADER_ZERO_VALUE);
+        //OutputStream os = httpServletResponse.getOutputStream();
+        //os.write(EMPTY_RESPONSE_TO_EXCHANGE.getBytes());
+        //os.flush();
+        //os.close();
     }
 }

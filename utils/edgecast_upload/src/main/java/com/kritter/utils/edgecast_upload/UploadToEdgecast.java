@@ -7,11 +7,11 @@ import java.io.InputStream;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.log4j.Logger;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class UploadToEdgecast {
-    private static Logger m_logger = Logger.getLogger(UploadToEdgecast.class);
+    private static Logger m_logger = LogManager.getLogger(UploadToEdgecast.class);
     public static boolean upload(String ftpHostname, String ftpPort, String inputFile, 
             String username, String password ) throws Exception {
         File firstLocalFile = new File(inputFile);

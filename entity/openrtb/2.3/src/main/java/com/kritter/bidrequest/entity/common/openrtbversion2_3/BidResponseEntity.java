@@ -6,7 +6,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
- * This class is used to map open rtb 2_1 bid response message.
+ * This class is used to map open rtb 2.3 bid response message.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BidResponseEntity

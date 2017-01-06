@@ -1,7 +1,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+       default-lazy-init="true">
 
     <bean id="db-manager" class="com.kritter.utils.databasemanager.DatabaseManager"> 
         <constructor-arg index="0" value="jdbc/AdserverDatabase"/>
@@ -444,6 +445,7 @@
         <constructor-arg index="15"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="16"><ref bean="isp_detector"/></constructor-arg>
         <constructor-arg index="17" value="k-uid"/>
+        <constructor-arg index="18" value="dspusync_"/>
     </bean> 
 
     <bean id="aggregator_pub_request_enricher" class="com.kritter.adserving.request.enricher.AggregatorRequestEnricher">
@@ -849,10 +851,12 @@
     </bean>
 
     <bean id="user_aerospike_db" class="com.kritter.utils.nosql.aerospike.AerospikeNoSqlNamespaceOperations">
-        <constructor-arg index="0" value="postimpression.application"/>
+        <constructor-arg index="0" value="adserving.application"/>
         <constructor-arg index="1" value="aerospike.mad.com"/>
         <constructor-arg index="2" value="3000"/>
         <constructor-arg index="3" value="3"/>
-        <constructor-arg index="4" value="20"/>
+        <constructor-arg index="4" value="5"/>
+        <constructor-arg index="5" value="1000"/>
+        <constructor-arg index="6" value="20000"/>
     </bean>
 </beans>

@@ -5,8 +5,8 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.common.caches.slot_size_cache.entity.CreativeSlotSize;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.*;
 import java.util.*;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class CreativeSlotSizeCache
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private AtomicReference<List<CreativeSlotSize>> creativeSlotSizeList;
     private DatabaseManager databaseManager;
     private static final String QUERY = "select * from creative_slots";
@@ -114,6 +114,24 @@ public class CreativeSlotSizeCache
 
         return -1;
     }
+    public short fetchSlotIdForExactSize(int width, int height)
+    {
+        CreativeSlotSize requestingCreativeSlotSize = new CreativeSlotSize((short)width,(short)height,(short)-1);
+
+        List<CreativeSlotSize> dataList = this.creativeSlotSizeList.get();
+
+        for(int i = 0; i < dataList.size(); i ++)
+        {
+            CreativeSlotSize element = dataList.get(i);
+
+            //find the first fitting element.
+            if(requestingCreativeSlotSize.getWidth() == element.getWidth() &&
+               requestingCreativeSlotSize.getHeight() == element.getHeight())
+                return element.getSlotId();
+        }
+
+        return -1;
+    }
 
     private class CreativeSlotSizeComparator implements Comparator<CreativeSlotSize> {
         @Override
@@ -149,7 +167,7 @@ public class CreativeSlotSizeCache
      */
     private class CreativeSlotSizeReloadTimerTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

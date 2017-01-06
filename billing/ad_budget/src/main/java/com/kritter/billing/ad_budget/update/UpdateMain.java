@@ -3,7 +3,7 @@ package com.kritter.billing.ad_budget.update;
 import com.kritter.billing.ad_budget.EntityType;
 import com.kritter.billing.ad_budget.utils.GeneralUtils;
 import com.kritter.postimpression.thrift.struct.PostImpressionEvent;
-import com.kritter.utils.dbconnector.DBConnector;
+import com.kritter.billing.dbconnector.DBConnector;
 import org.apache.log4j.Appender;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.or.ObjectRenderer;

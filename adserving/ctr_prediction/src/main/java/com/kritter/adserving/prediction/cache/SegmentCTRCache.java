@@ -7,8 +7,8 @@ import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.rtb.ds.pair.Pair;
 import com.kritter.rtb.ds.trie.Trie;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.Properties;
@@ -27,9 +27,9 @@ public class SegmentCTRCache extends AbstractFileStatsReloadableCache implements
     private ReadWriteLock readWriteLock;
 
     public SegmentCTRCache(String name, String loggerName, Properties properties) throws InitializationException {
-        super(LoggerFactory.getLogger(loggerName), properties);
+        super(LogManager.getLogger(loggerName), properties);
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.readWriteLock = new ReentrantReadWriteLock();
     }
 

@@ -2,7 +2,7 @@ package com.kritter.billing.ad_budget.reset;
 
 import com.kritter.billing.ad_budget.EntityType;
 import com.kritter.postimpression.thrift.struct.PostImpressionEvent;
-import com.kritter.utils.dbconnector.DBConnector;
+import com.kritter.billing.dbconnector.DBConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

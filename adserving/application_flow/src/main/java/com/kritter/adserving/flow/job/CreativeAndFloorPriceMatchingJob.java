@@ -5,11 +5,10 @@ import com.kritter.entity.reqres.entity.Response;
 import com.kritter.adserving.shortlisting.core.CreativeAndFloorMatchingRTBExchange;
 import com.kritter.adserving.shortlisting.core.CreativeTargetingMatcher;
 import com.kritter.constants.INVENTORY_SOURCE;
-import com.kritter.constants.OpenRTBVersion;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public class CreativeAndFloorPriceMatchingJob implements Job
                                             Map<Integer,CreativeAndFloorMatchingRTBExchange>
                                                     openRTBVersionWithCreativeAndFloorMatchingInstances)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;

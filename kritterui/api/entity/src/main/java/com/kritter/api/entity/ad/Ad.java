@@ -12,6 +12,7 @@ import com.kritter.constants.BidType;
 import com.kritter.constants.FreqDuration;
 import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.MarketPlace;
+import com.kritter.constants.Protocol;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.UserConstant;
 import com.kritter.constants.tracking_partner.TrackingPartner;
@@ -95,6 +96,7 @@ public class Ad {
     private int imp_freq_cap_type = FreqDuration.BYHOUR.getCode();
     private int imp_freq_cap_count = UserConstant.frequency_cap_default;
     private int imp_freq_time_window = UserConstant.frequency_cap_time_window_default;
+    private int protocol = Protocol.HTTP.getCode() ;
     @Override
 	public int hashCode() {
 		final int prime = 31;
@@ -121,6 +123,7 @@ public class Ad {
 		result = prime * result + (int) (created_on ^ (created_on >>> 32));
 		result = prime * result + ((creative_guid == null) ? 0 : creative_guid.hashCode());
 		result = prime * result + creative_id;
+		result = prime * result + extclickType;
 		result = prime * result + ((external_click_tracker == null) ? 0 : external_click_tracker.hashCode());
 		result = prime * result + ((external_imp_tracker == null) ? 0 : external_imp_tracker.hashCode());
 		result = prime * result + frequency_cap;
@@ -143,6 +146,7 @@ public class Ad {
 		result = prime * result + ((mma_tier_2_list == null) ? 0 : mma_tier_2_list.hashCode());
 		result = prime * result + modified_by;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + protocol;
 		result = prime * result + ((status_id == null) ? 0 : status_id.hashCode());
 		result = prime * result + ((targeting_guid == null) ? 0 : targeting_guid.hashCode());
 		result = prime * result + ((targeting_profile_name == null) ? 0 : targeting_profile_name.hashCode());
@@ -221,6 +225,8 @@ public class Ad {
 			return false;
 		if (creative_id != other.creative_id)
 			return false;
+		if (extclickType != other.extclickType)
+			return false;
 		if (external_click_tracker == null) {
 			if (other.external_click_tracker != null)
 				return false;
@@ -290,6 +296,8 @@ public class Ad {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (protocol != other.protocol)
+			return false;
 		if (status_id != other.status_id)
 			return false;
 		if (targeting_guid == null) {
@@ -307,6 +315,12 @@ public class Ad {
 		if (tracking_partner != other.tracking_partner)
 			return false;
 		return true;
+	}
+	public int getProtocol() {
+		return protocol;
+	}
+	public void setProtocol(int protocol) {
+		this.protocol = protocol;
 	}
 	public String getImpMacro() {
 		return impMacro;

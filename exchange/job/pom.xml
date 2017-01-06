@@ -12,6 +12,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.kritter.entity</groupId>
+            <artifactId>postimpression_entity</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.kritter.entity.exchangethrift</groupId>
             <artifactId>kritter_entity_exchangethrift</artifactId>
             <version>1.0.0</version>
@@ -69,6 +74,11 @@
         <dependency>
             <groupId>com.kritter.exchange.request_openrtb_2_2</groupId>
             <artifactId>exchange_request_openrtb_2_2</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.exchange.response_custom_dsp</groupId>
+            <artifactId>exchange_response_custom_dsp</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

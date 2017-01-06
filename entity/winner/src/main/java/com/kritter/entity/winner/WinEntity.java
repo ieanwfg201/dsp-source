@@ -21,14 +21,13 @@ public class WinEntity {
     private BidResponseEntity winnerBidResponse2_3 = null;
     @Getter@Setter
     private com.kritter.bidrequest.entity.common.openrtbversion2_2.BidResponseEntity winnerBidResponse2_2 = null;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static WinEntity getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static WinEntity getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

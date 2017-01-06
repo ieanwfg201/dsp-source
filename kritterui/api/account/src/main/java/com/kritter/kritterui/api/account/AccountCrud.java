@@ -301,7 +301,7 @@ public class AccountCrud {
                 autoCommitFlag = con.getAutoCommit();
                 con.setAutoCommit(false);
             }
-            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Account.create_account);
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Account.create_account,PreparedStatement.RETURN_GENERATED_KEYS);
             String generated_guid =SingletonUUIDGenerator.getSingletonUUIDGenerator().generateUniversallyUniqueIdentifier().toString();
 
             if(useProvidedGuid)
@@ -378,9 +378,15 @@ public class AccountCrud {
                 msg.setMsg(ErrorEnum.ACCOUNT_NOT_CREATED.getName());
                 return msg;
             }
+            ResultSet keyResultSet = pstmt.getGeneratedKeys();
+            int db_id = -1;
+            if (keyResultSet.next()) {
+                db_id = keyResultSet.getInt(1);
+            }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.NO_ERROR.getId());
             msg.setMsg(ErrorEnum.NO_ERROR.getName());
+            msg.setId(db_id+"");
             return msg;
         }catch(Exception e){
             LOG.error(e.getMessage(),e);
@@ -546,6 +552,10 @@ public class AccountCrud {
                 case list_active_advertiser_by_demandtype:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Account.list_active_advertiser_by_demandtype);
                     pstmt.setInt(1, listEntity.getDemandType().getCode());
+                    break;
+                case list_account_by_email:
+                	pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Account.list_accounts_by_email);
+                    pstmt.setString(1, listEntity.getEmail());
                     break;
                 default:
                     break;
@@ -1511,4 +1521,5 @@ public class AccountCrud {
 
         return null;
     }
+    
 }

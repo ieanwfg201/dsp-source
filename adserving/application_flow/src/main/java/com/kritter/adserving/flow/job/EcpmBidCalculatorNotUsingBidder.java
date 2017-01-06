@@ -10,8 +10,8 @@ import com.kritter.constants.MarketPlace;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.utils.common.AdNoFillStatsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +40,7 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
                                            String adNoFillReasonMapKey
                                           )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.jobName = name;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;
@@ -73,6 +73,13 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
         }
 
         Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfo();
+
+        if(null == responseAdInfos)
+        {
+            logger.debug("No ads to work on inside EcpmBidCalculatorNotUsingBidder, returning back.");
+            return;
+        }
+
         Set<ResponseAdInfo> finalResponseAdInfo = new HashSet<ResponseAdInfo>(responseAdInfos);
 
         for(ResponseAdInfo responseAdInfo : responseAdInfos)
@@ -115,19 +122,6 @@ public class EcpmBidCalculatorNotUsingBidder implements Job
 
             ReqLog.debugWithDebugNew(logger, request, "Ecpm bid value calculated inside EcpmBidCalculatorNotUsingBidder as : {} for adunit id: {}",
                          optimizedBidValueOfAdForThisImpression, responseAdInfo.getAdId());
-
-            //check for budget remaining of the entity, if less , then ad cant participate in final selection.
-
-            Double budgetRemainingForeseen = responseAdInfo.getDailyRemainingBudget() -
-                                             responseAdInfo.getAdvertiserBid();
-
-            if( budgetRemainingForeseen < Budget.min_budget )
-            {
-                ReqLog.debugWithDebugNew(logger, request, "Adunit's budget : {} is less than minimum value inside EcpmBidCalculatorNotUsingBidder for adid : {} , removing this ad from final list... ",
-                             budgetRemainingForeseen ,responseAdInfo.getAdId());
-                finalResponseAdInfo.remove(responseAdInfo);
-                continue;
-            }
 
             /* Check for if ecpm value meets site's floor value provided via admin user interface.
              * If realtime bid floor is provided by the requesting site then use that.

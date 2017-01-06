@@ -5,6 +5,7 @@ import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
+import com.kritter.common.caches.metrics.cache.MetricsCache;
 import com.kritter.constants.DeviceType;
 import com.kritter.device.common.HandsetDetectionProvider;
 import com.kritter.device.common.entity.HandsetDataTopLevelKey;
@@ -14,8 +15,8 @@ import com.kritter.device.common.index.HandsetSecondaryIndexBuilder;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import lombok.Setter;
 import net.sourceforge.wurfl.core.Device;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -34,7 +35,7 @@ public class HandsetDetector extends AbstractDBStatsReloadableQueryableCache<Han
     implements HandsetDetectionProvider
 {
 
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private final String name;
     /**
      * keep latest wurfl version of the file, as well as keep the full
@@ -50,15 +51,18 @@ public class HandsetDetector extends AbstractDBStatsReloadableQueryableCache<Han
     private static final String DEVICE_CLAIMS_WEB_SUPPORT_CAPABILITY_NAME = "device_claims_web_support";
 
     private static WurflFilesManager wurflFilesManager;
+    private MetricsCache metricsCache;
 
     public HandsetDetector(List<Class> secIndexKeyClassList,
                            Properties props,
                            DatabaseManager dbMgr,
                            String cacheName,
-                           WurflFilesManager wurflFilesManager) throws InitializationException
+                           WurflFilesManager wurflFilesManager,
+                           MetricsCache metricsCache) throws InitializationException
     {
         super(secIndexKeyClassList, logger, props, dbMgr,prepareQueryMapToSetAndInitializeWurflFileManager(wurflFilesManager));
         this.name = cacheName;
+        this.metricsCache = metricsCache;
     }
 
     private static Map<Integer,Object> prepareQueryMapToSetAndInitializeWurflFileManager(WurflFilesManager wurflFilesManager)
@@ -132,9 +136,11 @@ public class HandsetDetector extends AbstractDBStatsReloadableQueryableCache<Han
      */
     public HandsetMasterData detectHandsetForUserAgent(String userAgent) throws Exception
     {
+        metricsCache.incrementInvocations(getName());
         if(null == wurflFilesManager || null == wurflFilesManager.getWurflEngine())
             throw new Exception("Wurfl Manager for handset detection has not been initialized properly");
 
+        long beginTime = System.nanoTime();
         HandsetMasterData handsetMasterData = null;
         Device device = wurflFilesManager.getWurflEngine().getDeviceForRequest(userAgent);
 
@@ -201,6 +207,9 @@ public class HandsetDetector extends AbstractDBStatsReloadableQueryableCache<Han
             logger.error("Exception in handset detection inside HandsetDetector,returning null handset",e);
             return null;
         }
+
+        long endTime = System.nanoTime();
+        metricsCache.incrementLatency(getName(), (endTime - beginTime + 500) / 1000);
 
         return handsetMasterData;
     }

@@ -15,6 +15,7 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
 	$scope.native_icons= $("#native_icons").val();
 	$scope.native_screenshots= $("#native_screenshots").val();
 	$scope.direct_videos= $("#direct_videos").val();
+	$scope.slot_info= $("#slot_info").val();
 	$scope.uploader = null;
 	$scope.iconuploader = null;
 	$scope.screenshotuploader = null;
@@ -49,6 +50,11 @@ controller('creativeController',function ($scope, $http, $modal, FileUploader) {
     $scope.trackingStr_msmodel = Object.create(MultiSelectModel);  
     $scope.trackingStr_msmodel.init($scope.trackingStr_url, 'valueArray', true);
 	
+    $scope.slot_info_url = "/metadata/options/slot_options";
+    $scope.slot_info= $("#slot_info").val();;
+    $scope.slot_info_msmodel = Object.create(MultiSelectModel);  
+    $scope.slot_info_msmodel.init($scope.slot_info_url, 'valueArray', true);
+    
 	$scope.updateCreativeAttrs= function(){
 		if($scope.format_id != "")
 			$scope.creative_attr_msmodel.setUrl("/advertiser/creatives/metadata/creativeattrs/"+$scope.format_id);

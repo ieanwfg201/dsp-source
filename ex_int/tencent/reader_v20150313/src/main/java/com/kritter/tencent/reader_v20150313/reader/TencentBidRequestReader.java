@@ -8,8 +8,8 @@ import com.kritter.tencent.reader_v20150313.entity.TencentBidRequestParentNodeDT
 import RTB.Tencent.Request;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -27,8 +27,8 @@ public class TencentBidRequestReader implements IBidRequestReader
                                String bidRequestLoggerName
                                )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
-        this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
+        this.logger = LogManager.getLogger(loggerName);
+        this.bidRequestLogger = LogManager.getLogger(bidRequestLoggerName);
     }
 
     /**

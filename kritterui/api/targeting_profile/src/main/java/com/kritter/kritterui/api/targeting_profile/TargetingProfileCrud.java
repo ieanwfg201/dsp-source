@@ -12,6 +12,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -29,6 +33,7 @@ import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.SupplySourceEnum;
 import com.kritter.constants.SupplySourceTypeEnum;
 import com.kritter.constants.error.ErrorEnum;
+import com.kritter.entity.audience_definition.AudienceTargetingDef;
 import com.kritter.entity.targeting_profile.column.Retargeting;
 import com.kritter.entity.targeting_profile.column.TPExt;
 import com.kritter.kritterui.api.db_query_def.Targeting_Profile;
@@ -759,6 +764,166 @@ public class TargetingProfileCrud {
         if(rset.getObject("user_id_inc_exc")!= null){
         	tp.setUser_id_inc_exc(rset.getInt("user_id_inc_exc"));
         }
+        boolean audience_targeting = rset.getBoolean("audience_targeting");
+        tp.setAudience_targeting(audience_targeting);
+        if(audience_targeting && rset.getObject("audience_targeting_def") != null){
+        	String audience_targeting_def = rset.getString("audience_targeting_def");
+        	if(!audience_targeting_def.isEmpty()){
+        		try{
+        			AudienceTargetingDef audienceTargetingDef= AudienceTargetingDef.getObject(audience_targeting_def);
+        			if(audienceTargetingDef != null){
+        				populateAudience(tp, audienceTargetingDef);
+        			}
+        		}catch(Exception  e1){
+        			LOG.error(e1.getMessage(), e1);
+        		}
+        	}
+        }
+        
+    }
+    private static void populateAudience(Targeting_profile tp,AudienceTargetingDef audienceTargetingDef){
+    	String str = setToStringArray(audienceTargetingDef.getAgerange());
+    	tp.setAudience_agerange(str);
+    	if(audienceTargetingDef.getAgerangeinc() != null){
+    		tp.setAudience_agerangeinc(audienceTargetingDef.getAgerangeinc());
+    	}
+    	str = setToStringArray(audienceTargetingDef.getGender());
+    	tp.setAudience_gender(str);
+    	if(audienceTargetingDef.getGenderincl() != null){
+    		tp.setAudience_genderincl(audienceTargetingDef.getGenderincl());
+    	}
+    	if(audienceTargetingDef.getCatinc() !=null){
+    		tp.setAudience_catinc(audienceTargetingDef.getCatinc());
+    	}
+    	if(audienceTargetingDef.getTierCatSet() != null){
+    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(1));
+    		tp.setAudience_tier1_cat(str);
+    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(2));
+    		tp.setAudience_tier2_cat(str);
+    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(3));
+    		tp.setAudience_tier3_cat(str);
+    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(4));
+    		tp.setAudience_tier4_cat(str);
+    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(5));
+    		tp.setAudience_tier5_cat(str);
+    	}
+    }
+    private static String setToStringArray(Set<Integer> set){
+    	if(set == null || set.size()<1){
+    		return "[]";
+    	}
+    	StringBuffer sbuff = new StringBuffer("[");
+    	boolean isFirst = true;		
+    	for(Integer i:set){
+    		if(isFirst){
+    			isFirst=false;
+    		}else{
+    			sbuff.append(",");
+    		}
+    		sbuff.append(i);
+    	}
+    	sbuff.append("]");
+    	return sbuff.toString();
+    }
+    private static Set<Integer> generateSet(String str){
+    	if(str == null || str.isEmpty()){
+    		return null;
+    	}
+    	String s=StringUtils.replace(str, "[", "").replace("]", "");
+    	if(s.isEmpty()){
+    		return null;
+    	}
+    	String sSplit[] = s.split(",");
+    	if(sSplit.length<1){
+    		return null;
+    	}
+    	Set<Integer> set = new HashSet<Integer>();
+    	for(String sElement:sSplit){
+    		try{
+    			int i = Integer.parseInt(sElement);
+    			set.add(i);
+    		}catch(Exception e){
+    			
+    		}
+    	}
+    	if(set.size()<1){
+    		return null;
+    	}
+    	return set;
+    }
+    private static String generateAudience(Targeting_profile tp){
+    	if(tp == null){
+    		return "";
+    	}
+    	if(!tp.isAudience_targeting()){
+    		return "";
+    	}
+    	AudienceTargetingDef aDef= new AudienceTargetingDef();
+    	boolean audienceTargetingFound = false;
+    	if(tp.getAudience_agerange() != null && tp.getAudience_agerange().length()>0){
+    		Set<Integer> set = generateSet(tp.getAudience_agerange());
+    		if(set!= null){
+    			audienceTargetingFound=true;
+    			aDef.setAgerange(set);
+    			aDef.setAgerangeinc(tp.isAudience_agerangeinc());
+    		}
+    	}
+    	if(tp.getAudience_gender() != null && tp.getAudience_gender().length()>0){
+    		Set<Integer> set = generateSet(tp.getAudience_gender());
+    		if(set!= null){
+    			audienceTargetingFound=true;
+    			aDef.setGender(set);
+    			aDef.setGenderincl(tp.isAudience_genderincl());
+    		}
+    	}
+    	Map<Integer, Set<Integer>> map = new HashMap<Integer, Set<Integer>>();
+    	if(tp.getAudience_tier1_cat() != null && tp.getAudience_tier1_cat().length()>0){
+    		Set<Integer> set = generateSet(tp.getAudience_tier1_cat());
+    		if(set!= null){
+    			audienceTargetingFound=true;
+    			map.put(1,set);
+    			aDef.setCatinc(tp.isAudience_catinc());
+    		}
+    	}
+    	if(tp.getAudience_tier2_cat() != null && tp.getAudience_tier2_cat().length()>0){
+    		Set<Integer> set = generateSet(tp.getAudience_tier2_cat());
+    		if(set!= null){
+    			audienceTargetingFound=true;
+    			map.put(2,set);
+    			aDef.setCatinc(tp.isAudience_catinc());
+    		}
+    	}
+    	if(tp.getAudience_tier3_cat() != null && tp.getAudience_tier3_cat().length()>0){
+    		Set<Integer> set = generateSet(tp.getAudience_tier3_cat());
+    		if(set!= null){
+    			audienceTargetingFound=true;
+    			map.put(3,set);
+    			aDef.setCatinc(tp.isAudience_catinc());
+    		}
+    	}
+    	if(tp.getAudience_tier4_cat() != null && tp.getAudience_tier4_cat().length()>0){
+    		Set<Integer> set = generateSet(tp.getAudience_tier4_cat());
+    		if(set!= null){
+    			audienceTargetingFound=true;
+    			map.put(4,set);
+    			aDef.setCatinc(tp.isAudience_catinc());
+    		}
+    	}
+    	if(tp.getAudience_tier5_cat() != null && tp.getAudience_tier5_cat().length()>0){
+    		Set<Integer> set = generateSet(tp.getAudience_tier5_cat());
+    		if(set!= null){
+    			audienceTargetingFound=true;
+    			map.put(5,set);
+    			aDef.setCatinc(tp.isAudience_catinc());
+    		}
+    	}
+    	if(map.size()>0){
+    		aDef.setTierCatSet(map);
+    	}
+    	if(audienceTargetingFound){
+    		return aDef.toJson().toString();
+    	}
+    	return "";
     }
     
     private static void populateExt(Targeting_profile tp,String ext){
@@ -1207,6 +1372,8 @@ public class TargetingProfileCrud {
             pstmt.setString(36, ui_to_db_file_set(tp.getDeviceid_file()));
             pstmt.setInt(37, tp.getLat_lon_radius_unit());
             pstmt.setInt(38, tp.getUser_id_inc_exc());
+            pstmt.setBoolean(39, tp.isAudience_targeting());
+            pstmt.setString(40, generateAudience(tp));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -1471,7 +1638,9 @@ public class TargetingProfileCrud {
             pstmt.setString(34, renameDeviceidfile(tp.getDeviceid_file(), tp.getAccount_guid(), tp.getFile_prefix_path(),tp.getId() ));
             pstmt.setInt(35, tp.getLat_lon_radius_unit());
             pstmt.setInt(36, tp.getUser_id_inc_exc());
-            pstmt.setString(37, tp.getGuid());
+            pstmt.setBoolean(37, tp.isAudience_targeting());
+            pstmt.setString(38, generateAudience(tp));
+            pstmt.setString(39, tp.getGuid());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -1565,6 +1734,10 @@ public class TargetingProfileCrud {
                 case get_targeting_profile:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.get_targeting_profile);
                     pstmt.setString(1, tplistEntity.getGuid());
+                    break;
+                case get_targeting_profile_by_id:
+                    pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.get_targeting_profile_by_id);
+                    pstmt.setInt(1, tplistEntity.getId());
                     break;
                 case list_active_targeting_profile_by_account:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.list_active_targeting_profile_by_account);

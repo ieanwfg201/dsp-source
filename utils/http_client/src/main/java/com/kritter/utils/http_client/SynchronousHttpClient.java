@@ -3,9 +3,8 @@ package com.kritter.utils.http_client;
 import com.kritter.utils.http_client.entity.HttpRequest;
 import com.kritter.utils.http_client.entity.HttpResponse;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -38,13 +37,10 @@ public class SynchronousHttpClient {
             int maxConnectionsPerRoute
     ) {
         /*Set system properties to keep alive connections and enable pooling,define maxConnectionsPerRoute as well.*/
-        System.setProperty(KEEPALIVE_HTTP_SYSTEM_PROPERTY, "true");
-        System.setProperty(MAXCONNECTIONS_HTTP_SYSTEM_PROPERTY, String.valueOf(maxConnectionsPerRoute));
-        if (StringUtils.isNotEmpty(loggerName)) {
-            this.logger = LoggerFactory.getLogger(loggerName);
-        } else {
-            this.logger = LoggerFactory.getLogger(this.getClass());
-        }
+        System.setProperty(KEEPALIVE_HTTP_SYSTEM_PROPERTY     ,"true");
+        System.setProperty(MAXCONNECTIONS_HTTP_SYSTEM_PROPERTY,String.valueOf(maxConnectionsPerRoute));
+
+        this.logger = LogManager.getLogger(loggerName);
     }
 
     public HttpResponse fetchResponseFromThirdPartyServer(HttpRequest httpRequest) {

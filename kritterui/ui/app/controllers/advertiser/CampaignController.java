@@ -291,10 +291,15 @@ public class CampaignController extends Controller{
 							campaignPayoutEntity = campaignPayoutForm.get();
 							if(campaignPayoutEntity.getCampaign_id_payout()<1){			
 								campaignPayoutEntity.setCampaign_id_payout(campaign.getId());
-								msg = ApiDef.insert_campaign_payout_threshold(con, campaignPayoutEntity.getEntity());
+								CampaignPayoutThreshold campaignPayout = campaignPayoutEntity.getEntity();
+								if(campaignPayout.getAbsolute_threshold() != -1 && campaignPayout.getPercentage_threshold() !=-1){
+									msg = ApiDef.insert_campaign_payout_threshold(con, campaignPayout);
+								}
 							}else{
 								CampaignPayoutThreshold campaignPayout = campaignPayoutEntity.getEntity();
-								msg = ApiDef.update_campaign_payout_threshold(con, campaignPayout);
+								if(campaignPayout.getAbsolute_threshold() != -1 && campaignPayout.getPercentage_threshold() !=-1){
+									msg = ApiDef.update_campaign_payout_threshold(con, campaignPayout);
+								}
 							}
 
 							if(msg.getError_code()==0){ 

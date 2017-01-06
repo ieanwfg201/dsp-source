@@ -5,19 +5,19 @@ import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.common.site.entity.SiteIncIdSecondaryKey;
 import com.kritter.constants.ConnectionType;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Workflow;
 import com.kritter.postimpression.cache.ConversionEventIdStorageCache;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.tracking.common.ThirdPartyTrackingManager;
 import com.kritter.tracking.common.entity.ThirdPartyTrackingData;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
@@ -45,7 +45,7 @@ public class ConversionEnricherAndFraudProcessor implements OnlineEnricherAndFra
                                                long timeInMillisForClickExpiry,
                                                ConversionEventIdStorageCache eventIdStorageCache)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.thirdPartyTrackingManagerParentObject = thirdPartyTrackingManagerParentObject;
         this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
         this.adEntityCache = adEntityCache;
@@ -59,7 +59,7 @@ public class ConversionEnricherAndFraudProcessor implements OnlineEnricherAndFra
     //and the populates postImpressionRequest with all available
     //fields.
     @Override
-    public OnlineFraudUtils.ONLINE_FRAUD_REASON performOnlineFraudChecks(Context context)
+    public ONLINE_FRAUD_REASON performOnlineFraudChecks(Context context)
     {
         this.logger.debug("Inside performOnlineFraudChecks of ConversionEnricherAndFraudProcessor");
         HttpServletRequest httpServletRequest = (HttpServletRequest)context.getValue(Workflow.CONTEXT_REQUEST_KEY);
@@ -96,12 +96,12 @@ public class ConversionEnricherAndFraudProcessor implements OnlineEnricherAndFra
             timeOfClickEvent = com.kritter.utils.uuid.rand.UUIDGenerator.extractTimeInLong(postImpressionRequest.getClickRequestIdReceivedFromConversion());
 
         if((System.currentTimeMillis() - timeOfClickEvent) > timeInMillisForClickExpiry)
-            return OnlineFraudUtils.ONLINE_FRAUD_REASON.CONVERSION_EXPIRED;
+            return ONLINE_FRAUD_REASON.CONVERSION_EXPIRED;
 
         //if conversion not expired , check for repetition otherwise add to storage.
         if(this.eventIdStorageCache.
                 doesEventIdExistInStorage(postImpressionRequest.getClickRequestIdReceivedFromConversion()))
-            return OnlineFraudUtils.ONLINE_FRAUD_REASON.EVENT_DUPLICATE;
+            return ONLINE_FRAUD_REASON.EVENT_DUPLICATE;
         else
             this.eventIdStorageCache.
                     addEventIdToStorage(postImpressionRequest.getClickRequestIdReceivedFromConversion());
@@ -113,7 +113,7 @@ public class ConversionEnricherAndFraudProcessor implements OnlineEnricherAndFra
         if(null != adEntity)
             postImpressionRequest.setAdEntity(adEntity);
         else
-            return OnlineFraudUtils.ONLINE_FRAUD_REASON.AD_ID_NOT_FOUND;
+            return ONLINE_FRAUD_REASON.AD_ID_NOT_FOUND;
 
         //find site entity and set into request.
         Site site = null;
@@ -128,16 +128,16 @@ public class ConversionEnricherAndFraudProcessor implements OnlineEnricherAndFra
         }
         catch (UnSupportedOperationException unsope)
         {
-            return OnlineFraudUtils.ONLINE_FRAUD_REASON.SITE_ID_NOT_PRESENT_IN_CACHE;
+            return ONLINE_FRAUD_REASON.SITE_ID_NOT_PRESENT_IN_CACHE;
         }
 
         if(null==site)
-            return OnlineFraudUtils.ONLINE_FRAUD_REASON.SITE_ID_NOT_PRESENT_IN_CACHE;
+            return ONLINE_FRAUD_REASON.SITE_ID_NOT_PRESENT_IN_CACHE;
         if(site.getStatus().intValue() != StatusIdEnum.Active.getCode())
-            return OnlineFraudUtils.ONLINE_FRAUD_REASON.SITE_UNFIT;
+            return ONLINE_FRAUD_REASON.SITE_UNFIT;
 
         postImpressionRequest.setDetectedSite(site);
 
-        return OnlineFraudUtils.ONLINE_FRAUD_REASON.HEALTHY_REQUEST;
+        return ONLINE_FRAUD_REASON.HEALTHY_REQUEST;
     }
 }

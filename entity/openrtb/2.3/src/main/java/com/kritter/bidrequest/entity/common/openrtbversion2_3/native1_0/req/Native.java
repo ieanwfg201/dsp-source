@@ -82,4 +82,29 @@ public class Native {
     public Object getExtensionObject(){
         return extensionObject;
     }
+
+    /**additional fields if required to be set*/
+    @JsonProperty("context")
+    @Setter
+    private Integer context;
+    @JsonIgnore
+    public Integer getContext(){
+        return context;
+    }
+
+    @JsonProperty("contextsubtype")
+    @Setter
+    private Integer contextsubtype;
+    @JsonIgnore
+    public Integer getContextsubtype(){
+        return contextsubtype;
+    }
+
+    @JsonProperty("plcmttype")
+    @Setter
+    private Integer plcmttype;
+    @JsonIgnore
+    public Integer getPlcmttype(){
+        return plcmttype;
+    }
 }

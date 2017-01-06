@@ -13,8 +13,8 @@ import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Campaign;
 import com.kritter.serving.demand.entity.Creative;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,7 +58,7 @@ public class SupplyDemandMatcherJob implements Job
                                   AdEntityCache adEntityCache,
                                   CampaignCache campaignCache)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = jobName;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;

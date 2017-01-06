@@ -75,6 +75,9 @@ public class CreativeDisplay extends EntityDisplay{
 	public String getName(){
 		return cc.getLabel();
 	}
+	public String getGuid(){
+		return cc.getGuid();
+	}
 
 	public String getCreatedOn(){
 		Date date = new Date(cc.getCreated_on());

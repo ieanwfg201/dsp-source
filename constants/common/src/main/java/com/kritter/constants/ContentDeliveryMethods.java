@@ -7,7 +7,9 @@ public enum ContentDeliveryMethods {
     
     Unknown(0,"Unknown"),
     streaming(1,"streaming"),
-    progressive(2,"progressive");
+    progressive(2,"progressive"),
+    Download(3,"Download")
+    ;
     
     private int code;
     private String name;

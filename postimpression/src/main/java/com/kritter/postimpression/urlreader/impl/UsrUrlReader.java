@@ -3,7 +3,7 @@ package com.kritter.postimpression.urlreader.impl;
 import com.kritter.constants.UserConstant;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 
 import javax.servlet.http.HttpServletRequest;

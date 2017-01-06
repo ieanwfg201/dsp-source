@@ -6,7 +6,7 @@ import com.kritter.api_caller.core.util.DBTableColumnValueWithType;
 import com.kritter.api_caller.core.util.DatabaseConnector;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.*;

@@ -5,18 +5,17 @@ import com.kritter.constants.ConvertErrorEnum;
 import com.kritter.exchange.response_openrtb2_2.converter.common.ConvertBidResponse;
 import com.kritter.exchange.response_openrtb2_2.converter.common.ConvertEntity;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ConvertResponse {
     private Logger logger;
-    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     public ConvertResponse(String loggerName){
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
     }
     
     public BidResponseEntity convert(String str){
-        ObjectMapper objectMapper = new ObjectMapper();
         ConvertEntity convertEntity = ConvertBidResponse.convert(str, objectMapper, logger);
         if(convertEntity.getErrorEnum() == ConvertErrorEnum.HEALTHY_CONVERT){
             return convertEntity.getResponse();

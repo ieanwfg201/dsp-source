@@ -35,6 +35,7 @@ public class Creative implements IUpdatableEntity<Integer>
     private final NativeDemandProps native_demand_props;
     private final CreativeMacro creative_macro;
     private final VideoProps videoProps;
+    private Integer[] slotIdFromCreativeContainer;
     
     public Creative(CreativeEntityBuilder creativeEntityBuilder)
     {
@@ -52,6 +53,7 @@ public class Creative implements IUpdatableEntity<Integer>
         this.native_demand_props = creativeEntityBuilder.native_demand_props;
         this.creative_macro = creativeEntityBuilder.creative_macro;
         this.videoProps = creativeEntityBuilder.videoProps;
+        this.slotIdFromCreativeContainer = creativeEntityBuilder.slotIdFromCreativeContainer;
     }
 
     @Override
@@ -76,6 +78,7 @@ public class Creative implements IUpdatableEntity<Integer>
         private NativeDemandProps native_demand_props;
         private CreativeMacro creative_macro;
         private VideoProps videoProps;
+        private Integer[] slotIdFromCreativeContainer;
 
         public CreativeEntityBuilder(Integer creativeIncId,
                                      String creativeGuid,
@@ -120,6 +123,12 @@ public class Creative implements IUpdatableEntity<Integer>
 
         public CreativeEntityBuilder setExternalResourceURL(String externalResourceURL) {
             this.externalResourceURL = externalResourceURL;
+            return this;
+        }
+
+        public CreativeEntityBuilder setSlotInfo(Integer[] slotIdFromCreativeContainer)
+        {
+            this.slotIdFromCreativeContainer = slotIdFromCreativeContainer;
             return this;
         }
 

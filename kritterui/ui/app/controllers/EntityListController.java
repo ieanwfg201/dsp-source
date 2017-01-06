@@ -14,6 +14,7 @@ import models.advertiser.RetargetingSegmentDisplay;
 import models.advertiser.TargetingDisplay;
 import models.entities.adpositionget.AdpositionGetDisplay;
 import models.entities.adxbasedexchanges.AdxBasedExchangesMetadataDisplay;
+import models.entities.audience.AudienceMetadataDisplay;
 import models.entities.isp_mapping.Isp_mappingDisplay;
 import models.entities.materialadvinfoupload.MaterialAdvInfoUploadDisplay;
 import models.entities.materialbannerupload.MaterialBannerUploadDisplay;
@@ -49,6 +50,7 @@ import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
+import com.kritter.entity.audience_metadata.AudienceMetadata;
 import com.kritter.entity.retargeting_segment.RetargetingSegment;
 
 public class EntityListController extends Controller{
@@ -135,6 +137,10 @@ public class EntityListController extends Controller{
 				case qualification:
 					entityList = EntityListDataService.listData(entityListFilter, new Qualification());
 					populateQualification(itemList,(List<Qualification>) entityList.getEntityList());
+					break;
+				case audiencemetadata:
+					entityList = EntityListDataService.listData(entityListFilter, new AudienceMetadata());
+					populateAudienceMetadata(itemList,(List<AudienceMetadata>) entityList.getEntityList());
 					break;
 				default:
 					break;
@@ -244,6 +250,11 @@ public class EntityListController extends Controller{
     private static void populateQualification(ArrayNode entityArray, List<Qualification> entityList){
         for (Qualification entity : entityList) { 
             entityArray.addPOJO(objectMapper.valueToTree(new QualificationDisplay(entity)));
+        }
+    }
+    private static void populateAudienceMetadata(ArrayNode entityArray, List<AudienceMetadata> entityList){
+        for (AudienceMetadata entity : entityList) { 
+            entityArray.addPOJO(objectMapper.valueToTree(new AudienceMetadataDisplay(entity)));
         }
     }
 }

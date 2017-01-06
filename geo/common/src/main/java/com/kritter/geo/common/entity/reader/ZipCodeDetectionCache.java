@@ -4,8 +4,8 @@ import com.kritter.geo.common.entity.ZipCodeInfoDetected;
 import com.kritter.geo.common.entity.ZipCodeLatLongDatabase;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,7 +40,7 @@ public class ZipCodeDetectionCache
                                  DatabaseManager databaseManager,
                                  long reloadFrequency)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.dataSourceNamesToUse = dataSourceNamesToUse;
         this.databaseManager = databaseManager;
         this.dataSourcesForQuery = new StringBuffer();
@@ -198,7 +198,7 @@ public class ZipCodeDetectionCache
      */
     private class ZipCodeDatabaseReloadTimerTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

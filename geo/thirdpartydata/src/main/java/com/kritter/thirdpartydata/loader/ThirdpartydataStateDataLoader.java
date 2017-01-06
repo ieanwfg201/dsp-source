@@ -12,8 +12,8 @@ import com.kritter.thirdpartydata.entity.ThirdpartydataCountryInputData;
 import com.kritter.thirdpartydata.entity.ThirdpartydataStateInputData;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -67,7 +67,7 @@ public class ThirdpartydataStateDataLoader implements ThirdPartyDataLoader
                                             int LINES_TO_SKIP
                                         ) throws Exception
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.dataSourceName = dataSourceName;
         this.reloadFrequency = reloadFrequency;
         this.stateDatabaseFileFullPath = stateDatabaseFileFullPath;
@@ -390,7 +390,7 @@ public class ThirdpartydataStateDataLoader implements ThirdPartyDataLoader
      */
     private class StateDataLoadingTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

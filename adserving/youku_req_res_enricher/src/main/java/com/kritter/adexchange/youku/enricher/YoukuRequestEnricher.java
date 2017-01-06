@@ -28,8 +28,8 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,7 +67,7 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
                                  ISPDetectionCache ispDetectionCache
                                  )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.youkuBidRequestReader = youkuBidRequestReader;
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;

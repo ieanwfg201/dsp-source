@@ -5,7 +5,8 @@ import java.util.Map;
 
 public enum TEventType {
     video(1,"video"),
-    videoerror(2,"videoerror");
+    videoerror(2,"videoerror"),
+    passback(3,"passback");
     
     private int code;
     private String name;

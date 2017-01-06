@@ -41,15 +41,19 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kritter.api.entity.account.Account;
 import com.kritter.api.entity.ad.AdListEntity;
+import com.kritter.api.entity.audience.AudienceMetadataList;
 import com.kritter.api.entity.response.msg.Message;
 import com.kritter.api.entity.targeting_profile.FileUploadResponse;
 import com.kritter.api.entity.targeting_profile.TargetingProfileList;
 import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
 import com.kritter.constants.AdAPIEnum;
+import com.kritter.constants.AudienceMetadataQueryType;
 import com.kritter.constants.Geo_Targeting_type;
 import com.kritter.constants.TargetingProfileAPIEnum;
 import com.kritter.constants.error.ErrorEnum;
+import com.kritter.entity.audience_metadata.AudienceMetadata;
+import com.kritter.entity.audience_metadata.AudienceMetadataInput;
 import com.kritter.kritterui.api.def.ApiDef;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
@@ -69,6 +73,83 @@ public class TargetingProfileController extends Controller{
 	private static String lat_lon_file = Play.application().configuration().getString("lat_lon_file");
 	private static String deviceid_targeting = Play.application().configuration().getString("deviceid_targeting");
 	private static String file_prefix_path = Play.application().configuration().getString("file_prefix_path");
+	private static String audience_targeting = Play.application().configuration().getString("audience_targeting");
+	private static String audience_gender_targeting;
+	private static String audience_age_range_targeting;
+	private static String audience_cat_targeting;
+	private static String audience_cattierlist_targeting = Play.application().configuration().getString("audience_cattierlist_targeting");
+	private static String audience_cattier1_targeting;
+	private static String audience_cattier2_targeting;
+	private static String audience_cattier3_targeting;
+	private static String audience_cattier4_targeting;
+	private static String audience_cattier5_targeting;
+	
+	
+	private static void populateAudienceFlags(){
+		audience_gender_targeting="false";
+		audience_age_range_targeting="false";
+		audience_cat_targeting="false";
+		audience_cattier1_targeting="false";
+		audience_cattier2_targeting="false";
+		audience_cattier3_targeting="false";
+		audience_cattier4_targeting="false";
+		audience_cattier5_targeting="false";
+		if("true".equals(audience_targeting)){
+			Connection con = null;
+			try{
+			    con = DB.getConnection();
+			    AudienceMetadataInput entity = new AudienceMetadataInput();
+			    entity.setQueryType(AudienceMetadataQueryType.list_all);
+			    AudienceMetadataList list = ApiDef.various_get_audience_metadata(con, entity);
+			    if(list != null && list.getList() != null && list.getList().size()>0){
+			    	for(AudienceMetadata am:list.getList() ){
+			    		if(am.getInternalid()==com.kritter.constants.AudienceMetadata.Gender.getCode()){
+			    			if(am.getEnabled() != null && am.getEnabled()){
+			    				audience_gender_targeting="true";
+			    			}
+			    		}
+			    		if(am.getInternalid()==com.kritter.constants.AudienceMetadata.AgeRange.getCode()){
+			    			if(am.getEnabled() != null && am.getEnabled()){
+			    				audience_age_range_targeting="true";
+			    			}
+			    		}
+			    		if(am.getInternalid()==com.kritter.constants.AudienceMetadata.AudienceCategory.getCode()){
+			    			if(am.getEnabled() != null && am.getEnabled()){
+			    				audience_cat_targeting="true";
+			    				if(audience_cattierlist_targeting != null && !audience_cattierlist_targeting.isEmpty()){
+			    					String split[] = audience_cattierlist_targeting.split(",");
+			    					for(String s:split){
+			    						if("1".equals(s.trim())){
+			    							audience_cattier1_targeting="true";
+			    						}else if("2".equals(s.trim())){
+			    							audience_cattier2_targeting="true";
+			    						}else if("3".equals(s.trim())){
+			    							audience_cattier3_targeting="true";
+			    						}else if("4".equals(s.trim())){
+			    							audience_cattier4_targeting="true";
+			    						}else if("5".equals(s.trim())){
+			    							audience_cattier5_targeting="true";
+			    						}
+			    					}
+			    				}
+			    			}
+			    		}
+			    	}
+			    }
+			}catch(Exception e){
+				play.Logger.error(e.getMessage()+".get audience metadata",e);
+			}
+			finally{
+				try {
+	                if(con != null){
+				        con.close();
+	                }
+				} catch (SQLException e) {
+					Logger.error("Error closing DB connection in populateAudienceFlags in TargetingProfileController",e);
+				}
+			}
+		}
+	}
 	
 	private static Targeting_profile getTargetingProfile(String guid, String accountGuid){
 		Connection con = null;
@@ -108,7 +189,13 @@ public class TargetingProfileController extends Controller{
 		BeanUtils.copyProperties(tp, tpe);
 		if(destination.nonEmpty())
 			tpe.setDestination(destination.get());
-		return ok(targetingform.render( tpFormTemplate.fill(tpe) , new TargetingDisplay(tp), rhs,show_midp_ui, accountGuid, allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
+		populateAudienceFlags();
+		return ok(targetingform.render( tpFormTemplate.fill(tpe) , new TargetingDisplay(tp), rhs,show_midp_ui, 
+				accountGuid, allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,
+				channel_required,lat_lon_file,deviceid_targeting,
+				audience_targeting,audience_gender_targeting,audience_age_range_targeting,
+				audience_cat_targeting,audience_cattier1_targeting,audience_cattier2_targeting,
+				audience_cattier3_targeting,audience_cattier4_targeting,audience_cattier5_targeting));
 	}
 
 	@SecuredAction
@@ -116,9 +203,15 @@ public class TargetingProfileController extends Controller{
 		Targeting_profile tp =   getTargetingProfile(tpGuid, accountGuid);  
 		TargetingProfileEntity tpe = new TargetingProfileEntity();
 		BeanUtils.copyProperties(tp, tpe);
-		if(tp!= null)
-			return ok(targetingform.render(tpFormTemplate.fill(tpe), new TargetingDisplay(tp),rhs,show_midp_ui, tpe.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
-		else
+		if(tp!= null){
+			populateAudienceFlags();
+			return ok(targetingform.render(tpFormTemplate.fill(tpe), new TargetingDisplay(tp),rhs,show_midp_ui, 
+					tpe.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,
+					channel_required,lat_lon_file,deviceid_targeting,
+					audience_targeting,audience_gender_targeting,audience_age_range_targeting,
+					audience_cat_targeting,audience_cattier1_targeting,audience_cattier2_targeting,
+					audience_cattier3_targeting,audience_cattier4_targeting,audience_cattier5_targeting));
+		}else
 			return badRequest();
 	}
 
@@ -129,9 +222,14 @@ public class TargetingProfileController extends Controller{
 		Targeting_profile tp =   getTargetingProfile(tpGuid, accountGuid); 
 		TargetingProfileEntity tpe = new TargetingProfileEntity();
 		BeanUtils.copyProperties(tp, tpe);
-		if(tp!= null)
-			return ok(views.html.advt.targeting.targetingHome.render(new TargetingDisplayFull(tp),retargeting_flow_enabled,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
-		else
+		if(tp!= null){
+			populateAudienceFlags();
+			return ok(views.html.advt.targeting.targetingHome.render(new TargetingDisplayFull(tp),retargeting_flow_enabled,
+					mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting,
+					audience_targeting,audience_gender_targeting,audience_age_range_targeting,
+					audience_cat_targeting,audience_cattier1_targeting,audience_cattier2_targeting,
+					audience_cattier3_targeting,audience_cattier4_targeting,audience_cattier5_targeting));
+		}else
 			return badRequest();
 	}
 
@@ -197,8 +295,15 @@ public class TargetingProfileController extends Controller{
 						return redirect(routes.TargetingProfileController.list(tp.getAccount_guid()));
 				}
 					
-				else
-					return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs, show_midp_ui, tp.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
+				else{
+					populateAudienceFlags();
+					return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs, show_midp_ui, 
+							tp.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,
+							adposition_required,channel_required,lat_lon_file,deviceid_targeting,
+							audience_targeting,audience_gender_targeting,audience_age_range_targeting,
+							audience_cat_targeting,audience_cattier1_targeting,audience_cattier2_targeting,
+							audience_cattier3_targeting,audience_cattier4_targeting,audience_cattier5_targeting));
+				}
 			} catch (Exception e) {
 				Logger.error("Error while saving Targeting profile TargetingProfileController",e);
 			}
@@ -220,7 +325,13 @@ public class TargetingProfileController extends Controller{
 		    tp = new Targeting_profile();
 		    tp.setAccount_guid(accountGuid);
 		}
-		return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs,show_midp_ui, tp.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,lat_lon_file,deviceid_targeting));
+		populateAudienceFlags();
+		return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs,show_midp_ui, tp.getAccount_guid(), 
+				allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,
+				lat_lon_file,deviceid_targeting,
+				audience_targeting,audience_gender_targeting,audience_age_range_targeting,
+				audience_cat_targeting,audience_cattier1_targeting,audience_cattier2_targeting,
+				audience_cattier3_targeting,audience_cattier4_targeting,audience_cattier5_targeting));
 	}
 
 

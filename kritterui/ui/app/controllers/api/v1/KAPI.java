@@ -18,7 +18,9 @@ import services.TPMetadataAPI;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.kritter.api.entity.account.Account;
+import com.kritter.api.entity.account.AccountList;
 import com.kritter.api.entity.account.AccountMsgPair;
+import com.kritter.api.entity.account.ListEntity;
 import com.kritter.api.entity.account_budget.Account_Budget_Msg;
 import com.kritter.api.entity.account_budget.Account_budget;
 import com.kritter.api.entity.ad.Ad;
@@ -53,17 +55,22 @@ import com.kritter.api.entity.targeting_profile.FileUploadResponse;
 import com.kritter.api.entity.targeting_profile.TargetingProfileList;
 import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
+import com.kritter.api.entity.video_info.VideoInfoList;
+import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.AdAPIEnum;
 import com.kritter.constants.CampaignQueryEnum;
 import com.kritter.constants.CreativeBannerAPIEnum;
 import com.kritter.constants.CreativeContainerAPIEnum;
 import com.kritter.constants.IOStatus;
+import com.kritter.constants.ReportingTableType;
 import com.kritter.constants.SavedQueryEnum;
 import com.kritter.constants.SiteAPIEnum;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.TargetingProfileAPIEnum;
+import com.kritter.constants.VideoInfoAPIEnum;
 import com.kritter.constants.error.ErrorEnum;
+import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.kritterui.api.def.ApiDef;
 
 import controllers.advertiser.CreativeController;
@@ -72,9 +79,42 @@ import controllers.advertiser.TargetingProfileController;
 public class KAPI extends Controller{
 	private static String timezoneid = Play.application().configuration().getString("timezoneid");
 	private static String file_prefix_path = Play.application().configuration().getString("file_prefix_path");
+    public static Result tracking(){
+        JsonNode jsonNode= request().body().asJson();
+        Connection con = null;
+        response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+        
+        try{
+            con = DB.getConnection();
+            ReportingEntity entity = ReportingEntity.getObject(jsonNode.toString());
+            entity.setReportingTableType(ReportingTableType.TRACKINGEVENT);
+            entity.setTimezone(timezoneid);
+            org.codehaus.jackson.JsonNode resultNode = ApiDef.get_data(con, entity, false, false, null);
+            return ok(resultNode.toString());
+        }catch(Exception e){
+            Logger.error(e.getMessage(),e);
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
+            return badRequest(msg.toJson().toString());
+        }finally{
+            if(con != null){
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    Logger.error(e.getMessage(),e);
+                }
+            }
+        }
+    }
     public static Result reporting(){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+        response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
         try{
             con = DB.getConnection();
             ReportingEntity entity = ReportingEntity.getObject(jsonNode.toString());
@@ -100,6 +140,9 @@ public class KAPI extends Controller{
     public static Result reportingwithId(){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
         try{
             con = DB.getConnection();
             ReportingEntity entity = ReportingEntity.getObject(jsonNode.toString());
@@ -122,9 +165,42 @@ public class KAPI extends Controller{
             }
         }
     }
+    public static Result pubcreativetrackinreport(){
+        JsonNode jsonNode= request().body().asJson();
+        Connection con = null;
+        response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+        try{
+            con = DB.getConnection();
+            ReportingEntity entity = ReportingEntity.getObject(jsonNode.toString());
+            entity.setTimezone(timezoneid);
+            org.codehaus.jackson.JsonNode resultNode = ApiDef.get_pub_creative_tracking(con, entity, false, false, null);
+            return ok(resultNode.toString());
+        }catch(Exception e){
+            Logger.error(e.getMessage(),e);
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
+            return badRequest(msg.toJson().toString());
+        }finally{
+            if(con != null){
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    Logger.error(e.getMessage(),e);
+                }
+            }
+        }
+    }
+
     public static Result account(String accountType,String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type, User-Agent, Host, Connection, Accept-Language, "
+        		+ "Accept-Encoding, Accept, Connection, Pragma, Cache-Control, ");
         try{
             if(!("pub".equals(accountType) ||"adv".equals(accountType))){
                 Message msg = new Message();
@@ -133,33 +209,39 @@ public class KAPI extends Controller{
                 return ok(msg.toJson().toString());
             }
             con = DB.getConnection();
-            Account entity = Account.getObject(jsonNode.toString());
-            if("pub".equals(accountType)){
-               entity.setType_id(Account_Type.directpublisher);
-            }else if("adv".equals(accountType)){
-                entity.setType_id(Account_Type.directadvertiser);
-             } 
-            if("create".equals(actionType)){
-                Message msg  = ApiDef.createAccount(con, entity);
-                entity.setStatus(StatusIdEnum.Pending);
-                return ok(msg.toJson().toString());
-            }else if("verify".equals(actionType)){
-                Message msg  = ApiDef.verifyAccount(con, entity);
-                return ok(msg.toJson().toString());
-            }else if("get".equals(actionType)){
-                AccountMsgPair msg  = ApiDef.get_Account_By_UserId_Pwd(con, entity);
-                return ok(msg.toJson().toString());
-            }else if("getbyuserid".equals(actionType)){
-                AccountMsgPair msg  = ApiDef.get_Account(con, entity);
-                return ok(msg.toJson().toString());
-            }else if("edit".equals(actionType)){
-                Message msg  = ApiDef.updateAccount(con, entity);
-                return ok(msg.toJson().toString());
+            if("listbyemail".equals(actionType)){
+            	ListEntity entity = ListEntity.getObject(jsonNode.toString());
+            	AccountList accountList = ApiDef.various_get_account(con, entity);
+            	return ok(accountList.toJson().toString());
+            }else{
+            	Account entity = Account.getObject(jsonNode.toString());
+            	if("pub".equals(accountType)){
+            		entity.setType_id(Account_Type.directpublisher);
+            	}else if("adv".equals(accountType)){
+            		entity.setType_id(Account_Type.directadvertiser);
+            	} 
+            	if("create".equals(actionType)){
+            		Message msg  = ApiDef.createAccount(con, entity);
+            		entity.setStatus(StatusIdEnum.Pending);
+            		return ok(msg.toJson().toString());
+            	}else if("verify".equals(actionType)){
+            		Message msg  = ApiDef.verifyAccount(con, entity);
+            		return ok(msg.toJson().toString());
+            	}else if("get".equals(actionType)){
+            		AccountMsgPair msg  = ApiDef.get_Account_By_UserId_Pwd(con, entity);
+            		return ok(msg.toJson().toString());
+            	}else if("getbyuserid".equals(actionType)){
+            		AccountMsgPair msg  = ApiDef.get_Account(con, entity);
+            		return ok(msg.toJson().toString());
+            	}else if("edit".equals(actionType)){
+            		Message msg  = ApiDef.updateAccount(con, entity);
+            		return ok(msg.toJson().toString());
+            	}
+            	Message msg = new Message();
+            	msg.setError_code(ErrorEnum.ACTION_TYPE_ABSENT.getId());
+            	msg.setMsg(ErrorEnum.ACTION_TYPE_ABSENT.getName());
+            	return ok(msg.toJson().toString());
             }
-            Message msg = new Message();
-            msg.setError_code(ErrorEnum.ACTION_TYPE_ABSENT.getId());
-            msg.setMsg(ErrorEnum.ACTION_TYPE_ABSENT.getName());
-            return ok(msg.toJson().toString());
 
         }catch(Exception e){
             Logger.error(e.getMessage(),e);
@@ -180,6 +262,10 @@ public class KAPI extends Controller{
     public static Result account_budget(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -219,6 +305,10 @@ public class KAPI extends Controller{
 
     public static Result dashboard(String type,String guid){
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("adv".equals(type)){
@@ -249,6 +339,10 @@ public class KAPI extends Controller{
     public static Result io(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -302,6 +396,10 @@ public class KAPI extends Controller{
     public static Result site(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -321,6 +419,10 @@ public class KAPI extends Controller{
             }else if("list".equals(actionType)){
                 SiteListEntity entity = SiteListEntity.getObject(jsonNode.toString());
                 SiteList msg  = ApiDef.list_site_by_account_id(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("listsitebyurl".equals(actionType)){
+                SiteListEntity entity = SiteListEntity.getObject(jsonNode.toString());
+                SiteList msg  = ApiDef.list_site_by_url(con, entity);
                 return ok(msg.toJson().toString());
             }else if("approve".equals(actionType)){
                 SiteListEntity entity = SiteListEntity.getObject(jsonNode.toString());
@@ -362,6 +464,10 @@ public class KAPI extends Controller{
     public static Result campaign(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -429,6 +535,10 @@ public class KAPI extends Controller{
     public static Result campaignbudget(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -468,6 +578,10 @@ public class KAPI extends Controller{
     public static Result ad(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -510,6 +624,11 @@ public class KAPI extends Controller{
                 entity.setAdenum(AdAPIEnum.approve_ad_again_on_tp_update);
                 Message msg  = ApiDef.change_status_ad(con, entity);
                 return ok(msg.toJson().toString());
+            }else if("approve".equals(actionType)){
+                AdListEntity entity = AdListEntity.getObject(jsonNode.toString());
+                entity.setAdenum(AdAPIEnum.approve_multiple_ads);
+                Message msg  = ApiDef.change_status_ad(con, entity);
+                return ok(msg.toJson().toString());
             }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.ACTION_TYPE_ABSENT.getId());
@@ -535,6 +654,10 @@ public class KAPI extends Controller{
     public static Result targetingprofile(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -550,6 +673,11 @@ public class KAPI extends Controller{
             }else if("get".equals(actionType)){
                 TargetingProfileListEntity entity = TargetingProfileListEntity.getObject(jsonNode.toString());
                 entity.setTpEnum(TargetingProfileAPIEnum.get_targeting_profile);
+                TargetingProfileList msg  = ApiDef.various_get_targeting_profile(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("getbyid".equals(actionType)){
+                TargetingProfileListEntity entity = TargetingProfileListEntity.getObject(jsonNode.toString());
+                entity.setTpEnum(TargetingProfileAPIEnum.get_targeting_profile_by_id);
                 TargetingProfileList msg  = ApiDef.various_get_targeting_profile(con, entity);
                 return ok(msg.toJson().toString());
             }else if("list".equals(actionType)){
@@ -582,6 +710,10 @@ public class KAPI extends Controller{
     public static Result creativecontainer(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -627,6 +759,10 @@ public class KAPI extends Controller{
     public static Result creativebanner(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){
@@ -688,8 +824,109 @@ public class KAPI extends Controller{
             }
         }
     }
+    public static Result videoinfo(String actionType){
+        JsonNode jsonNode= request().body().asJson();
+        Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+        try{
+            con = DB.getConnection();
+            if("create".equals(actionType)){
+                VideoInfo entity =  VideoInfo.getObject(jsonNode.toString());
+                Message msg  = ApiDef.insert_video_info(con,  entity);
+                if(msg.getError_code() == 0){
+                	String s = CreativeController.saveDirectVideoApi(entity);
+                	if(!"success".equals(s)){
+                		msg.setMsg(s);
+                		msg.setError_code(ErrorEnum.VIDEO_INFO_NOT_INSERTED.getId());
+                	}
+                }
+                return ok(msg.toJson().toString());
+            }else if("edit".equals(actionType)){
+            	VideoInfo entity = VideoInfo.getObject(jsonNode.toString());
+                Message msg  = ApiDef.update_video_info(con,  entity);
+                if(msg.getError_code() == 0){
+                	String s = CreativeController.saveDirectVideoApi(entity);
+                	if(!"success".equals(s)){
+                		msg.setMsg(s);
+                		msg.setError_code(ErrorEnum.VIDEO_INFO_NOT_UPDATED.getId());
+                	}
+                }
+                return ok(msg.toJson().toString());
+            }else if("get".equals(actionType)){
+                VideoInfoListEntity entity = VideoInfoListEntity.getObject(jsonNode.toString());
+                entity.setVideoenum(VideoInfoAPIEnum.get_video_info_by_id);
+                VideoInfoList msg  = ApiDef.various_get_video_info(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("list".equals(actionType)){
+                VideoInfoListEntity entity = VideoInfoListEntity.getObject(jsonNode.toString());
+                entity.setVideoenum(VideoInfoAPIEnum.get_video_info_by_ids);
+                VideoInfoList msg  = ApiDef.various_get_video_info(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("listbyaccount".equals(actionType)){
+                VideoInfoListEntity entity = VideoInfoListEntity.getObject(jsonNode.toString());
+                entity.setVideoenum(VideoInfoAPIEnum.list_video_info_by_account);
+                VideoInfoList msg  = ApiDef.various_get_video_info(con, entity);
+                return ok(msg.toJson().toString());
+            }else if("listvideoinfobypub".equals(actionType)){
+                VideoInfoListEntity entity = VideoInfoListEntity.getObject(jsonNode.toString());
+                entity.setVideoenum(VideoInfoAPIEnum.get_video_info_by_pub);
+                VideoInfoList msg  = ApiDef.various_get_video_info(con, entity);
+                return ok(msg.toJson().toString());
+            }
+            
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.ACTION_TYPE_ABSENT.getId());
+            msg.setMsg(ErrorEnum.ACTION_TYPE_ABSENT.getName());
+            return ok(msg.toJson().toString());
+
+        }catch(Exception e){
+            Logger.error(e.getMessage(),e);
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
+            return badRequest(msg.toJson().toString());
+        }finally{
+            if(con != null){
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    Logger.error(e.getMessage(),e);
+                }
+            }
+        }
+    }
+    public static Result videoupload(String accountGuid){
+        MultipartFormData multipartFormData = request().body().asMultipartFormData();
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+        try{
+            if(accountGuid == null){
+                ImageUploadResponse iur = new ImageUploadResponse();
+                iur.setErrorCode(ErrorEnum.ACCOUNT_GUID_ABSENT.getId());
+                iur.setMessage(ErrorEnum.ACCOUNT_GUID_ABSENT.getName());
+                return ok(iur.toJson().toString());
+            }
+            return CreativeController.uploadDirectvideo(accountGuid, true);
+        }catch(Exception e){
+            Logger.error(e.getMessage(),e);
+            ImageUploadResponse iur = new ImageUploadResponse();
+            iur.setErrorCode(ErrorEnum.INTERNAL_ERROR_CONTACT_ADMINISTRATOR.getId());
+            iur.setMessage(ErrorEnum.INTERNAL_ERROR_CONTACT_ADMINISTRATOR.getName());
+            return ok(iur.toJson().toString());
+        }finally{
+        }
+    }
     public static Result imageupload(String accountGuid){
         MultipartFormData multipartFormData = request().body().asMultipartFormData();
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             if(accountGuid == null){
                 ImageUploadResponse iur = new ImageUploadResponse();
@@ -708,6 +945,10 @@ public class KAPI extends Controller{
         }
     }
     public static Result ipfileupload(String accountGuid){
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             if(accountGuid == null){
                 FileUploadResponse iur = new FileUploadResponse();
@@ -726,6 +967,10 @@ public class KAPI extends Controller{
         }
     }
     public static Result metafirstlevel(String metatype){
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type, User-Agent, Host, Connection, Accept-Language, Accept-Encoding, Accept");
+
         try{
             if("countries".equals(metatype)){
                 ArrayNode countryOptions = TPMetadataAPI.countryList(); 
@@ -786,7 +1031,60 @@ public class KAPI extends Controller{
                 return ok(MetadataAPI.passback_content_typeArray());
             }else if("advertisersbyid".equals(metatype)){
                 return ok(MetadataAPI.activeAdvIdsArray());
+            }else if("demandpreference".equals(metatype)){
+                return ok(MetadataAPI.getDemadPreferenceArrayNode());
+            }else if("app_stores".equals(metatype)){
+                return ok(MetadataAPI.getAppStoreIdArrayNode());
+            }else if("videolinearity".equals(metatype)){
+                return ok(MetadataAPI.getVideoLinearityArrayNode());
+            }else if("vastapiframework".equals(metatype)){
+                return ok(MetadataAPI.getAPIFrameworksArrayNode());
+            }else if("videodelivery".equals(metatype)){
+                return ok(MetadataAPI.videodelivery());
+            }else if("vastcompaniontype".equals(metatype)){
+                return ok(MetadataAPI.getVASTCompanionTypesArrayNode());
+            }else if("videomimes".equals(metatype)){
+                return ok(MetadataAPI.videomimes());
+            }else if("videoplaybackmethod".equals(metatype)){
+                return ok(MetadataAPI.videoplaybackmethod());
+            }else if("videoprotocols".equals(metatype)){
+                return ok(MetadataAPI.videoprotocols());
+            }else if("videoadpos".equals(metatype)){
+                return ok(MetadataAPI.getVideoAdPossArrayNode());
+            }else if("demandtype".equals(metatype)){
+                return ok(MetadataAPI.getDemadTypeArrayNode());
+            }else if("iostatus".equals(metatype)){
+                return ok(MetadataAPI.getIoStatusNode());
+            }else if("advertisersbyguid".equals(metatype)){
+                return ok(MetadataAPI.activeAdvGuidArray());
+            }else if("activeadminarray".equals(metatype)){
+                return ok(MetadataAPI.activeAdminArray());
+            }else if("freqduration".equals(metatype)){
+                return ok(MetadataAPI.getFreqDurationNode());
+            }else if("statusids".equals(metatype)){
+                return ok(MetadataAPI.getStatusIdArrayNode());
+            }else if("videoboxing".equals(metatype)){
+                return ok(MetadataAPI.getVideoBoxingArrayNode());
+            }else if("videomaxextended".equals(metatype)){
+                return ok(MetadataAPI.getVideoMaxExtendedArrayNode());
+            }else if("videodemandtype".equals(metatype)){
+                return ok(MetadataAPI.getVideoDemandTypeArrayNode());
+            }else if("videotrackingevents".equals(metatype)){
+                return ok(MetadataAPI.videoTracking());
+            }else if("bidtype".equals(metatype)){
+                return ok(MetadataAPI.getBidTypeArrayNode());
+            }else if("publishers".equals(metatype)){
+                return ok(MetadataAPI.activePublisherArray());
+            }else if("terminationReasonPostimp".equals(metatype)){
+                return ok(TPMetadataAPI.terminationReasonPostimp());
+            }else if("teventtype".equals(metatype)){
+                return ok(TPMetadataAPI.teventtype());
+            }else if("reportingDIMTypeEnumArrayNode".equals(metatype)){
+                return ok(MetadataAPI.reportingDIMTypeEnumArrayNode());
+            }else if("devicetype".equals(metatype)){
+                return ok(MetadataAPI.deviceTypeEnumArrayNode());
             }
+            
             Message msg = new Message();
             msg.setError_code(ErrorEnum.ACTION_TYPE_ABSENT.getId());
             msg.setMsg(ErrorEnum.ACTION_TYPE_ABSENT.getName());
@@ -801,6 +1099,10 @@ public class KAPI extends Controller{
         }
     }
     public static Result metasecondlevel(String metatype, String ids){
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             if("carrierbycountries".equals(metatype)){
                 return ok(TPMetadataAPI.carrierList(ids));
@@ -818,7 +1120,14 @@ public class KAPI extends Controller{
                 return ok(MetadataAPI.targeting_ext_siteByPublishers(ids));
             }else if("campaignbyadvertiserid".equals(metatype)){
                 return ok(MetadataAPI.campaignsByAdvIds(ids));
+            }else if("targeting_directsitesByPublishers".equals(metatype)){
+                return ok(MetadataAPI.targeting_directsitesByPublishers(ids));
+            }else if("sitesByPublishers".equals(metatype)){
+                return ok(MetadataAPI.sitesByPublishers(ids));
+            }else if("adsByCampaign".equals(metatype)){
+                return ok(MetadataAPI.adsByCampaign(ids));
             }
+            
             Message msg = new Message();
             msg.setError_code(ErrorEnum.ACTION_TYPE_ABSENT.getId());
             msg.setMsg(ErrorEnum.ACTION_TYPE_ABSENT.getName());
@@ -834,6 +1143,10 @@ public class KAPI extends Controller{
     }
     public static Result metasecondlevelpost(String metatype){
         JsonNode jsonNode= request().body().asJson();
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             MetaInput entity = MetaInput.getObject(jsonNode.toString());
             if(entity != null){
@@ -872,6 +1185,10 @@ public class KAPI extends Controller{
     public static Result savedquery(String actionType){
         JsonNode jsonNode= request().body().asJson();
         Connection con = null;
+    	response().setHeader("Access-Control-Allow-Origin", "*");
+        response().setHeader("Access-Control-Allow-Methods", "POST, GET");
+        response().setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         try{
             con = DB.getConnection();
             if("create".equals(actionType)){

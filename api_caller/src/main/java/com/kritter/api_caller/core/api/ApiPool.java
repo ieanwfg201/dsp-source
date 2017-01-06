@@ -1,7 +1,7 @@
 package com.kritter.api_caller.core.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.util.Map;
 
 /**
@@ -14,7 +14,7 @@ public class ApiPool
 
     public ApiPool(String loggerName,Map<String,Api> apiInstancesAgainstSignature)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.apiInstancesAgainstSignature = apiInstancesAgainstSignature;
     }
 

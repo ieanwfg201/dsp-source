@@ -3,8 +3,8 @@ package com.kritter.api_caller.core.action;
 import com.kritter.api_caller.core.model.WebServiceRequestEntity;
 import com.kritter.api_caller.core.model.WebServiceResponseEntity;
 import com.kritter.utils.http_client.SynchronousHttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class implements WebserviceApiAction interface, so as to provide ability
@@ -21,7 +21,7 @@ public class WebserviceApiActionImplementation implements WebserviceApiAction
                                              int maxConnectionsPerRoute)
     {
         this.synchronousHttpClient = new SynchronousHttpClient(loggerName,maxConnectionsPerRoute);
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
     }
 
     @Override

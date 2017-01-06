@@ -5,8 +5,8 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.geo.common.entity.InternetServiceProvider;
 import com.kritter.geo.common.entity.IpRangeKeyValue;
 import com.kritter.geo.common.utils.GeoDetectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,7 +47,7 @@ public class ISPDetectionCache
                              long reloadFrequencyForDetectionData) throws InitializationException
     {
 
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.dataSourceWithDetectionFileMap = dataSourceWithDetectionFileMap;
         this.dataSourceValuesForLookupInOrder = dataSourceValuesForLookupInOrder;
 
@@ -295,7 +295,7 @@ public class ISPDetectionCache
      */
     private class ISPDataFileReloadTimerTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

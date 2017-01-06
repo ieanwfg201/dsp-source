@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,8 +28,8 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
 
     public MadFileCache(String name, String loggerName, Properties properties)
             throws InitializationException {
-        super(LoggerFactory.getLogger(loggerName), properties);
-        this.logger = LoggerFactory.getLogger(loggerName);
+        super(LogManager.getLogger(loggerName), properties);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
     }
 

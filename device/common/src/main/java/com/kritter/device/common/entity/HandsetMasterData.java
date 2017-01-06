@@ -37,7 +37,7 @@ public class HandsetMasterData implements IUpdatableEntity<HandsetDataTopLevelKe
     @Getter @Setter
     private Integer modelId;
 
-    @Getter
+    @Getter @Setter
     private String modelName;
 
     @Getter
@@ -46,7 +46,7 @@ public class HandsetMasterData implements IUpdatableEntity<HandsetDataTopLevelKe
     @Getter @Setter
     private Integer deviceOperatingSystemId;
 
-    @Getter
+    @Getter @Setter
     private String osName;
 
     @Getter
@@ -92,7 +92,7 @@ public class HandsetMasterData implements IUpdatableEntity<HandsetDataTopLevelKe
     private final static String EMPTY_JSON = "{}";
 
     // jackson json object mapper to convert json to java object.
-    private static ObjectMapper jacksonObjectMapper = new ObjectMapper();
+    private static final ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
     // use this constructor for insertion of data into database.
     public HandsetMasterData(HandsetDataTopLevelKey handsetDataTopLevelKey,

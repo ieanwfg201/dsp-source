@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.adserving.prediction.interfaces.CTRPredictor;
