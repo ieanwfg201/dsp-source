@@ -107,15 +107,16 @@ public class FormatDspResponse {
         	return s;
         	
         }else{
-            sBuff.append(bidResponseBidEntity.getAdMarkup());
+            sBuff.append("<img src=\"");
+            sBuff.append(internalWinUrl+internalFieldURI);
+            sBuff.append((internalFieldURI.contains("?") ? "&" : "?"));
+            sBuff.append("wp=");
+            sBuff.append(winEntity.getWin_price());
+            sBuff.append("\" style=\"display: none;\" />");
             sBuff.append("<img src=\"");
             sBuff.append(winUrl);
             sBuff.append("\" style=\"display: none;\" />");
-            sBuff.append("<img src=\"");
-            sBuff.append(internalWinUrl+internalFieldURI);
-            sBuff.append("?wp=");
-            sBuff.append(winEntity.getWin_price());
-            sBuff.append("\" style=\"display: none;\" />");
+            sBuff.append(bidResponseBidEntity.getAdMarkup());
         }
         return sBuff.toString();
     }
@@ -205,16 +206,16 @@ public class FormatDspResponse {
         	return s;
         	
         }else{
-            sBuff.append(bidResponseBidEntity.getAdMarkup());
-            sBuff.append("<img src=\"");
-            sBuff.append(winUrl);
-            sBuff.append("\" style=\"display: none;\" />");
             sBuff.append("<img src=\"");
             sBuff.append(internalWinUrl+internalFieldURI);
             sBuff.append((internalFieldURI.contains("?") ? "&" : "?"));
             sBuff.append("wp=");
             sBuff.append(winEntity.getWin_price());
             sBuff.append("\" style=\"display: none;\" />");
+            sBuff.append("<img src=\"");
+            sBuff.append(winUrl);
+            sBuff.append("\" style=\"display: none;\" />");
+            sBuff.append(bidResponseBidEntity.getAdMarkup());
         }
         return sBuff.toString();
     }

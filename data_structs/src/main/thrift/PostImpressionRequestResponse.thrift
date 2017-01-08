@@ -15,6 +15,7 @@ INT_EXCHANGE_WIN =7,
 TEVENT =8,
 BEVENT_CSCWIN = 9,
 USR =10,
+USERSYNC =11,
 }
 
 enum PostImpressionTerminationReason{

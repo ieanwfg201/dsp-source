@@ -7,12 +7,24 @@
     <bean id="initJobset" class="com.kritter.core.workflow.JobSet">
         <constructor-arg value="postimpression-init-jobset"></constructor-arg>
         <constructor-arg>
-            <ref bean="initTransitionRule"/>
+            <ref bean="dspUserSyncRules"/>
         </constructor-arg>
         <constructor-arg>
             <list>
                 <ref bean="initJob"/>
                 <ref bean="eventUrlProcessorJob"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="dspUserSyncJobset" class="com.kritter.core.workflow.JobSet">
+        <constructor-arg value="postimpression-dsp-user-sync-jobset"></constructor-arg>
+        <constructor-arg>
+            <ref bean="initTransitionRule"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="dspUserSyncJob"/>
             </list>
         </constructor-arg>
     </bean>
