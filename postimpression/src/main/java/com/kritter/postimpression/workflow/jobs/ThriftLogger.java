@@ -444,7 +444,10 @@ public class ThriftLogger implements Job
         else if(POSTIMPRESSION_EVENT_URL_PREFIX.USR.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.USR;
-        }
+        } else if(POSTIMPRESSION_EVENT_URL_PREFIX.USERSYNC.getUrlIdentifierPrefix().equals(
+                request.getPostImpressionEvent().getUrlIdentifierPrefix())) {
+            postImpressionEvent = PostImpressionEvent.USERSYNC;
+    }
 
         return postImpressionEvent;
     }

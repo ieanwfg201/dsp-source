@@ -56,11 +56,15 @@ public class InternalExcWinUrlReader implements PostImpressionEventUrlReader
         HttpServletRequest httpServletRequest = (HttpServletRequest)context.getValue(Workflow.CONTEXT_REQUEST_KEY);
 
         String winPrice = httpServletRequest.getParameter(this.winPriceParameterName);
+        logger.debug("wp{}.",winPrice);
 
         double winBidPriceValue = 0.0;
 
         try
         {
+        	if(winPrice != null){
+        		winPrice=winPrice.trim();
+        	}
             winBidPriceValue = Double.valueOf(winPrice);
         }
         catch (NumberFormatException nfe)

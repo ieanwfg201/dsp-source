@@ -191,7 +191,7 @@ public class TestFrequencyCapFilter {
         EasyMock.expect(request.getUserId()).andReturn("1").anyTimes();
         EasyMock.expect(request.isRequestForSystemDebugging()).andReturn(false).anyTimes();
         EasyMock.expect(request.getNoFillReason()).andReturn(null).anyTimes();
-        request.setNoFillReason(NoFillReason.FREQUENCY_CAP);
+        request.setNoFillReason(NoFillReason.USER_ID_ABSENT);
         EasyMock.expectLastCall();
         EasyMock.replay(request);
 

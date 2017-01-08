@@ -20,16 +20,13 @@ public class SSLTargetingMatcher implements TargetingMatcher {
     private Logger logger;
 
     private AdEntityCache adEntityCache;
-    private String sslRequestKey;
 
     public SSLTargetingMatcher(String name,
                                String loggerName,
-                               AdEntityCache adEntityCache,
-                               String sslRequestKey) {
+                               AdEntityCache adEntityCache) {
         this.name = name;
         this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
-        this.sslRequestKey = sslRequestKey;
     }
 
     @Override
@@ -39,7 +36,7 @@ public class SSLTargetingMatcher implements TargetingMatcher {
             return adIdSet;
         }
 
-        boolean isSslRequest = (Boolean) context.getValue(this.sslRequestKey) || request.getSecure();
+        boolean isSslRequest = request.getSecure();
         if(!isSslRequest) {
             ReqLog.debugWithDebugNew(this.logger, request, "Request is not ssl enabled. passing all the ads.");
             return adIdSet;

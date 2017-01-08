@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class InitJob implements Job
 {
+    public static String AD_STATS_LOGGING_KEY = "ad-stats-logging-enabled";
+
     private Logger logger;
     private String name;
     private String requestObjectKey;
@@ -24,6 +26,7 @@ public class InitJob implements Job
     private String isRequestForSystemDebuggingHeaderName;
     private String inventorySourceHeader;
     private String sslRequestHeader;
+    private Boolean adStatsLoggingEnabled = null;
 
     public InitJob(
                    String loggerName,
@@ -44,6 +47,27 @@ public class InitJob implements Job
         this.sslRequestHeader = sslRequestHeader;
     }
 
+    public InitJob(
+            String loggerName,
+            String jobName,
+            String requestObjectKey,
+            RequestProcessor requestProcessor,
+            String isRequestForSystemDebuggingHeaderName,
+            String inventorySourceHeader,
+            String sslRequestHeader,
+            boolean adStatsLoggingEnabled
+    )
+    {
+        this.logger = LogManager.getLogger(loggerName);
+        this.name = jobName;
+        this.requestObjectKey = requestObjectKey;
+        this.requestProcessor = requestProcessor;
+        this.isRequestForSystemDebuggingHeaderName = isRequestForSystemDebuggingHeaderName;
+        this.inventorySourceHeader = inventorySourceHeader;
+        this.sslRequestHeader = sslRequestHeader;
+        this.adStatsLoggingEnabled = adStatsLoggingEnabled;
+    }
+
     @Override
     public String getName()
     {
@@ -57,6 +81,13 @@ public class InitJob implements Job
         HttpServletRequest httpServletRequest = (HttpServletRequest)context.getValue(Workflow.CONTEXT_REQUEST_KEY);
 
         this.logger.debug("Fetched servlet-request object inside InitJob.");
+
+        if(this.adStatsLoggingEnabled != null) {
+            this.logger.debug("Setting ad stats logging enabled to {} in context.", this.adStatsLoggingEnabled);
+            context.setValue(AD_STATS_LOGGING_KEY, this.adStatsLoggingEnabled);
+        } else {
+            this.logger.debug("Ad stats logging enabled is null. Not setting in context.");
+        }
 
         try
         {
@@ -102,16 +133,13 @@ public class InitJob implements Job
 
             String sslRequest = httpServletRequest.getHeader(this.sslRequestHeader);
             if(null != sslRequest) {
-                context.setValue(this.sslRequestHeader, Boolean.valueOf(sslRequest));
                 this.logger.debug("Value for secure request header : {} is {}", this.sslRequestHeader, sslRequest);
-            } else {
-                context.setValue(this.sslRequestHeader, false);
-                this.logger.debug("Value for secure request header : {} is false", this.sslRequestHeader);
+                request.setSecure(Boolean.valueOf(sslRequest));
             }
 
-            this.logger.debug("Finished getting workflow request object from RequestProcessor,Enrichment complete.");
+            this.logger.debug("Finished getting workflow request object from RequestProcessor, Enrichment " +
+                    "complete.");
             context.setValue(this.requestObjectKey, request);
-
         }
         catch(Exception e)
         {
