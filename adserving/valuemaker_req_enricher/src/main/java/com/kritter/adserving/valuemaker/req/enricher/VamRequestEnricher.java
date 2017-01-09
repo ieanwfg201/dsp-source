@@ -87,29 +87,42 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             logger.debug("SiteId received from bid request URL: {} ", siteIdFromBidRequest);
 
             //转换bcat
+
+            List<Integer> industyCategoryList = new ArrayList<Integer>();
+
             Integer[] mmaIndustryCodes1 = null;
             String[] mmaIndustryCodes2 = null;
+
             List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
             if (battr != null && battr.size() != 0) {
-                mmaIndustryCodes1 = new Integer[battr.size()];
-                mmaIndustryCodes2 = new String[battr.size()];
                 Site s = this.siteCache.query(siteIdFromBidRequest);
                 if (s != null) {
                     for (int i = 0; i < battr.size(); i++) {
                         MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + battr.get(i));
                         if (mmaCacheEntity != null && mmaCacheEntity.getUi_id()!=null) {
                             for (Integer uiId : mmaCacheEntity.getUi_id()){
-                                mmaIndustryCodes1[i] = uiId;
-                                mmaIndustryCodes2[i] = String.valueOf(uiId);
+                                industyCategoryList.add(uiId);
                             }
                         }
                     }
+                   mmaIndustryCodes1 =new Integer[industyCategoryList.size()];
+                   mmaIndustryCodes2 = new String[industyCategoryList.size()];
+
+                   for(int i=0;i<industyCategoryList.size();i++){
+                       mmaIndustryCodes1[i]=industyCategoryList.get(i);
+                       mmaIndustryCodes2[i]=String.valueOf(industyCategoryList.get(i));
+                   }
+
                     vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(mmaIndustryCodes2);
                 }
             }
 
             //app category
-            Integer[] appCategoryList1 = null;
+            List<Integer> appCategoryList = new ArrayList<Integer>();
+
+            Integer[] appCategoryArray1 = null;
+            String[] appCategroyArray2 = null;
+
             List<String> appCategoryList2 = new ArrayList<String>();
             BidRequestAppDTO appDTO = vamBidRequestParentNodeDTO.getBidRequestApp();
             if (appDTO != null && appDTO.getContentCategoriesApplication() != null && appDTO.getContentCategoriesApplication().length > 0) {
@@ -117,19 +130,24 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
                 Site s = this.siteCache.query(siteIdFromBidRequest);
                 if (s != null) {
-                    appCategoryList1 = new Integer[contentCategoriesApplication.length];
                     for (int i = 0; i < contentCategoriesApplication.length; i++) {
                         MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + contentCategoriesApplication[i]);
                         if (mmaCacheEntity != null && mmaCacheEntity.getUi_id()!=null) {
                             for (Integer uiId : mmaCacheEntity.getUi_id()){
-                                appCategoryList1[i] = uiId;
-                                appCategoryList2.add(String.valueOf(uiId));
+                                appCategoryList.add(uiId);
                             }
                         }
                     }
-                    String[] appCategroyArray = new String[appCategoryList2.size()];
-                    appCategroyArray = appCategoryList2.toArray(appCategroyArray);
-                    vamBidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(appCategroyArray);
+
+                    appCategoryArray1 =new Integer[appCategoryList.size()];
+                    appCategroyArray2 = new String[appCategoryList.size()];
+
+                    for(int i=0;i<appCategoryList.size();i++){
+                        appCategoryArray1[i]=appCategoryList.get(i);
+                        appCategroyArray2[i]=String.valueOf(appCategoryList.get(i));
+                    }
+
+                    vamBidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(appCategroyArray2);
                 }
             }
 
@@ -140,7 +158,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 adpositionid = impressionDTO.getAdTagOrPlacementId();
             }
 
-            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1, appCategoryList1);
+            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1, appCategoryArray1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));
 
 
