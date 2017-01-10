@@ -32,7 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -390,14 +392,20 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
     }
 
     private Integer[] buildMMAFromMMACache(Integer publisherId, Integer[] mmaCatgories, String[] cat) {
+        List<Integer> categoryList = new ArrayList<Integer>();
         if (cat != null && cat.length > 0) {
             int length = cat.length;
-            mmaCatgories = new Integer[length];
             for (int i = 0; i < length; i++) {
                 MMACacheEntity mmaCacheEntity = mmaCache.query(publisherId + CTRL_A + Integer.valueOf(cat[i]));
-                mmaCatgories[i] = mmaCacheEntity == null ? 0 : mmaCacheEntity.getUi_id();
+                if (mmaCacheEntity != null && mmaCacheEntity.getUi_id()!=null) {
+                    for (Integer uiId : mmaCacheEntity.getUi_id()){
+                        categoryList.add(uiId);
+                    }
+                }
             }
         }
+        mmaCatgories = new Integer[categoryList.size()];
+        mmaCatgories=categoryList.toArray(mmaCatgories);
         return mmaCatgories;
     }
 
