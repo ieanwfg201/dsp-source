@@ -54,10 +54,6 @@ public class ResponseFormattingJob implements Job{
     private SiteMetaDataCache siteMetaDataCache;
     private VASTFormatter vastFormatter;
 
-    private static final String CONTENT_LENGTH_HEADER = "Content-Length";
-    private static final String CONTENT_LENGTH_HEADER_ZERO_VALUE = "2";
-    private static final String EMPTY_RESPONSE_TO_EXCHANGE = "{}";
-
     public ResponseFormattingJob(
                                  String loggerName,
                                  String jobName,
@@ -130,14 +126,7 @@ public class ResponseFormattingJob implements Job{
             {
                 logger.debug("Inventory source is RTB Exchange, writing no bid to exchange, the enrichment error is : {} ",errorName);
 
-                try
-                {
-                    writeNoBidResponseToExchange(httpServletResponse);
-                }
-                catch (Exception e)
-                {
-                    logger.error("Exception writing no bid response",e);
-                }
+                writeNoBidResponseToExchange(httpServletResponse);
             }
             //may be possible that error name is not null and request is not null.
             else
@@ -208,12 +197,7 @@ public class ResponseFormattingJob implements Job{
             {
                 logger.error("Exception inside ResponseFormattingJob ", e);
 
-                try
-                {
-                    writeNoBidResponseToExchange(httpServletResponse);
-                }
-                catch (Exception ioe)
-                {}
+                writeNoBidResponseToExchange(httpServletResponse);
             }
         }
         else if(null != request &&
@@ -386,12 +370,9 @@ public class ResponseFormattingJob implements Job{
         //os.close();
     }
 
-    private void writeNoBidResponseToExchange(HttpServletResponse httpServletResponse) throws IOException
+    private void writeNoBidResponseToExchange(HttpServletResponse httpServletResponse)
     {
         httpServletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        //httpServletResponse.addHeader(CONTENT_LENGTH_HEADER,CONTENT_LENGTH_HEADER_ZERO_VALUE);
-        //OutputStream os = httpServletResponse.getOutputStream();
-        //os.write(EMPTY_RESPONSE_TO_EXCHANGE.getBytes());
         //os.flush();
         //os.close();
     }

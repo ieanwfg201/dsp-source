@@ -2,7 +2,6 @@ package com.kritter.naterial_upload.cloudcross.advertiser;
 
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
-import com.kritter.entity.account.AdxAccountExt;
 import com.kritter.material_upload.common.advInfo.MUAdvInfo;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiserEntity;
 import com.kritter.naterial_upload.cloudcross.entity.CloudCrossError;
@@ -11,9 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -26,7 +25,7 @@ import java.util.Date;
  */
 @SuppressWarnings("SqlDialectInspection")
 public class CloudCrossMUAdvInfo implements MUAdvInfo {
-    private static final Logger LOG = LoggerFactory.getLogger(CloudCrossMUAdvInfo.class);
+    private static final Logger LOG = LogManager.getLogger(CloudCrossMUAdvInfo.class);
     private ObjectMapper objectMapper = new ObjectMapper();
     @Getter
     @Setter
