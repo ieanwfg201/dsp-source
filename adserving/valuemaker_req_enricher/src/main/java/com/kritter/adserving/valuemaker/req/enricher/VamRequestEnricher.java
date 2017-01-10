@@ -24,8 +24,8 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 import com.kritter.valuemaker.reader_v20160817.reader.VamBidRequestReader;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -54,7 +54,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                               MMACache mMACache
 
     ) {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.vamBidRequestReader = vamBidRequestReader;
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;
