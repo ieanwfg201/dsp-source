@@ -373,7 +373,5 @@ public class ResponseFormattingJob implements Job{
     private void writeNoBidResponseToExchange(HttpServletResponse httpServletResponse)
     {
         httpServletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        //os.flush();
-        //os.close();
     }
 }
