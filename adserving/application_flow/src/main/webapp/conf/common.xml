@@ -523,6 +523,7 @@
             <map>
                 <entry key="mopub-pub-guid" value-ref="mopub_request_enricher_2_3"/>
                 <entry key="youku" value-ref="youku_request_enricher"/>
+                <entry key="inmobi23" value-ref="inmobi23_request_enricher"/>
             </map>
         </constructor-arg>
         <constructor-arg index="2" value="bid.req.logger"/>

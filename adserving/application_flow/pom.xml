@@ -75,6 +75,11 @@
             <artifactId>youku_enricher</artifactId>
             <version>1.0.0</version>
         </dependency>
+         <dependency>
+            <groupId>com.kritter.adexchange</groupId>
+            <artifactId>inmobi2_3_enricher</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>com.kritter.adserving</groupId>
             <artifactId>ad_shortlisting</artifactId>
