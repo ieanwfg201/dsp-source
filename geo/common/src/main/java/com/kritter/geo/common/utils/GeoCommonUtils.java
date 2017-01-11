@@ -7,8 +7,8 @@ import com.kritter.geo.common.entity.reader.CountryUserInterfaceIdCache;
 import com.kritter.geo.common.entity.reader.StateUserInterfaceIdCache;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class GeoCommonUtils
     private static final String QUERY_ISP_MAPPINGS_DATA_LOAD = "select * from isp_mappings";
     private static final String QUERY_MCC_MNC_DATA_LOAD = "select * from mcc_mnc";
     private static final int EARTH_RADIUS_MILES = 3959;
-    private static final Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static final Logger logger = LogManager.getLogger("cache.logger");
     /**
      * This function fetches country data from sql database for a given data source.
      * @param connectionToDatabase

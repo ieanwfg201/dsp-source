@@ -4,10 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -18,6 +22,7 @@ import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.error.ErrorEnum;
 import com.kritter.entity.video_props.VideoInfo;
 import com.kritter.entity.video_props.VideoInfoExt;
+import com.kritter.entity.video_props.VideoProps;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
@@ -294,6 +299,7 @@ public class VideoInfoCrud {
             return videoinfolist;
         }
         PreparedStatement pstmt = null;
+        PreparedStatement pstmt1 = null;
         try{
             switch (videoinfolistEntity.getVideoenum()){
                 case get_video_info_by_id:
@@ -324,6 +330,66 @@ public class VideoInfoCrud {
                     pstmt = con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
                             com.kritter.kritterui.api.db_query_def.VideoInfo.get_video_info_by_ids, "<id>", videoinfolistEntity.getId_list(), 
                             ",", true));
+                    break;
+                case get_video_info_by_pub:
+                	pstmt1 = con.prepareStatement(com.kritter.kritterui.api.db_query_def.VideoInfo.get_video_info_by_pub);
+                	ResultSet rset1 = pstmt1.executeQuery();
+                	int pubincid=videoinfolistEntity.getId();
+                	HashSet<String> hashSet = new HashSet<String>();
+                	while(rset1.next()){
+                		String direct_supply_inc_exc = rset1.getString("direct_supply_inc_exc");
+                		String video_props = rset1.getString("video_props"); 
+                		if(direct_supply_inc_exc != null && video_props != null){
+                			String split[] = direct_supply_inc_exc.split(",");
+                			for(String str:split){
+                				String split1[] = str.split(":");
+                				if(split1.length>0){
+                					String p = StringUtils.replace(split1[0], "\"", "").replace("{", "");
+                					try{
+                						int pub = Integer.parseInt(p);
+                						if(pub==pubincid){
+                							VideoProps vp = VideoProps.getObject(video_props);
+                							if(vp != null){
+                								String[] vi = vp.getVideo_info();
+                								if(vi != null){
+                									for(String s:vi){
+                										hashSet.add(s);
+                									}
+                								}
+                							}
+                							
+                						}
+                					}catch(Exception e1){
+                						
+                					}
+                				}
+                			}
+                		}
+                	}
+                	if(hashSet.size()>0){
+                		StringBuffer sbuff = new StringBuffer("");
+                		boolean isFirst = true;
+                		for(String s1:hashSet){
+                			if(isFirst){
+                				isFirst=false;
+                			}else{
+                				sbuff.append(",");
+                			}
+                			sbuff.append(s1);
+                		}
+                		pstmt= con.prepareStatement(InQueryPrepareStmnt.createInQueryPrepareStatement(
+                                com.kritter.kritterui.api.db_query_def.VideoInfo.get_video_info_by_ids, "<id>", sbuff.toString(), 
+                                ",", true));
+                	}else{
+                        VideoInfoList  cblist = new VideoInfoList();
+                        Message msg = new Message();
+                        msg.setError_code(ErrorEnum.VIDEO_INFO_ID_LIST_NULL.getId());
+                        msg.setMsg(ErrorEnum.VIDEO_INFO_ID_LIST_NULL.getName());
+                        cblist.setMsg(msg);
+                        return cblist;
+                	}
+                	
+                	break;
                 default:
                     break;
             }
@@ -358,6 +424,13 @@ public class VideoInfoCrud {
             if(pstmt != null){
                 try {
                     pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
+                }
+            }
+            if(pstmt1 != null){
+                try {
+                    pstmt1.close();
                 } catch (SQLException e) {
                     LOG.error(e.getMessage(),e);
                 }

@@ -9,6 +9,8 @@ import java.util.Map;
  * Utility functions for ad stats population and update
  */
 public class AdNoFillStatsUtils {
+    public static String AD_STATS_LOGGING_KEY = "ad-stats-logging-enabled";
+
     /**
      * Updates the context with the no fill reason for this ad.
      * @param adId Ad id for the ad that has been dropped
@@ -19,6 +21,11 @@ public class AdNoFillStatsUtils {
      */
     public static void updateContextForNoFillOfAd(int adId, int noFillReasonId, String noFillTargetingMapKey,
                                                   Context context) {
+        Boolean adStatsLoggingEnabled = (Boolean) context.getValue(AD_STATS_LOGGING_KEY);
+        if(adStatsLoggingEnabled == null || !adStatsLoggingEnabled) {
+            return;
+        }
+
         @SuppressWarnings("unchecked")
         Map<Integer, Integer> noFillTargetingMap = (Map<Integer, Integer>) context.getValue(noFillTargetingMapKey);
         if(noFillTargetingMap == null) {

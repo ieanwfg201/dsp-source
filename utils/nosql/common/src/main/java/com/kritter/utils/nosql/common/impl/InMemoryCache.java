@@ -2,6 +2,7 @@ package com.kritter.utils.nosql.common.impl;
 
 import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
+import com.kritter.utils.nosql.common.SignalingNotificationObject;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -45,6 +46,12 @@ public class InMemoryCache implements NoSqlNamespaceOperations {
     }
 
     @Override
+    public boolean insertAttributeToThisNamespaceAsync(String namespace, String tableName, NoSqlData primaryKeyValue,
+                                                       String attributeName, NoSqlData attributeValue) {
+        return insertAttributeToThisNamespace(namespace, tableName, primaryKeyValue, attributeName, attributeValue);
+    }
+
+    @Override
     public boolean insertMultipleAttributesToThisNamespace(String namespace, String tableName, NoSqlData primaryKeyValue, Map<String, NoSqlData> attributesNameValueMap) {
         if(cache == null) {
             cache = new HashMap<String, Map<String, Map<String, Map<NoSqlData, NoSqlData>>>>();
@@ -77,6 +84,13 @@ public class InMemoryCache implements NoSqlNamespaceOperations {
     }
 
     @Override
+    public boolean insertMultipleAttributesToThisNamespaceAsync(String namespace, String tableName,
+                                                                NoSqlData primaryKeyValue,
+                                                                Map<String, NoSqlData> attributesNameValueMap) {
+        return insertMultipleAttributesToThisNamespace(namespace, tableName, primaryKeyValue, attributesNameValueMap);
+    }
+
+    @Override
     public boolean updateAttributesInThisNamespace(String namespace, String tableName, NoSqlData primaryKeyValue, Map<String, NoSqlData> attributesNameUpdatedValueMap) {
         if(cache == null) {
             cache = new HashMap<String, Map<String, Map<String, Map<NoSqlData, NoSqlData>>>>();
@@ -106,6 +120,12 @@ public class InMemoryCache implements NoSqlNamespaceOperations {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean updateAttributesInThisNamespaceAsync(String namespace, String tableName, NoSqlData primaryKeyValue,
+                                                        Map<String, NoSqlData> attributesNameUpdatedValueMap) {
+        return updateAttributesInThisNamespace(namespace, tableName, primaryKeyValue, attributesNameUpdatedValueMap);
     }
 
     @Override
@@ -166,6 +186,18 @@ public class InMemoryCache implements NoSqlNamespaceOperations {
     }
 
     @Override
+    public void fetchSingleRecordAttributesAsync(String namespace,
+                                                 String tableName,
+                                                 NoSqlData primaryKeyValue,
+                                                 Set<String> attributes,
+                                                 SignalingNotificationObject<Map<String, NoSqlData>> synchronizingResultMap) {
+        Map<String, NoSqlData> noSqlDataMap = fetchSingleRecordAttributes(namespace, tableName, primaryKeyValue,
+                attributes);
+        Map<String, NoSqlData> dataMapMap = synchronizingResultMap.get();
+        dataMapMap.putAll(noSqlDataMap);
+    }
+
+    @Override
     public Map<NoSqlData, Map<String, NoSqlData>> fetchMultipleRecordsAttributes(String namespace, String tableName, Set<NoSqlData> primaryKeyValues, Set<String> attributes) {
         if(cache == null) {
             return null;
@@ -199,6 +231,18 @@ public class InMemoryCache implements NoSqlNamespaceOperations {
         }
 
         return resMap;
+    }
+
+    @Override
+    public void fetchMultipleRecordsAttributesAsync(String namespace,
+                                                    String tableName,
+                                                    Set<NoSqlData> primaryKeyValues,
+                                                    Set<String> attributes,
+                                                    SignalingNotificationObject<Map<NoSqlData, Map<String, NoSqlData>>> synchronizingResultMap) {
+        Map<NoSqlData, Map<String, NoSqlData>> noSqlDataMapMap = fetchMultipleRecordsAttributes(namespace, tableName,
+                primaryKeyValues, attributes);
+        Map<NoSqlData, Map<String, NoSqlData>> dataMapMap = synchronizingResultMap.get();
+        dataMapMap.putAll(noSqlDataMapMap);
     }
 
     @Override

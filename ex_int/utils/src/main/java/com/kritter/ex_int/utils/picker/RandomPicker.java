@@ -5,13 +5,14 @@ import java.util.Random;
 
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 
-public class RandomPicker {
-	public static ResponseAdInfo pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
-	(
-			ResponseAdInfo responseAdInfoHighestEcpm,
-			List<ResponseAdInfo> responseAdInfoList,
-			Random randomPicker
-			)
+public class RandomPicker
+{
+
+	public static ResponseAdInfo pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues(
+																							 ResponseAdInfo responseAdInfoHighestEcpm,
+																							 List<ResponseAdInfo> responseAdInfoList,
+																							 Random randomPicker
+																							)
 	{
 		int sameHighestEcpmCount = 1;
 
@@ -30,5 +31,4 @@ public class RandomPicker {
 
 		return responseAdInfoList.get(0);
 	}
-
 }

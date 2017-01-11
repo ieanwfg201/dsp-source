@@ -28,10 +28,10 @@ import com.kritter.valuemaker.reader_v20160817.converter.response.ConvertRespons
 import com.kritter.valuemaker.reader_v20160817.entity.BidRequestVam;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -68,7 +68,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
             AdEntityCache adEntityCache,
             IABCategoriesCache iabCategoriesCache
     ) {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         this.secretKey = secretKey;

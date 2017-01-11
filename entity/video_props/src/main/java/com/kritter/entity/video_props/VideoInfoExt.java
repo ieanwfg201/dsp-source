@@ -17,28 +17,28 @@ public class VideoInfoExt {
 	private String extCDNUrl;
 	@Getter@Setter
 	private String youkuCDNUrl;
-	
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+        objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public JsonNode toJsonIgnoreNull(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
 
     public static VideoInfoExt getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         VideoInfoExt entity = objectMapper.readValue(str, VideoInfoExt.class);
         return entity;
     }
     public static VideoInfoExt getObjectIgnoreNull(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-        objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         VideoInfoExt entity = objectMapper.readValue(str, VideoInfoExt.class);
         return entity;
     }

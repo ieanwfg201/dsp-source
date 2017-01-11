@@ -5,8 +5,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class YoukuAdExchageUtils extends AdExchangeUtils{
 	private Logger logger;
@@ -14,7 +14,7 @@ public class YoukuAdExchageUtils extends AdExchangeUtils{
 
 	public YoukuAdExchageUtils(String loggerName,
 			String token){
-		logger = LoggerFactory.getLogger(loggerName);
+		logger = LogManager.getLogger(loggerName);
 		this.token=token;
 	}
 	public Double decodeWinBidPrice(String price)

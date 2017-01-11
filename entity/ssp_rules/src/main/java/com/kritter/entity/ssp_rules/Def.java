@@ -15,6 +15,7 @@ public class Def {
      * demand partner map
      */
     private Map<String, Rule> dpaMap = null;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public int hashCode() {
@@ -49,7 +50,7 @@ public class Def {
         this.dpaMap = dpaMap;
     }
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
+
         return toJson(objectMapper);
     }
     public JsonNode toJson(ObjectMapper objectMapper){
@@ -57,7 +58,6 @@ public class Def {
         return jsonNode;
     }
     public static Def getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static Def getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

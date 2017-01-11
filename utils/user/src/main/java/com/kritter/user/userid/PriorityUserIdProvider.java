@@ -5,8 +5,8 @@ import com.kritter.entity.user.userid.UserIdProvider;
 import com.kritter.entity.user.userid.ExternalUserId;
 import lombok.Getter;
 import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * Cache corresponding to the table containing id -> kritter user id mapping
  */
-public class PriorityUserIdProvider implements UserIdProvider {
+public class PriorityUserIdProvider { // implements UserIdProvider {
     @Getter
     private String name;
     private Logger logger;
@@ -34,7 +34,7 @@ public class PriorityUserIdProvider implements UserIdProvider {
                                   String loggerName,
                                   List<ExternalUserIdType> priorityList) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.priorityList = priorityList;
 
         Set<ExternalUserIdType> prioritySet = new HashSet<ExternalUserIdType>();
@@ -54,7 +54,7 @@ public class PriorityUserIdProvider implements UserIdProvider {
      * @param userIds set of user ids obtained from the request
      * @return internal user id
      */
-    @Override
+    // @Override
     public String getInternalUserId(Set<ExternalUserId> userIds) {
         if(userIds == null || userIds.size() == 0) {
             logger.debug("No user information present in the request. Returning null user id.");

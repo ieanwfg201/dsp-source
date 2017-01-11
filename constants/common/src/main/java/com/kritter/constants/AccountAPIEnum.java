@@ -5,7 +5,8 @@ import java.util.Map;
 
 public enum AccountAPIEnum
 {
-            list_active_advertiser_by_demandtype(0,"list_active_advertiser_by_demandtype");
+            list_active_advertiser_by_demandtype(0,"list_active_advertiser_by_demandtype"),
+            list_account_by_email(1,"list_account_by_email");
 
             private int code;
             private String name;

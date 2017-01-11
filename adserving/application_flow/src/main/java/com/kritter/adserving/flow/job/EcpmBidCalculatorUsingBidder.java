@@ -14,8 +14,8 @@ import com.kritter.constants.BidType;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.utils.common.AdNoFillStatsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -53,7 +53,7 @@ public class EcpmBidCalculatorUsingBidder implements Job
                                         String adNoFillReasonMapKey
                                        )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.jobName = name;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;
@@ -88,7 +88,15 @@ public class EcpmBidCalculatorUsingBidder implements Job
         }
 
         Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfo();
+
+        if(null == responseAdInfos)
+        {
+            logger.debug("No ads to work on inside EcpmBidCalculatorNotUsingBidder, returning back.");
+            return;
+        }
+
         Set<ResponseAdInfo> finalResponseAdInfoSet = new HashSet<ResponseAdInfo>();
+
         Set<ServedEntityInfo> servedEntityInfosForBidder = new HashSet<ServedEntityInfo>(responseAdInfos.size());
 
         for(ResponseAdInfo responseAdInfo : responseAdInfos)

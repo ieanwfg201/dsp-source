@@ -2,7 +2,7 @@ package com.kritter.ex_int.video_admarkup;
 
 import java.net.URLEncoder;
 
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.constants.ContentDeliveryMethods;

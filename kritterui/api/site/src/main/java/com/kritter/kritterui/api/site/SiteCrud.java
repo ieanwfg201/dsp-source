@@ -12,6 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.kritter.api.entity.response.msg.Message;
+import com.kritter.api.entity.site.NoFillPassBack;
 import com.kritter.api.entity.site.Site;
 import com.kritter.api.entity.site.SiteList;
 import com.kritter.api.entity.site.SiteListEntity;
@@ -299,7 +300,11 @@ public class SiteCrud {
         if(site.getPassback_content_type() == (int)SITE_PASSBACK_CONTENT_TYPE.NONE.getCode()){
             return "";
         }
-        return "[{\"priority\":1,\"content\":\""+site.getNofill_backup_content().trim().replaceAll("\"", "\\\\\"")+"\",\"type\":"+site.getPassback_content_type()+"}]";
+        NoFillPassBack nfpb = new NoFillPassBack();
+        nfpb.setPriority(1);
+        nfpb.setContent(site.getNofill_backup_content().trim());
+        nfpb.setType(site.getPassback_content_type());
+        return "["+nfpb.toJson().toString()+"]";
     }
     private static String generateNativeProps(Site site){
         if(site == null){
@@ -1806,6 +1811,89 @@ public class SiteCrud {
                     con.setAutoCommit(autoCommitFlag);
                 } catch (SQLException e1) {
                     LOG.error(e1.getMessage(),e1);
+                }
+            }
+        } 
+    }
+    public static JsonNode list_site_by_url(Connection con, JsonNode jsonNode){
+        if(jsonNode == null){
+            SiteList sitelist = new SiteList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SITE_LIST_ENTITY_NULL.getId());
+            msg.setMsg(ErrorEnum.SITE_LIST_ENTITY_NULL.getName());
+            sitelist.setMsg(msg);
+            return sitelist.toJson();
+        }
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            SiteListEntity sitelistEntity = objectMapper.treeToValue(jsonNode, SiteListEntity.class);
+            return list_site_by_url(con, sitelistEntity).toJson();
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            SiteList sitelist = new SiteList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
+            sitelist.setMsg(msg);
+            return sitelist.toJson();
+        }
+    }
+    
+    public static SiteList list_site_by_url(Connection con, SiteListEntity sitelistEntity){
+        if(con == null){
+            SiteList sitelist = new SiteList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
+            msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
+            sitelist.setMsg(msg);
+            return sitelist;
+        }
+        if(sitelistEntity == null){
+            SiteList sitelist = new SiteList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SITE_LIST_ENTITY_NULL.getId());
+            msg.setMsg(ErrorEnum.SITE_LIST_ENTITY_NULL.getName());
+            sitelist.setMsg(msg);
+            return sitelist;
+        }
+        PreparedStatement pstmt = null;
+        try{
+            
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Site.list_sites_by_url);
+            pstmt.setString(1, "%"+sitelistEntity.getUrl()+"%");
+            ResultSet rset = pstmt.executeQuery();
+            SiteList sitelist = new SiteList();
+            List<Site> sites = new LinkedList<Site>();
+            while(rset.next()){
+                Site site = new Site();
+                populate(site, rset);
+                sites.add(site);
+            }
+            sitelist.setSite_list(sites);
+            Message msg = new Message();
+            if(sites.size()>0){
+                msg.setError_code(ErrorEnum.NO_ERROR.getId());
+                msg.setMsg(ErrorEnum.NO_ERROR.getName());
+            }else{
+                msg.setError_code(ErrorEnum.SITE_NOT_FOUND.getId());
+                msg.setMsg(ErrorEnum.SITE_NOT_FOUND.getName());
+            }
+            sitelist.setMsg(msg);
+            return sitelist;
+        }catch(Exception e){
+            LOG.error(e.getMessage(),e);
+            SiteList sitelist = new SiteList();
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
+            msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
+            sitelist.setMsg(msg);
+            return sitelist;
+        }finally{
+            if(pstmt != null){
+                try {
+                    pstmt.close();
+                } catch (SQLException e) {
+                    LOG.error(e.getMessage(),e);
                 }
             }
         } 

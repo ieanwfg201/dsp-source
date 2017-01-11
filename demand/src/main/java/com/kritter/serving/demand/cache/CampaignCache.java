@@ -10,8 +10,8 @@ import com.kritter.constants.StatusIdEnum;
 import com.kritter.serving.demand.indexbuilder.CampaignSecondaryIndexBuilder;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -26,7 +26,7 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
     public static final String ABSOLUTE_PAYOUT_THRESHOLD_KEY = "absolute_payout_threshold";
     public static final String PERCENT_PAYOUT_THRESHOLD_KEY = "percent_payout_threshold";
 
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter private final String name;
 
     public CampaignCache(List<Class> secIndexKeyClassList, Properties props,
@@ -80,11 +80,12 @@ public class CampaignCache extends AbstractDBStatsReloadableQueryableCache<Integ
             // If the campaign payout has already hit the limit, don't serve it any more
             Double campaignBurn = campaignDailyBudget - dailyBudgetRemaining;
             logger.debug("Daily burn for campaign id : {} = {}. Payout = {}", id, campaignBurn, campaignPayout);
-            if(campaignBurn + absolutePayoutThreshold < campaignPayout) {
+            if(absolutePayoutThreshold > 0 && campaignBurn + absolutePayoutThreshold < campaignPayout) {
                 isMarkedForDeletion = true;
                 logger.debug("Payout for this campaign exceeds burn by more than the absolute threshold : {}. Not " +
                         "loading it in memory.", absolutePayoutThreshold);
-            } else if((campaignPayout - campaignBurn) > (percentPayoutThreshold * campaignDailyBudget) / 100) {
+            } else if(percentPayoutThreshold > 0 &&
+                    (campaignPayout - campaignBurn) > (percentPayoutThreshold * campaignDailyBudget) / 100) {
                 isMarkedForDeletion = true;
                 logger.debug("Payout for this campaign exceeds burn by more than relative threshold. Percentage " +
                         "threshold = {}%, {}$.", percentPayoutThreshold,

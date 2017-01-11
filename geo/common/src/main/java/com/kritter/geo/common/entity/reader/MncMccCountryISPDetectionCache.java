@@ -8,8 +8,8 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.geo.common.entity.CountryIspUiDataUsingMccMnc;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +25,7 @@ import java.util.Properties;
 public class MncMccCountryISPDetectionCache extends
                                             AbstractDBStatsReloadableQueryableCache<String,CountryIspUiDataUsingMccMnc>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private String name;
 
     public MncMccCountryISPDetectionCache(

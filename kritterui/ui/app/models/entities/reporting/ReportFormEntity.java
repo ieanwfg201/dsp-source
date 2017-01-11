@@ -265,6 +265,27 @@ public class ReportFormEntity extends BaseReportEntity{
     public void setDspNofill(String dspNofill) { 
         reportingEntity.setDspNoFill(stringToStringIdList(dspNofill));
     }
+    public String getTerminationReason() {
+        return stringIdListToString(reportingEntity.getTerminationReason());
+    }
+
+    public void setTerminationReason(String terminationReason) { 
+        reportingEntity.setTerminationReason(stringToStringIdList(terminationReason));
+    }
+    public String getPostimpevent() {
+        return stringIdListToString(reportingEntity.getPostimpevent());
+    }
+
+    public void setPostimpevent(String postimpevent) { 
+        reportingEntity.setPostimpevent(stringToStringIdList(postimpevent));
+    }
+    public String getTeventtype() {
+        return stringIdListToString(reportingEntity.getTeventtype());
+    }
+
+    public void setTeventtype(String teventtype) { 
+        reportingEntity.setTeventtype(stringToStringIdList(teventtype));
+    }
 	public String getMarketplace() {
 		return idListToString(reportingEntity.getMarketplace());
 	}

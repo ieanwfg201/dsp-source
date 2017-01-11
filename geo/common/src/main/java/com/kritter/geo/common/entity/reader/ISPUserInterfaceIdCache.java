@@ -9,8 +9,8 @@ import com.kritter.geo.common.entity.IspUserInterfaceId;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -18,7 +18,7 @@ import java.util.*;
 
 public class ISPUserInterfaceIdCache extends AbstractDBStatsReloadableQueryableCache<Integer,IspUserInterfaceId>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter
     private final String name;
 
@@ -41,13 +41,17 @@ public class ISPUserInterfaceIdCache extends AbstractDBStatsReloadableQueryableC
             id = resultSet.getInt("id");
             Integer[] entityIdSet = ResultSetHelper.getResultSetIntegerArray(resultSet,"entity_id_set");
             Timestamp modifiedOn = resultSet.getTimestamp("modified_on");
+            String ispUiName = resultSet.getString("isp_ui_name");
 
             Set<Integer> ispIdSetForAllDataSources = ( null != entityIdSet ?
                                                        new HashSet<Integer>(Arrays.asList(entityIdSet)) :
                                                        new HashSet<Integer>()
                                                      );
 
-            return new IspUserInterfaceId(id,ispIdSetForAllDataSources,modifiedOn);
+            IspUserInterfaceId entry = new IspUserInterfaceId(id,ispIdSetForAllDataSources,modifiedOn);
+            entry.setIspUIName(ispUiName);
+
+            return entry;
         }
         catch(Exception e)
         {

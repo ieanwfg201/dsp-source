@@ -1,7 +1,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+       default-lazy-init="true">
 
     <bean id="init_job" class="com.kritter.adserving.flow.job.InitJob">
         <constructor-arg index="0" value="adserving.application"/>
@@ -10,6 +11,8 @@
         <constructor-arg index="3"><ref bean="adserving_request_processor"/></constructor-arg>
         <constructor-arg index="4" value="KRITTER-DEBUG-SYSTEM"/>
         <constructor-arg index="5" value="KRITTER_INVENTORY_SRC"/>
+        <constructor-arg index="6" value="Secure-Request"/>
+        <constructor-arg index="7" value="true"/>
     </bean>
 
     <bean id="user_id_fetch_job" class="com.kritter.adserving.user.job.UserIdFetchJob">
@@ -17,9 +20,39 @@
         <constructor-arg index="1" value="user_id_fetch_job"/>
         <constructor-arg index="2" value="req-object"/>
         <constructor-arg index="3"><ref bean="user_id_cache"/> </constructor-arg>
+        <constructor-arg index="4" value="user-id-fetch-map"/>
     </bean>
 
-     <bean id="ad_targeting_matcher_job" class="com.kritter.adserving.shortlisting.job.AdTargetingMatcher">
+    <bean id="user_id_join_job" class="com.kritter.adserving.user.job.UserIdJoinJob">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="user_id_join_job"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="user-id-fetch-map"/>
+        <constructor-arg index="4" value="internal_id"/>
+    </bean>
+
+    <bean id="user_targeting_matcher_job" class="com.kritter.adserving.shortlisting.job.TargetingSubsetMatcherJob">
+        <constructor-arg index="0" value="user_targeting_matcher_job"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="shortlisted-ads"/>
+        <constructor-arg index="4">
+            <list>
+                <ref bean="frequency_cap_filter"/>
+                <ref bean="lat_lon_file_targeting"/>
+                <ref bean="user_id_inc_exc_filter"/>
+                <ref bean="lifetime_ad_imp_filter"/>
+                <ref bean="lifetime_ad_click_filter"/>
+                <ref bean="lifetime_camapaign_imp_filter"/>
+                <ref bean="lifetime_camapaign_click_filter"/>
+                <ref bean="click_cap_filter"/>
+                <ref bean="campaign_frequency_cap_filter"/>
+                <ref bean="campaign_click_cap_filter"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="ad_targeting_matcher_job" class="com.kritter.adserving.shortlisting.job.AdTargetingMatcher">
         <constructor-arg index="0" value="ad_targeting_job"/>
         <constructor-arg index="1" value="adserving.application"/>
         <constructor-arg index="2" value="req-object"/>
@@ -51,20 +84,11 @@
                 <ref bean="mma_targeting_filter"/>
                 <ref bean="adposition_targeting_filter"/>
                 <ref bean="channel_targeting_filter"/>
-                <ref bean="frequency_cap_filter"/>
-                <ref bean="lat_lon_file_targeting"/>
-                <ref bean="user_id_inc_exc_filter"/>
-                <ref bean="lifetime_ad_imp_filter"/>
-                <ref bean="lifetime_ad_click_filter"/>
-                <ref bean="lifetime_camapaign_imp_filter"/>
-                <ref bean="lifetime_camapaign_click_filter"/>
-                <ref bean="click_cap_filter"/>
-                <ref bean="campaign_frequency_cap_filter"/>
-                <ref bean="campaign_click_cap_filter"/>
             </list>
         </constructor-arg>
         <constructor-arg index="10" value="ad-nofill-map"/>
         <constructor-arg index="11"><ref bean="campaign_cache"/></constructor-arg>
+        <constructor-arg index="12"><ref bean="metrics_cache"/></constructor-arg>
     </bean>
 
     <bean id="supply_demand_matcher_job" class="com.kritter.adserving.flow.job.SupplyDemandMatcherJob">
@@ -103,21 +127,21 @@
         <constructor-arg index="3" value="res-object"/>
         <constructor-arg index="4">
             <list>
-                 <value><![CDATA[invsrc]]></value>
-                 <value><![CDATA[siteid]]></value>
-                 <value><![CDATA[deviceid]]></value>
-                 <value><![CDATA[manufacturerid]]></value>
-                 <value><![CDATA[modelid]]></value>
-                 <value><![CDATA[osid]]></value>
-                 <value><![CDATA[country]]></value>
-                 <value><![CDATA[carrier]]></value>
-                 <value><![CDATA[scatid]]></value>
-                 <value><![CDATA[time]]></value>
-                 <value><![CDATA[isweekend]]></value>
-                 <value><![CDATA[adid]]></value>
-                 <value><![CDATA[campaignid]]></value>
-                 <value><![CDATA[creativeid]]></value>
-                 <value><![CDATA[creativetype]]></value>
+                <value><![CDATA[invsrc]]></value>
+                <value><![CDATA[siteid]]></value>
+                <value><![CDATA[deviceid]]></value>
+                <value><![CDATA[manufacturerid]]></value>
+                <value><![CDATA[modelid]]></value>
+                <value><![CDATA[osid]]></value>
+                <value><![CDATA[country]]></value>
+                <value><![CDATA[carrier]]></value>
+                <value><![CDATA[scatid]]></value>
+                <value><![CDATA[time]]></value>
+                <value><![CDATA[isweekend]]></value>
+                <value><![CDATA[adid]]></value>
+                <value><![CDATA[campaignid]]></value>
+                <value><![CDATA[creativeid]]></value>
+                <value><![CDATA[creativetype]]></value>
             </list>
         </constructor-arg>
         <constructor-arg index="5"><ref bean="lr_ctr_data_cache"/></constructor-arg>
@@ -133,21 +157,21 @@
         <constructor-arg index="3" value="res-object"/>
         <constructor-arg index="4">
             <list>
-                 <value><![CDATA[invsrc]]></value>
-                 <value><![CDATA[siteid]]></value>
-                 <value><![CDATA[deviceid]]></value>
-                 <value><![CDATA[manufacturerid]]></value>
-                 <value><![CDATA[modelid]]></value>
-                 <value><![CDATA[osid]]></value>
-                 <value><![CDATA[country]]></value>
-                 <value><![CDATA[carrier]]></value>
-                 <value><![CDATA[scatid]]></value>
-                 <value><![CDATA[time]]></value>
-                 <value><![CDATA[isweekend]]></value>
-                 <value><![CDATA[adid]]></value>
-                 <value><![CDATA[campaignid]]></value>
-                 <value><![CDATA[creativeid]]></value>
-                 <value><![CDATA[creativetype]]></value>
+                <value><![CDATA[invsrc]]></value>
+                <value><![CDATA[siteid]]></value>
+                <value><![CDATA[deviceid]]></value>
+                <value><![CDATA[manufacturerid]]></value>
+                <value><![CDATA[modelid]]></value>
+                <value><![CDATA[osid]]></value>
+                <value><![CDATA[country]]></value>
+                <value><![CDATA[carrier]]></value>
+                <value><![CDATA[scatid]]></value>
+                <value><![CDATA[time]]></value>
+                <value><![CDATA[isweekend]]></value>
+                <value><![CDATA[adid]]></value>
+                <value><![CDATA[campaignid]]></value>
+                <value><![CDATA[creativeid]]></value>
+                <value><![CDATA[creativetype]]></value>
             </list>
         </constructor-arg>
         <constructor-arg index="5"><ref bean="lr_csr_data_cache"/></constructor-arg>
@@ -235,18 +259,19 @@
     <bean id="thrift_logger" class="com.kritter.adserving.flow.job.ThriftLogger">
         <constructor-arg index="0" value="adserving_thrift_logger_job"/>
         <constructor-arg index="1" value="adserving.application"/>
-        <constructor-arg index="2" value="adserving.thriftlog"/>
-        <constructor-arg index="3" value="req-object"/>
-        <constructor-arg index="4" value="res-object"/>
-        <constructor-arg index="5"><ref bean="ad_entity_cache"/></constructor-arg>
-        <constructor-arg index="6"><ref bean="campaign_cache"/></constructor-arg>
-        <constructor-arg index="7" value="User-Agent"/>
-        <constructor-arg index="8" value="X-Forwarded-For"/>
-        <constructor-arg index="9" value="REMOTE_ADDR"/>
-        <constructor-arg index="10" value="bid.req.logger"/>
-        <constructor-arg index="11"><ref bean="req_logging_cache"/></constructor-arg>
-        <constructor-arg index="12"><ref bean="ad_stats_cache"/></constructor-arg>
-        <constructor-arg index="13" value="ad-nofill-map"/>
+        <constructor-arg index="2" value="req-object"/>
+        <constructor-arg index="3" value="res-object"/>
+        <constructor-arg index="4"><ref bean="ad_entity_cache"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="campaign_cache"/></constructor-arg>
+        <constructor-arg index="6" value="User-Agent"/>
+        <constructor-arg index="7" value="X-Forwarded-For"/>
+        <constructor-arg index="8" value="REMOTE_ADDR"/>
+        <constructor-arg index="9" value="bid.req.logger"/>
+        <constructor-arg index="10"><ref bean="req_logging_cache"/></constructor-arg>
+        <!--constructor-arg index="11"><ref bean="ad_stats_cache"/></constructor-arg-->
+        <constructor-arg index="11"><null /></constructor-arg>
+        <constructor-arg index="12" value="ad-nofill-map"/>
+        <constructor-arg index="13"><ref bean="adserving_thrift_logging_cache"/></constructor-arg>
     </bean>
 
     <bean id="exchange_thrift_logger_job" class="com.kritter.adserving.flow.job.ExchangeThriftLogger">
@@ -279,7 +304,7 @@
         <constructor-arg index="2" value="req-object"/>
         <constructor-arg index="3" value="res-object"/>
         <constructor-arg index="4" value="1"/>
-        <constructor-arg index="5" value="100"/>
+        <constructor-arg index="5" value="10"/>
         <constructor-arg index="6" value="100"/>
         <constructor-arg index="7" value="NING"/>
         <constructor-arg index="8" value="SECONDPRICE"/>
@@ -290,6 +315,8 @@
         <constructor-arg index="13"><ref bean="iab_categories_cache"/></constructor-arg>
         <constructor-arg index="14"><ref bean="server_config"/></constructor-arg>
         <constructor-arg index="15" value="exchange_rule_var"/>
+        <constructor-arg index="16" value="k-uid"/>
+        <constructor-arg index="17" value="315360000"/>
     </bean>
 
     <bean id="user_id_update_job" class="com.kritter.adserving.user.job.UserIdUpdateJob">

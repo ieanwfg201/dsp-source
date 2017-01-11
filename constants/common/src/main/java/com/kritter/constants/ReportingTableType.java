@@ -9,7 +9,9 @@ public enum ReportingTableType
             CHANNEL(2,"CHANNEL"),
             ADPOSITION(3,"ADPOSITION"),
             FASTPATH(4,"FASTPATH"),
-            EXCHANGE(5,"EXCHANGE");
+            EXCHANGE(5,"EXCHANGE"),
+            TRACKINGEVENT(6,"TRACKINGEVENT"),
+            FRAUD(7,"FRAUD");
             private int code;
             private String name;
             private static Map<Integer, ReportingTableType> map = new HashMap<Integer, ReportingTableType>();

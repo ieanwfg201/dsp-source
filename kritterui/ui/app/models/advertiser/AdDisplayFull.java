@@ -10,6 +10,7 @@ import com.kritter.constants.BidType;
 import com.kritter.constants.CreativeMacroQuote;
 import com.kritter.constants.ExtClickType;
 import com.kritter.constants.MetadataType;
+import com.kritter.constants.Protocol;
 
 public class AdDisplayFull extends AdDisplay{
 
@@ -29,6 +30,9 @@ public class AdDisplayFull extends AdDisplay{
 	public String getAdvDomain() {
         return ad.getAdv_domain();
     }
+	public String getProtocol() {
+		return Protocol.getEnum(ad.getProtocol()).getName();
+	}
 
 	public TargetingDisplayFull getTargetingFull() {
 	    Targeting_profile tp = DataAPI.getTargetingProfile(ad.getTargeting_guid());	

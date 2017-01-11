@@ -4,6 +4,7 @@ import com.kritter.abstraction.cache.abstractions.AbstractFileStatsReloadableCac
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
+import com.kritter.common.caches.metrics.cache.MetricsCache;
 import fiftyone.mobile.detection.Match;
 import fiftyone.mobile.detection.factories.MemoryFactory;
 import fiftyone.mobile.detection.factories.StreamFactory;
@@ -12,8 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import fiftyone.mobile.detection.Provider;
 
 import java.io.File;
@@ -44,13 +45,15 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache
     @Getter
     private final String name;
     private Provider provider;
+    private MetricsCache metricsCache;
 
-    public FiftyOneDegreesFileCache(String name, String loggerName, Properties properties)
+    public FiftyOneDegreesFileCache(String name, String loggerName, Properties properties, MetricsCache metricsCache)
                                                                                     throws InitializationException
     {
-        super(LoggerFactory.getLogger(loggerName), properties);
-        this.logger = LoggerFactory.getLogger(loggerName);
+        super(LogManager.getLogger(loggerName), properties);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
+        this.metricsCache = metricsCache;
     }
 
     @Override
@@ -68,11 +71,13 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache
 
         try
         {
+
             fiftyOneDegreesDataFileInputStream = new FileInputStream(file);
+            Provider updatedProvider = new Provider(MemoryFactory.create(fiftyOneDegreesDataFileInputStream));
 
             //read bytes from the input data file.
-            byte[] data = IOUtils.toByteArray(fiftyOneDegreesDataFileInputStream);
-            Provider updatedProvider    = new Provider(StreamFactory.create(data));
+            //byte[] data = IOUtils.toByteArray(fiftyOneDegreesDataFileInputStream);
+            //Provider updatedProvider    = new Provider(StreamFactory.create(data));
 
             //close previous data set.
             if(null != provider && null != provider.dataSet && null != updatedProvider)
@@ -94,7 +99,8 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache
         {
             try
             {
-                fiftyOneDegreesDataFileInputStream.close();
+                if(null != fiftyOneDegreesDataFileInputStream)
+                    fiftyOneDegreesDataFileInputStream.close();
 
                 logger.debug("Successfully closed input stream as well inside FiftyOneDegreesFileCache");
             }
@@ -129,6 +135,7 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache
 
     public HandsetInfo getHandsetInfo(String userAgent)
     {
+        metricsCache.incrementInvocations(getName());
         if(userAgent == null || null == provider || null == provider.dataSet || provider.dataSet.getDisposed())
         {
             logger.debug("Null user agent or Provider not available inside FiftyOneDegreesFileCache, cannot detect.");
@@ -139,6 +146,7 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache
 
         try
         {
+            long beginTime = System.nanoTime();
             Match match = provider.match(userAgent);
 
             handsetInfo = new HandsetInfo();
@@ -157,6 +165,9 @@ public class FiftyOneDegreesFileCache extends AbstractFileStatsReloadableCache
                     .setAjaxSupportJava(match.getValues(AJAX_SUPPORT_JAVA_KEY).toBool())
                     .setBot(match.getValues(IS_BOT_KEY).toBool())
                     .setDeviceType(match.getValues(DEVICE_TYPE_KEY).toString());
+
+            long endTime = System.nanoTime();
+            metricsCache.incrementLatency(getName(), (endTime - beginTime + 500) / 1000);
 
             logger.debug("Handset info for user agent : {} is {}", handsetInfo);
         }

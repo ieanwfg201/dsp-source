@@ -4,7 +4,7 @@ package com.kritter.ex_int.utils.richmedia;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.constants.ExternalUserIdType;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.entity.creative_macro.CreativeMacro;

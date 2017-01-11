@@ -25,8 +25,8 @@ import com.kritter.geo.common.entity.reader.MncMccCountryISPDetectionCache;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
@@ -66,7 +66,7 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
                                     ISPDetectionCache ispDetectionCache
                                   )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.mopubBidRequestReader = mopubBidRequestReader;
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;
@@ -88,7 +88,7 @@ public class MoPubRequestEnricher2_3 implements RTBExchangeRequestReader
                                     IConnectionTypeDetectionCache connectionTypeDetectionCache
                                   )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.mopubBidRequestReader = mopubBidRequestReader;
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;

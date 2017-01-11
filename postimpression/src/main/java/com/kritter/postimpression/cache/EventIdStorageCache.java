@@ -1,8 +1,8 @@
 package com.kritter.postimpression.cache;
 
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class EventIdStorageCache
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
 
     //Keep a map to store event id
     private Map<String,Long> eventIdStorage;
@@ -59,7 +59,7 @@ public class EventIdStorageCache
 
     private class EventIdCleanUpTimerTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

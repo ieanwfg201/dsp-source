@@ -29,8 +29,8 @@ import com.kritter.tencent.reader_v20150313.reader.TencentBidRequestReader;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.*;
@@ -61,7 +61,7 @@ public class TencentRequestEnricher implements RTBExchangeRequestReader
                               DatabaseManager databaseManager,
                               String datasource)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.auctioneerId = auctioneerId;
         this.uuidGenerator = new UUIDGenerator();
         this.tencentBidRequestReader = tencentBidRequestReader;

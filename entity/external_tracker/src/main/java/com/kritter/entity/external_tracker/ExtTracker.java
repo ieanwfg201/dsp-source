@@ -34,22 +34,21 @@ public class ExtTracker {
     private Integer clickMacroQuote;
     @Getter@Setter
     private Integer clickType=1;
-    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+        objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static ExtTracker getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
-        objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return getObject(objectMapper,str);
     }
     public static ExtTracker getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
         ExtTracker entity = objectMapper.readValue(str, ExtTracker.class);
-        objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return entity;
 
     }

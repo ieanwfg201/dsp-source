@@ -5,8 +5,8 @@ import com.kritter.adserving.request.reader.RequestProcessor;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,12 +17,16 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class InitJob implements Job
 {
+    public static String AD_STATS_LOGGING_KEY = "ad-stats-logging-enabled";
+
     private Logger logger;
     private String name;
     private String requestObjectKey;
     private RequestProcessor requestProcessor;
     private String isRequestForSystemDebuggingHeaderName;
     private String inventorySourceHeader;
+    private String sslRequestHeader;
+    private Boolean adStatsLoggingEnabled = null;
 
     public InitJob(
                    String loggerName,
@@ -30,15 +34,38 @@ public class InitJob implements Job
                    String requestObjectKey,
                    RequestProcessor requestProcessor,
                    String isRequestForSystemDebuggingHeaderName,
-                   String inventorySourceHeader
+                   String inventorySourceHeader,
+                   String sslRequestHeader
                   )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = jobName;
         this.requestObjectKey = requestObjectKey;
         this.requestProcessor = requestProcessor;
         this.isRequestForSystemDebuggingHeaderName = isRequestForSystemDebuggingHeaderName;
         this.inventorySourceHeader = inventorySourceHeader;
+        this.sslRequestHeader = sslRequestHeader;
+    }
+
+    public InitJob(
+            String loggerName,
+            String jobName,
+            String requestObjectKey,
+            RequestProcessor requestProcessor,
+            String isRequestForSystemDebuggingHeaderName,
+            String inventorySourceHeader,
+            String sslRequestHeader,
+            boolean adStatsLoggingEnabled
+    )
+    {
+        this.logger = LogManager.getLogger(loggerName);
+        this.name = jobName;
+        this.requestObjectKey = requestObjectKey;
+        this.requestProcessor = requestProcessor;
+        this.isRequestForSystemDebuggingHeaderName = isRequestForSystemDebuggingHeaderName;
+        this.inventorySourceHeader = inventorySourceHeader;
+        this.sslRequestHeader = sslRequestHeader;
+        this.adStatsLoggingEnabled = adStatsLoggingEnabled;
     }
 
     @Override
@@ -54,6 +81,13 @@ public class InitJob implements Job
         HttpServletRequest httpServletRequest = (HttpServletRequest)context.getValue(Workflow.CONTEXT_REQUEST_KEY);
 
         this.logger.debug("Fetched servlet-request object inside InitJob.");
+
+        if(this.adStatsLoggingEnabled != null) {
+            this.logger.debug("Setting ad stats logging enabled to {} in context.", this.adStatsLoggingEnabled);
+            context.setValue(AD_STATS_LOGGING_KEY, this.adStatsLoggingEnabled);
+        } else {
+            this.logger.debug("Ad stats logging enabled is null. Not setting in context.");
+        }
 
         try
         {
@@ -97,9 +131,15 @@ public class InitJob implements Job
                 }
             }
 
-            this.logger.debug("Finished getting workflow request object from RequestProcessor,Enrichment complete.");
-            context.setValue(this.requestObjectKey, request);
+            String sslRequest = httpServletRequest.getHeader(this.sslRequestHeader);
+            if(null != sslRequest) {
+                this.logger.debug("Value for secure request header : {} is {}", this.sslRequestHeader, sslRequest);
+                request.setSecure(Boolean.valueOf(sslRequest));
+            }
 
+            this.logger.debug("Finished getting workflow request object from RequestProcessor, Enrichment " +
+                    "complete.");
+            context.setValue(this.requestObjectKey, request);
         }
         catch(Exception e)
         {

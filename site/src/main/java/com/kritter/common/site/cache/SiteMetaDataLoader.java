@@ -11,8 +11,8 @@ import com.kritter.utils.http_client.entity.HttpRequest;
 import com.kritter.utils.http_client.entity.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -78,7 +78,7 @@ public class SiteMetaDataLoader
                               int readTimeout
                              ) throws Exception
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.reloadFrequency = reloadFrequency;
         this.dataLoadMasterNode = Boolean.valueOf(serverConfig.getValueForKey(dataLoadMasterNodeParam));
         this.databaseManager = databaseManager;
@@ -266,7 +266,7 @@ public class SiteMetaDataLoader
      */
     private class SiteMetaDataLoadingTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

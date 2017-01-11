@@ -1,6 +1,6 @@
 package com.kritter.utils.common;
 
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.Array;

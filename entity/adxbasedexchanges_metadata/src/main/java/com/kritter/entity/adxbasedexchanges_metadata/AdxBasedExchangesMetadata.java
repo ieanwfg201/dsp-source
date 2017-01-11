@@ -30,16 +30,17 @@ public class AdxBasedExchangesMetadata
     private boolean video_upload=false;
     @Getter@Setter
     private long last_modified = 0;
-    
-    public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
+
+    public JsonNode toJson(){
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static AdxBasedExchangesMetadata getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
     public static AdxBasedExchangesMetadata getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

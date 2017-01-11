@@ -18,8 +18,8 @@ import com.kritter.serving.demand.entity.Campaign;
 import com.kritter.user.thrift.struct.LifetimeDemandHistory;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +41,7 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
                                      LifetimeDemandHistoryProvider lifetimeDemandHistoryProvider,
                                      String adNoFillReasonMapKey) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.campaignCache = campaignCache;
         this.lifetimeDemandHistoryProvider = lifetimeDemandHistoryProvider;
@@ -66,7 +66,7 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
             Set<Integer> cappedAds = LifetimeCapUtils.getCappedCampaigns(adEntityCache, campaignCache, adIdSet,
                     getEventType());
             for(int adId : cappedAds) {
-                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, getNoFillReason().getValue(),
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, NoFillReason.USER_ID_ABSENT.getValue(),
                         this.adNoFillReasonMapKey, context);
             }
 
@@ -81,7 +81,7 @@ public abstract class LifetimeCampaignCapFilter implements TargetingMatcher {
             Set<Integer> shortlistedAdIdSet = LifetimeCapUtils.getNonCappedCampaigns(this.adEntityCache,
                     this.campaignCache, adIdSet, getEventType());
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
-                request.setNoFillReason(getNoFillReason());
+                request.setNoFillReason(NoFillReason.USER_ID_ABSENT);
             return shortlistedAdIdSet;
         }
 

@@ -67,8 +67,10 @@ public class SSPGlobalRuleDef {
     public void setId(int id) {
         this.id = id;
     }
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         return toJson(objectMapper);
     }
     public JsonNode toJson(ObjectMapper objectMapper){
@@ -76,7 +78,6 @@ public class SSPGlobalRuleDef {
         return jsonNode;
     }
     public static SSPGlobalRuleDef getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static SSPGlobalRuleDef getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

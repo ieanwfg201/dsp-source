@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum CreativeAttribute {
-    EXTRA(17,"Banner Only"),
+    EXTRA(91,"Banner Only"),
     Native(51,"Native");
 
     private int code;

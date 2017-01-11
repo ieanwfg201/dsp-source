@@ -5,7 +5,7 @@ import com.kritter.postimpression.cache.entity.UrlAliasEntity;
 import com.kritter.postimpression.cache.index.UrlAliasSecondaryIndex;
 import com.kritter.utils.dbconnector.DBConnector;
 import com.kritter.utils.uuid.rand.UUIDGenerator;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;

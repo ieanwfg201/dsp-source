@@ -1,7 +1,8 @@
 package com.kritter.exchange.request_openrtb_2_3.converter.v1;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.kritter.serving.demand.entity.AdEntity;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO;
@@ -14,20 +15,20 @@ public class Convert {
     private Logger logger;
     
     public Convert(String loggerName){
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
     }
 
-    public BidRequestParentNodeDTO convert(Request request,  int version,
-            AccountEntity publisherAccountEntity, IABCategoriesCache iabCategoryCache,AccountEntity dspEntity){
-        if(request == null){
+    public BidRequestParentNodeDTO convert(Request request, int version, AccountEntity publisherAccountEntity,
+                                           IABCategoriesCache iabCategoryCache, AccountEntity dspEntity) {
+        if(request == null) {
             this.logger.debug("BidRequestParentNodeDTO: Request object null");
             return null;
         }
         
         BidRequestParentNodeDTO bidRequest = new BidRequestParentNodeDTO();
-        ConvertErrorEnum errorEnum = ConvertBidRequest.convert(request, bidRequest, version,
-                publisherAccountEntity, iabCategoryCache,dspEntity);
-        if(ConvertErrorEnum.HEALTHY_CONVERT == errorEnum){
+        ConvertErrorEnum errorEnum = ConvertBidRequest.convert(request, bidRequest, version, publisherAccountEntity,
+                iabCategoryCache, dspEntity);
+        if(ConvertErrorEnum.HEALTHY_CONVERT == errorEnum) {
             return bidRequest;
         }
         return null;

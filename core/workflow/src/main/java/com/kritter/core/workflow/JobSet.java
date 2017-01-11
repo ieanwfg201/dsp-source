@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.kritter.core.metrics.YammerMetrics;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * JobSets are executed by the Workflow one by one. The workflow is similar to a flow
@@ -27,7 +27,7 @@ public class JobSet
         this.name = name;
         this.rules = rules;
         this.jobs = jobs;
-        this.workflowLogger = LoggerFactory.getLogger(WORKFLOW_LOGGER_NAME);
+        this.workflowLogger = LogManager.getLogger(WORKFLOW_LOGGER_NAME);
     }
 
     /**
@@ -63,10 +63,8 @@ public class JobSet
             {
                 metrics.incrementJobFailures(job.getName());
 
-                workflowLogger.error("Job: {} execution failed due to some exception in execute method of the job.",
-                                      job.getName());
-
-                workflowLogger.error("Exception inside executing job ",e);
+                workflowLogger.error("Job: {} execution failed due to exception in execute method of the job. Exception : ",
+                                      job.getName(), e);
 
                 return false;
             }

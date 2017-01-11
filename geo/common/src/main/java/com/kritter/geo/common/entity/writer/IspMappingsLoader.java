@@ -7,8 +7,8 @@ import com.kritter.geo.common.utils.GeoCommonUtils;
 import com.kritter.utils.common.ServerConfig;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.*;
 import java.util.*;
@@ -37,7 +37,7 @@ public class IspMappingsLoader
                              ServerConfig serverConfig,
                              String dataLoadMasterNodeParam) throws Exception
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.databaseManager = databaseManager;
         this.dataSourceNames = dataSourceNames;
         this.batchSizeForSqlInsertion = batchSizeForSqlInsertion;
@@ -100,7 +100,7 @@ public class IspMappingsLoader
      */
     private class ISPMappingsReloadTimerTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

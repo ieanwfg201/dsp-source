@@ -32,15 +32,13 @@ public class TPExt {
     private HashSet<Integer> channel_tier1;
     @Getter@Setter
     private HashSet<Integer> channel_tier2;
-    
-    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static TPExt getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static TPExt getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

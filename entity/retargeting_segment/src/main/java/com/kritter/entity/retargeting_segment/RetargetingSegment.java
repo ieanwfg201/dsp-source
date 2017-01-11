@@ -28,15 +28,14 @@ public class RetargetingSegment
     private long last_modified = 0;
     @Getter@Setter
     private int modified_by = 1;
-    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     
     public static RetargetingSegment getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static RetargetingSegment getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

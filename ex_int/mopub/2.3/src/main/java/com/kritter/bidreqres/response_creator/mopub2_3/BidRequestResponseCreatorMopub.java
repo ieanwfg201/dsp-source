@@ -8,6 +8,7 @@ import com.kritter.bidrequest.response_creator.IBidResponseCreator;
 import com.kritter.constants.VideoBidResponseProtocols;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
+import com.kritter.ex_int.native_admarkup.NativeAdMarkUp;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
 import com.kritter.ex_int.utils.comparator.advdomain.FetchAdvertiserDomain;
 import com.kritter.ex_int.utils.comparator.common.ShortArrayToIntegerArray;
@@ -30,8 +31,8 @@ import com.kritter.serving.demand.entity.Creative;
 import com.kritter.utils.common.ServerConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -59,8 +60,8 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
 
     //template for formatting.
     private static final String CURRENCY = DefaultCurrency.defaultCurrency.getName();
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Random randomPicker = new Random();
+    private ObjectMapper objectMapper;
 
     public BidRequestResponseCreatorMopub(
                                           String loggerName,
@@ -73,7 +74,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                                           IABCategoriesCache iabCategoriesCache
                                          )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
         this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
         this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
@@ -86,6 +87,8 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         this.iabCategoriesCache = iabCategoriesCache;
         this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
         this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+        objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
     }
 
 
@@ -185,7 +188,6 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
 
         try
         {
-            objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
             payLoad = objectMapper.writeValueAsString(bidResponseMopubDTO);
         }
         catch (IOException ioe)
@@ -251,6 +253,15 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                             winNotificationURLBuffer,
                             creative.getCreative_macro(),
                             adEntity.getExtTracker()
+                    )
+            );
+        else if(creative.getCreativeFormat().equals(CreativeFormat.Native))
+            bidResponseBidMopubDTO.setAdMarkup(
+                    prepareNativeAdMarkup(
+                            request,
+                            responseAdInfo,
+                            response,
+                            winNotificationURLBuffer
                     )
             );
         else if(creative.getCreativeFormat().equals(CreativeFormat.VIDEO))
@@ -384,38 +395,19 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
     }
 
     private String prepareRichmediaAdMarkup(
-            Request request,
-            ResponseAdInfo responseAdInfo,
-            Response response,
-            StringBuffer winNotificationURLBuffer,
-            CreativeMacro creativeMacro,
-            ExtTracker extTracker
-    ) throws BidResponseException
+                                            Request request,
+                                            ResponseAdInfo responseAdInfo,
+                                            Response response,
+                                            StringBuffer winNotificationURLBuffer,
+                                            CreativeMacro creativeMacro,
+                                            ExtTracker extTracker
+                                           ) throws BidResponseException
     {
         return RichMediaAdMarkUp.prepareRichmediaAdMarkup(request, responseAdInfo, response, 
                 winNotificationURLBuffer, logger, urlVersion, secretKey, postImpressionBaseClickUrl, 
                 postImpressionBaseCSCUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix, 
                 notificationUrlBidderBidPriceMacro, null, null, creativeMacro, this.macroPostImpressionBaseClickUrl,
                 extTracker);
-    }
-
-    private String fetchImpressionTrackerSameAsCSC(
-                                                    Request request,
-                                                    ResponseAdInfo responseAdInfo,
-                                                    Response response
-                                                  ) throws BidResponseException
-    {
-        String clickUri = responseAdInfo.getCommonURIForPostImpression();
-
-        if (null == clickUri)
-            throw new BidResponseException("Click URI could not be formed using different attributes like " +
-                    "handset,location,bids,version,etc. inside BidRequestResponseCreatorMopub");
-
-
-        StringBuffer cscBeaconUrl = new StringBuffer(this.postImpressionBaseCSCUrl);
-        cscBeaconUrl.append(clickUri);
-
-        return cscBeaconUrl.toString();
     }
 
     private String prepareBannerHTMLAdMarkup(
@@ -430,13 +422,27 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                 notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker,
                 winNotificationURLBuffer, null, this.macroPostImpressionBaseClickUrl);
     }
-    
+
+    private String prepareNativeAdMarkup(
+                                            Request request,
+                                            ResponseAdInfo responseAdInfo,
+                                            Response response,
+                                            StringBuffer winNotificationURLBuffer
+                                        ) throws BidResponseException
+    {
+        return NativeAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
+                this.logger, this.urlVersion, this.secretKey, this.postImpressionBaseClickUrl,
+                this.postImpressionBaseWinApiUrl, this.notificationUrlSuffix,
+                this.notificationUrlBidderBidPriceMacro, this.postImpressionBaseCSCUrl,
+                this.cdnBaseImageUrl);
+    }
+
     private String prepareVideoAdMarkup(
-            Request request,
-            ResponseAdInfo responseAdInfo,
-            Response response,
-            StringBuffer winNotificationURLBuffer
-    ) throws BidResponseException
+                                        Request request,
+                                        ResponseAdInfo responseAdInfo,
+                                        Response response,
+                                        StringBuffer winNotificationURLBuffer
+                                       ) throws BidResponseException
     {
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
                 logger, urlVersion, secretKey, postImpressionBaseClickUrl, postImpressionBaseWinApiUrl,

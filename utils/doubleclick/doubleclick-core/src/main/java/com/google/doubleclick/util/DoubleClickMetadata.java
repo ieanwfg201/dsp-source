@@ -22,8 +22,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.doubleclick.util.GeoTarget.Type;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,7 +59,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class DoubleClickMetadata {
-  private static final Logger logger = LoggerFactory.getLogger(DoubleClickMetadata.class);
+  private static final Logger logger = LogManager.getLogger(DoubleClickMetadata.class);
   private static final String BASE_URL = "https://storage.googleapis.com";
   private static final String ADX_DICT = BASE_URL + "/adx-rtb-dictionaries/";
 

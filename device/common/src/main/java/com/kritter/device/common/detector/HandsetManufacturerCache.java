@@ -7,8 +7,8 @@ import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.device.common.entity.HandsetManufacturerData;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -22,7 +22,7 @@ import java.util.Properties;
 public class HandsetManufacturerCache extends AbstractDBStatsReloadableQueryableCache<String,HandsetManufacturerData>
 {
 
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private final String name;
 
     public HandsetManufacturerCache(List<Class> secIndexKeyClassList, Properties props,

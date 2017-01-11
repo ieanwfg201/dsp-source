@@ -1,7 +1,39 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+        default-lazy-init="true">
+
+    <bean id="dspUserSyncJobVar" class="com.kritter.core.expressiontree.Variable">
+        <constructor-arg value="dspUserSyncJobVar"></constructor-arg>
+        <constructor-arg value="boolean"></constructor-arg>
+    </bean>
+
+    <bean id="dspUserSyncRule" class="com.kritter.core.workflow.TransitionRule">
+      <constructor-arg><value><![CDATA[dspUserSyncJobVar = true]]></value></constructor-arg>
+        <constructor-arg>
+            <ref bean="dspUserSyncJobset"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="dspUserSyncRules" class="com.kritter.core.workflow.TransitionRules">
+        <constructor-arg>
+            <list>
+                <ref bean="dspUserSyncJobVar"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobset"/>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="finalJobset"/>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="dspUserSyncRule"/>
+            </list>
+        </constructor-arg>
+    </bean>
 
     <bean id="initTransitionRule" class="com.kritter.core.workflow.TransitionRules">
         <constructor-arg>

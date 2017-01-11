@@ -9,8 +9,8 @@ import com.kritter.utils.uuid.mac.UUIDGenerator;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 
@@ -20,17 +20,17 @@ import java.io.IOException;
 
 public class BidRequestReaderMopub implements IBidRequestReader
 {
-	private ObjectMapper jacksonObjectMapper;
     private UUIDGenerator uuidGenerator;
     private String mopubAuctioneerId;
     private Logger logger;
+    private ObjectMapper jacksonObjectMapper;
 
-	public BidRequestReaderMopub(String loggerName, String mopubAuctioneerId)
+    public BidRequestReaderMopub(String loggerName, String mopubAuctioneerId)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.mopubAuctioneerId = mopubAuctioneerId;
-		this.jacksonObjectMapper = new ObjectMapper();
         this.uuidGenerator = new UUIDGenerator();
+        this.jacksonObjectMapper = new ObjectMapper();
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class BidRequestReaderMopub implements IBidRequestReader
 
 		try
         {
-            mopubBidRequestParentNodeDTO = this.jacksonObjectMapper.readValue(
+            mopubBidRequestParentNodeDTO = jacksonObjectMapper.readValue(
                                                                               bidRequestJson,
                                                                               MopubBidRequestParentNodeDTO.class
                                                                              );

@@ -166,6 +166,48 @@ public class HelperKumbayaQueryPlanner {
     		default:
     			return null;
     		}    		
+    	}else if(reportingDTableType == ReportingTableType.TRACKINGEVENT){
+    		switch(frequency){
+    		case TODAY:
+    			return TABLE.tracking_hourly;
+    		case YESTERDAY:
+    			return TABLE.tracking_daily;
+    		case LAST7DAYS:
+    			return TABLE.tracking_daily;
+    		case CURRENTMONTH:
+    			return TABLE.tracking_daily;
+    		case LASTMONTH:
+    			return TABLE.tracking_daily;
+    		case ADMIN_INTERNAL_HOURLY:
+    			return TABLE.tracking_hourly;
+    		case DATERANGE:
+    			return TABLE.tracking_daily;
+    		case MONTHLY:
+    			return TABLE.tracking_daily;
+    		default:
+    			return null;
+    		}    		
+    	}else if(reportingDTableType == ReportingTableType.FRAUD){
+    		switch(frequency){
+    		case TODAY:
+    			return TABLE.fraud_hourly;
+    		case YESTERDAY:
+    			return TABLE.fraud_daily;
+    		case LAST7DAYS:
+    			return TABLE.fraud_daily;
+    		case CURRENTMONTH:
+    			return TABLE.fraud_daily;
+    		case LASTMONTH:
+    			return TABLE.fraud_daily;
+    		case ADMIN_INTERNAL_HOURLY:
+    			return TABLE.fraud_hourly;
+    		case DATERANGE:
+    			return TABLE.fraud_daily;
+    		case MONTHLY:
+    			return TABLE.fraud_daily;
+    		default:
+    			return null;
+    		}    		
     	}else if(reportingDTableType == ReportingTableType.FASTPATH){
     		return TABLE.fast_path;
     	}else{

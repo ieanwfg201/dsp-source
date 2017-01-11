@@ -2,6 +2,7 @@ package com.kritter.adserving.shortlisting.job;
 
 import com.kritter.abstraction.cache.utils.exceptions.UnSupportedOperationException;
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.common.caches.metrics.cache.MetricsCache;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
@@ -10,6 +11,7 @@ import com.kritter.core.workflow.Job;
 import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.geo.common.entity.CountryUserInterfaceId;
 import com.kritter.geo.common.entity.CountryUserInterfaceIdSecondaryIndex;
+import com.kritter.geo.common.entity.IspUserInterfaceId;
 import com.kritter.geo.common.entity.IspUserInterfaceIdSecondaryIndex;
 import com.kritter.geo.common.entity.reader.*;
 import com.kritter.serving.demand.cache.AdEntityCache;
@@ -21,8 +23,8 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.SetUtils;
 import lombok.Getter;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -50,6 +52,7 @@ public class AdTargetingMatcher implements Job
     private List<TargetingMatcher> targetingMatchers;
     private String adNoFillReasonMapKey;
     private CampaignCache campaignCache;
+    private MetricsCache metricsCache;
 
     public AdTargetingMatcher(
                                 String name,
@@ -63,11 +66,12 @@ public class AdTargetingMatcher implements Job
                                 ISPUserInterfaceIdCache ispUserInterfaceIdCache,
                                 List<TargetingMatcher> targetingMatchers,
                                 String adNoFillReasonMapKey,
-                                CampaignCache campaignCache
+                                CampaignCache campaignCache,
+                                MetricsCache metricsCache
                              ) throws SQLException
     {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.requestObjectKey = requestObjectKey;
         this.shortlistedAdKey = shortlistedAdKey;
         this.selectedSiteCategoryIdKey = selectedSiteCategoryIdKey;
@@ -78,6 +82,7 @@ public class AdTargetingMatcher implements Job
         this.targetingMatchers = targetingMatchers;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
         this.campaignCache = campaignCache;
+        this.metricsCache = metricsCache;
     }
 
     /**
@@ -284,7 +289,11 @@ public class AdTargetingMatcher implements Job
         }
 
         for(TargetingMatcher targetingMatcher : targetingMatchers) {
+            metricsCache.incrementInvocations(targetingMatcher.getName());
+            long beginTime = System.nanoTime();
             finalShortlistedAdIds = targetingMatcher.shortlistAds(finalShortlistedAdIds, request, context);
+            long endTime = System.nanoTime();
+            metricsCache.incrementLatency(targetingMatcher.getName(), (endTime - beginTime + 500) / 1000);
 
             logger.debug("Shortlisted ads after targeting-matcher : {}", targetingMatcher.getName());
 
@@ -482,7 +491,14 @@ public class AdTargetingMatcher implements Job
             if(null == ispUiId)
                 request.setCarrierUserInterfaceId(ApplicationGeneralUtils.DEFAULT_COUNTRY_CARRIER_ID);
             else
+            {
                 request.setCarrierUserInterfaceId(ispUiId);
+
+                /**Set the carrier name as well so as to allow bid request enrichment*/
+                IspUserInterfaceId ispUserInterfaceId = this.ispUserInterfaceIdCache.query(ispUiId);
+                if(null != ispUserInterfaceId)
+                    request.setBidRequestDeviceCarrier(ispUserInterfaceId.getIspUIName());
+            }
         }
         catch (UnSupportedOperationException e)
         {

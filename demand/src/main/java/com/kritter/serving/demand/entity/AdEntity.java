@@ -2,6 +2,7 @@ package com.kritter.serving.demand.entity;
 
 import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import com.kritter.constants.MarketPlace;
+import com.kritter.constants.Protocol;
 import com.kritter.entity.ad_ext.AdExt;
 import com.kritter.entity.external_tracker.ExtTracker;
 
@@ -58,6 +59,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
     private boolean isRetargeted=false;
     private AdExt adExt;
     private FreqCap frequencyCap;
+    private int protocol=Protocol.HTTP.getCode();
 
     public AdEntity(AdEntityBuilder adEntityBuilder)
     {
@@ -92,6 +94,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         this.isRetargeted = adEntityBuilder.isRetargeted;
         this.adExt = adEntityBuilder.adExt;
         this.frequencyCap = adEntityBuilder.frequencyCap;
+        this.protocol = adEntityBuilder.protocol;
     }
 
     @Override
@@ -135,6 +138,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         private boolean isRetargeted = false;
         private AdExt adExt;
         private FreqCap frequencyCap;
+        private int protocol;
         
         public AdEntityBuilder(Integer adIncId,
                                String adGuid,
@@ -158,7 +162,8 @@ public class AdEntity implements IUpdatableEntity<Integer>
                                String accountGuid,
                                int bidtype,
                                ExtTracker extTracker,
-							   boolean isRetargeted) throws Exception
+							   boolean isRetargeted,
+							   int protocol) throws Exception
         {
             this.adIncId = adIncId;
             this.adGuid = adGuid;
@@ -183,6 +188,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
             this.bidtype = bidtype;
             this.extTracker = extTracker;
             this.isRetargeted = isRetargeted;
+            this.protocol=protocol;
         }
 
         public AdEntityBuilder setLandingUrl(String landingUrl)

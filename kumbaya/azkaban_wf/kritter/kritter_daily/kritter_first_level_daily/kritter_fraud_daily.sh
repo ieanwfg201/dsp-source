@@ -18,7 +18,7 @@ PIG_OPTS="$PIG_OPTS -Dhadoop.tmp.dir=${MAPRED}/$pig_script/hadoop"
 
 export PIG_OPTS
 
-input_files=${3}-*/fraud.gz/part*
+input_files=${3}-*/fraud/part*
 tracking_files=${3}-*/tracking_event/part*
 
 echo "##########################################################################################################"

@@ -8,13 +8,13 @@ import com.kritter.device.mad.MadFileCache.HandsetInfo;
 import com.kritter.device.common.entity.*;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.security.MessageDigest;
 
 public class MadHandsetDetector implements HandsetDetectionProvider {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter
     private final String name;
 

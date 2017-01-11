@@ -23,8 +23,8 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class ResponseFormattingJob implements Job{
                                  VASTFormatter vastFormatter
                                 )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = jobName;
         this.requestObjectKey = requestObjectKey;
         this.errorOrEmptyResponse = errorOrEmptyResponse;
@@ -149,7 +149,7 @@ public class ResponseFormattingJob implements Job{
         {
             try
             {
-                logger.debug("Inventory source is RTB Exchange inside ResponseFormattingJob...");
+                logger.debug("Inventory source is RTB Exchange inside ResponseFormattingJob using adaptor...");
 
                 Response response = (Response)context.getValue(this.responseObjectKey);
 
@@ -196,6 +196,7 @@ public class ResponseFormattingJob implements Job{
             catch (Exception e)
             {
                 logger.error("Exception inside ResponseFormattingJob ", e);
+
                 writeNoBidResponseToExchange(httpServletResponse);
             }
         }
@@ -205,7 +206,7 @@ public class ResponseFormattingJob implements Job{
         {
             try
             {
-                logger.debug("Inventory source is RTB Exchange inside ResponseFormattingJob...");
+                logger.debug("Inventory source is RTB Exchange inside ResponseFormattingJob using exchange adaptor...");
 
                 Response response = (Response)context.getValue(this.responseObjectKey);
 
@@ -342,9 +343,6 @@ public class ResponseFormattingJob implements Job{
         {
             try
             {
-                if(responseCode != HttpServletResponse.SC_FOUND)
-                    httpServletResponse.setStatus(responseCode);
-
                 writeResponseToUser(httpServletResponse,responseContent,responseCode);
             }
             catch(IOException e)
@@ -358,27 +356,24 @@ public class ResponseFormattingJob implements Job{
                                      String content,
                                      int responseCode) throws IOException
     {
-        if(responseCode == HttpServletResponse.SC_FOUND)
-        {
-            logger.debug("Response being sent to user is redirect to the url {} ",
-                         content);
-            httpServletResponse.sendRedirect(content);
-        }
-        else
-        {
-            OutputStream os = httpServletResponse.getOutputStream();
 
-            if(null == content)
-                content = errorOrEmptyResponse;
+        httpServletResponse.setStatus(responseCode);
+        OutputStream os = httpServletResponse.getOutputStream();
 
-            os.write(content.getBytes());
-            os.flush();
-            os.close();
-        }
+        if(null == content)
+            content = errorOrEmptyResponse;
+
+        logger.debug("Writing following content to http servlet response : {}", content);
+
+        os.write(content.getBytes());
+        os.flush();
+        //os.close();
     }
 
     private void writeNoBidResponseToExchange(HttpServletResponse httpServletResponse)
     {
         httpServletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        //os.flush();
+        //os.close();
     }
 }

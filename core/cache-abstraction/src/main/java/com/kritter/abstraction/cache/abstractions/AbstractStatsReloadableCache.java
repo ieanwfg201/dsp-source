@@ -7,7 +7,7 @@ import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Date;
 import java.util.Properties;

@@ -9,8 +9,8 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.common.caches.advinfo_upload_cache.entity.AdvInfoUploadCacheEntity;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.Properties;
  */
 public class AdvInfoUploadCache extends AbstractDBStatsReloadableQueryableCache<String, AdvInfoUploadCacheEntity>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private String name;
 
     public AdvInfoUploadCache(List<Class> secIndexKeyClassList, Properties props,

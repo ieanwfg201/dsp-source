@@ -6,10 +6,14 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.entity.user.userid.UserIdProvider;
+import com.kritter.utils.nosql.common.NoSqlData;
+import com.kritter.utils.nosql.common.SignalingNotificationObject;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class UserIdFetchJob implements Job {
@@ -18,15 +22,18 @@ public class UserIdFetchJob implements Job {
     private String name;
     private String requestObjectKey;
     private UserIdProvider userIdProvider;
+    private String contextUserIdFetchMapKey;
 
     public UserIdFetchJob(String loggerName,
                           String name,
                           String requestObjectKey,
-                          UserIdProvider userIdProvider) {
-        this.logger = LoggerFactory.getLogger(loggerName);
+                          UserIdProvider userIdProvider,
+                          String contextUserIdFetchMapKey) {
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
         this.requestObjectKey = requestObjectKey;
         this.userIdProvider = userIdProvider;
+        this.contextUserIdFetchMapKey = contextUserIdFetchMapKey;
     }
 
     @Override
@@ -36,7 +43,8 @@ public class UserIdFetchJob implements Job {
         Request request = (Request)context.getValue(requestObjectKey);
 
         if(request == null) {
-            this.logger.error("Request object is null inside {}.", this.name);
+            // this.logger.error("Request object is null inside {}.", this.name);
+            context.setTerminated(true);
             return;
         }
 
@@ -46,9 +54,9 @@ public class UserIdFetchJob implements Job {
                 // Find internal user id for the supplied external user ids and set the internal user id in the
                 // request
                 ReqLog.debugWithDebugNew(this.logger, request, "Number of external user ids : {}", externalUserIds.size());
-                String internalUserId = this.userIdProvider.getInternalUserId(externalUserIds);
-                ReqLog.debugWithDebugNew(this.logger, request, "Internal user id found : {}", internalUserId);
-                request.setUserId(internalUserId);
+                SignalingNotificationObject<Map<String, NoSqlData>> noSqlDataMap= new SignalingNotificationObject<Map<String, NoSqlData>>();
+                this.userIdProvider.getInternalUserId(externalUserIds, noSqlDataMap);
+                context.setValue(this.contextUserIdFetchMapKey, noSqlDataMap);
             } else {
                 ReqLog.debugWithDebugNew(this.logger, request, "External User ids not present in this request.");
             }

@@ -9,8 +9,8 @@ import com.kritter.utils.uuid.mac.UUIDGenerator;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 
@@ -20,17 +20,17 @@ import java.io.IOException;
 
 public class BidRequestReaderYouku implements IBidRequestReader
 {
-	private ObjectMapper jacksonObjectMapper;
     private UUIDGenerator uuidGenerator;
     private String youkuAuctioneerId;
     private Logger logger;
+    private ObjectMapper jacksonObjectMapper;
 
 	public BidRequestReaderYouku(String loggerName, String youkuAuctioneerId)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.youkuAuctioneerId = youkuAuctioneerId;
-		this.jacksonObjectMapper = new ObjectMapper();
         this.uuidGenerator = new UUIDGenerator();
+        this.jacksonObjectMapper = new ObjectMapper();
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class BidRequestReaderYouku implements IBidRequestReader
 
 		try
         {
-            youkuBidRequestParentNodeDTO = this.jacksonObjectMapper.readValue(
+            youkuBidRequestParentNodeDTO = jacksonObjectMapper.readValue(
                                                                                bidRequestJson,
                                                                                YoukuBidRequestParentNodeDTO.class
                                                                               );

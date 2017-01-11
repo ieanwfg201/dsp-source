@@ -7,6 +7,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.kritter.constants.Account_Type;
 import com.kritter.constants.OpenRTBVersion;
@@ -376,6 +377,7 @@ public class Account {
 
     public static Account getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         Account entity = objectMapper.readValue(str, Account.class);
         return entity;
 

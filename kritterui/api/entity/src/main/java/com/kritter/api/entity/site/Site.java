@@ -11,7 +11,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.Payout;
 import com.kritter.constants.SITE_PLATFORM;
-import com.kritter.constants.VideoAdPos;
+import com.kritter.constants.AdPositionsOpenRTB;
 import com.kritter.constants.VideoLinearity;
 
 import lombok.EqualsAndHashCode;
@@ -143,9 +143,9 @@ public class Site {
 	/**format [1,2] com.kritter.constants.ContentDeliveryMethods*/
 	@Getter@Setter
 	private String strdelivery;
-	/**com.kritter.constants.VideoAdPos*/
+	/**com.kritter.constants.AdPositionsOpenRTB*/
 	@Getter@Setter
-	private Integer pos = VideoAdPos.Unknown.getCode();
+	private Integer pos = AdPositionsOpenRTB.Unknown.getCode();
 	/**format [1,2] - com.kritter.constants.APIFrameworks*/
 	@Getter@Setter
 	private String strapi;

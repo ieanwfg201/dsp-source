@@ -43,6 +43,7 @@ import com.kritter.kumbaya.libraries.data_structs.common.Marketplace;
 import com.kritter.kumbaya.libraries.data_structs.common.NetworkPayout;
 import com.kritter.kumbaya.libraries.data_structs.common.NetworkRevenue;
 import com.kritter.kumbaya.libraries.data_structs.common.NofillReason;
+import com.kritter.kumbaya.libraries.data_structs.common.PostimpEvent;
 import com.kritter.kumbaya.libraries.data_structs.common.PubIncId;
 import com.kritter.kumbaya.libraries.data_structs.common.PublisherId;
 import com.kritter.kumbaya.libraries.data_structs.common.ReqState;
@@ -52,9 +53,15 @@ import com.kritter.kumbaya.libraries.data_structs.common.StateId;
 import com.kritter.kumbaya.libraries.data_structs.common.SupplyCost;
 import com.kritter.kumbaya.libraries.data_structs.common.Supply_source_type;
 import com.kritter.kumbaya.libraries.data_structs.common.TABLE;
+import com.kritter.kumbaya.libraries.data_structs.common.TerminationReason;
+import com.kritter.kumbaya.libraries.data_structs.common.Tevent;
+import com.kritter.kumbaya.libraries.data_structs.common.Teventtype;
+import com.kritter.kumbaya.libraries.data_structs.common.Total_Request_To_Dsp;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_bidValue;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_click;
+import com.kritter.kumbaya.libraries.data_structs.common.Total_count;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_csc;
+import com.kritter.kumbaya.libraries.data_structs.common.Total_event;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_event_type;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_floor;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_impression;
@@ -374,11 +381,60 @@ public class DBQueryPlanner implements IQueryPlanner {
                     entity.getFact_column(), kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
                     korderbyHashSet, headerList, entity.getUiname(), false);
         }
+        if(reportingEntity.getTerminationReason() != null){
+            TerminationReason entity = kReportingConfiguration.getTerminationReason();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, table_name, aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromFactTable(entity.return_prefix, reportingEntity.getTerminationReason(), table_name, 
+                    entity.getFact_column(), kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
+                    korderbyHashSet, headerList, entity.getUiname(), false);
+        }
+        if(reportingEntity.getPostimpevent() != null){
+            PostimpEvent entity = kReportingConfiguration.getPostimpevent();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, table_name, aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromFactTable(entity.return_prefix, reportingEntity.getPostimpevent(), table_name, 
+                    entity.getFact_column(), kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
+                    korderbyHashSet, headerList, entity.getUiname(), false);
+        }
+        if(reportingEntity.getTevent() != null){
+            Tevent entity = kReportingConfiguration.getTevent();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, table_name, aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromFactTable(entity.return_prefix, reportingEntity.getTevent(), table_name, 
+                    entity.getFact_column(), kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
+                    korderbyHashSet, headerList, entity.getUiname(), false);
+        }
+        if(reportingEntity.getTeventtype() != null){
+            Teventtype entity = kReportingConfiguration.getTeventtype();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, table_name, aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromFactTable(entity.return_prefix, reportingEntity.getTeventtype(), table_name, 
+                    entity.getFact_column(), kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
+                    korderbyHashSet, headerList, entity.getUiname(), false);
+        }
+        if(reportingEntity.isTotal_event()){
+            Total_event entity = kReportingConfiguration.getTotal_event();
+            HelperKumbayaQueryPlanner.populateMetric(entity.getReturn_prefix(), true, table_name,  entity.getFact_column(), METRICTYPE.SUM,
+                    kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, HeaderType.LONG, 
+                    entity.getUiname(), reportingEntity.getTotal_event_order_sequence(), korderbyTreeMap,reportingEntity.getChartType(),
+                    pieProjection);
+        }
+        if(reportingEntity.isTotal_count()){
+            Total_count entity = kReportingConfiguration.getTotal_count();
+            HelperKumbayaQueryPlanner.populateMetric(entity.getReturn_prefix(), true, table_name,  entity.getFact_column(), METRICTYPE.SUM,
+                    kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, HeaderType.LONG, 
+                    entity.getUiname(), reportingEntity.getTotal_count_order_sequence(), korderbyTreeMap,reportingEntity.getChartType(),
+                    pieProjection);
+        }
         if(reportingEntity.isTotal_request()){
             Total_request entity = kReportingConfiguration.getTotal_request();
             HelperKumbayaQueryPlanner.populateMetric(entity.getReturn_prefix(), true, table_name,  entity.getFact_column(), METRICTYPE.SUM,
                     kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, HeaderType.LONG, 
                     entity.getUiname(), reportingEntity.getTotal_request_order_sequence(), korderbyTreeMap,reportingEntity.getChartType(),
+                    pieProjection);
+        }
+        if(reportingEntity.isTotal_request_to_dsp()){
+            Total_Request_To_Dsp entity = kReportingConfiguration.getTotal_request_to_dsp();
+            HelperKumbayaQueryPlanner.populateMetric(entity.getReturn_prefix(), true, table_name,  entity.getFact_column(), METRICTYPE.SUM,
+                    kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, HeaderType.LONG, 
+                    entity.getUiname(), reportingEntity.getTotal_request_to_dsp_order_sequence(), korderbyTreeMap,reportingEntity.getChartType(),
                     pieProjection);
         }
         if(reportingEntity.isTotal_impression()){

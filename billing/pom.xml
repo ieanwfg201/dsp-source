@@ -44,6 +44,8 @@
     </plugins>
   </build>
   <modules>
+  	<module>dbutils</module>
+  	<module>pub_payout_serde</module>
   	<module>loglineconverter</module>
     <module>billing_object_creator</module>
     <module>prepare_transaction</module>

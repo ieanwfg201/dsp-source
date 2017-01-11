@@ -11,6 +11,7 @@ import com.kritter.api.entity.ad.Ad;
 import com.kritter.constants.FreqDuration;
 import com.kritter.constants.HygieneCategory;
 import com.kritter.constants.MarketPlace;
+import com.kritter.constants.Protocol;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.UserConstant;
 import com.kritter.constants.tracking_partner.TrackingPartner;
@@ -76,6 +77,7 @@ public class AdEntity extends Entity{
     private int imp_freq_cap_type = FreqDuration.BYHOUR.getCode();
     private int imp_freq_cap_count = UserConstant.frequency_cap_default;
     private int imp_freq_time_window = UserConstant.frequency_cap_time_window_default;
+    private int protocol = Protocol.HTTP.getCode() ;
 
 
     
@@ -389,6 +391,12 @@ public class AdEntity extends Entity{
 	}
 	public void setExtclickType(int extclickType) {
 		this.extclickType = extclickType;
+	}
+	public int getProtocol() {
+		return protocol;
+	}
+	public void setProtocol(int protocol) {
+		this.protocol = protocol;
 	}
 
     public Ad getEntity(){

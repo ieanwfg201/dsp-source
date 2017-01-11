@@ -39,6 +39,7 @@
 					@components.formElements.textarea(creativeForm("ext_resource_url"),"External Creative URL (E.g: http://www.myimage.com/myimage.jpg)")
 					@components.formElements.multiselectlist3(creativeForm("creative_macro"), '_label ->"MACROS (for replacement)" , '_row->true)
 					@components.formElements.selectlist2(creativeForm("creative_macro_quote"), "Macros (Quoted) ",services.MetadataAPI.creativeMacroQuote() )
+					@components.formElements.multiselectlist3(creativeForm("slot_info"), '_label ->"Eligible slots" , '_row->true)
 				</fieldset>
 
 				<fieldset ng-show="showBannerForm">

@@ -10,8 +10,8 @@ import com.kritter.utils.http_client.entity.HttpResponse;
 
 import lombok.Setter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class VservDemandPartnerApi implements DemandPartnerApi
             SynchronousHttpClient synchronousHttpClient
             )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.isTestMode = isTestMode;
         this.adSpotValue = adSpotValue;
         this.serverURL = serverURL;

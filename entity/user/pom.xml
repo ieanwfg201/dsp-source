@@ -25,6 +25,11 @@
             <version>2.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.kritter.utils.nosql</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <organization>
         <name>Kritter</name>

@@ -4,8 +4,8 @@ package com.kritter.fanoutinfra.apiclient.ning;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.HttpResponseBodyPart;
@@ -17,7 +17,7 @@ public class NingAsyncHandler implements AsyncHandler<String> {
     private ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     NingAsyncHandler(String loggerName) {
         super();
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
     }
 
     @Override

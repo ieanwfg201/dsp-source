@@ -10,8 +10,8 @@ import com.kritter.geo.utils.IPTransformer;
 import com.kritter.maxmind.entity.MaxmindORGInputData;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -92,7 +92,7 @@ public class MaxMindOrgDataLoader implements ThirdPartyDataLoader
                                 int batchSizeForSqlInsertion
                                ) throws Exception
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.dataSourceName = dataSourceName;
         this.reloadFrequency = reloadFrequency;
         this.orgDatabaseFileFullPath = orgDatabaseFileFullPath;
@@ -445,7 +445,7 @@ public class MaxMindOrgDataLoader implements ThirdPartyDataLoader
      */
     private class ORGDataLoadingTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

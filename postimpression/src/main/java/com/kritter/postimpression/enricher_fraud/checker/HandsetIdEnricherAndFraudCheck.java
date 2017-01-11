@@ -4,10 +4,10 @@ import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Workflow;
 import com.kritter.device.common.HandsetDetectionProvider;
 import com.kritter.device.common.entity.HandsetMasterData;
-import com.kritter.postimpression.entity.Request;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.kritter.entity.postimpression.entity.Request;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,7 +50,7 @@ public class HandsetIdEnricherAndFraudCheck implements OnlineEnricherAndFraudChe
                                           String[] operaMiniUAHeaderNames)
     {
         this.signature = signature;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
         this.userAgentHeaderName = userAgentHeaderName;
         this.handsetDetectionProvider = handsetDetectionProvider;

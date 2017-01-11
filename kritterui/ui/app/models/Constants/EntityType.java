@@ -18,5 +18,6 @@ public enum EntityType {
 	materialbannerupload,
 	materialvideoupload,
 	materialadvinfoupload,
-	qualification
+	qualification,
+	audiencemetadata
 }

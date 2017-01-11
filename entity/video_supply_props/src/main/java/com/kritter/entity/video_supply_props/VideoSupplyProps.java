@@ -72,16 +72,16 @@ public class VideoSupplyProps {
 	/**com.kritter.constants.VASTCompanionTypes*/
 	@Getter@Setter
 	private HashSet<Integer> companiontype;
-	
+
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+	static {
+		objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+	}
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static VideoSupplyProps getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
     public static VideoSupplyProps getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

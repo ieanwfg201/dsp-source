@@ -17,8 +17,8 @@ import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.common.url.URLFieldProcessingException;
 import com.kritter.utils.entity.TargetingProfileLocationEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +46,7 @@ public class StateTargetingMatcher implements TargetingMatcher
                                 )
     {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
         this.adEntityCache = adEntityCache;
         this.stateDetectionCache = stateDetectionCache;

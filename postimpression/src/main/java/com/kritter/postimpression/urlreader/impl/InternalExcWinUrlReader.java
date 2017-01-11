@@ -2,11 +2,11 @@ package com.kritter.postimpression.urlreader.impl;
 
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.utils.PostImpressionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -26,7 +26,7 @@ public class InternalExcWinUrlReader implements PostImpressionEventUrlReader
                                       String winPriceParameterName
                                      )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
         this.postImpressionUtils = postImpressionUtils;
         this.winPriceParameterName = winPriceParameterName;
@@ -56,11 +56,15 @@ public class InternalExcWinUrlReader implements PostImpressionEventUrlReader
         HttpServletRequest httpServletRequest = (HttpServletRequest)context.getValue(Workflow.CONTEXT_REQUEST_KEY);
 
         String winPrice = httpServletRequest.getParameter(this.winPriceParameterName);
+        logger.debug("wp{}.",winPrice);
 
         double winBidPriceValue = 0.0;
 
         try
         {
+        	if(winPrice != null){
+        		winPrice=winPrice.trim();
+        	}
             winBidPriceValue = Double.valueOf(winPrice);
         }
         catch (NumberFormatException nfe)

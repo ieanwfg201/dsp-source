@@ -44,7 +44,9 @@ public enum ADTagMacros {
     UDID(37,"{{UDID}}","\\{\\{UDID\\}\\}"),
     MACMD5(38,"{{MACMD5}}","\\{\\{MACMD5\\}\\}"),
     AAIDMD5(39,"{{AAIDMD5}}","\\{\\{AAIDMD5\\}\\}"),
-    OpenUDIDMD5(40,"{{OpenUDIDMD5}}","\\{\\{OpenUDIDMD5\\}\\}")
+    OpenUDIDMD5(40,"{{OpenUDIDMD5}}","\\{\\{OpenUDIDMD5\\}\\}"),
+    EXTAPPID(41,"{{EXTAPPID}}","\\{\\{EXTAPPID\\}\\}"),
+    EXTSITEID(42,"{{EXTSITEID}}","\\{\\{EXTSITEID\\}\\}")
     ;
     /**
      adid={{AD_ID}}&adwidth={{AD_WIDTH}}&adheight={{AD_HEIGHT}}&appbundle={{APP_BUNDLE}}&appname={{APP_NAME}}&appcat={{APP_CATEGORY}}&appstore={{APP_STOREURL}}&appv={{APP_VERSION}}&cid={{CLICK_ID}}&campid={{CAMPAIGN_ID}}&os={{DEVICE_OS}}&exc={{EXCHANGE}}&pageurl={{PAGE_URL}}&sitedomain={{SITE_DOMAIN}}&ts={{TIMESTAMP}}&cntry={{USER_COUNTRY}}&lat={{USER_GEO_LAT}}&lon={{USER_GEO_LNG}}&cb={{CACHEBUSTER}}&pg={{PUB_GUID}}&dnt={{DO_NOT_TRACK}}&ref={{REFERER}}&imei={{IMEI}}&imeimd5={{IMEIMD5}}&mac={{MAC}}&idfa={{IDFA}}&aaid={{AAID}}&openudid={{OpenUDID}}&andoidid={{AndroidID}}&androismd5={{AndroidIDMD5}}&udid={{UDID}}&ip={{DEVICE_IP}}&ua={{DEVICE_UA}}

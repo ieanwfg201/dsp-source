@@ -31,26 +31,26 @@ public class NativeScreenshot {
     private long created_on = 0;
     @Getter@Setter
     private long last_modified = 0;
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public JsonNode toJsonIgnoreNull(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
 
     public static NativeScreenshot getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         NativeScreenshot entity = objectMapper.readValue(str, NativeScreenshot.class);
         return entity;
     }
     public static NativeScreenshot getObjectIgnoreNull(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         NativeScreenshot entity = objectMapper.readValue(str, NativeScreenshot.class);
         return entity;
     }

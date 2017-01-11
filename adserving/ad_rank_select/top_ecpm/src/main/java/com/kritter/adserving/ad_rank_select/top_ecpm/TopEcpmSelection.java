@@ -4,8 +4,8 @@ import com.kritter.adserving.adrankselect.common.AdRankingSelection;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -20,7 +20,7 @@ public class TopEcpmSelection implements AdRankingSelection
 
     public TopEcpmSelection(String loggerName,int numberOfAdsToSelect)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.numberOfAdsToSelect = numberOfAdsToSelect;
     }
 
