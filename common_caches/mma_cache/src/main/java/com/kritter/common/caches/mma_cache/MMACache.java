@@ -12,14 +12,17 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * This class keeps mma cache entities
  */
 public class MMACache extends AbstractDBStatsReloadableQueryableCache<String, MMACacheEntity>
 {
+    private static final String CTRL_A = String.valueOf((char)1);
     private static Logger logger = LogManager.getLogger("cache.logger");
     private String name;
 
@@ -44,8 +47,14 @@ public class MMACache extends AbstractDBStatsReloadableQueryableCache<String, MM
             ui_id = resultSet.getInt("ui_id");
             boolean isMarkedForDeletion = false;
             Long lastModified = resultSet.getTimestamp("last_modified").getTime();
-            MMACacheEntity vice = new MMACacheEntity(id, supplycode, ui_id, 
-                    lastModified, isMarkedForDeletion);
+
+            MMACacheEntity vice=this.query(id+CTRL_A+supplycode);
+            if(vice!=null){
+                vice.getUi_id().add(ui_id);
+            }else{
+                vice = new MMACacheEntity(id, supplycode, new HashSet<Integer>(ui_id),
+                        lastModified, isMarkedForDeletion);
+            }
             return vice;
         } catch(Exception e) {
             addToErrorMap(supplycode+"id", "Exception while processing MMACacheEntity entry: " + id);
