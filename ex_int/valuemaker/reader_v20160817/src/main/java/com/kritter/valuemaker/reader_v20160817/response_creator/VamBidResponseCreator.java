@@ -55,6 +55,8 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     private String notificationUrlSuffix;
     private String notificationUrlBidderBidPriceMacro;
     private IABCategoriesCache iabCategoriesCache;
+    private ServerConfig serverConfig;
+
 
     public VamBidResponseCreator(
             String loggerName,
@@ -82,6 +84,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
         this.iabCategoriesCache = iabCategoriesCache;
+        this.serverConfig = serverConfig;
     }
 
     private void writeEmptyResponse(HttpServletResponse httpServletResponse) throws IOException {
@@ -97,6 +100,23 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     ) throws IOException, BidResponseException {
 
         try {
+            BidRequestVam bidRequestVam = (BidRequestVam) request.getBidRequest();
+            VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
+            VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
+            int secure = vamRequest.getSecure();
+            if(secure == 1) {
+                postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX, secure);
+                postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX, secure);
+                postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX, secure);
+                macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX, secure);
+                trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX, secure);
+            }else{
+                postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
+                postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
+                postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
+                macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
+                trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+            }
 
             Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();
             if (null == impressionIdsToRespondFor) {
@@ -175,10 +195,6 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                 StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
                 cscBeaconUrl.append(clickUri);
                 String show_url = cscBeaconUrl.toString();
-
-                BidRequestVam bidRequestVam = (BidRequestVam) request.getBidRequest();
-                VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
-                VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
 
                 AdEntity adEntity = adEntityCache.query(responseAdInfoToUse.getAdId());
                 if (null == adEntity) {

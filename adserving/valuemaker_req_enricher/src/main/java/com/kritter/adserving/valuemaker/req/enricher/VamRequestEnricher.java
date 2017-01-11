@@ -15,6 +15,7 @@ import com.kritter.constants.INVENTORY_SOURCE;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.constants.StatusIdEnum;
 import com.kritter.device.common.HandsetDetectionProvider;
+import com.kritter.device.common.entity.HandsetCapabilities;
 import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.user.userid.ExternalUserId;
@@ -86,27 +87,42 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             logger.debug("SiteId received from bid request URL: {} ", siteIdFromBidRequest);
 
             //转换bcat
+
+            List<Integer> industyCategoryList = new ArrayList<Integer>();
+
             Integer[] mmaIndustryCodes1 = null;
             String[] mmaIndustryCodes2 = null;
+
             List<Integer> battr = vamBidRequestParentNodeDTO.getBattr();
             if (battr != null && battr.size() != 0) {
-                mmaIndustryCodes1 = new Integer[battr.size()];
-                mmaIndustryCodes2 = new String[battr.size()];
                 Site s = this.siteCache.query(siteIdFromBidRequest);
                 if (s != null) {
                     for (int i = 0; i < battr.size(); i++) {
                         MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + battr.get(i));
-                        if (mmaCacheEntity != null) {
-                            mmaIndustryCodes1[i] = mmaCacheEntity.getUi_id();
-                            mmaIndustryCodes2[i] = String.valueOf(mmaCacheEntity.getUi_id());
+                        if (mmaCacheEntity != null && mmaCacheEntity.getUi_id()!=null) {
+                            for (Integer uiId : mmaCacheEntity.getUi_id()){
+                                industyCategoryList.add(uiId);
+                            }
                         }
                     }
+                   mmaIndustryCodes1 =new Integer[industyCategoryList.size()];
+                   mmaIndustryCodes2 = new String[industyCategoryList.size()];
+
+                   for(int i=0;i<industyCategoryList.size();i++){
+                       mmaIndustryCodes1[i]=industyCategoryList.get(i);
+                       mmaIndustryCodes2[i]=String.valueOf(industyCategoryList.get(i));
+                   }
+
                     vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(mmaIndustryCodes2);
                 }
             }
 
             //app category
-            Integer[] appCategoryList1 = null;
+            List<Integer> appCategoryList = new ArrayList<Integer>();
+
+            Integer[] appCategoryArray1 = null;
+            String[] appCategroyArray2 = null;
+
             List<String> appCategoryList2 = new ArrayList<String>();
             BidRequestAppDTO appDTO = vamBidRequestParentNodeDTO.getBidRequestApp();
             if (appDTO != null && appDTO.getContentCategoriesApplication() != null && appDTO.getContentCategoriesApplication().length > 0) {
@@ -114,17 +130,24 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
                 Site s = this.siteCache.query(siteIdFromBidRequest);
                 if (s != null) {
-                    appCategoryList1 = new Integer[contentCategoriesApplication.length];
                     for (int i = 0; i < contentCategoriesApplication.length; i++) {
                         MMACacheEntity mmaCacheEntity = mMACache.query(s.getPublisherIncId() + CTRL_A + contentCategoriesApplication[i]);
-                        if (mmaCacheEntity != null) {
-                            appCategoryList1[i] = mmaCacheEntity.getUi_id();
-                            appCategoryList2.add(String.valueOf(mmaCacheEntity.getUi_id()));
+                        if (mmaCacheEntity != null && mmaCacheEntity.getUi_id()!=null) {
+                            for (Integer uiId : mmaCacheEntity.getUi_id()){
+                                appCategoryList.add(uiId);
+                            }
                         }
                     }
-                    String[] appCategroyArray = new String[appCategoryList2.size()];
-                    appCategroyArray = appCategoryList2.toArray(appCategroyArray);
-                    vamBidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(appCategroyArray);
+
+                    appCategoryArray1 =new Integer[appCategoryList.size()];
+                    appCategroyArray2 = new String[appCategoryList.size()];
+
+                    for(int i=0;i<appCategoryList.size();i++){
+                        appCategoryArray1[i]=appCategoryList.get(i);
+                        appCategroyArray2[i]=String.valueOf(appCategoryList.get(i));
+                    }
+
+                    vamBidRequestParentNodeDTO.getBidRequestApp().setContentCategoriesApplication(appCategroyArray2);
                 }
             }
 
@@ -135,7 +158,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 adpositionid = impressionDTO.getAdTagOrPlacementId();
             }
 
-            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1, appCategoryList1);
+            Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1, appCategoryArray1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));
 
 
@@ -172,16 +195,38 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
             HandsetMasterData handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
 
-            if (null == handsetMasterData) {
-                this.logger.warn("Device detection failed inside VamRequestEnricher, proceeding with  undetected handset,{}", userAgent);
-            } else {
-                logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
-                if (handsetMasterData.isBot()) {
-                    this.logger.error("Device detected is BOT inside VamRequestEnricher, cannot proceed further");
-                    request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
-                    return request;
-                }
+            if(handsetMasterData != null && handsetMasterData.isBot())
+            {
+                this.logger.error("Device detected is BOT inside MoPubRequestEnricher, can not proceed further");
+                request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
+                return request;
             }
+
+            //ua exist ,os unknow
+            boolean flag = handsetMasterData !=null && handsetMasterData.getDeviceOperatingSystemId()!=null && handsetMasterData.getDeviceOperatingSystemId().equals(-1);
+
+            if(flag || handsetMasterData == null || handsetMasterData.getDeviceOperatingSystemId() == null){
+                HandsetCapabilities handsetCapabilities = new HandsetCapabilities();
+                handsetCapabilities.setIsTablet(false);
+                handsetCapabilities.setMidp2(false);
+                handsetCapabilities.setResolutionWidth(-1);
+                handsetCapabilities.setResolutionHeight(-1);
+
+                //万流客1.adnroid,2.ios,自己的平台1.ios,2.android
+                int os = -1;
+                VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
+                if (vamRequest.hasVamMobile() && vamRequest.getVamMobile().hasOs()) {
+                    os=convertOs(vamRequest.getVamMobile().getOs());
+                } else if (vamRequest.hasVamMobileVideo() && vamRequest.getVamMobileVideo().hasOs()) {
+                    os=convertOs(vamRequest.getVamMobileVideo().getOs());
+                }
+
+                handsetMasterData = new HandsetMasterData(-1, -1, "-1", os, "-1", -1, null, handsetCapabilities);
+                handsetMasterData.setBot(false);
+                handsetMasterData.setDeviceType(null);
+                handsetMasterData.setDeviceJavascriptCompatible(true);
+            }
+
             request.setHandsetMasterData(handsetMasterData);
             /************************************Done detecting handset****************************************************/
 
@@ -398,4 +443,20 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         impressionDTO.setBidFloorPrice(price);
     }
 
+    //convert valuemaker os
+    private int convertOs(int os){
+        int i = -1;
+        switch (os) {
+            case 1:
+                i = 2;
+                break;
+            case 2:
+                i = 1;
+                break;
+            default:
+                i = -1;
+                break;
+        }
+        return i;
+    }
 }
