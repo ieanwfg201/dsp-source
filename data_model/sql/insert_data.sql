@@ -843,3 +843,10 @@ INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_li
 ('bidswitch24','bidswitch24',(select id from account where guid='bidswitch24'),'bidswitch24','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,'')
 ON DUPLICATE KEY UPDATE guid = VALUES(guid);
 
+
+('inmobi23',1,2,'inmobi23','inmobi23','$2a$10$NRxVckXVGU0gzk77jIBIZOgdgUwoNwylRqHERcjBAPKv4pAhFokZu','inmobi23@inmobi23.com','','United States','New York','0123456',1,now(),now(),2,'inmobi23')
+ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) values
+('inmobi23','inmobi23',(select id from account where guid='inmobi23'),'inmobi23','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,'')
+ON DUPLICATE KEY UPDATE guid = VALUES(guid);

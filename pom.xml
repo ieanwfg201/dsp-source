@@ -130,6 +130,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>ex_int/tencent</module>
     <module>ex_int/youku/2.2</module>
     <module>ex_int/valuemaker</module>
+    <module>ex_int/inmobi/2.3</module>
     <module>geo/utils</module>
     <module>geo/common</module>
     <module>geo/maxmind</module>
@@ -168,6 +169,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>adserving/mopub_req_enricher_2.3</module>
     <module>adserving/enricher_req_cloudcross_4_4_4</module>
     <module>adserving/youku_req_res_enricher</module>
+    <module>adserving/inmobi2_3_req_res_enricher</module>
     <module>adserving/tencent_req_enricher</module>
     <module>adserving/adexchange_req_enricher</module>
     <module>adserving/valuemaker_req_enricher</module>
