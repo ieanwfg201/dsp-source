@@ -12,7 +12,7 @@
 
     <context-param>
         <param-name>LOG4J_ADSERVING_PROPERTIES_PATH</param-name>
-        <param-value>classpath*:conf/log4j2.xml</param-value>
+        <param-value>/var/data/kritter/log4j2.xml</param-value>
     </context-param>
 
     <listener>
