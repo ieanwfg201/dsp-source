@@ -23,7 +23,7 @@ import java.util.Set;
 public class MMACache extends AbstractDBStatsReloadableQueryableCache<String, MMACacheEntity>
 {
     private static final String CTRL_A = String.valueOf((char)1);
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private String name;
 
     public MMACache(List<Class> secIndexKeyClassList, Properties props,
