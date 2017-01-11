@@ -99,7 +99,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
+                <version>2.3.2</version>
                 <configuration>
                     <compilerArgument>-Xlint</compilerArgument>
                     <source>1.6</source>

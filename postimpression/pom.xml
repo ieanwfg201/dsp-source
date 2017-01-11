@@ -247,6 +247,11 @@
             <artifactId>disruptor</artifactId>
             <version>3.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.kritter.exchange.job</groupId>
+            <artifactId>exchange_job</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <organization>
