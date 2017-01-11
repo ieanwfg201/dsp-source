@@ -286,6 +286,7 @@ public class EnricherUtils {
         }
     }
 
+
     public static void populateUserIdsFromBidRequestUserDTO(
             com.kritter.bidrequest.entity.common.openrtb2_0.BidRequestUserDTO bidRequestUserDTO, Request request) {
         if(null == bidRequestUserDTO)
