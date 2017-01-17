@@ -267,8 +267,8 @@
         <constructor-arg index="8" value="REMOTE_ADDR"/>
         <constructor-arg index="9" value="bid.req.logger"/>
         <constructor-arg index="10"><ref bean="req_logging_cache"/></constructor-arg>
-        <!--constructor-arg index="11"><ref bean="ad_stats_cache"/></constructor-arg-->
-        <constructor-arg index="11"><null /></constructor-arg>
+        <constructor-arg index="11"><ref bean="ad_stats_cache"/></constructor-arg>
+        <!--constructor-arg index="11"><null /></constructor-arg-->
         <constructor-arg index="12" value="ad-nofill-map"/>
         <constructor-arg index="13"><ref bean="adserving_thrift_logging_cache"/></constructor-arg>
     </bean>
