@@ -46,11 +46,11 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     private int urlVersion;
     private AdEntityCache adEntityCache;
 
-    private String postImpressionBaseClickUrl;
-    private String postImpressionBaseCSCUrl;
-    private String postImpressionBaseWinApiUrl;
-    private String macroPostImpressionBaseClickUrl;
-    private String trackingEventUrl;
+//    private String postImpressionBaseClickUrl;
+//    private String postImpressionBaseCSCUrl;
+//    private String postImpressionBaseWinApiUrl;
+//    private String macroPostImpressionBaseClickUrl;
+//    private String trackingEventUrl;
 
     private String notificationUrlSuffix;
     private String notificationUrlBidderBidPriceMacro;
@@ -75,11 +75,11 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         this.urlVersion = urlVersion;
         this.adEntityCache = adEntityCache;
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-        this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
-        this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
-        this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
-        this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
-        this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+//        this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
+//        this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
+//        this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
+//        this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
+//        this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
 
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
@@ -104,6 +104,11 @@ public class VamBidResponseCreator implements IBidResponseCreator {
             VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
             VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
             int secure = vamRequest.getSecure();
+            String postImpressionBaseClickUrl  = null;
+            String postImpressionBaseCSCUrl = null;
+            String postImpressionBaseWinApiUrl = null;
+            String macroPostImpressionBaseClickUrl = null;
+            String trackingEventUrl;
             if(secure == 1) {
                 postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX, secure);
                 postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX, secure);
@@ -111,13 +116,13 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                 macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX, secure);
                 trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX, secure);
             }
-//            else{
-//                postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
-//                postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
-//                postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
-//                macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
-//                trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
-//            }
+            else{
+                postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
+                postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
+                postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
+                macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
+                trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+            }
 
             Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();
             if (null == impressionIdsToRespondFor) {
