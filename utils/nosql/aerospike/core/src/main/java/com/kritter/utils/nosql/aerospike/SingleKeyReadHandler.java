@@ -24,7 +24,7 @@ public class SingleKeyReadHandler implements RecordListener {
 
     @Override
     public void onSuccess(Key key, Record record) {
-        logger.debug("Fetched result for key : {}", key.toString());
+        //logger.debug("Fetched result for key : {}", key.toString());
         Map<String, NoSqlData> resultMap = new HashMap<String, NoSqlData>();
         if (null != record && null != record.bins) {
             for (String attributeName : record.bins.keySet()) {

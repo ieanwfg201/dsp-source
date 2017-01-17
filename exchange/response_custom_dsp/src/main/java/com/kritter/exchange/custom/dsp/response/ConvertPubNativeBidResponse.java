@@ -7,6 +7,7 @@ import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.*;
 import com.kritter.constants.ConvertErrorEnum;
 import com.kritter.exchange.response_openrtb_2_3.converter.common.ConvertEntity;
 import com.kritter.exchange.response_openrtb_2_3.converter.v1.ConvertResponse;
+import com.kritter.utils.common.ApplicationGeneralUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
@@ -39,18 +40,31 @@ public class ConvertPubNativeBidResponse extends ConvertResponse
     public BidResponseEntity convert(String str)
     {
         /**read response into pubnative's custom object*/
-        if(null == str)
+        if(null == str || "".equals(str))
            return null;
 
         PubNativeBidResponseEntity pubNativeBidResponseEntity = null;
 
         try
         {
-            logger.debug("BidResponse from Pubnative DSP is: {} " , str);
+            logger.debug("BidResponse from Pubnative DSP is: {} ", str);
 
             pubNativeBidResponseEntity = objectMapper.readValue(str, PubNativeBidResponseEntity.class);
 
-            if( null == pubNativeBidResponseEntity          ||
+            /**Form error response in case returned response from pubnative is error.*/
+            if (
+                null != pubNativeBidResponseEntity              &&
+                null != pubNativeBidResponseEntity.getStatus()  &&
+                pubNativeBidResponseEntity.getStatus().equalsIgnoreCase("error")
+               )
+            {
+                BidResponseEntity bidResponseEntity = new BidResponseEntity();
+                bidResponseEntity.setNoBidReason(ApplicationGeneralUtils.DSP_NO_BID_RESPONSE_ERROR_CODE_KRITTER);
+                return bidResponseEntity;
+            }
+
+            if(
+                null == pubNativeBidResponseEntity          ||
                 null == pubNativeBidResponseEntity.getAds() ||
                 pubNativeBidResponseEntity.getAds().length <= 0
               )
@@ -59,6 +73,7 @@ public class ConvertPubNativeBidResponse extends ConvertResponse
         catch (Exception e)
         {
             logger.error("Exception in reading response payload from pubnative: {} ", str, e);
+            return null;
         }
 
         /*populate 2.3 version response entity using pubnative bid response entity*/
@@ -90,6 +105,9 @@ public class ConvertPubNativeBidResponse extends ConvertResponse
 
     private BidResponseEntity populateBidResponseEntityUsingPubnative(PubNativeBidResponseEntity pubNativeBidResponseEntity) throws Exception
     {
+        if(null == pubNativeBidResponseEntity)
+            return null;
+
         BidResponseEntity bidResponseEntity = new BidResponseEntity();
         bidResponseEntity.setBidRequestId("pubnative_bid_request_id");
         bidResponseEntity.setBidderGeneratedUniqueId("pubnative_bidder_gen_id");

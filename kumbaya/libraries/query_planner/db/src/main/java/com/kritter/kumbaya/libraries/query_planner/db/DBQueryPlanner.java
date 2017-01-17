@@ -58,6 +58,7 @@ import com.kritter.kumbaya.libraries.data_structs.common.Tevent;
 import com.kritter.kumbaya.libraries.data_structs.common.Teventtype;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_Request_To_Dsp;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_bidValue;
+import com.kritter.kumbaya.libraries.data_structs.common.Total_bidfloor;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_click;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_count;
 import com.kritter.kumbaya.libraries.data_structs.common.Total_csc;
@@ -672,6 +673,15 @@ public class DBQueryPlanner implements IQueryPlanner {
                     entity.getUiname(),reportingEntity.getEarning_order_sequence(), korderbyTreeMap, reportingEntity.getChartType(),
                     pieProjection);
         }
+        if(reportingEntity.isAvgBidFloor()){
+            Total_bidfloor entity = kReportingConfiguration.getTotal_bidfloor();
+            HelperKumbayaQueryPlanner.populateAvgBidFloor("fr", true, table_name, entity.getFact_column(), 
+                    table_name, kReportingConfiguration.getTotal_request().getFact_column(), METRICTYPE.SUM, 
+                    kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, "AvgBidFloor", 
+                    reportingEntity.getAvgBidFloor_order_sequence(), korderbyTreeMap);
+
+        }
+
         /*PREPARE ORDER BY*/
         HelperKumbayaQueryPlanner.prepareKOrderByHashSet(korderbyTreeMap, korderbyHashSet);
         

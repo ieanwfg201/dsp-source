@@ -484,10 +484,20 @@
         <constructor-arg index="16"><ref bean="handset_detector"/></constructor-arg>
         <constructor-arg index="17"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="18"><ref bean="isp_detector"/></constructor-arg>
-        <constructor-arg index="19" value="rm"/>
-        <constructor-arg index="20" value="w"/>
-        <constructor-arg index="21" value="h"/>
-        <constructor-arg index="22" value="bp"/>
+        <constructor-arg index="19"><null /></constructor-arg>
+        <constructor-arg index="20" value="rm"/>
+        <constructor-arg index="21" value="w"/>
+        <constructor-arg index="22" value="h"/>
+        <constructor-arg index="23" value="bp"/>
+        <constructor-arg index="24" value="ctype"/>
+        <constructor-arg index="25" value="mimes"/>
+        <constructor-arg index="26" value="protocol"/>
+        <constructor-arg index="27" value="mindur"/>
+        <constructor-arg index="28" value="maxdur"/>
+        <constructor-arg index="29" value="lin"/>
+        <constructor-arg index="30" value="playbk"/>
+        <constructor-arg index="31" value="apifr"/>
+        <constructor-arg index="32" value="del"/>
     </bean>
 
     <bean id="mopub_bid_request_reader_2_3" class="com.kritter.bidreqres.reader.mopub2_3.BidRequestReaderMopub">

@@ -4,6 +4,7 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
+import com.kritter.constants.CreativeFormat;
 import com.kritter.constants.INVENTORY_SOURCE;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.constants.StatusIdEnum;
@@ -15,6 +16,7 @@ import com.kritter.geo.common.entity.reader.IConnectionTypeDetectionCache;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.geo.common.entity.reader.ISPDetectionCache;
 import com.kritter.entity.user.userid.ExternalUserId;
+import com.kritter.entity.video_supply_props.VideoSupplyProps;
 import com.kritter.constants.ExternalUserIdType;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.logging.log4j.Logger;
@@ -59,57 +61,16 @@ public class AggregatorRequestEnricher implements RequestEnricher
     private ISPDetectionCache ispDetectionCache;
     private IConnectionTypeDetectionCache connectionTypeDetectionCache;
 
-    public AggregatorRequestEnricher(
-                                     String loggerName,
-                                     String userAgentParameterName,
-                                     String operaMiniUserAgentSubString,
-                                     String[] operaMiniUAHeaderNames,
-                                     String ipAddressParameterName,
-                                     String xffHeaderName,
-                                     List<String> privateAddressPrefixList,
-                                     String siteIdParameterName,
-                                     String invocationCodeVersionParameterName,
-                                     String responseFormatParameterName,
-                                     String numberOfAdsParameterName,
-                                     String siteAppWapParameterName,
-                                     String uidParameterName,
-                                     String latitudeParameterName,
-                                     String longitudeParameterName,
-                                     SiteCache siteCache,
-                                     HandsetDetectionProvider handsetDetectionProvider,
-                                     CountryDetectionCache countryDetectionCache,
-                                     ISPDetectionCache ispDetectionCache,
-                                     String richMediaParameterName,
-                                     String widthParameterName,
-                                     String heightParameterName,
-                                     String bidFloorParameterName
-                                     )
-    {
-        this.logger = LogManager.getLogger(loggerName);
-        this.userAgentParameterName = userAgentParameterName;
-        this.operaMiniUserAgentSubString = operaMiniUserAgentSubString;
-        this.operaMiniUAHeaderNames = operaMiniUAHeaderNames;
-        this.ipAddressParameterName = ipAddressParameterName;
-        this.xffHeaderName = xffHeaderName;
-        this.privateAddressPrefixList = privateAddressPrefixList;
-        this.siteIdParameterName = siteIdParameterName;
-        this.invocationCodeVersionParameterName = invocationCodeVersionParameterName;
-        this.responseFormatParameterName = responseFormatParameterName;
-        this.numberOfAdsParameterName = numberOfAdsParameterName;
-        this.siteAppWapParameterName = siteAppWapParameterName;
-        this.uidParameterName = uidParameterName;
-        this.latitudeParameterName = latitudeParameterName;
-        this.longitudeParameterName = longitudeParameterName;
-        this.richMediaParameterName = richMediaParameterName;
-        this.widthParameterName = widthParameterName;
-        this.heightParameterName = heightParameterName;
-        this.siteCache = siteCache;
-        this.handsetDetectionProvider = handsetDetectionProvider;
-        this.countryDetectionCache = countryDetectionCache;
-        this.ispDetectionCache = ispDetectionCache;
-        this.connectionTypeDetectionCache = null;
-        this.bidFloorParameterName = bidFloorParameterName;
-    }
+    private String ctype;
+    private String mimes;
+    private String protocols;
+    private String minDuration;
+    private String maxDuration;
+    private String linearity;
+    private String playback;
+    private String apiFramework;
+    private String contentDeliveryMethods;
+
 
     public AggregatorRequestEnricher(
                                      String loggerName,
@@ -135,33 +96,60 @@ public class AggregatorRequestEnricher implements RequestEnricher
                                      String richMediaParameterName,
                                      String widthParameterName,
                                      String heightParameterName,
-                                     String bidFloorParameterName
+                                     String bidFloorParameterName,
+                                     String ctype,
+                                     String mimes,
+                                     String protocols,
+                                     String minDuration,
+                                     String maxDuration,
+                                     String linearity,
+                                     String playback,
+                                     String apiFramework,
+                                     String contentDeliveryMethods
                                     )
     {
         this.logger = LogManager.getLogger(loggerName);
-        this.userAgentParameterName = userAgentParameterName;
-        this.operaMiniUserAgentSubString = operaMiniUserAgentSubString;
+        this.userAgentParameterName = userAgentParameterName; /*Generally ua*/
+        this.operaMiniUserAgentSubString = operaMiniUserAgentSubString; /*Generally opera mini*/
         this.operaMiniUAHeaderNames = operaMiniUAHeaderNames;
-        this.ipAddressParameterName = ipAddressParameterName;
-        this.xffHeaderName = xffHeaderName;
+        this.ipAddressParameterName = ipAddressParameterName; /*Generally ip*/
+        this.xffHeaderName = xffHeaderName; /*Generally X-Forwarded-For*/
         this.privateAddressPrefixList = privateAddressPrefixList;
-        this.siteIdParameterName = siteIdParameterName;
-        this.invocationCodeVersionParameterName = invocationCodeVersionParameterName;
-        this.responseFormatParameterName = responseFormatParameterName;
-        this.numberOfAdsParameterName = numberOfAdsParameterName;
-        this.siteAppWapParameterName = siteAppWapParameterName;
-        this.uidParameterName = uidParameterName;
-        this.latitudeParameterName = latitudeParameterName;
-        this.longitudeParameterName = longitudeParameterName;
-        this.richMediaParameterName = richMediaParameterName;
-        this.widthParameterName = widthParameterName;
-        this.heightParameterName = heightParameterName;
-        this.siteCache = siteCache;
+        this.siteIdParameterName = siteIdParameterName; /*Generally site-id*/
+        this.invocationCodeVersionParameterName = invocationCodeVersionParameterName; /*Generally ver*/
+        this.responseFormatParameterName = responseFormatParameterName; /*Generally fmt*/
+        this.numberOfAdsParameterName = numberOfAdsParameterName; /*Generally nads*/
+        this.siteAppWapParameterName = siteAppWapParameterName;/*Generally plat*/
+        this.uidParameterName = uidParameterName; /*Generally uid*/
+        this.latitudeParameterName = latitudeParameterName; /*Generally lat*/
+        this.longitudeParameterName = longitudeParameterName; /*Generally lon*/
+        this.richMediaParameterName = richMediaParameterName; /*Generally rm*/
+        this.widthParameterName = widthParameterName; /*Generally w*/
+        this.heightParameterName = heightParameterName; /*Generally h*/
+        this.siteCache = siteCache; 
         this.handsetDetectionProvider = handsetDetectionProvider;
         this.countryDetectionCache = countryDetectionCache;
         this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = connectionTypeDetectionCache;
-        this.bidFloorParameterName = bidFloorParameterName;
+        this.bidFloorParameterName = bidFloorParameterName; /*Generally bp*/
+        this.ctype = ctype;
+        /*Generally ctype Allowed values - one of these 1|2|3|4|51 . Refers to  com.kritter.constants.CreativeFormat */ 
+        this.mimes = mimes;
+        /*Generally mimes Allowed Values - csv of one or more of these 1|2|3|4|5|6|7|8 . Refers to com.kritter.constant.VideoMimeTypes when ctype=4*/
+        this.protocols = protocols; 
+        /*Generally protocol. Allowed Values - csv of one or more of these 2,3,5,6 . Refers to com.kritter.constant.VideoBidResponseProtocols when ctype=4*/
+        this.minDuration = minDuration; 
+        /*Generally mindur - Allowed values - Integer > 0- Refers to minimum duration is seconds */
+        this.maxDuration = maxDuration;
+        /*Generally maxdur - Allowed values - Integer > 0 - Refers to maximum duration is seconds */
+        this.linearity = linearity; 
+        /*Generally lin Allowed values - one of these 1|2 . Refers to  com.kritter.constants.VideoLinearity */
+        this.playback = playback; 
+        /*Generally playbk. Allowed Values - csv of one or more of these 1,2,3,4 . Refers to com.kritter.constant.VideoPlaybackMethods when ctype=4*/
+        this.apiFramework = apiFramework; /*Generally apifr*/
+        /*Generally apifr. Allowed Values - csv of one or more of these 1,2,3,4,5 . Refers to com.kritter.constant.APIFrameworks when ctype=4*/
+        this.contentDeliveryMethods = contentDeliveryMethods;/*Generally del*/
+        /*Generally del. Allowed Values - csv of one or more of these 1,2,3 . Refers to com.kritter.constant.ContentDeliveryMethods when ctype=4*/
     }
 
     @Override
@@ -347,7 +335,6 @@ public class AggregatorRequestEnricher implements RequestEnricher
             if(!(sitePlatformValue == SITE_PLATFORM.NO_VALID_VALUE.getPlatform()))
                 site.setSitePlatform(sitePlatformValue);
 
-            request.setSite(site);
 
             //set user agent to request object.
             request.setUserAgent(userAgent);
@@ -404,6 +391,41 @@ public class AggregatorRequestEnricher implements RequestEnricher
             request.setRequestedSlotHeights(requiredHeights);
             /***************Done setting handset attributes ******************/
 
+            if(this.ctype != null && site != null){
+                String creativeType = httpServletRequest.getParameter(this.ctype);
+                if(creativeType != null && creativeType.trim().equals(CreativeFormat.VIDEO.getCode()+"")){
+                	VideoSupplyProps vsp = new VideoSupplyProps();
+                	String videomimes = httpServletRequest.getParameter(this.mimes);
+                	vsp.setMimes(VideoSupplyProps.stringtoVideoMimeSetOrDefault(videomimes));
+                	String videoprotocols = httpServletRequest.getParameter(this.protocols);
+                	vsp.setProtocols(VideoSupplyProps.stringtoVideoProtoColSetOrDefault(videoprotocols));
+                	String videominDuration = httpServletRequest.getParameter(this.minDuration);
+                	if(videominDuration != null && !videominDuration.isEmpty() ){
+                		try{
+                			Integer i = Integer.parseInt(videominDuration.trim());
+                			vsp.setMinDurationSec(i);
+                		}catch(Exception e){
+                		}
+                	}
+                	String videomaxDuration = httpServletRequest.getParameter(this.maxDuration);
+                	if(videomaxDuration != null && !videomaxDuration.isEmpty() ){
+                		try{
+                			Integer i = Integer.parseInt(videomaxDuration.trim());
+                			vsp.setMaxDurationSec(i);
+                		}catch(Exception e){
+                		}
+                	}
+                	vsp.setLinearity(VideoSupplyProps.stringtoVideoLinearityOrDefault(httpServletRequest.getParameter(this.linearity)));
+                	vsp.setPlaybackmethod(VideoSupplyProps.stringtoVideoPlaybackSetOrDefault(httpServletRequest.getParameter(this.playback)));
+                	vsp.setApi(VideoSupplyProps.stringtoVideoApiFrameworkSetOrDefault(httpServletRequest.getParameter(this.apiFramework)));
+                	vsp.setDelivery(VideoSupplyProps.stringtoVideoContentDeliveryMethodSetOrDefault(httpServletRequest.getParameter(this.contentDeliveryMethods)));
+                	vsp.setHeightPixel(requiredWidths[0]);
+                	vsp.setWidthPixel(requiredHeights[0]);
+                	site.setVideoSupplyProps(vsp);
+                	site.setVideo(true);
+                }
+            }
+            request.setSite(site);
             if(null != ip)
             {
                 //set final ip address into request object, used for detection.
