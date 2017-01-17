@@ -493,7 +493,7 @@
                 <ref bean="native_icon_cache"/>
                 <ref bean="native_screenshot_cache"/>
                 <ref bean="req_logging_cache"/>
-                <ref bean="ad_stats_cache">
+                <ref bean="ad_stats_cache"/>
                 <ref bean="metrics_cache"/>
 				<ref bean="mma_cache"/>
                 <ref bean="adxbasedexchanges_metadata_cache"/>

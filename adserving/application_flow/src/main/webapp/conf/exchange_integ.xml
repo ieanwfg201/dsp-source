@@ -20,7 +20,7 @@
         <constructor-arg index="5"><ref bean="mnc_mcc_data_cache"/></constructor-arg>
         <constructor-arg index="6"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="7"><ref bean="isp_detector"/></constructor-arg>
-        <constructor-arg index="8"><ref bean="connection_type_cache"/></constructor-arg>
+        <constructor-arg index="8"><null/></constructor-arg>
     </bean>
 
     <bean id="inmobi23_response_creator" class="com.kritter.bidreqres.response_creator.inmobi2_3.BidRequestResponseCreatorInmobi">

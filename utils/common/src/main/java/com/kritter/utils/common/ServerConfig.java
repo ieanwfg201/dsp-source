@@ -10,8 +10,7 @@ import java.util.Map;
  * This class contains config parameters that are required at a server level.
  * Like prefixes of cdn url, click url, csc url.
  */
-public class ServerConfig
-{
+public class ServerConfig {
     public static final String CDN_URL_PREFIX = "cdn-url-prefix";
     public static final String CLICK_URL_PREFIX = "click-url-prefix";
     public static final String CSC_URL_PREFIX = "csc-url-prefix";
@@ -23,115 +22,108 @@ public class ServerConfig
     public static final String beventUrl_PREFIX = "bevent-url-prefix";
     public Boolean isHttps = false;
 
-    public static final String DELIMITER = String.valueOf((char)1);
+    public static final String DELIMITER = String.valueOf((char) 1);
     public static final String DELIMITER_EQUAL_TO = "=";
 
-    private Map<String,String> configMap;
+    private Map<String, String> configMap;
+    private Map<String, String> configMap2;
 
-    public ServerConfig(String serverPropertiesFilePath) throws Exception
-    {
-        if(null == serverPropertiesFilePath)
+    public ServerConfig(String serverPropertiesFilePath) throws Exception {
+        if (null == serverPropertiesFilePath)
             throw new Exception("ServerPropertiesFilePath is null, cannot initialize application...");
 
         this.configMap = new HashMap<String, String>();
+        this.configMap2 = new HashMap<String, String>();
         readPropertiesFileAndPopulateConfiguration(serverPropertiesFilePath);
+        changeHttps();
     }
 
-    private void readPropertiesFileAndPopulateConfiguration(String serverPropertiesFilePath) throws Exception
-    {
+    private void readPropertiesFileAndPopulateConfiguration(String serverPropertiesFilePath) throws Exception {
 
         BufferedReader br = null;
         FileReader fr = null;
         File file = null;
 
-        try
-        {
+        try {
             file = new File(serverPropertiesFilePath);
             fr = new FileReader(file);
             br = new BufferedReader(fr);
 
             String line = null;
 
-            while(null != (line = (br.readLine())))
-            {
-                if(line.contains(DELIMITER))
-                {
+            while (null != (line = (br.readLine()))) {
+                if (line.contains(DELIMITER)) {
                     String parts[] = line.split(DELIMITER);
 
-                    if(null == parts || parts.length != 2)
+                    if (null == parts || parts.length != 2)
                         throw new Exception("The line in server config file is corrupt..." + line +
                                 " , file path being " + serverPropertiesFilePath);
 
-                    configMap.put(parts[0],parts[1]);
-                }
-                else if(line.contains(DELIMITER_EQUAL_TO) && !line.contains(DELIMITER))
-                {
+                    configMap.put(parts[0], parts[1]);
+                } else if (line.contains(DELIMITER_EQUAL_TO) && !line.contains(DELIMITER)) {
                     String parts[] = line.split(DELIMITER_EQUAL_TO);
-                    if(null == parts || parts.length < 1)
+                    if (null == parts || parts.length < 1)
                         throw new Exception("The line in server config file is corrupt..." + line +
                                 " , file path being " + serverPropertiesFilePath);
 
                     StringBuffer sb = new StringBuffer();
 
-                    for(int i=1;i<parts.length;i++)
-                    {
+                    for (int i = 1; i < parts.length; i++) {
                         sb.append(parts[i]);
                         sb.append(DELIMITER_EQUAL_TO);
                     }
 
-                    sb.deleteCharAt(sb.length()-1);
+                    sb.deleteCharAt(sb.length() - 1);
 
-                    configMap.put(parts[0],sb.toString());
-                }
-                else
+                    configMap.put(parts[0], sb.toString());
+                } else
                     throw new Exception("The line in server config file is corrupt... " + line +
                             " , file path being" + serverPropertiesFilePath);
             }
 
             isHttps = Boolean.valueOf(getValueForKey("tracking_https_enabled"));
-            if(isHttps == true)
-                for(Map.Entry<String,String> entry:configMap.entrySet()){
-                    if(entry.getValue().indexOf("http:") != -1){
-                        String value = entry.getValue().replaceAll("http:","https:");
-                        configMap.put(entry.getKey(),value);
+            if (isHttps == true)
+                for (Map.Entry<String, String> entry : configMap.entrySet()) {
+                    if (entry.getValue().indexOf("http:") != -1) {
+                        String value = entry.getValue().replaceAll("http:", "https:");
+                        configMap.put(entry.getKey(), value);
                     }
                 }
-        }
-        finally
-        {
-            if(null != fr)
+        } finally {
+            if (null != fr)
                 fr.close();
-            if(null != br)
+            if (null != br)
                 br.close();
         }
     }
 
-    public String getValueForKey(String key)
-    {
-        if(null != configMap)
+    public String getValueForKey(String key) {
+        if (null != configMap)
             return this.configMap.get(key);
 
         return null;
     }
 
-    public String getValueForKey(String key,int secure)
-    {
-        Map<String,String> configMap2 = new HashMap<String, String>();
-        if(null != configMap)
-        {
-            if(secure == 1){
-                for(Map.Entry<String,String> entry:configMap.entrySet()){
-                    if(entry.getValue().indexOf("http:") != -1){
-                        String value = entry.getValue().replaceAll("http:","https:");
-                        configMap2.put(entry.getKey(),value);
-                    }
-                }
-                return configMap2.get(key);
-            }else{
+    public String getValueForKey(String key, int secure) {
+        if (null != configMap || null != configMap2) {
+            if (secure == 1) {
+                return this.configMap2.get(key);
+            } else {
                 return this.configMap.get(key);
             }
 
         }
         return null;
+    }
+
+    public void changeHttps() {
+        if (null != configMap) {
+            for (Map.Entry<String, String> entry : configMap.entrySet()) {
+                if (entry.getValue().indexOf("http:") != -1) {
+                    String value = entry.getValue().replaceAll("http:", "https:");
+                    configMap2.put(entry.getKey(), value);
+                }
+            }
+        }
     }
 }

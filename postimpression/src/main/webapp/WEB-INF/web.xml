@@ -12,7 +12,7 @@
 
     <context-param>
         <param-name>LOG4J_POSTIMPRESSION_PROPERTIES_PATH</param-name>
-        <param-value>/var/data/kritter/log4j-postimpression.properties</param-value>
+        <param-value>/var/data/kritter/log4j2-postimpression.xml</param-value>
     </context-param>
 
     <listener>
