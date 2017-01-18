@@ -19,8 +19,8 @@ public class ExtractFromBagOfTupleExchange extends EvalFunc<DataBag> {
     private Tuple createDefault(Tuple input) throws ExecException{
         Tuple defaultTuple = mTupleFactory.newTuple();
         int size = input.size();
-        if(size > 1){
-            for(int i=1; i<size; i++){
+        if(size > 2){
+            for(int i=2; i<size; i++){
                 defaultTuple.append(input.get(i));
             }
         }
@@ -33,7 +33,15 @@ public class ExtractFromBagOfTupleExchange extends EvalFunc<DataBag> {
                 return output_bag;
             }
             try {
-                    Object values = input.get(0);
+            		Double winprice =0.0;
+            		Object wp = input.get(0);
+            		if(wp !=null){
+            			try{
+            				winprice = Double.parseDouble(wp.toString());
+            			}catch(Exception e){
+            			}
+            		}
+                    Object values = input.get(1);
                     if (!(values instanceof DataBag)) {
                             output_bag.add(createDefault(input));
                             return output_bag;
@@ -44,7 +52,17 @@ public class ExtractFromBagOfTupleExchange extends EvalFunc<DataBag> {
                                 return output_bag;
                             }else{
                                 boolean isFirst = true;
+                                int i=0;
                                 for(Tuple t : databag){
+                                	boolean winner =false;
+                                	if(t.size()>4){
+                                		Object o =t.get(4);
+                                		if(o != null){
+                                			if("FILL".equals(o.toString())){
+                                				winner=false;
+                                			}
+                                		}
+                                	}
                                     if(isFirst){
                                         t.append(1);
                                         t.append(1);
@@ -52,7 +70,13 @@ public class ExtractFromBagOfTupleExchange extends EvalFunc<DataBag> {
                                     	t.append(0);
                                         t.append(1);    
                                     }
+                                    if(winner){
+                                    	t.append(winprice);
+                                    }else{
+                                    	t.append(0.0);
+                                    }
                                     isFirst = false;
+                                    
                                 }
                                 return databag;
                             }

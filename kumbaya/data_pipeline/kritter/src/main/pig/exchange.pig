@@ -51,13 +51,14 @@ decoded_data = FOREACH decoded GENERATE ThriftBytesToTupleDef($0);
 
 proj_data = FOREACH decoded_data GENERATE  
     com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(Exchange.time * 1000,'yyyy-MM-dd HH:00:00', '$tz') as time, 
-    Exchange.winprice as winprice, Exchange.reqState as reqState, Exchange.floor as floor, 
+    Exchange.reqState as reqState, Exchange.floor as floor, 
     Exchange.formatId as formatId, Exchange.countryId as countryId, Exchange.deviceOsId as deviceOsId, 
     Exchange.siteId as siteId, Exchange.pubincId as pubincId, 
-    FLATTEN(com.kritter.kumbaya.libraries.pigudf.ExtractFromBagOfTupleExchange(Exchange.dspInfos , -1, -1, -1, -1 , 0.0, '-1','', 1, 0))
-     as (version:int,advincId:int,campaignId:int,adId:int,bid:double, nofill:chararray, response:chararray,total_request:long, total_impression:long)
+    FLATTEN(com.kritter.kumbaya.libraries.pigudf.ExtractFromBagOfTupleExchange(Exchange.winprice,Exchange.dspInfos , -1, -1, -1, -1 , 0.0, '-1','', 1, 0,0.0))
+     as (version:int,advincId:int,campaignId:int,adId:int,bid:double, nofill:chararray, response:chararray,total_request:long, total_impression:long,winprice:double)
     ;
     
+
 
 group_data = GROUP proj_data BY (time,pubincId,siteId,deviceOsId,countryId,advincId,campaignId,adId,formatId,reqState,nofill);
 

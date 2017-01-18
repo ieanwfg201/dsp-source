@@ -342,6 +342,8 @@ public class ReportingEntity {
 	private boolean billedECPM = false;
 	/** metrics set to true if required */
 	private boolean billedEIPM = false;
+	/** metrics set to true if required */
+	private boolean avgBidFloor = false;
 	/** order by sequence number */
 	/** true means descending otherwise by default ascending */
 	private boolean order_by_desc = true;
@@ -425,6 +427,8 @@ public class ReportingEntity {
 	private int billedEIPM_order_sequence = -1;
 	/** sequence no */
 	private int total_floor_order_sequence = -1;
+	/** sequence no */
+	private int avgBidFloor_order_sequence = -1;
 
 	/** default false - return GUID */
 	private boolean returnGuid = false;
@@ -450,6 +454,22 @@ public class ReportingEntity {
 	private boolean rollup = false;
 
 	
+	public boolean isAvgBidFloor() {
+		return avgBidFloor;
+	}
+
+	public void setAvgBidFloor(boolean avgBidFloor) {
+		this.avgBidFloor = avgBidFloor;
+	}
+
+	public int getAvgBidFloor_order_sequence() {
+		return avgBidFloor_order_sequence;
+	}
+
+	public void setAvgBidFloor_order_sequence(int avgBidFloor_order_sequence) {
+		this.avgBidFloor_order_sequence = avgBidFloor_order_sequence;
+	}
+
 	public boolean isTotal_request_to_dsp() {
 		return total_request_to_dsp;
 	}

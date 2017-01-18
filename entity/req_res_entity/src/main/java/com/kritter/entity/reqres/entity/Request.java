@@ -538,6 +538,9 @@ public class Request
     private String bidRequestDeviceLanguage;
 
     @Getter @Setter
+    private Integer bidRequestDeviceGeoLocationType;
+
+    @Getter @Setter
     private boolean bidRequestUseHMinWMinNativeRequest;
 
     @Getter @Setter

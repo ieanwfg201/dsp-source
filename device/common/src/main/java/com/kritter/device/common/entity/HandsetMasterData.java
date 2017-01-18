@@ -31,7 +31,7 @@ public class HandsetMasterData implements IUpdatableEntity<HandsetDataTopLevelKe
     @Getter @Setter
     private Integer manufacturerId;
 
-    @Getter
+    @Getter @Setter
     private String manufacturerName;
 
     @Getter @Setter
