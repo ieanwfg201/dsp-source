@@ -25,6 +25,7 @@ import com.kritter.fanoutinfra.apiclient.common.KHttpResponse;
 import com.kritter.fanoutinfra.apiclient.ning.NingClient;
 import com.kritter.fanoutinfra.executorservice.common.KExecutor;
 import com.kritter.formatterutil.CreativeFormatterUtils;
+import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.CookieUtils;
 import com.kritter.utils.common.ServerConfig;
 import com.kritter.auction_strategies.common.KAuction;
@@ -507,7 +508,6 @@ public class ExchangeJob implements Job
                 }
                 emptyExchangeAds = true;
                 request.setNoFillReason(NoFillReason.EX_OD_RESP_EMPTY);
-                createExchangeThrift.updateAllEmpty();
                 request.setCreateExchangeThrift(createExchangeThrift);
                 return;
             }
@@ -536,7 +536,12 @@ public class ExchangeJob implements Job
                             null != kHttpResponse.getResponsePayload()   &&
                             !"".equals(kHttpResponse.getResponsePayload())
                            )
+                    {
+                        /**If something received from DSP, initialize with LOWBID, If response wins then
+                         * it would be marked as FILL automatically**/
+                        createExchangeThrift.updateDemandState(keyAdvGuid,DspNoFill.LOWBID);
                         noResponseAtAll = false;
+                    }
                 }
 
                 if(noResponseAtAll)
@@ -557,18 +562,38 @@ public class ExchangeJob implements Job
             com.kritter.exchange.response_openrtb2_2.converter.v1.ConvertResponse convertResponse2_2 =
                                 new com.kritter.exchange.response_openrtb2_2.converter.v1.ConvertResponse(loggerName);
 
-            for(String key:advResponseMap.keySet()){
-
+            for(String key:advResponseMap.keySet())
+            {
                 AccountEntity advEntity = this.accountCache.query(key);
+
                 if(null != advEntity && advEntity.getOpenRTBVersion().getCode() == OpenRTBVersion.VERSION_2_3.getCode())
                 {
                     BidResponseEntity bidResponseEntity2_3 = convertResponse2_3.convert(advResponseMap.get(key).getResponsePayload());
-                    if(bidResponseEntity2_3 == null){
+
+                    if(bidResponseEntity2_3 == null)
+                    {
                         logger.info("ExchangeJob: bidResponseEntity for adv {}",key);
-                        if(request.isRequestForSystemDebugging()){
+
+                        if(request.isRequestForSystemDebugging())
+                        {
                             request.addDebugMessageForTestRequest("ExchangeJob: bidResponseEntity for adv " + key);
                         }
-                    }else {
+
+                        /**Now if earlier LOWBID set for a DSP assuming response received was correct.
+                         * However here if response fetched is null then mark it as EMPTY*/
+                        createExchangeThrift.updateDSPEmptyResponse(key);
+                    }
+                    else if(
+                            null != bidResponseEntity2_3                     &&
+                            null != bidResponseEntity2_3.getNoBidReason()    &&
+                            bidResponseEntity2_3.getNoBidReason().intValue() ==
+                            ApplicationGeneralUtils.DSP_NO_BID_RESPONSE_ERROR_CODE_KRITTER.intValue()
+                           )
+                    {
+                        createExchangeThrift.updateDSPResponseError(key);
+                    }
+                    else
+                    {
                         advBidResponseMap2_3.put(key, bidResponseEntity2_3);
                     }
                 }
@@ -583,6 +608,10 @@ public class ExchangeJob implements Job
                         {
                             request.addDebugMessageForTestRequest("ExchangeJob: bidResponseEntity for adv " + key);
                         }
+
+                        /**Now if earlier LOWBID set for a DSP assuming response received was correct.
+                         * However here if response fetched is null then mark it as EMPTY*/
+                        createExchangeThrift.updateDSPEmptyResponse(key);
                     }
                     else
                     {

@@ -31,6 +31,7 @@ public class ConvertBidRequestDevice {
         {
             BidRequestGeoDTO bidRequestGeoDTO = new BidRequestGeoDTO();
             bidRequestGeoDTO.setCountry(request.getCountry().getCountryCodeThreeLetter());
+            bidRequestGeoDTO.setLocationType(request.getBidRequestDeviceGeoLocationType());
             device.setGeoObject(bidRequestGeoDTO);
         }
 

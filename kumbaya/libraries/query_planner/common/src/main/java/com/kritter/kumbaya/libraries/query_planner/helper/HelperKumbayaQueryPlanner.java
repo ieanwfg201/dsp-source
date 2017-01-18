@@ -760,6 +760,19 @@ public class HelperKumbayaQueryPlanner {
         addToHeader(HeaderType.DOUBLE, prefix+"_name", HeaderType.DOUBLE, ui_header_name,headerList,ColumnType.DERIVED,true, false);
         prepareOrderedMap(treeMap, order_sequence, prefix+"_name");
     }
+    public static void populateAvgBidFloor(String prefix,boolean ismetricset,
+            String bidfloor_fact_table, String bidfloor_fact_column,
+            String request_fact_table, String request_fact_column,METRICTYPE metrictype,
+            HashMap<String, String> kprojectionMap, HashSet<KFilterFields> kFilterSet,
+            HashSet<String> kgroupbyHashSet,HashMap<String, String> kjoinMap,
+            HashMap<String, String> aliasMap, HashSet<String> korderbyHashSet, List<Header> headerList,String ui_header_name,
+            int order_sequence, TreeMap<Integer, String> treeMap){
+        if(!ismetricset) {return;}
+        populateMap(kprojectionMap, metrictype.toString()+"("+aliasMap.get(bidfloor_fact_table)+"."+bidfloor_fact_column+")/"+
+                metrictype.toString()+"("+aliasMap.get(request_fact_table)+"."+request_fact_column+")", prefix+"_name");
+        addToHeader(HeaderType.DOUBLE, prefix+"_name", HeaderType.DOUBLE, ui_header_name,headerList,ColumnType.DERIVED,true, false);
+        prepareOrderedMap(treeMap, order_sequence, prefix+"_name");
+    }
     public static void populateEIPC(String prefix,boolean ismetricset,
             String revenue_fact_table, String revenue_fact_column,
             String click_fact_table, String click_fact_column,METRICTYPE metrictype,

@@ -26,7 +26,7 @@ public class SignalingNotificationObject<T> {
             return object;
         } catch (InterruptedException ie) {
             return null;
-        }finally {
+        } finally {
             lock.unlock();
         }
     }

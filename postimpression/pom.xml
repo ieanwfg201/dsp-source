@@ -10,6 +10,11 @@
     <name>post_impression_application</name>
     <dependencies>
         <dependency>
+            <groupId>com.kritter.exchange.job</groupId>
+            <artifactId>exchange_job</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.openx.market.ssrtb</groupId>
             <artifactId>pricecrypter</artifactId>
             <version>0.0.4</version>

@@ -228,6 +228,7 @@ public class FiftyOneDegreesHandsetDetector implements HandsetDetectionProvider 
         handsetMasterData.setDeviceJavascriptCompatible(handsetInfo.isAjaxSupportJava());
         handsetMasterData.setOsName(handsetInfo.getDeviceOs());
         handsetMasterData.setModelName(handsetInfo.getModelName());
+        handsetMasterData.setManufacturerName(handsetInfo.getBrandName());
 
         return handsetMasterData;
     }

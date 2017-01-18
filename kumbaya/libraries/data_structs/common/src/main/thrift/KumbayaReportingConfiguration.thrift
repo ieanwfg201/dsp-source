@@ -591,6 +591,15 @@ struct Total_count {
     8: string return_prefix = 'count'
 }
 
+struct Total_bidfloor {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'bidFloor',
+    6: MEMBERTYPE member_type = MEMBERTYPE.METRIC,
+    7: string uiname = 'TOTAL BidFloor',
+    8: string return_prefix = 'total_bidfloor'
+}
+
+
 struct KumbayaReportingConfiguration{
     1: SiteId siteId = {'fact_table':TABLE.first_level, 'fact_column':'siteId', 'dim_table':'site', 'dim_column':'id', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'SITE NAME','return_prefix':'site','dim_guid':'guid'},
     2: DeviceId deviceId = {'fact_table':TABLE.first_level, 'fact_column':'deviceId', 'dim_table':'handset_detection_data', 'dim_column':'internal_id', 'dim_column_name':'marketing_name','member_type':MEMBERTYPE.DIMENSION, 'uiname':'Marketing Name','return_prefix':'device'},
@@ -653,7 +662,9 @@ struct KumbayaReportingConfiguration{
     59: Total_Request_To_Dsp total_request_to_dsp = {'fact_table' :TABLE.first_level, 'fact_column' : 'total_impression', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'Total Request To Dsp','return_prefix':'total_request_to_dsp'},
     60: PostimpEvent postimpevent = {'fact_table' :TABLE.first_level, 'fact_column' : 'event', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'PostimpEvent','return_prefix':'postimpevent'},
     61: Total_count total_count = {'fact_table' :TABLE.first_level, 'fact_column' : 'count', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL Count','return_prefix':'count'},
+    62: Total_bidfloor total_bidfloor = {'fact_table' :TABLE.first_level, 'fact_column' : 'bidFloor', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL BidFloor','return_prefix':'total_bidfloor'},
 }
+
 
 
 
