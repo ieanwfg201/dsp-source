@@ -52,6 +52,8 @@ public class ApplicationGeneralUtils
     public static final Double DUMMY_AD_HARD_BID = 0.000000000000001;
     public static final Double DUMMY_AD_ADVERTISER_BID = 0.000000000000001;
 
+    public static final Integer DSP_NO_BID_RESPONSE_ERROR_CODE_KRITTER = -997;
+
     /**********************Conversion event id utils size declarations ***************************************/
     @Getter
     private static ConversionEventIdUtils conversionEventIdUtils;

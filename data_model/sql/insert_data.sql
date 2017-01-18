@@ -830,6 +830,7 @@ update creative_container set creative_attr = replace(creative_attr,',17,',',91,
 update site set creative_attr_inc_exc = replace(creative_attr_inc_exc,'[17,','[91,');
 update site set creative_attr_inc_exc = replace(creative_attr_inc_exc,',17]',',91]');
 update site set creative_attr_inc_exc = replace(creative_attr_inc_exc,',17,',',91,');
+update site set creative_attr_inc_exc = replace(creative_attr_inc_exc,'[17]','[91]');
 -- Mnaually verify all 17 has been replaced by 91
 
 insert into formats_attributes_mapping(creative_formats_id,creative_attributes_id,last_modified,modified_by) values(2,91,now(),1);

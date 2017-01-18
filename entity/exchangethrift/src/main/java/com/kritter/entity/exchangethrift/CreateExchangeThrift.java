@@ -174,6 +174,16 @@ struct DspInfo
 
 		return this;
 	}
+	public CreateExchangeThrift updateDSPResponseError(String advertiserGuid){
+
+		DspInfo dspInfo = this.dsfInfoMap.get(advertiserGuid);
+		if(null == dspInfo)
+			return this;
+
+		dspInfo.setNofill(DspNoFill.RESPERROR);
+
+		return this;
+	}
 	public CreateExchangeThrift updateDSPEmptyResponse(String advertiserGuid){
 
 		DspInfo dspInfo = this.dsfInfoMap.get(advertiserGuid);

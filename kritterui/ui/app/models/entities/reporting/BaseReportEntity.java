@@ -281,6 +281,14 @@ public class BaseReportEntity {
         reportingEntity.setFr(fr);
     }
 
+    public boolean isAvgBidFloor() {
+		return reportingEntity.isAvgBidFloor();
+	}
+
+	public void setAvgBidFloor(boolean avgBidFloor) {
+		reportingEntity.setAvgBidFloor(avgBidFloor);
+	}
+
     public boolean iseCPC() {
         return reportingEntity.iseCPC();
     }

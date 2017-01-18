@@ -123,6 +123,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                 postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
                 macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
                 trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+                request.setSecure(false);
             }
 
             Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();

@@ -128,7 +128,7 @@ proj_data = FOREACH decoded_data GENERATE AdservingRequestResponse.terminationRe
      AdservingRequestResponse.bidderModelId as bidderModelId, AdservingRequestResponse.nofillReason as nofillReason,
     AdservingRequestResponse.browserId as browserId, AdservingRequestResponse.supply_source_type as supply_source_type,
     AdservingRequestResponse.ext_supply_url as ext_supply_url, AdservingRequestResponse.ext_supply_id as ext_supply_id, AdservingRequestResponse.ext_supply_name as ext_supply_name, AdservingRequestResponse.ext_supply_domain as ext_supply_domain, AdservingRequestResponse.ext_supply_attr_internal_id as ext_supply_attr_internal_id, AdservingRequestResponse.connectionTypeId as connectionTypeId, AdservingRequestResponse.pub_inc_id as pub_inc_id,AdservingRequestResponse.stateId as stateId,
-    AdservingRequestResponse.cityId as cityId, AdservingRequestResponse.adpositionId as adpositionId,AdservingRequestResponse.channelId as channelId;
+    AdservingRequestResponse.cityId as cityId, AdservingRequestResponse.adpositionId as adpositionId,AdservingRequestResponse.channelId as channelId,AdservingRequestResponse.bidFloor as bidFloor;
 
 
 
@@ -152,7 +152,8 @@ flatten_group_data = FOREACH group_data {
             GENERATE FLATTEN(group),
             SUM(filter_data.total_request) as total_request,
             SUM(filter_data.total_impression) as total_impression,
-            SUM(filter_data.bidValue) as total_bidValue;
+            SUM(filter_data.bidValue) as total_bidValue,
+            SUM(filter_data.bidFloor) as bidFloor;
         }
 
 
@@ -166,7 +167,7 @@ group_data_gen = FOREACH flatten_group_data GENERATE '$PROCESS_TIME' as process_
     0.0 as demandCharges, 0.0 as supplyCost, 0.0 as earning , 0 as conversion, 0.0 as bidprice_to_exchange,group::browserId as browserId,0.0 as cpa_goal,
     0.0 as exchangepayout, 0.0 as exchangerevenue, 0.0 as networkpayout, 0.0 as networkrevenue, 0 as billedclicks, 0 as billedcsc,group::supply_source_type as supply_source_type, group::ext_supply_attr_internal_id as ext_supply_attr_internal_id, group::connectionTypeId as connectionTypeId, group::adv_inc_id as adv_inc_id, 
     group::pub_inc_id as pub_inc_id, group::stateId as stateId,group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId,
-    group::marketplace as marketplace;
+    group::marketplace as marketplace,bidFloor as bidFloor;
 
 
 DEFINE PostImpThriftBytesToTupleDef com.twitter.elephantbird.pig.piggybank.ThriftBytesToTuple('com.kritter.postimpression.thrift.struct.PostImpressionRequestResponse');
@@ -305,7 +306,7 @@ post_imp_group_data_gen = FOREACH post_imp_flatten_group_data GENERATE '$PROCESS
     0.0 as exchangepayout, 0.0 as exchangerevenue, 0.0 as networkpayout, 0.0 as networkrevenue, 0 as billedclicks, 0 as billedcsc,
     group::supply_source_type as supply_source_type, group::ext_supply_attr_internal_id as ext_supply_attr_internal_id,
     group::connectionTypeId as connectionTypeId, group::adv_inc_id as adv_inc_id, group::pub_inc_id as pub_inc_id, group::stateId as stateId,
-    group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId,group::marketplace as marketplace;
+    group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId,group::marketplace as marketplace, 0.0 as bidFloor;
 
 
 DEFINE BillingThriftBytesToTupleDef com.twitter.elephantbird.pig.piggybank.ThriftBytesToTuple('com.kritter.postimpression.thrift.struct.Billing');
@@ -397,7 +398,8 @@ billing_group_data_gen = FOREACH billing_flatten_group_data GENERATE '$PROCESS_T
     0 as total_request, 0 as total_impression, 0.0 as total_bidValue, 0 as total_click, 0 as total_win, 0.0 as total_win_bidValue, 
     0 as total_csc, 0 as total_event_type, demandCharges as demandCharges, supplyCost as supplyCost, earning as earning, 0 as conversion, 0.0 as bidprice_to_exchange,
     group::browserId as browserId, 0.0 as cpa_goal, exchangepayout as exchangepayout, exchangerevenue as exchangerevenue, networkpayout as networkpayout, networkrevenue as networkrevenue, billedclicks as billedclicks, billedcsc as billedcsc, group::supply_source_type as supply_source_type, group::ext_supply_attr_internal_id as ext_supply_attr_internal_id, group::connectionTypeId as connectionTypeId, group::adv_inc_id as adv_inc_id, group::pub_inc_id as pub_inc_id,
-    group::stateId as stateId, group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId,group::marketplace as marketplace;
+    group::stateId as stateId, group::cityId as cityId, group::adpositionId as adpositionId, group::channelId as channelId,group::marketplace as marketplace,
+    0.0 as bidFloor;
 
 
 union_adserv_postimp = UNION group_data_gen, post_imp_group_data_gen, billing_group_data_gen;
@@ -454,10 +456,11 @@ first_level_limited_group_gen = FOREACH first_level_limited_group {
         SUM(union_adserv_postimp.networkpayout) as networkpayout,
         SUM(union_adserv_postimp.networkrevenue) as networkrevenue,
         SUM(union_adserv_postimp.billedclicks) as billedclicks,
-        SUM(union_adserv_postimp.billedcsc) as billedcsc;
+        SUM(union_adserv_postimp.billedcsc) as billedcsc,
+        SUM(union_adserv_postimp.bidFloor) as bidFloor;
     }
 
-first_level_limited_group_store = FOREACH first_level_limited_group_gen GENERATE group::process_time, group::time, group::pub_inc_id, group::siteId, group::deviceManufacturerId, group::deviceOsId, group::countryId, group::countryCarrierId, group::adId, group::campaignId, group::adv_inc_id, total_request, total_impression, total_bidValue, total_click, total_win, total_win_bidValue, total_csc, demandCharges, supplyCost, earning, conversion, bidprice_to_exchange, cpa_goal, exchangepayout, exchangerevenue, networkpayout, networkrevenue,billedclicks,billedcsc,group::marketplace;
+first_level_limited_group_store = FOREACH first_level_limited_group_gen GENERATE group::process_time, group::time, group::pub_inc_id, group::siteId, group::deviceManufacturerId, group::deviceOsId, group::countryId, group::countryCarrierId, group::adId, group::campaignId, group::adv_inc_id, total_request, total_impression, total_bidValue, total_click, total_win, total_win_bidValue, total_csc, demandCharges, supplyCost, earning, conversion, bidprice_to_exchange, cpa_goal, exchangepayout, exchangerevenue, networkpayout, networkrevenue,billedclicks,billedcsc,group::marketplace,bidFloor;
 
 STORE first_level_limited_group_store INTO '$OUTPUT/limited_first_level' USING PigStorage('');
 
