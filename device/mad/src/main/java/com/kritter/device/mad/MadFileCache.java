@@ -51,7 +51,10 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
             ChronicleMap<String, HandsetInfo> tempdataMap = ChronicleMapBuilder
                     .of(String.class, HandsetInfo.class)
                     .name("HandsetInfo-Cache-Map")
-                    .averageKeySize(32)
+                    .entries(10000000L)
+                    //.constantKeySizeBySample(32)
+                    //.immutableKeys()
+                    //.averageValueSize(2*1024)
                     .create();
 //            ConcurrentHashMap<String, HandsetInfo> tempdataMap = new ConcurrentHashMap<String, MadFileCache.HandsetInfo>();
             while((str = br.readLine()) != null){
@@ -91,10 +94,12 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
                 }
 
             }
-            dataMap.close();
+            if (dataMap!=null)
+                dataMap.close();
             dataMap=tempdataMap;
             logger.debug("Refreshed MadFileCache");
         } catch (Exception ioe) {
+            logger.error("Refreshed MadFileCache error:{}",ioe);
             throw new RefreshException(ioe);
         }finally{
             if(fr!=null){
