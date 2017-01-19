@@ -60,9 +60,9 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
     	if(userAgentIn != null){
             try{
                 MessageDigest md = MessageDigest.getInstance("MD5");
-                userAgentMD5 = getDigest(userAgentIn,md);
+                userAgentMD5 = getDigest(userAgentIn.toLowerCase(),md);
             }catch(Exception e){
-                logger.error("create md5 value error for user agent {}",userAgentIn,e);
+                logger.error("create md5 value error for user agent {}",userAgentIn.toLowerCase(),e);
             }
     	}
 
@@ -70,10 +70,10 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
 
         HandsetInfo handsetInfo = madFileCache.getHandsetInfo(userAgentMD5);
         if(handsetInfo == null) {
-            logger.debug("null handset info got for user agent {}[md5 value:{}]",userAgentIn,userAgentMD5);
+            logger.debug("null handset info got for user agent {}[md5 value:{}]",userAgentIn.toLowerCase(),userAgentMD5);
             return null;
         } else {
-            logger.debug("Handset info for user agent : {}[md5 value:{}]= {}", userAgentIn,userAgentMD5, handsetInfo);
+            logger.debug("Handset info for user agent : {}[md5 value:{}]= {}", userAgentIn.toLowerCase(),userAgentMD5, handsetInfo);
         }
 
         HandsetManufacturerData handsetManufacturerData = handsetManufacturerCache.query(

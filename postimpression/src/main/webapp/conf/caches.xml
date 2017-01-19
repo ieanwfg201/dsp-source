@@ -81,7 +81,7 @@
             <constructor-arg index="0" value="10800000"/>
             <constructor-arg index="1" value="600000"/>
     </bean>
- 
+
     <bean id="conversion_event_id_storage" class="com.kritter.postimpression.cache.ConversionEventIdStorageCache">
             <constructor-arg index="0" value="3600000"/>
             <constructor-arg index="1" value="600000"/>
@@ -100,7 +100,7 @@
     <bean id="click_event_id_storage" class="com.kritter.postimpression.cache.EventIdStorageCache">
             <constructor-arg index="0" value="10800000"/>
             <constructor-arg index="1" value="600000"/>
-    </bean> 
+    </bean>
 
     <bean id="macro_click_event_id_storage" class="com.kritter.postimpression.cache.EventIdStorageCache">
             <constructor-arg index="0" value="10800000"/>
@@ -335,7 +335,7 @@
          </props>
       </constructor-arg>
    </bean>
-  
+
     <bean id="user_id_cache_props" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -412,4 +412,22 @@
          </props>
       </constructor-arg>
    </bean>
+    <bean id="account_cache" class="com.kritter.common.caches.account.AccountCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="account_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="account_cache"/>
+    </bean>
+    <bean id="account_cache_properties" class="java.util.Properties">
+        <constructor-arg>
+            <props>
+                <prop key="refresh_interval">30000</prop>
+                <prop key="query"><![CDATA[select id as id, guid as guid, last_modified as last_modified, demandtype as demandtype, demandpreference as demandpreference, qps as qps, timeout as timeout,currency as currency,demand_props as demand_props,supply_props as supply_props,third_party_demand_channel_type as third_party_demand_channel_type,open_rtb_ver_required as open_rtb_ver_required from account where last_modified >= '$last_modified']]></prop>
+            </props>
+        </constructor-arg>
+    </bean>
+
 </beans>

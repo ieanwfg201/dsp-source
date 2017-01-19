@@ -5,7 +5,6 @@ import com.kritter.adserving.request.utils.EnricherUtils;
 import com.kritter.bidreqres.entity.cloudcross4_4_4.*;
 import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestGeoDTO;
-import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.reader.IBidRequestReader;
 import com.kritter.common.caches.mma_cache.MMACache;
 import com.kritter.common.caches.mma_cache.entity.MMACacheEntity;
@@ -217,18 +216,6 @@ public class CloudCrossRequestEnricher4_4_4 implements RTBExchangeRequestReader 
                         externalUserIds.add(new ExternalUserId(ExternalUserIdType.DEVICE_ID, siteIncId, uuid));
                         break;
                 }
-            }
-
-
-            /******************************************* ip extraction and  connection type detection ends***************/
-
-            BidRequestImpressionDTO[] impressionArray = cloudCrossBidRequestParentNodeDTO.getBidRequestImpressionArray();
-            if (impressionArray != null && impressionArray.length > 0) {
-                for (int i = 0; i < impressionArray.length; i++) {
-                    Double bidFloorPrice = impressionArray[i].getBidFloorPrice();
-                    impressionArray[i].setBidFloorPrice(bidFloorPrice == null ? 0 : bidFloorPrice.doubleValue() / 100);
-                }
-
             }
 
             /************************** Set lat-long if available in the request **********************************/
