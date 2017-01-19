@@ -6,7 +6,8 @@ import java.util.Map;
 public enum TargetingProfileAPIEnum
 {
             list_active_targeting_profile_by_account(0,"list_active_targeting_profile_by_account"),
-            get_targeting_profile(2,"get_targeting_profile");
+            get_targeting_profile(2,"get_targeting_profile"),
+            get_targeting_profile_by_id(3,"get_targeting_profile_by_id");
 
             private int code;
             private String name;

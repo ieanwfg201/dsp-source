@@ -4,11 +4,11 @@ import com.kritter.constants.BEvent;
 import com.kritter.constants.BEventType;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.utils.PostImpressionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -26,7 +26,7 @@ public class BillableEventUrlReader implements PostImpressionEventUrlReader
                                       PostImpressionUtils postImpressionUtils
                                      )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = name;
         this.postImpressionUtils = postImpressionUtils;
     }

@@ -21,12 +21,12 @@
                  @components.formElements.selectlist2(reportEntityForm("date_as_dimension"), 
                                     "Show Time Distribution", services.MetadataAPI.noYesOptions(), '_classes -> "small")                     
 		       </fieldset>
-		       <fieldset>
+		       <!-- fieldset>
 		         	@components.formElements.multiselectlist3(reportEntityForm("publishers"),'_label->"Publishers")   
 			          <span ng-show="sites_msmodel.visible">     
 			          	@components.formElements.multiselectlist3(reportEntityForm("sites"),'_label->"Sites")
 			          </span>
-		       </fieldset>
+		       </fieldset -->
 		       <fieldset>
 		           @components.formElements.multiselectlist3(reportEntityForm("advid"),'_label->"Advertisers")
 			          <span ng-show="campaigns_msmodel.visible">
@@ -44,8 +44,7 @@
 		        <fieldset>
 		            @components.formElements.checkBoxWithIdWithChange(reportEntityForm("selectallmetric"),'_label->"Select All", '_ngChange ->"togglechecks()")
 		        	<legend>Direct Metrics</legend> 
-                      @components.formElements.checkBoxWithId(reportEntityForm("total_request"),'_label->"Total Request")
-			          @components.formElements.checkBoxWithId(reportEntityForm("total_impression"),'_label->"Total Impressions")
+                      @components.formElements.checkBoxWithId(reportEntityForm("total_request_to_dsp"),'_label->"Total Request To Dsp")
 			          @components.formElements.checkBoxWithId(reportEntityForm("total_floor"),'_label->"Total Floor")
 			          @components.formElements.checkBoxWithId(reportEntityForm("total_bidValue"),'_label->"Total Bid Amount")
                       @components.formElements.checkBoxWithId(reportEntityForm("total_win_bidValue"),'_label->"Total Win Amount") 
@@ -53,7 +52,7 @@
 		       
 		       <fieldset> 
                    <legend>Others</legend>
-					  @components.formElements.multiselectlist3(reportEntityForm("reqState"),'_label->"ReqState") 
+					  <!-- @components.formElements.multiselectlist3(reportEntityForm("reqState"),'_label->"ReqState") --> 
 					  @components.formElements.multiselectlist3(reportEntityForm("dspNofill"),'_label->"DspNoFill") 
                       @components.formElements.selectlist2(reportEntityForm("roundoffmetric"), 
                                     "Round Off ", services.MetadataAPI.noYesOptions())    

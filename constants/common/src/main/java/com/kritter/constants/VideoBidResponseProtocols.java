@@ -11,7 +11,12 @@ public enum VideoBidResponseProtocols {
     VAST_3_0(3,"VAST 3.0"),
     //VAST_1_0_WRAPPER(4,"VAST 1.0 Wrapper"),
     VAST_2_0_WRAPPER(5,"VAST 2.0 Wrapper"),
-    VAST_3_0_WRAPPER(6,"VAST 3.0 Wrapper");;
+    VAST_3_0_WRAPPER(6,"VAST 3.0 Wrapper"),
+    //VAST_4_0(7,"VAST 4.0"),
+    //VAST_4_0_Wrapper(8,"VAST 4.0 Wrapper"),
+    //DAAST_1_0(9,"DAAST 1.0"),
+    //DAAST_1_0_Wrapper(10,"DAAST 1.0 Wrapper")
+    ;
     
     private int code;
     private String name;

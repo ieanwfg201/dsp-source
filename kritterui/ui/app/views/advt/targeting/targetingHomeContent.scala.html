@@ -1,4 +1,9 @@
-@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String, channel_required:String,lat_lon_file:String,deviceid_targeting:String)
+@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String, 
+channel_required:String,lat_lon_file:String,deviceid_targeting:String,
+audience_targeting:String,audience_gender_targeting:String,audience_age_range_targeting:String,
+	audience_cat_targeting:String,audience_cattier1_targeting:String,audience_cattier2_targeting:String,
+	audience_cattier3_targeting:String,audience_cattier4_targeting:String,audience_cattier5_targeting:String)
+	
 @components.fielddisplays.textdisplay("TP-Name", tp.getName()) 
 @components.fielddisplays.textdisplay("TP-Guid", tp.getGuid())
 @components.fielddisplays.textdisplay("TP-Status", tp.getStatusIdName())
@@ -44,11 +49,40 @@
 @if("true" == retargeting_flow_enabled){
     @components.fielddisplays.listdisplay("TP-RetargetingSegment", tp.getRetargetingSegment())
 }
+
 @if("true" == deviceid_targeting){
 @if("" != tp.getDeviceidfile()){
 	@components.fielddisplays.textdisplay("TP-DeviceIdfile Inc/Exc", tp.deviceIdIncExc())
     @components.fielddisplays.htmldisplay("TP-Deviceidfile") { <a href="@tp.getDeviceidfile()">download</a> }
 }
+}
+@if("true" == audience_targeting){
+	@if("true" == audience_gender_targeting){
+			@components.fielddisplays.textdisplay("TP-Aud-Gender", tp.getAudGenderInc())
+			@components.fielddisplays.listdisplay("TP-Aud-Gender", tp.getAudGenderList())
+	}
+	@if("true" == audience_age_range_targeting){
+			@components.fielddisplays.textdisplay("TP-Aud-AgeRange", tp.getAudAgeRangeInc())
+			@components.fielddisplays.listdisplay("TP-Aud-AgeRange", tp.getAgeRangeList())
+	}
+	@if("true" == audience_cat_targeting){
+			@components.fielddisplays.textdisplay("TP-Aud-Cat", tp.getAudCatInc())
+		@if("true" == audience_cattier1_targeting){
+			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier1", tp.getAgeCatTierList(1))
+		}
+		@if("true" == audience_cattier2_targeting){
+			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier2", tp.getAgeCatTierList(2))
+		}
+		@if("true" == audience_cattier3_targeting){
+			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier3", tp.getAgeCatTierList(3))
+		}
+		@if("true" == audience_cattier4_targeting){
+			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier4", tp.getAgeCatTierList(4))
+		}
+		@if("true" == audience_cattier5_targeting){
+			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier5", tp.getAgeCatTierList(5))
+		}
+	}
 }
 @components.fielddisplays.listdisplay("TP-PMP-Exchange", tp.getPmpExchangeValues())
 @components.fielddisplays.textdisplay("TP-PMP-DealIds", tp.getPmpDeal())

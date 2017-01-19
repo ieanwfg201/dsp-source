@@ -3,8 +3,8 @@ package com.kritter.common.caches.thrift_logging.cache;
 import com.kritter.abstraction.cache.interfaces.ICache;
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import lombok.ToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.concurrent.*;
 
@@ -24,8 +24,8 @@ public class ThriftLoggingCache implements ICache {
                               int threadCount)
             throws InitializationException {
         this.name = name;
-        this.applicationLogger = LoggerFactory.getLogger(loggerName);
-        this.thriftLogger = LoggerFactory.getLogger(thriftLoggerName);
+        this.applicationLogger = LogManager.getLogger(loggerName);
+        this.thriftLogger = LogManager.getLogger(thriftLoggerName);
         this.executorService = Executors.newFixedThreadPool(threadCount);
     }
 

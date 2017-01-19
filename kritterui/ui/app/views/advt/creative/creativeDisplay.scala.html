@@ -2,6 +2,7 @@
  
  <div ng-controller="creativeDisplayController">
 @components.fielddisplays.textdisplay("Creative Name", creativeDisplay.getName())
+@components.fielddisplays.textdisplay("Creative Guid", creativeDisplay.getGuid())
 @components.fielddisplays.textdisplay("Creative Status", creativeDisplay.getStatus())
 @components.fielddisplays.textdisplay("Creative Format", creativeDisplay.getFormat())
 
@@ -21,9 +22,10 @@
         @components.fielddisplays.textdisplay("External Creative URL", creativeDisplay.getExtcreativeurl())
         <code ng-non-bindable>  
 		@components.fielddisplays.textdisplay("Creative Text", creativeDisplay.getHtmlDisplay())
-		@components.fielddisplays.listdisplay("Ad Tag Macro", creativeDisplay.getCreativemacro())
+		@components.fielddisplays.listdisplay("Creative Tag Macro", creativeDisplay.getCreativemacro())
         </code>
-		@components.fielddisplays.textdisplay("Ad Tag Quote", creativeDisplay.getCreativemacroquote())
+		@components.fielddisplays.textdisplay("Creative Tag Quote", creativeDisplay.getCreativemacroquote())
+		@components.fielddisplays.listdisplay("Creative Slots", creativeDisplay.getSlotinfo())
 }
 
 @if(creativeDisplay.isNativeFormat()){

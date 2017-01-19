@@ -57,6 +57,7 @@ import com.kritter.constants.NativeIconAPIEnum;
 import com.kritter.constants.NativeScreenshotAPIEnum;
 import com.kritter.constants.PageConstants;
 import com.kritter.constants.PayoutThresholdListEnum;
+import com.kritter.constants.Protocol;
 import com.kritter.constants.TargetingProfileAPIEnum;
 import com.kritter.constants.VideoInfoAPIEnum;
 import com.kritter.entity.native_props.demand.NativeIcon;
@@ -561,6 +562,13 @@ public class DataAPI {
 			creativeOptions.add(new SelectOption(cc.getLabel(),cc.getId()+":"+ cc.getGuid()));
 		} 
 		return creativeOptions;
+	}
+	public static List<SelectOption> getProtocol(){
+		List<SelectOption> opt = new ArrayList<SelectOption>();
+		for (Protocol cc : Protocol.values()) { 
+			opt.add(new SelectOption(cc.getName(),cc.getCode()+""));
+		} 
+		return opt;
 	}
 
 	public static List<Creative_banner> getCreativeBannerList(String ids){

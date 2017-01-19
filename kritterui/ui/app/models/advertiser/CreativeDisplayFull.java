@@ -194,6 +194,10 @@ public class CreativeDisplayFull extends CreativeDisplay{
         }
         return "";
     }
+    public List<String> getSlotinfo() {
+        return MetadataAPI.getSlotinfo(cc.getSlot_info());
+    }
+
 /**
                         @components.formElements.selectlist2(creativeForm("companiontype"), "",services.MetadataAPI.companiontype() )
 

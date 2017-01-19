@@ -2,11 +2,11 @@ package com.kritter.postimpression.enricher_fraud.checker;
 
 import com.kritter.core.workflow.Context;
 import com.kritter.postimpression.cache.EventIdStorageCache;
-import com.kritter.postimpression.entity.Request;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
+import com.kritter.entity.postimpression.entity.Request;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class detects whether the received post impression event has an expired
@@ -30,7 +30,7 @@ public class ImpressionIdEnricherAndFraudCheck implements OnlineEnricherAndFraud
                                              EventIdStorageCache eventIdStorageCache)
     {
 		this.signature = signature;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
 		this.timeInMillisForImpressionExpiry = timeInMillisForImpressionExpiry;
         this.isUUIDBasedOnMacAddress = isUUIDBasedOnMacAddress;
@@ -74,7 +74,7 @@ public class ImpressionIdEnricherAndFraudCheck implements OnlineEnricherAndFraud
         /********************************Check for duplication**********************************************/
         //check if impression id is duplicate or not.
         if(this.eventIdStorageCache.doesEventIdExistInStorage(request.getImpressionId()))
-            return OnlineFraudUtils.ONLINE_FRAUD_REASON.EVENT_DUPLICATE;
+            return ONLINE_FRAUD_REASON.EVENT_DUPLICATE;
         else
             this.eventIdStorageCache.addEventIdToStorage(request.getImpressionId());
         /***************************************************************************************************/

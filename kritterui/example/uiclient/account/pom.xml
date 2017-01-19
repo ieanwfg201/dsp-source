@@ -10,6 +10,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritterui_example_uiclient_account</name>
   <dependencies>
     <dependency>
+        <groupId>com.kritter.kritterui.example.uiclient.common</groupId>
+        <artifactId>kritter_kritterui_example_uiclient_common</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    <dependency>
         <groupId>org.mindrot</groupId>
         <artifactId>jbcrypt</artifactId>
         <version>0.3m</version>

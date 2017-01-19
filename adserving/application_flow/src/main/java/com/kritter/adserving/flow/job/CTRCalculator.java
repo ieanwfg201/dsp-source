@@ -13,8 +13,8 @@ import com.kritter.core.workflow.Job;
 import com.kritter.device.common.entity.HandsetMasterData;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.util.Set;
@@ -51,7 +51,7 @@ public class CTRCalculator implements Job
                          double ctrCeiling
                         )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.jobName = jobName;
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;

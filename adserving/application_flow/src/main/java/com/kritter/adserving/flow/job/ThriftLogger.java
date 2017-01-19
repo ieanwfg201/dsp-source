@@ -1,6 +1,7 @@
 package com.kritter.adserving.flow.job;
 
 import com.kritter.common.caches.ad_stats.cache.AdStatsCache;
+import com.kritter.common.caches.thrift_logging.cache.ThriftLoggingCache;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
@@ -23,8 +24,8 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -38,7 +39,6 @@ public class ThriftLogger implements Job {
 
     private String name;
     private Logger applicationLogger;
-    private Logger thriftLogger;
     private String requestObjectKey;
     private String responseObjectKey;
     private AdEntityCache adEntityCache;
@@ -51,10 +51,10 @@ public class ThriftLogger implements Job {
     private static final String BID_REQ_DELIM_FOR_NOFILL = "|";
     private AdStatsCache adStatsCache;
     private String adNoFillReasonMapKey;
+    ThriftLoggingCache thriftLoggingCache;
 
     public ThriftLogger(String name,
                         String applicationLoggerName,
-                        String thriftLoggerName,
                         String requestObjectKey,
                         String responseObjectKey,
                         AdEntityCache adEntityCache,
@@ -65,11 +65,11 @@ public class ThriftLogger implements Job {
                         String bidRequestLoggerName,
                         ReqLoggingCache reqLoggingCache,
                         AdStatsCache adStatsCache,
-                        String adNoFillReasonMapKey)
+                        String adNoFillReasonMapKey,
+                        ThriftLoggingCache thriftLoggingCache)
     {
         this.name = name;
-        this.applicationLogger = LoggerFactory.getLogger(applicationLoggerName);
-        this.thriftLogger = LoggerFactory.getLogger(thriftLoggerName);
+        this.applicationLogger = LogManager.getLogger(applicationLoggerName);
         this.requestObjectKey = requestObjectKey;
         this.responseObjectKey = responseObjectKey;
         this.adEntityCache = adEntityCache;
@@ -77,10 +77,11 @@ public class ThriftLogger implements Job {
         this.userAgentHeaderName = userAgentHeaderName;
         this.xForwardedForHeaderName = xForwardedForHeaderName;
         this.remoteAddressHeaderName = remoteAddressHeaderName;
-        this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
+        this.bidRequestLogger = LogManager.getLogger(bidRequestLoggerName);
         this.reqLoggingCache = reqLoggingCache;
         this.adStatsCache = adStatsCache;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
+        this.thriftLoggingCache = thriftLoggingCache;
     }
 
     @Override
@@ -508,6 +509,9 @@ public class ThriftLogger implements Job {
             }
             /********************************************************************************************************/
 
+            /*******************************Persist deal ids recevied in the bid request.****************************/
+            adservingRequestResponse.setDeal_ids(request.fetchDealIdWithFloorPriceSetFromBidRequest());
+            /********************************************************************************************************/
             try
             {
                 TSerializer thriftSerializer = new TSerializer();
@@ -526,7 +530,7 @@ public class ThriftLogger implements Job {
         }
 
         this.applicationLogger.info("Done prepairing thrift object, now writing it to thrift data file");
-        this.thriftLogger.info(new String(serializedImpressionRequest));
+        this.thriftLoggingCache.submitLogLineForLogging(new String(serializedImpressionRequest));
     }
 
     private User fetchUserFromRequest(Request request)

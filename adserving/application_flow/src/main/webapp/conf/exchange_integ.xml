@@ -5,6 +5,35 @@
 
 
 
+    <!-- Inmobi2.3 exchange beans -->
+    <bean id="inmobi23_bid_request_reader" class="com.kritter.bidreqres.reader.inmobi2_3.BidRequestReaderInmobi">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1" value="inmobi23"/>
+    </bean>
+
+    <bean id="inmobi23_request_enricher" class="com.kritter.adexchange.inmobi2_3.enricher.InmobiRequestEnricher">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1"><ref bean="inmobi23_bid_request_reader"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="site_cache"/></constructor-arg>
+        <constructor-arg index="3"><ref bean="handset_detector"/></constructor-arg>
+        <constructor-arg index="4"><ref bean="iab_categories_cache"/></constructor-arg>
+        <constructor-arg index="5"><ref bean="mnc_mcc_data_cache"/></constructor-arg>
+        <constructor-arg index="6"><ref bean="country_detector"/></constructor-arg>
+        <constructor-arg index="7"><ref bean="isp_detector"/></constructor-arg>
+        <constructor-arg index="8"><null /></constructor-arg>
+    </bean>
+
+    <bean id="inmobi23_response_creator" class="com.kritter.bidreqres.response_creator.inmobi2_3.BidRequestResponseCreatorInmobi">
+        <constructor-arg index="0" value="adserving.application"/>
+        <constructor-arg index="1"><ref bean="server_config"/></constructor-arg>
+        <constructor-arg index="2" value="CH-UMMA-TECH-IES-KR-I-TTER"/>
+        <constructor-arg index="3" value="1"/>
+        <constructor-arg index="4"><value><![CDATA[&aid=${AUCTION_ID}&abid=${AUCTION_BID_ID}&aimpid=${AUCTION_IMP_ID}&p=${AUCTION_PRICE}&bp=${BIDDER_PRICE}]]></value></constructor-arg>
+        <constructor-arg index="5" value="${BIDDER_PRICE}"/>
+        <constructor-arg index="6"><ref bean="ad_entity_cache"/></constructor-arg>
+    </bean>
+    <!-- Inmobi2.3 exchange beans -->
+
     <!-- Youku exchange beans begin -->
     <bean id="youku_bidrequest_reader" class="com.kritter.bidreqres.reader.BidRequestReaderYouku">
         <constructor-arg index="0" value="adserving.application"/>

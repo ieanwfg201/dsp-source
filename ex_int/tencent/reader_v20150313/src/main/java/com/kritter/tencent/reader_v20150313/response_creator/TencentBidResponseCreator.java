@@ -25,10 +25,8 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ServerConfig;
 
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -44,7 +42,6 @@ import java.util.*;
 public class TencentBidResponseCreator implements IBidResponseCreator
 {
     private Logger logger;
-    private ObjectMapper objectMapper;
     private static final Random randomPicker = new Random();
     private String secretKey;
     private int urlVersion;
@@ -56,9 +53,7 @@ public class TencentBidResponseCreator implements IBidResponseCreator
                                  AdEntityCache adEntityCache
                                  )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
-        this.objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+        this.logger = LogManager.getLogger(loggerName);
         this.secretKey = secretKey;
         this.urlVersion = urlVersion;
     }

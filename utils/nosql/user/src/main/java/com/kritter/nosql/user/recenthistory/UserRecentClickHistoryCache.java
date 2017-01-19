@@ -14,8 +14,8 @@ import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -57,7 +57,7 @@ public class UserRecentClickHistoryCache implements NoSqlNamespaceTable, ICache,
                                        Properties properties
                                        ) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.maxSizeClickList = maxSizeClickList;
 
         this.noSqlNamespaceOperationsInstance = noSqlNamespaceOperations;

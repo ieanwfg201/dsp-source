@@ -1,0 +1,24 @@
+ .../main/java/com/kritter/adserving/shortlisting/core/CreativeAndFloorMatchingRTBExchangeTwoDotThree.java |    2 +-
+ .../src/main/java/com/kritter/adserving/shortlisting/core/twodotthreehelper/ValidateCreativeSize.java     |   72 ++-
+ adserving/application_flow/src/main/webapp/conf/caches.xml                                                | 1519 +++++++++++++++++++++++-----------------------------
+ adserving/application_flow/src/main/webapp/conf/exchange_integ.xml                                        |    5 +-
+ .../src/main/java/com/kritter/adexchange/cloudcross/enricher/CloudCrossRequestEnricher4_4_4.java          |   17 +-
+ .../src/main/java/com/kritter/common/caches/banner_upload_cache/BannerUploadCache.java                    |    1 +
+ .../src/main/java/com/kritter/common/caches/banner_upload_cache/entity/BannerUploadCacheEntity.java       |    6 +-
+ .../src/main/java/com/kritter/bidreqres/entity/cloudcross4_4_4/CloudCrossBidRequestParentNodeDTO.java     |   11 +
+ .../4.4.4/src/main/java/com/kritter/bidreqres/entity/cloudcross4_4_4/CloudCrossBidRequestSiteDTO.java     |   43 ++
+ ex_int/valuemaker/reader_v20160817/pom.xml                                                                |    9 +-
+ .../src/main/java/com/kritter/valuemaker/reader_v20160817/response_creator/VamBidResponseCreator.java     |   22 +-
+ .../cloudcross/src/main/java/com/kritter/naterial_upload/cloudcross/advertiser/CloudCrossMUAdvInfo.java   |   27 +-
+ .../src/main/java/com/kritter/naterial_upload/cloudcross/advertiser/CloudCrossMUAdvInfoAudit.java         |   56 +-
+ .../cloudcross/src/main/java/com/kritter/naterial_upload/cloudcross/banner/CloudCrossBannerQuery.java     |    8 +-
+ .../cloudcross/src/main/java/com/kritter/naterial_upload/cloudcross/banner/CloudCrossMUBanner.java        |   85 +--
+ .../cloudcross/src/main/java/com/kritter/naterial_upload/cloudcross/banner/CloudCrossMUBannerAudit.java   |    4 +-
+ material_upload/valuemaker/src/main/java/com/kritter/naterial_upload/valuemaker/banner/VamMUBanner.java   |   33 ++
+ material_upload/valuemaker/src/main/java/com/kritter/naterial_upload/valuemaker/video/VamMUVideo.java     |   40 +-
+ postimpression/src/main/java/com/kritter/postimpression/utils/CloudCrossExchangeUtils.java                |   13 +-
+ postimpression/src/main/java/com/kritter/postimpression/utils/ValuemakerExchangeUtils.java                |   25 +
+ postimpression/src/main/webapp/conf/common.xml                                                            |    4 +-
+ 21 files changed, 966 insertions(+), 1036 deletions(-)
+ create mode 100644 postimpression/src/main/java/com/kritter/postimpression/utils/ValuemakerExchangeUtils.java
+

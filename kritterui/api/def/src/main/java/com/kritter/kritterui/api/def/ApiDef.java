@@ -32,6 +32,8 @@ import com.kritter.api.entity.adpositionget.AdpositionGetList;
 import com.kritter.api.entity.adpositionget.AdpositionGetListEntity;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadatList;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadataListEntity;
+import com.kritter.api.entity.audience.AudienceDefinitionList;
+import com.kritter.api.entity.audience.AudienceMetadataList;
 import com.kritter.api.entity.campaign.Campaign;
 import com.kritter.api.entity.campaign.CampaignList;
 import com.kritter.api.entity.campaign.CampaignListEntity;
@@ -83,7 +85,6 @@ import com.kritter.api.entity.ssp.SSPEntity;
 import com.kritter.api.entity.targeting_profile.TargetingProfileList;
 import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
-import com.kritter.api.entity.tracking_event.TrackingEvent;
 import com.kritter.api.entity.video_info.VideoInfoList;
 import com.kritter.api.entity.video_info.VideoInfoListEntity;
 import com.kritter.constants.MetadataType;
@@ -92,6 +93,8 @@ import com.kritter.entity.ad_stats.AdStats;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
 import com.kritter.entity.algomodel.AlgoModelEntity;
+import com.kritter.entity.audience_definition.AudienceDefinitionInput;
+import com.kritter.entity.audience_metadata.AudienceMetadataInput;
 import com.kritter.entity.native_props.demand.NativeIcon;
 import com.kritter.entity.native_props.demand.NativeScreenshot;
 import com.kritter.entity.payout_threshold.CampaignPayoutThreshold;
@@ -110,6 +113,8 @@ import com.kritter.kritterui.api.adxbasedexchanges_metadata.MaterialAdvInfoCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.MaterialUploadBannerCrud;
 import com.kritter.kritterui.api.adxbasedexchanges_metadata.MaterialUploadVideoCrud;
 import com.kritter.kritterui.api.algo_models.AlgoModelCrud;
+import com.kritter.kritterui.api.audience_definition.AudienceDefinitionCrud;
+import com.kritter.kritterui.api.audience_metadata.AudienceMetadataCrud;
 import com.kritter.kritterui.api.campaign.CampaignCrud;
 import com.kritter.kritterui.api.campaign_budget.CampaignBudgetCrud;
 import com.kritter.kritterui.api.creative_banner.CreativeBannerCrud;
@@ -133,7 +138,6 @@ import com.kritter.kritterui.api.saved_query.SavedQueryCrud;
 import com.kritter.kritterui.api.site.SiteCrud;
 import com.kritter.kritterui.api.ssp.SSPCrud;
 import com.kritter.kritterui.api.targeting_profile.TargetingProfileCrud;
-import com.kritter.kritterui.api.tracking_event.TrackingEventCrud;
 import com.kritter.kritterui.api.userreport.UserReportCrud;
 import com.kritter.kritterui.api.video_info.VideoInfoCrud;
 
@@ -405,6 +409,12 @@ public class ApiDef {
     }
     public static Message pause_site(Connection con, Site site){
         return SiteCrud.pause_site(con, site, true);
+    }
+    public static JsonNode list_site_by_url(Connection con, JsonNode jsonNode){
+        return SiteCrud.list_site_by_url(con, jsonNode);
+    }
+    public static SiteList list_site_by_url(Connection con, SiteListEntity sitelistEntity){
+        return SiteCrud.list_site_by_url(con, sitelistEntity);
     }
     /* ReqLogging API's */
     public static JsonNode insert_req_logging(Connection con, JsonNode jsonNode){
@@ -825,11 +835,6 @@ public class ApiDef {
             boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
         return FraudReportCrud.get_data(con, fraudReportEntity, exportAsCsv, absoluteFileName);
     }
-    /*Tracking Event API*/
-    public static JsonNode get_data(Connection con, TrackingEvent trackingEvent, 
-            boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
-        return TrackingEventCrud.get_data(con, trackingEvent, exportAsCsv, absoluteFileName);
-    }
     /*AdStats API*/
     public static JsonNode get_data(Connection con, AdStats adStats, 
             boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
@@ -870,6 +875,10 @@ public class ApiDef {
     }
     public static JsonNode get_pub_dashboard(Connection con, String tz, String guid){
         return DashBoardCrud.get_pub_dashboard(con, tz, guid);
+    }
+    public static JsonNode get_pub_creative_tracking(Connection con, ReportingEntity reportingEntity, 
+            boolean returnWithId, boolean exportAsCsv, String absoluteFileName){
+        return MixedCrud.get_pub_creative_tracking(con, reportingEntity, returnWithId, exportAsCsv, absoluteFileName);
     }
     
     /*REPORTING QUERY/SAVED QUERY APIs*/
@@ -1259,6 +1268,26 @@ public class ApiDef {
     }
     public static QualificationList various_get_qualification(Connection con, QualificationListEntity entity){
         return QualificationCrud.various_get_qualification(con, entity);
+    }
+    /*AUDIENCE METADATA APIS*/
+    public static JsonNode update_audience_metadata(Connection con, JsonNode jsonNode){
+        return AudienceMetadataCrud.update_audience_metadata(con, jsonNode);
+    }    
+    public static Message update_audience_metadata(Connection con, AudienceMetadataInput entity){
+        return AudienceMetadataCrud.update_audience_metadata(con, entity, true);
+    }
+    public static JsonNode various_get_audience_metadata(Connection con, JsonNode jsonNode){
+        return AudienceMetadataCrud.various_get_audience_metadata(con, jsonNode);
+    }
+    public static AudienceMetadataList various_get_audience_metadata(Connection con, AudienceMetadataInput entity){
+        return AudienceMetadataCrud.various_get_audience_metadata(con, entity);
+    }
+    /*AUDIENCE DEFINITION APIS*/
+    public static JsonNode various_get_audience_definition(Connection con, JsonNode jsonNode){
+        return AudienceDefinitionCrud.various_get_audience_definition(con, jsonNode);
+    }
+    public static AudienceDefinitionList various_get_audience_definition(Connection con, AudienceDefinitionInput entity){
+        return AudienceDefinitionCrud.various_get_audience_definition(con, entity);
     }
 
 }

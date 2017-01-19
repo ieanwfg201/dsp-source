@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!-- Don't forget to set system property
+-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+     to make all loggers asynchronous. -->
+
+<!-- Configuration status is debug means print all startup messages to catalina while initiating log4j--> 
+<Configuration status="WARN">
+  <Appenders>
+
+    <!-- Async Loggers will auto-flush in batches, so switch off immediateFlush. -->
+    <RollingFile name="postimpression.application.root.file" fileName="/var/log/kritter/postimpression/postimpression-server-root.log" 
+                 filePattern="/var/log/kritter/postimpression/postimpression-server-root.log.%d{yyyy-MM-dd-HH}" immediateFlush="true" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="postimpression.application.file" fileName="/var/log/kritter/postimpression/postimpression-server-application.log" 
+                 filePattern="/var/log/kritter/postimpression/postimpression-server-application.log.%d{yyyy-MM-dd-HH}" immediateFlush="true" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="cache.logger.file" fileName="/var/log/kritter/postimpression/postimpression-cache.log" 
+                 filePattern="/var/log/kritter/postimpression/postimpression-cache.log.%d{yyyy-MM-dd-HH}" immediateFlush="true" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="workflow.logger.file" fileName="/var/log/kritter/postimpression/postimpression-workflow.log" 
+                 filePattern="/var/log/kritter/postimpression/postimpression-workflow.log.%d{yyyy-MM-dd-HH}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+    <RollingFile name="postimpression.thriftlog.file" fileName="/var/log/kritter/postimpression/data/postimpression-thrift.log" 
+                 filePattern="/var/log/kritter/postimpression/data/postimpression-thrift.log.%d{yyyy-MM-dd-HH-mm}" immediateFlush="false" append="true">
+      <PatternLayout>
+        <!--Pattern><![CDATA[]]></Pattern-->
+      </PatternLayout>
+      <TimeBasedTriggeringPolicy />
+    </RollingFile>
+
+  </Appenders>
+
+  <Loggers>
+
+    <Logger name="postimpression.application" level="DEBUG" additivity="false">
+        <AppenderRef ref="postimpression.application.file"/>
+    </Logger>
+
+    <Logger name="cache.logger" level="DEBUG" additivity="false">
+        <AppenderRef ref="cache.logger.file"/>
+    </Logger>
+
+    <Logger name="workflow.logger" level="DEBUG" additivity="false">
+        <AppenderRef ref="workflow.logger.file"/>
+    </Logger>
+
+    <Logger name="postimpression.thriftlog" level="DEBUG" additivity="false">
+        <AppenderRef ref="postimpression.thriftlog.file"/>
+    </Logger>
+
+    <Logger name="postimpression.root" level="DEBUG" additivity="false">
+        <AppenderRef ref="postimpression.application.root.file"/>
+    </Logger>
+
+    <Root level="DEBUG" includeLocation="false">
+       <AppenderRef ref="postimpression.application.root.file"/>
+    </Root>
+  </Loggers>
+  
+</Configuration>

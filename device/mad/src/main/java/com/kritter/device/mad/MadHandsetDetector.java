@@ -8,13 +8,13 @@ import com.kritter.device.mad.MadFileCache.HandsetInfo;
 import com.kritter.device.common.entity.*;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.security.MessageDigest;
 
 public class MadHandsetDetector implements HandsetDetectionProvider {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter
     private final String name;
 
@@ -60,9 +60,9 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
     	if(userAgentIn != null){
             try{
                 MessageDigest md = MessageDigest.getInstance("MD5");
-                userAgentMD5 = getDigest(userAgentIn,md);
+                userAgentMD5 = getDigest(userAgentIn.toLowerCase(),md);
             }catch(Exception e){
-                logger.error("create md5 value error for user agent {}",userAgentIn,e);
+                logger.error("create md5 value error for user agent {}",userAgentIn.toLowerCase(),e);
             }
     	}
 
@@ -70,10 +70,10 @@ public class MadHandsetDetector implements HandsetDetectionProvider {
 
         HandsetInfo handsetInfo = madFileCache.getHandsetInfo(userAgentMD5);
         if(handsetInfo == null) {
-            logger.debug("null handset info got for user agent {}[md5 value:{}]",userAgentIn,userAgentMD5);
+            logger.debug("null handset info got for user agent {}[md5 value:{}]",userAgentIn.toLowerCase(),userAgentMD5);
             return null;
         } else {
-            logger.debug("Handset info for user agent : {}[md5 value:{}]= {}", userAgentIn,userAgentMD5, handsetInfo);
+            logger.debug("Handset info for user agent : {}[md5 value:{}]= {}", userAgentIn.toLowerCase(),userAgentMD5, handsetInfo);
         }
 
         HandsetManufacturerData handsetManufacturerData = handsetManufacturerCache.query(

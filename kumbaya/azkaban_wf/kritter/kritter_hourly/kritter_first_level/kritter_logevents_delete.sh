@@ -28,6 +28,12 @@ tablename=${8}
 hours=${9}
 trackingeventtablename=${10}
 trackingeventhours=${11}
+fraudtablename=fraud_hourly
+fraudhours=36
+
+echo 'java  -cp "$CLASSPATH" $TRACKINGMAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${fraudtablename} ${fraudhours}'
+exec java  -cp "$CLASSPATH" $TRACKINGMAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${fraudtablename} ${fraudhours}
+
 
 echo 'java  -cp "$CLASSPATH" $TRACKINGMAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${trackingeventtablename} ${trackingeventhours}'
 exec java  -cp "$CLASSPATH" $TRACKINGMAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${trackingeventtablename} ${trackingeventhours}

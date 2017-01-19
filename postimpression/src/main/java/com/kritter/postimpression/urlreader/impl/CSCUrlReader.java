@@ -1,12 +1,9 @@
 package com.kritter.postimpression.urlreader.impl;
 
 import com.kritter.core.workflow.Context;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.utils.PostImpressionUtils;
-import com.kritter.utils.common.ApplicationGeneralUtils;
-
-import java.util.Map;
 
 /**
  * This class reads csc url.

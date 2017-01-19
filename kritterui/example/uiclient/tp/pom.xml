@@ -10,24 +10,19 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <name>kritterui_example_uiclient_tp</name>
   <dependencies>
     <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpmime</artifactId>
-        <version>4.5</version>
+        <groupId>org.mindrot</groupId>
+        <artifactId>jbcrypt</artifactId>
+        <version>0.3m</version>
     </dependency>
     <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>2.4</version>
+        <groupId>com.kritter.kritterui.example.uiclient.account</groupId>
+        <artifactId>kritter_kritterui_example_uiclient_account</artifactId>
+        <version>1.0.0</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore</artifactId>
-        <version>4.4.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>4.5</version>
+        <groupId>com.kritter.kritterui.example.uiclient.common</groupId>
+        <artifactId>kritter_kritterui_example_uiclient_common</artifactId>
+        <version>1.0.0</version>
     </dependency>
     <dependency>
         <groupId>com.kritter.kritterui.api.entity</groupId>

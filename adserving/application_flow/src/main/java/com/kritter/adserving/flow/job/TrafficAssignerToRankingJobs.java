@@ -2,8 +2,8 @@ package com.kritter.adserving.flow.job;
 
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.util.Random;
 
 /**
@@ -24,7 +24,7 @@ public class TrafficAssignerToRankingJobs implements Job
                                         String randomProbabilityVariableName
                                        )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.name = jobName;
         this.randomProbabilityVariableName = randomProbabilityVariableName;
     }

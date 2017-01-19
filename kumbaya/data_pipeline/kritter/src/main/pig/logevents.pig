@@ -79,7 +79,7 @@ post_imp_decoded_data = FOREACH post_imp_decoded GENERATE PostImpThriftBytesToTu
 post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE '$PROCESS_TIME' as process_time,
             com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.time * 1000,'yyyy-MM-dd HH:mm:ss', '$tz'),
             com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:mm:ss', '$tz'),
-            PostImpressionRequestResponse.status, PostImpressionRequestResponse.event as event, PostImpressionRequestResponse.campaignId, 	
+            PostImpressionRequestResponse.status, PostImpressionRequestResponse.event as event, PostImpressionRequestResponse.campaignId as campaignId, 	
             PostImpressionRequestResponse.adId, PostImpressionRequestResponse.marketplace_id,
             PostImpressionRequestResponse.exchangeId, PostImpressionRequestResponse.siteId, PostImpressionRequestResponse.ext_supply_attr_internal_id, 
             PostImpressionRequestResponse.inventorySource, PostImpressionRequestResponse.supply_source_type,
@@ -98,8 +98,8 @@ post_imp_proj_data = FOREACH post_imp_decoded_data GENERATE '$PROCESS_TIME' as p
             PostImpressionRequestResponse.auction_bid_id, PostImpressionRequestResponse.auction_id, PostImpressionRequestResponse.auction_imp_id,  
             PostImpressionRequestResponse.countryRegionId, PostImpressionRequestResponse.selectedSiteCategoryId, PostImpressionRequestResponse.urlVersion,  
             PostImpressionRequestResponse.bidderModelId, PostImpressionRequestResponse.slotId, PostImpressionRequestResponse.buyerUid,
-            PostImpressionRequestResponse.connectionTypeId, PostImpressionRequestResponse.referer, PostImpressionRequestResponse.adv_inc_id,
-            PostImpressionRequestResponse.pub_inc_id, PostImpressionRequestResponse.tevent, PostImpressionRequestResponse.teventtype,
+            PostImpressionRequestResponse.connectionTypeId, PostImpressionRequestResponse.referer, PostImpressionRequestResponse.adv_inc_id as adv_inc_id,
+            PostImpressionRequestResponse.pub_inc_id as pub_inc_id, PostImpressionRequestResponse.tevent, PostImpressionRequestResponse.teventtype,
             PostImpressionRequestResponse.deviceType, PostImpressionRequestResponse.bidFloor, PostImpressionRequestResponse.exchangeUserId,
             PostImpressionRequestResponse.kritterUserId, PostImpressionRequestResponse.externalSiteAppId;
 
@@ -109,13 +109,18 @@ STORE post_imp_filter INTO '$OUTPUT/logevents' USING PigStorage('');
 
 post_imp_fraud = FOREACH post_imp_decoded_data GENERATE com.kritter.kumbaya.libraries.pigudf.EpochToDateStr(PostImpressionRequestResponse.eventTime * 1000,'yyyy-MM-dd HH:00:00', '$tz') as time,PostImpressionRequestResponse.status as terminationReason,
     PostImpressionRequestResponse.event as event,PostImpressionRequestResponse.siteId as siteId,
-    PostImpressionRequestResponse.adId as adId,'$PROCESS_TIME' as process_time;
+    PostImpressionRequestResponse.adId as adId,'$PROCESS_TIME' as process_time,PostImpressionRequestResponse.campaignId as campaignId,
+    PostImpressionRequestResponse.adv_inc_id as adv_inc_id, PostImpressionRequestResponse.pub_inc_id as pub_inc_id;
 
-post_imp_fraud_group_data =  GROUP post_imp_fraud BY (process_time,time,siteId,adId,event,terminationReason);
+post_imp_fraud_group_data =  GROUP post_imp_fraud BY (process_time,time,siteId,adId,event,terminationReason,campaignId , adv_inc_id ,pub_inc_id);
 
-post_imp_fraud_group_data_gen = FOREACH post_imp_fraud_group_data GENERATE FLATTEN(group), COUNT(post_imp_fraud);
+post_imp_fraud_group_data_gen = FOREACH post_imp_fraud_group_data GENERATE FLATTEN(group), COUNT(post_imp_fraud) as cnt;
 
-STORE post_imp_fraud_group_data_gen INTO '$OUTPUT/fraud.gz' USING PigStorage('');
+post_imp_fraud_group_data_store = FOREACH post_imp_fraud_group_data_gen GENERATE group::process_time, group::time,
+            group::siteId, group::adId, group::event, group::terminationReason,
+            cnt as cnt, group::campaignId , group::adv_inc_id , group::pub_inc_id;
+
+STORE post_imp_fraud_group_data_store INTO '$OUTPUT/fraud' USING PigStorage('');
 
 tracking_event_data = FOREACH post_imp_decoded_data GENERATE 
     PostImpressionRequestResponse.event as event,

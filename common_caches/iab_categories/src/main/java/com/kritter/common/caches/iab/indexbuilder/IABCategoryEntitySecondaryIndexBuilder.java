@@ -4,8 +4,8 @@ import com.kritter.abstraction.cache.interfaces.ISecondaryIndex;
 import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.common.caches.iab.categories.entity.IABCategoryEntity;
 import com.kritter.common.caches.iab.index.IABIDIndex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class IABCategoryEntitySecondaryIndexBuilder {
 
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
 
     public static ISecondaryIndexWrapper getIndex(Class className, IABCategoryEntity entity)
     {

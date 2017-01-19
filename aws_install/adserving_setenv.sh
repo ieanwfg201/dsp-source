@@ -1,1 +1,1 @@
-export CATALINA_OPTS="$CATALINA_OPTS -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/kritter/heapdump/adserving/ads.heapdump"
+export CATALINA_OPTS="-server -Xms1024m -Xmx8192m $CATALINA_OPTS -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+DisableExplicitGC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/app/kritter/adserving/adserving.heap.dump.bin"

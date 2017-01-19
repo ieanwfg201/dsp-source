@@ -5,15 +5,17 @@ import com.kritter.device.common.detector.HandsetBrowserCache;
 import com.kritter.device.common.detector.HandsetManufacturerCache;
 import com.kritter.device.common.detector.HandsetModelCache;
 import com.kritter.device.common.detector.HandsetOperatingSystemCache;
+import com.kritter.device.common.realtime.cache.RealTimeHandset;
+import com.kritter.device.common.realtime.cache.RealTimeUsageHandsetCache;
 import com.kritter.device.common.util.DeviceUtils;
 import com.kritter.device.common.fifty1degrees.FiftyOneDegreesFileCache.HandsetInfo;
 import com.kritter.device.common.entity.*;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class FiftyOneDegreesHandsetDetector implements HandsetDetectionProvider {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter
     private final String name;
 
@@ -22,6 +24,7 @@ public class FiftyOneDegreesHandsetDetector implements HandsetDetectionProvider 
     private HandsetManufacturerCache handsetManufacturerCache;
     private HandsetModelCache handsetModelCache;
     private FiftyOneDegreesFileCache fiftyOneDegreesFileCache;
+    private RealTimeUsageHandsetCache realTimeUsageHandsetCache;
 
     public FiftyOneDegreesHandsetDetector(String cacheName,
                                           HandsetBrowserCache handsetBrowserCache,
@@ -35,6 +38,22 @@ public class FiftyOneDegreesHandsetDetector implements HandsetDetectionProvider 
         this.handsetManufacturerCache = handsetManufacturerCache;
         this.handsetModelCache = handsetModelCache;
         this.fiftyOneDegreesFileCache = fiftyOneDegreesFileCache;
+    }
+
+    public FiftyOneDegreesHandsetDetector(String cacheName,
+                                          HandsetBrowserCache handsetBrowserCache,
+                                          HandsetOperatingSystemCache handsetOperatingSystemCache,
+                                          HandsetManufacturerCache handsetManufacturerCache,
+                                          HandsetModelCache handsetModelCache,
+                                          FiftyOneDegreesFileCache fiftyOneDegreesFileCache,
+                                          RealTimeUsageHandsetCache realTimeUsageHandsetCache) {
+        this.name = cacheName;
+        this.handsetBrowserCache = handsetBrowserCache;
+        this.handsetOperatingSystemCache = handsetOperatingSystemCache;
+        this.handsetManufacturerCache = handsetManufacturerCache;
+        this.handsetModelCache = handsetModelCache;
+        this.fiftyOneDegreesFileCache = fiftyOneDegreesFileCache;
+        this.realTimeUsageHandsetCache = realTimeUsageHandsetCache;
     }
 
     protected HandsetCapabilities getHandsetCapabilitiesObjectFromHandsetInfo(HandsetInfo handsetInfo) {
@@ -66,9 +85,62 @@ public class FiftyOneDegreesHandsetDetector implements HandsetDetectionProvider 
     }
 
     public HandsetMasterData detectHandsetForUserAgent(String userAgent) throws Exception {
-        HandsetInfo handsetInfo = fiftyOneDegreesFileCache.getHandsetInfo(userAgent);
+
+        //try to fetch from realtime cache.
+        HandsetInfo handsetInfo = null;
+
+        if(null != this.realTimeUsageHandsetCache)
+        {
+            RealTimeHandset realTimeHandset = this.realTimeUsageHandsetCache.getRealTimeHandset(userAgent);
+            if(null != realTimeHandset)
+            {
+                handsetInfo = new HandsetInfo();
+                handsetInfo.setBrandName(realTimeHandset.getBrandName())
+                            .setModelName(realTimeHandset.getModelName())
+                            .setMarketingName(realTimeHandset.getMarketingName())
+                            .setDeviceOs(realTimeHandset.getDeviceOs())
+                            .setDeviceOsVersion(realTimeHandset.getDeviceOsVersion())
+                            .setBrowserName(realTimeHandset.getBrowserName())
+                            .setBrowserVersion(realTimeHandset.getBrowserVersion())
+                            .setTablet(realTimeHandset.isTablet())
+                            .setWirelessDevice(realTimeHandset.isWirelessDevice())
+                            .setResolutionWidth(realTimeHandset.getResolutionWidth())
+                            .setResolutionHeight(realTimeHandset.getResolutionHeight())
+                            .setJ2meMidp2(realTimeHandset.isJ2meMidp2())
+                            .setAjaxSupportJava(realTimeHandset.isAjaxSupportJava())
+                            .setBot(realTimeHandset.isBot())
+                            .setDeviceType(realTimeHandset.getDeviceType());
+
+                realTimeHandset.incrementUsageCount();
+                logger.debug("Handset detected using RealTimeUsageHandsetCache as: {} ", handsetInfo);
+            }
+        }
+
+        if(null == handsetInfo)
+        {
+            long start = System.currentTimeMillis();
+
+            handsetInfo = fiftyOneDegreesFileCache.getHandsetInfo(userAgent);
+
+            long timeTaken = System.currentTimeMillis() - start;
+
+            //update realtime cache
+            if(null != handsetInfo && null != this.realTimeUsageHandsetCache)
+            {
+                this.realTimeUsageHandsetCache.
+                        addRealTimeHandset(userAgent,handsetInfo.getBrandName(),
+                                           handsetInfo.getModelName(),handsetInfo.getMarketingName(),
+                                           handsetInfo.getDeviceOs(),handsetInfo.getDeviceOsVersion(),
+                                           handsetInfo.getBrowserName(),handsetInfo.getBrowserVersion(),
+                                           handsetInfo.isTablet(),handsetInfo.isWirelessDevice(),
+                                           handsetInfo.isJ2meMidp2(),handsetInfo.getResolutionWidth(),
+                                           handsetInfo.getResolutionHeight(),handsetInfo.isAjaxSupportJava(),
+                                           handsetInfo.isBot(),handsetInfo.getDeviceType(),timeTaken);
+            }
+        }
+
         if(handsetInfo == null) {
-            logger.debug("null handset info got for user agent");
+            logger.debug("Handset info null for user agent: {} ", userAgent);
             return null;
         } else {
             logger.debug("Handset info for user agent : {} = {}", userAgent, handsetInfo);
@@ -154,6 +226,10 @@ public class FiftyOneDegreesHandsetDetector implements HandsetDetectionProvider 
         handsetMasterData.setBot(handsetInfo.isBot());
         handsetMasterData.setDeviceType(DeviceUtils.getDeviceTypeFrom51DegreesDeviceType(handsetInfo.getDeviceType()));
         handsetMasterData.setDeviceJavascriptCompatible(handsetInfo.isAjaxSupportJava());
+        handsetMasterData.setOsName(handsetInfo.getDeviceOs());
+        handsetMasterData.setModelName(handsetInfo.getModelName());
+        handsetMasterData.setManufacturerName(handsetInfo.getBrandName());
+
         return handsetMasterData;
     }
 }

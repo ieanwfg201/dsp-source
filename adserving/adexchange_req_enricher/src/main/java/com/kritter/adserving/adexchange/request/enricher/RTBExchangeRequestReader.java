@@ -1,7 +1,7 @@
 package com.kritter.adserving.adexchange.request.enricher;
 
 import com.kritter.entity.reqres.entity.Request;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 

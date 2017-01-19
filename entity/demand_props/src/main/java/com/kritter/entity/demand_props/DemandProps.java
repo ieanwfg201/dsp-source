@@ -20,14 +20,13 @@ public class DemandProps
     private boolean test=false;
     @Getter@Setter
     private String demand_url;
-    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static DemandProps getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static DemandProps getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

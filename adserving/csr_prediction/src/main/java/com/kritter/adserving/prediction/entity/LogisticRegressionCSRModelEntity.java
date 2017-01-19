@@ -5,7 +5,7 @@ import com.kritter.adserving.prediction.interfaces.CSRPredictor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Timestamp;
 import java.util.HashMap;

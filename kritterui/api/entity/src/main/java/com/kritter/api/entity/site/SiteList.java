@@ -7,6 +7,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.kritter.api.entity.response.msg.Message;
 
@@ -67,6 +68,7 @@ public class SiteList {
     }
     public static SiteList getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         SiteList entity = objectMapper.readValue(str, SiteList.class);
         return entity;
 

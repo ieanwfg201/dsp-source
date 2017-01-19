@@ -10,8 +10,8 @@ import lombok.Getter;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import com.kritter.abstraction.cache.interfaces.ICache;
 
 import java.util.*;
@@ -61,7 +61,7 @@ public class UserSegmentCache implements NoSqlNamespaceTable, ICache, UserSegmen
                                             Properties properties
                                            ){
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.noSqlNamespaceOperationsInstance = noSqlNamespaceOperations;
         this.namespaceName = properties.getProperty(NAMESPACE_NAME_KEY);
         this.tableName = properties.getProperty(TABLE_NAME_KEY);

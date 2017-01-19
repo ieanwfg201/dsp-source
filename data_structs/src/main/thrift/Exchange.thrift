@@ -7,6 +7,7 @@ TIMEOUT = 2,
 RESPERROR = 3,
 LOWBID = 4,
 FLOORUNMET = 5,
+EMPTY_RESPONSE = 6,
 }
 
 enum ReqState{

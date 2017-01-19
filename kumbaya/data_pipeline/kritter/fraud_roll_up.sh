@@ -23,7 +23,7 @@ if [ "$4" = "" ]; then
     PROCESS_TIME="2013-12-06 00:00:00"
 fi
 if [ "$6" = "" ]; then
-    INPUT_FILES=/home/rohan/testdata/kritter/out/logevents/fraud.gz/part*
+    INPUT_FILES=/home/rohan/testdata/kritter/out/logevents/fraud/part*
 fi
 if [ "$7" = "" ]; then
     ROLLUPTYPE="D"

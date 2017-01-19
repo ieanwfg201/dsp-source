@@ -3,9 +3,10 @@ package com.kritter.postimpression.workflow.jobs;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Job;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
+import com.kritter.constants.POSTIMPRESSION_EVENT_URL_PREFIX;
 import com.kritter.postimpression.thrift.struct.PostImpressionEvent;
 import com.kritter.postimpression.thrift.struct.PostImpressionRequestResponse;
 import com.kritter.postimpression.thrift.struct.PostImpressionTerminationReason;
@@ -17,8 +18,8 @@ import com.kritter.utils.common.url.URLField;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -54,8 +55,8 @@ public class ThriftLogger implements Job
                         String remoteAddressHeaderName)
     {
         this.name = name;
-        this.applicationLogger = LoggerFactory.getLogger(applicationLoggerName);
-        this.thriftLogger = LoggerFactory.getLogger(thriftLoggerName);
+        this.applicationLogger = LogManager.getLogger(applicationLoggerName);
+        this.thriftLogger = LogManager.getLogger(thriftLoggerName);
         this.postImpressionRequestObjectKey = postImpressionRequestObjectKey;
         this.userAgentHeaderName = userAgentHeaderName;
         this.xForwardedForHeaderName = xForwardedForHeaderName;
@@ -83,7 +84,7 @@ public class ThriftLogger implements Job
 
             PostImpressionRequestResponse postImpressionRequestResponse = new PostImpressionRequestResponse();
             if(request.getPostImpressionEvent().getUrlIdentifierPrefix().equals
-                    (PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.
+                    (POSTIMPRESSION_EVENT_URL_PREFIX.
                      CONVERSION_FEEDBACK.getUrlIdentifierPrefix()))
             {
                 this.applicationLogger.debug("Setting requestId as conversion's click id.");
@@ -185,7 +186,9 @@ public class ThriftLogger implements Job
             postImpressionRequestResponse.setTime(System.currentTimeMillis()/1000);
 
             //set bidder model id
-            postImpressionRequestResponse.setBidderModelId(request.getBidderModelId());
+            if(request.getBidderModelId() != null) {
+                postImpressionRequestResponse.setBidderModelId(request.getBidderModelId());
+            }
 
             /*set advertiser and publisher integer id from mysql if available*/
             postImpressionRequestResponse.setAdv_inc_id(-1);
@@ -235,26 +238,36 @@ public class ThriftLogger implements Job
             }
 
             //set selected site category id.
-            postImpressionRequestResponse.setSelectedSiteCategoryId(request.getSelectedSiteCategoryId());
+            if(request.getSelectedSiteCategoryId() != null) {
+                postImpressionRequestResponse.setSelectedSiteCategoryId(request.getSelectedSiteCategoryId());
+            }
 
             //set supply source type code value as 2-wap, 3-app
-            postImpressionRequestResponse.setSupply_source_type(request.getSupplySourceTypeCode().shortValue());
+            if(request.getSupplySourceTypeCode() != null) {
+                postImpressionRequestResponse.setSupply_source_type(request.getSupplySourceTypeCode().shortValue());
+            }
 
             //set external supply attributes internal id
-            postImpressionRequestResponse.setExt_supply_attr_internal_id(request.getExternalSupplyAttributesInternalId().intValue());
+            if(request.getExternalSupplyAttributesInternalId() != null) {
+                postImpressionRequestResponse.setExt_supply_attr_internal_id(request.getExternalSupplyAttributesInternalId().intValue());
+            }
 
             //set buyer uid (internal advertising id), received at the time of csc event directly from user's browser.
-            postImpressionRequestResponse.setBuyerUid(request.getBuyerUid());
+            if(request.getBuyerUid() != null) {
+                postImpressionRequestResponse.setBuyerUid(request.getBuyerUid());
+            }
 
             //set url version and inventory source.
             if(null != request.getUrlVersion())
                 postImpressionRequestResponse.setUrlVersion(request.getUrlVersion());
 
-            postImpressionRequestResponse.setInventorySource(request.getInventorySource());
+            if(request.getInventorySource() != null) {
+                postImpressionRequestResponse.setInventorySource(request.getInventorySource());
+            }
 
             //set win notification related parameters.
             postImpressionRequestResponse.setAuction_currency(AUCTION_CURRENCY);
-            if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP.
+            if(POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             	 postImpressionRequestResponse.setAuction_currency(null);
             }
@@ -342,6 +355,8 @@ public class ThriftLogger implements Job
                 URLField marketplace = urlFieldMap.get(URLField.MARKETPLACE.getCode());
                 if(null != marketplace && null != marketplace.getUrlFieldProperties().getFieldValue())
                     postImpressionRequestResponse.setMarketplace_id((Short) marketplace.getUrlFieldProperties().getFieldValue());
+                else if(null != request.getAdEntity())
+                    postImpressionRequestResponse.setMarketplace_id((short)request.getAdEntity().getMarketPlace().getCode());
                 else
                     postImpressionRequestResponse.setMarketplace_id((short)-1);
             }
@@ -372,7 +387,7 @@ public class ThriftLogger implements Job
     private PostImpressionEvent fetchPostImpressionEvent(Request request)
     {
         PostImpressionEvent postImpressionEvent = null;
-        if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP.
+        if(POSTIMPRESSION_EVENT_URL_PREFIX.NOFRDP.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             if(NoFraudPostImpEvents.clk == request.getNfrdpType()){
                 postImpressionEvent = PostImpressionEvent.CLICK;
@@ -381,55 +396,58 @@ public class ThriftLogger implements Job
             }if(NoFraudPostImpEvents.win == request.getNfrdpType()){
                 postImpressionEvent = PostImpressionEvent.WIN_NOTIFICATION;
             }
-        }if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.TEVENT.
+        }if(POSTIMPRESSION_EVENT_URL_PREFIX.TEVENT.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.TEVENT;
-        }else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.BEVENT.
+        }else if(POSTIMPRESSION_EVENT_URL_PREFIX.BEVENT.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             if(BEventType.cscwin == request.getBEventType()){
                 postImpressionEvent = PostImpressionEvent.BEVENT_CSCWIN;
             }
-        }else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CLICK.
+        }else if(POSTIMPRESSION_EVENT_URL_PREFIX.CLICK.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.CLICK;
-        }else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.MACRO_CLICK.
+        }else if(POSTIMPRESSION_EVENT_URL_PREFIX.MACRO_CLICK.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.CLICK;
-        }else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CSC.
+        }else if(POSTIMPRESSION_EVENT_URL_PREFIX.CSC.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.RENDER;
-        }else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.INT_EXCHANGE_WIN.
+        }else if(POSTIMPRESSION_EVENT_URL_PREFIX.INT_EXCHANGE_WIN.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.INT_EXCHANGE_WIN;
         }
-        else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.WIN_NOTIFICATION.
+        else if(POSTIMPRESSION_EVENT_URL_PREFIX.WIN_NOTIFICATION.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.WIN_NOTIFICATION;
         }
-        else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.WIN_API_NOTIFICATION.
+        else if(POSTIMPRESSION_EVENT_URL_PREFIX.WIN_API_NOTIFICATION.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.WIN_NOTIFICATION;
         }
-        else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.CONVERSION_FEEDBACK.
+        else if(POSTIMPRESSION_EVENT_URL_PREFIX.CONVERSION_FEEDBACK.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.CONVERSION;
         }
-        else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.COOKIE_BASED_CONV_JS.
+        else if(POSTIMPRESSION_EVENT_URL_PREFIX.COOKIE_BASED_CONV_JS.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.CONVERSION;
         }
-        else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.THIRD_PARTY_CLICK_ALIAS_URL.
+        else if(POSTIMPRESSION_EVENT_URL_PREFIX.THIRD_PARTY_CLICK_ALIAS_URL.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.THIRD_PARTY_CLICK_EVENT;
         }
-        else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.TRACKING_URL_FROM_THIRD_PARTY.
+        else if(POSTIMPRESSION_EVENT_URL_PREFIX.TRACKING_URL_FROM_THIRD_PARTY.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.THIRD_PARTY_TRACKING_EVENT;
         }
-        else if(PostImpressionEventUrlReader.POSTIMPRESSION_EVENT_URL_PREFIX.USR.
+        else if(POSTIMPRESSION_EVENT_URL_PREFIX.USR.
                 getUrlIdentifierPrefix().equals(request.getPostImpressionEvent().getUrlIdentifierPrefix())){
             postImpressionEvent = PostImpressionEvent.USR;
-        }
+        } else if(POSTIMPRESSION_EVENT_URL_PREFIX.USERSYNC.getUrlIdentifierPrefix().equals(
+                request.getPostImpressionEvent().getUrlIdentifierPrefix())) {
+            postImpressionEvent = PostImpressionEvent.USERSYNC;
+    }
 
         return postImpressionEvent;
     }
@@ -511,6 +529,12 @@ public class ThriftLogger implements Job
         }
         else if(request.getOnlineFraudReason().getFraudReasonValue().equals(ONLINE_FRAUD_REASON.RETARGETING_SEGMENT_NF.getFraudReasonValue())){
             postImpressionTerminationReason = PostImpressionTerminationReason.RETARGETING_SEGMENT_NF;
+        } else if(request.getOnlineFraudReason().getFraudReasonValue().equalsIgnoreCase(ONLINE_FRAUD_REASON.USER_SYNC_EXCH_ID_MISSING.getFraudReasonValue())) {
+            postImpressionTerminationReason = PostImpressionTerminationReason.USER_SYNC_EXCH_ID_MISSING;
+        } else if(request.getOnlineFraudReason().getFraudReasonValue().equalsIgnoreCase(ONLINE_FRAUD_REASON.USER_SYNC_DSP_ID_MISSING.getFraudReasonValue())) {
+            postImpressionTerminationReason = PostImpressionTerminationReason.USER_SYNC_DSP_ID_MISSING;
+        } else if(request.getOnlineFraudReason().getFraudReasonValue().equalsIgnoreCase(ONLINE_FRAUD_REASON.USER_SYNC_DSP_USER_ID_MISSING.getFraudReasonValue())) {
+            postImpressionTerminationReason = PostImpressionTerminationReason.USER_SYNC_DSP_USER_ID_MISSING;
         }
 
         return postImpressionTerminationReason;

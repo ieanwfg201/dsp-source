@@ -19,8 +19,8 @@ import com.kritter.utils.databasemanager.DatabaseManager;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
 import com.kritter.utils.entity.TargetingProfileLocationEntity;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.util.*;
@@ -31,7 +31,7 @@ import java.util.*;
  */
 public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integer, AdEntity>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter private final String name;
 
     public AdEntityCache(List<Class> secIndexKeyClassList,Properties props,
@@ -169,6 +169,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             int bidtype = resultSet.getInt("bidtype");
             String external_tracker = resultSet.getString("external_tracker");
             String frequencyCapStr = resultSet.getString("freqcap_json");
+            int protocol = resultSet.getInt("protocol");
             ExtTracker extTracker = null;
             if(external_tracker != null && !"".equals(external_tracker.trim())){
                 extTracker= ExtTracker.getObject(external_tracker.trim());
@@ -250,7 +251,8 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
                                                 MarketPlace.getMarketPlace(marketplaceId),
                                                 bid,advertiserBid,isMarkedForDeletion,lastModified,
                                                 isFrequencyCapped, maxCap, timeWindowInHours,
-                                                demandtype, qps, accountGuid, bidtype, extTracker, isRetargeted
+                                                demandtype, qps, accountGuid, bidtype, extTracker, isRetargeted,
+                                                protocol
                                                )
                                                .setLandingUrl(landingUrl)
                                                .setAccountId(accountIncId)

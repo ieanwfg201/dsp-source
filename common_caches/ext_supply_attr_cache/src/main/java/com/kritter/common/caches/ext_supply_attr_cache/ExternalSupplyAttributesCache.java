@@ -5,8 +5,8 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.serving.demand.entity.ExternalSupplyAttributes;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.*;
 import java.util.*;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ExternalSupplyAttributesCache
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     private Map<String,ExternalSupplyAttributes> externalSupplyAttributesDataMap;
     private DatabaseManager databaseManager;
     private static final String QUERY =
@@ -122,7 +122,7 @@ public class ExternalSupplyAttributesCache
      */
     private class ExternalSupplyAttributesReloadTimerTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

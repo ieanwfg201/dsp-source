@@ -6,8 +6,8 @@ import com.kritter.core.workflow.Job;
 import com.kritter.entity.reqres.entity.Request;
 
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ExchangeThriftLogger implements Job {
     @Getter
@@ -22,7 +22,7 @@ public class ExchangeThriftLogger implements Job {
                                 ThriftLoggingCache thriftLoggingCache,
                                 String requestObjectKey) {
         this.name = name;
-        this.applicationLogger = LoggerFactory.getLogger(applicationLoggerName);
+        this.applicationLogger = LogManager.getLogger(applicationLoggerName);
         this.thriftLoggingCache = thriftLoggingCache;
         this.requestObjectKey = requestObjectKey;
     }

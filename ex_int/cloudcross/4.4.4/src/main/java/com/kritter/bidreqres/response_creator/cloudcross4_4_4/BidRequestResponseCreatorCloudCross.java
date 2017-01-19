@@ -25,10 +25,10 @@ import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
 import com.kritter.utils.common.ServerConfig;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -68,7 +68,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
             AdEntityCache adEntityCache,
             IABCategoriesCache iabCategoriesCache
     ) {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
         this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
         this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);

@@ -7,7 +7,7 @@ import com.kritter.abstraction.cache.interfaces.IUpdatableEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class is used to keep bidder generated data for served entity,

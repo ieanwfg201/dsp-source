@@ -9,8 +9,8 @@ import com.kritter.device.common.entity.HandsetBrowserData;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class HandsetBrowserCache extends AbstractDBStatsReloadableQueryableCache<String, HandsetBrowserData> {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
     @Getter
     private final String name;
 

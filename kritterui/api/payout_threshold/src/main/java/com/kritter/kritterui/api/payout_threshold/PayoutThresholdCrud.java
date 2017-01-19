@@ -83,6 +83,12 @@ public class PayoutThresholdCrud {
             msg.setMsg(ErrorEnum.PT_NULL.getName());
             return msg;
         }
+        if(entity.getAbsolute_threshold()==-1 || entity.getPercentage_threshold()==-1){
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.PT_NOT_INSERTED.getId());
+            msg.setMsg(ErrorEnum.PT_NOT_INSERTED.getName());
+            return msg;
+        }
         PreparedStatement pstmt = null;
         boolean autoCommitFlag = false;
         try{
@@ -173,6 +179,13 @@ public class PayoutThresholdCrud {
             msg.setMsg(ErrorEnum.PT_NULL.getName());
             return msg;
         }
+        if(entity.getAbsolute_threshold()==-1 || entity.getPercentage_threshold()==-1){
+            Message msg = new Message();
+            msg.setError_code(ErrorEnum.PT_NOT_UPDATED.getId());
+            msg.setMsg(ErrorEnum.PT_NOT_UPDATED.getName());
+            return msg;
+        }
+
         PreparedStatement pstmt = null;
         boolean autoCommitFlag = false;
         try{

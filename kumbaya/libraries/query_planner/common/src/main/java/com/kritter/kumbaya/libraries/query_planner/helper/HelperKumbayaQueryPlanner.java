@@ -166,6 +166,48 @@ public class HelperKumbayaQueryPlanner {
     		default:
     			return null;
     		}    		
+    	}else if(reportingDTableType == ReportingTableType.TRACKINGEVENT){
+    		switch(frequency){
+    		case TODAY:
+    			return TABLE.tracking_hourly;
+    		case YESTERDAY:
+    			return TABLE.tracking_daily;
+    		case LAST7DAYS:
+    			return TABLE.tracking_daily;
+    		case CURRENTMONTH:
+    			return TABLE.tracking_daily;
+    		case LASTMONTH:
+    			return TABLE.tracking_daily;
+    		case ADMIN_INTERNAL_HOURLY:
+    			return TABLE.tracking_hourly;
+    		case DATERANGE:
+    			return TABLE.tracking_daily;
+    		case MONTHLY:
+    			return TABLE.tracking_daily;
+    		default:
+    			return null;
+    		}    		
+    	}else if(reportingDTableType == ReportingTableType.FRAUD){
+    		switch(frequency){
+    		case TODAY:
+    			return TABLE.fraud_hourly;
+    		case YESTERDAY:
+    			return TABLE.fraud_daily;
+    		case LAST7DAYS:
+    			return TABLE.fraud_daily;
+    		case CURRENTMONTH:
+    			return TABLE.fraud_daily;
+    		case LASTMONTH:
+    			return TABLE.fraud_daily;
+    		case ADMIN_INTERNAL_HOURLY:
+    			return TABLE.fraud_hourly;
+    		case DATERANGE:
+    			return TABLE.fraud_daily;
+    		case MONTHLY:
+    			return TABLE.fraud_daily;
+    		default:
+    			return null;
+    		}    		
     	}else if(reportingDTableType == ReportingTableType.FASTPATH){
     		return TABLE.fast_path;
     	}else{
@@ -715,6 +757,19 @@ public class HelperKumbayaQueryPlanner {
         if(!ismetricset) {return;}
         populateMap(kprojectionMap, "100*("+metrictype.toString()+"("+aliasMap.get(impression_fact_table)+"."+impression_fact_column+")/"+
                 metrictype.toString()+"("+aliasMap.get(request_fact_table)+"."+request_fact_column+"))", prefix+"_name");
+        addToHeader(HeaderType.DOUBLE, prefix+"_name", HeaderType.DOUBLE, ui_header_name,headerList,ColumnType.DERIVED,true, false);
+        prepareOrderedMap(treeMap, order_sequence, prefix+"_name");
+    }
+    public static void populateAvgBidFloor(String prefix,boolean ismetricset,
+            String bidfloor_fact_table, String bidfloor_fact_column,
+            String request_fact_table, String request_fact_column,METRICTYPE metrictype,
+            HashMap<String, String> kprojectionMap, HashSet<KFilterFields> kFilterSet,
+            HashSet<String> kgroupbyHashSet,HashMap<String, String> kjoinMap,
+            HashMap<String, String> aliasMap, HashSet<String> korderbyHashSet, List<Header> headerList,String ui_header_name,
+            int order_sequence, TreeMap<Integer, String> treeMap){
+        if(!ismetricset) {return;}
+        populateMap(kprojectionMap, metrictype.toString()+"("+aliasMap.get(bidfloor_fact_table)+"."+bidfloor_fact_column+")/"+
+                metrictype.toString()+"("+aliasMap.get(request_fact_table)+"."+request_fact_column+")", prefix+"_name");
         addToHeader(HeaderType.DOUBLE, prefix+"_name", HeaderType.DOUBLE, ui_header_name,headerList,ColumnType.DERIVED,true, false);
         prepareOrderedMap(treeMap, order_sequence, prefix+"_name");
     }

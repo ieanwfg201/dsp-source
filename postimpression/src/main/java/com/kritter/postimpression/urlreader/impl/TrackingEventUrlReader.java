@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.kritter.constants.TEvent;
 import com.kritter.core.workflow.Context;
 import com.kritter.core.workflow.Workflow;
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import com.kritter.postimpression.urlreader.PostImpressionEventUrlReader;
 import com.kritter.postimpression.utils.PostImpressionUtils;
 
@@ -36,7 +36,7 @@ public class TrackingEventUrlReader implements PostImpressionEventUrlReader
 
         if(null == postImpressionRequest || null== requestURI)
             throw new Exception("The supplied request object is null inside decipherPostImpressionUrl " +
-                                "of MacroClickUrlReader");
+                                "of TrackingEventUrlReader");
 
         this.postImpressionUtils.populatePostImpressionRequestObject(postImpressionRequest,requestURI);
         HttpServletRequest httpServletRequest = (HttpServletRequest)context.getValue(Workflow.CONTEXT_REQUEST_KEY);

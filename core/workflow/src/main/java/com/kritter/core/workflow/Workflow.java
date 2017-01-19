@@ -11,8 +11,8 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.core.metrics.YammerMetrics;
 import lombok.Getter;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.sql.DriverManager;
@@ -36,7 +36,8 @@ public class Workflow
     private List<Timer> cacheReloadTimerList;
     private List<TimerTask> cacheReloadTimerTaskList;
 
-    private static Logger workflowLogger = LoggerFactory.getLogger(WORKFLOW_LOGGER_NAME);
+    private static Logger workflowLogger = LogManager.getLogger(WORKFLOW_LOGGER_NAME);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private boolean useMacAddressImplForUUID;
 
@@ -220,7 +221,6 @@ public class Workflow
             statsMap.put(statName, value.getCount());
         }
 
-        ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(jobStatsMap);
         } catch (IOException ioe) {

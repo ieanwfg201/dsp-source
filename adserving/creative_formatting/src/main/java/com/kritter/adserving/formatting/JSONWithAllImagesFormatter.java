@@ -6,8 +6,8 @@ import com.kritter.serving.demand.entity.CreativeBanner;
 import com.kritter.serving.demand.entity.CreativeSlot;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.kritter.entity.formatter_entity.creative.FormatCreative;
 import com.kritter.entity.reqres.entity.Request;
@@ -53,7 +53,7 @@ public class JSONWithAllImagesFormatter extends JSONFormatter implements Creativ
                                      )
     {
         super(loggerName,secretKey,urlVersion,creativeCache,adEntityCache,creativeSlotCache,serverConfig);
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.loggerName = loggerName;
         this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
         this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);

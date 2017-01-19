@@ -125,6 +125,34 @@ controller('tpController',function ($scope, $http, $upload) {
 	$scope.channel_tier_2_list_msmodel.init($scope.channel_tier2_url, 'valueArray', true);
 	$scope.channel_tier_1_list_msmodel.addDependent("channel_tier2", $scope.channel_tier_2_list_msmodel);
 
+	$scope.audience_gender_url = "/metadata/options/audience_gender";
+	$scope.audience_gender_msmodel = Object.create(MultiSelectModel);  
+	$scope.audience_gender_msmodel.init($scope.audience_gender_url, 'valueArray', true, false);
+
+	$scope.audience_agerange_url = "/metadata/options/audience_agerange";
+	$scope.audience_agerange_msmodel = Object.create(MultiSelectModel);  
+	$scope.audience_agerange_msmodel.init($scope.audience_agerange_url, 'valueArray', true, false);
+
+	$scope.audience_tier1_cat_url = "/metadata/options/audience_tier1_cat";
+	$scope.audience_tier1_cat_msmodel = Object.create(MultiSelectModel);  
+	$scope.audience_tier1_cat_msmodel.init($scope.audience_tier1_cat_url, 'valueArray', true, false);
+
+	$scope.audience_tier2_cat_url = "/metadata/options/audience_tier2_cat";
+	$scope.audience_tier2_cat_msmodel = Object.create(MultiSelectModel);  
+	$scope.audience_tier2_cat_msmodel.init($scope.audience_tier2_cat_url, 'valueArray', true, false);
+
+	$scope.audience_tier3_cat_url = "/metadata/options/audience_tier3_cat";
+	$scope.audience_tier3_cat_msmodel = Object.create(MultiSelectModel);  
+	$scope.audience_tier3_cat_msmodel.init($scope.audience_tier3_cat_url, 'valueArray', true, false);
+
+	$scope.audience_tier4_cat_url = "/metadata/options/audience_tier4_cat";
+	$scope.audience_tier4_cat_msmodel = Object.create(MultiSelectModel);  
+	$scope.audience_tier4_cat_msmodel.init($scope.audience_tier4_cat_url, 'valueArray', true, false);
+
+	$scope.audience_tier5_cat_url = "/metadata/options/audience_tier5_cat";
+	$scope.audience_tier5_cat_msmodel = Object.create(MultiSelectModel);  
+	$scope.audience_tier5_cat_msmodel.init($scope.audience_tier5_cat_url, 'valueArray', true, false);
+
 	$scope.custom_ip_file_id_set="#";
 	$scope.lat_lon_radius_file="#";
 	$scope.deviceid_file="#";

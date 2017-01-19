@@ -6,8 +6,8 @@ import com.kritter.geo.common.entity.IpRangeKeyValue;
 import com.kritter.geo.common.utils.GeoDetectionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import com.kritter.utils.dbextractionutil.ResultSetHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,7 +50,7 @@ public class CustomIPFileDetectionCache
                                       String customIPFileStorageDirectory,
                                       long reloadFrequency) throws InitializationException
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.queryToLoadCustomFileIds = queryToLoadCustomFileIds;
         this.databaseManager = databaseManager;
         this.customIPFileStorageDirectory = customIPFileStorageDirectory;
@@ -302,7 +302,7 @@ public class CustomIPFileDetectionCache
      */
     private class CustomIpDataFileReloadTimerTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

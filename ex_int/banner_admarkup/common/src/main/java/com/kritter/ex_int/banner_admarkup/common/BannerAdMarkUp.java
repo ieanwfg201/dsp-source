@@ -2,7 +2,7 @@ package com.kritter.ex_int.banner_admarkup.common;
 
 import java.util.Set;
 
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.constants.CreativeFormat;
@@ -105,13 +105,13 @@ public class BannerAdMarkUp {
                          responseAdInfo.getAdId());
             return null;
         }
-        String HTML_BANNER_TEMPLATE =null;
+        String HTML_BANNER_TEMPLATE_USE =null;
         if(templateWithWin){
-            HTML_BANNER_TEMPLATE = prepareHTMLBannerTemplateWithWin();
+            HTML_BANNER_TEMPLATE_USE = HTML_BANNER_TEMPLATE_WITH_WIN;
         }else{
-            HTML_BANNER_TEMPLATE = prepareHTMLBannerTemplate();
+            HTML_BANNER_TEMPLATE_USE = HTML_BANNER_TEMPLATE;
         }
-        String htmlBannerResponse = HTML_BANNER_TEMPLATE.replace
+        String htmlBannerResponse = HTML_BANNER_TEMPLATE_USE.replace
                 (CreativeFormatterUtils.CLICK_URL_MACRO,clickUrl.toString());
         if(templateWithWin){
             htmlBannerResponse = htmlBannerResponse.replace
@@ -173,4 +173,7 @@ public class BannerAdMarkUp {
         return sb.toString();
     }
 
+    /**Create templates initially to avoid string appends on every ad request.*/
+    private static final String HTML_BANNER_TEMPLATE_WITH_WIN = prepareHTMLBannerTemplateWithWin();
+    private static final String HTML_BANNER_TEMPLATE = prepareHTMLBannerTemplate();
 }

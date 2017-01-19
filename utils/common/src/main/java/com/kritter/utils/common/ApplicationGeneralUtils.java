@@ -2,6 +2,8 @@ package com.kritter.utils.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -12,261 +14,272 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 public class ApplicationGeneralUtils
 {
-        private static final String REQUEST_ID_AD_ID_DELIMITER = ":";
+    private static final String REQUEST_ID_AD_ID_DELIMITER = ":";
 
-        public static final Short DEFAULT_BIDDER_MODEL_ID = -1;
-        public static final Integer DEFAULT_COUNTRY_ID = -1;
-        public static final Integer DEFAULT_COUNTRY_CARRIER_ID = -1;
-        public static final Short DEFAULT_SELECTED_SITE_CATEGORY_ID = -1;
-        public static final Integer DEFAULT_INTERNAL_ID_FOR_EXTERNAL_SUPPLY_ATTRIBUTES = -1;
-        public static final Integer DEFAULT_ADPOSITION_ID = -1;
-        public static final Integer DEFAULT_CHANNEL_ID = -1;
-        public static final short DEFAULT_MARKETPLACE_ID = -1;
-        public static final int DEFAULT_STATE_ID = -1;
-        public static final int DEFAULT_CITY_ID = -1;
-        public static final String OS_TARGETING_VERSION_SEPARATOR = "-";
-        public static final String URI_PATH_SEPARATOR = "/";
-        private static final String BID_SEPARATOR = ",";
-        private static final String BID_KEY_VALUE_SEPARATOR = "=";
-        private static final String COMMA = ",";
-        public static final String PROCESSED_WURFL_FILE_EXTENSION = ".done";
-        public static final String PROCESSED_51DEGREES_FILE_EXTENSION = ".done";
-        private static final ObjectMapper objectMapper = new ObjectMapper();
+    public static final Short DEFAULT_BIDDER_MODEL_ID = -1;
+    public static final Integer DEFAULT_COUNTRY_ID = -1;
+    public static final Integer DEFAULT_COUNTRY_CARRIER_ID = -1;
+    public static final Short DEFAULT_SELECTED_SITE_CATEGORY_ID = -1;
+    public static final Short DEFAULT_SLOT_ID = -1;
+    public static final Integer DEFAULT_INTERNAL_ID_FOR_EXTERNAL_SUPPLY_ATTRIBUTES = -1;
+    public static final Integer DEFAULT_ADPOSITION_ID = -1;
+    public static final Integer DEFAULT_CHANNEL_ID = -1;
+    public static final short DEFAULT_MARKETPLACE_ID = -1;
+    public static final int DEFAULT_STATE_ID = -1;
+    public static final int DEFAULT_CITY_ID = -1;
+    public static final String OS_TARGETING_VERSION_SEPARATOR = "-";
+    public static final String URI_PATH_SEPARATOR = "/";
+    private static final String BID_SEPARATOR = ",";
+    private static final String BID_KEY_VALUE_SEPARATOR = "=";
+    private static final String COMMA = ",";
+    public static final String PROCESSED_WURFL_FILE_EXTENSION = ".done";
+    public static final String PROCESSED_51DEGREES_FILE_EXTENSION = ".done";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-        /*For richmedia formatting across ad-exchanges*/
-        public static final String RICHMEDIA_PAYLOAD     = "$RICHMEDIA_PAYLOAD";
-        public static final String CREATIVE_CSC_BEACON   = "$CREATIVE_CSC_BEACON";
-        public static final String HTML_RICHMEDIA_TEMPLATE = prepareRichmediaBannerTemplate();
-        public static final String EXCHANGE_BID_REQUEST_DELIM = "|";
+    /*For richmedia formatting across ad-exchanges*/
+    public static final String RICHMEDIA_PAYLOAD     = "$RICHMEDIA_PAYLOAD";
+    public static final String CREATIVE_CSC_BEACON   = "$CREATIVE_CSC_BEACON";
+    public static final String HTML_RICHMEDIA_TEMPLATE = prepareRichmediaBannerTemplate();
+    public static final String EXCHANGE_BID_REQUEST_DELIM = "|";
 
+    /*constants for dummy ad, this ad fields are used while creating an ad on the fly in
+    * java application, this ad actually does not exist anywhere in the database.*/
+    public static final Integer DUMMY_AD_ID = -1;
+    public static final Double DUMMY_AD_HARD_BID = 0.000000000000001;
+    public static final Double DUMMY_AD_ADVERTISER_BID = 0.000000000000001;
 
-        /**********************Conversion event id utils size declarations ***************************************/
-        @Getter
-        private static ConversionEventIdUtils conversionEventIdUtils;
-        static
-        {
-            short SIZE_INTERNAL_BID = 32;
-            short SIZE_ADV_BID = 32;
-            short SIZE_AD_ID = 20;
-            short SIZE_SITE_ID = 20;
-            short SIZE_INV_SRC = 3;
-            short SIZE_CARRIER_ID = 24;
-            short SIZE_COUNTRY = 14;
-            short SIZE_DEVICE_MODEL_ID = 18;
-            short SIZE_MANUFACTURER_ID  = 16;
-            short SIZE_DEVICE_OS_ID = 10;
-            short SIZE_DEVICE_BROWSER_ID = 12;
-            short SIZE_EXT_SUPPLY = 32;
-            short SIZE_SELECTED_SITE_CAT_ID = 14;
-            short SIZE_BIDDER_MODEL_ID = 8;
-            short SIZE_SUPPLY_SOURCE_ID = 5;
-            short SIZE_CONN_TYPE_ID = 6;
-            short SIZE_DEVICE_TYPE_ID = 6;
-            short SIZE_CLICK_REQUEST_ID = 128;
+    public static final Integer DSP_NO_BID_RESPONSE_ERROR_CODE_KRITTER = -997;
 
-            conversionEventIdUtils = new ConversionEventIdUtils
-                    (SIZE_INTERNAL_BID,SIZE_ADV_BID,SIZE_AD_ID,SIZE_SITE_ID,
-                     SIZE_INV_SRC,SIZE_CARRIER_ID,SIZE_COUNTRY,SIZE_DEVICE_MODEL_ID,
-                     SIZE_MANUFACTURER_ID,SIZE_DEVICE_OS_ID,SIZE_DEVICE_BROWSER_ID,
-                     SIZE_EXT_SUPPLY,SIZE_SELECTED_SITE_CAT_ID,
-                     SIZE_BIDDER_MODEL_ID,SIZE_SUPPLY_SOURCE_ID,
-                     SIZE_CONN_TYPE_ID,SIZE_DEVICE_TYPE_ID,SIZE_CLICK_REQUEST_ID);
+    /**********************Conversion event id utils size declarations ***************************************/
+    @Getter
+    private static ConversionEventIdUtils conversionEventIdUtils;
+    static
+    {
+        short SIZE_INTERNAL_BID = 32;
+        short SIZE_ADV_BID = 32;
+        short SIZE_AD_ID = 20;
+        short SIZE_SITE_ID = 20;
+        short SIZE_INV_SRC = 3;
+        short SIZE_CARRIER_ID = 24;
+        short SIZE_COUNTRY = 14;
+        short SIZE_DEVICE_MODEL_ID = 18;
+        short SIZE_MANUFACTURER_ID  = 16;
+        short SIZE_DEVICE_OS_ID = 10;
+        short SIZE_DEVICE_BROWSER_ID = 12;
+        short SIZE_EXT_SUPPLY = 32;
+        short SIZE_SELECTED_SITE_CAT_ID = 14;
+        short SIZE_BIDDER_MODEL_ID = 8;
+        short SIZE_SUPPLY_SOURCE_ID = 5;
+        short SIZE_CONN_TYPE_ID = 6;
+        short SIZE_DEVICE_TYPE_ID = 6;
+        short SIZE_CLICK_REQUEST_ID = 128;
 
-        }
-        /**************************Conversion event id utils instance created***************************************/
+        conversionEventIdUtils = new ConversionEventIdUtils
+                (SIZE_INTERNAL_BID,SIZE_ADV_BID,SIZE_AD_ID,SIZE_SITE_ID,
+                 SIZE_INV_SRC,SIZE_CARRIER_ID,SIZE_COUNTRY,SIZE_DEVICE_MODEL_ID,
+                 SIZE_MANUFACTURER_ID,SIZE_DEVICE_OS_ID,SIZE_DEVICE_BROWSER_ID,
+                 SIZE_EXT_SUPPLY,SIZE_SELECTED_SITE_CAT_ID,
+                 SIZE_BIDDER_MODEL_ID,SIZE_SUPPLY_SOURCE_ID,
+                 SIZE_CONN_TYPE_ID,SIZE_DEVICE_TYPE_ID,SIZE_CLICK_REQUEST_ID);
 
-        public static String calculateHashForData(String data, String secretKey)
-                        throws NoSuchAlgorithmException
-        {
-                if (null == data || null == secretKey)
-                        return null;
+    }
+    /**************************Conversion event id utils instance created***************************************/
 
-                MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+    public static String calculateHashForData(String data, String secretKey)
+                    throws NoSuchAlgorithmException
+    {
+            if (null == data || null == secretKey)
+                    return null;
 
-                StringBuffer finalData = new StringBuffer(data);
-                finalData.append(secretKey);
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 
-                messageDigest.reset();
+            StringBuffer finalData = new StringBuffer(data);
+            finalData.append(secretKey);
 
-                messageDigest.update(finalData.toString().getBytes());
+            messageDigest.reset();
 
-                byte[] convertedBytes = messageDigest.digest();
+            messageDigest.update(finalData.toString().getBytes());
 
-                StringBuffer hexString = new StringBuffer();
+            byte[] convertedBytes = messageDigest.digest();
 
-                for (int i = 0; i < convertedBytes.length; i++) {
-                        hexString.append(Integer.toHexString(0xFF & convertedBytes[i]));
-                }
+            StringBuffer hexString = new StringBuffer();
 
-                return hexString.toString();
-        }
-           
-        public static String generateImpressionId(String requestId,Integer adIncId)
-        {
-            StringBuffer result = new StringBuffer(requestId);
-            result.append(REQUEST_ID_AD_ID_DELIMITER);
+            for (int i = 0; i < convertedBytes.length; i++) {
+                    hexString.append(Integer.toHexString(0xFF & convertedBytes[i]));
+            }
+
+            return hexString.toString();
+    }
+
+    public static String generateImpressionId(String requestId,Integer adIncId)
+    {
+        StringBuffer result = new StringBuffer(requestId);
+        result.append(REQUEST_ID_AD_ID_DELIMITER);
+        if(null!= adIncId && adIncId.intValue() != -1)
             result.append(Integer.toHexString(adIncId));
+        else
+            result.append(String.valueOf(-1));
 
-            return result.toString();
-        }
+        return result.toString();
+    }
 
-        public static void logDebug(Logger logger, String... messages)
-        {
-            if(logger.isDebugEnabled()){
-                StringBuffer sb = new StringBuffer();
-                for(int i=0;i<messages.length;i++){
-                    sb.append(messages[i]);
-                }
-                logger.debug(sb.toString());
+    public static void logDebug(Logger logger, String... messages)
+    {
+        if(logger.isDebugEnabled()){
+            StringBuffer sb = new StringBuffer();
+            for(int i=0;i<messages.length;i++){
+                sb.append(messages[i]);
             }
-
+            logger.debug(sb.toString());
         }
 
-        public static double[] fetchOSTargetingRanges(String range)
-        {
-            double[] rangeValues = new double[2];
+    }
 
-            String parts[] = range.split(OS_TARGETING_VERSION_SEPARATOR);
+    public static double[] fetchOSTargetingRanges(String range)
+    {
+        double[] rangeValues = new double[2];
 
-            try{
+        String parts[] = range.split(OS_TARGETING_VERSION_SEPARATOR);
 
-                rangeValues[0] = Double.parseDouble(parts[0]);
-                rangeValues[1] = Double.parseDouble(parts[1]);
-            }catch (NumberFormatException e){
+        try{
 
-                return null;
-            }
+            rangeValues[0] = Double.parseDouble(parts[0]);
+            rangeValues[1] = Double.parseDouble(parts[1]);
+        }catch (NumberFormatException e){
 
-            return rangeValues;
+            return null;
         }
 
-        public static Map<AD_BIDS_TYPE,Double> fetchBidTypesWithValues(String encodedBid)
+        return rangeValues;
+    }
+
+    public static Map<AD_BIDS_TYPE,Double> fetchBidTypesWithValues(String encodedBid)
+    {
+        Base64 base64 = new Base64(0);
+        String decodedValue = new String(base64.decode(encodedBid.getBytes()));
+
+        String bidParts[] = decodedValue.split(BID_SEPARATOR);
+        String internalBidParts[] = bidParts[0].split(BID_KEY_VALUE_SEPARATOR);
+        String externalBidParts[] = bidParts[1].split(BID_KEY_VALUE_SEPARATOR);
+        Map<AD_BIDS_TYPE,Double> bidInfo = new HashMap<AD_BIDS_TYPE, Double>();
+
+        bidInfo.put(AD_BIDS_TYPE.INTERNAL_BID,Double.valueOf(internalBidParts[1]));
+        bidInfo.put(AD_BIDS_TYPE.ADVERTISER_BID,Double.valueOf(externalBidParts[1]));
+
+        return bidInfo;
+    }
+
+    public static String formEncodedBidTypesWithValues(Double internalBid,Double externalAdvertiserBid)
+    {
+        StringBuffer toEncode = new StringBuffer();
+
+        if(null != internalBid)
         {
-            Base64 base64 = new Base64(0);
-            String decodedValue = new String(base64.decode(encodedBid.getBytes()));
-
-            String bidParts[] = decodedValue.split(BID_SEPARATOR);
-            String internalBidParts[] = bidParts[0].split(BID_KEY_VALUE_SEPARATOR);
-            String externalBidParts[] = bidParts[1].split(BID_KEY_VALUE_SEPARATOR);
-            Map<AD_BIDS_TYPE,Double> bidInfo = new HashMap<AD_BIDS_TYPE, Double>();
-
-            bidInfo.put(AD_BIDS_TYPE.INTERNAL_BID,Double.valueOf(internalBidParts[1]));
-            bidInfo.put(AD_BIDS_TYPE.ADVERTISER_BID,Double.valueOf(externalBidParts[1]));
-
-            return bidInfo;
+            toEncode.append(AD_BIDS_TYPE.INTERNAL_BID.getIdentifier());
+            toEncode.append(BID_KEY_VALUE_SEPARATOR);
+            toEncode.append(internalBid);
+            toEncode.append(BID_SEPARATOR);
+        }
+        if(null != externalAdvertiserBid)
+        {
+            toEncode.append(AD_BIDS_TYPE.ADVERTISER_BID.getIdentifier());
+            toEncode.append(BID_KEY_VALUE_SEPARATOR);
+            toEncode.append(externalAdvertiserBid);
         }
 
-        public static String formEncodedBidTypesWithValues(Double internalBid,Double externalAdvertiserBid)
-        {
-            StringBuffer toEncode = new StringBuffer();
+        Base64 base64 = new Base64(0);
+        return new String(base64.encode(toEncode.toString().getBytes()));
+    }
 
-            if(null != internalBid)
+    /**
+    * Class to keep bid types to be used in url formation and then extraction from it.
+    */
+    public enum AD_BIDS_TYPE
+    {
+        INTERNAL_BID(1, "i"),
+        ADVERTISER_BID(2, "e");
+
+        @Getter
+        private int code;
+        @Getter
+        private String identifier;
+
+        private AD_BIDS_TYPE(int code,String identifier)
+        {
+            this.code = code;
+            this.identifier = identifier;
+        }
+    }
+
+    public static int getDayOfWeek()
+    {
+        Date date = new Date(System.currentTimeMillis());
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        return c.get(Calendar.DAY_OF_WEEK);
+    }
+
+    public static int getTimeWindowId()
+    {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minutes = calendar.get(Calendar.MINUTE);
+
+        return ((hour * 60) + minutes) / 30;
+    }
+
+    public static short getHourOfDay()
+    {
+        Calendar calendar = Calendar.getInstance();
+        return (short)calendar.get(Calendar.HOUR_OF_DAY);
+    }
+
+    public static String findCorrectIpAddressForDetection(String requestAddress,
+                                                          String xForwardedFor,
+                                                          List<String> privateAddressPrefixList)
+    {
+        String ip = requestAddress;
+
+        if(null != xForwardedFor)
+        {
+            String parts[] = xForwardedFor.split(COMMA);
+            if(null != parts && parts.length > 0)
             {
-                toEncode.append(AD_BIDS_TYPE.INTERNAL_BID.getIdentifier());
-                toEncode.append(BID_KEY_VALUE_SEPARATOR);
-                toEncode.append(internalBid);
-                toEncode.append(BID_SEPARATOR);
-            }
-            if(null != externalAdvertiserBid)
-            {
-                toEncode.append(AD_BIDS_TYPE.ADVERTISER_BID.getIdentifier());
-                toEncode.append(BID_KEY_VALUE_SEPARATOR);
-                toEncode.append(externalAdvertiserBid);
-            }
-
-            Base64 base64 = new Base64(0);
-            return new String(base64.encode(toEncode.toString().getBytes()));
-        }
-
-        /**
-        * Class to keep bid types to be used in url formation and then extraction from it.
-        */
-        public enum AD_BIDS_TYPE
-        {
-            INTERNAL_BID(1, "i"),
-            ADVERTISER_BID(2, "e");
-
-            @Getter
-            private int code;
-            @Getter
-            private String identifier;
-
-            private AD_BIDS_TYPE(int code,String identifier)
-            {
-                this.code = code;
-                this.identifier = identifier;
-            }
-        }
-
-        public static int getDayOfWeek()
-        {
-            Date date = new Date(System.currentTimeMillis());
-            Calendar c = Calendar.getInstance();
-            c.setTime(date);
-            return c.get(Calendar.DAY_OF_WEEK);
-        }
-
-        public static int getTimeWindowId()
-        {
-            Calendar calendar = Calendar.getInstance();
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minutes = calendar.get(Calendar.MINUTE);
-
-            return ((hour * 60) + minutes) / 30;
-        }
-
-        public static short getHourOfDay()
-        {
-            Calendar calendar = Calendar.getInstance();
-            return (short)calendar.get(Calendar.HOUR_OF_DAY);
-        }
-
-        public static String findCorrectIpAddressForDetection(String requestAddress,
-                                                              String xForwardedFor,
-                                                              List<String> privateAddressPrefixList)
-        {
-            String ip = requestAddress;
-
-            if(null != xForwardedFor)
-            {
-                String parts[] = xForwardedFor.split(COMMA);
-                if(null != parts && parts.length > 0)
+                for(String part: parts)
                 {
-                    for(String part: parts)
+                    part = part.trim();
+
+                    //if the ip part is empty or null skip it...
+                    if(StringUtils.isEmpty(part))
+                        continue;
+
+                    Iterator<String> privateIpIterator = privateAddressPrefixList.iterator();
+
+                    boolean isPrivateIp = false;
+
+                    while (privateIpIterator.hasNext())
                     {
-                        part = part.trim();
-
-                        //if the ip part is empty or null skip it...
-                        if(StringUtils.isEmpty(part))
-                            continue;
-
-                        Iterator<String> privateIpIterator = privateAddressPrefixList.iterator();
-
-                        boolean isPrivateIp = false;
-
-                        while (privateIpIterator.hasNext())
+                        if(part.startsWith(privateIpIterator.next()))
                         {
-                            if(part.startsWith(privateIpIterator.next()))
-                            {
-                                isPrivateIp = true;
-                            }
+                            isPrivateIp = true;
                         }
+                    }
 
-                        if(!isPrivateIp)
-                        {
-                            ip = part;
-                            break;
-                        }
+                    if(!isPrivateIp)
+                    {
+                        ip = part;
+                        break;
                     }
                 }
             }
-
-            return ip;
         }
+
+        return ip;
+    }
 
     public static Map<Integer,Object> fetchDecodedConversionInfo(String encodedConversionData) throws IOException
     {
@@ -475,5 +488,51 @@ public class ApplicationGeneralUtils
         }
 
         return cscUrlToModify.toString();
+    }
+
+    public static String generateMD5OfUrl(String url) throws MalformedURLException,NoSuchAlgorithmException
+    {
+        if(null == url)
+            return null;
+
+        URL urlObject = new URL(url);
+
+        String urlHost = urlObject.getHost();
+        String urlPath = urlObject.getPath();
+        if(null == urlHost || null == urlPath)
+            return null;
+
+        String data = urlHost;
+        data = data + urlPath;
+
+        StringBuffer dataTemp = new StringBuffer();
+        dataTemp.append(data);
+
+        if(dataTemp.charAt(dataTemp.length()-1)=='/')
+            dataTemp = dataTemp.deleteCharAt(dataTemp.length()-1);
+
+        data = dataTemp.toString();
+
+        return calculateHashForData(data);
+    }
+
+    private static String calculateHashForData(String data) throws NoSuchAlgorithmException
+    {
+        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+
+        messageDigest.reset();
+
+        messageDigest.update(data.getBytes());
+
+        byte[] convertedBytes = messageDigest.digest();
+
+        StringBuffer hexString = new StringBuffer();
+
+        for (int i = 0; i < convertedBytes.length; i++)
+        {
+            hexString.append(Integer.toHexString(0xFF & convertedBytes[i]));
+        }
+
+        return hexString.toString();
     }
 }

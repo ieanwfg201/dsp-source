@@ -75,6 +75,16 @@ public class MetadataController extends Controller{
             ArrayNode nofillReasonOptions = TPMetadataAPI.dspNofill(); 
             return ok(nofillReasonOptions);
         }
+        @SecuredAction
+        public static Result terminationReasonPostimp(){
+            ArrayNode nofillReasonOptions = TPMetadataAPI.terminationReasonPostimp(); 
+            return ok(nofillReasonOptions);
+        }
+        @SecuredAction
+        public static Result teventtype(){
+            ArrayNode nofillReasonOptions = TPMetadataAPI.teventtype(); 
+            return ok(nofillReasonOptions);
+        }
         
         @SecuredAction
         public static Result postImpEvent(){
@@ -350,4 +360,40 @@ public class MetadataController extends Controller{
            ArrayNode advidlist = MetadataAPI.thirdPartyConnectionAdvIdArray(advertiserGuid);
            return ok(advidlist);
        }
+       @SecuredAction
+       public static Result audience_gender(){
+           ArrayNode list = MetadataAPI.audience_gender();
+           return ok(list);
+       }
+       @SecuredAction
+       public static Result audience_agerange(){
+           ArrayNode list = MetadataAPI.audience_agerange();
+           return ok(list);
+       }
+       @SecuredAction
+       public static Result audience_tier1_cat(){
+           ArrayNode list = MetadataAPI.audience_tier_cat(1);
+           return ok(list);
+       }
+       @SecuredAction
+       public static Result audience_tier2_cat(){
+           ArrayNode list = MetadataAPI.audience_tier_cat(2);
+           return ok(list);
+       }
+       @SecuredAction
+       public static Result audience_tier3_cat(){
+           ArrayNode list = MetadataAPI.audience_tier_cat(3);
+           return ok(list);
+       }
+       @SecuredAction
+       public static Result audience_tier4_cat(){
+           ArrayNode list = MetadataAPI.audience_tier_cat(4);
+           return ok(list);
+       }
+       @SecuredAction
+       public static Result audience_tier5_cat(){
+           ArrayNode list = MetadataAPI.audience_tier_cat(5);
+           return ok(list);
+       }
+       
 }

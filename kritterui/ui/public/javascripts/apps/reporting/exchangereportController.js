@@ -24,8 +24,7 @@ controller('exchangereportController',function ($scope, $http, ngTableParams, $m
 		$scope.checkuncheckmetrics(checkval);
 	}
 	$scope.checkuncheckmetrics = function(checkvalue){
-		$('#total_request').prop("checked",checkvalue);
-		$('#total_impression').prop("checked",checkvalue);
+		$('#total_request_to_dsp').prop("checked",checkvalue);
 		$('#total_bidValue').prop("checked",checkvalue);
 		$('#total_win_bidValue').prop("checked",checkvalue);
 		$('#total_floor').prop("checked",checkvalue);

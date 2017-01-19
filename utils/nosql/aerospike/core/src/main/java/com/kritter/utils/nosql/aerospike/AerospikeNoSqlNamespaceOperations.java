@@ -1,7 +1,10 @@
 package com.kritter.utils.nosql.aerospike;
 
 import com.aerospike.client.*;
+import com.aerospike.client.async.AsyncClient;
 import com.aerospike.client.async.AsyncClientPolicy;
+import com.aerospike.client.async.MaxCommandAction;
+import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.BatchPolicy;
 import com.aerospike.client.policy.Policy;
 import com.aerospike.client.policy.Priority;
@@ -9,14 +12,18 @@ import com.aerospike.client.policy.WritePolicy;
 import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlData.NoSqlDataType;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
+import com.kritter.utils.nosql.common.SignalingNotificationObject;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * This class has implementation for aerospike operations required by a namespace
@@ -27,11 +34,13 @@ import java.util.Set;
  */
 public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperations
 {
+    public static AtomicLong timeouts = new AtomicLong(0);
+
     private Logger logger;
     private String host;
     private int port;
     @Getter
-    private AerospikeClient aerospikeAsyncClient;
+    private AsyncClient aerospikeAsyncClient;
     @Getter
     private WritePolicy writePolicy;
     @Getter
@@ -45,15 +54,71 @@ public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperatio
                                              int maxRetries,
                                              int timeout) throws AerospikeException
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.host = aerospikeHost;
         this.port = aerospikePort;
         //in case in future we need to re-define async client policy, for now this will do.
         AsyncClientPolicy asyncClientPolicy = new AsyncClientPolicy();
-        this.aerospikeAsyncClient = new AerospikeClient(asyncClientPolicy,host,port);
+        asyncClientPolicy.asyncMaxCommandAction = MaxCommandAction.REJECT;
+        this.aerospikeAsyncClient = new AsyncClient(asyncClientPolicy, host, port);
 
         /**************************Define default write policy************************************/
         this.writePolicy = asyncClientPolicy.asyncWritePolicyDefault;
+        this.writePolicy.sendKey = true;
+        /*****************************************************************************************/
+
+        /**************************Define a read policy for records*******************************/
+        Policy readPolicyDefined = new Policy();
+        readPolicyDefined.maxRetries = maxRetries;
+        readPolicyDefined.priority = Priority.DEFAULT;
+        readPolicyDefined.sleepBetweenRetries = 0;
+        //timeout to 5 milliseconds.
+        readPolicyDefined.timeout = timeout;
+        /*****************************************************************************************/
+
+        this.readPolicy = readPolicyDefined;
+        this.readBatchPolicy = asyncClientPolicy.batchPolicyDefault;
+    }
+
+    public AerospikeNoSqlNamespaceOperations(String loggerName,
+                                             String aerospikeHost,
+                                             int aerospikePort,
+                                             int maxRetries,
+                                             int timeout,
+                                             int maxConnsPerNode,
+                                             int asyncMaxCommands) throws AerospikeException
+    {
+        this.logger = LogManager.getLogger(loggerName);
+        this.host = aerospikeHost;
+        this.port = aerospikePort;
+        //in case in future we need to re-define async client policy, for now this will do.
+        AsyncClientPolicy asyncClientPolicy = new AsyncClientPolicy();
+        if(maxConnsPerNode > 0) {
+            asyncClientPolicy.maxConnsPerNode = maxConnsPerNode;
+        }
+        if(asyncMaxCommands > 0) {
+            asyncClientPolicy.asyncMaxCommands = asyncMaxCommands;
+        }
+        asyncClientPolicy.asyncTaskThreadPool = Executors.newCachedThreadPool(new ThreadFactory() {
+            public final Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable);
+                thread.setDaemon(true);
+                return thread;
+            }
+        });
+
+        /**
+         * Number of selector threads used to process asynchronous network events.  The default is
+         * a single threaded network handler.  Some applications may benefit from increasing this
+         * value to the number of CPU cores on the executing machine.
+         */
+        asyncClientPolicy.asyncSelectorThreads = 4;
+
+        this.aerospikeAsyncClient = new AsyncClient(asyncClientPolicy, host, port);
+
+        /**************************Define default write policy************************************/
+        this.writePolicy = asyncClientPolicy.asyncWritePolicyDefault;
+        this.writePolicy.timeout = timeout;
         this.writePolicy.sendKey = true;
         /*****************************************************************************************/
 
@@ -92,6 +157,42 @@ public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperatio
         }
         catch (Exception e)
         {
+            this.logger.error("Exception inside insertAttributeToThisNamespace of AerospikeNoSqlNamespaceOperations ",e);
+            return false;
+        }
+
+
+        //return true if no problems till here
+        return true;
+    }
+
+    @Override
+    public boolean insertAttributeToThisNamespaceAsync(String namespace,
+                                                  String tableName,
+                                                  NoSqlData primaryKeyValue,
+                                                  String attributeName,
+                                                  NoSqlData attributeValue) throws AerospikeException {
+        try {
+            Value keyValue = fetchAerospikeValueForNoSqlDataType(primaryKeyValue);
+
+            Key key = new Key(namespace, tableName, keyValue);
+
+            Value binValue = fetchAerospikeValueForNoSqlDataType(attributeValue);
+
+            Bin attribute = new Bin(attributeName, binValue);
+
+            //passing empty WriteListener so that we fire and forget and does not wait for the result.
+            this.aerospikeAsyncClient.put(this.writePolicy, new WriteListener() {
+                @Override
+                public void onSuccess(Key key) {
+                }
+
+                @Override
+                public void onFailure(AerospikeException exception) {
+                }
+            }, key, attribute);
+        }
+        catch (Exception e) {
             this.logger.error("Exception inside insertAttributeToThisNamespace of AerospikeNoSqlNamespaceOperations ",e);
             return false;
         }
@@ -142,6 +243,51 @@ public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperatio
     }
 
     @Override
+    public boolean insertMultipleAttributesToThisNamespaceAsync(String namespace,
+                                                           String tableName,
+                                                           NoSqlData primaryKeyValue,
+                                                           Map<String, NoSqlData> attributesNameValueMap)
+            throws AerospikeException {
+        if(null == namespace || null == tableName || null == primaryKeyValue ||
+                null == primaryKeyValue.getValue() || null == attributesNameValueMap)
+            return false;
+
+        try {
+            Value keyValue = fetchAerospikeValueForNoSqlDataType(primaryKeyValue);
+
+            Key key = new Key(namespace, tableName, keyValue);
+
+            Bin attributes[] = new Bin[attributesNameValueMap.size()];
+
+            int counter = 0;
+            for(String entryKey : attributesNameValueMap.keySet())
+            {
+                Value binValue = fetchAerospikeValueForNoSqlDataType(attributesNameValueMap.get(entryKey));
+                Bin attribute = new Bin(entryKey, binValue);
+                attributes[counter++] = attribute;
+            }
+
+            //passing WriteListener as empty so that we fire and forget and does not wait for the result.
+            this.aerospikeAsyncClient.put(this.writePolicy, new WriteListener() {
+                @Override
+                public void onSuccess(Key key) {
+                }
+
+                @Override
+                public void onFailure(AerospikeException exception) {
+                }
+            }, key, attributes);
+        }
+        catch (Exception e) {
+            //this.logger.error("Exception inside insertMultipleAttributesToThisNamespace of AerospikeNoSqlNamespaceOperations ",e);
+            return false;
+        }
+
+        //return true if no problems till here
+        return true;
+    }
+
+    @Override
     public boolean updateAttributesInThisNamespace(String namespace,
                                                    String tableName,
                                                    NoSqlData primaryKeyValue,
@@ -157,6 +303,24 @@ public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperatio
                                                        tableName,
                                                        primaryKeyValue,
                                                        attributesNameUpdatedValueMap);
+    }
+
+    @Override
+    public boolean updateAttributesInThisNamespaceAsync(String namespace,
+                                                   String tableName,
+                                                   NoSqlData primaryKeyValue,
+                                                   Map<String, NoSqlData> attributesNameUpdatedValueMap)
+            throws AerospikeException
+    {
+        if(null == namespace || null == tableName || null == primaryKeyValue ||
+                null == primaryKeyValue.getValue() || null == attributesNameUpdatedValueMap)
+            return false;
+
+        //update is same as insert as the bins are again put for this given primary key.
+        return insertMultipleAttributesToThisNamespaceAsync(namespace,
+                tableName,
+                primaryKeyValue,
+                attributesNameUpdatedValueMap);
     }
 
     @Override
@@ -233,6 +397,30 @@ public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperatio
         return mapToReturn;
     }
 
+    @Override
+    public void fetchSingleRecordAttributesAsync(String namespace,
+                                                 String tableName,
+                                                 NoSqlData primaryKeyValue,
+                                                 final Set<String> attributes,
+                                                 SignalingNotificationObject<Map<String, NoSqlData>> synchronizingResultMap)
+            throws AerospikeException
+    {
+        if(null == namespace || null == tableName || null == attributes || null == primaryKeyValue
+                || null == primaryKeyValue.getValue()) {
+            return;
+        }
+
+
+        SingleKeyReadHandler singleKeyReadHandler = new SingleKeyReadHandler(synchronizingResultMap, this.logger);
+
+        Value value = fetchAerospikeValueForNoSqlDataType(primaryKeyValue);
+        Key key = new Key(namespace, tableName, value);
+        String[] binNames = attributes.toArray(new String[attributes.size()]);
+
+        logger.debug("Firing async request to fetch record.");
+        this.aerospikeAsyncClient.get(readPolicy, singleKeyReadHandler, key, binNames);
+    }
+
     /**
      * This method takes input a map with key as primary-key value and its value as
      * set of attributes that need to be read in batch from the namespace table.
@@ -304,6 +492,39 @@ public class AerospikeNoSqlNamespaceOperations implements NoSqlNamespaceOperatio
         }
 
         return mapToReturn;
+    }
+
+    /**
+     * This method takes input a map with key as primary-key value and its value as
+     * set of attributes that need to be read in batch from the namespace table.
+     * @param namespace
+     * @param tableName
+     * @param primaryKeyValues
+     * @return
+     */
+    @Override
+    public void fetchMultipleRecordsAttributesAsync(String namespace,
+                                                    String tableName,
+                                                    Set<NoSqlData> primaryKeyValues,
+                                                    Set<String> attributes,
+                                                    SignalingNotificationObject<Map<NoSqlData, Map<String,NoSqlData>>> synchronizingResultMap) {
+        if(null == namespace || null == tableName || null == primaryKeyValues)
+            return;
+
+        // Create all the keys
+        Key[] primaryKeyArrayForAerospike = new Key[primaryKeyValues.size()];
+        int counter = 0;
+        for(NoSqlData noSqlData : primaryKeyValues) {
+            Value value = fetchAerospikeValueForNoSqlDataType(noSqlData);
+            Key key = new Key(namespace,tableName,value);
+            primaryKeyArrayForAerospike[counter ++ ] = key;
+        }
+
+        String[] binNames = attributes.toArray(new String[attributes.size()]);
+
+        MultipleKeyReadHandler multipleKeyReadHandler = new MultipleKeyReadHandler(synchronizingResultMap, this.logger);
+        logger.debug("Firing async request to fetch record.");
+        this.aerospikeAsyncClient.get(readBatchPolicy, multipleKeyReadHandler, primaryKeyArrayForAerospike, binNames);
     }
 
     private Value fetchAerospikeValueForNoSqlDataType(NoSqlData noSqlValue) throws AerospikeException

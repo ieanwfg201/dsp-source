@@ -12,7 +12,8 @@ public enum OpenRTBVersion
     VERSION_2_0(1,"openrtb-version-2.0"),
     VERSION_2_1(2,"openrtb-version-2.1"),
     VERSION_2_2(3,"openrtb-version-2.2"),
-    VERSION_2_3(4,"openrtb-version-2.3");
+    VERSION_2_3(4,"openrtb-version-2.3"),
+    VERSION_2_4(5,"openrtb-version-2.4");
 
     private int code;
     private String name;

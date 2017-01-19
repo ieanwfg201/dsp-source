@@ -16,8 +16,8 @@ import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.user.thrift.struct.LifetimeDemandHistory;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +37,7 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
                                LifetimeDemandHistoryProvider lifetimeAdImpHistoryProvider,
                                String adNoFillReasonMapKey) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.lifetimeAdHistoryProvider = lifetimeAdImpHistoryProvider;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
@@ -59,7 +59,7 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
         if(kritterUserId == null || null == lifetimeAdHistoryProvider) {
             Set<Integer> cappedAds = LifetimeCapUtils.getCappedAds(this.adEntityCache, adIdSet, getEventType());
             for(int adId : cappedAds) {
-                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, getNoFillReason().getValue(),
+                AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, NoFillReason.USER_ID_ABSENT.getValue(),
                         this.adNoFillReasonMapKey, context);
             }
 
@@ -74,7 +74,7 @@ public abstract class LifetimeAdCapFilter implements TargetingMatcher {
             Set<Integer> shortlistedAdIdSet = LifetimeCapUtils.getNonCappedAds(this.adEntityCache, adIdSet,
                     getEventType());
             if(null == request.getNoFillReason() && (shortlistedAdIdSet == null || shortlistedAdIdSet.size() <= 0))
-                request.setNoFillReason(getNoFillReason());
+                request.setNoFillReason(NoFillReason.USER_ID_ABSENT);
             return shortlistedAdIdSet;
         }
 

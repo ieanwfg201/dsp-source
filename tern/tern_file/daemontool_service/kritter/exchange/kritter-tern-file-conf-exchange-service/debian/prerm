@@ -1,0 +1,7 @@
+#!/bin/sh -x
+#DEBHELPER#
+set -e
+if [ -e /etc/kritter-tern-file-conf-exchange-service/run ]; then
+        update-service --remove /etc/kritter-tern-file-conf-exchange-service
+fi
+

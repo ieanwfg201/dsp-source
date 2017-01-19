@@ -15,6 +15,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.kritter.api.entity.creative_container.CreativeContainerList;
 import com.kritter.api.entity.creative_container.CreativeContainerListEntity;
 import com.kritter.api.entity.creative_container.Creative_container;
@@ -27,6 +28,7 @@ import com.kritter.entity.native_props.demand.NativeDemandProps;
 import com.kritter.entity.video_props.VideoProps;
 import com.kritter.kritterui.api.utils.InQueryPrepareStmnt;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
+import org.apache.commons.lang.StringUtils;
 
 
 public class CreativeContainerCrud {
@@ -71,6 +73,13 @@ public class CreativeContainerCrud {
           cc.setStatus_id(StatusIdEnum.getEnum(rset.getInt("status_id")));
           cc.setExt_resource_url(rset.getString("ext_resource_url"));
           cc.setComment(rset.getString("comment"));
+          String slot_info =  rset.getString("slot_info");
+          if(slot_info != null){
+        	  slot_info = slot_info.trim();
+        	  if(!"".equals(slot_info)){
+        		  cc.setSlot_info(slot_info);
+        	  }
+          }
           String native_demand_props =  rset.getString("native_demand_props");
           if(native_demand_props != null){
               String native_demand_props_trim = native_demand_props.trim();
@@ -326,6 +335,30 @@ public class CreativeContainerCrud {
         }
         return "";
     }
+    public static String generateSlotInfo(Creative_container cc){
+    	StringBuffer sbuff = new StringBuffer("[");
+    	if(cc.getSlot_info() != null){
+    		String s = StringUtils.replace(cc.getSlot_info(), "[", "");
+    		s= StringUtils.replace(s, "]", "");
+    		String split[] = s.split(",");
+    		boolean isFirst = true;
+    		for(String s1:split){
+    			try{
+    				int i = Integer.parseInt(s1);
+    				if(isFirst){
+    					isFirst=false;
+    				}else{
+    					sbuff.append(",");
+    				}
+    				sbuff.append(i);
+    			}catch(Exception e){
+    				
+    			}
+    		}
+    	}
+    	sbuff.append("]");
+    	return sbuff.toString();
+    }
     public static String generateNativeDemandProps(Creative_container cc){
         if(CreativeFormat.Native.getCode() == cc.getFormat_id()){
             NativeDemandProps ndp = new NativeDemandProps();
@@ -466,6 +499,7 @@ public class CreativeContainerCrud {
             pstmt.setString(14, generateCreativeMacros(cc));
             pstmt.setString(15, generateVideoProps(cc));
             pstmt.setString(16, cc.getComment());
+            pstmt.setString(17, generateSlotInfo(cc));
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();
@@ -577,7 +611,8 @@ public class CreativeContainerCrud {
             pstmt.setString(12, generateCreativeMacros(cc));
             pstmt.setString(13, generateVideoProps(cc));
             pstmt.setString(14, cc.getComment());
-            pstmt.setInt(15, cc.getId());
+            pstmt.setString(15, generateSlotInfo(cc));
+            pstmt.setInt(16, cc.getId());
             int returnCode = pstmt.executeUpdate();
             if(createTransaction){
                 con.commit();

@@ -30,26 +30,26 @@ public class VideoInfo {
     @Getter@Setter
     private VideoInfoExt ext;
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
+
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public JsonNode toJsonIgnoreNull(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
 
     public static VideoInfo getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         VideoInfo entity = objectMapper.readValue(str, VideoInfo.class);
         return entity;
     }
     public static VideoInfo getObjectIgnoreNull(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         VideoInfo entity = objectMapper.readValue(str, VideoInfo.class);
         return entity;
     }

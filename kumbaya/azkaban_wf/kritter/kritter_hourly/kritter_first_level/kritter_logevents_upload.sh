@@ -32,7 +32,12 @@ dbtype=${10}
 processing_time=${11}
 trackingeventtablename=${13}
 trackingevent=${2}/tracking_event/part-*
+fraudtablename=fraud_hourly
+fraudevent=${2}/fraud/part-*
 
+
+echo 'java  -cp "$CLASSPATH" $MAINCLASS "${fraudevent}" ${fraudtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+java  -cp "$CLASSPATH" $MAINCLASS "${fraudevent}" ${fraudtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
 
 echo 'java  -cp "$CLASSPATH" $MAINCLASS "${trackingevent}" ${trackingeventtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
 java  -cp "$CLASSPATH" $MAINCLASS "${trackingevent}" ${trackingeventtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}

@@ -54,16 +54,18 @@ public class MaterialUploadVideo
     private long last_modified = 0;
     @Getter@Setter
     private String resource_uri_ids;
-    
-    public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
+
+    public JsonNode toJson(){
+
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static MaterialUploadVideo getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
     public static MaterialUploadVideo getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

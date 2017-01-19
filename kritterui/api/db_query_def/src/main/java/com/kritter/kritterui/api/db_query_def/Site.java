@@ -26,6 +26,8 @@ public class Site {
     
     public static final String list_sites_by_account_guid = "select * from site where pub_guid=? " +
             "order by name limit ?,?";
+    public static final String list_sites_by_url= "select * from site where site_url like ? ";
+    
     public static final String list_sites_by_account_id = "select * from site where pub_id=? " +
             "order by last_modified desc limit ?,?";
     

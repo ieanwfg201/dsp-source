@@ -10,8 +10,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
-import com.kritter.constants.VideoMimeTypes;
-
+import com.kritter.constants.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,16 +71,16 @@ public class VideoSupplyProps {
 	/**com.kritter.constants.VASTCompanionTypes*/
 	@Getter@Setter
 	private HashSet<Integer> companiontype;
-	
+
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+	static {
+		objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+	}
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static VideoSupplyProps getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
     public static VideoSupplyProps getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
@@ -117,5 +116,140 @@ public class VideoSupplyProps {
     	String list2[] = new String[arrlist.size()];
     	list2 = arrlist.toArray(list2);
     	return list2;
+    }
+    public static HashSet<Integer> stringtoVideoMimeSetOrDefault(String inStr){
+		HashSet<Integer> set = new HashSet<Integer>();
+        if(inStr!=null){
+        	String inStrTmp= inStr.trim();
+        	if(!inStrTmp.isEmpty()){
+        		String split[]=inStrTmp.split(",");
+        		for(String str:split){
+        			try{
+        				Integer i = Integer.parseInt(str);
+        				VideoMimeTypes enu = VideoMimeTypes.getEnum(i);
+        				if(enu != null){
+        					set.add(enu.getCode());
+        				}
+        			}catch(Exception e){
+        			}
+        		}
+        	}
+        }
+        if(set.size()<1){
+        	set.add(VideoMimeTypes.MPEG4.getCode());
+        }
+		return set;
+    }
+    public static HashSet<Integer> stringtoVideoProtoColSetOrDefault(String inStr){
+		HashSet<Integer> set = new HashSet<Integer>();
+        if(inStr!=null){
+        	String inStrTmp= inStr.trim();
+        	if(!inStrTmp.isEmpty()){
+        		String split[]=inStrTmp.split(",");
+        		for(String str:split){
+        			try{
+        				Integer i = Integer.parseInt(str);
+        				VideoBidResponseProtocols enu = VideoBidResponseProtocols.getEnum(i);
+        				if(enu != null){
+        					set.add(enu.getCode());
+        				}
+        			}catch(Exception e){
+        			}
+        		}
+        	}
+        }
+        if(set.size()<1){
+        	for(VideoBidResponseProtocols enu:VideoBidResponseProtocols.values()){
+        		if(enu != VideoBidResponseProtocols.NONVAST){
+        			set.add(enu.getCode());
+        		}
+        	}
+        }
+		return set;
+    }
+    public static Integer stringtoVideoLinearityOrDefault(String inStr){
+        if(inStr!=null){
+        	String inStrTmp= inStr.trim();
+        	if(!inStrTmp.isEmpty()){
+        			try{
+        				Integer i = Integer.parseInt(inStrTmp);
+        				VideoLinearity enu = VideoLinearity.getEnum(i);
+        				if(enu != null){
+        					return enu.getCode();
+        				}
+        			}catch(Exception e){
+        			}
+        	}
+        }
+		return VideoLinearity.LINEAR_IN_STREAM.getCode();
+    }
+    public static HashSet<Integer> stringtoVideoPlaybackSetOrDefault(String inStr){
+		HashSet<Integer> set = new HashSet<Integer>();
+        if(inStr!=null){
+        	String inStrTmp= inStr.trim();
+        	if(!inStrTmp.isEmpty()){
+        		String split[]=inStrTmp.split(",");
+        		for(String str:split){
+        			try{
+        				Integer i = Integer.parseInt(str);
+        				VideoPlaybackMethods enu = VideoPlaybackMethods.getEnum(i);
+        				if(enu != null){
+        					set.add(enu.getCode());
+        				}
+        			}catch(Exception e){
+        			}
+        		}
+        	}
+        }
+        if(set.size()<1){
+        	set.add(VideoPlaybackMethods.Unknown.getCode());
+        }
+		return set;
+    }
+    public static HashSet<Integer> stringtoVideoApiFrameworkSetOrDefault(String inStr){
+		HashSet<Integer> set = new HashSet<Integer>();
+        if(inStr!=null){
+        	String inStrTmp= inStr.trim();
+        	if(!inStrTmp.isEmpty()){
+        		String split[]=inStrTmp.split(",");
+        		for(String str:split){
+        			try{
+        				Integer i = Integer.parseInt(str);
+        				APIFrameworks enu = APIFrameworks.getEnum(i);
+        				if(enu != null){
+        					set.add(enu.getCode());
+        				}
+        			}catch(Exception e){
+        			}
+        		}
+        	}
+        }
+        if(set.size()<1){
+        	set.add(APIFrameworks.Unknown.getCode());
+        }
+		return set;
+    }
+    public static HashSet<Integer> stringtoVideoContentDeliveryMethodSetOrDefault(String inStr){
+		HashSet<Integer> set = new HashSet<Integer>();
+        if(inStr!=null){
+        	String inStrTmp= inStr.trim();
+        	if(!inStrTmp.isEmpty()){
+        		String split[]=inStrTmp.split(",");
+        		for(String str:split){
+        			try{
+        				Integer i = Integer.parseInt(str);
+        				ContentDeliveryMethods enu = ContentDeliveryMethods.getEnum(i);
+        				if(enu != null){
+        					set.add(enu.getCode());
+        				}
+        			}catch(Exception e){
+        			}
+        		}
+        	}
+        }
+        if(set.size()<1){
+        	set.add(ContentDeliveryMethods.Unknown.getCode());
+        }
+		return set;
     }
 }

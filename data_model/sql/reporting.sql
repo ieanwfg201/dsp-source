@@ -921,3 +921,29 @@ CREATE TABLE `exchange_daily` (
   KEY `exchange_daily_advId` (`advId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+ALTER TABLE fraud_daily ADD COLUMN campaignId INTEGER  after count;
+ALTER TABLE fraud_daily ADD COLUMN advId INTEGER  after campaignId;
+ALTER TABLE fraud_daily ADD COLUMN pubId INTEGER  after advId;
+
+CREATE TABLE `fraud_hourly` (
+  `processing_time` datetime DEFAULT NULL,
+  `impression_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `siteId` int(11) DEFAULT NULL,
+  `adId` int(11) DEFAULT '0',
+  `event` varchar(64) DEFAULT NULL,
+  `terminationReason` varchar(64) DEFAULT NULL,
+  `count` bigint default 0  ,
+  `campaignId` int(11) DEFAULT NULL,
+  `advId` int(11) DEFAULT NULL,
+  `pubId` int(11) DEFAULT NULL,
+  KEY `fraud_hourly_siteId` (`siteId`),
+  KEY `fraud_hourly_adId` (`adId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE fraud_daily MODIFY count bigint default 0;
+
+ALTER TABLE first_level_limited ADD COLUMN bidFloor double default 0  after marketplace;
+ALTER TABLE first_level_limited_daily ADD COLUMN bidFloor double default 0  after marketplace;
+ALTER TABLE first_level_limited_monthly ADD COLUMN bidFloor double default 0  after marketplace;
+ALTER TABLE first_level_limited_yearly ADD COLUMN bidFloor double default 0  after marketplace;

@@ -34,8 +34,8 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.sql.Timestamp;
@@ -57,8 +57,7 @@ public class OpenRTBTwoDotThreeAggregatorRequestEnricher implements RequestEnric
     private ISPDetectionCache ispDetectionCache;
     private IConnectionTypeDetectionCache connectionTypeDetectionCache;
     private static final String ENCODING = "UTF-8";
-
-
+    private ObjectMapper objectMapper;
 
     public OpenRTBTwoDotThreeAggregatorRequestEnricher(
                                      String loggerName,
@@ -71,14 +70,16 @@ public class OpenRTBTwoDotThreeAggregatorRequestEnricher implements RequestEnric
                                      IConnectionTypeDetectionCache connectionTypeDetectionCache
                                      )
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
-        this.bidRequestLogger = LoggerFactory.getLogger(bidRequestLoggerName);
+        this.logger = LogManager.getLogger(loggerName);
+        this.bidRequestLogger = LogManager.getLogger(bidRequestLoggerName);
         this.reqLoggingCache = reqLoggingCache;
         this.siteCache = siteCache;
         this.handsetDetectionProvider = handsetDetectionProvider;
         this.countryDetectionCache = countryDetectionCache;
         this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = connectionTypeDetectionCache;
+        this.objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
     }
 
     @Override
@@ -147,8 +148,7 @@ public class OpenRTBTwoDotThreeAggregatorRequestEnricher implements RequestEnric
             bidRequestLogger.debug(sb.toString());
         }
         try{
-        	ObjectMapper objectMapper = new ObjectMapper();
-        	objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+
         	BidRequestParentNodeDTO entity = objectMapper.readValue(adRequestPayLoadReceived, BidRequestParentNodeDTO.class);
         	if(entity == null){
             	logger.error("Site {} - Unable to deserialise post body-> {} ",siteGuid,adRequestPayLoadReceived);

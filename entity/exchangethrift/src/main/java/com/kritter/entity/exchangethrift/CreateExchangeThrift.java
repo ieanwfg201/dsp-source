@@ -8,8 +8,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.kritter.adserving.thrift.struct.DspInfo;
 import com.kritter.adserving.thrift.struct.DspNoFill;
@@ -33,7 +33,7 @@ public class CreateExchangeThrift {
 		if(dsfInfoMap == null){
 			this.dsfInfoMap = new HashMap<String, DspInfo>();
 		}
-		this.logger=LoggerFactory.getLogger(loggerName);
+		this.logger=LogManager.getLogger(loggerName);
 	}
 
 	
@@ -143,6 +143,12 @@ struct DspInfo
 		}
 		return this;
 	}
+	public CreateExchangeThrift updateAllEmpty(){
+		for(DspInfo dspInfo:this.dsfInfoMap.values()){
+			dspInfo.setNofill(DspNoFill.EMPTY_RESPONSE);
+		}
+		return this;
+	}
 	public CreateExchangeThrift updateDemandResponse(String advertiser,String demandResponse){
 		if(advertiser!=null){
 			DspInfo dspInfo =this.dsfInfoMap.get(advertiser);
@@ -156,6 +162,36 @@ struct DspInfo
 		for(DspInfo dspInfo:this.dsfInfoMap.values()){
 			dspInfo.setNofill(DspNoFill.TIMEOUT);
 		}
+		return this;
+	}
+	public CreateExchangeThrift updateDSPTimeOut(String advertiserGuid){
+
+		DspInfo dspInfo = this.dsfInfoMap.get(advertiserGuid);
+		if(null == dspInfo)
+			return this;
+
+		dspInfo.setNofill(DspNoFill.TIMEOUT);
+
+		return this;
+	}
+	public CreateExchangeThrift updateDSPResponseError(String advertiserGuid){
+
+		DspInfo dspInfo = this.dsfInfoMap.get(advertiserGuid);
+		if(null == dspInfo)
+			return this;
+
+		dspInfo.setNofill(DspNoFill.RESPERROR);
+
+		return this;
+	}
+	public CreateExchangeThrift updateDSPEmptyResponse(String advertiserGuid){
+
+		DspInfo dspInfo = this.dsfInfoMap.get(advertiserGuid);
+		if(null == dspInfo)
+			return this;
+
+		dspInfo.setNofill(DspNoFill.EMPTY_RESPONSE);
+
 		return this;
 	}
 	public CreateExchangeThrift updateErrorReqState(ReqState reqState){

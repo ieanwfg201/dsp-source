@@ -46,14 +46,14 @@ public class NativeProps {
     private Integer description_maxchars;
     @Getter@Setter
     private String rating_count_keyname;
-    
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static NativeProps getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static NativeProps getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

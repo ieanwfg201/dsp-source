@@ -25,6 +25,11 @@ enum TABLE{
     fast_path = 15,
     exchange_hourly = 16,
     exchange_daily = 17,
+    tracking_hourly = 18,
+    tracking_daily = 19,
+    tracking_monthly = 20,
+    fraud_hourly = 21,
+    fraud_daily = 22,
 }  
 
 struct SiteId {
@@ -530,6 +535,71 @@ struct DspNoFill {
     8: string return_prefix = 'dspNoFill'
 }
 
+struct TerminationReason {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'terminationReason',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'TerminationReason',
+    8: string return_prefix = 'terminationReason'
+}
+
+struct Tevent {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'tevent',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'TEvent',
+    8: string return_prefix = 'tevent'
+}
+
+struct Teventtype {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'teventtype',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'TEventtype',
+    8: string return_prefix = 'teventtype'
+}
+
+struct Total_event {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'total_event',
+    6: MEMBERTYPE member_type = MEMBERTYPE.METRIC,
+    7: string uiname = 'TOTAL Event',
+    8: string return_prefix = 'total_event'
+}
+
+struct PostimpEvent {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'event',
+    6: MEMBERTYPE member_type = MEMBERTYPE.METRIC,
+    7: string uiname = 'PostimpEvent',
+    8: string return_prefix = 'postimpevent'
+}
+
+struct Total_Request_To_Dsp {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'total_impression',
+    6: MEMBERTYPE member_type = MEMBERTYPE.METRIC,
+    7: string uiname = 'Total Request To Dsp',
+    8: string return_prefix = 'total_request_to_dsp'
+}
+
+struct Total_count {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'count',
+    6: MEMBERTYPE member_type = MEMBERTYPE.METRIC,
+    7: string uiname = 'TOTAL Count',
+    8: string return_prefix = 'count'
+}
+
+struct Total_bidfloor {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'bidFloor',
+    6: MEMBERTYPE member_type = MEMBERTYPE.METRIC,
+    7: string uiname = 'TOTAL BidFloor',
+    8: string return_prefix = 'total_bidfloor'
+}
+
+
 struct KumbayaReportingConfiguration{
     1: SiteId siteId = {'fact_table':TABLE.first_level, 'fact_column':'siteId', 'dim_table':'site', 'dim_column':'id', 'dim_column_name':'name','member_type':MEMBERTYPE.DIMENSION,'uiname':'SITE NAME','return_prefix':'site','dim_guid':'guid'},
     2: DeviceId deviceId = {'fact_table':TABLE.first_level, 'fact_column':'deviceId', 'dim_table':'handset_detection_data', 'dim_column':'internal_id', 'dim_column_name':'marketing_name','member_type':MEMBERTYPE.DIMENSION, 'uiname':'Marketing Name','return_prefix':'device'},
@@ -585,5 +655,16 @@ struct KumbayaReportingConfiguration{
 	52: Total_floor total_floor = {'fact_table' :TABLE.first_level, 'fact_column' : 'total_floor', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL FLOOR','return_prefix':'total_floor'},
 	53: ReqState reqState = {'fact_table':TABLE.first_level, 'fact_column':'reqState','member_type':MEMBERTYPE.DIMENSION, 'uiname':'ReqState','return_prefix':'reqState'},
 	54: DspNoFill dspNoFill = {'fact_table':TABLE.first_level, 'fact_column':'dspNoFill','member_type':MEMBERTYPE.DIMENSION, 'uiname':'DspNoFill','return_prefix':'dspNoFill'},
+	55: TerminationReason terminationReason = {'fact_table':TABLE.first_level, 'fact_column':'terminationReason','member_type':MEMBERTYPE.DIMENSION, 'uiname':'TerminationReason','return_prefix':'terminationReason'},
+	56: Tevent tevent = {'fact_table':TABLE.first_level, 'fact_column':'tevent','member_type':MEMBERTYPE.DIMENSION, 'uiname':'TEvent','return_prefix':'tevent'},
+	57: Teventtype teventtype = {'fact_table':TABLE.first_level, 'fact_column':'teventtype','member_type':MEMBERTYPE.DIMENSION, 'uiname':'TEventtype','return_prefix':'teventtype'},
+    58: Total_event total_event = {'fact_table' :TABLE.first_level, 'fact_column' : 'total_event', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL Event','return_prefix':'total_event'},
+    59: Total_Request_To_Dsp total_request_to_dsp = {'fact_table' :TABLE.first_level, 'fact_column' : 'total_impression', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'Total Request To Dsp','return_prefix':'total_request_to_dsp'},
+    60: PostimpEvent postimpevent = {'fact_table' :TABLE.first_level, 'fact_column' : 'event', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'PostimpEvent','return_prefix':'postimpevent'},
+    61: Total_count total_count = {'fact_table' :TABLE.first_level, 'fact_column' : 'count', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL Count','return_prefix':'count'},
+    62: Total_bidfloor total_bidfloor = {'fact_table' :TABLE.first_level, 'fact_column' : 'bidFloor', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL BidFloor','return_prefix':'total_bidfloor'},
 }
+
+
+
 

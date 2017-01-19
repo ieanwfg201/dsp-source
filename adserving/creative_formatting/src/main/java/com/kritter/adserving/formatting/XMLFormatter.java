@@ -16,8 +16,8 @@ import com.kritter.serving.demand.entity.Creative;
 import com.kritter.serving.demand.entity.CreativeSlot;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.ServerConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 
 import java.util.List;
@@ -51,7 +51,7 @@ public class XMLFormatter implements CreativesFormatter
                         ServerConfig serverConfig)
     {
         this.loggerName = loggerName;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
         this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
         this.cdnBaseImageUrl = serverConfig.getValueForKey(ServerConfig.CDN_URL_PREFIX);

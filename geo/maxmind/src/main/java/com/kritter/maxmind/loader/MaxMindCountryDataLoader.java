@@ -7,8 +7,8 @@ import com.kritter.geo.common.utils.GeoCommonUtils;
 import com.kritter.maxmind.entity.MaxmindCountryInputData;
 import com.kritter.utils.databasemanager.DBExecutionUtils;
 import com.kritter.utils.databasemanager.DatabaseManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -55,7 +55,7 @@ public class MaxMindCountryDataLoader implements ThirdPartyDataLoader
                                     int batchSizeForSqlInsertion
                                    ) throws Exception
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.dataSourceName = dataSourceName;
         this.reloadFrequency = reloadFrequency;
         this.countryDatabaseFileFullPath = countryDatabaseFileFullPath;
@@ -332,7 +332,7 @@ public class MaxMindCountryDataLoader implements ThirdPartyDataLoader
      */
     private class CountryDataLoadingTask extends TimerTask
     {
-        private Logger cacheLogger = LoggerFactory.getLogger("cache.logger");
+        private Logger cacheLogger = LogManager.getLogger("cache.logger");
 
         @Override
         public void run()

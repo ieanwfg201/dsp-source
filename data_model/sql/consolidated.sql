@@ -1510,3 +1510,36 @@ CREATE TABLE `qualification` (
 ) ENGINE=InnoDB;
 
 alter table qualification drop index qualification_unique_key;
+
+-- allowed values empty,null,[], [1,2]
+alter table creative_container add column slot_info text default null  after comment;
+-- Refers to protocol as defined in  com.kritter.constants.Protocol
+alter table ad add column protocol int default 1 after freqcap_json;
+
+-- Same ad com.kritter.constants.AudienceMetadata
+CREATE TABLE `audience_metadata` (
+`internalid`  int(10) unsigned NOT NULL,
+ `name` varchar(128) NOT NULL,
+ `enabled` boolean NOT NULL default false,
+  `last_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+PRIMARY KEY (`internalid`)
+);
+
+insert into audience_metadata  (internalid,name) values(1,'Gender');
+insert into audience_metadata  (internalid,name) values(2,'Age Range');
+insert into audience_metadata  (internalid,name) values(3,'Audience Category');
+
+CREATE TABLE `audience_definition` (
+    `internalid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `name` varchar(128) NOT NULL,
+    `audience_type` int(10) unsigned NOT NULL,
+    `tier` int(10) unsigned default 1,
+    `parent_internalid` int(10) unsigned default null,
+  `last_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`internalid`),
+    KEY `fk_audience_definition_audience_type` (`audience_type`),
+    CONSTRAINT `fk_audience_definition_audience_type` FOREIGN KEY (`audience_type`) REFERENCES `audience_metadata` (`internalid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table targeting_profile add column audience_targeting boolean default false  after lat_lon_radius_unit;
+alter table targeting_profile add column audience_targeting_def text  after audience_targeting;

@@ -9,7 +9,7 @@ import com.kritter.utils.common.ApplicationGeneralUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespAsset;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.native1_0.resp.RespData;
@@ -27,6 +27,12 @@ import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.entity.Creative;
 
 public class NativeAdMarkUp {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static
+    {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
 
     public static String prepare(
             Request request,
@@ -117,19 +123,19 @@ public class NativeAdMarkUp {
         respNative.setImptrackers(imptrackers);
         respNative.setVer(1);
         ArrayList<RespAsset> respAssetList = new ArrayList<RespAsset>();
-        String[] clicktrackers = new String[1];
-        clicktrackers[0] = clickUrl.toString().toString();
         RespLink respLink = new RespLink();
-        respLink.setClicktrackers(clicktrackers);
-        RespAsset clickRespAsset = new RespAsset();
-        clickRespAsset.setLink(respLink);
-        respAssetList.add(clickRespAsset);
+        respLink.setUrl(clickUrl.toString());
+        respNative.setLink(respLink);
         if(nativeDemandProps.getTitle() != null){
             RespAsset respAsset = new RespAsset();
             RespTitle title = new RespTitle();
             title.setText(nativeDemandProps.getTitle());
             respAsset.setTitle(title);
-            respAsset.setId(NativeAssetId.Title.getCode());
+            if(nativeDemandProps.getTitleId() != null){
+            	respAsset.setId(nativeDemandProps.getTitleId());
+            }else{
+            	respAsset.setId(NativeAssetId.Title.getCode());
+            }
             respAssetList.add(respAsset);
         }
         if(nativeDemandProps.getDesc() != null){
@@ -138,7 +144,11 @@ public class NativeAdMarkUp {
             data.setLabel(NativeDataAssetType.desc.getName());
             data.setValue(nativeDemandProps.getDesc());
             respAsset.setData(data);
-            respAsset.setId(NativeAssetId.Desc.getCode());
+            if(nativeDemandProps.getDescId() != null){
+            	respAsset.setId(nativeDemandProps.getDescId());
+            }else{
+            	respAsset.setId(NativeAssetId.Desc.getCode());
+            }
             respAssetList.add(respAsset);
         }
         if(responseAdInfo.getNativeIcon() != null){
@@ -152,7 +162,11 @@ public class NativeAdMarkUp {
             respImage.setW(Integer.parseInt(sSplit[0]));
             respImage.setH(Integer.parseInt(sSplit[1]));
             respAsset.setImg(respImage);
-            respAsset.setId(NativeAssetId.Icon.getCode());
+            if(nativeDemandProps.getIconId() != null){
+            	respAsset.setId(nativeDemandProps.getIconId());
+            }else{
+            	respAsset.setId(NativeAssetId.Icon.getCode());
+            }
             respAssetList.add(respAsset);
         }
         if(responseAdInfo.getNativeScreenshot() != null){
@@ -166,7 +180,11 @@ public class NativeAdMarkUp {
             respImage.setW(Integer.parseInt(sSplit[0]));
             respImage.setH(Integer.parseInt(sSplit[1]));
             respAsset.setImg(respImage);
-            respAsset.setId(NativeAssetId.Screenshot.getCode());
+            if(nativeDemandProps.getScreenshotId() != null){
+            	respAsset.setId(nativeDemandProps.getScreenshotId());
+            }else{
+            	respAsset.setId(NativeAssetId.Screenshot.getCode());
+            }
             respAssetList.add(respAsset);
         }
         
@@ -174,8 +192,6 @@ public class NativeAdMarkUp {
         stockArr = respAssetList.toArray(stockArr);
         respNative.setAssets(stockArr);
         respNativeParent.setRespNativeForstLevel(respNative);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         JsonNode jsonNode = objectMapper.valueToTree(respNativeParent);
         return jsonNode.toString();
 

@@ -1,0 +1,58 @@
+@(audience_targeting:String )
+@main("Audience Metadata"){
+
+@components.containers.panel("Audience Metadata"){
+
+@if("true" == audience_targeting) {
+<div ng-controller="audienceMetadataController">
+    <div class="btn-group pull-right">
+        </div> 		
+        <div infinite-scroll='nextPage()' infinite-scroll-disabled='audienceMetadataListData.isLoading' infinite-scroll-distance='1'>
+			<table tr-ng-grid="" class="table-condensed" items="audienceMetadataListData.filteredData"   
+			 					selected-items="audienceMetadataListData.selections" 
+			 					fields="['select', 'name',  'enabled', 'action']" 
+			 					selection-mode="MultiRow"
+			 					enable-filtering="audienceMetadataListData.enableFilter"
+			 					enable-sorting="audienceMetadataListData.enableSorting" 
+			 					order-by="audienceMetadataListData.orderBy"
+			 					order-by-reverse="audienceMetadataListData.orderByReverse" 
+			 					page-items="audienceMetadataListData.itemsPerPage"  
+			 					total-items="audienceMetadataListData.totalItems"
+			 					current-page="audienceMetadataListData.currentPage" 
+			 					on-data-required="audienceMetadataListData.updateData(currentPage, pageItems, filterBy, filterByFields, orderBy, orderByReverse)" > 
+		 
+			    <thead>
+			        <tr>
+                        <th field-name="name" display-name="Name" enable-sorting="true" enable-filtering="true" >  </th>
+                        <th field-name="enabled" display-name="Enabled" enable-sorting="true" enable-filtering="true" >  </th>
+			            <th field-name="action" display-name="Action" enable-sorting="false" >  </th>
+			        </tr>  
+			    </thead> 
+			    <tbody>
+		    		<tr>
+		    			<td field-name="select"> <input type="checkbox" ng-model="gridItem.isSelected" ng-checked="audienceMetadataListData.isItemChecked(gridItem)" ></td>
+		    		
+						<td field-name="action" > 
+					                <button ng-show="gridItem.enabled" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="Disable" ng-click="updateAudienceMetadata(gridItem.id,'disable')">
+					                					<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+					                </button>
+					                <button ng-show="gridItem.disabled" class="btn  btn-default" data-toggle="tooltip" data-placement="top" title="Enable" ng-click="updateAudienceMetadata(gridItem.id,'enable')">
+					                					<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+					                </button>
+			            </td>
+			            
+			           
+			        </tr>
+			    </tbody>
+			</table> 
+		</div>
+</div>
+
+}
+
+}
+@if("true" != audience_targeting) {
+Audience Targeting NOT AVAILABLE
+}
+<script src="@routes.Assets.at("javascripts/apps/audience/audiencemetadataController.js")" type="text/javascript"></script>
+}

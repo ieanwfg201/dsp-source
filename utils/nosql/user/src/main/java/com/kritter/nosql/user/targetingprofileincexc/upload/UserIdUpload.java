@@ -10,8 +10,8 @@ import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.PropertyConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import com.google.common.io.Files;
 
 import java.io.*;
@@ -24,7 +24,7 @@ public class UserIdUpload {
 
     public UserIdUpload(String loggerName,
                         UserTargetingProfileIncExcCache profileIncExcCache) {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.profileIncExcCache = profileIncExcCache;
     }
 

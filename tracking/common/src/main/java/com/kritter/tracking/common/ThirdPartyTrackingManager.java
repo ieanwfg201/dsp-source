@@ -2,8 +2,8 @@ package com.kritter.tracking.common;
 
 import com.kritter.tracking.common.entity.ThirdPartyTrackingData;
 import com.kritter.utils.common.ApplicationGeneralUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class ThirdPartyTrackingManager
     public ThirdPartyTrackingManager(String loggerName,
                                      String encodedConversionDataParameter)
     {
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.encodedConversionDataParameter = encodedConversionDataParameter;
     }
 

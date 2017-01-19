@@ -6,8 +6,8 @@ import com.kritter.utils.databasemanager.DatabaseManager;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import static org.easymock.EasyMock.*;
  */
 public class TestDBStatsReloadableQueryableCache
 {
-    private final static Logger logger = LoggerFactory.getLogger(TestDBStatsReloadableQueryableCache.class);
+    private final static Logger logger = LogManager.getLogger(TestDBStatsReloadableQueryableCache.class);
     private DatabaseManager mockMgr;
     private Connection mockConn;
     private PreparedStatement mockPrepStmt;

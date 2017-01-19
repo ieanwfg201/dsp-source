@@ -8,6 +8,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
@@ -34,6 +35,14 @@ public class NativeDemandProps {
     private String download_count;
     @Getter@Setter
     private String active_players;
+    @Getter@Setter
+    private Integer titleId;
+    @Getter@Setter
+    private Integer descId;
+    @Getter@Setter
+    private Integer iconId;
+    @Getter@Setter
+    private Integer screenshotId;
     @JsonIgnore
     public String getIconsStr(){
         if(this.icons != null){
@@ -74,15 +83,17 @@ public class NativeDemandProps {
         }
         return "[]";
     }
-    public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+        objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    }
+    public JsonNode toJson(){
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static NativeDemandProps getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         return getObject(objectMapper,str);
     }
     public static NativeDemandProps getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

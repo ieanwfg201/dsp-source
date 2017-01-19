@@ -1,7 +1,7 @@
 package com.kritter.postimpression.enricher_fraud.checker;
 
 import com.kritter.core.workflow.Context;
-import com.kritter.postimpression.enricher_fraud.checker.OnlineFraudUtils.ONLINE_FRAUD_REASON;
+import com.kritter.constants.ONLINE_FRAUD_REASON;
 
 /**
  * This interface dictates methods to be implemented by any online fraud check.

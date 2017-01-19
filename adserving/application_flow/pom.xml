@@ -80,6 +80,11 @@
             <artifactId>youku_enricher</artifactId>
             <version>1.0.0</version>
         </dependency>
+         <dependency>
+            <groupId>com.kritter.adexchange</groupId>
+            <artifactId>inmobi2_3_enricher</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>com.kritter.adexchange</groupId>
             <artifactId>valuemaker_req_enricher</artifactId>
@@ -227,12 +232,6 @@
             <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.5</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>com.kritter.common.caches</groupId>
             <artifactId>ad_stats</artifactId>
             <version>1.0.0</version>
@@ -286,6 +285,62 @@
             <groupId>com.kritter.common.caches</groupId>
             <artifactId>thrift_logging</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>metrics</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+            <scope>compile</scope>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.5</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>3.2.0</version>
         </dependency>
     </dependencies>
     <organization>

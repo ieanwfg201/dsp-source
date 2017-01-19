@@ -4,7 +4,7 @@ import com.kritter.abstraction.cache.interfaces.ISecondaryIndexWrapper;
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Properties;

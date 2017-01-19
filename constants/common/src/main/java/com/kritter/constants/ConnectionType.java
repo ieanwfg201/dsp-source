@@ -14,6 +14,7 @@ public enum ConnectionType {
     MobiledataUnknown("MobiledataUnknown", (short)3),
     MobiledataTwoG("MobiledataTwoG", (short)4),
     MobiledataThreeG("MobiledataThreeG", (short)5),
+    MobiledataFourG("MobiledataFourG", (short)6),
     CARRIER("Carrier", (short)51);
 
 

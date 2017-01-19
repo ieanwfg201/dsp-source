@@ -53,6 +53,7 @@ controller('limitedReportController',function ($scope, $http, ngTableParams, $mo
 		$('#profitmargin').prop("checked",checkvalue);
 		$('#eIPA').prop("checked",checkvalue);
 		$('#eCPA').prop("checked",checkvalue);
+		$('#avgBidFloor').prop("checked",checkvalue);
 	}
 
 	$scope.refershData = function(){

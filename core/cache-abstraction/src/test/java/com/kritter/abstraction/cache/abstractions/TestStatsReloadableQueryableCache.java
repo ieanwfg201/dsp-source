@@ -3,8 +3,8 @@ package com.kritter.abstraction.cache.abstractions;
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Date;
 import java.util.Properties;
@@ -19,7 +19,7 @@ import static junit.framework.Assert.assertNotSame;
  */
 public class TestStatsReloadableQueryableCache
 {
-    private static Logger logger = LoggerFactory.getLogger(TestStatsReloadableQueryableCache.class);
+    private static Logger logger = LogManager.getLogger(TestStatsReloadableQueryableCache.class);
 
     @Test(expected = InitializationException.class)
     public void testConstruction() throws InitializationException

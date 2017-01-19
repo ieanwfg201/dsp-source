@@ -5,8 +5,8 @@ import com.kritter.abstraction.cache.abstractions.AbstractFileStatsReloadableCac
 import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.HashMap;
@@ -31,9 +31,9 @@ public class LogisticRegressionCTRCache extends AbstractFileStatsReloadableCache
     private String dimCoeffDelimiter;
 
     public LogisticRegressionCTRCache(String name, String loggerName, Properties properties) throws InitializationException {
-        super(LoggerFactory.getLogger(loggerName), properties);
+        super(LogManager.getLogger(loggerName), properties);
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.othersId = Integer.parseInt(properties.getProperty(OTHERSID_KEY));
         this.dimValueDelimiter = properties.getProperty(DIMENSION_VALUE_DELIMITER_KEY);
         this.dimCoeffDelimiter = properties.getProperty(DIMENSION_COEFFICIENT_DELIMITER_KEY);

@@ -26,6 +26,11 @@ import com.kritter.constants.NativeImageAssetType;
 import com.kritter.constants.NativeScreenShotImageSize;
 
 public class ConvertBidRequestImpNative {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
+
     public static ConvertErrorEnum convert(Request request, BidRequestImpressionDTO bidRequestImpressionDTO, int version, AccountEntity dspEntity){
         Site site = request.getSite();
         if(site == null){
@@ -37,9 +42,16 @@ public class ConvertBidRequestImpNative {
         if(site.getNativeProps() == null){
             return ConvertErrorEnum.REQ_NATIVE_PROP_NF;
         }
-            NativeProps nativeSupplyProps = site.getNativeProps();
-            Native nativeObj = new Native();
-            nativeObj.setLayout(nativeSupplyProps.getLayout());
+
+        NativeProps nativeSupplyProps = site.getNativeProps();
+        Native nativeObj = new Native();
+        nativeObj.setLayout(nativeSupplyProps.getLayout());
+        if(null != request.getBidRequestNativeRequestContext());
+            nativeObj.setContext(request.getBidRequestNativeRequestContext());
+        if(null != request.getBidRequestNativeRequestContextsubtype());
+            nativeObj.setContextsubtype(request.getBidRequestNativeRequestContextsubtype());
+        if(null != request.getBidRequestNativeRequestPlcmttype())
+            nativeObj.setPlcmttype(request.getBidRequestNativeRequestPlcmttype());
 
         //set adunit id of the external DSP, assuming one ad id per DSP.
         if(null != request.getAdUnitIdOfExternalDSPMapForNativeBidRequest())
@@ -65,8 +77,21 @@ public class ConvertBidRequestImpNative {
             String str[] = s.split("\\*");
             Asset asset = new Asset();
             Image img = new Image();
-            img.setH(Integer.parseInt(str[1]));
-            img.setW(Integer.parseInt(str[0]));
+
+            Integer w = Integer.parseInt(str[0]);
+            Integer h = Integer.parseInt(str[1]);
+
+            if(request.isBidRequestUseHMinWMinNativeRequest())
+            {
+                img.setHmin(h);
+                img.setWmin(w);
+            }
+            else
+            {
+                img.setH(h);
+                img.setW(w);
+            }
+
             img.setType(NativeImageAssetType.Icon.getCode());
             asset.setImg(img);
             asset.setId(NativeAssetId.Icon.getCode());
@@ -85,8 +110,21 @@ public class ConvertBidRequestImpNative {
             String str[] = s.split("\\*");
             Asset asset = new Asset();
             Image img = new Image();
-            img.setH(Integer.parseInt(str[1]));
-            img.setW(Integer.parseInt(str[0]));
+
+            Integer w = Integer.parseInt(str[0]);
+            Integer h = Integer.parseInt(str[1]);
+
+            if(request.isBidRequestUseHMinWMinNativeRequest())
+            {
+                img.setHmin(h);
+                img.setWmin(w);
+            }
+            else
+            {
+                img.setH(h);
+                img.setW(w);
+            }
+
             img.setType(NativeImageAssetType.Main.getCode());
             asset.setImg(img);
             asset.setId(NativeAssetId.Screenshot.getCode());
@@ -107,9 +145,12 @@ public class ConvertBidRequestImpNative {
         stockArr = assetList.toArray(stockArr);
         nativeObj.setAssets(stockArr);
         BidRequestImpressionNativeObjectDTO bnative = new BidRequestImpressionNativeObjectDTO();
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+
         JsonNode jsonNode = objectMapper.valueToTree(nativeObj);
+
+        if(null != request.getBidRequestNativeVersion())
+            bnative.setVer(request.getBidRequestNativeVersion());
+
         bnative.setRequest(jsonNode.toString());
         bidRequestImpressionDTO.setBidRequestImpressionNativeObjectDTO(bnative);
 

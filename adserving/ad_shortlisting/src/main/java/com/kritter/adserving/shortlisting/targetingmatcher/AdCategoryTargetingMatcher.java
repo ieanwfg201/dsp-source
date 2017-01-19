@@ -11,8 +11,8 @@ import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.SetUtils;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,7 +31,7 @@ public class AdCategoryTargetingMatcher implements TargetingMatcher {
     public AdCategoryTargetingMatcher(String name, String loggerName, AdEntityCache adEntityCache,
                                       String adNoFillReasonMapKey) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
     }

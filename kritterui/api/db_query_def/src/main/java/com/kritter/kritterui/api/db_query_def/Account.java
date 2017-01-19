@@ -38,4 +38,6 @@ public class Account {
     public static String get_Account_By_Id = "select * from  account where id=?";
     public static String get_Account_By_Guid_Apikey = "select * from  account where guid=? and api_key=?";
     public static String get_Account_By_UserId_Pwd = "select * from  account where userid=?";
+    public static String list_accounts_by_email = "select * from  account where email=?";
+
 }

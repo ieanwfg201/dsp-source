@@ -6,8 +6,8 @@ import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
 import com.kritter.utils.nosql.common.NoSqlNamespaceTable;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -41,7 +41,7 @@ public class UserTargetingProfileIncExcCache implements NoSqlNamespaceTable, ICa
                                            NoSqlNamespaceOperations noSqlNamespaceOperations,
                                            Properties properties) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.noSqlNamespaceOperationsInstance = noSqlNamespaceOperations;
 
         this.namespaceName = properties.getProperty(NAMESPACE_NAME_KEY);

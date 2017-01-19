@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestParentNodeDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidResponseBidEntity;
@@ -18,6 +18,11 @@ import com.kritter.entity.winner.WinEntity;
 import com.kritter.vast.vastversion.CheckVastVersion;
 
 public class FormatDspResponse {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+    }
 
     public static String formatResponse2_3(WinEntity winEntity, BidRequestParentNodeDTO bidRequestParent,
             String internalFieldURI, String internalWinUrl, boolean isNative, Logger logger, boolean isVideo){
@@ -61,8 +66,6 @@ public class FormatDspResponse {
         winUrl = winUrl.replaceAll(ExchangeConstants.winMacroAuctionPrice, winEntity.getWin_price()+"");
         winUrl = winUrl.replaceAll(ExchangeConstants.winMacroAuctionCurrency,  bidRequestParent.getAllowedCurrencies()[0]);
         if(isNative){
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
             try{
                 RespNativeParent entityParent = objectMapper.readValue(bidResponseBidEntity.getAdMarkup(), RespNativeParent.class);
                 RespNativeFirstLevel entity = entityParent.getRespNativeForstLevel();
@@ -104,15 +107,16 @@ public class FormatDspResponse {
         	return s;
         	
         }else{
-            sBuff.append(bidResponseBidEntity.getAdMarkup());
+            sBuff.append("<img src=\"");
+            sBuff.append(internalWinUrl+internalFieldURI);
+            sBuff.append((internalFieldURI.contains("?") ? "&" : "?"));
+            sBuff.append("wp=");
+            sBuff.append(winEntity.getWin_price());
+            sBuff.append("\" style=\"display: none;\" />");
             sBuff.append("<img src=\"");
             sBuff.append(winUrl);
             sBuff.append("\" style=\"display: none;\" />");
-            sBuff.append("<img src=\"");
-            sBuff.append(internalWinUrl+internalFieldURI);
-            sBuff.append("?wp=");
-            sBuff.append(winEntity.getWin_price());
-            sBuff.append("\" style=\"display: none;\" />");
+            sBuff.append(bidResponseBidEntity.getAdMarkup());
         }
         return sBuff.toString();
     }
@@ -160,8 +164,7 @@ public class FormatDspResponse {
         winUrl = winUrl.replaceAll(ExchangeConstants.winMacroAuctionPrice, winEntity.getWin_price()+"");
         winUrl = winUrl.replaceAll(ExchangeConstants.winMacroAuctionCurrency,  bidRequestParent.getAllowedCurrencies()[0]);
         if(isNative){
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
+
             try{
                 RespNativeParent entityParent = objectMapper.readValue(bidResponseBidEntity.getAdMarkup(), RespNativeParent.class);
                 RespNativeFirstLevel entity = entityParent.getRespNativeForstLevel();
@@ -203,16 +206,16 @@ public class FormatDspResponse {
         	return s;
         	
         }else{
-            sBuff.append(bidResponseBidEntity.getAdMarkup());
-            sBuff.append("<img src=\"");
-            sBuff.append(winUrl);
-            sBuff.append("\" style=\"display: none;\" />");
             sBuff.append("<img src=\"");
             sBuff.append(internalWinUrl+internalFieldURI);
             sBuff.append((internalFieldURI.contains("?") ? "&" : "?"));
             sBuff.append("wp=");
             sBuff.append(winEntity.getWin_price());
             sBuff.append("\" style=\"display: none;\" />");
+            sBuff.append("<img src=\"");
+            sBuff.append(winUrl);
+            sBuff.append("\" style=\"display: none;\" />");
+            sBuff.append(bidResponseBidEntity.getAdMarkup());
         }
         return sBuff.toString();
     }

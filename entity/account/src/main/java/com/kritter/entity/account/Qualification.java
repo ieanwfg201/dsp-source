@@ -25,11 +25,12 @@ public class Qualification {
     public String md5; /*image md5*/
     @Getter@Setter
     public Integer state; /*add,update,delete*/
-    
-    public static Qualification getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
         objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+    public static Qualification getObject(String str) throws JsonParseException, JsonMappingException, IOException{
         return getObject(objectMapper,str);
     }
     public static Qualification getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{
@@ -38,7 +39,6 @@ public class Qualification {
 
     }
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }

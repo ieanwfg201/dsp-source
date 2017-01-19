@@ -11,7 +11,7 @@ import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.utils.common.ApplicationGeneralUtils;
 import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.common.url.URLFieldProcessingException;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
@@ -25,28 +25,24 @@ import java.util.Set;
  */
 public class CreativeFormatterUtils
 {
-    private static final String URI_FIELD_DELIMITER = "/";
+    public static final String URI_FIELD_DELIMITER = "/";
     public static final String CLICK_URL_MACRO       = "$CLICK_URL";
     public static final String CREATIVE_IMAGE_URL    = "$CREATIVE_IMAGE";
-    public static final String CREATIVE_TEXT         = "$CREATIVE_TEXT";
     public static final String CREATIVE_CSC_BEACON   = "$CREATIVE_CSC_BEACON";
     public static final String CREATIVE_ALT_TEXT     = "$CREATIVE_ALT_TEXT";
-    public static final String CREATIVE_TYPE         = "$CREATIVE_TYPE";
-    public static final String CREATIVE_IMAGE_WIDTH  = "$CREATIVE_IMAGE_WIDTH";
-    public static final String CREATIVE_IMAGE_HEIGHT = "$CREATIVE_IMAGE_HEIGHT";
-    public static final String RICHMEDIA_PAYLOAD     = "$RICHMEDIA_PAYLOAD";
     public static final String WIN_NOTIFICATION_URL  = "$WIN_NOTIFICATION_URL";
 
-    public static String prepareClickUri(Logger logger,Request request,
-            ResponseAdInfo responseAdInfo,
-            Short bidderModelId,
-            int urlVersion,
-            int inventorySource,
-            Short selectedSiteCategoryId,
-            String secretKeyForHash)
+    public static String prepareClickUri(   Logger logger,Request request,
+                                            ResponseAdInfo responseAdInfo,
+                                            Short bidderModelId,
+                                            int urlVersion,
+                                            int inventorySource,
+                                            Short selectedSiteCategoryId,
+                                            String secretKeyForHash
+                                        )
     {
-        return prepareClickUri(logger, request, responseAdInfo, bidderModelId, urlVersion, inventorySource,
-                selectedSiteCategoryId, secretKeyForHash, false);
+        return prepareClickUri(logger, request, responseAdInfo, bidderModelId, urlVersion,
+                               inventorySource,selectedSiteCategoryId, secretKeyForHash, false);
     }
 
     public static String prepareClickUri(Logger logger,Request request,
@@ -271,7 +267,7 @@ public class CreativeFormatterUtils
         return sb.toString();
     }
 
-    private static String encodeAndGenerateAdservingInformationForPostimpressionURLTransport(Request request,Logger logger)
+    public static String encodeAndGenerateAdservingInformationForPostimpressionURLTransport(Request request,Logger logger)
                                                                                     throws URLFieldProcessingException
 
     {

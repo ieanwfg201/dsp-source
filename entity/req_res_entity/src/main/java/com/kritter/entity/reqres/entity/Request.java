@@ -114,6 +114,8 @@ public class Request
     private int[] requestedSlotWidths;
     @Getter @Setter
     private int[] requestedSlotHeights;
+    @Getter @Setter
+    private boolean exactBannerSizeRequired = false;
 
     @Getter @Setter
     private List<Short> requestedSlotIdList;
@@ -191,6 +193,21 @@ public class Request
     //contains all request enrichment related error codes.
     @Getter @Setter
     private CreateExchangeThrift createExchangeThrift;
+
+    private static final String DEALID_FLOOR_DELIM = ":";
+
+    /**flag to mark request as test request.Any aggregator Network or Exchange might set this flag
+     * to enable workflow to decide whether to perform time taking executions for this type of request
+     * or simply allow next executions in line to decide on their workings.*/
+    @Getter @Setter
+    private Boolean isTestRequest;
+
+    @Getter @Setter
+    private Boolean secure=false;
+
+    /**Adx specific adgroup id list against ad-slot-id.*/
+    @Getter @Setter
+    private Map<Integer,List<Long>> adxAdGroupIdListAgainstAdSlotId;
 
     public enum REQUEST_ENRICHMENT_ERROR_CODE
     {
@@ -335,6 +352,57 @@ public class Request
         return null;
     }
 
+    public List<String> fetchDealIdSetFromBidRequest()
+    {
+        List<String> dealIdSet = new ArrayList<String>();
+
+        if(null != adExchangeInfoMapPerImpression && adExchangeInfoMapPerImpression.size() > 0)
+        {
+            for(AdExchangeInfo adExchangeInfo : adExchangeInfoMapPerImpression.values())
+            {
+                Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet = adExchangeInfo.getPrivateDealInfoSet();
+                if(null == privateDealInfoSet || privateDealInfoSet.size() <= 0)
+                    return dealIdSet;
+                for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
+                {
+                    dealIdSet.add(privateDealInfo.getDealId());
+                }
+            }
+        }
+
+        return dealIdSet;
+    }
+
+    public List<String> fetchDealIdWithFloorPriceSetFromBidRequest()
+    {
+        List<String> dealIdSet = new ArrayList<String>();
+
+        if(null != adExchangeInfoMapPerImpression && adExchangeInfoMapPerImpression.size() > 0)
+        {
+            for(AdExchangeInfo adExchangeInfo : adExchangeInfoMapPerImpression.values())
+            {
+                Set<AdExchangeInfo.PrivateDealInfo> privateDealInfoSet = adExchangeInfo.getPrivateDealInfoSet();
+                if(null == privateDealInfoSet || privateDealInfoSet.size() <= 0)
+                    return dealIdSet;
+
+                for(AdExchangeInfo.PrivateDealInfo privateDealInfo : privateDealInfoSet)
+                {
+                    StringBuffer sb = new StringBuffer(privateDealInfo.getDealId());
+
+                    if(null != privateDealInfo.getBidFloor())
+                    {
+                        sb.append(DEALID_FLOOR_DELIM);
+                        sb.append(privateDealInfo.getBidFloor());
+                    }
+
+                    dealIdSet.add(sb.toString());
+                }
+            }
+        }
+
+        return dealIdSet;
+    }
+
     public int[] fetchMinimumInterstitialWidthArrayForImpressionId(String impressionId)
     {
         if(null == impressionId)
@@ -421,4 +489,71 @@ public class Request
 
         return this.dspBidPriceResponseForExchangeRequest.get(dspGuid);
     }
+
+    /**
+     * *******************Below fields would capture more information about this request, that might be****************
+     * *******************extracted using primary parameters directly or via database lookups.*************************
+     * *******************Can be then used in Ad-exchange(SSP) workflow where enrichment of bid request****************
+     * *******************with more parameters is required or may be used by DSP workflow for better*******************
+     * *******************targeting or decision making on bid values.**************************************************
+     */
+    @Getter @Setter
+    private String bidRequestNativeVersion;
+
+    @Getter @Setter
+    private Integer bidRequestNativeRequestContext;
+
+    @Getter @Setter
+    private Integer bidRequestNativeRequestAdUnit;
+
+    @Getter @Setter
+    private Integer bidRequestNativeRequestContextsubtype;
+
+    @Getter @Setter
+    private Integer bidRequestNativeRequestPlcmttype;
+
+    @Getter @Setter
+    private String[] bidRequestSiteSectioncat;
+
+    /**CSV of requesting content's keywords*/
+    @Getter @Setter
+    private String bidRequestSiteKeywords;
+
+    @Getter @Setter
+    private String bidRequestSiteContentId;
+
+    @Getter @Setter
+    private String bidRequestSiteContentKeywords;
+
+    @Getter @Setter
+    private String bidRequestSiteContentContext;
+
+    @Getter @Setter
+    private String bidRequestSiteContentLanguage;
+
+    @Getter @Setter
+    private String bidRequestDeviceCarrier;
+
+    @Getter @Setter
+    private String bidRequestDeviceLanguage;
+
+    @Getter @Setter
+    private Integer bidRequestDeviceGeoLocationType;
+
+    @Getter @Setter
+    private boolean bidRequestUseHMinWMinNativeRequest;
+
+    @Getter @Setter
+    private Integer bidRequestUserYOB;
+
+    @Getter @Setter
+    private String bidRequestUserGender;
+
+    @Getter @Setter
+    private String bidRequestUserKeywords;
+
+    @Getter @Setter
+    private String bidRequestUserCountry;
+    /*******************Extra parameters might be required for bid request formation ends here*************************/
+    /******************************************************************************************************************/
 }

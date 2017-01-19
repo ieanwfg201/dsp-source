@@ -1,6 +1,6 @@
 package com.kritter.postimpression.utils;
 
-import com.kritter.postimpression.entity.Request;
+import com.kritter.entity.postimpression.entity.Request;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import com.kritter.postimpression.macros.Macros;

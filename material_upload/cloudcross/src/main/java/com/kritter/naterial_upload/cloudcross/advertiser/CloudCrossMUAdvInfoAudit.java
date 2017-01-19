@@ -7,9 +7,9 @@ import com.kritter.naterial_upload.cloudcross.entity.CloudCrossAdvertiserEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.Properties;
  * Created by hamlin on 16-9-29.
  */
 public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
-    private static final Logger LOG = LoggerFactory.getLogger(CloudCrossMUAdvInfoAudit.class);
+    private static final Logger LOG = LogManager.getLogger(CloudCrossMUAdvInfoAudit.class);
     private ObjectMapper objectMapper = new ObjectMapper();
     @Getter
     @Setter

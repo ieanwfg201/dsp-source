@@ -21,14 +21,13 @@ public class MMACategories {
     private String code;
     @Getter@Setter
     private String name;
-    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public JsonNode toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.valueToTree(this);
         return jsonNode;
     }
     public static MMACategories getObject(String str) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper objectMapper = new ObjectMapper();
         return getObject(objectMapper,str);
     }
     public static MMACategories getObject(ObjectMapper objectMapper,String str) throws JsonParseException, JsonMappingException, IOException{

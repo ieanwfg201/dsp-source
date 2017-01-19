@@ -30,8 +30,8 @@ import com.google.protos.adx.NetworkBid;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 
@@ -45,7 +45,7 @@ import javax.inject.Singleton;
 @Singleton
 public class DoubleClickOpenRtbNativeMapper {
   private static final Logger logger =
-      LoggerFactory.getLogger(DoubleClickOpenRtbNativeMapper.class);
+      LogManager.getLogger(DoubleClickOpenRtbNativeMapper.class);
 
   private final ImmutableList<ExtMapper> extMappers;
   private final OpenRtbNativeJsonReader jsonReader;

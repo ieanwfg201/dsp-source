@@ -16,7 +16,8 @@ import com.kritter.constants.ConvertErrorEnum;
 public class ConvertBidRequest {
 
     public static ConvertErrorEnum convert(Request request, BidRequestParentNodeDTO bidRequest, int version,
-            AccountEntity publisherAccountEntity, IABCategoriesCache iabCategoryCache,AccountEntity dspEntity){
+                                           AccountEntity publisherAccountEntity, IABCategoriesCache iabCategoryCache,
+                                           AccountEntity dspEntity){
         if(request == null){
             return ConvertErrorEnum.ADSERVING_REQ_NULL; 
         }
@@ -79,7 +80,7 @@ public class ConvertBidRequest {
         if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
             return convertErrorEnum;
         }
-        convertErrorEnum = ConvertBidRequestUser.convert(request, bidRequest, version);
+        convertErrorEnum = ConvertBidRequestUser.convert(request, bidRequest, version, dspEntity);
         if(convertErrorEnum != ConvertErrorEnum.HEALTHY_CONVERT){
             return convertErrorEnum;
         }

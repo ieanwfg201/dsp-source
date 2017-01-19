@@ -8,8 +8,8 @@ import com.kritter.constants.ConnectionType;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.ConnectionTypeResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import lombok.Getter;
 
 import java.io.File;
@@ -37,9 +37,9 @@ public class ConnectionTypeDetectionCache extends AbstractFileStatsReloadableCac
     private DatabaseReader maxmindDbReader;
 
     public ConnectionTypeDetectionCache(String name, String loggerName, Properties properties) throws InitializationException {
-        super(LoggerFactory.getLogger(loggerName), properties);
+        super(LogManager.getLogger(loggerName), properties);
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
     }
 
     @Override

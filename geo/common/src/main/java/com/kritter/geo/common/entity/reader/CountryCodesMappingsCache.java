@@ -8,8 +8,8 @@ import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.geo.common.entity.CountryCodesEntity;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.Properties;
  */
 public class CountryCodesMappingsCache extends AbstractDBStatsReloadableQueryableCache<String,CountryCodesEntity>
 {
-    private static Logger logger = LoggerFactory.getLogger("cache.logger");
+    private static Logger logger = LogManager.getLogger("cache.logger");
 
     @Getter
     private final String name;

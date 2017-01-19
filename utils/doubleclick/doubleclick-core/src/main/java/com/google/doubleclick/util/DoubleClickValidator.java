@@ -29,8 +29,8 @@ import com.google.protos.adx.NetworkBid.BidResponse;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +54,7 @@ import javax.inject.Singleton;
 @Singleton
 public class DoubleClickValidator {
   private static final Logger logger =
-      LoggerFactory.getLogger(DoubleClickValidator.class);
+      LogManager.getLogger(DoubleClickValidator.class);
   private static final int GDN = 1;
   static final int CREATIVE_FLASH = 34;
   static final int CREATIVE_NON_FLASH = 50;

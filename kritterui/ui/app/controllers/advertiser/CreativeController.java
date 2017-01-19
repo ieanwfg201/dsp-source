@@ -801,6 +801,39 @@ public class CreativeController extends Controller {
 		return "success";
 	
 	}
+	
+	public static String saveDirectVideoApi(VideoInfo vinfo){
+		DirectvideoDisplay directVideoDisplay = null;
+
+		directVideoDisplay = new DirectvideoDisplay(vinfo);
+		String name = directVideoDisplay.getBannerUrl();
+		String uuid = name.substring(name.lastIndexOf("/")+1);
+		uuid = uuid.substring(0, uuid.lastIndexOf("."));
+		String uploadtoCDNFlag = Play.application().configuration().getString("cdn_upload");
+		if("evrest".equals(uploadtoCDNFlag)){
+		    boolean cdn_upload_success = postToEvrest(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile(), uuid);
+		    if(!cdn_upload_success){
+		        return "CDN upload failed";
+		    }
+		}else if("s3".equals(uploadtoCDNFlag)){
+                boolean s3_upload_success = postToS3(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+                if(!s3_upload_success){
+                    return "S3 upload failed";
+                }
+		}else if("edgecast".equals(uploadtoCDNFlag)){
+            boolean upload_success = postToEdgeCast(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+            if(!upload_success){
+                return "Edgecast upload failed";
+            }
+		}else if("ucloud".equals(uploadtoCDNFlag)){
+            boolean upload_success = postToUCloud(new File("public"+name.substring(name.indexOf("/images/")+7)).getAbsoluteFile());
+            if(!upload_success){
+                return "Ucloud upload failed";
+            }
+        }
+		return "success";
+	
+	}
 
     public static Result saveIcon(){
         JsonNode reqData = request().body().asJson();

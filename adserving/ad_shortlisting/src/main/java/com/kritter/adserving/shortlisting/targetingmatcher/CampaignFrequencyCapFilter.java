@@ -18,8 +18,8 @@ import com.kritter.user.thrift.struct.ImpressionEvent;
 import com.kritter.user.thrift.struct.RecentImpressionHistory;
 import com.kritter.utils.common.AdNoFillStatsUtils;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -43,7 +43,7 @@ public class CampaignFrequencyCapFilter implements TargetingMatcher {
                                       String adNoFillReasonMapKey,
                                       CampaignCache campaignCache) {
         this.name = name;
-        this.logger = LoggerFactory.getLogger(loggerName);
+        this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.recentHistoryProvider = recentHistoryProvider;
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
