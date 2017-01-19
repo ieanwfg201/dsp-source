@@ -4,6 +4,7 @@ import com.kritter.bidreqres.entity.cloudcross4_4_4.BidRequestCloudCross;
 import com.kritter.bidreqres.entity.cloudcross4_4_4.BidRequestCloudCrossDTO;
 import com.kritter.bidreqres.entity.cloudcross4_4_4.CloudCrossBidRequestParentNodeDTO;
 import com.kritter.bidrequest.entity.IBidRequest;
+import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.exception.BidRequestException;
 import com.kritter.bidrequest.reader.IBidRequestReader;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
@@ -61,6 +62,14 @@ public class BidRequestReaderCloudCross implements IBidRequestReader {
                     default:
                         break;
                 }
+            }
+            BidRequestImpressionDTO[] impressionArray = cloudCrossBidRequestParentNodeDTO.getBidRequestImpressionArray();
+            if (impressionArray != null && impressionArray.length > 0) {
+                for (int i = 0; i < impressionArray.length; i++) {
+                    Double bidFloorPrice = impressionArray[i].getBidFloorPrice();
+                    impressionArray[i].setBidFloorPrice(bidFloorPrice == null ? 0 : bidFloorPrice.doubleValue() / 100);
+                }
+
             }
         } catch (JsonParseException e) {
             logger.error("JsonParseException inside convertBidRequestJsonToBusinessObject of BidRequestReaderCloudCross", e);

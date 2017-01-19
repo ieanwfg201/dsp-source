@@ -66,26 +66,6 @@ public class InmobiRequestEnricher implements RTBExchangeRequestReader
                                     IABCategoriesCache iabCategoriesCache,
                                     MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache,
                                     CountryDetectionCache countryDetectionCache,
-                                    ISPDetectionCache ispDetectionCache)
-    {
-        this.logger = LogManager.getLogger(loggerName);
-        this.inmobiBidRequestReader = inmobiBidRequestReader;
-        this.siteCache = siteCache;
-        this.handsetDetectionProvider = handsetDetectionProvider;
-        this.iabCategoriesCache = iabCategoriesCache;
-        this.mncMccCountryISPDetectionCache = mncMccCountryISPDetectionCache;
-        this.countryDetectionCache = countryDetectionCache;
-        this.ispDetectionCache = ispDetectionCache;
-        this.connectionTypeDetectionCache = null;
-    }
-
-    public InmobiRequestEnricher(String loggerName,
-                                    IBidRequestReader inmobiBidRequestReader,
-                                    SiteCache siteCache,
-                                    HandsetDetectionProvider handsetDetectionProvider,
-                                    IABCategoriesCache iabCategoriesCache,
-                                    MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache,
-                                    CountryDetectionCache countryDetectionCache,
                                     ISPDetectionCache ispDetectionCache,
                                     IConnectionTypeDetectionCache connectionTypeDetectionCache)
     {
@@ -251,8 +231,14 @@ public class InmobiRequestEnricher implements RTBExchangeRequestReader
         }
         else
         {
-            // Default to unknown if the cache is not present
-            request.setConnectionType(ConnectionType.UNKNOWN);
+        	ConnectionType connectionType = ConnectionType.getEnum(inmobiBidRequestDeviceDTO.getConnectionType().shortValue());
+            // Get the connection type for this ip
+        	if(connectionType != null){
+        		request.setConnectionType(connectionType);
+        	}else{
+        		// Default to unknown if the cache is not present
+        		request.setConnectionType(ConnectionType.UNKNOWN);
+        	}
         }
         /******************************************* ip extraction and  connection type detection ends***************/
 
