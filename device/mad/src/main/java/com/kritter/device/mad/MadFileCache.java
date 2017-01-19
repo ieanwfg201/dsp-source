@@ -9,17 +9,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class MadFileCache extends AbstractFileStatsReloadableCache {
     private static final String DELIMITER = "";
@@ -38,7 +34,7 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
     @Override
     protected void refreshFile(File file) throws RefreshException {
         logger.debug("Inside refresh file of {}", this.name);
-        if(file == null) {
+        if (file == null) {
             logger.error("File provided for mad one degrees file cache refresh is null");
             return;
         }
@@ -50,21 +46,17 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
             String str;
             ChronicleMap<String, HandsetInfo> tempdataMap = ChronicleMapBuilder
                     .of(String.class, HandsetInfo.class)
-                    .name("HandsetInfo-Cache-Map")
-                    .entries(10000000L)
-                    //.constantKeySizeBySample(32)
-                    //.immutableKeys()
-                    //.averageValueSize(2*1024)
+                    .entries(10000000l)
                     .create();
 //            ConcurrentHashMap<String, HandsetInfo> tempdataMap = new ConcurrentHashMap<String, MadFileCache.HandsetInfo>();
-            while((str = br.readLine()) != null){
+            while ((str = br.readLine()) != null) {
                 /**
                  * ua<CTRLA>md5(ua)<CTRLA>is_tablet<CTRLA>is_wireless_device<CTRLA>brand_name
                  * <CTRLA>model_name<CTRLA>device_os<CTRLA>device_os_version<CTRLA>resolution_height
                  * <CTRLA>resolution_width
                  */
                 String strSplit[] = str.split(DELIMITER);
-                if(strSplit.length == 10){
+                if (strSplit.length == 10) {
                     HandsetInfo handSetInfo = new HandsetInfo();
                     handSetInfo.setAjaxSupportJava(true);
                     handSetInfo.setBot(false);
@@ -79,41 +71,40 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
                     handSetInfo.setModelName(strSplit[5]);
                     handSetInfo.setResolutionHeight(strSplit[8]);
                     handSetInfo.setResolutionWidth(strSplit[9]);
-                    if("Y".equals(strSplit[2])){
+                    if ("Y".equals(strSplit[2])) {
                         handSetInfo.setTablet(true);
-                    }else{
+                    } else {
                         handSetInfo.setTablet(false);
                     }
-                    
-                    if("Y".equals(strSplit[3])){
+
+                    if ("Y".equals(strSplit[3])) {
                         handSetInfo.setWirelessDevice(true);
-                    }else{
+                    } else {
                         handSetInfo.setWirelessDevice(false);
                     }
                     tempdataMap.put(strSplit[1].toLowerCase().trim(), handSetInfo);
                 }
 
             }
-            if (dataMap!=null)
+            if (dataMap != null)
                 dataMap.close();
-            dataMap=tempdataMap;
+            dataMap = tempdataMap;
             logger.debug("Refreshed MadFileCache");
         } catch (Exception ioe) {
-            logger.error("Refreshed MadFileCache error:{}",ioe);
             throw new RefreshException(ioe);
-        }finally{
-            if(fr!=null){
+        } finally {
+            if (fr != null) {
                 try {
                     fr.close();
                 } catch (IOException e) {
-                    logger.error(e.getMessage(),e);
+                    logger.error(e.getMessage(), e);
                 }
             }
-            if(br != null){
+            if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    logger.error(e.getMessage(),e);
+                    logger.error(e.getMessage(), e);
                 }
             }
         }
@@ -122,8 +113,9 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
     @Accessors(chain = true)
     @ToString
     @EqualsAndHashCode
-    @Getter @Setter
-    public static class HandsetInfo {
+    @Getter
+    @Setter
+    public static class HandsetInfo implements Serializable {
         private String brandName;
         private String modelName;
         private String marketingName;
@@ -142,12 +134,12 @@ public class MadFileCache extends AbstractFileStatsReloadableCache {
     }
 
     public HandsetInfo getHandsetInfo(String userAgentMD5) {
-        if(userAgentMD5 == null) {
+        if (userAgentMD5 == null) {
             logger.debug("null user agent sent to query");
             return null;
         }
         HandsetInfo handsetInfo = null;
-        if(dataMap != null){
+        if (dataMap != null) {
             handsetInfo = dataMap.get(userAgentMD5);
         }
         logger.debug("Handset info for user agent : {} is {}", handsetInfo);
