@@ -675,7 +675,7 @@ public class DBQueryPlanner implements IQueryPlanner {
         }
         if(reportingEntity.isAvgBidFloor()){
             Total_bidfloor entity = kReportingConfiguration.getTotal_bidfloor();
-            HelperKumbayaQueryPlanner.populateAvgBidFloor("fr", true, table_name, entity.getFact_column(), 
+            HelperKumbayaQueryPlanner.populateAvgBidFloor("avgBidFloor", true, table_name, entity.getFact_column(), 
                     table_name, kReportingConfiguration.getTotal_request().getFact_column(), METRICTYPE.SUM, 
                     kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, "AvgBidFloor", 
                     reportingEntity.getAvgBidFloor_order_sequence(), korderbyTreeMap);

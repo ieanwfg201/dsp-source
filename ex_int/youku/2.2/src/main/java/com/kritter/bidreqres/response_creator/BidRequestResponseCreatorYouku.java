@@ -244,6 +244,11 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
 
             bidResponseBidYoukuDTO.setWinNotificationUrl(winNotificationURLBuffer.toString());
             bidResponseBidYoukuDTO.setExtensionObject(bidResponseBidExtYoukuDTO);
+            if(responseAdInfo.getVideoInfo() != null && responseAdInfo.getVideoInfo().getExt()!=null 
+            		&& responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl() != null){
+            	bidResponseBidYoukuDTO.setAdMarkup(responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl());
+            }
+
         }
         bidResponseBidYoukuDTO.setBidId(responseAdInfo.getImpressionId());
         bidResponseBidYoukuDTO.setRequestImpressionId(bidRequestImpressionId);
@@ -450,7 +455,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     	}
     	
     	BidResponseBidExtYoukuEntity bidResponseBidExtYoukuEntity = new BidResponseBidExtYoukuEntity();
-    	bidResponseBidExtYoukuEntity.setLdp(responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl());
+        bidResponseBidExtYoukuEntity.setLdp(clickUrl.toString());
     	String impTrackerArray[] = null;
     	if(extTracker != null && extTracker.getImpTracker() != null){
     		impTrackerArray = new String[1+extTracker.getImpTracker().size()];
