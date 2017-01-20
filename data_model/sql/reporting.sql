@@ -947,3 +947,16 @@ ALTER TABLE first_level_limited ADD COLUMN bidFloor double default 0  after mark
 ALTER TABLE first_level_limited_daily ADD COLUMN bidFloor double default 0  after marketplace;
 ALTER TABLE first_level_limited_monthly ADD COLUMN bidFloor double default 0  after marketplace;
 ALTER TABLE first_level_limited_yearly ADD COLUMN bidFloor double default 0  after marketplace;
+
+
+ALTER TABLE first_level_limited ADD COLUMN reqslot int default -1  after bidFloor;
+ALTER TABLE first_level_limited_daily ADD COLUMN reqslot int default -1  after bidFloor;
+ALTER TABLE first_level_limited_monthly ADD COLUMN reqslot int default -1  after bidFloor;
+ALTER TABLE first_level_limited_yearly ADD COLUMN reqslot int default -1  after bidFloor;
+
+
+ALTER TABLE first_level_limited ADD COLUMN device_type int default 0  after reqslot;
+ALTER TABLE first_level_limited_daily ADD COLUMN device_type int default 0  after reqslot;
+ALTER TABLE first_level_limited_monthly ADD COLUMN device_type int default 0  after reqslot;
+ALTER TABLE first_level_limited_yearly ADD COLUMN device_type int default 0  after reqslot;
+

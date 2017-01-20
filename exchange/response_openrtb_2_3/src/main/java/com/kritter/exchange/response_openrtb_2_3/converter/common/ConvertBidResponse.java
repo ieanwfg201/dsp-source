@@ -23,6 +23,18 @@ public class ConvertBidResponse {
         }
         try{
             BidResponseEntity bidResponseEntity = objectMapper.readValue(str, BidResponseEntity.class);
+
+            /**Check if there is a no bid response code set in the response, if yes then bid is essentially empty
+             * Since future integrations of DSP would be just above 2.3, so we can start assuming that capturing
+             * these codes for Ad-Exchange health might become necessary TODO*/
+            if(null != bidResponseEntity.getNoBidReason())
+            {
+                logger.error("NO BID from DSP, reason is: {}", bidResponseEntity.getNoBidReason());
+                //TODO set appropriate no fill reason from dsp.
+                entity.setErrorEnum(ConvertErrorEnum.RES_INPUT_EMPTY);
+                return entity;
+            }
+
             entity.setErrorEnum(ConvertErrorEnum.HEALTHY_CONVERT);
             entity.setResponse(bidResponseEntity);
             return entity;

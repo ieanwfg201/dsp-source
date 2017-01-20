@@ -1347,6 +1347,14 @@ public class MetadataAPI {
         }
         return optionNodes; 
     }
+    public static ArrayNode all_device_type(){ 
+        ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
+        DeviceType[] types = DeviceType.values();
+        for (DeviceType type : types) {
+                optionNodes.add(new SelectOption(type.name(), type.getCode()+"").toJson());
+        }
+        return optionNodes; 
+    }
     public static ArrayNode deviceTypeEnumArrayNode(){ 
         ArrayNode optionNodes = new ArrayNode(JsonNodeFactory.instance);
         DeviceType[] types = DeviceType.values();

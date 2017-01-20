@@ -301,6 +301,20 @@ public class ReportFormEntity extends BaseReportEntity{
 	public void setFormatId(String formatId) { 
 		reportingEntity.setFormatId(stringToIdList(formatId));
 	}
+	
+	public String getDevice_type() {
+		return idListToString(reportingEntity.getDevice_type());
+	}
 
+	public void setDevice_type(String device_type) { 
+		reportingEntity.setDevice_type(stringToIdList(device_type));
+	}
+	public String getReqslot() {
+		return idListToString(reportingEntity.getReqslot());
+	}
+
+	public void setReqslot(String reqslot) { 
+		reportingEntity.setReqslot(stringToIdList(reqslot));
+	}
 
 }

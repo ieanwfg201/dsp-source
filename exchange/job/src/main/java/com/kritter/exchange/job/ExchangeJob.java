@@ -525,9 +525,8 @@ public class ExchangeJob implements Job
 
                     if(kHttpResponse.getResponseStatusCode() == 504)
                         createExchangeThrift.updateDSPTimeOut(keyAdvGuid);
-
                     else if(
-                            kHttpResponse.getResponseStatusCode() == 200 &&
+                            (kHttpResponse.getResponseStatusCode() == 200 || kHttpResponse.getResponseStatusCode() == 204) &&
                             (null == kHttpResponse.getResponsePayload()  || "".equals(kHttpResponse.getResponsePayload()))
                            )
                         createExchangeThrift.updateDSPEmptyResponse(keyAdvGuid);
@@ -541,6 +540,12 @@ public class ExchangeJob implements Job
                          * it would be marked as FILL automatically**/
                         createExchangeThrift.updateDemandState(keyAdvGuid,DspNoFill.LOWBID);
                         noResponseAtAll = false;
+                    }
+                    //some error code received from DSP
+                    else if(kHttpResponse.getResponseStatusCode() != 200 && kHttpResponse.getResponseStatusCode() != 204)
+                    {
+                        logger.error("ERROR from DSP : {} ,code: {} ",keyAdvGuid, kHttpResponse.getResponseStatusCode());
+                        createExchangeThrift.updateDSPResponseError(keyAdvGuid);
                     }
                 }
 
