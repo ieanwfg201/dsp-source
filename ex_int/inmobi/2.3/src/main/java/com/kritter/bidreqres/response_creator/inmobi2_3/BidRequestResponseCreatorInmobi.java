@@ -1,14 +1,16 @@
     package com.kritter.bidreqres.response_creator.inmobi2_3;
 
+import com.kritter.bidreqres.entity.inmobi2_3.*;
+import com.kritter.bidrequest.entity.IBidResponse;
+import com.kritter.bidrequest.exception.BidResponseException;
+import com.kritter.bidrequest.response_creator.IBidResponseCreator;
+import com.kritter.constants.CreativeFormat;
+import com.kritter.constants.DefaultCurrency;
 import com.kritter.entity.creative_macro.CreativeMacro;
 import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
-import com.kritter.bidreqres.entity.inmobi2_3.*;
-import com.kritter.bidrequest.entity.IBidResponse;
-import com.kritter.bidrequest.exception.BidResponseException;
-import com.kritter.bidrequest.response_creator.IBidResponseCreator;
 import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
 import com.kritter.ex_int.native_admarkup.NativeAdMarkUp;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
@@ -16,17 +18,17 @@ import com.kritter.ex_int.utils.comparator.advdomain.FetchAdvertiserDomain;
 import com.kritter.ex_int.utils.comparator.common.ShortArrayToIntegerArray;
 import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
+import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
-import com.kritter.constants.CreativeFormat;
-import com.kritter.constants.DefaultCurrency;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
 import com.kritter.utils.common.ServerConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -231,7 +233,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                     response, adEntity.getExtTracker(),
                     winNotificationURLBuffer
             );
-            bidResponseBidInmobiDTO.setAdMarkup(appendExternalClickTracking(adEntity.getExtTracker(),adMarkup));
+            bidResponseBidInmobiDTO.setAdMarkup(appendExternalClickTracking(request,response,responseAdInfo,adEntity.getExtTracker(),adMarkup));
         }
         else if(creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
             bidResponseBidInmobiDTO.setAdMarkup(
@@ -310,14 +312,15 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         return bidResponseBidInmobiDTO;
     }
 
-    private String appendExternalClickTracking(ExtTracker extTracker, String adMarkup) {
+    private String appendExternalClickTracking(Request request, Response response, ResponseAdInfo responseAdInfo, ExtTracker extTracker, String adMarkup) {
         StringBuilder stringBuilder = new StringBuilder(adMarkup).insert(2, " onclick=\"fireClickTracker()\" target=\"_blank\" ");
         for (int i = 0; i < extTracker.getClickTracker().size(); i++) {
                 stringBuilder.append("<img id=\"click" + i + "\" width=\"1\" height=\"1\" />");
         }
         stringBuilder.append("<script type=\"text/javascript\">function fireClickTracker() {");
         for (int i = 0; i < extTracker.getClickTracker().size(); i++) {
-            stringBuilder.append("document.getElementById('click" + i + "').src = '"+extTracker.getClickTracker().get(i)+"';");
+            stringBuilder.append("document.getElementById('click" + i + "').src = '"+ MarkUpHelper.adTagMacroReplace(extTracker.getClickTracker().get(i), request, responseAdInfo, response,
+                    "", this.macroPostImpressionBaseClickUrl.toString(), extTracker.getClickMacro(), extTracker.getClickMacroQuote(), "")+"';");
         }
         stringBuilder.append(" return false;}</script>");
         return stringBuilder.toString();
