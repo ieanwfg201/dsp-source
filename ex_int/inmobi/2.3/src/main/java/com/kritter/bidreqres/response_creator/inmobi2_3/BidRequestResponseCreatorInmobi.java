@@ -224,15 +224,15 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         bidResponseBidInmobiDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
         Creative creative = responseAdInfo.getCreative();
 
-        if(creative.getCreativeFormat().equals(CreativeFormat.BANNER))
-            bidResponseBidInmobiDTO.setAdMarkup(
-                    prepareBannerHTMLAdMarkup(
-                            request,
-                            responseAdInfo,
-                            response, adEntity.getExtTracker(),
-                            winNotificationURLBuffer
-                    )
+        if(creative.getCreativeFormat().equals(CreativeFormat.BANNER)) {
+            String adMarkup = prepareBannerHTMLAdMarkup(
+                    request,
+                    responseAdInfo,
+                    response, adEntity.getExtTracker(),
+                    winNotificationURLBuffer
             );
+            bidResponseBidInmobiDTO.setAdMarkup(appendExternalClickTracking(adEntity.getExtTracker(),adMarkup));
+        }
         else if(creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
             bidResponseBidInmobiDTO.setAdMarkup(
                     prepareRichmediaAdMarkup(
@@ -310,6 +310,19 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         return bidResponseBidInmobiDTO;
     }
 
+    private String appendExternalClickTracking(ExtTracker extTracker, String adMarkup) {
+        StringBuilder stringBuilder = new StringBuilder(adMarkup).insert(2, " onclick=\"fireClickTracker()\" target=\"_blank\" ");
+        for (int i = 0; i < extTracker.getClickTracker().size(); i++) {
+                stringBuilder.append("<img id=\"click" + i + "\" width=\"1\" height=\"1\" />");
+        }
+        stringBuilder.append("<script type=\"text/javascript\">function fireClickTracker() {");
+        for (int i = 0; i < extTracker.getClickTracker().size(); i++) {
+            stringBuilder.append("document.getElementById('click" + i + "').src = '"+extTracker.getClickTracker().get(i)+"';");
+        }
+        stringBuilder.append(" return false;}</script>");
+        return stringBuilder.toString();
+    }
+
     private String prepareRichmediaAdMarkup(
             Request request,
             ResponseAdInfo responseAdInfo,
@@ -319,9 +332,9 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             ExtTracker extTracker
     ) throws BidResponseException
     {
-        return RichMediaAdMarkUp.prepareRichmediaAdMarkup(request, responseAdInfo, response, 
-                winNotificationURLBuffer, logger, urlVersion, secretKey, postImpressionBaseClickUrl, 
-                postImpressionBaseCSCUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix, 
+        return RichMediaAdMarkUp.prepareRichmediaAdMarkup(request, responseAdInfo, response,
+                winNotificationURLBuffer, logger, urlVersion, secretKey, postImpressionBaseClickUrl,
+                postImpressionBaseCSCUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
                 notificationUrlBidderBidPriceMacro, null, null, creativeMacro, this.macroPostImpressionBaseClickUrl,
                 extTracker);
     }
@@ -334,8 +347,8 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                                              StringBuffer winNotificationURLBuffer
                                             ) throws BidResponseException
     {
-        return BannerAdMarkUp.prepare(logger, request, response, responseAdInfo, urlVersion, secretKey, 
-                macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix, 
+        return BannerAdMarkUp.prepare(logger, request, response, responseAdInfo, urlVersion, secretKey,
+                macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
                 notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker,
                 winNotificationURLBuffer, null, this.macroPostImpressionBaseClickUrl);
     }
@@ -346,13 +359,13 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             StringBuffer winNotificationURLBuffer
     ) throws BidResponseException
     {
-        return NativeAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer, 
-                this.logger, this.urlVersion, this.secretKey, this.macroPostImpressionBaseClickUrl, 
-                this.postImpressionBaseWinApiUrl, this.notificationUrlSuffix, 
-                this.notificationUrlBidderBidPriceMacro, this.postImpressionBaseCSCUrl, 
+        return NativeAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
+                this.logger, this.urlVersion, this.secretKey, this.macroPostImpressionBaseClickUrl,
+                this.postImpressionBaseWinApiUrl, this.notificationUrlSuffix,
+                this.notificationUrlBidderBidPriceMacro, this.postImpressionBaseCSCUrl,
                 this.cdnBaseImageUrl);
     }
-    
+
     private String prepareVideoAdMarkup(
             Request request,
             ResponseAdInfo responseAdInfo,
