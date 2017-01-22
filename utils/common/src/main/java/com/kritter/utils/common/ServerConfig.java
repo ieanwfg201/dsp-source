@@ -21,6 +21,7 @@ public class ServerConfig {
     public static final String trackingEventUrl_PREFIX = "tracking-event-url-prefix";
     public static final String beventUrl_PREFIX = "bevent-url-prefix";
     public Boolean isHttps = false;
+    public static final String EXCHANGE_OS_CHECK = "exchange_os_check";
 
     public static final String DELIMITER = String.valueOf((char) 1);
     public static final String DELIMITER_EQUAL_TO = "=";
