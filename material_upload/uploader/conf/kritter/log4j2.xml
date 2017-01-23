@@ -13,10 +13,6 @@
   </Appenders>
 
   <Loggers>
-    <Logger name="material.root" level="DEBUG" additivity="false">
-        <AppenderRef ref="material.server.root"/>
-    </Logger>
-
     <Root level="DEBUG" includeLocation="false">
        <AppenderRef ref="material.server.root"/>
     </Root>

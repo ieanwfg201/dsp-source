@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TokenNonWeb {
-    private static final Logger LOG = LogManager.getLogger("material.root");
+    private static final Logger LOG = LogManager.getLogger(TokenNonWeb.class.getName());
     @Getter@Setter
     private String accessToken;
 

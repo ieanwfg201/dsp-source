@@ -25,7 +25,7 @@ import java.util.Date;
  */
 @SuppressWarnings("SqlDialectInspection")
 public class CloudCrossMUAdvInfo implements MUAdvInfo {
-    private static final Logger LOG = LogManager.getLogger("material.root");
+    private static final Logger LOG = LogManager.getLogger(CloudCrossMUAdvInfo.class.getName());
     private ObjectMapper objectMapper = new ObjectMapper();
     @Getter
     @Setter

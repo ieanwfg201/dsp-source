@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public abstract class UploadExecutorImpl implements UploadExecutor {
-    private static final Logger LOG = LogManager.getLogger("material.root");
+    private static final Logger LOG = LogManager.getLogger(UploadExecutorImpl.class.getName());
     @Getter
     @Setter
     private boolean advertiser_upload = false;

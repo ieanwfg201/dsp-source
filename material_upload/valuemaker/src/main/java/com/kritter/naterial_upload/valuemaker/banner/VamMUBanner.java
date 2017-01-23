@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class VamMUBanner implements MUBanner {
-    private static final Logger LOG = LogManager.getLogger("material.root");
+    private static final Logger LOG = LogManager.getLogger(VamMUBanner.class.getName());
     @Getter
     @Setter
     private String dspid;

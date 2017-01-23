@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.*;
 
 public class YoukuMUAdvInfo implements MUAdvInfo {
-	private static final Logger LOG = LogManager.getLogger("material.root");
+	private static final Logger LOG = LogManager.getLogger(YoukuMUAdvInfo.class.getName());
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter

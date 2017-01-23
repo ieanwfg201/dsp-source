@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class UrlPost {
-    private static final Logger LOG = LogManager.getLogger("material.root");
+    private static final Logger LOG = LogManager.getLogger(UrlPost.class.getName());
 	public String urlpost(String urlString,String postBody) throws Exception{
 		StringBuffer sbuff = new StringBuffer("");
         URL url;

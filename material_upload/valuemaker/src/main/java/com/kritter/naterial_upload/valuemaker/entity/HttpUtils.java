@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class HttpUtils {
 
-    private static final Logger LOG = LogManager.getLogger("material.root");
+    private static final Logger LOG = LogManager.getLogger(HttpUtils.class.getName());
 
     static CloseableHttpClient httpClient = HttpClients.createDefault();
 

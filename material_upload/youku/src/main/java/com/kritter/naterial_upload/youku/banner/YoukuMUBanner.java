@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class YoukuMUBanner implements MUBanner {
-	private static final Logger LOG = LogManager.getLogger("material.root");
+	private static final Logger LOG = LogManager.getLogger(YoukuMUBanner.class.getName());
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter
