@@ -84,6 +84,7 @@
                 <ref bean="mma_targeting_filter"/>
                 <ref bean="adposition_targeting_filter"/>
                 <ref bean="channel_targeting_filter"/>
+                <ref bean="ssl_targeting"/>
             </list>
         </constructor-arg>
         <constructor-arg index="10" value="ad-nofill-map"/>

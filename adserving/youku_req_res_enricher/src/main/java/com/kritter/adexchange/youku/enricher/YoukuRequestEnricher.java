@@ -244,6 +244,10 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         {
             for(YoukuBidRequestImpressionDTO youkuBidRequestImpressionDTO : youkuBidRequestImpressionDTOs)
             {
+            	if(1==youkuBidRequestImpressionDTO.getRequiresSecureAssets()){
+            		request.setSecure(true);
+            	}
+            	
             	if(youkuBidRequestImpressionDTO.getAdTagOrPlacementId() !=null && !"".equals(youkuBidRequestImpressionDTO.getAdTagOrPlacementId())){
             		adpositionid=youkuBidRequestImpressionDTO.getAdTagOrPlacementId();
             	}

@@ -164,6 +164,12 @@
         <constructor-arg index="3" value="ad-nofill-map"/>
     </bean>
 
+    <bean id="ssl_targeting" class="com.kritter.adserving.shortlisting.targetingmatcher.SSLTargetingMatcher">
+        <constructor-arg index="0" value="ssl_targeting"/>
+        <constructor-arg index="1" value="adserving.application"/>
+        <constructor-arg index="2"><ref bean="ad_entity_cache"/></constructor-arg>
+    </bean>
+
     <bean id="supply_inc_exc_targeting" class="com.kritter.adserving.shortlisting.targetingmatcher.SupplyInclusionExclusionTargetingMatcher">
         <constructor-arg index="0" value="supply_inc_exc_targeting"/>
         <constructor-arg index="1" value="adserving.application"/>

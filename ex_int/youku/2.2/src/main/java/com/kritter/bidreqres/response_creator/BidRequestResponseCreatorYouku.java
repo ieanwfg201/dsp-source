@@ -24,6 +24,7 @@ import com.kritter.utils.common.ServerConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -36,22 +37,24 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
 {
     private Logger logger;
     private String postImpressionBaseClickUrl;
+    private String postImpressionBaseClickUrlSecure;
     private String postImpressionBaseCSCUrl;
+    private String postImpressionBaseCSCUrlSecure;
     private String postImpressionBaseWinApiUrl;
+    private String postImpressionBaseWinApiUrlSecure;
     private String cdnBaseImageUrl;
+    private String cdnBaseImageUrlSecure;
     private String secretKey;
     private int urlVersion;
     private String notificationUrlSuffix;
     private String notificationUrlBidderBidPriceMacro;
     private AdEntityCache adEntityCache;
     private String macroPostImpressionBaseClickUrl;
+    private String macroPostImpressionBaseClickUrlSecure;
 
     //template for formatting.
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Random randomPicker = new Random();
-    private static final String PREFIX_AS_SIGNED_CLICK_URL = "";
-    private static final String HTTP_PROTOCOL = "http://";
-    private static final String HTTPS_PROTOCOL = "https://";
     
     public BidRequestResponseCreatorYouku(
                                             String loggerName,
@@ -65,16 +68,20 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     {
         this.logger = LogManager.getLogger(loggerName);
         this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
-        this.postImpressionBaseClickUrl = PREFIX_AS_SIGNED_CLICK_URL + this.postImpressionBaseClickUrl;
+        this.postImpressionBaseClickUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseClickUrl, "http://", "https://");
         this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
+        this.postImpressionBaseCSCUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseCSCUrl, "http://", "https://");
         this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
+        this.postImpressionBaseWinApiUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseWinApiUrl, "http://", "https://");
         this.cdnBaseImageUrl = serverConfig.getValueForKey(ServerConfig.CDN_URL_PREFIX);
+        this.cdnBaseImageUrlSecure = StringUtils.replaceOnce(this.cdnBaseImageUrl, "http://", "https://");
         this.secretKey = secretKey;
         this.urlVersion = urlVersion;
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
         this.adEntityCache = adEntityCache;
         this.macroPostImpressionBaseClickUrl= serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
+        this.macroPostImpressionBaseClickUrlSecure = StringUtils.replaceOnce(this.macroPostImpressionBaseClickUrl, "http://", "https://");
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
     }
 
@@ -246,7 +253,9 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
             bidResponseBidYoukuDTO.setExtensionObject(bidResponseBidExtYoukuDTO);
             if(responseAdInfo.getVideoInfo() != null && responseAdInfo.getVideoInfo().getExt()!=null 
             		&& responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl() != null){
-            	bidResponseBidYoukuDTO.setAdMarkup(responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl());
+            	bidResponseBidYoukuDTO.setAdMarkup(request.getSecure()?
+            					responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl():
+            						StringUtils.replaceOnce(responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl(), "http://", "https://"));
             }
 
         }
@@ -286,12 +295,12 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         if(null == clickUri)
             throw new BidResponseException("Click URI could not be formed using different attributes like handset,location,bids,version,etc. inside BidRequestResponseCreator banneradmarkup");
 
-        StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
+        StringBuffer clickUrl = new StringBuffer(request.getSecure()?postImpressionBaseClickUrl:postImpressionBaseClickUrlSecure);
         clickUrl.append(clickUri);
-        StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
+        StringBuffer macroClickUrl = new StringBuffer(request.getSecure()?macroPostImpressionBaseClickUrl:macroPostImpressionBaseClickUrlSecure);
         macroClickUrl.append(clickUri);
         /*********prepare win notification url , also include bidder price.****************/
-        winNotificationURLBuffer.append(postImpressionBaseWinApiUrl);
+        winNotificationURLBuffer.append(request.getSecure()?postImpressionBaseWinApiUrl:postImpressionBaseWinApiUrlSecure);
         winNotificationURLBuffer.append(clickUri);
         String suffixToAdd = notificationUrlSuffix;
         suffixToAdd = suffixToAdd.replace(
@@ -303,7 +312,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         //set common post impression uri to be used in any type of post impression url.
         responseAdInfo.setCommonURIForPostImpression(clickUri);
 
-        StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
+        StringBuffer cscBeaconUrl = new StringBuffer(request.getSecure()?postImpressionBaseCSCUrl:postImpressionBaseCSCUrlSecure);
         cscBeaconUrl.append(clickUri);
 
         /**modify csc url to have bid-switch exchangeId as a parameter for usage in post-impression server************/
@@ -394,12 +403,12 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     	if(null == clickUri)
     		throw new BidResponseException("Click URI could not be formed using different attributes like handset,location,bids,version,etc. inside BidRequestResponseCreator banneradmarkup");
 
-    	StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
+    	StringBuffer clickUrl = new StringBuffer(request.getSecure()?postImpressionBaseClickUrl:postImpressionBaseClickUrlSecure);
     	clickUrl.append(clickUri);
-        StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
+        StringBuffer macroClickUrl = new StringBuffer(request.getSecure()?macroPostImpressionBaseClickUrl:macroPostImpressionBaseClickUrlSecure);
         macroClickUrl.append(clickUri);
     	/*********prepare win notification url , also include bidder price.****************/
-    	winNotificationURLBuffer.append(postImpressionBaseWinApiUrl);
+    	winNotificationURLBuffer.append(request.getSecure()?postImpressionBaseWinApiUrl:postImpressionBaseWinApiUrlSecure);
     	winNotificationURLBuffer.append(clickUri);
     	String suffixToAdd = notificationUrlSuffix;
     	suffixToAdd = suffixToAdd.replace(
@@ -411,7 +420,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     	//set common post impression uri to be used in any type of post impression url.
     	responseAdInfo.setCommonURIForPostImpression(clickUri);
 
-    	StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
+    	StringBuffer cscBeaconUrl = new StringBuffer(request.getSecure()?postImpressionBaseCSCUrl:postImpressionBaseCSCUrlSecure);
     	cscBeaconUrl.append(clickUri);
 
     	/**modify csc url to have bid-switch exchangeId as a parameter for usage in post-impression server************/
