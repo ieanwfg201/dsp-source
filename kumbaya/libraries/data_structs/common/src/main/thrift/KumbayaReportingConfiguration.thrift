@@ -78,6 +78,19 @@ struct Device_type {
     8: string return_prefix = 'device_type'
 }
 
+struct Reqslot {
+    1: TABLE fact_table = 1, 
+    2: string fact_column = 'reqslot',
+    3: string dim_table = 'creative_slots', 
+    4: string dim_column = 'id',
+    5: string dim_column_name = 'width',
+    6: MEMBERTYPE member_type = MEMBERTYPE.DIMENSION,
+    7: string uiname = 'reqslot',
+    8: string return_prefix = 'reqslot'
+    9: string second_dim_column_name = 'height',
+    10: string mul_dim_column_delimeter = '*',
+}
+
 
 struct DeviceId {
     1: TABLE fact_table = 1, 
@@ -663,6 +676,7 @@ struct KumbayaReportingConfiguration{
     60: PostimpEvent postimpevent = {'fact_table' :TABLE.first_level, 'fact_column' : 'event', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'PostimpEvent','return_prefix':'postimpevent'},
     61: Total_count total_count = {'fact_table' :TABLE.first_level, 'fact_column' : 'count', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL Count','return_prefix':'count'},
     62: Total_bidfloor total_bidfloor = {'fact_table' :TABLE.first_level, 'fact_column' : 'bidFloor', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL BidFloor','return_prefix':'total_bidfloor'},
+    63: Reqslot reqslot = {'fact_table':TABLE.first_level, 'fact_column':'reqslot', 'dim_table':'creative_slots', 'dim_column':'id', 'dim_column_name':'description','member_type':MEMBERTYPE.DIMENSION,'uiname':'Reqslot','return_prefix':'reqslot','second_dim_column_name':'height','mul_dim_column_delimeter':'*'}
 }
 
 

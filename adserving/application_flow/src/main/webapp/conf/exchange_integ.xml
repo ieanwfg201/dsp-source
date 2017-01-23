@@ -21,6 +21,7 @@
         <constructor-arg index="6"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="7"><ref bean="isp_detector"/></constructor-arg>
         <constructor-arg index="8"><null /></constructor-arg>
+        <constructor-arg index="9"><ref bean="creative_slot_size_cache"/></constructor-arg>
     </bean>
 
     <bean id="inmobi23_response_creator" class="com.kritter.bidreqres.response_creator.inmobi2_3.BidRequestResponseCreatorInmobi">
@@ -46,6 +47,7 @@
         <constructor-arg index="3"><ref bean="handset_detector"/></constructor-arg>
         <constructor-arg index="4"><ref bean="country_detector"/></constructor-arg>
         <constructor-arg index="5"><ref bean="isp_detector"/></constructor-arg>
+        <constructor-arg index="6"><ref bean="creative_slot_size_cache"/></constructor-arg>
     </bean>
 
     <bean id="youku_response_creator" class="com.kritter.bidreqres.response_creator.BidRequestResponseCreatorYouku">

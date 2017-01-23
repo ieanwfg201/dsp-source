@@ -442,8 +442,11 @@ public class ThriftLogger implements Job {
             }
 
             //set requesting slot id array
-            if(null != request.getRequestedSlotIdList())
+            if(null != request.getRequestedSlotIdList()){
                 adservingRequestResponse.setReqSlotIds(request.getRequestedSlotIdList());
+            }else if(null != request.getFirstImpClosestRequestedSlotIdList()){
+            	adservingRequestResponse.setReqSlotIds(request.getFirstImpClosestRequestedSlotIdList());
+            }
 
             if(null != request.getUserAgent())
                 adservingRequestResponse.setUserAgent(request.getUserAgent());

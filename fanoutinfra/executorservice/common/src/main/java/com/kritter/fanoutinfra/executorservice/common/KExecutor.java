@@ -197,7 +197,8 @@ public class KExecutor {
 
                 logger.debug("Response from DSP is: {} ", futureGetStr);
 
-                if(futureGetStr != null){
+                if(futureGetStr != null && null != kHttpResponse && kHttpResponse.getResponseStatusCode() == 200)
+                {
                     String strSplit[] = futureGetStr.split(ExchangeConstants.callDelimiter);
                     if(strSplit.length == 1)
                     {
@@ -209,6 +210,15 @@ public class KExecutor {
                         kHttpResponse.setResponsePayload(strSplit[1]);
                         advResponseMap.put(strSplit[0], kHttpResponse);
                     }
+                }
+                //ERROR from DSP, as 504 is already noted as timeout, 200/204 as ok, any other means ERROR from DSP.
+                else if(null != kHttpResponse                        &&
+                        kHttpResponse.getResponseStatusCode() != 200 &&
+                        kHttpResponse.getResponseStatusCode() != 204 &&
+                        kHttpResponse.getResponseStatusCode() != 504)
+                {
+                    kHttpResponse.setResponsePayload(null);
+                    advResponseMap.put(dspGuid,kHttpResponse);
                 }
             }
 

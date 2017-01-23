@@ -4,6 +4,7 @@ package com.kritter.fanoutinfra.apiclient.ning;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -14,6 +15,8 @@ import com.ning.http.client.HttpResponseStatus;
 
 public class NingAsyncHandler implements AsyncHandler<String> {
     private Logger logger;
+    @Getter
+    private int status;
     private ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     NingAsyncHandler(String loggerName) {
         super();
@@ -22,12 +25,15 @@ public class NingAsyncHandler implements AsyncHandler<String> {
 
     @Override
     public STATE onStatusReceived(final HttpResponseStatus responseStatus) throws Exception {
+        logger.debug("Inside onStatusReceived , status is: {} ",responseStatus.getStatusCode());
+        status = responseStatus.getStatusCode();
         if(responseStatus.getStatusCode() == 200 ||responseStatus.getStatusCode() == 204){
             return STATE.CONTINUE;
         }else if(responseStatus.getStatusCode() == 204){
             return STATE.CONTINUE;
         }
-        return STATE.ABORT;
+        /**Changed on 18Jan2017, to capture errors from DSP we must continue.*/
+        return STATE.CONTINUE;
     }
 
     @Override

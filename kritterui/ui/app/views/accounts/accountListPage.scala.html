@@ -31,6 +31,7 @@
 		            	<a href="{{gridItem.viewUrl}}" class="btn btn-primary   active" role="button">Login to Account</a>
 		                <a href="{{gridItem.editUrl}}" class="btn btn-primary   active" role="button">Edit</a>
 		                <button class="btn btn-primary  active" ng-click="updateAccount(gridItem.accountGuid,gridItem.action)">{{gridItem.action}}</button> 
+		                <button class="btn btn-primary  active" ng-click="updateAccount(gridItem.accountGuid,'Deactivate')">Reject</button> 
 		            </td>
 		            <td field-name="stats" >
                         <a href="{{gridItem.statUrl}}" class="btn btn-default " role="button" data-toggle="tooltip" data-placement="top" title="Stats">

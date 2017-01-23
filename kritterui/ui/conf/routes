@@ -360,6 +360,7 @@ GET     /metadata/options/connection_type                           controllers.
 GET     /metadata/options/tier1categories   						controllers.MetadataController.tier_1_categories()
 GET     /metadata/options/tier2categories                           controllers.MetadataController.tier_2_categories()
 GET     /metadata/options/device_type                               controllers.MetadataController.device_type()
+GET     /metadata/options/all_device_type                           controllers.MetadataController.all_device_type()
 GET     /metadata/options/state/:countryList       				    controllers.MetadataController.state(countryList:String)
 GET     /metadata/options/city/:stateList       				    controllers.MetadataController.city(stateList:String)
 GET     /metadata/options/marketplace       				        controllers.MetadataController.marketplace()
