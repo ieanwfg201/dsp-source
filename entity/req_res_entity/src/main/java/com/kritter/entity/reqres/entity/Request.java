@@ -119,6 +119,9 @@ public class Request
 
     @Getter @Setter
     private List<Short> requestedSlotIdList;
+    /*firstImpRequestedSlotIdList -for nfr cases and to populated closest slot id for reporting */
+    @Getter @Setter
+    private List<Short> firstImpClosestRequestedSlotIdList;
     @Getter @Setter
     private String invocationCodeVersion;
     @Getter @Setter
@@ -208,6 +211,8 @@ public class Request
     /**Adx specific adgroup id list against ad-slot-id.*/
     @Getter @Setter
     private Map<Integer,List<Long>> adxAdGroupIdListAgainstAdSlotId;
+    @Getter @Setter
+    private Boolean respDocWrite=false;
 
     public enum REQUEST_ENRICHMENT_ERROR_CODE
     {

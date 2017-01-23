@@ -7,6 +7,7 @@ import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestAppDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionBannerObjectDTO;
 import com.kritter.bidrequest.reader.IBidRequestReader;
+import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
@@ -33,12 +34,12 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,6 +58,8 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
     private CountryDetectionCache countryDetectionCache;
     private ISPDetectionCache ispDetectionCache;
    private static final String ENCODING = "UTF-8";
+   private CreativeSlotSizeCache creativeSlotSizeCache;
+
 
     public YoukuRequestEnricher
                                 (String loggerName,
@@ -64,7 +67,8 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
                                  SiteCache siteCache,
                                  HandsetDetectionProvider handsetDetectionProvider,
                                  CountryDetectionCache countryDetectionCache,
-                                 ISPDetectionCache ispDetectionCache
+                                 ISPDetectionCache ispDetectionCache,
+                                 CreativeSlotSizeCache creativeSlotSizeCache
                                  )
     {
         this.logger = LogManager.getLogger(loggerName);
@@ -73,6 +77,8 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         this.handsetDetectionProvider = handsetDetectionProvider;
         this.countryDetectionCache = countryDetectionCache;
         this.ispDetectionCache = ispDetectionCache;
+        this.creativeSlotSizeCache = creativeSlotSizeCache;
+
     }
 
     @Override
@@ -244,6 +250,10 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         {
             for(YoukuBidRequestImpressionDTO youkuBidRequestImpressionDTO : youkuBidRequestImpressionDTOs)
             {
+            	if(1==youkuBidRequestImpressionDTO.getRequiresSecureAssets()){
+            		request.setSecure(true);
+            	}
+            	
             	if(youkuBidRequestImpressionDTO.getAdTagOrPlacementId() !=null && !"".equals(youkuBidRequestImpressionDTO.getAdTagOrPlacementId())){
             		adpositionid=youkuBidRequestImpressionDTO.getAdTagOrPlacementId();
             	}
@@ -288,6 +298,13 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
                 		(youkuBidRequestImpressionDTO.getBidRequestImpressionId(),minWidthArray,minHeightArray);
                 		request.setInterstitialBidRequest(true);
                 	}
+            		if(this.creativeSlotSizeCache == null && 
+            				maxWidth != null && maxHeight != null && request.getFirstImpClosestRequestedSlotIdList() == null){
+            			short requestedSlotId = this.creativeSlotSizeCache.fetchSlotIdForExactSize(maxWidth,maxHeight);
+                	    List<Short> firstImpClosestrequestedSlotIdList = new ArrayList<Short>();
+                	    firstImpClosestrequestedSlotIdList.add(requestedSlotId);
+                	    request.setFirstImpClosestRequestedSlotIdList(firstImpClosestrequestedSlotIdList);
+            		}
                 }
 
                 /*set secure assets required if at all*/

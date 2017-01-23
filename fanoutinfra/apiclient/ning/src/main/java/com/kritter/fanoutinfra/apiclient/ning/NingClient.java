@@ -1,8 +1,10 @@
 package com.kritter.fanoutinfra.apiclient.ning;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.kritter.fanoutinfra.apiclient.common.KHttpResponse;
 import org.apache.logging.log4j.Logger;
@@ -170,23 +172,42 @@ public class NingClient implements KHttpClient {
                 return kHttpResponse;
             }
 
-            Future<String> f = this.client.executeRequest(request, new NingAsyncHandler(loggerName));
+            NingAsyncHandler ningAsyncHandler = new NingAsyncHandler(loggerName);
+            Future<String> f = this.client.executeRequest(request, ningAsyncHandler);
             returnStr = f.get(requestTimeoutMillis,TimeUnit.MILLISECONDS);
+            statusCode = ningAsyncHandler.getStatus();
             KHttpResponse kHttpResponse = new KHttpResponse();
             kHttpResponse.setResponseStatusCode(statusCode);
             kHttpResponse.setResponsePayload(returnStr);
             return kHttpResponse;
         }
-        catch (Exception e)
+        catch (InterruptedException ine)
         {
-            logger.error(e.getMessage(),e);
+            logger.error(ine.getMessage(),ine);
             KHttpResponse kHttpResponse = new KHttpResponse();
             kHttpResponse.setResponseStatusCode(504);
             kHttpResponse.setResponsePayload(null);
             return kHttpResponse;
         }
-
-        finally{}
+        catch (TimeoutException te)
+        {
+            logger.error(te.getMessage(),te);
+            KHttpResponse kHttpResponse = new KHttpResponse();
+            kHttpResponse.setResponseStatusCode(504);
+            kHttpResponse.setResponsePayload(null);
+            return kHttpResponse;
+        }
+        catch (ExecutionException exe)
+        {
+            logger.error(exe.getMessage(),exe);
+            KHttpResponse kHttpResponse = new KHttpResponse();
+            kHttpResponse.setResponseStatusCode(504);
+            kHttpResponse.setResponsePayload(null);
+            return kHttpResponse;
+        }
+        finally
+        {
+        }
     }
 
     public static void main(String args[]) throws Exception{

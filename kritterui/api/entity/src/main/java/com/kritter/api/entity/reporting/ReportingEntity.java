@@ -113,6 +113,13 @@ public class ReportingEntity {
 	private boolean device_type_clickable = false;
 	/**
 	 * mandatory - default null - null means not required, empty list means all
+	 * required, integer - reqslot element in list signifies filters
+	 */
+	private List<Integer> reqslot = null;
+	/** mandatory - default false - used by hierarchical reporting */
+	private boolean reqslot_clickable = false;
+	/**
+	 * mandatory - default null - null means not required, empty list means all
 	 * required, integer - campaignid element in list signifies filters
 	 */
 	private List<Integer> campaignId = null;
@@ -454,6 +461,22 @@ public class ReportingEntity {
 	private boolean rollup = false;
 
 	
+	public List<Integer> getReqslot() {
+		return reqslot;
+	}
+
+	public void setReqslot(List<Integer> reqslot) {
+		this.reqslot = reqslot;
+	}
+
+	public boolean isReqslot_clickable() {
+		return reqslot_clickable;
+	}
+
+	public void setReqslot_clickable(boolean reqslot_clickable) {
+		this.reqslot_clickable = reqslot_clickable;
+	}
+
 	public boolean isAvgBidFloor() {
 		return avgBidFloor;
 	}

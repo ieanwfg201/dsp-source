@@ -26,6 +26,7 @@
 			          <span ng-show="sites_msmodel.visible">     
 			          	@components.formElements.multiselectlist3(reportEntityForm("sites"),'_label->"Sites")
 			          </span>
+		         	@components.formElements.multiselectlist3(reportEntityForm("reqslot"),'_label->"ReqSlots")   
 		           @components.formElements.multiselectlist3(reportEntityForm("advid"),'_label->"Advertisers")
 			          <span ng-show="campaigns_msmodel.visible">
 			          @components.formElements.multiselectlist3(reportEntityForm("campaigns"),'_label->"Campaigns")  
@@ -43,10 +44,11 @@
 		          <span ng-show="carrier_msmodel.visible">
 		          	@components.formElements.multiselectlist3(reportEntityForm("carrier"),'_label->"Carrier")
 		          </span>
+		          @components.formElements.multiselectlist3(reportEntityForm("device_type"),'_label->"Device Type")
 		          @components.formElements.multiselectlist3(reportEntityForm("os"),'_label->"Os")
-		          <span ng-show="brand_msmodel.visible">
+		          <!--span ng-show="brand_msmodel.visible">
 		          	@components.formElements.multiselectlist3(reportEntityForm("brand"),'_label->"Brand")
-		          </span>
+		          </span-->
 		       </fieldset>
 		    
 		        <fieldset>

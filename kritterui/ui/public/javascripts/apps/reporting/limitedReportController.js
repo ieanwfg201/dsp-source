@@ -138,6 +138,8 @@ controller('limitedReportController',function ($scope, $http, ngTableParams, $mo
 	$scope.brand_url = "/metadata/options/brands/";
 	$scope.os_url = "/metadata/options/operating-systems";
 	$scope.marketplace_url = "/metadata/options/marketplace";
+	$scope.device_type_url = "/metadata/options/all_device_type";
+	$scope.reqslot_url = "/metadata/options/slot_options";
 	
 	function pad0(a) {
 		if( a < 10){
@@ -263,6 +265,12 @@ controller('limitedReportController',function ($scope, $http, ngTableParams, $mo
 	
 	$scope.marketplace_msmodel = Object.create(MultiSelectModel);
 	$scope.marketplace_msmodel.init($scope.marketplace_url, 'valueArray', true, true);
+
+	$scope.reqslot_msmodel = Object.create(MultiSelectModel);
+	$scope.reqslot_msmodel.init($scope.reqslot_url, 'valueArray', true, true);
+
+	$scope.device_type_msmodel = Object.create(MultiSelectModel);
+	$scope.device_type_msmodel.init($scope.device_type_url, 'valueArray', true, true);
 
 	$scope.initMS = function(field, value){
 		$scope[field+"_msmodel"].setInitValue(value); 
