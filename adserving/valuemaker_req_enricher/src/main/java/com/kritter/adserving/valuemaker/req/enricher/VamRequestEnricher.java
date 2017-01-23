@@ -22,6 +22,7 @@ import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.geo.common.entity.Country;
 import com.kritter.geo.common.entity.reader.CountryDetectionCache;
 import com.kritter.utils.common.ApplicationGeneralUtils;
+import com.kritter.utils.common.ServerConfig;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 import com.kritter.valuemaker.reader_v20160817.reader.VamBidRequestReader;
 import org.apache.commons.lang.StringUtils;
@@ -44,15 +45,20 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
     private HandsetDetectionProvider handsetDetectionProvider;
     private CountryDetectionCache countryDetectionCache;
     private MMACache mMACache;
+    private String osCheck = "0";
 
     private static final String CTRL_A = String.valueOf((char) 1);
+    private static final String OS_USING_DEFAULT = "0";
+    private static final String OS_USING_EXCHANGE = "1";
+    private static final String OS_USING_UAFILE = "2";
 
     public VamRequestEnricher(String loggerName,
                               VamBidRequestReader vamBidRequestReader,
                               SiteCache siteCache,
                               HandsetDetectionProvider handsetDetectionProvider,
                               CountryDetectionCache countryDetectionCache,
-                              MMACache mMACache
+                              MMACache mMACache,
+                              ServerConfig serverConfig
 
     ) {
         this.logger = LogManager.getLogger(loggerName);
@@ -61,6 +67,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         this.handsetDetectionProvider = handsetDetectionProvider;
         this.countryDetectionCache = countryDetectionCache;
         this.mMACache = mMACache;
+        this.osCheck = serverConfig.getValueForKey(ServerConfig.EXCHANGE_OS_CHECK);
     }
 
     @Override
@@ -195,36 +202,38 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
             HandsetMasterData handsetMasterData = this.handsetDetectionProvider.detectHandsetForUserAgent(userAgent);
 
-            if(handsetMasterData != null && handsetMasterData.isBot())
-            {
-                this.logger.error("Device detected is BOT inside MoPubRequestEnricher, can not proceed further");
-                request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
-                return request;
+            if(osCheck == null){
+                osCheck = OS_USING_DEFAULT;
             }
+            if(osCheck.equals(OS_USING_UAFILE)){
+                if (null == handsetMasterData) {
+                    this.logger.warn("Device detection failed inside VamRequestEnricher, proceeding with  undetected handset,{}", userAgent);
+                    return request;
+                } else {
+                    logger.debug("The internal id for handset detection is : {}", handsetMasterData.getInternalId());
+                    if (handsetMasterData.isBot()) {
+                        this.logger.error("Device detected is BOT inside VamRequestEnricher, cannot proceed further");
+                        request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
+                        return request;
+                    }
+                }
+            }else if(osCheck.equals(OS_USING_EXCHANGE)){
 
-            //ua exist ,os unknow
-            boolean flag = handsetMasterData !=null && handsetMasterData.getDeviceOperatingSystemId()!=null && handsetMasterData.getDeviceOperatingSystemId().equals(-1);
+                handsetMasterData = createHandset(vamBidRequestParentNodeDTO);
 
-            if(flag || handsetMasterData == null || handsetMasterData.getDeviceOperatingSystemId() == null){
-                HandsetCapabilities handsetCapabilities = new HandsetCapabilities();
-                handsetCapabilities.setIsTablet(false);
-                handsetCapabilities.setMidp2(false);
-                handsetCapabilities.setResolutionWidth(-1);
-                handsetCapabilities.setResolutionHeight(-1);
-
-                //万流客1.adnroid,2.ios,自己的平台1.ios,2.android
-                int os = -1;
-                VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
-                if (vamRequest.hasVamMobile() && vamRequest.getVamMobile().hasOs()) {
-                    os=convertOs(vamRequest.getVamMobile().getOs());
-                } else if (vamRequest.hasVamMobileVideo() && vamRequest.getVamMobileVideo().hasOs()) {
-                    os=convertOs(vamRequest.getVamMobileVideo().getOs());
+            }else{
+                if(handsetMasterData != null && handsetMasterData.isBot())
+                {
+                    this.logger.error("Device detected is BOT inside MoPubRequestEnricher, can not proceed further");
+                    request.setRequestEnrichmentErrorCode(Request.REQUEST_ENRICHMENT_ERROR_CODE.DEVICE_BOT);
+                    return request;
                 }
 
-                handsetMasterData = new HandsetMasterData(-1, -1, "-1", os, "-1", -1, null, handsetCapabilities);
-                handsetMasterData.setBot(false);
-                handsetMasterData.setDeviceType(null);
-                handsetMasterData.setDeviceJavascriptCompatible(true);
+                //ua exist ,os unknow
+                boolean flag = handsetMasterData !=null && handsetMasterData.getDeviceOperatingSystemId()!=null && handsetMasterData.getDeviceOperatingSystemId().equals(-1);
+                if(flag || handsetMasterData == null || handsetMasterData.getDeviceOperatingSystemId() == null){
+                    handsetMasterData = createHandset(vamBidRequestParentNodeDTO);
+                }
             }
 
             request.setHandsetMasterData(handsetMasterData);
@@ -458,5 +467,28 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                 break;
         }
         return i;
+    }
+
+    private HandsetMasterData createHandset(VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO) throws Exception {
+        HandsetCapabilities handsetCapabilities = new HandsetCapabilities();
+        handsetCapabilities.setIsTablet(false);
+        handsetCapabilities.setMidp2(false);
+        handsetCapabilities.setResolutionWidth(-1);
+        handsetCapabilities.setResolutionHeight(-1);
+
+        //万流客1.adnroid,2.ios,自己的平台1.ios,2.android
+        int os = -1;
+        VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
+        if (vamRequest.hasVamMobile() && vamRequest.getVamMobile().hasOs()) {
+            os=convertOs(vamRequest.getVamMobile().getOs());
+        } else if (vamRequest.hasVamMobileVideo() && vamRequest.getVamMobileVideo().hasOs()) {
+            os=convertOs(vamRequest.getVamMobileVideo().getOs());
+        }
+
+        HandsetMasterData handsetMasterData = new HandsetMasterData(-1, -1, "-1", os, "-1", -1, null, handsetCapabilities);
+        handsetMasterData.setBot(false);
+        handsetMasterData.setDeviceType(null);
+        handsetMasterData.setDeviceJavascriptCompatible(true);
+        return handsetMasterData;
     }
 }
