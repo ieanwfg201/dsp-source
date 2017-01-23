@@ -1,18 +1,16 @@
 package com.kritter.material_upload.youkuvideouploader;
 
 import com.youku.uploader.YoukuUploader;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class YoukuNonWebVideoUploader {
-	private static final Logger LOG = LoggerFactory.getLogger(YoukuNonWebVideoUploader.class);
-    private static YoukuUploader uploader;
+	private static final Logger LOG = LogManager.getLogger("material.root");
+	private static YoukuUploader uploader;
     @Getter@Setter
     private String videoid;
     public void upload(String client_id,String client_secret,String refresh_token,

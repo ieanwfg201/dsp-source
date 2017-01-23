@@ -10,8 +10,8 @@ import com.kritter.naterial_upload.valuemaker.entity.VamQueryEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class VamMUBanner implements MUBanner {
-    private static final Logger LOG = LoggerFactory.getLogger(VamMUBanner.class);
+    private static final Logger LOG = LogManager.getLogger("material.root");
     @Getter
     @Setter
     private String dspid;

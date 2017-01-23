@@ -7,17 +7,20 @@ import com.kritter.naterial_upload.cloudcross.entity.CloudCrossResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 public class CloudCrossMUBannerAudit implements MUBannerAudit {
-    private static final Logger LOG = LoggerFactory.getLogger(CloudCrossMUBannerAudit.class);
+    private static final Logger LOG = LogManager.getLogger("material.root");
     private static final ObjectMapper objectMapper = new ObjectMapper();
     @Getter
     @Setter

@@ -8,9 +8,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
@@ -27,7 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class YoukuAdPositionGet implements AdPositionGet{
-	private static final Logger LOG = LoggerFactory.getLogger(YoukuAdPositionGet.class);
+	private static final Logger LOG = LogManager.getLogger("material.root");
 	@Getter @Setter
 	private String dspid;
 	@Getter @Setter

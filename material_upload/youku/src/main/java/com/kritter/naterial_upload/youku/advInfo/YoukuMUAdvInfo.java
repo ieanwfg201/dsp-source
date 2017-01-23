@@ -1,40 +1,25 @@
 package com.kritter.naterial_upload.youku.advInfo;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.MaterialType;
 import com.kritter.constants.QualificationState;
 import com.kritter.material_upload.common.advInfo.MUAdvInfo;
 import com.kritter.material_upload.common.urlpost.UrlPost;
-import com.kritter.naterial_upload.youku.advInfo.YoukuAdvInfoQuery;
-import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
-import com.kritter.naterial_upload.youku.entity.ReturnResultMessage;
-import com.kritter.naterial_upload.youku.entity.YoukuAdvInfoLocaLMaterialUploadEntity;
-import com.kritter.naterial_upload.youku.entity.YoukuAdvInfoUploadEntity;
-import com.kritter.naterial_upload.youku.entity.YoukuQualifications;
-
+import com.kritter.naterial_upload.youku.entity.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.*;
 
 public class YoukuMUAdvInfo implements MUAdvInfo {
-	private static final Logger LOG = LoggerFactory.getLogger(YoukuMUAdvInfo.class);
+	private static final Logger LOG = LogManager.getLogger("material.root");
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter

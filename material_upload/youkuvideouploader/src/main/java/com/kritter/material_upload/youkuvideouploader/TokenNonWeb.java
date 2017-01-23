@@ -1,5 +1,7 @@
 package com.kritter.material_upload.youkuvideouploader;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -8,20 +10,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TokenNonWeb {
-	private static final Logger LOG = LoggerFactory.getLogger(TokenNonWeb.class);
-	@Getter@Setter
+    private static final Logger LOG = LogManager.getLogger("material.root");
+    @Getter@Setter
     private String accessToken;
 
     public void refreshToken(String client_id,String client_secret,String refresh_token,
