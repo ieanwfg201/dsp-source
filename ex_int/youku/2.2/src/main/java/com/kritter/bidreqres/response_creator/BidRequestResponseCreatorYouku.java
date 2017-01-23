@@ -55,7 +55,8 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     //template for formatting.
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Random randomPicker = new Random();
-    
+    private static final String HTTP_PROTOCOL = "http://";
+    private static final String HTTPS_PROTOCOL = "https://";  
     public BidRequestResponseCreatorYouku(
                                             String loggerName,
                                             ServerConfig serverConfig,
@@ -68,20 +69,20 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     {
         this.logger = LogManager.getLogger(loggerName);
         this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
-        this.postImpressionBaseClickUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseClickUrl, "http://", "https://");
+        this.postImpressionBaseClickUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseClickUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
         this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
-        this.postImpressionBaseCSCUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseCSCUrl, "http://", "https://");
+        this.postImpressionBaseCSCUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseCSCUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
         this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
-        this.postImpressionBaseWinApiUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseWinApiUrl, "http://", "https://");
+        this.postImpressionBaseWinApiUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseWinApiUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
         this.cdnBaseImageUrl = serverConfig.getValueForKey(ServerConfig.CDN_URL_PREFIX);
-        this.cdnBaseImageUrlSecure = StringUtils.replaceOnce(this.cdnBaseImageUrl, "http://", "https://");
+        this.cdnBaseImageUrlSecure = StringUtils.replaceOnce(this.cdnBaseImageUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
         this.secretKey = secretKey;
         this.urlVersion = urlVersion;
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
         this.adEntityCache = adEntityCache;
         this.macroPostImpressionBaseClickUrl= serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
-        this.macroPostImpressionBaseClickUrlSecure = StringUtils.replaceOnce(this.macroPostImpressionBaseClickUrl, "http://", "https://");
+        this.macroPostImpressionBaseClickUrlSecure = StringUtils.replaceOnce(this.macroPostImpressionBaseClickUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
     }
 
@@ -255,7 +256,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
             		&& responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl() != null){
             	bidResponseBidYoukuDTO.setAdMarkup(request.getSecure()?
             					responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl():
-            						StringUtils.replaceOnce(responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl(), "http://", "https://"));
+            						StringUtils.replaceOnce(responseAdInfo.getVideoInfo().getExt().getYoukuCDNUrl(), HTTP_PROTOCOL, HTTPS_PROTOCOL));
             }
 
         }
