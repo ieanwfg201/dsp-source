@@ -1,14 +1,5 @@
 package com.kritter.material_upload.common.executor;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.kritter.material_upload.common.adposition.AdPositionGet;
 import com.kritter.material_upload.common.advInfo.MUADvInfoAudit;
 import com.kritter.material_upload.common.advInfo.MUAdvInfo;
@@ -16,13 +7,19 @@ import com.kritter.material_upload.common.banner.MUBanner;
 import com.kritter.material_upload.common.banner.MUBannerAudit;
 import com.kritter.material_upload.common.video.MUVideo;
 import com.kritter.material_upload.common.video.MUVideoAudit;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
 
 public abstract class UploadExecutorImpl implements UploadExecutor {
-    private static final Logger LOG = LoggerFactory.getLogger(UploadExecutorImpl.class);
-
+    private static final Logger LOG = LogManager.getLogger(UploadExecutorImpl.class);
     @Getter
     @Setter
     private boolean advertiser_upload = false;

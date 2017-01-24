@@ -1,13 +1,12 @@
 package com.kritter.material_upload.materialdaemon;
 
+import com.kritter.material_upload.uploader.MaterialUploader;
+import org.apache.log4j.PropertyConfigurator;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import org.apache.log4j.PropertyConfigurator;
-
-import com.kritter.material_upload.uploader.MaterialUploader;
 
 public class MaterialUploaderDaemon {
     
@@ -15,7 +14,7 @@ public class MaterialUploaderDaemon {
     public void configure_logger(String conf_path){
         FileInputStream fi = null;
         try{
-            File file = new File(conf_path+System.getProperty("file.separator")+"log4j.properties");
+            File file = new File(conf_path+System.getProperty("file.separator")+"log4j2.xml");
             fi = new FileInputStream(file);
             PropertyConfigurator.configure(fi);
         }catch(Exception e){
@@ -59,6 +58,7 @@ public class MaterialUploaderDaemon {
         MaterialUploader mUploader = new MaterialUploader();
         mUploader.setProperties(this.properties);
         int sleep_interval = Integer.parseInt(properties.getProperty("sleepintervalinms"));
+        boolean flag = true;
         while(true){
         	mUploader.materialupload();
             try {
