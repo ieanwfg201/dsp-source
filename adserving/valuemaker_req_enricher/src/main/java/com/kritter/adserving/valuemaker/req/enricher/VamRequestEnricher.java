@@ -164,6 +164,9 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
             if (impressionDTO != null && impressionDTO.getAdTagOrPlacementId() != null) {
                 adpositionid = impressionDTO.getAdTagOrPlacementId();
             }
+            if(impressionDTO.getSecure() != null && 1==impressionDTO.getSecure()){
+                request.setSecure(true);
+            }
 
             Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1, appCategoryArray1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));

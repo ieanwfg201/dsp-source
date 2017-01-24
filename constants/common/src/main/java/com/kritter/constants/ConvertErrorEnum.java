@@ -27,6 +27,21 @@ public enum ConvertErrorEnum {
     RES_CONVERT_EXCEPTION(20,"RES_CONVERT_EXCEPTION"),
     REQ_NATIVE_PROP_NF(21,"REQ_NATIVE_PROP_NF"),
     REQ_VIDEO_PROP_NF(22,"REQ_VIDEO_PROP_NF");
+
+    //TODO use proper codes here and also put in dsp landscape later on.
+    /**Also put standard IAB DSP error reasons, these can then
+     * be used in DSP landscape reporting in future.*/
+    /*DSP_NO_BID_REASON_UNKNOWN(23,"DSP_NO_BID_REASON_UNKNOW"),
+    DSP_NO_BID_REASON_TECHNICAL ERROR(23,"DSP_NO_BID_REASON_UNKNOW"),
+    2 Invalid Request
+    Page 46OpenRTB API Specification Version 2.3
+            3 Known Web Spider
+    4 Suspected Non-Human Traffic
+    5 Cloud, Data center, or Proxy IP
+    6 Unsupported Device
+    7 Blocked Publisher or Site
+    8 Unmatched User*/
+
     private int code;
     private String name;
     private static Map<Integer, ConvertErrorEnum> map = new HashMap<Integer, ConvertErrorEnum>();

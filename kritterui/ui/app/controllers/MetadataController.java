@@ -109,6 +109,11 @@ public class MetadataController extends Controller{
             ArrayNode device_typeOptions = MetadataAPI.device_type(); 
             return ok(device_typeOptions);
         }
+        @SecuredAction
+        public static Result all_device_type(){
+            ArrayNode device_typeOptions = MetadataAPI.all_device_type(); 
+            return ok(device_typeOptions);
+        }
 
         @SecuredAction
 		public static Result countries(){
