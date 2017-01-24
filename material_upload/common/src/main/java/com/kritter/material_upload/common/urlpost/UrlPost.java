@@ -1,5 +1,8 @@
 package com.kritter.material_upload.common.urlpost;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,11 +10,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class UrlPost {
-	private static final Logger LOG = LoggerFactory.getLogger(UrlPost.class);
+    private static final Logger LOG = LogManager.getLogger(UrlPost.class);
 	public String urlpost(String urlString,String postBody) throws Exception{
 		StringBuffer sbuff = new StringBuffer("");
         URL url;

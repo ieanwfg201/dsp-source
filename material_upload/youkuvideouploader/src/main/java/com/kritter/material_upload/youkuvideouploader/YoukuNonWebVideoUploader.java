@@ -1,18 +1,16 @@
 package com.kritter.material_upload.youkuvideouploader;
 
 import com.youku.uploader.YoukuUploader;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class YoukuNonWebVideoUploader {
-	private static final Logger LOG = LoggerFactory.getLogger(YoukuNonWebVideoUploader.class);
-    private static YoukuUploader uploader;
+	private static final Logger LOG = LogManager.getLogger(YoukuNonWebVideoUploader.class);
+	private static YoukuUploader uploader;
     @Getter@Setter
     private String videoid;
     public void upload(String client_id,String client_secret,String refresh_token,
@@ -40,12 +38,12 @@ public class YoukuNonWebVideoUploader {
 
     public static void main(String args[]){
     	/**YoukuNonWebVideoUploader h = new YoukuNonWebVideoUploader();
-    	h.upload("10a56fb7e9c3bd9c", "b4ef90f3450b190ad3d95cc0b1c0549a", "3f2f8405a24eacc2c1c39d2c098e190a", 
+    	h.upload("10a56fb7e9c3bd9c", "b4ef90f3450b190ad3d95cc0b1c0549a", "3f2f8405a24eacc2c1c39d2c098e190a",
     			"https://openapi.youku.com/v2/oauth2/token", "/home/rohan/testvideos/300_50.mp4", "testvideowithouttag");
-    	
+
     	 * {"video_id":"XMTcyNjU5NDc0NA=="}
     	 * http://v.youku.com/v_show/id_XMTcyNjU5ODUzNg==.html
     	 */
-    	
+
     }
 }

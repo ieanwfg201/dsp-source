@@ -1,17 +1,5 @@
 package com.kritter.naterial_upload.youku.advInfo;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Properties;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.material_upload.common.advInfo.MUADvInfoAudit;
 import com.kritter.material_upload.common.urlpost.UrlPost;
@@ -19,12 +7,18 @@ import com.kritter.naterial_upload.youku.entity.ReturnAdvInfoMessage;
 import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
 import com.kritter.naterial_upload.youku.entity.YoukuAdvInfoAuditEntity;
 import com.kritter.naterial_upload.youku.entity.YoukuAdvInfoLocaLMaterialUploadEntity;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.sql.*;
+import java.util.Date;
+import java.util.Properties;
 
 public class YoukuMUAdvInfoAudit implements MUADvInfoAudit {
-	private static final Logger LOG = LoggerFactory.getLogger(YoukuMUAdvInfoAudit.class);
+	private static final Logger LOG = LogManager.getLogger(YoukuMUAdvInfoAudit.class);
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter

@@ -6,8 +6,8 @@ import com.kritter.material_upload.common.banner.MUBannerAudit;
 import com.kritter.naterial_upload.valuemaker.entity.HttpUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class VamMUBannerAudit implements MUBannerAudit {
-    private static final Logger LOG = LoggerFactory.getLogger(VamMUBannerAudit.class);
+    private static final Logger LOG = LogManager.getLogger(VamMUBannerAudit.class);
     @Getter
     @Setter
     private String dspid;
