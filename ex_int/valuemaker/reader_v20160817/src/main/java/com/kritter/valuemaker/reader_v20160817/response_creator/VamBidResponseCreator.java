@@ -28,6 +28,7 @@ import com.kritter.valuemaker.reader_v20160817.converter.response.ConvertRespons
 import com.kritter.valuemaker.reader_v20160817.entity.BidRequestVam;
 import com.kritter.valuemaker.reader_v20160817.entity.VamBidRequestParentNodeDTO;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -46,17 +47,24 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     private int urlVersion;
     private AdEntityCache adEntityCache;
 
-//    private String postImpressionBaseClickUrl;
-//    private String postImpressionBaseCSCUrl;
-//    private String postImpressionBaseWinApiUrl;
-//    private String macroPostImpressionBaseClickUrl;
-//    private String trackingEventUrl;
+    private String postImpressionBaseClickUrl;
+    private String postImpressionBaseCSCUrl;
+    private String postImpressionBaseWinApiUrl;
+    private String macroPostImpressionBaseClickUrl;
+    private String trackingEventUrl;
+
+    private String postImpressionBaseClickUrlSecure;
+    private String postImpressionBaseCSCUrlSecure;
+    private String postImpressionBaseWinApiUrlSecure;
+    private String macroPostImpressionBaseClickUrlSecure;
+    private String trackingEventUrlSecure;
 
     private String notificationUrlSuffix;
     private String notificationUrlBidderBidPriceMacro;
     private IABCategoriesCache iabCategoriesCache;
     private ServerConfig serverConfig;
-
+    private static final String HTTP_PROTOCOL = "http://";
+    private static final String HTTPS_PROTOCOL = "https://";
 
     public VamBidResponseCreator(
             String loggerName,
@@ -75,11 +83,17 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         this.urlVersion = urlVersion;
         this.adEntityCache = adEntityCache;
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
-//        this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
-//        this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
-//        this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
-//        this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
-//        this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+
+        this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
+        this.postImpressionBaseClickUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseClickUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
+        this.postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
+        this.postImpressionBaseCSCUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseCSCUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
+        this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
+        this.postImpressionBaseWinApiUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseWinApiUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
+        this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
+        this.macroPostImpressionBaseClickUrlSecure =  StringUtils.replaceOnce(this.macroPostImpressionBaseClickUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
+        this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
+        this.trackingEventUrlSecure =StringUtils.replaceOnce(this.trackingEventUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
 
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
@@ -103,28 +117,6 @@ public class VamBidResponseCreator implements IBidResponseCreator {
             BidRequestVam bidRequestVam = (BidRequestVam) request.getBidRequest();
             VamBidRequestParentNodeDTO vamBidRequestParentNodeDTO = (VamBidRequestParentNodeDTO) bidRequestVam.getBidRequestParentNodeDTO();
             VamRealtimeBidding.VamRequest vamRequest = (VamRealtimeBidding.VamRequest) vamBidRequestParentNodeDTO.getExtensionObject();
-            int secure = vamRequest.getSecure();
-            String postImpressionBaseClickUrl  = null;
-            String postImpressionBaseCSCUrl = null;
-            String postImpressionBaseWinApiUrl = null;
-            String macroPostImpressionBaseClickUrl = null;
-            String trackingEventUrl;
-            if(secure == 1) {
-                postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX, secure);
-                postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX, secure);
-                postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX, secure);
-                macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX, secure);
-                trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX, secure);
-                request.setSecure(true);
-            }
-            else{
-                postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
-                postImpressionBaseCSCUrl = serverConfig.getValueForKey(ServerConfig.CSC_URL_PREFIX);
-                postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
-                macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
-                trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
-                request.setSecure(false);
-            }
 
             Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();
             if (null == impressionIdsToRespondFor) {
@@ -182,7 +174,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                         );
 
                 //win_url
-                StringBuffer winNotificationURLBuffer = new StringBuffer(postImpressionBaseWinApiUrl);
+                StringBuffer winNotificationURLBuffer = new StringBuffer(request.getSecure()?postImpressionBaseWinApiUrl:postImpressionBaseWinApiUrlSecure);
                 winNotificationURLBuffer.append(clickUri);
 
                 String suffixToAdd = notificationUrlSuffix;
@@ -195,12 +187,12 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                 String win_url = winNotificationURLBuffer.toString();
 
                 //clk_url
-                StringBuffer clickUrl = new StringBuffer(postImpressionBaseClickUrl);
+                StringBuffer clickUrl = new StringBuffer(request.getSecure()?postImpressionBaseClickUrl:postImpressionBaseClickUrlSecure);
                 clickUrl.append(clickUri);
                 String clk_url = clickUrl.toString();
 
                 //show_url
-                StringBuffer cscBeaconUrl = new StringBuffer(postImpressionBaseCSCUrl);
+                StringBuffer cscBeaconUrl = new StringBuffer(request.getSecure()?postImpressionBaseCSCUrl:postImpressionBaseCSCUrlSecure);
                 cscBeaconUrl.append(clickUri);
                 String show_url = cscBeaconUrl.toString();
 
@@ -210,7 +202,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                     continue;
                 }
 
-                StringBuffer macroClickUrl = new StringBuffer(macroPostImpressionBaseClickUrl);
+                StringBuffer macroClickUrl = new StringBuffer(request.getSecure()?macroPostImpressionBaseClickUrl:macroPostImpressionBaseClickUrlSecure);
                 macroClickUrl.append(clickUri);
 
                 ExtTracker extTracker = adEntity.getExtTracker();

@@ -22,6 +22,7 @@ public class ConvertRequest {
         BidRequestImpressionDTO bidRequestImpressionDTO = new BidRequestImpressionDTO();
         UUIDGenerator uuidGenerator = new UUIDGenerator();
         bidRequestImpressionDTO.setBidRequestImpressionId(uuidGenerator.generateUniversallyUniqueIdentifier().toString());
+        bidRequestImpressionDTO.setSecure(vamRequest.getSecure());
 
         bidRequestParentNodeDTO.setBidRequestImpressionArray(new BidRequestImpressionDTO[]{bidRequestImpressionDTO});
 
