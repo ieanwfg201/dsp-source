@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class YoukuMUVideo implements MUVideo {
-	private static final Logger LOG = LogManager.getLogger(YoukuMUVideo.class.getName());
+	private static final Logger LOG = LogManager.getLogger(YoukuMUVideo.class);
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter

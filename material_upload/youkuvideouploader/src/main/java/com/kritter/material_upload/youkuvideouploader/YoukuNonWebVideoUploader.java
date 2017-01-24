@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 
 public class YoukuNonWebVideoUploader {
-	private static final Logger LOG = LogManager.getLogger(YoukuNonWebVideoUploader.class.getName());
+	private static final Logger LOG = LogManager.getLogger(YoukuNonWebVideoUploader.class);
 	private static YoukuUploader uploader;
     @Getter@Setter
     private String videoid;

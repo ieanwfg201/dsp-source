@@ -26,7 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class YoukuAdPositionGet implements AdPositionGet{
-	private static final Logger LOG = LogManager.getLogger(YoukuAdPositionGet.class.getName());
+	private static final Logger LOG = LogManager.getLogger(YoukuAdPositionGet.class);
 	@Getter @Setter
 	private String dspid;
 	@Getter @Setter

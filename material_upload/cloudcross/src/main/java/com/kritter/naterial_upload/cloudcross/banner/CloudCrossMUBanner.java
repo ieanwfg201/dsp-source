@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class CloudCrossMUBanner implements MUBanner {
-    private static final Logger LOG = LogManager.getLogger(CloudCrossMUBanner.class.getName());
+    private static final Logger LOG = LogManager.getLogger(CloudCrossMUBanner.class);
     @Getter
     @Setter
     private String dspid;

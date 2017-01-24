@@ -21,7 +21,7 @@ import java.util.Properties;
  * Created by hamlin on 16-9-29.
  */
 public class CloudCrossMUAdvInfoAudit implements MUADvInfoAudit {
-    private static final Logger LOG = LogManager.getLogger(CloudCrossMUAdvInfoAudit.class.getName());
+    private static final Logger LOG = LogManager.getLogger(CloudCrossMUAdvInfoAudit.class);
     private ObjectMapper objectMapper = new ObjectMapper();
     @Getter
     @Setter

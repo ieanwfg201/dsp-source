@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.Properties;
 
 public class YoukuMUAdvInfoAudit implements MUADvInfoAudit {
-	private static final Logger LOG = LogManager.getLogger(YoukuMUAdvInfoAudit.class.getName());
+	private static final Logger LOG = LogManager.getLogger(YoukuMUAdvInfoAudit.class);
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter

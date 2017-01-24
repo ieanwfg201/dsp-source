@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class VamMUVideoAudit implements MUVideoAudit {
-    private static final Logger LOG = LogManager.getLogger(VamMUVideoAudit.class.getName());
+    private static final Logger LOG = LogManager.getLogger(VamMUVideoAudit.class);
     @Getter
     @Setter
     private String dspid;

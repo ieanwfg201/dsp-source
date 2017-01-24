@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.Properties;
 
 public class YoukuMUBannerAudit implements MUBannerAudit {
-	private static final Logger LOG = LogManager.getLogger(YoukuMUBannerAudit.class.getName());
+	private static final Logger LOG = LogManager.getLogger(YoukuMUBannerAudit.class);
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter

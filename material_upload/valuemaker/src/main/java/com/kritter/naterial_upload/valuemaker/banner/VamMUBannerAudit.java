@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class VamMUBannerAudit implements MUBannerAudit {
-    private static final Logger LOG = LogManager.getLogger(VamMUBannerAudit.class.getName());
+    private static final Logger LOG = LogManager.getLogger(VamMUBannerAudit.class);
     @Getter
     @Setter
     private String dspid;

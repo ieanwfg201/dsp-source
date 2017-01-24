@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.Properties;
 
 public class YoukuMUVideoAudit implements MUVideoAudit {
-	private static final Logger LOG = LogManager.getLogger(YoukuMUVideoAudit.class.getName());
+	private static final Logger LOG = LogManager.getLogger(YoukuMUVideoAudit.class);
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter

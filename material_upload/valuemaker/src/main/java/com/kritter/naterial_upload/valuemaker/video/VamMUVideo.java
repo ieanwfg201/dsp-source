@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class VamMUVideo implements MUVideo {
-    private static final Logger LOG = LogManager.getLogger(VamMUVideo.class.getName());
+    private static final Logger LOG = LogManager.getLogger(VamMUVideo.class);
     @Getter
     @Setter
     private String dspid;

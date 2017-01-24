@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class CloudCrossMUBannerAudit implements MUBannerAudit {
-    private static final Logger LOG = LogManager.getLogger(CloudCrossMUBannerAudit.class.getName());
+    private static final Logger LOG = LogManager.getLogger(CloudCrossMUBannerAudit.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
     @Getter
     @Setter
