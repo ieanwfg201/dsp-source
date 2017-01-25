@@ -357,7 +357,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                 winNotificationURLBuffer, null, this.macroPostImpressionBaseClickUrl);
         
         // inmobi banner doesn't have dedicated fields to retain 3rd party cilck tracker URL, we need to provide it within adm.
-        if(extTracker.getClickTracker() != null && extTracker.getClickTracker().size() > 0)
+        if(extTracker != null && extTracker.getClickTracker() != null && extTracker.getClickTracker().size() > 0)
         {
             injectExtClickTracker(request,response,responseAdInfo,extTracker,bannerAdMarkUp);
         }
