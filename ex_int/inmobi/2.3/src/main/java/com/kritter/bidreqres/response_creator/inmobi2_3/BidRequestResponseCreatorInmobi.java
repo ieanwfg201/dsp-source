@@ -227,13 +227,14 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         Creative creative = responseAdInfo.getCreative();
 
         if(creative.getCreativeFormat().equals(CreativeFormat.BANNER)) {
-            String adMarkup = prepareBannerHTMLAdMarkup(
-                    request,
-                    responseAdInfo,
-                    response, adEntity.getExtTracker(),
-                    winNotificationURLBuffer
+            bidResponseBidInmobiDTO.setAdMarkup(
+                    prepareBannerHTMLAdMarkup(
+                            request,
+                            responseAdInfo,
+                            response, adEntity.getExtTracker(),
+                            winNotificationURLBuffer
+                    )
             );
-            bidResponseBidInmobiDTO.setAdMarkup(appendExternalClickTracking(request,response,responseAdInfo,adEntity.getExtTracker(),adMarkup));
         }
         else if(creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
             bidResponseBidInmobiDTO.setAdMarkup(
@@ -312,7 +313,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         return bidResponseBidInmobiDTO;
     }
 
-    private String appendExternalClickTracking(Request request, Response response, ResponseAdInfo responseAdInfo, ExtTracker extTracker, String adMarkup) {
+    private String injectExtClickTracker(Request request, Response response, ResponseAdInfo responseAdInfo, ExtTracker extTracker, String adMarkup) {
         StringBuilder stringBuilder = new StringBuilder(adMarkup).insert(2, " onclick=\"fireClickTracker()\" target=\"_blank\" ");
         for (int i = 0; i < extTracker.getClickTracker().size(); i++) {
                 stringBuilder.append("<img id=\"click" + i + "\" width=\"1\" height=\"1\" />");
@@ -350,10 +351,17 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                                              StringBuffer winNotificationURLBuffer
                                             ) throws BidResponseException
     {
-        return BannerAdMarkUp.prepare(logger, request, response, responseAdInfo, urlVersion, secretKey,
+        String bannerAdMarkUp = BannerAdMarkUp.prepare(logger, request, response, responseAdInfo, urlVersion, secretKey,
                 macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
                 notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker,
                 winNotificationURLBuffer, null, this.macroPostImpressionBaseClickUrl);
+        
+        // inmobi banner doesn't have dedicated fields to retain 3rd party cilck tracker URL, we need to provide it within adm.
+        if(extTracker != null && extTracker.getClickTracker() != null && extTracker.getClickTracker().size() > 0)
+        {
+            injectExtClickTracker(request,response,responseAdInfo,extTracker,bannerAdMarkUp);
+        }
+        return bannerAdMarkUp;
     }
     private String prepareNativeAdMarkup(
             Request request,
