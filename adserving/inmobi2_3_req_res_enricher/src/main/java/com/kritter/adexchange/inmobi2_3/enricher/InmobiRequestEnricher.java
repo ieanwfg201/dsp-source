@@ -11,6 +11,7 @@ import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestSiteDTO;
 import com.kritter.bidrequest.reader.IBidRequestReader;
 import com.kritter.common.caches.iab.categories.IABCategoriesCache;
 import com.kritter.common.caches.iab.categories.entity.IABCategoryEntity;
+import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
@@ -36,7 +37,9 @@ import org.apache.logging.log4j.LogManager;
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,6 +61,7 @@ public class InmobiRequestEnricher implements RTBExchangeRequestReader
     private ISPDetectionCache ispDetectionCache;
     private IConnectionTypeDetectionCache connectionTypeDetectionCache;
     private static final String ENCODING = "UTF-8";
+    private CreativeSlotSizeCache creativeSlotSizeCache;
 
     public InmobiRequestEnricher(String loggerName,
                                     IBidRequestReader inmobiBidRequestReader,
@@ -67,7 +71,8 @@ public class InmobiRequestEnricher implements RTBExchangeRequestReader
                                     MncMccCountryISPDetectionCache mncMccCountryISPDetectionCache,
                                     CountryDetectionCache countryDetectionCache,
                                     ISPDetectionCache ispDetectionCache,
-                                    IConnectionTypeDetectionCache connectionTypeDetectionCache)
+                                    IConnectionTypeDetectionCache connectionTypeDetectionCache,
+                                    CreativeSlotSizeCache creativeSlotSizeCache)
     {
         this.logger = LogManager.getLogger(loggerName);
         this.inmobiBidRequestReader = inmobiBidRequestReader;
@@ -78,6 +83,7 @@ public class InmobiRequestEnricher implements RTBExchangeRequestReader
         this.countryDetectionCache = countryDetectionCache;
         this.ispDetectionCache = ispDetectionCache;
         this.connectionTypeDetectionCache = connectionTypeDetectionCache;
+        this.creativeSlotSizeCache = creativeSlotSizeCache;
     }
 
     @Override
@@ -320,6 +326,13 @@ public class InmobiRequestEnricher implements RTBExchangeRequestReader
                                 (inmobiBidRequestImpressionDTO.getBidRequestImpressionId(), minWidthArray, minHeightArray);
                         request.setInterstitialBidRequest(true);
                     }
+            		if(this.creativeSlotSizeCache == null && 
+            				maxWidth != null && maxHeight != null && request.getFirstImpClosestRequestedSlotIdList() == null){
+            			short requestedSlotId = this.creativeSlotSizeCache.fetchSlotIdForExactSize(maxWidth,maxHeight);
+                	    List<Short> firstImpClosestrequestedSlotIdList = new ArrayList<Short>();
+                	    firstImpClosestrequestedSlotIdList.add(requestedSlotId);
+                	    request.setFirstImpClosestRequestedSlotIdList(firstImpClosestrequestedSlotIdList);
+            		}
                 }
             }
         }

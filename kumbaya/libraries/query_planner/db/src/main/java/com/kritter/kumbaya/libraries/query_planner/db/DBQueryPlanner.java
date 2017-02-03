@@ -47,6 +47,7 @@ import com.kritter.kumbaya.libraries.data_structs.common.PostimpEvent;
 import com.kritter.kumbaya.libraries.data_structs.common.PubIncId;
 import com.kritter.kumbaya.libraries.data_structs.common.PublisherId;
 import com.kritter.kumbaya.libraries.data_structs.common.ReqState;
+import com.kritter.kumbaya.libraries.data_structs.common.Reqslot;
 import com.kritter.kumbaya.libraries.data_structs.common.SiteId;
 import com.kritter.kumbaya.libraries.data_structs.common.Site_hygiene;
 import com.kritter.kumbaya.libraries.data_structs.common.StateId;
@@ -171,7 +172,7 @@ public class DBQueryPlanner implements IQueryPlanner {
                 HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getPubId(), table_name, 
                         entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                         returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                        reportingEntity.isReturnGuid(),null, reportingEntity.isPubId_clickable(), false);
+                        reportingEntity.isReturnGuid(),null, reportingEntity.isPubId_clickable(), false,null,null);
             }
         }
         if(reportingEntity.getSite_hygiene() != null){
@@ -194,7 +195,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getAdvId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    reportingEntity.isReturnGuid(),null, reportingEntity.isAdvId_clickable(), false);
+                    reportingEntity.isReturnGuid(),null, reportingEntity.isAdvId_clickable(), false, null,null);
         }
         
         if(reportingEntity.getSiteId() != null){
@@ -204,7 +205,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getSiteId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    siteGuid,entity.getDim_guid(), reportingEntity.isSiteId_clickable(), reportingEntity.isSiteId_just_filter());
+                    siteGuid,entity.getDim_guid(), reportingEntity.isSiteId_clickable(), reportingEntity.isSiteId_just_filter(), null,null);
         }
         if(reportingEntity.getChannelId() != null){
             ChannelId entity = kReportingConfiguration.getChannelId();
@@ -212,7 +213,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getChannelId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    false,null, reportingEntity.isChannelId_clickable(), false);
+                    false,null, reportingEntity.isChannelId_clickable(), false, null,null);
         }
         if(reportingEntity.getAdpositionId() != null){
             AdpositionId entity = kReportingConfiguration.getAdpositionId();
@@ -220,7 +221,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getAdpositionId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    false,null, reportingEntity.isAdpositionId_clickable(), false);
+                    false,null, reportingEntity.isAdpositionId_clickable(), false, null,null);
         }
         if(reportingEntity.getSupply_source_type() != null){
             Supply_source_type entity = kReportingConfiguration.getSupply_source_type();
@@ -228,7 +229,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getSupply_source_type(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    false,null, reportingEntity.isSupply_source_type_clickable(), false);
+                    false,null, reportingEntity.isSupply_source_type_clickable(), false, null,null);
         }
         if(reportingEntity.getExt_site() != null){
             Ext_site entity = kReportingConfiguration.getExt_site();
@@ -236,7 +237,15 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getExt_site(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    false,null, reportingEntity.isExt_site_clickable(), false);
+                    false,null, reportingEntity.isExt_site_clickable(), false, null,null);
+        }
+        if(reportingEntity.getReqslot() != null){
+            Reqslot entity = kReportingConfiguration.getReqslot();
+            aliasCounter = aliasCounter + HelperKumbayaQueryPlanner.setAlias(aliasPrefix, aliasMap, entity.getDim_table(), aliasCounter);
+            HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getReqslot(), table_name, 
+                    entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
+                    returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
+                    false,null, reportingEntity.isReqslot_clickable(), false, entity.getSecond_dim_column_name(),entity.getMul_dim_column_delimeter());
         }
         if(reportingEntity.getCampaignId() != null){
             CampaignId entity = kReportingConfiguration.getCampaignId();
@@ -244,7 +253,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getCampaignId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname()
-                    , false, null, reportingEntity.isCampaignId_clickable(), reportingEntity.isCampaignId_just_filter());
+                    , false, null, reportingEntity.isCampaignId_clickable(), reportingEntity.isCampaignId_just_filter(), null,null);
         }
         if(reportingEntity.getAdId() != null){
             AdId entity = kReportingConfiguration.getAdId();
@@ -252,7 +261,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getAdId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname()
-                    , reportingEntity.isReturnAdGuid(), "guid", reportingEntity.isAdId_clickable(), reportingEntity.isAdId_just_filter());
+                    , reportingEntity.isReturnAdGuid(), "guid", reportingEntity.isAdId_clickable(), reportingEntity.isAdId_just_filter(), null,null);
         }
         if(reportingEntity.getMarketplace() != null){
             Marketplace entity = kReportingConfiguration.getMarketplace();
@@ -260,7 +269,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getMarketplace(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname()
-                    , false, null, reportingEntity.isMarketplace_clickable(), false);
+                    , false, null, reportingEntity.isMarketplace_clickable(), false, null,null);
         }
         if(reportingEntity.getDeviceId() != null){
             
@@ -271,7 +280,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getDeviceManufacturerId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), 
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
-                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isDeviceManufacturerId_clickable(), false);
+                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isDeviceManufacturerId_clickable(), false, null,null);
         }
         if(reportingEntity.getDeviceModelId() != null){
             DeviceModelId entity = kReportingConfiguration.getDeviceModelId();
@@ -279,7 +288,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getDeviceModelId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), 
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
-                    korderbyHashSet, headerList, entity.getUiname(), false, null, false, false);
+                    korderbyHashSet, headerList, entity.getUiname(), false, null, false, false, null,null);
         }
         if(reportingEntity.getDeviceOsId() != null){
             DeviceOsId entity = kReportingConfiguration.getDeviceOsId();
@@ -287,7 +296,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getDeviceOsId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), 
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
-                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isDeviceOsId_clickable(), false);
+                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isDeviceOsId_clickable(), false, null,null);
         }
         if(reportingEntity.getDevice_type() != null){
             Device_type entity = kReportingConfiguration.getDevice_type();
@@ -295,7 +304,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getDevice_type(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), 
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
-                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isDevice_type_clickable(), false);
+                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isDevice_type_clickable(), false, null,null);
         }
         if(reportingEntity.getBrowserId() != null){
             BrowserId entity = kReportingConfiguration.getBrowserId();
@@ -303,7 +312,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getBrowserId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), 
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
-                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isBrowserId_clickable(), false);
+                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isBrowserId_clickable(), false, null,null);
         }
         if(reportingEntity.getCountryId() != null){
             CountryId entity = kReportingConfiguration.getCountryId();
@@ -311,7 +320,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getCountryId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), 
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
-                    korderbyHashSet, headerList, entity.getUiname(),false, null, reportingEntity.isCountryId_clickable(), false);
+                    korderbyHashSet, headerList, entity.getUiname(),false, null, reportingEntity.isCountryId_clickable(), false, null,null);
         }
         if(reportingEntity.getCountryRegionId() != null){
         }
@@ -321,7 +330,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getCountryCarrierId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), 
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
-                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isCountryCarrierId_clickable(), false);
+                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isCountryCarrierId_clickable(), false, null,null);
         }
         if(reportingEntity.getStateId() != null){
             StateId entity = kReportingConfiguration.getStateId();
@@ -329,7 +338,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getStateId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    false,null, reportingEntity.isStateId_clickable(), false);
+                    false,null, reportingEntity.isStateId_clickable(), false, null,null);
         }
         if(reportingEntity.getCityeId() != null){
             CityId entity = kReportingConfiguration.getCityId();
@@ -337,7 +346,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getCityeId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    false,null, reportingEntity.isCityId_clickable(), false);
+                    false,null, reportingEntity.isCityId_clickable(), false, null,null);
         }
         if(reportingEntity.getFormatId() != null){
             CreativeFormatId entity = kReportingConfiguration.getCreativeFormatId();
@@ -345,7 +354,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getFormatId(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), entity.getDim_column_name(),
                     returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap, korderbyHashSet, headerList, entity.getUiname(),
-                    false,null, reportingEntity.isFormatId_clickable(), false);
+                    false,null, reportingEntity.isFormatId_clickable(), false, null,null);
         }
         if(reportingEntity.getConnection_type() != null){
             ConnectionType entity = kReportingConfiguration.getConnectionType() ;
@@ -353,7 +362,7 @@ public class DBQueryPlanner implements IQueryPlanner {
             HelperKumbayaQueryPlanner.populateFromList(entity.return_prefix, reportingEntity.getConnection_type(), table_name, 
                     entity.getFact_column(), entity.getDim_table(), entity.getDim_column(), 
                     entity.getDim_column_name(),returnId, kprojectionMap, kFilterSet, kgroupbyHashSet, kjoinMap, aliasMap,
-                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isConnection_type_clickable(), false);
+                    korderbyHashSet, headerList, entity.getUiname(), false, null, reportingEntity.isConnection_type_clickable(), false, null,null);
         }
         if(reportingEntity.getExchangeId() != null){
         }

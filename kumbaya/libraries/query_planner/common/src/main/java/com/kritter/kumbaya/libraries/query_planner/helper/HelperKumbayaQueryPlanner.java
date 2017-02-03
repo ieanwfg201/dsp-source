@@ -355,7 +355,8 @@ public class HelperKumbayaQueryPlanner {
             HashMap<String, String> kprojectionMap, HashSet<KFilterFields> kFilterSet,
             HashSet<String> kgroupbyHashSet,HashMap<String, String> kjoinMap,
             HashMap<String, String> aliasMap, HashSet<String> korderbyHashSet, List<Header> headerList,
-            String ui_header_name, boolean returnGuid, String guidColumn, boolean clickable, boolean onlyFilter){
+            String ui_header_name, boolean returnGuid, String guidColumn, boolean clickable, boolean onlyFilter,
+            String second_dim_column_name, String multi_dim_delimiter){
 
         if(intList == null){ return;}
         int size = intList.size();
@@ -364,7 +365,11 @@ public class HelperKumbayaQueryPlanner {
                 populateMap(kprojectionMap, aliasMap.get(fact_table)+"."+fact_column, prefix+"_id");
                 addToHeader(HeaderType.INT, prefix+"_id", HeaderType.INT, "id of "+ui_header_name, headerList,ColumnType.DIM,false,clickable);
             }
-            populateMap(kprojectionMap, aliasMap.get(dim_table)+"."+dim_column_name, prefix+"_name");
+            if(second_dim_column_name==null || multi_dim_delimiter==null){
+            	populateMap(kprojectionMap, aliasMap.get(dim_table)+"."+dim_column_name, prefix+"_name");
+            }else{
+            	populateMap(kprojectionMap, "CONCAT("+aliasMap.get(dim_table)+"."+dim_column_name+",'"+multi_dim_delimiter+"',"+aliasMap.get(dim_table)+"."+second_dim_column_name+")", prefix+"_name");
+            }
             addToHeader(HeaderType.STRING, prefix+"_name", HeaderType.INT, ui_header_name, headerList,ColumnType.DIM,true,false);
             if(returnGuid){
                 populateMap(kprojectionMap, aliasMap.get(dim_table)+"."+guidColumn, prefix+"_guid");
@@ -386,7 +391,12 @@ public class HelperKumbayaQueryPlanner {
                     populateMap(kprojectionMap, aliasMap.get(fact_table)+"."+fact_column, prefix+"_id");
                     addToHeader(HeaderType.INT, prefix+"_id", HeaderType.INT, "id of" + ui_header_name, headerList,ColumnType.DIM,false, clickable);
                 }
-                populateMap(kprojectionMap, aliasMap.get(dim_table)+"."+dim_column_name, prefix+"_name");
+                if(second_dim_column_name==null || multi_dim_delimiter == null){
+                	populateMap(kprojectionMap, aliasMap.get(dim_table)+"."+dim_column_name, prefix+"_name");
+                }else{
+                	populateMap(kprojectionMap, "CONCAT("+aliasMap.get(dim_table)+"."+dim_column_name+",'"+multi_dim_delimiter+"',"+aliasMap.get(dim_table)+"."+second_dim_column_name+")", prefix+"_name");
+                }
+
                 addToHeader(HeaderType.STRING, prefix+"_name", HeaderType.INT, ui_header_name, headerList,ColumnType.DIM,true, false);
                 if(returnGuid){
                     populateMap(kprojectionMap, aliasMap.get(dim_table)+"."+guidColumn, prefix+"_guid");

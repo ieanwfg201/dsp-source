@@ -8,6 +8,7 @@ import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.*;
 import com.kritter.common.caches.mma_cache.MMACache;
 import com.kritter.common.caches.mma_cache.entity.MMACacheEntity;
+import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
@@ -51,6 +52,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
     private static final String OS_USING_DEFAULT = "0";
     private static final String OS_USING_EXCHANGE = "1";
     private static final String OS_USING_UAFILE = "2";
+    private CreativeSlotSizeCache creativeSlotSizeCache;
 
     public VamRequestEnricher(String loggerName,
                               VamBidRequestReader vamBidRequestReader,
@@ -58,7 +60,8 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                               HandsetDetectionProvider handsetDetectionProvider,
                               CountryDetectionCache countryDetectionCache,
                               MMACache mMACache,
-                              ServerConfig serverConfig
+                              ServerConfig serverConfig,
+                              CreativeSlotSizeCache creativeSlotSizeCache
 
     ) {
         this.logger = LogManager.getLogger(loggerName);
@@ -68,6 +71,7 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
         this.countryDetectionCache = countryDetectionCache;
         this.mMACache = mMACache;
         this.osCheck = serverConfig.getValueForKey(ServerConfig.EXCHANGE_OS_CHECK);
+        this.creativeSlotSizeCache = creativeSlotSizeCache;
     }
 
     @Override
@@ -112,13 +116,13 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
                             }
                         }
                     }
-                   mmaIndustryCodes1 =new Integer[industyCategoryList.size()];
-                   mmaIndustryCodes2 = new String[industyCategoryList.size()];
+                    mmaIndustryCodes1 =new Integer[industyCategoryList.size()];
+                    mmaIndustryCodes2 = new String[industyCategoryList.size()];
 
-                   for(int i=0;i<industyCategoryList.size();i++){
-                       mmaIndustryCodes1[i]=industyCategoryList.get(i);
-                       mmaIndustryCodes2[i]=String.valueOf(industyCategoryList.get(i));
-                   }
+                    for(int i=0;i<industyCategoryList.size();i++){
+                        mmaIndustryCodes1[i]=industyCategoryList.get(i);
+                        mmaIndustryCodes2[i]=String.valueOf(industyCategoryList.get(i));
+                    }
 
                     vamBidRequestParentNodeDTO.setBlockedAdvertiserCategoriesForBidRequest(mmaIndustryCodes2);
                 }
@@ -161,9 +165,31 @@ public class VamRequestEnricher implements RTBExchangeRequestReader {
 
             String adpositionid = null;
             BidRequestImpressionDTO impressionDTO = vamBidRequestParentNodeDTO.getBidRequestImpressionArray()[0];
-            if (impressionDTO != null && impressionDTO.getAdTagOrPlacementId() != null) {
-                adpositionid = impressionDTO.getAdTagOrPlacementId();
+            if (impressionDTO != null) {
+                if (impressionDTO.getAdTagOrPlacementId() != null) {
+                    adpositionid = impressionDTO.getAdTagOrPlacementId();
+                }
+                if (impressionDTO.getSecure() != null && 1 == impressionDTO.getSecure()) {
+                    request.setSecure(true);
+                }
+                BidRequestImpressionBannerObjectDTO vamBidRequestImpressionDTO =
+                        impressionDTO.getBidRequestImpressionBannerObject();
+                if (vamBidRequestImpressionDTO != null) {
+                    Integer maxWidth = vamBidRequestImpressionDTO.getBannerWidthInPixels();
+                    Integer maxHeight = vamBidRequestImpressionDTO.getBannerHeightInPixels();
+
+                    if (this.creativeSlotSizeCache == null &&
+                            maxWidth != null && maxHeight != null && request.getFirstImpClosestRequestedSlotIdList() == null) {
+                        short requestedSlotId = this.creativeSlotSizeCache.fetchSlotIdForExactSize(maxWidth, maxHeight);
+                        List<Short> firstImpClosestrequestedSlotIdList = new ArrayList<Short>();
+                        firstImpClosestrequestedSlotIdList.add(requestedSlotId);
+                        request.setFirstImpClosestRequestedSlotIdList(firstImpClosestrequestedSlotIdList);
+                    }
+                }
+                 /*set secure assets required if at all*/
+                request.setSecureRequiredForImpressionIdOfRTBExchange(impressionDTO.getBidRequestImpressionId(),Boolean.FALSE);
             }
+
 
             Site site = fetchSiteEntityForVamRequest(request, siteIdFromBidRequest, adpositionid, mmaIndustryCodes1, appCategoryArray1);
             logger.debug("Site extracted inside VamRequestEnricher is null ? : {} ", (null == site));

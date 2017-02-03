@@ -52,6 +52,11 @@
             <artifactId>iab_categories</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>slot_size</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <organization>
         <name>Kritter</name>

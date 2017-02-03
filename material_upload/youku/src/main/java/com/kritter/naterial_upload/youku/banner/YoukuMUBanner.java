@@ -1,10 +1,17 @@
 package com.kritter.naterial_upload.youku.banner;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import com.kritter.constants.AdxBasedExchangesStates;
+import com.kritter.constants.MaterialType;
+import com.kritter.material_upload.common.banner.MUBanner;
+import com.kritter.material_upload.common.urlpost.UrlPost;
+import com.kritter.naterial_upload.youku.entity.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,25 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.kritter.constants.AdxBasedExchangesStates;
-import com.kritter.constants.MaterialType;
-import com.kritter.material_upload.common.banner.MUBanner;
-import com.kritter.material_upload.common.urlpost.UrlPost;
-import com.kritter.naterial_upload.youku.entity.ReturnResultCode;
-import com.kritter.naterial_upload.youku.entity.ReturnResultMessage;
-import com.kritter.naterial_upload.youku.entity.YoukuMaterialUploadEntity;
-import com.kritter.naterial_upload.youku.entity.YoukuMultipleMaterialUploadEntity;
-import com.kritter.naterial_upload.youku.entity.YoukuQueryEntity;
-
-import lombok.Getter;
-import lombok.Setter;
-
 public class YoukuMUBanner implements MUBanner {
-	private static final Logger LOG = LoggerFactory.getLogger(YoukuMUBanner.class);
+	private static final Logger LOG = LogManager.getLogger(YoukuMUBanner.class);
 	@Getter@Setter
 	private String dspid;
 	@Getter @Setter
