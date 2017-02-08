@@ -48,6 +48,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
     private String macroPostImpressionBaseClickUrl;
     private String trackingEventUrl;
     private ObjectMapper objectMapper;
+    private String seatId;
 
     //template for formatting.
     private static final String CURRENCY = DefaultCurrency.defaultCurrency.getName();
@@ -60,7 +61,8 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                                               int urlVersion,
                                               String notificationUrlSuffix,
                                               String notificationUrlBidderBidPriceMacro,
-                                              AdEntityCache adEntityCache
+                                              AdEntityCache adEntityCache,
+                                              String seatId
                                              )
     {
         this.logger = LogManager.getLogger(loggerName);
@@ -78,6 +80,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         this.objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+        this.seatId = seatId;
     }
 
 
@@ -169,6 +172,9 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             return null;
 
         bidResponseSeatBidInmobiDTO.setBidResponseBidEntities(bidResponseBidinmobiArray);
+        if(this.seatId != null){
+        	bidResponseSeatBidInmobiDTO.setBidderSeatId(this.seatId);
+        }
         bidResponseSeatBidInmobiArray[0] = bidResponseSeatBidInmobiDTO;
 
         bidResponseInmobiDTO.setBidResponseSeatBid(bidResponseSeatBidInmobiArray);
