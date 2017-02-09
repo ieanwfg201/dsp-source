@@ -15,6 +15,7 @@ import com.kritter.common.caches.slot_size_cache.CreativeSlotSizeCache;
 import com.kritter.common.site.cache.SiteCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.ConnectionType;
+import com.kritter.constants.ExternalUserIdType;
 import com.kritter.constants.INVENTORY_SOURCE;
 import com.kritter.constants.SITE_PLATFORM;
 import com.kritter.constants.StatusIdEnum;
@@ -547,6 +548,9 @@ public class InmobiRequestEnricher implements RTBExchangeRequestReader
 
         EnricherUtils.populateUserIdsFromBidRequestDeviceDTO(inmobiBidRequestDeviceDTO, request);
         EnricherUtils.populateUserIdsFromBidRequestUserDTO(inmobiBidRequestUserDTO, request);
+        if(inmobiBidRequestDeviceDTO != null){
+        	populateUserIdsFromBidRequestDeviceExtension(inmobiBidRequestDeviceDTO.getExtensionObject(), request);
+        }
         Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
         if(externalUserIds == null || externalUserIds.size() == 0) {
             logger.debug("External user ids empty or not present");
@@ -564,4 +568,43 @@ public class InmobiRequestEnricher implements RTBExchangeRequestReader
             request.setIpAddressUsedForDetection(inmobiBidRequestDeviceDTO.getIpV4AddressClosestToDevice());
         }
     }
+    
+    private void populateUserIdsFromBidRequestDeviceExtension(
+    		BidRequestDeviceDTOInmobiExt bidRequestDeviceExtDTO,
+            Request request) {
+        if(null == bidRequestDeviceExtDTO)
+            return;
+
+        int siteIncId = -1;
+        if(request.getSite() != null)
+            siteIncId = request.getSite().getSiteIncId();
+
+        Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
+        if(externalUserIds == null) {
+            externalUserIds = new HashSet<ExternalUserId>();
+            request.setExternalUserIds(externalUserIds);
+        }
+
+        if(bidRequestDeviceExtDTO.getIdfa() != null &&
+                !bidRequestDeviceExtDTO.getIdfa().toString().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.IFA_USER_ID, siteIncId,
+            		bidRequestDeviceExtDTO.getIdfa().toString()));
+        }
+        if(bidRequestDeviceExtDTO.getGpid() != null &&
+                !bidRequestDeviceExtDTO.getGpid().toString().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.AAID, siteIncId,
+            		bidRequestDeviceExtDTO.getGpid().toString()));
+        }
+        if(bidRequestDeviceExtDTO.getIdfamd5() != null &&
+                !bidRequestDeviceExtDTO.getIdfamd5().toString().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.IFA_MD5_USER_ID, siteIncId,
+            		bidRequestDeviceExtDTO.getIdfamd5().toString()));
+        }
+        if(bidRequestDeviceExtDTO.getIdfasha1() != null &&
+                !bidRequestDeviceExtDTO.getIdfasha1().toString().isEmpty()) {
+            externalUserIds.add(new ExternalUserId(ExternalUserIdType.IFA_SHA1_USER_ID, siteIncId,
+            		bidRequestDeviceExtDTO.getIdfasha1().toString()));
+        }
+    }	
+
 }

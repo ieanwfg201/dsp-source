@@ -676,7 +676,7 @@ struct KumbayaReportingConfiguration{
     60: PostimpEvent postimpevent = {'fact_table' :TABLE.first_level, 'fact_column' : 'event', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'PostimpEvent','return_prefix':'postimpevent'},
     61: Total_count total_count = {'fact_table' :TABLE.first_level, 'fact_column' : 'count', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL Count','return_prefix':'count'},
     62: Total_bidfloor total_bidfloor = {'fact_table' :TABLE.first_level, 'fact_column' : 'bidFloor', 'member_type' : MEMBERTYPE.METRIC, 'uiname':'TOTAL BidFloor','return_prefix':'total_bidfloor'},
-    63: Reqslot reqslot = {'fact_table':TABLE.first_level, 'fact_column':'reqslot', 'dim_table':'creative_slots', 'dim_column':'id', 'dim_column_name':'description','member_type':MEMBERTYPE.DIMENSION,'uiname':'Reqslot','return_prefix':'reqslot','second_dim_column_name':'height','mul_dim_column_delimeter':'*'}
+    63: Reqslot reqslot = {'fact_table':TABLE.first_level, 'fact_column':'reqslot', 'dim_table':'creative_slots', 'dim_column':'id', 'dim_column_name':'width','member_type':MEMBERTYPE.DIMENSION,'uiname':'Reqslot','return_prefix':'reqslot','second_dim_column_name':'height','mul_dim_column_delimeter':'*'}
 }
 
 
