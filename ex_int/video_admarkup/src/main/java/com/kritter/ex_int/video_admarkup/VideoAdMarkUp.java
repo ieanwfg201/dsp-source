@@ -178,7 +178,7 @@ public class VideoAdMarkUp {
             String vastStr = CreateVastNormalTwoDotZero.createVastNormalString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
             		responseAdInfo.getImpressionId(),trackingUrl.toString(), request.getSite().getPublisherId(), videProps.getLinearity(), 
             		videProps.getCompaniontype(), videProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
-            		convertDurationStr(videProps.getDuration()),null, creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
+            		convertDurationStr(videProps.getDuration()),clickUrl.toString(), creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
             		VideoMimeTypes.getEnum(videProps.getMime()).getMime(), bitRateStr, videProps.getWidth(), videProps.getHeight());
             if(vastStr == null){
                 logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
@@ -212,7 +212,7 @@ public class VideoAdMarkUp {
             String vastStr = CreateVastNormalThreeDotZero.createVastNormalString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
             		responseAdInfo.getImpressionId(),trackingUrl.toString(), request.getSite().getPublisherId(), videProps.getLinearity(), 
             		videProps.getCompaniontype(), videProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
-            		convertDurationStr(videProps.getDuration()),null, creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
+            		convertDurationStr(videProps.getDuration()),clickUrl.toString(), creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
             		VideoMimeTypes.getEnum(videProps.getMime()).getMime(), bitRateStr, videProps.getWidth(), videProps.getHeight(),
             		null);
             if(vastStr == null){

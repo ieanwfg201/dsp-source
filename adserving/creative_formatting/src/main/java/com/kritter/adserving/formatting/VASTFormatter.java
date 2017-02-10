@@ -185,7 +185,7 @@ public class VASTFormatter implements CreativesFormatter{
                 	return CreateVastNormalTwoDotZero.createVastNormalString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
                     		responseAdInfo.getImpressionId(),trackingUrl.toString(), request.getSite().getPublisherId(), videoProps.getLinearity(), 
                     		videoProps.getCompaniontype(), videoProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
-                    		convertDurationStr(videoProps.getDuration()),null, creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
+                    		convertDurationStr(videoProps.getDuration()),macroClickUrl.toString(), creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
                     		VideoMimeTypes.getEnum(videoProps.getMime()).getMime(), bitRateStr, videoProps.getWidth(), videoProps.getHeight());
                 	}
                 }
@@ -200,7 +200,7 @@ public class VASTFormatter implements CreativesFormatter{
                 	return CreateVastNormalThreeDotZero.createVastNormalString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
                     		responseAdInfo.getImpressionId(),trackingUrl.toString(), request.getSite().getPublisherId(), videoProps.getLinearity(), 
                     		videoProps.getCompaniontype(), videoProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
-                    		convertDurationStr(videoProps.getDuration()),null, creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
+                    		convertDurationStr(videoProps.getDuration()),macroClickUrl.toString(), creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
                     		VideoMimeTypes.getEnum(videoProps.getMime()).getMime(), bitRateStr, videoProps.getWidth(), videoProps.getHeight(),
                     		null);
                 	}
