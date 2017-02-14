@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import com.kritter.constants.DBCONSTANTS;
 
 public class DBConnector
 {
-    private static Logger m_logger = Logger.getLogger(DBConnector.class);
     public static Connection getConnection(Properties prop) throws Exception
     {
         Connection conn = null;
@@ -44,7 +42,6 @@ public class DBConnector
         }
         catch(Exception e)
         {
-            m_logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
     }
@@ -68,7 +65,6 @@ public class DBConnector
             return conn;
         }
         catch(Exception e){
-            m_logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
     }
