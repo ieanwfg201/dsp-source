@@ -208,20 +208,20 @@ public class VASTFormatter implements CreativesFormatter{
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()){
                 	String macroTagUrl = AdTagMacroReplace.adTagMacroReplace(videoProps.getVastTagUrl(), request, responseAdInfo, response, 
                 			macroPostImpressionBaseClickUrl, videoProps.getVast_tag_macro(), videoProps.getVast_tag_macro_quote());
-                	return CreateVastWrapper.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
+                	return CreateVastWrapper.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(),
                             responseAdInfo.getImpressionId(), macroTagUrl, 
                             trackingUrl.toString(), request.getSite().getPublisherId(), 
                             videoProps.getLinearity(), videoProps.getCompaniontype(), videoProps.getTracking(), 
-                            trackingUrl.toString(), logger);
+                            trackingUrl.toString(), logger,clickUri.toString());
                 }
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0_WRAPPER.getCode()){
                 	String macroTagUrl = AdTagMacroReplace.adTagMacroReplace(videoProps.getVastTagUrl(), request, responseAdInfo, response, 
                 			macroPostImpressionBaseClickUrl, videoProps.getVast_tag_macro(), videoProps.getVast_tag_macro_quote());
-                	return CreateVastWrapperTwoDotZero.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(), 
+					return CreateVastWrapperTwoDotZero.createWrapperString(cscBeaconUrl.toString(), responseAdInfo.getGuid(),
                             responseAdInfo.getImpressionId(), macroTagUrl, 
                             trackingUrl.toString(), request.getSite().getPublisherId(), 
                             videoProps.getLinearity(), videoProps.getCompaniontype(), videoProps.getTracking(), 
-                            trackingUrl.toString(), logger);
+                            trackingUrl.toString(), logger,clickUri.toString());
                 }
 			}
 		}

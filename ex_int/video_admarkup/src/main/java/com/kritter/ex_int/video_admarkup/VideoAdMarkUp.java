@@ -108,7 +108,7 @@ public class VideoAdMarkUp {
                     responseAdInfo.getImpressionId(), macroTagUrl, 
                     trackingUrl.toString(), request.getSite().getPublisherId(), 
                     videProps.getLinearity(), videProps.getCompaniontype(), videProps.getTracking(), 
-                    trackingUrl.toString(), logger);
+                    trackingUrl.toString(), logger, clickUri.toString());
             if(vastStr == null){
                 logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
                         responseAdInfo.getAdId());
@@ -134,7 +134,7 @@ public class VideoAdMarkUp {
                     responseAdInfo.getImpressionId(), macroTagUrl, 
                     trackingUrl.toString(), request.getSite().getPublisherId(), 
                     videProps.getLinearity(), videProps.getCompaniontype(), videProps.getTracking(), 
-                    trackingUrl.toString(), logger);
+                    trackingUrl.toString(), logger, clickUri.toString());
             if(vastStr == null){
                 logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
                         responseAdInfo.getAdId());
