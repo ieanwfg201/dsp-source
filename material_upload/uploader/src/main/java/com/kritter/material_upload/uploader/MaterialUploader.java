@@ -25,8 +25,7 @@ public class MaterialUploader {
         FileInputStream fi = null;
         ConfigurationSource source;
         try{
-            File file = new File(conf_path+System.getProperty("file.separator")+"log4j2" +
-                    ".xml");
+            File file = new File(conf_path+System.getProperty("file.separator")+"log4j2.xml");
             fi = new FileInputStream(file);
             source = new ConfigurationSource(fi);
             Configurator.initialize(null,source);
