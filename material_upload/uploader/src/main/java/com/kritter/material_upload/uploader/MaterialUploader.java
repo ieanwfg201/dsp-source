@@ -1,5 +1,14 @@
 package com.kritter.material_upload.uploader;
 
+import com.kritter.naterial_upload.cloudcross.executor.CloudCrossUploadExecutor;
+import com.kritter.naterial_upload.valuemaker.executor.VamUploadExecutor;
+import com.kritter.naterial_upload.youku.executor.YoukuUploadExecutor;
+import com.kritter.utils.dbconnector.DBConnector;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.config.Configurator;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,27 +16,21 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import com.kritter.naterial_upload.cloudcross.executor.CloudCrossUploadExecutor;
-import com.kritter.naterial_upload.valuemaker.executor.VamUploadExecutor;
-import org.apache.log4j.PropertyConfigurator;
-
-import com.kritter.naterial_upload.youku.executor.YoukuUploadExecutor;
-import com.kritter.utils.dbconnector.DBConnector;
-
-import lombok.Getter;
-import lombok.Setter;
-
 public class MaterialUploader {
-    
+
 	@Getter@Setter
     private Properties properties = null;
 
     public void configure_logger(String conf_path) {
         FileInputStream fi = null;
+        ConfigurationSource source;
         try{
-            File file = new File(conf_path+System.getProperty("file.separator")+"log4j.properties");
+            File file = new File(conf_path+System.getProperty("file.separator")+"log4j2" +
+                    ".xml");
             fi = new FileInputStream(file);
-            PropertyConfigurator.configure(fi);
+            source = new ConfigurationSource(fi);
+            Configurator.initialize(null,source);
+//            PropertyConfigurator.configure(fi);
         }catch(Exception e){
             e.printStackTrace();
         }finally{
@@ -61,8 +64,8 @@ public class MaterialUploader {
             }
         }
     }
-    
-    
+
+
     public void materialupload(){
         String split[] =  properties.get("adxbasedexchanges_prefix").toString().split(",");
         Connection con = null;
@@ -104,9 +107,9 @@ public class MaterialUploader {
             }
         }
     }
-    
-    
-    
+
+
+
     public static void main(String args[]){
         if(args.length != 1){
             System.out.println("Incorrect Usage");
