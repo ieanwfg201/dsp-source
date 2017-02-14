@@ -1,15 +1,12 @@
 package com.kritter.utils.dbconnector;
 
 import com.kritter.constants.DBCONSTANTS;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
 public class DBConnector {
-    private static Logger m_logger = LogManager.getLogger(DBConnector.class);
 
     public static Connection getConnection(Properties prop) throws Exception {
         Connection conn = null;
@@ -37,7 +34,6 @@ public class DBConnector {
             }
             return conn;
         } catch (Exception e) {
-            m_logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
     }
@@ -49,17 +45,16 @@ public class DBConnector {
             // POSTGRES
             if (DBCONSTANTS.m_postgres.equalsIgnoreCase(dbtype)) {
                 Class.forName(DBCONSTANTS.m_posgres_driver);
-                conn = DriverManager.getConnection("jdbc:postgresql://" + dbhost + ":" + dbport + "/" + dbname, dbuser, dbpwd);
+                conn = DriverManager.getConnection("jdbc:postgresql://" + dbhost + ":" + dbport + "/" + dbname + "?characterEncoding=UTF-8", dbuser, dbpwd);
             } else {
                 // MYSQL
                 if (DBCONSTANTS.m_mysql.equalsIgnoreCase(dbtype)) {
                     Class.forName(DBCONSTANTS.m_msql_driver);
-                    conn = DriverManager.getConnection("jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname, dbuser, dbpwd);
+                    conn = DriverManager.getConnection("jdbc:mysql://" + dbhost + ":" + dbport + "/" + dbname + "?characterEncoding=UTF-8", dbuser, dbpwd);
                 }
             }
             return conn;
         } catch (Exception e) {
-            m_logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
     }
