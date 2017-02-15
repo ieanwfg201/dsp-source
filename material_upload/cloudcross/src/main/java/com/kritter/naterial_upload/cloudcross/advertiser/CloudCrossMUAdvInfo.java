@@ -148,10 +148,12 @@ public class CloudCrossMUAdvInfo implements MUAdvInfo {
     private String getIndustryIdByUiMMACode(Connection con, ResultSet rset) throws java.io.IOException, SQLException {
         Integer industryId = -1;
         if (rset.getObject("firstind") != null) {
-            industryId = Integer.parseInt(rset.getString("firstind"));
+            String firstind = rset.getString("firstind");
+            industryId = Integer.parseInt(null == firstind || firstind.trim().equalsIgnoreCase("") ? "0" : firstind);
         }
         if (rset.getObject("secondind") != null) {
-            industryId = Integer.parseInt(rset.getString("secondind"));
+            String secondind = rset.getString("secondind");
+            industryId = Integer.parseInt(null == secondind || secondind.trim().equalsIgnoreCase("") ? "0" : secondind);
         }
         ResultSet resultSet;
         try (PreparedStatement statement = con.prepareStatement(CloudCrossAdvInfoQuery.selectSupplyIndustryIdByUIMMACategoriesId)) {
