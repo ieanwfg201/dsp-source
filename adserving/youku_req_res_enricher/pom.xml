@@ -52,6 +52,11 @@
             <artifactId>ex_int_youku_2_2</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.kritter.common.caches</groupId>
+            <artifactId>slot_size</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <organization>
         <name>Kritter</name>

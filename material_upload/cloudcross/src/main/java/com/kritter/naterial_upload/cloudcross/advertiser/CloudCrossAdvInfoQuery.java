@@ -28,7 +28,7 @@ public class CloudCrossAdvInfoQuery {
 
     public static final String insert_material_state = "insert into material_upload_state(pubIncId,materialtype,last_modified) values(?,?,?)";
     public static final String update_material_state = "update material_upload_state set last_modified=? where materialtype=? and pubIncId=?";
-    public static final String selectSupplyIndustryIdByUIMMACategoriesId = "SELECT supplycode FROM supply_mma_mapping WHERE exchangename = 'cloudcross' AND mma_category_code = (SELECT `code` FROM mma_code_mma_ui_mapping WHERE ui_id = ?)";
+    public static final String selectSupplyIndustryIdByUIMMACategoriesId = "SELECT supplycode FROM supply_mma_mapping WHERE exchangename = 'cloudcross' AND mma_category_code = (SELECT max(`code`) FROM mma_code_mma_ui_mapping WHERE ui_id = ?)";
 
     public static void main(String args[]) {
         System.out.println(selectQuery);
