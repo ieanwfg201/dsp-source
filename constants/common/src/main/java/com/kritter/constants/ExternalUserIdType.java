@@ -31,6 +31,8 @@ public enum ExternalUserIdType {
     OpenUDIDMD5("oudidmd5", false), /*aaid*/
     DSPBUYERUID("dspuid", true) /*In case when we're acting as an exchange, gives the userid for the DSP's who're the
     buyers of impression*/;
+	IFA_SHA1_USER_ID("ifasha1", false),
+	IFA_MD5_USER_ID("ifamd5", false);
 
     @Getter
     private String typeName;
