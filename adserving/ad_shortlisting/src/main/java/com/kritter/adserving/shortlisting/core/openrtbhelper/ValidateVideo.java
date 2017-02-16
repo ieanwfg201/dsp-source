@@ -42,7 +42,7 @@ public class ValidateVideo {
                 return;
         }
 
-        NoFillReason nfrReason = NoFillReason.FILL;
+        NoFillReason nfrReason = null;
         NoFillReason nfrReasonPriority = null;
 
         for(BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs){
@@ -140,6 +140,7 @@ public class ValidateVideo {
                 	}
             	}
 
+                nfrReason = NoFillReason.FILL;
                 nfrReasonPriority = ValidateVideoHelper.validate(logger, videoProps, videoObj);
                 ReqLog.debugWithDebugNew(logger, request, "NFR reason is :{} under ValidateVideo", nfrReason);
                 if(nfrReason ==  NoFillReason.FILL && nfrReasonPriority == NoFillReason.FILL){
