@@ -851,3 +851,6 @@ ON DUPLICATE KEY UPDATE guid = VALUES(guid);
 INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_list_inc_exc,is_category_list_excluded,hygiene_list,site_platform_id,status_id,last_modified,modified_by,url_exclusion) values
 ('inmobi23','inmobi23',(select id from account where guid='inmobi23'),'inmobi23','','{\"TIER1\":[],\"TIER2\":[]}','{\"TIER1\":[],\"TIER2\":[]}',1,'[1]',1,1,now(),1,'')
 ON DUPLICATE KEY UPDATE guid = VALUES(guid);
+
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values
+(45,640,100,'youku slot',1,now(),now(),false);
