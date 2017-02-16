@@ -845,6 +845,7 @@ INSERT INTO site (guid,name,pub_id,pub_guid,site_url,categories_list,category_li
 ON DUPLICATE KEY UPDATE guid = VALUES(guid);
 
 
+insert into account (guid,status,type_id,name,userid,password,email,address,country,city,phone,modified_by,created_on,last_modified,inventory_source, company_name) values
 ('inmobi23',1,2,'inmobi23','inmobi23','$2a$10$NRxVckXVGU0gzk77jIBIZOgdgUwoNwylRqHERcjBAPKv4pAhFokZu','inmobi23@inmobi23.com','','United States','New York','0123456',1,now(),now(),2,'inmobi23')
 ON DUPLICATE KEY UPDATE guid = VALUES(guid);
 
