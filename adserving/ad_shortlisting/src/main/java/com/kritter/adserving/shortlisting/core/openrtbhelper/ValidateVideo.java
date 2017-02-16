@@ -142,7 +142,7 @@ public class ValidateVideo {
 
                 nfrReason = NoFillReason.FILL;
                 nfrReasonPriority = ValidateVideoHelper.validate(logger, videoProps, videoObj);
-                logger.debug("NFR reason is :{} under ValidateVideo", nfrReason);
+                ReqLog.debugWithDebugNew(logger, request, "NFR reason is :{} under ValidateVideo", nfrReason);
                 if(nfrReason ==  NoFillReason.FILL && nfrReasonPriority == NoFillReason.FILL){
                     try {
                         responseAdInfo.setVideoProps(videoProps);

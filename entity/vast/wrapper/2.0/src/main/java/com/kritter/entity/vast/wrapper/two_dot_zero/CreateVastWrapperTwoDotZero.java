@@ -21,7 +21,7 @@ import com.kritter.constants.VideoMacros;
 public class CreateVastWrapperTwoDotZero {
     public static VastWrapper createWrapper(String csc, String adId,String impressionId,
             String vastTagUrl,String errorUrl, String pubGuid, int linearity,
-            int companionType, Integer[] tracking, String trackingEventUrl){
+            int companionType, Integer[] tracking, String trackingEventUrl, String clickurl){
         Wrapper wrapper = new Wrapper();
         VASTAdTagURI vastAdTagURI = new VASTAdTagURI();
         vastAdTagURI.setStr(vastTagUrl);
@@ -45,6 +45,17 @@ public class CreateVastWrapperTwoDotZero {
                         trackingEvents.add(t);
                     }
                 }
+                if(clickurl != null){
+                	ClickTracking clickTracking = new ClickTracking();
+                	clickTracking.setStr(clickurl);
+                	VideoClicks videoClicks = new VideoClicks();
+                	videoClicks.setClickTracking(clickTracking);
+                	/**	videoClicks.setClickTracking(clickTracking);
+    					videoClicks.setCustomClick(customClick);
+                	 */
+                	linear.setVideoClicks(videoClicks);
+                }
+
                 TrackingEvents t = new TrackingEvents();
                 t.setTracking(trackingEvents);
                 linear.setTrackingEvents(t);
@@ -113,10 +124,10 @@ public class CreateVastWrapperTwoDotZero {
     }
     public static String createWrapperString(String csc, String adId,String impressionId,
             String vastTagUrl,String errorUrl, String pubGuid, int linearity,
-            int companionType, Integer[] tracking, String trackingEventUrl,Logger  logger){
+            int companionType, Integer[] tracking, String trackingEventUrl,Logger  logger,String clickurl){
         
         VastWrapper vastWrapper = createWrapper(csc, adId, impressionId, vastTagUrl, errorUrl, pubGuid, 
-                linearity, companionType, tracking, trackingEventUrl);
+                linearity, companionType, tracking, trackingEventUrl, clickurl);
         if(vastWrapper == null){
             return null;
         }
