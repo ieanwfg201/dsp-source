@@ -75,7 +75,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         this.postImpressionBaseWinApiUrl = serverConfig.getValueForKey(ServerConfig.WIN_API_URL_PREFIX);
         this.postImpressionBaseWinApiUrlSecure = StringUtils.replaceOnce(this.postImpressionBaseWinApiUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
         this.cdnBaseImageUrl = serverConfig.getValueForKey(ServerConfig.CDN_URL_PREFIX);
-        this.cdnBaseImageUrlSecure = StringUtils.replaceOnce(this.cdnBaseImageUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
+        this.cdnBaseImageUrlSecure = StringUtils.replaceOnce(serverConfig.getValueForKey(ServerConfig.CDN_URL_PREFIX), HTTP_PROTOCOL, HTTPS_PROTOCOL);
         this.secretKey = secretKey;
         this.urlVersion = urlVersion;
         this.notificationUrlSuffix = notificationUrlSuffix;
@@ -238,7 +238,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
                                                         response, adEntity.getExtTracker(),
                                                         winNotificationURLBuffer
                                                        );
-
+            bidResponseBidYoukuDTO.setAdMarkup((request.getSecure()==true?cdnBaseImageUrl:cdnBaseImageUrlSecure)+responseAdInfo.getCreativeBanner().getResourceURI());
             bidResponseBidYoukuDTO.setWinNotificationUrl(winNotificationURLBuffer.toString());
             bidResponseBidYoukuDTO.setExtensionObject(bidResponseBidExtYoukuDTO);
         }else if(creative.getCreativeFormat().equals(CreativeFormat.VIDEO))
