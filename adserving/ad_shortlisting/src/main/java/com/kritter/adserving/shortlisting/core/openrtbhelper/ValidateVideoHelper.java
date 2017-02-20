@@ -1,16 +1,10 @@
 package com.kritter.adserving.shortlisting.core.openrtbhelper;
 
 import com.kritter.adserving.thrift.struct.NoFillReason;
+import com.kritter.constants.*;
 import org.apache.logging.log4j.Logger;
 
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionVideoObjectDTO;
-import com.kritter.constants.APIFrameworks;
-import com.kritter.constants.ContentDeliveryMethods;
-import com.kritter.constants.VASTCompanionTypes;
-import com.kritter.constants.VideoBoxing;
-import com.kritter.constants.VideoMaxExtended;
-import com.kritter.constants.VideoMimeTypes;
-import com.kritter.constants.VideoPlaybackMethods;
 import com.kritter.entity.video_props.VideoProps;
 
 public class ValidateVideoHelper {
@@ -57,7 +51,7 @@ public class ValidateVideoHelper {
     public static NoFillReason validateProtocol(VideoProps videoProps, Integer[] videoBidResponseProtocol)throws Exception{
         if(videoBidResponseProtocol != null && videoBidResponseProtocol.length>0){
             for(Integer i:videoBidResponseProtocol){
-                if(i==videoProps.getProtocol()){
+                if(i==videoProps.getProtocol() || i == VideoBidResponseProtocols.NONVAST.getCode()){
                     return NoFillReason.FILL;
                 }
             }

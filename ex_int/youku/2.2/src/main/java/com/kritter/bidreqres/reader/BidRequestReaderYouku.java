@@ -1,16 +1,18 @@
 package com.kritter.bidreqres.reader;
 
-import com.kritter.bidreqres.entity.YoukuBidRequestParentNodeDTO;
 import com.kritter.bidreqres.entity.BidRequestYouku;
+import com.kritter.bidreqres.entity.YoukuBidRequestImpressionDTO;
+import com.kritter.bidreqres.entity.YoukuBidRequestParentNodeDTO;
 import com.kritter.bidrequest.entity.IBidRequest;
 import com.kritter.bidrequest.exception.BidRequestException;
 import com.kritter.bidrequest.reader.IBidRequestReader;
+import com.kritter.constants.VideoMimeTypes;
 import com.kritter.utils.uuid.mac.UUIDGenerator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 
@@ -72,6 +74,17 @@ public class BidRequestReaderYouku implements IBidRequestReader
                      "uniqueInternalBidRequestId: {} ",
                      youkuBidRequestParentNodeDTO.getBidRequestId(),
                      uniqueInternalBidRequestId);
+
+        // youku only give us "video/x-flv", but in fact youku is to support other formats.
+        String[] strings = new String[VideoMimeTypes.values().length];
+        int n = 0;
+        for (VideoMimeTypes videoMimeType : VideoMimeTypes.values()) {
+            strings[n] = videoMimeType.getMime();
+            n++;
+        }
+        for (YoukuBidRequestImpressionDTO bidRequestImpressionDTO : youkuBidRequestParentNodeDTO.getYoukuBidRequestImpressionDTOs()) {
+            bidRequestImpressionDTO.getBidRequestImpressionVideoObject().setMimeTypesSupported(strings);
+        }
 
         bidRequestYouku = new BidRequestYouku(
                                                   youkuAuctioneerId,
