@@ -1,5 +1,7 @@
 package com.kritter.entity.vast.normal.twodotzero;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -11,7 +13,7 @@ public class VideoClicks {
     @Setter@Getter@XmlElement(name="ClickThrough")
     private ClickThrough clickThrough;
     @Setter@Getter@XmlElement(name="ClickTracking")
-    private ClickTracking clickTracking;
+    private List<ClickTracking> clickTracking;
     @Setter@Getter@XmlElement(name="CustomClick")
     private CustomClick customClick;
 }

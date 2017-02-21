@@ -234,6 +234,10 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         BidResponseBidMopubDTO bidResponseBidMopubDTO = new BidResponseBidMopubDTO();
         bidResponseBidMopubDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
         Creative creative = responseAdInfo.getCreative();
+        List<String> clickTrackers = null;
+        if(adEntity.getExtTracker() != null){
+        	clickTrackers= adEntity.getExtTracker().getClickTracker();
+        }
 
         if (creative.getCreativeFormat().equals(CreativeFormat.BANNER))
             bidResponseBidMopubDTO.setAdMarkup(
@@ -270,7 +274,8 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                             request,
                             responseAdInfo,
                             response,
-                            winNotificationURLBuffer
+                            winNotificationURLBuffer,
+                            clickTrackers
                     )
             );
 
@@ -291,7 +296,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
             return null;
         }
 
-        if(responseAdInfo.getCreative().getExternalResourceURL() != null)
+        if(responseAdInfo.getCreative().getExternalResourceURL() != null && !responseAdInfo.getCreative().getExternalResourceURL().isEmpty())
         {
             bidResponseBidMopubDTO.setSampleImageUrl(responseAdInfo.getCreative().getExternalResourceURL());
         }
@@ -441,12 +446,14 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                                         Request request,
                                         ResponseAdInfo responseAdInfo,
                                         Response response,
-                                        StringBuffer winNotificationURLBuffer
+                                        StringBuffer winNotificationURLBuffer,
+                                        List<String> clickTrackers
                                        ) throws BidResponseException
     {
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
                 logger, urlVersion, secretKey, postImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
-                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl);
+                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl,
+                clickTrackers);
     }
 }
