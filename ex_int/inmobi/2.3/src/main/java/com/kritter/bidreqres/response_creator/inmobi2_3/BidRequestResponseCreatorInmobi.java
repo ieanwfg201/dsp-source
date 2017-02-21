@@ -229,6 +229,11 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         BidResponseBidInmobiDTO bidResponseBidInmobiDTO = new BidResponseBidInmobiDTO();
         bidResponseBidInmobiDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
         Creative creative = responseAdInfo.getCreative();
+        List<String> clickTrackers = null;
+        if(adEntity.getExtTracker() != null){
+        	clickTrackers= adEntity.getExtTracker().getClickTracker();
+        }
+
 
         if(creative.getCreativeFormat().equals(CreativeFormat.BANNER))
             bidResponseBidInmobiDTO.setAdMarkup(
@@ -265,7 +270,8 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                             request,
                             responseAdInfo,
                             response,
-                            winNotificationURLBuffer
+                            winNotificationURLBuffer,
+                            clickTrackers
                     )
             );
 
@@ -363,12 +369,13 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             Request request,
             ResponseAdInfo responseAdInfo,
             Response response,
-            StringBuffer winNotificationURLBuffer
+            StringBuffer winNotificationURLBuffer,
+            List<String> clickTrackers
     ) throws BidResponseException
     {
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
                 logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
-                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl);
+                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl, clickTrackers);
     }
 }

@@ -1,5 +1,7 @@
 package com.kritter.entity.vast.wrapper.three_dot_zero;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -27,5 +29,5 @@ public class NonLinear {
     @Setter@Getter@XmlAttribute(name="apiFramework")
     private String apiFramework;
     @Setter@Getter@XmlAttribute(name="NonLinearClickTracking")
-    private NonLinearClickTracking nonLinearClickTracking;
+    private List<NonLinearClickTracking> nonLinearClickTracking;
 }

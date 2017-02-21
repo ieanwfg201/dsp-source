@@ -21,7 +21,8 @@ import com.kritter.constants.VideoMacros;
 public class CreateVastWrapper {
     public static VastWrapper createWrapper(String csc, String adId,String impressionId,
             String vastTagUrl,String errorUrl, String pubGuid, int linearity,
-            int companionType, Integer[] tracking, String trackingEventUrl, String clickurl){
+            int companionType, Integer[] tracking, String trackingEventUrl, String clickurl,
+            List<String> clickTrackers){
         Wrapper wrapper = new Wrapper();
         VASTAdTagURI vastAdTagURI = new VASTAdTagURI();
         vastAdTagURI.setStr(vastTagUrl);
@@ -45,11 +46,25 @@ public class CreateVastWrapper {
                         trackingEvents.add(t);
                     }
                 }
-                if(clickurl != null){
-                	ClickTracking clickTracking = new ClickTracking();
-                	clickTracking.setStr(clickurl);
+                if(clickurl != null || clickTrackers != null){
+            		List<ClickTracking> ctList = new LinkedList<ClickTracking>();
+            		if(clickurl != null){
+            			ClickTracking clickTracking = new ClickTracking();
+                		clickTracking.setStr(clickurl);
+                		ctList.add(clickTracking);
+            		}
                 	VideoClicks videoClicks = new VideoClicks();
-                	videoClicks.setClickTracking(clickTracking);
+                	if(clickTrackers != null){
+                		for(String clickTracker:clickTrackers){
+                			if(clickTracker != null && !clickTracker.isEmpty()){
+                				ClickTracking cT = new ClickTracking();
+                				cT.setStr(clickTracker);
+                				ctList.add(cT);
+                			}
+                		}
+                    	videoClicks.setClickTracking(ctList);
+                	}
+
                 	/**	videoClicks.setClickTracking(clickTracking);
     					videoClicks.setCustomClick(customClick);
                 	 */
@@ -95,6 +110,26 @@ public class CreateVastWrapper {
                     nonLinearAds.setTrackingEvents(t);
                 }
                 creative.setNonLinearAds(nonLinearAds);
+                if(clickurl != null || clickTrackers != null){
+                	NonLinear nonLinear = new NonLinear();
+                	List<NonLinearClickTracking> nctList = new LinkedList<NonLinearClickTracking>();
+                	if(clickurl != null){
+                		NonLinearClickTracking nct = new NonLinearClickTracking();
+                		nct.setStr(clickurl);
+                		nctList.add(nct);
+                	}
+                	if(clickTrackers != null){
+                		for(String s:clickTrackers){
+                			if(s != null && !s.isEmpty()){
+                				NonLinearClickTracking nct = new NonLinearClickTracking();
+                        		nct.setStr(s);
+                        		nctList.add(nct);
+                			}
+                		}
+                	}
+                	nonLinear.setNonLinearClickTracking(nctList);
+                	nonLinearAds.setNonLinear(nonLinear);
+                }
             }
             
             
@@ -123,10 +158,11 @@ public class CreateVastWrapper {
     }
     public static String createWrapperString(String csc, String adId,String impressionId,
             String vastTagUrl,String errorUrl, String pubGuid, int linearity,
-            int companionType, Integer[] tracking, String trackingEventUrl,Logger  logger,String clickurl){
+            int companionType, Integer[] tracking, String trackingEventUrl,Logger  logger,String clickurl,
+            List<String> clickTrackers){
         
         VastWrapper vastWrapper = createWrapper(csc, adId, impressionId, vastTagUrl, errorUrl, pubGuid, 
-                linearity, companionType, tracking, trackingEventUrl,clickurl);
+                linearity, companionType, tracking, trackingEventUrl,clickurl, clickTrackers);
         if(vastWrapper == null){
             return null;
         }
