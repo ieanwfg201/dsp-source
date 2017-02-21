@@ -230,10 +230,13 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         bidResponseBidInmobiDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
         Creative creative = responseAdInfo.getCreative();
         List<String> clickTrackers = null;
+        Set<Integer> clickMacro=null;
+        Integer clickMacroQuote=null;
         if(adEntity.getExtTracker() != null){
         	clickTrackers= adEntity.getExtTracker().getClickTracker();
+        	clickMacro =  adEntity.getExtTracker().getClickMacro();
+        	clickMacroQuote =  adEntity.getExtTracker().getClickMacroQuote();
         }
-
 
         if(creative.getCreativeFormat().equals(CreativeFormat.BANNER))
             bidResponseBidInmobiDTO.setAdMarkup(
@@ -271,7 +274,8 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                             responseAdInfo,
                             response,
                             winNotificationURLBuffer,
-                            clickTrackers
+                            clickTrackers,
+                            clickMacro,clickMacroQuote
                     )
             );
 
@@ -370,12 +374,15 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             ResponseAdInfo responseAdInfo,
             Response response,
             StringBuffer winNotificationURLBuffer,
-            List<String> clickTrackers
+            List<String> clickTrackers,
+            Set<Integer> clickMacro,
+            Integer clickMacroQuote
     ) throws BidResponseException
     {
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
                 logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
-                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl, clickTrackers);
+                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl, clickTrackers,
+                clickMacro,clickMacroQuote);
     }
 }
