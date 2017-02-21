@@ -8,25 +8,18 @@ import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.bidrequest.response_creator.IBidResponseCreator;
 import com.kritter.common.caches.iab.categories.IABCategoriesCache;
 import com.kritter.common.caches.iab.index.IABIDIndex;
-import com.kritter.constants.CreativeFormat;
-import com.kritter.constants.VideoBidResponseProtocols;
-import com.kritter.entity.creative_macro.CreativeMacro;
 import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
-import com.kritter.entity.video_props.VideoProps;
-import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
-import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
 import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
-import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
 import com.kritter.utils.common.ServerConfig;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -51,10 +44,8 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
     private AdEntityCache adEntityCache;
     private IABCategoriesCache iabCategoriesCache;
     private String macroPostImpressionBaseClickUrl;
-    private String trackingEventUrl;
 
     //template for formatting.
-    private static final String CURRENCY = "USD";
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Random randomPicker = new Random();
 
@@ -80,7 +71,6 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         this.adEntityCache = adEntityCache;
         this.iabCategoriesCache = iabCategoriesCache;
         this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
-        this.trackingEventUrl = serverConfig.getValueForKey(ServerConfig.trackingEventUrl_PREFIX);
     }
 
 
@@ -330,72 +320,6 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         return bidResponseBidCloudCrossDTO;
     }
 
-    private String prepareRichmediaAdMarkup(
-            Request request,
-            ResponseAdInfo responseAdInfo,
-            Response response,
-            StringBuffer winNotificationURLBuffer,
-            CreativeMacro creativeMacro,
-            ExtTracker extTracker
-    ) throws BidResponseException {
-        return RichMediaAdMarkUp.prepareRichmediaAdMarkup(request, responseAdInfo, response,
-                winNotificationURLBuffer, logger, urlVersion, secretKey, postImpressionBaseClickUrl,
-                postImpressionBaseCSCUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
-                notificationUrlBidderBidPriceMacro, null, null, creativeMacro, this.macroPostImpressionBaseClickUrl,
-                extTracker);
-    }
-
-    private String fetchImpressionTrackerSameAsCSC(
-            Request request,
-            ResponseAdInfo responseAdInfo,
-            Response response
-    ) throws BidResponseException {
-        String clickUri = CreativeFormatterUtils.prepareClickUri
-                (
-                        this.logger,
-                        request,
-                        responseAdInfo,
-                        response.getBidderModelId(),
-                        urlVersion,
-                        request.getInventorySource(),
-                        response.getSelectedSiteCategoryId(),
-                        this.secretKey
-                );
-
-        if (null == clickUri)
-            throw new BidResponseException("Click URI could not be formed using different attributes like " +
-                    "handset,location,bids,version,etc. inside BidRequestResponseCreatorCloudCross");
-
-
-        StringBuffer cscBeaconUrl = new StringBuffer(this.postImpressionBaseCSCUrl);
-        cscBeaconUrl.append(clickUri);
-
-        return cscBeaconUrl.toString();
-    }
-
-    private String prepareBannerHTMLAdMarkup(
-            Request request,
-            ResponseAdInfo responseAdInfo,
-            Response response, ExtTracker extTracker,
-            StringBuffer winNotificationURLBuffer
-    ) throws BidResponseException {
-        return BannerAdMarkUp.prepare(logger, request, response, responseAdInfo, urlVersion, secretKey,
-                postImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
-                notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker,
-                winNotificationURLBuffer, null, macroPostImpressionBaseClickUrl);
-    }
-
-    private String prepareVideoAdMarkup(
-            Request request,
-            ResponseAdInfo responseAdInfo,
-            Response response,
-            StringBuffer winNotificationURLBuffer
-    ) throws BidResponseException {
-        return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
-                logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
-                notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
-                cdnBaseImageUrl, trackingEventUrl, null, null, macroPostImpressionBaseClickUrl);
-    }
 
     private static class EcpmValueComparator implements Comparator<ResponseAdInfo> {
         @Override
@@ -427,17 +351,6 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         return uri.getHost();
     }
 
-    private Integer[] fetchIntegerArrayFromShortArray(Short[] array) {
-        if (null == array || array.length <= 0)
-            return null;
-
-        Integer[] dest = new Integer[array.length];
-        for (int i = 0; i < array.length; i++) {
-            dest[i] = array[i].intValue();
-        }
-
-        return dest;
-    }
 
     private ResponseAdInfo pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
             (
