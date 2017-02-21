@@ -25,7 +25,7 @@ public class CreateVastNormalTwoDotZero {
             int companionType, Integer[] tracking, String trackingEventUrl, String adName,
             String durationinFormat, String clickurl,String cdnUrl,
             String creativeId, String delivery, String mimeType,
-            String bitRate, int width, int height){
+            String bitRate, int width, int height, List<String> clickTrackers){
        	AdSystem adSystem = new AdSystem();
        	adSystem.setVersion("2.0");
        	adSystem.setStr(pubGuid);
@@ -113,6 +113,18 @@ public class CreateVastNormalTwoDotZero {
             	clickThrough.setStr(clickurl);
             	VideoClicks videoClicks = new VideoClicks();
             	videoClicks.setClickThrough(clickThrough);
+            	if(clickTrackers != null){
+            		List<ClickTracking> ctList = new LinkedList<ClickTracking>();
+            		for(String clickTracker:clickTrackers){
+            			if(clickTracker != null && !clickTracker.isEmpty()){
+            				ClickTracking cT = new ClickTracking();
+            				cT.setStr(clickTracker);
+            				ctList.add(cT);
+            			}
+            		}
+                	videoClicks.setClickTracking(ctList);
+            	}
+
             	/**	videoClicks.setClickTracking(clickTracking);
 					videoClicks.setCustomClick(customClick);
             	 */
@@ -235,14 +247,14 @@ public class CreateVastNormalTwoDotZero {
             String adName,
             String durationinFormat, String clickurl,String cdnUrl,
             String creativeId, String delivery, String mimeType,
-            String bitRate, int width, int height){
+            String bitRate, int width, int height, List<String> clickTrackers){
         
         VastNormal vastNormal = createVast(csc, adId, impressionId,  errorUrl, pubGuid, 
                 linearity, companionType, tracking, trackingEventUrl,
                 adName,
                 durationinFormat, clickurl, cdnUrl,
                 creativeId, delivery, mimeType,
-                bitRate, width, height);
+                bitRate, width, height, clickTrackers);
         if(vastNormal == null){
             return null;
         }

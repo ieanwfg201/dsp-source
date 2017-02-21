@@ -1,6 +1,7 @@
 package com.kritter.ex_int.video_admarkup;
 
 import java.net.URLEncoder;
+import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +35,8 @@ public class VideoAdMarkUp {
             String notificationUrlBidderBidPriceMacro, String postImpressionBaseCSCUrl, 
             String cdnBaseImageUrl, String trackingEventUrl,
             String impressionExtra, String beventBaseUrl,
-            String macroPostImpressionBaseClickUrl
+            String macroPostImpressionBaseClickUrl,
+            List<String> clickTrackers
     )throws BidResponseException{
 
         String clickUri = CreativeFormatterUtils.prepareClickUri
@@ -108,7 +110,7 @@ public class VideoAdMarkUp {
                     responseAdInfo.getImpressionId(), macroTagUrl, 
                     trackingUrl.toString(), request.getSite().getPublisherId(), 
                     videProps.getLinearity(), videProps.getCompaniontype(), videProps.getTracking(), 
-                    trackingUrl.toString(), logger, clickUri.toString());
+                    trackingUrl.toString(), logger, clickUri.toString(),clickTrackers);
             if(vastStr == null){
                 logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
                         responseAdInfo.getAdId());
@@ -134,7 +136,7 @@ public class VideoAdMarkUp {
                     responseAdInfo.getImpressionId(), macroTagUrl, 
                     trackingUrl.toString(), request.getSite().getPublisherId(), 
                     videProps.getLinearity(), videProps.getCompaniontype(), videProps.getTracking(), 
-                    trackingUrl.toString(), logger, clickUri.toString());
+                    trackingUrl.toString(), logger, clickUri.toString(), clickTrackers);
             if(vastStr == null){
                 logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
                         responseAdInfo.getAdId());
@@ -179,7 +181,8 @@ public class VideoAdMarkUp {
             		responseAdInfo.getImpressionId(),trackingUrl.toString(), request.getSite().getPublisherId(), videProps.getLinearity(), 
             		videProps.getCompaniontype(), videProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
             		convertDurationStr(videProps.getDuration()),clickUrl.toString(), creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
-            		VideoMimeTypes.getEnum(videProps.getMime()).getMime(), bitRateStr, videProps.getWidth(), videProps.getHeight());
+            		VideoMimeTypes.getEnum(videProps.getMime()).getMime(), bitRateStr, videProps.getWidth(), videProps.getHeight(),
+            		clickTrackers);
             if(vastStr == null){
                 logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
                         responseAdInfo.getAdId());
@@ -214,7 +217,7 @@ public class VideoAdMarkUp {
             		videProps.getCompaniontype(), videProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
             		convertDurationStr(videProps.getDuration()),clickUrl.toString(), creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
             		VideoMimeTypes.getEnum(videProps.getMime()).getMime(), bitRateStr, videProps.getWidth(), videProps.getHeight(),
-            		null);
+            		null, clickTrackers);
             if(vastStr == null){
                 logger.error("Creative vastStr inside BidRequestResponseCreator,adId:{} ",
                         responseAdInfo.getAdId());
