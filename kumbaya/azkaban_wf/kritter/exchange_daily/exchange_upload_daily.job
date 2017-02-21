@@ -1,4 +1,0 @@
-#exchange_upload_daily.job.job
-type=command
-dependencies=exchange_pig_daily
-command=sh exchange_upload_daily.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' 

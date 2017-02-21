@@ -1,4 +1,0 @@
-# init.job
-
-type=command
-command=sh init.sh
