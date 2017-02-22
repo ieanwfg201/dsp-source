@@ -24,7 +24,6 @@ import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
-import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
@@ -35,8 +34,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -461,6 +458,6 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                 logger, urlVersion, secretKey, postImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
                 cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl,
-                clickTrackers,clickMacro,clickMacroQuote);
+                clickTrackers,clickMacro,clickMacroQuote,null,null,null);
     }
 }
