@@ -1,4 +1,0 @@
-#exchange_report_delete.sh.job
-type=command
-dependencies=exchange_upload_daily
-command=sh exchange_report_delete.sh ${daily_report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${daily_retention}

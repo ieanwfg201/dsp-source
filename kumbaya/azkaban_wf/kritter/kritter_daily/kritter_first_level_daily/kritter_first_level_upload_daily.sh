@@ -20,9 +20,9 @@ done
 
 MAINCLASS=com.kritter.kumbaya.libraries.data_loader.LoadData
 
-filepath=${2}/daily_first_level/part-*
-limitedfilepath=${2}/limited_daily_first_level/part-*
-extfilepath=${2}/ext_site_daily_first_level/part-*
+filepath=${2}/daily_first_level/part*
+limitedfilepath=${2}/limited_daily_first_level/part*
+extfilepath=${2}/ext_site_daily_first_level/part*
 tablename=${3}
 delimiter=${4}
 dbhost=${5}
@@ -35,9 +35,9 @@ processing_time=${11}
 exttableupload=${13}
 exttablename=${14}
 limitedtablename=${15}
-adpositionpath=${2}/adposition_daily/part-*
+adpositionpath=${2}/adposition_daily/part*
 adpostiontablename="ad_position_daily"
-channelpath=${2}/channel_daily/part-*
+channelpath=${2}/channel_daily/part*
 channeltablename="channel_daily"
 
 if [ "$13" = "true" ]; then

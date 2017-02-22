@@ -1,16 +1,14 @@
     package com.kritter.bidreqres.response_creator.inmobi2_3;
 
-import com.kritter.bidreqres.entity.inmobi2_3.*;
-import com.kritter.bidrequest.entity.IBidResponse;
-import com.kritter.bidrequest.exception.BidResponseException;
-import com.kritter.bidrequest.response_creator.IBidResponseCreator;
-import com.kritter.constants.CreativeFormat;
-import com.kritter.constants.DefaultCurrency;
 import com.kritter.entity.creative_macro.CreativeMacro;
 import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
+import com.kritter.bidreqres.entity.inmobi2_3.*;
+import com.kritter.bidrequest.entity.IBidResponse;
+import com.kritter.bidrequest.exception.BidResponseException;
+import com.kritter.bidrequest.response_creator.IBidResponseCreator;
 import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
 import com.kritter.ex_int.native_admarkup.NativeAdMarkUp;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
@@ -18,17 +16,17 @@ import com.kritter.ex_int.utils.comparator.advdomain.FetchAdvertiserDomain;
 import com.kritter.ex_int.utils.comparator.common.ShortArrayToIntegerArray;
 import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
-import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
+import com.kritter.constants.CreativeFormat;
+import com.kritter.constants.DefaultCurrency;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
 import com.kritter.utils.common.ServerConfig;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.io.IOException;
 import java.util.*;
 
@@ -232,12 +230,15 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         bidResponseBidInmobiDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
         Creative creative = responseAdInfo.getCreative();
         List<String> clickTrackers = null;
+        Set<Integer> clickMacro=null;
+        Integer clickMacroQuote=null;
         if(adEntity.getExtTracker() != null){
         	clickTrackers= adEntity.getExtTracker().getClickTracker();
+        	clickMacro =  adEntity.getExtTracker().getClickMacro();
+        	clickMacroQuote =  adEntity.getExtTracker().getClickMacroQuote();
         }
 
-
-        if(creative.getCreativeFormat().equals(CreativeFormat.BANNER)) {
+        if(creative.getCreativeFormat().equals(CreativeFormat.BANNER))
             bidResponseBidInmobiDTO.setAdMarkup(
                     prepareBannerHTMLAdMarkup(
                             request,
@@ -246,7 +247,6 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                             winNotificationURLBuffer
                     )
             );
-        }
         else if(creative.getCreativeFormat().equals(CreativeFormat.RICHMEDIA))
             bidResponseBidInmobiDTO.setAdMarkup(
                     prepareRichmediaAdMarkup(
@@ -274,7 +274,8 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                             responseAdInfo,
                             response,
                             winNotificationURLBuffer,
-                            clickTrackers
+                            clickTrackers,
+                            clickMacro,clickMacroQuote
                     )
             );
 
@@ -348,9 +349,9 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             ExtTracker extTracker
     ) throws BidResponseException
     {
-        return RichMediaAdMarkUp.prepareRichmediaAdMarkup(request, responseAdInfo, response,
-                winNotificationURLBuffer, logger, urlVersion, secretKey, postImpressionBaseClickUrl,
-                postImpressionBaseCSCUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
+        return RichMediaAdMarkUp.prepareRichmediaAdMarkup(request, responseAdInfo, response, 
+                winNotificationURLBuffer, logger, urlVersion, secretKey, postImpressionBaseClickUrl, 
+                postImpressionBaseCSCUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix, 
                 notificationUrlBidderBidPriceMacro, null, null, creativeMacro, this.macroPostImpressionBaseClickUrl,
                 extTracker);
     }
@@ -367,7 +368,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                 macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl, notificationUrlSuffix,
                 notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl, cdnBaseImageUrl, false, extTracker,
                 winNotificationURLBuffer, null, this.macroPostImpressionBaseClickUrl);
-        
+
         // inmobi banner doesn't have dedicated fields to retain 3rd party cilck tracker URL, we need to provide it within adm.
         if(extTracker != null && extTracker.getClickTracker() != null && extTracker.getClickTracker().size() > 0)
         {
@@ -382,24 +383,27 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             StringBuffer winNotificationURLBuffer
     ) throws BidResponseException
     {
-        return NativeAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
-                this.logger, this.urlVersion, this.secretKey, this.macroPostImpressionBaseClickUrl,
-                this.postImpressionBaseWinApiUrl, this.notificationUrlSuffix,
-                this.notificationUrlBidderBidPriceMacro, this.postImpressionBaseCSCUrl,
+        return NativeAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer, 
+                this.logger, this.urlVersion, this.secretKey, this.macroPostImpressionBaseClickUrl, 
+                this.postImpressionBaseWinApiUrl, this.notificationUrlSuffix, 
+                this.notificationUrlBidderBidPriceMacro, this.postImpressionBaseCSCUrl, 
                 this.cdnBaseImageUrl);
     }
-
+    
     private String prepareVideoAdMarkup(
             Request request,
             ResponseAdInfo responseAdInfo,
             Response response,
             StringBuffer winNotificationURLBuffer,
-            List<String> clickTrackers
+            List<String> clickTrackers,
+            Set<Integer> clickMacro,
+            Integer clickMacroQuote
     ) throws BidResponseException
     {
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
                 logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
-                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl, clickTrackers);
+                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl, clickTrackers,
+                clickMacro,clickMacroQuote);
     }
 }

@@ -22,15 +22,15 @@ dbport=$4
 dbname=$5
 dbuser=$6
 dbpwd=$7
+EXTSITEAUTOAPPROVAL=$8
 process_time_day=`date --date="1 day ago" +%Y-%m-%d`
 pathpattern=/var/data/kritter/data_pipeline/kritter_first_level_daily/$process_time_day/daily_externalsite.gz/
 
 
-echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hours}'
 
-echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} "${pathpattern}"'
+echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} "${pathpattern}" ${EXTSITEAUTOAPPROVAL}'
 
-exec java  -cp "$CLASSPATH" $MAINCLASS ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} "${pathpattern}"
+exec java  -cp "$CLASSPATH" $MAINCLASS ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} "${pathpattern} ${EXTSITEAUTOAPPROVAL}"
 
 
 exit $?

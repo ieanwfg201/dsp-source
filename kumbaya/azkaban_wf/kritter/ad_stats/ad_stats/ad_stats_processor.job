@@ -1,6 +1,0 @@
-# ad_stats_processor.job
-
-type=command
-dependencies=init
-env.PYTHONPATH=${python_path}
-command=sh ad_stats_processor.sh '${ad_stats_processor_bin}' "${ad_stats_config}" '${ad_stats_logger_config}' '${input_logs_dir}' '${input_file_prefix}' '${done_logs_dir}' '${process_time}' '${process_time_dir}'

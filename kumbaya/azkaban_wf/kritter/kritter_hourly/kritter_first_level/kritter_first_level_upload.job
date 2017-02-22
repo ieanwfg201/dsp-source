@@ -1,6 +1,6 @@
 #kritter_first_level_upload.job
 type=command
 dependencies=kritter_first_level_pig
-command=sh kritter_first_level_upload.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel}
+command=sh kritter_first_level_upload.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc}
 
 

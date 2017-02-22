@@ -20,7 +20,7 @@ done
 
 MAINCLASS=com.kritter.kumbaya.libraries.data_loader.LoadData
 
-filepath=${2}/fraud_roll_up/part-*
+filepath=${2}/fraud_roll_up/part*
 tablename=${3}
 delimiter=${4}
 dbhost=${5}
@@ -31,7 +31,7 @@ dbport=${9}
 dbtype=${10}
 processing_time=${11}
 tracking_event_daily_table=${13}
-tracking_event_path=${2}/tracking_event_roll_up/part-*
+tracking_event_path=${2}/tracking_event_roll_up/part*
 
 echo 'java  -cp "$CLASSPATH" $MAINCLASS ${tracking_event_path} ${tracking_event_daily_table} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
 java  -cp "$CLASSPATH" $MAINCLASS ${tracking_event_path} ${tracking_event_daily_table} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}

@@ -2,6 +2,7 @@ package com.kritter.ex_int.utils.richmedia.markuphelper;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +20,35 @@ import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.user.userid.ExternalUserId;
 
 public class MarkUpHelper {
+    public static List<String> adTagMacroReplace(List<String> list,Request request,
+            ResponseAdInfo responseAdInfo, Response response, String appCategory, String macroClickUrl,Set<Integer> macroSet,Integer quote,String defaultReplaceOrig){
+    	if(list ==null ||list.size()<1){
+    		return null;
+    	}
+    	
+    	CreativeMacro creativeMacro = new CreativeMacro();
+    	if(macroSet != null && macroSet.size()>0){
+    		if(quote != null){
+    		creativeMacro.setQuote(quote);
+    		}
+    		if(macroSet != null){
+    			LinkedList<Integer> l = new LinkedList<Integer>();
+    			l.addAll(macroSet);
+    			creativeMacro.setMacroIds(l);
+    		}
+    	}else{
+    		return list;
+    	}
+    	List<String> listToReturn = new LinkedList<String>();
+    	for(String str:list){
+    		String s = adTagMacroReplace(str, creativeMacro, request, responseAdInfo, response,appCategory, macroClickUrl,defaultReplaceOrig);
+    		if(s!=null && !s.isEmpty()){
+    			listToReturn.add(s);
+    		}
+    	}
+    	return listToReturn;
+    	}
+    
     public static String adTagMacroReplace(String str,Request request,
             ResponseAdInfo responseAdInfo, Response response, String appCategory, String macroClickUrl,Set<Integer> macroSet,Integer quote,String defaultReplaceOrig){
     	CreativeMacro creativeMacro = new CreativeMacro();

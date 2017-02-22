@@ -2,6 +2,7 @@ package com.kritter.ex_int.video_admarkup;
 
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +37,9 @@ public class VideoAdMarkUp {
             String cdnBaseImageUrl, String trackingEventUrl,
             String impressionExtra, String beventBaseUrl,
             String macroPostImpressionBaseClickUrl,
-            List<String> clickTrackers
+            List<String> clickTrackersIn,
+            Set<Integer> clickMacro,
+            Integer clickMacroQuote
     )throws BidResponseException{
 
         String clickUri = CreativeFormatterUtils.prepareClickUri
@@ -101,6 +104,12 @@ public class VideoAdMarkUp {
 
         StringBuffer creativeUrl = new StringBuffer(cdnBaseImageUrl);
 
+    	List<String> clickTrackers = MarkUpHelper.adTagMacroReplace(clickTrackersIn, 
+    			request, responseAdInfo, response, "", 
+    			clickUrl.toString(), clickMacro, 
+    			clickMacroQuote, "");
+
+        
         if(videProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()){
         	String macroTagUrl = MarkUpHelper.adTagMacroReplace(videProps.getVastTagUrl(), request, responseAdInfo, response, 
         			"",macroPostImpressionBaseClickUrl, videProps.getVast_tag_macro(), videProps.getVast_tag_macro_quote(),
