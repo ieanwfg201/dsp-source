@@ -46,6 +46,7 @@ if __name__ == '__main__':
             budgetRemaining = 0
             if bid > 0 and amountRemaining > 0:
                 budgetRemaining = amountRemaining / bid
+                budgetRemaining = budgetRemaining * 1000
             campaignBudget[campaignId] = budgetRemaining * (1 - cfg.networkCutRatio)
 
         mpsOutputFile = sys.argv[4]
