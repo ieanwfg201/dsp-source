@@ -1,0 +1,5 @@
+# ad_stat_new_pushtocentral.job
+
+type=command
+dependencies=ad_stat_new_delete
+command=sh ad_stat_new_pushtocentral.sh '${destination_central_user}' '${destination_central_host}' '${destination_central_ssh_port}' '${OUTPUT}' '${process_time_dir}'   '${central_dc}'

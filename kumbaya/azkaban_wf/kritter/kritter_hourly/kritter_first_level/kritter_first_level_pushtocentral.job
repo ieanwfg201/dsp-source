@@ -1,0 +1,5 @@
+# kritter_first_level_pushtocentral.job
+
+type=command
+dependencies=kritter_logevents_delete
+command=sh kritter_first_level_pushtocentral.sh '${destination_central_user}' '${destination_central_host}' '${destination_central_ssh_port}' '${OUTPUT}' '${process_time_dir}'  '${OUTPUTLOGEVENT}' '${central_dc}'
