@@ -35,6 +35,7 @@ trackingevent=${2}/tracking_event/part*
 fraudtablename=fraud_hourly
 fraudevent=${2}/fraud/part*
 
+if [ "$13" = "true" ]; then
 
 echo 'java  -cp "$CLASSPATH" $MAINCLASS "${fraudevent}" ${fraudtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
 java  -cp "$CLASSPATH" $MAINCLASS "${fraudevent}" ${fraudtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
@@ -48,3 +49,5 @@ java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbho
 
 
 exit $?
+
+fi

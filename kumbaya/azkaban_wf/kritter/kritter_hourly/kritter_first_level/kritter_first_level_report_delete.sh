@@ -31,6 +31,7 @@ limitedtablename=${12}
 adpositiontablename="ad_position_hourly"
 channeltablename="channel_hourly"
 
+if [ "$15" = "true" ]; then
 if [ "$10" = "true" ]; then
     echo 'java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${exttablename} ${hours}'
     java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${exttablename} ${hours}
@@ -56,3 +57,5 @@ java  -cp "$CLASSPATH" $MAINCLASS ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbpor
 
 
 exit $?
+
+fi
