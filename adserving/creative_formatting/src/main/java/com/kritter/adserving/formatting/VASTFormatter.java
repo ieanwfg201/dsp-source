@@ -92,6 +92,10 @@ public class VASTFormatter implements CreativesFormatter{
             if(adEntity.getExtTracker() != null){
             	clickTrackers= adEntity.getExtTracker().getClickTracker();
             }
+            List<String> impTrackers = null;
+            if(adEntity.getExtTracker() != null){
+            	impTrackers= adEntity.getExtTracker().getImpTracker();
+            }
         	
             Creative creative = this.creativeCache.query(adEntity.getCreativeId());
 
@@ -191,7 +195,7 @@ public class VASTFormatter implements CreativesFormatter{
                     		videoProps.getCompaniontype(), videoProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
                     		convertDurationStr(videoProps.getDuration()),macroClickUrl.toString(), creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
                     		VideoMimeTypes.getEnum(videoProps.getMime()).getMime(), bitRateStr, videoProps.getWidth(), videoProps.getHeight(),
-                    		clickTrackers);
+                    		clickTrackers, impTrackers);
                 	}
                 }
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0.getCode()){
@@ -206,7 +210,7 @@ public class VASTFormatter implements CreativesFormatter{
                     		videoProps.getCompaniontype(), videoProps.getTracking(), trackingUrl.toString(),logger, responseAdInfo.getAdId()+"", 
                     		convertDurationStr(videoProps.getDuration()),macroClickUrl.toString(), creativeUrl.toString(), creative.getCreativeGuid(), deliveryStr, 
                     		VideoMimeTypes.getEnum(videoProps.getMime()).getMime(), bitRateStr, videoProps.getWidth(), videoProps.getHeight(),
-                    		null, clickTrackers);
+                    		null, clickTrackers, impTrackers);
                 	}
                 }
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_3_0_WRAPPER.getCode()){
@@ -216,7 +220,7 @@ public class VASTFormatter implements CreativesFormatter{
                             responseAdInfo.getImpressionId(), macroTagUrl, 
                             trackingUrl.toString(), request.getSite().getPublisherId(), 
                             videoProps.getLinearity(), videoProps.getCompaniontype(), videoProps.getTracking(), 
-                            trackingUrl.toString(), logger,clickUri.toString(),clickTrackers);
+                            trackingUrl.toString(), logger,clickUri.toString(),clickTrackers, impTrackers);
                 }
                 if(videoProps.getProtocol() == VideoBidResponseProtocols.VAST_2_0_WRAPPER.getCode()){
                 	String macroTagUrl = AdTagMacroReplace.adTagMacroReplace(videoProps.getVastTagUrl(), request, responseAdInfo, response, 
@@ -225,7 +229,7 @@ public class VASTFormatter implements CreativesFormatter{
                             responseAdInfo.getImpressionId(), macroTagUrl, 
                             trackingUrl.toString(), request.getSite().getPublisherId(), 
                             videoProps.getLinearity(), videoProps.getCompaniontype(), videoProps.getTracking(), 
-                            trackingUrl.toString(), logger,clickUri.toString(), clickTrackers);
+                            trackingUrl.toString(), logger,clickUri.toString(), clickTrackers, impTrackers);
                 }
 			}
 		}

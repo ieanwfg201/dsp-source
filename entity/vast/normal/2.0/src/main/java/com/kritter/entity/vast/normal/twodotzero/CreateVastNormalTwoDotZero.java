@@ -25,7 +25,8 @@ public class CreateVastNormalTwoDotZero {
             int companionType, Integer[] tracking, String trackingEventUrl, String adName,
             String durationinFormat, String clickurl,String cdnUrl,
             String creativeId, String delivery, String mimeType,
-            String bitRate, int width, int height, List<String> clickTrackers){
+            String bitRate, int width, int height, List<String> clickTrackers,
+            List<String> impTrackers){
        	AdSystem adSystem = new AdSystem();
        	adSystem.setVersion("2.0");
        	adSystem.setStr(pubGuid);
@@ -230,6 +231,18 @@ public class CreateVastNormalTwoDotZero {
     	inline.setError(error);
     	List<Impression> impressions = new LinkedList<Impression>();
     	impressions.add(impression);
+    	if(impTrackers != null){
+    		int cnt=1;
+    		for(String impTracker:impTrackers){
+    			if(impTracker != null && !impTracker.isEmpty()){
+    				Impression imp = new Impression();
+    				imp.setId(impressionId+"-"+cnt);
+    				imp.setStr(impTracker);
+    				impressions.add(imp);
+    			}
+    			cnt++;
+    		}
+    	}
     	inline.setImpression(impressions);
     	Creatives c = new Creatives();
     	c.setCreative(creatives);
@@ -247,14 +260,15 @@ public class CreateVastNormalTwoDotZero {
             String adName,
             String durationinFormat, String clickurl,String cdnUrl,
             String creativeId, String delivery, String mimeType,
-            String bitRate, int width, int height, List<String> clickTrackers){
+            String bitRate, int width, int height, List<String> clickTrackers,
+            List<String> impTrackers){
         
         VastNormal vastNormal = createVast(csc, adId, impressionId,  errorUrl, pubGuid, 
                 linearity, companionType, tracking, trackingEventUrl,
                 adName,
                 durationinFormat, clickurl, cdnUrl,
                 creativeId, delivery, mimeType,
-                bitRate, width, height, clickTrackers);
+                bitRate, width, height, clickTrackers, impTrackers);
         if(vastNormal == null){
             return null;
         }

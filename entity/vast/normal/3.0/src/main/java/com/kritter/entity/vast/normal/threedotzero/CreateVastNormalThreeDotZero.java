@@ -23,7 +23,7 @@ public class CreateVastNormalThreeDotZero {
             String durationinFormat, String clickurl,String cdnUrl,
             String creativeId, String delivery, String mimeType,
             String bitRate, int width, int height, String skipOffset,
-            List<String> clickTrackers){
+            List<String> clickTrackers, List<String> impTrackers){
     	Error error = new Error();
         if(errorUrl != null){
             error.setStr(errorUrl+"&"+TEvent.ttype+"="+TEventType.videoerror.getName()+"&"+TEvent.tevent+"="+VideoMacros.ERRORCODE.getName());
@@ -251,6 +251,18 @@ public class CreateVastNormalThreeDotZero {
         inline.setCreatives(c);
         List<Impression> impressions = new LinkedList<Impression>();
         impressions.add(impression);
+    	if(impTrackers != null){
+    		int cnt=1;
+    		for(String impTracker:impTrackers){
+    			if(impTracker != null && !impTracker.isEmpty()){
+    				Impression imp = new Impression();
+    				imp.setId(impressionId+"-"+cnt);
+    				imp.setStr(impTracker);
+    				impressions.add(imp);
+    			}
+    			cnt++;
+    		}
+    	}
         inline.setImpression(impressions);
     	Ad ad = new Ad();
     	/**
@@ -268,14 +280,14 @@ public class CreateVastNormalThreeDotZero {
             String adName,
             String durationinFormat, String clickurl,String cdnUrl,
             String creativeId, String delivery, String mimeType,
-            String bitRate, int width, int height, String skipOffset, List<String> clickTrackers){
+            String bitRate, int width, int height, String skipOffset, List<String> clickTrackers, List<String> impTrackers){
         
         VastNormal vastNormal = createVast(csc, adId, impressionId,  errorUrl, pubGuid, 
                 linearity, companionType, tracking, trackingEventUrl,
                 adName,
                 durationinFormat, clickurl, cdnUrl,
                 creativeId, delivery, mimeType,
-                bitRate, width, height, skipOffset, clickTrackers);
+                bitRate, width, height, skipOffset, clickTrackers, impTrackers);
         if(vastNormal == null){
             return null;
         }
@@ -352,9 +364,12 @@ public class CreateVastNormalThreeDotZero {
     	List<String> clickTrackers = new LinkedList<String>();
     	clickTrackers.add("qkswdgqw");
     	clickTrackers.add("qud21312342gwgqw");
+    	List<String> impTrackers = new LinkedList<String>();
+    	impTrackers.add("impqkswdgqw");
+    	impTrackers.add("impqud21312342gwgqw");
     	System.out.println(CreateVastNormalThreeDotZero.createVastNormalString("http://csc", "adId", 
     			"impressionId", "errorUrl", "pubGuid", 1, 1, 
     			null, "trackingEventUrl", null, "adName", "YYYY", "clickurl", 
-    			"cdnUrl", "creativeId", "delivery", "mimeType", "bitRate", 1, 1, "skipOffset", clickTrackers));
+    			"cdnUrl", "creativeId", "delivery", "mimeType", "bitRate", 1, 1, "skipOffset", clickTrackers,impTrackers));
     }
 }

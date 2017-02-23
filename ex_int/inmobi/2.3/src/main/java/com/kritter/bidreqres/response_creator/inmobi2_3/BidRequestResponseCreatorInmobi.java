@@ -239,6 +239,14 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         	clickMacro =  adEntity.getExtTracker().getClickMacro();
         	clickMacroQuote =  adEntity.getExtTracker().getClickMacroQuote();
         }
+        List<String> impTrackers = null;
+        Set<Integer> impMacro=null;
+        Integer impMacroQuote=null;
+        if(adEntity.getExtTracker() != null){
+        	impTrackers= adEntity.getExtTracker().getImpTracker();
+        	impMacro =  adEntity.getExtTracker().getImpMacro();
+        	impMacroQuote =  adEntity.getExtTracker().getImpMacroQuote();
+        }
 
         if(creative.getCreativeFormat().equals(CreativeFormat.BANNER))
             bidResponseBidInmobiDTO.setAdMarkup(
@@ -277,7 +285,8 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                             response,
                             winNotificationURLBuffer,
                             clickTrackers,
-                            clickMacro,clickMacroQuote
+                            clickMacro,clickMacroQuote,
+                            impTrackers, impMacro, impMacroQuote
                     )
             );
 
@@ -399,13 +408,14 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             StringBuffer winNotificationURLBuffer,
             List<String> clickTrackers,
             Set<Integer> clickMacro,
-            Integer clickMacroQuote
+            Integer clickMacroQuote,
+            List<String> impTrackers,Set<Integer> impMacro,Integer impMacroQuote
     ) throws BidResponseException
     {
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
                 logger, urlVersion, secretKey, macroPostImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
                 cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl, clickTrackers,
-                clickMacro,clickMacroQuote);
+                clickMacro,clickMacroQuote, impTrackers, impMacro, impMacroQuote);
     }
 }
