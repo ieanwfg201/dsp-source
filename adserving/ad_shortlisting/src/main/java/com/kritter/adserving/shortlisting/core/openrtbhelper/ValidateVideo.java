@@ -1,8 +1,6 @@
 package com.kritter.adserving.shortlisting.core.openrtbhelper;
 
 import com.kritter.adserving.thrift.struct.NoFillReason;
-import org.apache.logging.log4j.Logger;
-
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionVideoObjectDTO;
 import com.kritter.common.caches.advinfo_upload_cache.AdvInfoUploadCache;
@@ -25,7 +23,7 @@ import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.cache.CreativeCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
-import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
+import org.apache.logging.log4j.Logger;
 
 public class ValidateVideo {
     private static final String CTRL_A = String.valueOf((char)1);
@@ -42,7 +40,7 @@ public class ValidateVideo {
                 return;
         }
 
-        NoFillReason nfrReason = NoFillReason.FILL;
+        NoFillReason nfrReason = null;
         NoFillReason nfrReasonPriority = null;
 
         for(BidRequestImpressionDTO bidRequestImpressionDTO : bidRequestImpressionDTOs){
@@ -125,7 +123,7 @@ public class ValidateVideo {
             			ReqLog.debugWithDebugNew(logger, request, "VideoId {} does not qualify as videoUploadCache  null", videoInfo.getId());
             			continue;
             		}
-            		VideoUploadCacheEntity bue = videoUploadCache.query(site.getPublisherIncId()+CTRL_A+videoInfo.getId());
+                    VideoUploadCacheEntity bue = videoUploadCache.query(site.getPublisherIncId()+CTRL_A+responseAdInfo.getAdId()+CTRL_A+videoInfo.getId());
                 	if(bue ==null){
                 		ReqLog.debugWithDebugNew(logger, request, "VideoId {} does not qualify as videoUploadCacheEntity  null", videoInfo.getId());
             			continue;
@@ -140,8 +138,9 @@ public class ValidateVideo {
                 	}
             	}
 
+                nfrReason = NoFillReason.FILL;
                 nfrReasonPriority = ValidateVideoHelper.validate(logger, videoProps, videoObj);
-                logger.debug("NFR reason is :{} under ValidateVideo", nfrReason);
+                ReqLog.debugWithDebugNew(logger, request, "NFR reason is :{} under ValidateVideo", nfrReason);
                 if(nfrReason ==  NoFillReason.FILL && nfrReasonPriority == NoFillReason.FILL){
                     try {
                         responseAdInfo.setVideoProps(videoProps);
@@ -252,7 +251,7 @@ public class ValidateVideo {
             			ReqLog.debugWithDebugNew(logger, request, "VideoId {} does not qualify as videoUploadCache  null", videoInfo.getId());
             			continue;
             		}
-            		VideoUploadCacheEntity bue = videoUploadCache.query(site.getPublisherIncId()+CTRL_A+videoInfo.getId());
+                    VideoUploadCacheEntity bue = videoUploadCache.query(site.getPublisherIncId()+CTRL_A+responseAdInfo.getAdId()+CTRL_A+videoInfo.getId());
                 	if(bue ==null){
                 		ReqLog.debugWithDebugNew(logger, request, "VideoId {} does not qualify as videoUploadCacheEntity  null", videoInfo.getId());
             			continue;
@@ -385,7 +384,7 @@ public class ValidateVideo {
             			ReqLog.debugWithDebugNew(logger, request, "VideoId {} does not qualify as videoUploadCache  null", videoInfo.getId());
             			continue;
             		}
-            		VideoUploadCacheEntity bue = videoUploadCache.query(site.getPublisherIncId()+CTRL_A+videoInfo.getId());
+                    VideoUploadCacheEntity bue = videoUploadCache.query(site.getPublisherIncId()+CTRL_A+responseAdInfo.getAdId()+CTRL_A+videoInfo.getId());
                 	if(bue ==null){
                 		ReqLog.debugWithDebugNew(logger, request, "VideoId {} does not qualify as videoUploadCacheEntity  null", videoInfo.getId());
             			continue;

@@ -45,6 +45,7 @@ public class VideoUploadCache extends AbstractDBStatsReloadableQueryableCache<St
             muv.setVideoInfoId(resultSet.getInt("videoInfoId"));
             muv.setAdxbasedexhangesstatus(resultSet.getInt("adxbasedexhangesstatus"));
             muv.setPubIncId(resultSet.getInt("pubIncId"));
+            muv.setAdId(resultSet.getInt("adId"));
             isMarkedForDeletion=resultSet.getBoolean("video_upload");
             VideoUploadCacheEntity vice = new VideoUploadCacheEntity(muv, lastModified, !isMarkedForDeletion);
             return vice;

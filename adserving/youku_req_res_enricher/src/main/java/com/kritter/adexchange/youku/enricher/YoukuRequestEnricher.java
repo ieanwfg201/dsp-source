@@ -250,7 +250,9 @@ public class YoukuRequestEnricher implements RTBExchangeRequestReader
         {
             for(YoukuBidRequestImpressionDTO youkuBidRequestImpressionDTO : youkuBidRequestImpressionDTOs)
             {
-            	if(1==youkuBidRequestImpressionDTO.getRequiresSecureAssets()){
+                Integer requiresSecureAssets = youkuBidRequestImpressionDTO.getRequiresSecureAssets()==null? 0 : youkuBidRequestImpressionDTO.getRequiresSecureAssets();
+                if(0== requiresSecureAssets){
+                    // set true, returen http
             		request.setSecure(true);
             	}
             	

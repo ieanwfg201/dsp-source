@@ -17,16 +17,16 @@ public class VideoUploadCacheEntity implements IUpdatableEntity<String>{
     private long lastModified;
     @Getter@Setter
     private MaterialUploadVideo muv;
-    
+
     public VideoUploadCacheEntity(MaterialUploadVideo muv, long lastModified, boolean isMarkedForDeletion){
         this.markedForDeletion = isMarkedForDeletion;
         this.muv = muv;
         this.lastModified = lastModified;
     }
-    
+
     @Override
     public String getId() {
-    	return  this.muv.getPubIncId()+CTRL_A+this.muv.getVideoInfoId();
+    	return  this.muv.getPubIncId()+CTRL_A+this.muv.getAdId()+CTRL_A+this.muv.getVideoInfoId();
     }
     @Override
     public Long getModificationTime() {

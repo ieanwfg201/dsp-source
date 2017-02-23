@@ -1,5 +1,0 @@
-# exchange_pig_daily.job
-
-type=command
-dependencies=exchange_init_daily
-command=sh exchange_pig_daily.sh '${kritter_first_level_code_path}' '${pig_home}' "${input_path}"/"${process_time_dir}" '${OUTPUT}'/'${process_time_dir}' '${rolluptype}' '${process_time}' '${process_time_dir}'

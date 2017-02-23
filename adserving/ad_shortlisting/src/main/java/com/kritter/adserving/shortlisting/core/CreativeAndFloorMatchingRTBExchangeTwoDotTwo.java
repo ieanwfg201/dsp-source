@@ -1,20 +1,9 @@
 package com.kritter.adserving.shortlisting.core;
 
+import com.kritter.adserving.shortlisting.core.openrtbhelper.ValidateVideo;
 import com.kritter.adserving.shortlisting.utils.CreativeUtils;
 import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestDeviceDTO;
-import com.kritter.constants.OpenRTBParameters;
-import com.kritter.utils.common.AdNoFillStatsUtils;
-import com.kritter.core.workflow.Context;
-import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
-import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadBanner;
-import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadVideo;
-import com.kritter.entity.reqres.entity.AdExchangeInfo;
-import com.kritter.entity.reqres.entity.Request;
-import com.kritter.entity.reqres.entity.Response;
-import com.kritter.entity.reqres.entity.ResponseAdInfo;
-import com.kritter.entity.reqres.log.ReqLog;
-import com.kritter.adserving.shortlisting.core.openrtbhelper.ValidateVideo;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionBannerObjectDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestImpressionDTO;
 import com.kritter.bidrequest.entity.common.openrtbversion2_2.BidRequestParentNodeDTO;
@@ -30,15 +19,23 @@ import com.kritter.common.caches.video_upload_cache.VideoUploadCache;
 import com.kritter.common.site.entity.Site;
 import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.constants.CreativeFormat;
+import com.kritter.constants.OpenRTBParameters;
+import com.kritter.core.workflow.Context;
+import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
+import com.kritter.entity.reqres.entity.AdExchangeInfo;
+import com.kritter.entity.reqres.entity.Request;
+import com.kritter.entity.reqres.entity.Response;
+import com.kritter.entity.reqres.entity.ResponseAdInfo;
+import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.serving.demand.cache.*;
 import com.kritter.serving.demand.entity.*;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.common.SetUtils;
-
 import com.kritter.utils.common.url.URLField;
 import com.kritter.utils.common.url.URLFieldProcessingException;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -373,7 +370,7 @@ public class CreativeAndFloorMatchingRTBExchangeTwoDotTwo implements CreativeAnd
                     			ReqLog.debugWithDebugNew(logger, request, "BannerId {} does not qualify as bannerupload cache null", bannerId);
                     			continue;
                     		}
-                    		BannerUploadCacheEntity bue = this.bannerUploadCache.query(pubIncId+CTRL_A+bannerId);
+                            BannerUploadCacheEntity bue = this.bannerUploadCache.query(pubIncId+CTRL_A + responseAdInfo.getAdId() + CTRL_A+bannerId);
                         	if(bue ==null){
                         		ReqLog.debugWithDebugNew(logger, request, "BannerId {} does not qualify as BannerUploadCacheEntity  null", bannerId);
                     			continue;

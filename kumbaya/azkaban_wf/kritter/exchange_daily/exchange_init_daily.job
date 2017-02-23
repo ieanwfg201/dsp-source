@@ -1,4 +1,0 @@
-# kritter_first_level_init_daily.job
-
-type=command
-command=sh exchange_init_daily.sh

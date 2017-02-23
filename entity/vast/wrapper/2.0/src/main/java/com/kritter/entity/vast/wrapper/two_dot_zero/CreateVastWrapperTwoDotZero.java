@@ -21,7 +21,8 @@ import com.kritter.constants.VideoMacros;
 public class CreateVastWrapperTwoDotZero {
     public static VastWrapper createWrapper(String csc, String adId,String impressionId,
             String vastTagUrl,String errorUrl, String pubGuid, int linearity,
-            int companionType, Integer[] tracking, String trackingEventUrl){
+            int companionType, Integer[] tracking, String trackingEventUrl, String clickurl,
+            List<String> clickTrackers, List<String> impTrackers){
         Wrapper wrapper = new Wrapper();
         VASTAdTagURI vastAdTagURI = new VASTAdTagURI();
         vastAdTagURI.setStr(vastTagUrl);
@@ -45,6 +46,31 @@ public class CreateVastWrapperTwoDotZero {
                         trackingEvents.add(t);
                     }
                 }
+                if(clickurl != null || clickTrackers != null){
+                	List<ClickTracking> ctList = new LinkedList<ClickTracking>();
+                	if(clickurl != null){
+                		ClickTracking clickTracking = new ClickTracking();
+                		clickTracking.setStr(clickurl);
+                		ctList.add(clickTracking);
+                	}
+                	VideoClicks videoClicks = new VideoClicks();
+                	if(clickTrackers != null){
+                		for(String clickTracker:clickTrackers){
+                			if(clickTracker != null && !clickTracker.isEmpty()){
+                				ClickTracking cT = new ClickTracking();
+                				cT.setStr(clickTracker);
+                				ctList.add(cT);
+                			}
+                		}
+                    	videoClicks.setClickTracking(ctList);
+                	}
+
+                	/**	videoClicks.setClickTracking(clickTracking);
+    					videoClicks.setCustomClick(customClick);
+                	 */
+                	linear.setVideoClicks(videoClicks);
+                }
+
                 TrackingEvents t = new TrackingEvents();
                 t.setTracking(trackingEvents);
                 linear.setTrackingEvents(t);
@@ -103,6 +129,18 @@ public class CreateVastWrapperTwoDotZero {
         impression.setStr(csc);
         List<Impression> impressions = new LinkedList<Impression>();
         impressions.add(impression);
+    	if(impTrackers != null){
+    		int cnt=1;
+    		for(String impTracker:impTrackers){
+    			if(impTracker != null && !impTracker.isEmpty()){
+    				Impression imp = new Impression();
+    				imp.setId(impressionId+"-"+cnt);
+    				imp.setStr(impTracker);
+    				impressions.add(imp);
+    			}
+    			cnt++;
+    		}
+    	}
         wrapper.setImpression(impressions);
         Ad ad = new Ad();
         ad.setId(adId);
@@ -113,10 +151,11 @@ public class CreateVastWrapperTwoDotZero {
     }
     public static String createWrapperString(String csc, String adId,String impressionId,
             String vastTagUrl,String errorUrl, String pubGuid, int linearity,
-            int companionType, Integer[] tracking, String trackingEventUrl,Logger  logger){
+            int companionType, Integer[] tracking, String trackingEventUrl,Logger  logger,String clickurl,
+            List<String> clickTrackers, List<String> impTrackers){
         
         VastWrapper vastWrapper = createWrapper(csc, adId, impressionId, vastTagUrl, errorUrl, pubGuid, 
-                linearity, companionType, tracking, trackingEventUrl);
+                linearity, companionType, tracking, trackingEventUrl, clickurl,clickTrackers, impTrackers);
         if(vastWrapper == null){
             return null;
         }

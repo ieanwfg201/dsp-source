@@ -24,7 +24,6 @@ import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
-import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.Creative;
@@ -35,8 +34,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -234,6 +231,14 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         BidResponseBidMopubDTO bidResponseBidMopubDTO = new BidResponseBidMopubDTO();
         bidResponseBidMopubDTO.setAdId(String.valueOf(responseAdInfo.getAdId()));
         Creative creative = responseAdInfo.getCreative();
+        List<String> clickTrackers = null;
+        Set<Integer> clickMacro=null;
+        Integer clickMacroQuote=null;
+        if(adEntity.getExtTracker() != null){
+        	clickTrackers= adEntity.getExtTracker().getClickTracker();
+        	clickMacro =  adEntity.getExtTracker().getClickMacro();
+        	clickMacroQuote =  adEntity.getExtTracker().getClickMacroQuote();
+        }
 
         if (creative.getCreativeFormat().equals(CreativeFormat.BANNER))
             bidResponseBidMopubDTO.setAdMarkup(
@@ -270,7 +275,9 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                             request,
                             responseAdInfo,
                             response,
-                            winNotificationURLBuffer
+                            winNotificationURLBuffer,
+                            clickTrackers,
+                            clickMacro,clickMacroQuote
                     )
             );
 
@@ -291,7 +298,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
             return null;
         }
 
-        if(responseAdInfo.getCreative().getExternalResourceURL() != null)
+        if(responseAdInfo.getCreative().getExternalResourceURL() != null && !responseAdInfo.getCreative().getExternalResourceURL().isEmpty())
         {
             bidResponseBidMopubDTO.setSampleImageUrl(responseAdInfo.getCreative().getExternalResourceURL());
         }
@@ -441,12 +448,16 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                                         Request request,
                                         ResponseAdInfo responseAdInfo,
                                         Response response,
-                                        StringBuffer winNotificationURLBuffer
+                                        StringBuffer winNotificationURLBuffer,
+                                        List<String> clickTrackers,
+                                        Set<Integer> clickMacro,
+                                        Integer clickMacroQuote
                                        ) throws BidResponseException
     {
         return VideoAdMarkUp.prepare(request, responseAdInfo, response, winNotificationURLBuffer,
                 logger, urlVersion, secretKey, postImpressionBaseClickUrl, postImpressionBaseWinApiUrl,
                 notificationUrlSuffix, notificationUrlBidderBidPriceMacro, postImpressionBaseCSCUrl,
-                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl);
+                cdnBaseImageUrl, trackingEventUrl, null, null,macroPostImpressionBaseClickUrl,
+                clickTrackers,clickMacro,clickMacroQuote,null,null,null);
     }
 }

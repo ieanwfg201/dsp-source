@@ -43,8 +43,8 @@ else
   echo "$file not found."
 fi
 
-echo sh kritter_first_level_daily.sh "${kritter_first_level_code_path}" "${pig_home}" "${input_path}"/"${process_time_dir}" "${OUTPUT}"/"${process_time_dir}" "${rolluptype}" \""${process_time}"\" "${process_time_dir}"
-eval sh kritter_first_level_daily.sh "${kritter_first_level_code_path}" "${pig_home}" "${input_path}"/"${process_time_dir}" "${OUTPUT}"/"${process_time_dir}" "${rolluptype}" \""${process_time}"\" "${process_time_dir}"
+echo sh kritter_first_level_daily.sh "${kritter_first_level_code_path}" "${pig_home}" "${input_path}"/"${process_time_dir}" "${OUTPUT}"/"${process_time_dir}" "${rolluptype}" \""${process_time}"\" "${process_time_dir}" "${EXTSITECOUNT}"
+eval sh kritter_first_level_daily.sh "${kritter_first_level_code_path}" "${pig_home}" "${input_path}"/"${process_time_dir}" "${OUTPUT}"/"${process_time_dir}" "${rolluptype}" \""${process_time}"\" "${process_time_dir}" "${EXTSITECOUNT}"
 
 echo sh kritter_first_level_upload_daily.sh ${loader_code_path} ${OUTPUT}/"${process_time_dir}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} \""${process_time}"\" "${process_time_dir}" ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel}
 eval sh kritter_first_level_upload_daily.sh ${loader_code_path} ${OUTPUT}/"${process_time_dir}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} \""${process_time}"\" "${process_time_dir}" ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel}
@@ -87,5 +87,5 @@ eval sh kritter_dashboard_delete.sh ${report_delete_code_path} ${dbhost} ${dbuse
 echo sh kritter_first_level_report_delete.sh ${daily_report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${daily_retention} ${exttableupload} ${exttablename} ${limitedtablename} ${limiteddaily_retention} ${tracking_event_daily_table} ${adposition} ${channel}
 eval sh kritter_first_level_report_delete.sh ${daily_report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${daily_retention} ${exttableupload} ${exttablename} ${limitedtablename} ${limiteddaily_retention} ${tracking_event_daily_table} ${adposition} ${channel}
 
-echo sh kritter_ext_site_app.sh ${ext_site_app_code_path} ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} ${dashboard_total_metric}
-eval sh kritter_ext_site_app.sh ${ext_site_app_code_path} ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} ${dashboard_total_metric}
+echo sh kritter_ext_site_app.sh ${ext_site_app_code_path} ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} ${EXTSITEAUTOAPPROVAL}
+eval sh kritter_ext_site_app.sh ${ext_site_app_code_path} ${dbtype} ${dbhost} ${dbport} ${dbname} ${dbuser} ${dbpwd} ${EXTSITEAUTOAPPROVAL}
