@@ -1,5 +1,5 @@
 #kritter_logevents_delete.job
 type=command
 dependencies=kritter_first_level_report_delete
-command=sh kritter_logevents_delete.sh ${logevents_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${logeventstablename} ${logeventshourlyhour} ${trackingeventtablename} ${trackingeventhour}
+command=sh kritter_logevents_delete.sh ${logevents_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${logeventstablename} ${logeventshourlyhour} ${trackingeventtablename} ${trackingeventhour} '${process_time}' '${process_time_dir}'
 
