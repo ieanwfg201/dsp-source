@@ -20,7 +20,7 @@ done
 
 MAINCLASS=com.kritter.kumbaya.libraries.data_loader.LoadData
 
-filepath=${2}/ad_stat/part-*
+filepath=${2}/exchange_daily/part-*
 tablename=${3}
 delimiter=${4}
 dbhost=${5}
@@ -31,10 +31,7 @@ dbport=${9}
 dbtype=${10}
 processing_time=${11}
 
-
-echo 'java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
-
-java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
-
+echo 'java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
 
 exit $?

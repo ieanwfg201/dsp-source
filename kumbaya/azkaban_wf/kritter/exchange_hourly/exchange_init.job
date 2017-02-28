@@ -1,0 +1,4 @@
+# exchange_init.job
+
+type=command
+command=sh exchange_init.sh

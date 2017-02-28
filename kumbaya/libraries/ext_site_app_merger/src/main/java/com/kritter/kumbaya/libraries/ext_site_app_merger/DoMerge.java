@@ -156,15 +156,15 @@ public class DoMerge {
         }
         srcFs.close();
     }
-    public static void insertinext(Connection con,SummaryEvent summaryEvent,boolean approved){
+    public static void insertinext(Connection con,SummaryEvent summaryEvent){
         if(con == null){
             return;
         }
         PreparedStatement pstmt = null;
         try{
             pstmt = con.prepareStatement("insert into " +
-                    "ext_supply_attr(site_inc_id,ext_supply_id,ext_supply_name,ext_supply_domain,req,supply_source_type,ext_supply_url,osId,approved)" +
-                    " values(?,?,?,?,?,?,?,?,?)");
+                    "ext_supply_attr(site_inc_id,ext_supply_id,ext_supply_name,ext_supply_domain,req,supply_source_type,ext_supply_url,osId)" +
+                    " values(?,?,?,?,?,?,?,?)");
             pstmt.setInt(1, summaryEvent.getSiteId());
             pstmt.setString(2, summaryEvent.getExt_supply_id());
             pstmt.setString(3, summaryEvent.getExt_supply_name());
@@ -174,7 +174,6 @@ public class DoMerge {
             pstmt.setInt(6, summaryEvent.getSupply_source_type());
             pstmt.setString(7, summaryEvent.getExt_supply_url());
             pstmt.setInt(8, summaryEvent.getOsId());
-            pstmt.setBoolean(9, approved);
             pstmt.executeUpdate();
         }catch(Exception e){
             e.printStackTrace();
@@ -221,7 +220,7 @@ public class DoMerge {
             }
         }
     }
-    public static void insertOrUpdate(Connection con, boolean approved) throws Exception{
+    public static void insertOrUpdate(Connection con) throws Exception{
         if(con == null || summaryMap.size()<1){
             return;
         }
@@ -233,7 +232,7 @@ public class DoMerge {
                 SummaryEvent summaryEvent = summaryMap.get(key);
                 if(summaryEvent != null){
                     if(summaryEvent.getDbActivity() == DBActivityEnum.INSERT){
-                        insertinext(con, summaryEvent, approved);
+                        insertinext(con, summaryEvent);
                     }else if(summaryEvent.getDbActivity() == DBActivityEnum.UPDATE){
                         updateinext(con, summaryEvent,date);
                     }
@@ -249,7 +248,7 @@ public class DoMerge {
         }
     }
 
-    public static void readFromDBAndMerge( String dbtype,String dbhost, String dbport, String dbname, String dbuser, String dbpwd, boolean approvedIn){
+    public static void readFromDBAndMerge( String dbtype,String dbhost, String dbport, String dbname, String dbuser, String dbpwd){
         Connection con = null;
         Statement stmnt = null;
         try{
@@ -283,7 +282,7 @@ public class DoMerge {
 
                 }
             }
-            insertOrUpdate(con, approvedIn);
+            insertOrUpdate(con);
         }catch(Exception e){
             e.printStackTrace();
         }finally{
@@ -306,24 +305,20 @@ public class DoMerge {
     }
 
     
-    public static void domerge( String dbtype,String dbhost, String dbport, String dbname, String dbuser, String dbpwd, String patternPath, boolean approved){
+    public static void domerge( String dbtype,String dbhost, String dbport, String dbname, String dbuser, String dbpwd, String patternPath){
         try{
         readFromPathPattern(patternPath );
-        readFromDBAndMerge(dbtype, dbhost, dbport, dbname, dbuser, dbpwd, approved);
+        readFromDBAndMerge(dbtype, dbhost, dbport, dbname, dbuser, dbpwd);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
     public static void main(String args[]){
         //domerge("MYSQL", "localhost", "3306", "kritter", "root", "password", "/home/rohan/testdata/kritter/manual/daily_externalsite.gz/part*");
-        if(args.length != 8){
+        if(args.length != 7){
             System.out.println("InCorrect Usage ");
         }else{
-            boolean approved = false;
-                if("true".equals(args[7])){
-                    approved=true;
-                }
-            domerge(args[0], args[1], args[2], args[3], args[4], args[5], args[6], approved);
+            domerge(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
         }
     }
 }

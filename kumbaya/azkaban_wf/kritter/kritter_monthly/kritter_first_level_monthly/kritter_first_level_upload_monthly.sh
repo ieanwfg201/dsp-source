@@ -20,9 +20,9 @@ done
 
 MAINCLASS=com.kritter.kumbaya.libraries.data_loader.LoadDataMonthly
 
-filepath=${2}/daily_first_level/part*
-limitedfilepath=${2}/limited_daily_first_level/part*
-extsitefilepath=${2}/ext_site_daily_first_level/part*
+filepath=${2}/daily_first_level/part-*
+limitedfilepath=${2}/limited_daily_first_level/part-*
+extsitefilepath=${2}/ext_site_daily_first_level/part-*
 tablename=${3}
 delimiter=${4}
 dbhost=${5}
