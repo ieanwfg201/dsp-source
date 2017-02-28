@@ -48,7 +48,7 @@ echo 'java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} 
 
 java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
 
-touch ${14}/first_level_${process_time_dir}
+touch ${14}/first_level__${process_time_dir}
 exit $?
 
 fi
