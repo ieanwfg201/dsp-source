@@ -1,5 +1,5 @@
 #kritter_first_level_report_delete.job
 type=command
 dependencies=kritter_first_level_upload
-command=sh kritter_first_level_report_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hourlyhour} ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc}
+command=sh kritter_first_level_report_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hourlyhour} ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc} '${process_time}' '${process_time_dir}'
 

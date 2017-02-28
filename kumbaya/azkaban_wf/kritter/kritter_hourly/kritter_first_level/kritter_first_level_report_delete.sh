@@ -4,6 +4,13 @@
 cd ${1}
 
 
+process_time="${16}"
+process_time_dir="${17}"
+echo "{\"process_time\":\"${process_time}\",\"process_time_dir\":\"${process_time_dir}\"}" >> $JOB_OUTPUT_PROP_FILE
+
+
+
+
 CLASSPATH=
 
 for f in target/*.jar; do

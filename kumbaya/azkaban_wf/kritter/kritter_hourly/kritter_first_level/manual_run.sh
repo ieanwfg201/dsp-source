@@ -81,8 +81,8 @@ eval sh kritter_first_level_pig.sh "${kritter_first_level_code_path}" "${pig_hom
 echo sh kritter_first_level_upload.sh ${loader_code_path} ${OUTPUT}/"${process_time_dir}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} \""${process_time}"\" "${process_time_dir}" ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc}
 eval sh kritter_first_level_upload.sh ${loader_code_path} ${OUTPUT}/"${process_time_dir}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} \""${process_time}"\" "${process_time_dir}" ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc}
 
-echo sh kritter_first_level_report_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hourlyhour} ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc}
-eval sh kritter_first_level_report_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hourlyhour} ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc}
+echo sh kritter_first_level_report_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hourlyhour} ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc} \""${process_time}"\" "${process_time_dir}"
+eval sh kritter_first_level_report_delete.sh ${report_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${tablename} ${hourlyhour} ${exttableupload} ${exttablename} ${limitedtablename} ${adposition} ${channel} ${central_dc} \""${process_time}"\" "${process_time_dir}"
 
 
 echo sh kritter_logevents_delete.sh ${logevents_delete_code_path} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} ${logeventstablename} ${logeventshourlyhour} ${trackingeventtablename} ${trackingeventhour} ${central_dc} \""${process_time}"\" "${process_time_dir}"
