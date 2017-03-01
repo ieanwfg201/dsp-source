@@ -1,0 +1,5 @@
+# exchange_pig.job
+
+type=command
+dependencies=exchange_movetoinprocess
+command=sh exchange_pig.sh '${exchange_code_path}' '${pig_home}' "${exchange_readytoprocess_path}"/"${process_time_dir}"  '${OUTPUT}'/'${process_time_dir}' '${thrift_jar_path}' '${process_time}' '${process_time_dir}' '${tz}'
