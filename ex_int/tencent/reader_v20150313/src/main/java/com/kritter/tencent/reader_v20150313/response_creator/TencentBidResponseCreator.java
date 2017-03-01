@@ -1,6 +1,7 @@
 package com.kritter.tencent.reader_v20150313.response_creator;
 
 
+import com.kritter.ex_int.utils.picker.AdPicker;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
@@ -45,12 +46,14 @@ public class TencentBidResponseCreator implements IBidResponseCreator
     private static final Random randomPicker = new Random();
     private String secretKey;
     private int urlVersion;
+    private AdPicker adPicker;
     public TencentBidResponseCreator(
                                  String loggerName,
                                  ServerConfig serverConfig,
                                  String secretKey,
                                  int urlVersion,
-                                 AdEntityCache adEntityCache
+                                 AdEntityCache adEntityCache,
+                                 AdPicker adPicker
                                  )
     {
         this.logger = LogManager.getLogger(loggerName);
@@ -80,7 +83,6 @@ public class TencentBidResponseCreator implements IBidResponseCreator
         Set<String> impressionIdsToRespondFor = response.fetchRTBExchangeImpressionIdToRespondFor();
         if(null == impressionIdsToRespondFor)
             logger.debug("There is no impression ids to respond for inside TencentBidResponseCreator");
-        Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
         BidRequestTencent bidRequestTencent = (BidRequestTencent)request.getBidRequest();
 
         TencentBidRequestParentNodeDTO tencentBidRequestParentNodeDTO = bidRequestTencent.getTencentBidRequestParentNodeDTO();
@@ -112,11 +114,7 @@ public class TencentBidResponseCreator implements IBidResponseCreator
                 continue;
             }
 
-            Collections.sort(list,comparator);
-
-            ResponseAdInfo responseAdInfoToUse = list.get(0);
-            responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
-                    (responseAdInfoToUse,list, randomPicker);
+            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos, randomPicker);
             Creative creative = responseAdInfoToUse.getCreative();
 
             String ext = preparExt(request, responseAdInfoToUse, response);

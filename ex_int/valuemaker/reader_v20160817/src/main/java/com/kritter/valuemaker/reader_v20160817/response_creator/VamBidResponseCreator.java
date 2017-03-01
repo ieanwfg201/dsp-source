@@ -16,6 +16,7 @@ import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
+import com.kritter.ex_int.utils.picker.AdPicker;
 import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.formatterutil.CreativeFormatterUtils;
@@ -63,6 +64,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     private String notificationUrlBidderBidPriceMacro;
     private IABCategoriesCache iabCategoriesCache;
     private ServerConfig serverConfig;
+    private AdPicker adPicker;
     private static final String HTTP_PROTOCOL = "http://";
     private static final String HTTPS_PROTOCOL = "https://";
 
@@ -74,7 +76,8 @@ public class VamBidResponseCreator implements IBidResponseCreator {
             String notificationUrlSuffix,
             String notificationUrlBidderBidPriceMacro,
             AdEntityCache adEntityCache,
-            IABCategoriesCache iabCategoriesCache
+            IABCategoriesCache iabCategoriesCache,
+            AdPicker adPicker
     ) {
         this.logger = LogManager.getLogger(loggerName);
         this.objectMapper = new ObjectMapper();
@@ -123,8 +126,6 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                 logger.debug("There is no impression ids to respond for inside VamBidResponseCreator");
             }
 
-            Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
-
             //只取一个
             for (String impressionId : impressionIdsToRespondFor) {
                 Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
@@ -147,10 +148,8 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                     continue;
                 }
 
-                Collections.sort(list, comparator);
 
-                ResponseAdInfo responseAdInfoToUse = list.get(0);
-                responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues(responseAdInfoToUse, list, randomPicker);
+                ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos, randomPicker);
                 Creative creative = responseAdInfoToUse.getCreative();
 
                 Double p = responseAdInfoToUse.getEcpmValue() * 100;
