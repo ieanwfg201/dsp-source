@@ -10,7 +10,7 @@ outputdirfolder=${5}
 if [ "$6" = "true" ]; then
 
 ssh rohan@localhost "mkdir -p ${outputdirprefix}"
-rsync -drtv ${outputdirprefix}/${outputdirfolder} --delay-updates --rsh="ssh -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking no' -p${destination_central_ssh_port}" -drtv  ${destination_central_user}@${destination_central_ssh_port}:${outputdirprefix}/ --stats 
+rsync -drtv ${outputdirprefix}/${outputdirfolder} --delay-updates --rsh="ssh -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking no' -p${destination_central_ssh_port}" -drtv  ${destination_central_user}@${destination_central_host}:${outputdirprefix}/ --stats 
 
 
 exit $?

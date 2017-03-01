@@ -12,9 +12,9 @@ if [ "$7" = "true" ]; then
 
 ssh ${destination_central_user}@${destination_central_host} "mkdir -p ${outputdirprefix}"
 ssh ${destination_central_user}@${destination_central_host} "mkdir -p ${outputlogdirprefix}"
-rsync -drtv ${outputdirprefix}/${outputdirfolder} --delay-updates --rsh="ssh -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking no' -p${destination_central_ssh_port}" -drtv  ${destination_central_user}@${destination_central_ssh_port}:${outputdirprefix}/ --stats 
+rsync -drtv ${outputdirprefix}/${outputdirfolder} --delay-updates --rsh="ssh -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking no' -p${destination_central_ssh_port}" -drtv  ${destination_central_user}@${destination_central_host}:${outputdirprefix}/ --stats 
 
-rsync -drtv ${outputlogdirprefix}/${outputdirfolder} --delay-updates --rsh="ssh -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking no' -p${destination_central_ssh_port}" -drtv  ${destination_central_user}@${destination_central_ssh_port}:${outputlogdirprefix}/ --stats 
+rsync -drtv ${outputlogdirprefix}/${outputdirfolder} --delay-updates --rsh="ssh -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking no' -p${destination_central_ssh_port}" -drtv  ${destination_central_user}@${destination_central_host}:${outputlogdirprefix}/ --stats 
 
 ssh ${destination_central_user}@${destination_central_host} "touch ${10}/first_level__${9}"
 
