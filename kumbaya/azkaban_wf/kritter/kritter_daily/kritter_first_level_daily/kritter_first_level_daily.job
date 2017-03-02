@@ -2,4 +2,4 @@
 
 type=command
 dependencies=kritter_first_level_init_daily
-command=sh kritter_first_level_daily.sh '${kritter_first_level_code_path}' '${pig_home}' "${input_path}"/"${process_time_dir}" '${OUTPUT}'/'${process_time_dir}' '${rolluptype}' '${process_time}' '${process_time_dir}' '${EXTSITECOUNT}'
+command=sh kritter_first_level_daily.sh '${kritter_first_level_code_path}' '${pig_home}' "${input_path}"/"${process_time_dir}" '${OUTPUT}'/'${process_time_dir}' '${rolluptype}' '${process_time}' '${process_time_dir}'
