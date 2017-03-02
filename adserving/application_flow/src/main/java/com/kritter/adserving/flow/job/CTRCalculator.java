@@ -91,10 +91,10 @@ public class CTRCalculator implements Job
         for(ResponseAdInfo responseAdInfo : responseAdInfos)
         {
             //if ad is not of type CPC or CPD then skip it.
-//            int marketPlaceCode =  responseAdInfo.getMarketPlace().getCode();
-//            if(!(marketPlaceCode == MarketPlace.CPC.getCode() || marketPlaceCode == MarketPlace.CPD.getCode())) {
-//                continue;
-//            }
+            int marketPlaceCode =  responseAdInfo.getMarketPlace().getCode();
+            if(!(marketPlaceCode == MarketPlace.CPC.getCode() || marketPlaceCode == MarketPlace.CPD.getCode())) {
+                continue;
+            }
 
             int[] dimensionValues = new int[this.dimensionNames.length];
             int counter = 0;

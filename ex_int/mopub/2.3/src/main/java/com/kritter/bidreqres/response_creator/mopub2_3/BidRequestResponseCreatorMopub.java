@@ -12,7 +12,6 @@ import com.kritter.ex_int.native_admarkup.NativeAdMarkUp;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
 import com.kritter.ex_int.utils.comparator.advdomain.FetchAdvertiserDomain;
 import com.kritter.ex_int.utils.comparator.common.ShortArrayToIntegerArray;
-import com.kritter.ex_int.utils.picker.AdPicker;
 import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
 import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
@@ -55,7 +54,6 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
     private IABCategoriesCache iabCategoriesCache;
     private String macroPostImpressionBaseClickUrl;
     private String trackingEventUrl;
-    private AdPicker adPicker;
 
     //template for formatting.
     private static final String CURRENCY = DefaultCurrency.defaultCurrency.getName();
@@ -70,8 +68,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
                                           String notificationUrlSuffix,
                                           String notificationUrlBidderBidPriceMacro,
                                           AdEntityCache adEntityCache,
-                                          IABCategoriesCache iabCategoriesCache,
-                                          AdPicker adPicker
+                                          IABCategoriesCache iabCategoriesCache
                                          )
     {
         this.logger = LogManager.getLogger(loggerName);
@@ -126,6 +123,8 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
             return null;
         }
 
+        Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
+
         BidResponseMopubDTO bidResponseMopubDTO = new BidResponseMopubDTO();
         bidResponseMopubDTO.setBidderGeneratedUniqueId(bidRequestMopub.getUniqueInternalRequestId());
         bidResponseMopubDTO.setBidRequestId(bidRequestMopub.getUniqueBidRequestIdentifierForAuctioneer());
@@ -144,7 +143,14 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         {
             Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
 
-            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos, randomPicker);
+            //sort and pick the one with highest ecpm value.
+            List<ResponseAdInfo> list = new ArrayList<ResponseAdInfo>();
+            list.addAll(responseAdInfos);
+            Collections.sort(list,comparator);
+
+            ResponseAdInfo responseAdInfoToUse = list.get(0);
+            responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
+                    (responseAdInfoToUse,list, randomPicker);
 
             BidResponseBidMopubDTO bidResponseBidMopubDTO =
                     prepareBidResponseSeatBidMopub(
