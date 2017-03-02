@@ -1,0 +1,5 @@
+# agg_kritter_hourly_fraud.job
+
+type=command
+dependencies=agg_kritter_hourly_upload
+command=bash agg_kritter_hourly_fraud.sh '${kritter_first_level_code_path}' '${pig_home}' "${fraud_input_path}" '${fraud_OUTPUT}' '${rolluptype}'  '${process_time}' '${process_time_dir}'

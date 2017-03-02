@@ -1,7 +1,5 @@
 #!/bin/sh
 
-${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${limitedtablename}
-
 
 
 
@@ -37,6 +35,13 @@ dbport=${9}
 dbtype=${10}
 processing_time=${11}
 limitedtablename=${13}
+extfilepath=${2}/first_level_ext_site/part*
+exttableupload=${14}
+exttablename=${15}
+adpositionpath=${2}/adposition_hourly/part*
+adpositionptablename="ad_position_hourly"
+channelpath=${2}/channel_hourly/part*
+channeltablename="channel_hourly"
 
 
 echo 'java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
@@ -45,6 +50,19 @@ java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost
 echo 'java  -cp "$CLASSPATH" $MAINCLASS ${limitedfilepath} ${limitedtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
 java  -cp "$CLASSPATH" $MAINCLASS ${limitedfilepath} ${limitedtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
 
+if [ "$14" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS "${extfilepath}" ${exttablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+    java  -cp "$CLASSPATH" $MAINCLASS "${extfilepath}" ${exttablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+fi
 
+if [ "$15" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS "${adpositionpath}" ${adpositionptablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+    java  -cp "$CLASSPATH" $MAINCLASS "${adpositionpath}" ${adpositionptablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+fi
 
+if [ "$16" = "true" ]; then
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+    java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+fi
 exit $?
+

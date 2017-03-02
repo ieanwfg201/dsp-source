@@ -75,3 +75,103 @@ limited_flatten_data_store = FOREACH limited_flatten_data GENERATE group::PROCES
 STORE limited_flatten_data_store INTO '$OUTPUT/limited_first_level' USING PigStorage('');
 
 
+ext_site_raw_data = load '$EXT_SITE_INPUT_FILES' USING PigStorage('') as (process_time, time:chararray, exchangeId:int, siteId:int, ext_supply_attr_internal_id:int, adId:int, campaignId:int, total_request:int, total_impression:int, total_bidValue:double, total_click:int, total_win:int, total_win_bidValue:double, total_csc:int, demandCharges:double, supplyCost:double, earning:double, conversion:int,bidprice_to_exchange:double, cpa_goal:double, exchangepayout:double, exchangerevenue:double, networkpayout:double, networkrevenue:double, billedclicks:int, billedcsc:int, countryId:int);
+
+ext_site_convert_data = FOREACH ext_site_raw_data GENERATE '$PROCESS_TIME' as PROCESS_TIME,com.kritter.kumbaya.libraries.pigudf.RollUpDateConversion('$rolluptype',time) AS time, siteId as siteId, exchangeId as exchangeId, adId as adId, campaignId as campaignId, total_request as total_request, total_impression as total_impression, total_bidValue as total_bidValue, total_click as total_click, total_win as total_win, total_win_bidValue as total_win_bidValue, total_csc as total_csc, demandCharges as demandCharges, supplyCost as supplyCost, earning as earning,conversion as conversion,bidprice_to_exchange as bidprice_to_exchange, cpa_goal as cpa_goal, exchangepayout as exchangepayout, exchangerevenue as exchangerevenue, networkpayout as networkpayout, networkrevenue as networkrevenue, billedclicks, billedcsc, ext_supply_attr_internal_id as ext_supply_attr_internal_id, countryId as countryId;
+
+ext_site_group_data =  GROUP ext_site_convert_data BY (PROCESS_TIME, time, siteId, exchangeId, adId, campaignId, ext_supply_attr_internal_id,countryId);
+
+ext_site_flatten_data = FOREACH ext_site_group_data {
+                GENERATE FLATTEN(group),
+                SUM(ext_site_convert_data.total_request) as total_request,
+                SUM(ext_site_convert_data.total_impression) as total_impression,
+                SUM(ext_site_convert_data.total_bidValue) as total_bidValue,
+                SUM(ext_site_convert_data.total_click) as total_click,
+                SUM(ext_site_convert_data.total_win) as total_win,
+                SUM(ext_site_convert_data.total_win_bidValue) as total_win_bidValue,
+                SUM(ext_site_convert_data.total_csc) as total_csc,
+                SUM(ext_site_convert_data.demandCharges) as demandCharges,
+                SUM(ext_site_convert_data.supplyCost) as supplyCost,
+                SUM(ext_site_convert_data.earning) as earning,
+                SUM(ext_site_convert_data.conversion) as conversion,
+                SUM(ext_site_convert_data.bidprice_to_exchange) as bidprice_to_exchange,
+                SUM(ext_site_convert_data.exchangepayout) as exchangepayout,
+                SUM(ext_site_convert_data.exchangerevenue) as exchangerevenue,
+                SUM(ext_site_convert_data.networkpayout) as networkpayout,
+                SUM(ext_site_convert_data.networkrevenue) as networkrevenue,
+                SUM(ext_site_convert_data.billedclicks) as billedclicks,
+                SUM(ext_site_convert_data.cpa_goal) as cpa_goal,
+                SUM(ext_site_convert_data.billedcsc) as billedcsc;
+            }
+
+ext_site_flatten_data_store = FOREACH ext_site_flatten_data GENERATE group::PROCESS_TIME, group::time, group::exchangeId, group::siteId, group::ext_supply_attr_internal_id, group::adId, group::campaignId, total_request, total_impression, total_bidValue, total_click, total_win, total_win_bidValue, total_csc, demandCharges, supplyCost, earning, conversion, bidprice_to_exchange, cpa_goal, exchangepayout, exchangerevenue, networkpayout, networkrevenue, billedclicks,billedcsc, group::countryId;
+
+STORE ext_site_flatten_data_store INTO '$OUTPUT/first_level_ext_site' USING PigStorage('');
+
+adposition_input = load '$ADPOSITION_FILES' USING PigStorage('') as (process_time, time:chararray, pub_inc_id:chararray, siteId:chararray, countryId:chararray, stateId:chararray, cityId:chararray, adv_inc_id:chararray, campaignId:chararray, adId:chararray, adpositionId:chararray, total_request:int, total_impression:int, total_bidValue:double, total_click:int, total_win:int, total_win_bidValue:int, total_csc:int, demandCharges:double, supplyCost:double, earning:double, conversion:int, bidprice_to_exchange:double, cpa_goal:double, exchangepayout:double, exchangerevenue:double, networkpayout:double, networkrevenue:double,billedclicks:int,billedcsc:int);
+
+adposition_data = FOREACH adposition_input GENERATE com.kritter.kumbaya.libraries.pigudf.RollUpDateConversion('$rolluptype',time) AS time, pub_inc_id as pub_inc_id, siteId as siteId, countryId as countryId, stateId as stateId, cityId as cityId, adv_inc_id as adv_inc_id, campaignId as campaignId, adId as adId, adpositionId as adpositionId, total_request as total_request, total_impression as total_impression, total_bidValue as total_bidValue, total_click as total_click, total_win as total_win, total_win_bidValue as total_win_bidValue, total_csc as total_csc, demandCharges as demandCharges, supplyCost as supplyCost, earning as earning, conversion as conversion, bidprice_to_exchange as bidprice_to_exchange, cpa_goal as cpa_goal, exchangepayout as exchangepayout, exchangerevenue as exchangerevenue, networkpayout as networkpayout, networkrevenue as networkrevenue, billedclicks as billedclicks, billedcsc as billedcsc;
+
+adposition_group =  GROUP adposition_data BY (time, pub_inc_id, siteId, countryId, stateId, cityId, adv_inc_id, campaignId, adId, adpositionId);
+
+adposition_flatten = FOREACH adposition_group {
+                GENERATE FLATTEN(group),
+                SUM(adposition_data.total_request) as total_request,
+                SUM(adposition_data.total_impression) as total_impression,
+                SUM(adposition_data.total_bidValue) as total_bidValue,
+                SUM(adposition_data.total_click) as total_click,
+                SUM(adposition_data.total_win) as total_win,
+                SUM(adposition_data.total_win_bidValue) as total_win_bidValue,
+                SUM(adposition_data.total_csc) as total_csc,
+                SUM(adposition_data.demandCharges) as demandCharges,
+                SUM(adposition_data.supplyCost) as supplyCost,
+                SUM(adposition_data.earning) as earning,
+                SUM(adposition_data.conversion) as conversion,
+                SUM(adposition_data.bidprice_to_exchange) as bidprice_to_exchange,
+                SUM(adposition_data.cpa_goal) as cpa_goal,
+                SUM(adposition_data.exchangepayout) as exchangepayout,
+                SUM(adposition_data.exchangerevenue) as exchangerevenue,
+                SUM(adposition_data.networkpayout) as networkpayout,
+                SUM(adposition_data.networkrevenue) as networkrevenue,
+                SUM(adposition_data.billedclicks) as billedclicks,
+                SUM(adposition_data.billedcsc) as billedcsc;
+            }
+
+adposition_store = FOREACH adposition_flatten GENERATE '$PROCESS_TIME', group::time, group::pub_inc_id, group::siteId, group::countryId, group::stateId, group::cityId, group::adv_inc_id, group::campaignId, group::adId, group::adpositionId, total_request, total_impression, total_bidValue, total_click, total_win, total_win_bidValue, total_csc, demandCharges, supplyCost, earning, conversion, bidprice_to_exchange, cpa_goal, exchangepayout, exchangerevenue, networkpayout, networkrevenue, billedclicks, billedcsc;
+
+STORE adposition_store INTO '$OUTPUT/adposition_hourly' USING PigStorage('');
+
+channel_input = load '$CHANNEL_FILES' USING PigStorage('') as (process_time, time:chararray, pub_inc_id:chararray, siteId:chararray, adv_inc_id:chararray, campaignId:chararray, adId:chararray, channelId:chararray, total_request:int, total_impression:int, total_bidValue:double, total_click:int, total_win:int, total_win_bidValue:int, total_csc:int, demandCharges:double, supplyCost:double, earning:double, conversion:int, bidprice_to_exchange:double, cpa_goal:double, exchangepayout:double, exchangerevenue:double, networkpayout:double, networkrevenue:double,billedclicks:int,billedcsc:int);
+
+channel_data = FOREACH channel_input GENERATE com.kritter.kumbaya.libraries.pigudf.RollUpDateConversion('$rolluptype',time) AS time, pub_inc_id as pub_inc_id, siteId as siteId, adv_inc_id as adv_inc_id, campaignId as campaignId, adId as adId, channelId as channelId, total_request as total_request, total_impression as total_impression, total_bidValue as total_bidValue, total_click as total_click, total_win as total_win, total_win_bidValue as total_win_bidValue, total_csc as total_csc, demandCharges as demandCharges, supplyCost as supplyCost, earning as earning, conversion as conversion, bidprice_to_exchange as bidprice_to_exchange, cpa_goal as cpa_goal, exchangepayout as exchangepayout, exchangerevenue as exchangerevenue, networkpayout as networkpayout, networkrevenue as networkrevenue, billedclicks as billedclicks, billedcsc as billedcsc;
+
+channel_group =  GROUP channel_data BY (time, pub_inc_id, siteId, adv_inc_id, campaignId, adId, channelId);
+
+channel_flatten = FOREACH channel_group {
+                GENERATE FLATTEN(group),
+                SUM(channel_data.total_request) as total_request,
+                SUM(channel_data.total_impression) as total_impression,
+                SUM(channel_data.total_bidValue) as total_bidValue,
+                SUM(channel_data.total_click) as total_click,
+                SUM(channel_data.total_win) as total_win,
+                SUM(channel_data.total_win_bidValue) as total_win_bidValue,
+                SUM(channel_data.total_csc) as total_csc,
+                SUM(channel_data.demandCharges) as demandCharges,
+                SUM(channel_data.supplyCost) as supplyCost,
+                SUM(channel_data.earning) as earning,
+                SUM(channel_data.conversion) as conversion,
+                SUM(channel_data.bidprice_to_exchange) as bidprice_to_exchange,
+                SUM(channel_data.cpa_goal) as cpa_goal,
+                SUM(channel_data.exchangepayout) as exchangepayout,
+                SUM(channel_data.exchangerevenue) as exchangerevenue,
+                SUM(channel_data.networkpayout) as networkpayout,
+                SUM(channel_data.networkrevenue) as networkrevenue,
+                SUM(channel_data.billedclicks) as billedclicks,
+                SUM(channel_data.billedcsc) as billedcsc;
+            }
+
+
+channel_store = FOREACH channel_flatten GENERATE '$PROCESS_TIME', group::time, group::pub_inc_id, group::siteId, group::adv_inc_id, group::campaignId, group::adId, group::channelId, total_request, total_impression, total_bidValue, total_click, total_win, total_win_bidValue, total_csc, demandCharges, supplyCost, earning, conversion, bidprice_to_exchange, cpa_goal, exchangepayout, exchangerevenue, networkpayout, networkrevenue, billedclicks, billedcsc;
+
+STORE channel_store INTO '$OUTPUT/channel_hourly' USING PigStorage('');
+

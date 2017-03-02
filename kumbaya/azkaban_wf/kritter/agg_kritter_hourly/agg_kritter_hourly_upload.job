@@ -1,4 +1,5 @@
 #agg_kritter_hourly_upload.job
 type=command
 dependencies=agg_kritter_hourly
-command=bash agg_kritter_hourly_upload.job.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${limitedtablename}
+command=bash agg_kritter_hourly_upload.job.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${limitedtablename} '${exttableupload}' '${exttablename}' '${adposition}' '${channel}' 
+
