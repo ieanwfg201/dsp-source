@@ -2,4 +2,4 @@
 
 type=command
 dependencies=fast_path_delete
-command=sh fast_path_pushtocentral.sh '${destination_central_user}' '${destination_central_host}' '${destination_central_ssh_port}' '${OUTPUT}' '${process_time_dir}'   '${central_dc}'
+command=sh fast_path_pushtocentral.sh '${destination_central_user}' '${destination_central_host}' '${destination_central_ssh_port}' '${OUTPUT}' '${process_time_dir}'   '${central_dc}' '${process_time_dir}' ${file_journal_path}

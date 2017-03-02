@@ -1,0 +1,4 @@
+#agg_fast_path_upload.job
+type=command
+command=bash agg_fast_path_upload.sh ${loader_code_path} ${input_path} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype}
+

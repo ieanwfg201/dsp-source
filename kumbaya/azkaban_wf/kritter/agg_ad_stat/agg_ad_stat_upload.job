@@ -1,0 +1,4 @@
+#agg_ad_stat_upload.job
+type=command
+command=bash agg_ad_stat_upload.sh ${loader_code_path} ${input_path} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype}
+
