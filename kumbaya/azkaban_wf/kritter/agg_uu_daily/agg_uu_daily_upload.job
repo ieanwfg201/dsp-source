@@ -1,0 +1,5 @@
+#agg_uu_daily_upload.job
+type=command
+dependencies=agg_uu_daily
+command=bash agg_uu_daily_upload.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}'
+

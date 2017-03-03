@@ -1,5 +1,8 @@
 #!/bin/sh
 
+
+
+
 process_time="${11}"
 process_time_dir="${12}"
 echo "{\"process_time\":\"${process_time}\",\"process_time_dir\":\"${process_time_dir}\"}" >> $JOB_OUTPUT_PROP_FILE
@@ -30,11 +33,21 @@ dbname=${8}
 dbport=${9}
 dbtype=${10}
 processing_time=${11}
+limitedtablename=${13}
+extfilepath=${2}/first_level_ext_site/part*
+exttableupload=${14}
+exttablename=${15}
+adpositionpath=${2}/adposition_hourly/part*
+adpositionptablename="ad_position_hourly"
+channelpath=${2}/channel_hourly/part*
+channeltablename="channel_hourly"
 
-if [ "$13" = "true" ]; then
-    mkdir -p ${14}
+
+if [ "${process_time_dir}" != "" ]; then
+
     echo 'java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
-    java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}a
-    touch ${14}/uu_daily__${process_time_dir}
-    exit $?
+    java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+
+exit $?
+
 fi
