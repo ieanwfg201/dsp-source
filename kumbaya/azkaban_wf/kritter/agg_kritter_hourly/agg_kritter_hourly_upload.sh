@@ -44,25 +44,28 @@ channelpath=${2}/channel_hourly/part*
 channeltablename="channel_hourly"
 
 
-echo 'java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
-java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+if [ "${process_time_dir}" != "" ]; then
 
-echo 'java  -cp "$CLASSPATH" $MAINCLASS ${limitedfilepath} ${limitedtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
-java  -cp "$CLASSPATH" $MAINCLASS ${limitedfilepath} ${limitedtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
 
-if [ "$14" = "true" ]; then
-    echo 'java  -cp "$CLASSPATH" $MAINCLASS "${extfilepath}" ${exttablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
-    java  -cp "$CLASSPATH" $MAINCLASS "${extfilepath}" ${exttablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
-fi
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${limitedfilepath} ${limitedtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${limitedfilepath} ${limitedtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
 
-if [ "$15" = "true" ]; then
-    echo 'java  -cp "$CLASSPATH" $MAINCLASS "${adpositionpath}" ${adpositionptablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
-    java  -cp "$CLASSPATH" $MAINCLASS "${adpositionpath}" ${adpositionptablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
-fi
+    if [ "$14" = "true" ]; then
+        echo 'java  -cp "$CLASSPATH" $MAINCLASS "${extfilepath}" ${exttablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+        java  -cp "$CLASSPATH" $MAINCLASS "${extfilepath}" ${exttablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+    fi
 
-if [ "$16" = "true" ]; then
-    echo 'java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
-    java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
-fi
+    if [ "$15" = "true" ]; then
+        echo 'java  -cp "$CLASSPATH" $MAINCLASS "${adpositionpath}" ${adpositionptablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+        java  -cp "$CLASSPATH" $MAINCLASS "${adpositionpath}" ${adpositionptablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+    fi
+
+    if [ "$16" = "true" ]; then
+        echo 'java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+        java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+    fi
 exit $?
 
+fi
