@@ -142,7 +142,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         {
             Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
 
-            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos, randomPicker);
+            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos);
 
             BidResponseBidYoukuEntity bidResponseBidYoukuDTO =
                     prepareBidResponseSeatBidYouku(
