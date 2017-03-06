@@ -33,7 +33,7 @@ public class ExportHbaseDataToFile {
     private static long oldLastModify = 0;
     private static long newLastModify = 0;
     private static String PARTITION = "_";
-    private static Map<String, List<Map<String, List<String>>>> asSet = null;
+    private static Map<String, Map<String, List<String>>> asSet = null;
     private static String LASTMODIFY_FILE_PATH;
     private static String TABLE_NAME;
     private static String FIRST_ROWKEY;
@@ -166,34 +166,33 @@ public class ExportHbaseDataToFile {
                  */
                 if (asSet == null)
                     asSet = new HashMap<>();
-                List<Map<String, List<String>>> binsList = asSet.get(rowKey);
-                if (binsList == null) {
-                    binsList = new ArrayList<>();
-                    asSet.put(rowKey, binsList);
+                Map<String, List<String>> sourceMap = asSet.get(rowKey);
+//                List<Map<String, List<String>>> binsList = (List<Map<String, List<String>>>) listMap;
+                if (sourceMap == null) {
+                    sourceMap = new HashMap<>();
+                    asSet.put(rowKey, sourceMap);
                 }
                 if (split.length > 1) {
-                    if (binsList.size() == 0) {
+                    if (sourceMap.size() == 0) {
                         List<String> tagList = new ArrayList<>();
-                        Map<String, List<String>> sourceMap = new HashMap<>();
                         tagList.add(split[1]);
                         sourceMap.put(split[0], tagList);
-                        binsList.add(sourceMap);
                     } else {
-                        for (Map<String, List<String>> tagIncExc : binsList) {
-                            List<String> tagLists = tagIncExc.get(split[0]);
-                            if (null == tagLists) {
+                        for (String source : sourceMap.keySet()) {
+                            List<String> tagList = sourceMap.get(source);
+                            if (null == tagList) {
                                 List<String> list = new ArrayList<>();
                                 list.add(split[1]);
-                                tagIncExc.put(split[0], list);
+                                sourceMap.put(split[0], list);
                             } else {
-                                if (!tagLists.contains(split[1]))
-                                    tagLists.add(split[1]);
+                                if (!tagList.contains(split[1]))
+                                    tagList.add(split[1]);
                             }
                         }
                     }
                     if (newLastModify < kv.getTimestamp())
                         newLastModify = kv.getTimestamp();
-                    LOG.debug("rowKey:{},have {} the source. LastModify ： {}", rowKey, binsList != null ? binsList.size() : 0, newLastModify);
+                    LOG.debug("rowKey:{},have {} the source. LastModify ： {}", rowKey != null ? sourceMap.get(rowKey).size() : 0, newLastModify);
                 }
             }
         } catch (Exception e) {
@@ -238,7 +237,7 @@ public class ExportHbaseDataToFile {
 
     private static void writeToLocalFile() {
         for (String rowKey : asSet.keySet()) {
-            HashMap<String, List<Map<String, List<String>>>> tempMap = new HashMap<>();
+            HashMap<String, Map<String, List<String>>> tempMap = new HashMap<>();
             tempMap.put(rowKey, asSet.get(rowKey));
             LOG_HBASE_DATA_WRITE_TO_FILE.info(JSON.toJSONString(tempMap));
         }

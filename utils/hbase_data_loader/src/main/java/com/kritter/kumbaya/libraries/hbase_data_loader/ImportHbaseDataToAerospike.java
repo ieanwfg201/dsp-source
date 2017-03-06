@@ -32,7 +32,7 @@ public class ImportHbaseDataToAerospike {
 
     // 声明静态配置
     private static AerospikeNoSqlNamespaceOperations aeroUtils = null;
-    private static Map<String, List<Map<String, List<String>>>> asSet = null;
+    private static Map<String, Map<String, List<String>>> asSet = null;
     private static String LOAD_FILE_PATH;
     private static String AEROSPIKE_NAMESPACE;
     private static String AEROSPIKE_SET_NAME;
@@ -79,7 +79,7 @@ public class ImportHbaseDataToAerospike {
             String line;
             int number = 0;
             while (!StringUtils.isEmpty((line = reader.readLine()))) {
-                asSet = JSON.parseObject(line, new com.alibaba.fastjson.TypeReference<Map<String, List<Map<String, List<String>>>>>() {
+                asSet = JSON.parseObject(line, new com.alibaba.fastjson.TypeReference<Map<String, Map<String, List<String>>>>() {
                 });
                 insertIntoAerospike();
                 asSet.clear();
