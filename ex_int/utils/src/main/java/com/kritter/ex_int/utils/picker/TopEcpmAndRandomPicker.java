@@ -9,8 +9,11 @@ import java.util.*;
  * Created by oneal on 2017/3/1.
  */
 public class TopEcpmAndRandomPicker implements AdPicker {
+
+    private Random randomPicker = new Random();
+
     @Override
-    public ResponseAdInfo pick(Set<ResponseAdInfo> responseAdInfoList, Random randomPicker) {
+    public ResponseAdInfo pick(Set<ResponseAdInfo> responseAdInfoList) {
 
         Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
 

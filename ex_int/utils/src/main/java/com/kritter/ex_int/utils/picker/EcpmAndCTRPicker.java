@@ -10,6 +10,8 @@ import java.util.*;
  */
 public class EcpmAndCTRPicker implements AdPicker {
 
+    private Random randomPicker = new Random();
+
     private double ecpmWeight;
 
     public EcpmAndCTRPicker(double ecpmWeight) {
@@ -17,13 +19,14 @@ public class EcpmAndCTRPicker implements AdPicker {
     }
 
     @Override
-    public ResponseAdInfo pick(Set<ResponseAdInfo> responseAdInfoSet, Random randomPicker) {
+    public ResponseAdInfo pick(Set<ResponseAdInfo> responseAdInfoSet) {
 
         if (responseAdInfoSet.size() == 1) {
             return responseAdInfoSet.iterator().next();
         }
 
-        Comparator<ResponseAdInfo> comparator = new EcpmCTRComparator(this.ecpmWeight);
+        double baseECPM = responseAdInfoSet.iterator().next().getEcpmValue();
+        Comparator<ResponseAdInfo> comparator = new EcpmCTRComparator(this.ecpmWeight, baseECPM);
         List<ResponseAdInfo> list = new ArrayList<ResponseAdInfo>();
         list.addAll(responseAdInfoSet);
         Collections.sort(list, comparator);

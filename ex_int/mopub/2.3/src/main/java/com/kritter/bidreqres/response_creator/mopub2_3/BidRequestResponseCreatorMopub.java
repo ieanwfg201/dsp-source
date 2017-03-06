@@ -59,7 +59,6 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
 
     //template for formatting.
     private static final String CURRENCY = DefaultCurrency.defaultCurrency.getName();
-    private static final Random randomPicker = new Random();
     private ObjectMapper objectMapper;
 
     public BidRequestResponseCreatorMopub(
@@ -144,7 +143,7 @@ public class BidRequestResponseCreatorMopub implements IBidResponseCreator
         {
             Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
 
-            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos, randomPicker);
+            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos);
 
             BidResponseBidMopubDTO bidResponseBidMopubDTO =
                     prepareBidResponseSeatBidMopub(

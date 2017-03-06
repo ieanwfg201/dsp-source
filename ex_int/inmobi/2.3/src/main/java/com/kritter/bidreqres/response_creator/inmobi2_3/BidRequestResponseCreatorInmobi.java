@@ -54,7 +54,6 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
 
     //template for formatting.
     private static final String CURRENCY = DefaultCurrency.defaultCurrency.getName();
-    private static final Random randomPicker = new Random();
 
     public BidRequestResponseCreatorInmobi(
                                               String loggerName,
@@ -139,7 +138,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         {
             Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
 
-            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos, randomPicker);
+            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos);
 
             BidResponseBidInmobiDTO bidResponseBidInmobiDTO =
                     prepareBidResponseSeatBidInmobi(

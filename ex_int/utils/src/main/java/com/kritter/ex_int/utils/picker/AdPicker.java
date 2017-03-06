@@ -11,6 +11,5 @@ import java.util.Set;
  */
 public interface AdPicker {
 
-    public ResponseAdInfo pick(Set<ResponseAdInfo> responseAdInfoList,
-                               Random randomPicker);
+    public ResponseAdInfo pick(Set<ResponseAdInfo> responseAdInfoList);
 }

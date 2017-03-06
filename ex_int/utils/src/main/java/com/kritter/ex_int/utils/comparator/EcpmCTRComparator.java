@@ -13,9 +13,11 @@ public class EcpmCTRComparator implements Comparator<ResponseAdInfo> {
     private static double EXPECTED_CTR = 0.01;
 
     private double ecpmWeight = 0.5;
+    private double baseECPM;
 
-    public EcpmCTRComparator(double ecpmWeight) {
+    public EcpmCTRComparator(double ecpmWeight, double baseECPM) {
         this.ecpmWeight = ecpmWeight;
+        this.baseECPM = baseECPM;
     }
     
     /**
