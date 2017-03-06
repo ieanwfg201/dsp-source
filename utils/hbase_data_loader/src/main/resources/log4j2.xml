@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_HOME">/var/log/kritter/hbase//logs</Property>
+        <Property name="HBASE_TO_FILE_HOME">/var/log/kritter/hbase//logs/data</Property>
+    </Properties>
+
+
+    <Appenders>
+        <RollingFile name="hbase_loadser" fileName="${LOG_HOME}/hbase_loader.log"
+                     filePattern="${LOG_HOME}/hbase_loader.log.%d{yyyy-MM-dd}-%i" immediateFlush="false" append="true">
+            <PatternLayout>
+                <Pattern><![CDATA[%d %p %t %c - %m%n]]></Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="3"/>
+        </RollingFile>
+
+        <RollingFile name="hbaseToFileAppenders" fileName="${HBASE_TO_FILE_HOME}/hbase_to_file.log"
+                     filePattern="${HBASE_TO_FILE_HOME}/hbase_to_file-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <Pattern>%m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10240"/>
+        </RollingFile>
+
+        <RollingFile name="lastModifyAppenders" fileName="${LOG_HOME}/lastModify.log"
+                     filePattern="${HBASE_TO_FILE_HOME}/lastModify.log-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <Pattern>%m%n</Pattern>
+            </PatternLayout>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="DEBUG" includeLocation="false">
+            <AppenderRef ref="hbase_loadser"/>
+        </Root>
+        <Logger name="hbaseToFileLogger" level="info" additivity="false">
+            <AppenderRef ref="hbaseToFileAppenders"/>
+        </Logger>
+        <Logger name="lastModifyLogger" level="info" additivity="false">
+            <AppenderRef ref="lastModifyAppenders"/>
+        </Logger>
+    </Loggers>
+
+</Configuration>
