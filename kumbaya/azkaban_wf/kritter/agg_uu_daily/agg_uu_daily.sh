@@ -49,7 +49,7 @@ if echo "${findout}" | grep 'uu_daily_'; then
     echo "${2}/bin/pig -x local -f src/main/pig/uu_roll_up.pig  --param INPUT_FILES='${input_file}' --param OUTPUT='${4}' --param rolluptype='${5}' --param  PROCESS_TIME='${actual_process_time}'  "
     eval "${2}/bin/pig -x local -f src/main/pig/uu_roll_up.pig  --param INPUT_FILES='${input_file}' --param OUTPUT='${4}' --param rolluptype='${5}' --param  PROCESS_TIME='${actual_process_time}'"
 else
-    echo "{\"process_time\":\"\",\"process_time_dir\":\"}" >> "$JOB_OUTPUT_PROP_FILE"        
+    echo "{\"process_time\":\"\",\"process_time_dir\":\"\"}" >> "$JOB_OUTPUT_PROP_FILE"        
 fi
 
 

@@ -34,13 +34,6 @@ dbport=${9}
 dbtype=${10}
 processing_time=${11}
 limitedtablename=${13}
-extfilepath=${2}/first_level_ext_site/part*
-exttableupload=${14}
-exttablename=${15}
-adpositionpath=${2}/adposition_hourly/part*
-adpositionptablename="ad_position_hourly"
-channelpath=${2}/channel_hourly/part*
-channeltablename="channel_hourly"
 
 
 if [ "${process_time_dir}" != "" ]; then
