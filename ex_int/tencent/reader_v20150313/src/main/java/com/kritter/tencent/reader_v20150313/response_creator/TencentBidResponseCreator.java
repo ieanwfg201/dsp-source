@@ -7,8 +7,6 @@ import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.user.userid.ExternalUserId;
-import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
-import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.bidrequest.entity.IBidResponse;
 import com.kritter.bidrequest.entity.common.openrtbversion2_3.BidRequestImpressionDTO;
 import com.kritter.bidrequest.exception.BidResponseException;
@@ -114,7 +112,7 @@ public class TencentBidResponseCreator implements IBidResponseCreator
                 continue;
             }
 
-            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos, randomPicker);
+            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos);
             Creative creative = responseAdInfoToUse.getCreative();
 
             String ext = preparExt(request, responseAdInfoToUse, response);
