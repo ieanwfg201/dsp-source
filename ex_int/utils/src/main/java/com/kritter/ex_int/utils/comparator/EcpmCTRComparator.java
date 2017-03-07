@@ -36,10 +36,10 @@ public class EcpmCTRComparator implements Comparator<ResponseAdInfo> {
     @Override
     public int compare(ResponseAdInfo responseAdInfoFirst, ResponseAdInfo responseAdInfoSecond) {
 
-        double scoreFirst = (responseAdInfoFirst.getEcpmValue() / responseAdInfoFirst.getHardBid()) * this.ecpmWeight
+        double scoreFirst = (responseAdInfoFirst.getEcpmValue() / this.baseECPM) * this.ecpmWeight
                 + (responseAdInfoFirst.getCtrValue() / EXPECTED_CTR) * ( 1 - this.ecpmWeight);
 
-        double scoreSecond = (responseAdInfoSecond.getEcpmValue() / responseAdInfoSecond.getHardBid()) * this.ecpmWeight
+        double scoreSecond = (responseAdInfoSecond.getEcpmValue() / this.baseECPM) * this.ecpmWeight
                 + (responseAdInfoSecond.getCtrValue() / EXPECTED_CTR) * ( 1 - this.ecpmWeight);
 
         if(scoreFirst > scoreSecond)
