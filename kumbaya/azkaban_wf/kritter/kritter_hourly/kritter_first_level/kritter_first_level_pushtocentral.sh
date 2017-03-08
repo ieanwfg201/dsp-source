@@ -8,7 +8,7 @@ outputdirprefix=${4}
 outputdirfolder=${5}
 outputlogdirprefix=${6}
 
-if [ "$7" = "true" ]; then
+if [ "$7" = "false" ]; then
 
 ssh ${destination_central_user}@${destination_central_host} "mkdir -p ${outputdirprefix}"
 ssh ${destination_central_user}@${destination_central_host} "mkdir -p ${outputlogdirprefix}"

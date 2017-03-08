@@ -14,8 +14,9 @@ csv_file_name=${7}/${8}-${process_time}
 output_file_name=${10}/${11}-${process_time}
 output_link_file=${10}/${12}
 
-if [ "$15" = "true" ]; then
 echo "{\"process_time\":\"${process_time}\",\"process_time_dir\":\"${process_time_dir}\",\"forecast_output_file\":\"${output_file}\",\"previous_time\":\"${previous_time}\"}" >> $JOB_OUTPUT_PROP_FILE
+
+if [ "$15" = "true" ]; then
 
 echo "##########################################################################################################"
 echo "python ${1} ${2} ${3} ${input_file} ${existing_click_log_segments_file} ${new_click_log_segments_file} ${csv_file_name} ${9} ${output_file_name} ${output_link_file}"

@@ -56,8 +56,8 @@ if echo "${findout}" | grep 'ad_stat_'; then
     unset -f
     actual_process_time="${array[0]}-${array[1]}-${array[2]} ${array[3]}:00:00"
     echo "{\"process_time\":\"${actual_process_time}\",\"process_time_dir\":\"${process_time}\"}" >> "$JOB_OUTPUT_PROP_FILE"
-    echo 'java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${actual_process_time}'
-    java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${actual_process_time}
+    echo "java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${actual_process_time}"
+    eval java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} "${actual_process_time}"
     exit $?
 fi
 
