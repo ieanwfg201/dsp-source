@@ -16,6 +16,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hamlin on 17-3-2.
@@ -65,8 +69,17 @@ public class ImportHbaseDataToAerospike {
         buildConfig();
         initAerospike();
         File[] files = getFiles();
+        ExecutorService poolExecutor = new ThreadPoolExecutor(files.length, files.length, 0l, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(10000));
         for (File file : files) {
-            readDataFromFile(file);
+            poolExecutor.execute(new AsyncHandleFile(file));
+        }
+        poolExecutor.shutdown();
+        while (!poolExecutor.isTerminated()) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                LOG.error("wait all thread stop ERROR : ", e);
+            }
         }
     }
 
@@ -74,25 +87,6 @@ public class ImportHbaseDataToAerospike {
         aeroUtils = new AerospikeNoSqlNamespaceOperations(null, AEROSPIKE_HOST, AEROSPIKE_PORT, AEROSPIKE_MAX_RETRIES, AEROSPIKE_TIMEOUT, AEROSPIKE_MAX_CONNS_PER_NODE, 20000);
     }
 
-    private static void readDataFromFile(File file) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            int number = 0;
-            while (!StringUtils.isEmpty((line = reader.readLine()))) {
-                asSet = JSON.parseObject(line, new com.alibaba.fastjson.TypeReference<Map<String, Map<String, List<String>>>>() {
-                });
-                insertIntoAerospike();
-                asSet.clear();
-                asSet = null;
-                if (++number > 1000) {
-                    number = 0;
-                    Thread.sleep(100);
-                }
-            }
-        } catch (Exception e) {
-            LOG.debug("open file ERROR:", e);
-        }
-    }
 
     private static File[] getFiles() {
         File[] files;
@@ -106,21 +100,6 @@ public class ImportHbaseDataToAerospike {
         return files;
     }
 
-
-    protected static void insertIntoAerospike() {
-        boolean success;
-        LOG.debug("asSet size : ", asSet.size());
-        for (String rowKey : asSet.keySet()) {
-            String value = JSON.toJSONString(asSet.get(rowKey));
-            NoSqlData noSqlData = new NoSqlData(NoSqlData.NoSqlDataType.STRING, value);
-            NoSqlData hbase_row = new NoSqlData(NoSqlData.NoSqlDataType.STRING, rowKey);
-            LOG.debug("inert into aerospike data : key:{} , bins:{}", rowKey, value);
-            success = aeroUtils.insertAttributeToThisNamespace(AEROSPIKE_NAMESPACE, AEROSPIKE_SET_NAME, hbase_row, AEROSPIKE_ATTRIBUTE_NAME, noSqlData);
-            if (!success) {
-                LOG.error("failed insert into aerospike:key={},bins={}", rowKey, value);
-            }
-        }
-    }
 
     private static void buildConfig() {
         LOAD_FILE_PATH = properties.getProperty("load_file_path");
@@ -144,6 +123,59 @@ public class ImportHbaseDataToAerospike {
             properties.load(fileInputStream);
         } catch (Exception e) {
             LOG.error("load properties file ERROR:", e);
+        }
+    }
+
+    static class AsyncHandleFile implements Runnable {
+        private File file;
+
+        public AsyncHandleFile(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public void run() {
+            readDataFromFile(file);
+        }
+
+        private void readDataFromFile(File file) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                int number = 0;
+                while (!StringUtils.isEmpty((line = reader.readLine()))) {
+                    // 期间修改过json的结构，减少了一个list，下面的这个if条件，就是将旧数据中去除的list删掉。
+                    if (line.charAt(line.length() - 2) == ']') {
+                        StringBuilder builder = new StringBuilder(line).deleteCharAt(line.indexOf('['));
+                        line = builder.deleteCharAt(builder.lastIndexOf("]")).toString();
+                    }
+                    asSet = JSON.parseObject(line, new com.alibaba.fastjson.TypeReference<Map<String, Map<String, List<String>>>>() {
+                    });
+                    insertIntoAerospike();
+                    asSet.clear();
+                    asSet = null;
+                    if (++number > 1000) {
+                        number = 0;
+                        Thread.sleep(100);
+                    }
+                }
+            } catch (Exception e) {
+                LOG.debug("open file ERROR:", e);
+            }
+        }
+
+        protected static void insertIntoAerospike() {
+            boolean success;
+            LOG.debug("asSet size : ", asSet.size());
+            for (String rowKey : asSet.keySet()) {
+                String value = JSON.toJSONString(asSet.get(rowKey));
+                NoSqlData noSqlData = new NoSqlData(NoSqlData.NoSqlDataType.STRING, value);
+                NoSqlData hbase_row = new NoSqlData(NoSqlData.NoSqlDataType.STRING, rowKey);
+                LOG.debug("inert into aerospike data : key:{} , bins:{}", rowKey, value);
+                success = aeroUtils.insertAttributeToThisNamespaceAsync(AEROSPIKE_NAMESPACE, AEROSPIKE_SET_NAME, hbase_row, AEROSPIKE_ATTRIBUTE_NAME, noSqlData);
+                if (!success) {
+                    LOG.error("failed insert into aerospike:key={},bins={}", rowKey, value);
+                }
+            }
         }
     }
 }
