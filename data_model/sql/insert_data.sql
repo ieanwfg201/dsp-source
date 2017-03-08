@@ -855,3 +855,15 @@ ON DUPLICATE KEY UPDATE guid = VALUES(guid);
 
 insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values
 (45,640,100,'youku slot',1,now(),now(),false);
+
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(55,300,100,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(56,610,100,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(57,300,50,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(58,400,300,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(59,300,250,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(60,640,960,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(61,640,1136,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(62,750,1334,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(63,828,1472,'',1,now(),now(),false);
+insert into creative_slots (id,width,height,description,modified_by,created_on,last_modified,is_deprecated) values(64,750,350,'',1,now(),now(),false);
+
