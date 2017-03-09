@@ -1,10 +1,23 @@
 #!/bin/sh
 
 
+process_time="";
+if [ -z "${11}" ]
+    then
+        process_time=""
+    else
+        process_time="${11}"
+fi
+
+process_time_dir=""
+if [ -z "${12}" ]
+    then
+        process_time_dir=""
+    else
+        process_time_dir="${12}"
+fi
 
 
-process_time="${11}"
-process_time_dir="${12}"
 echo "{\"process_time\":\"${process_time}\",\"process_time_dir\":\"${process_time_dir}\"}" >> $JOB_OUTPUT_PROP_FILE
 
 
@@ -33,7 +46,7 @@ dbpwd=${7}
 dbname=${8}
 dbport=${9}
 dbtype=${10}
-processing_time=${11}
+processing_time="${process_time}"
 limitedtablename=${13}
 extfilepath=${2}/first_level_ext_site/part*
 exttableupload=${14}
@@ -44,7 +57,7 @@ channelpath=${2}/channel_hourly/part*
 channeltablename="channel_hourly"
 
 
-if [ "${process_time_dir}" != "" ]; then
+if [ "${process_time_dir}" != "stop" ]; then
 
     echo 'java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
     java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}

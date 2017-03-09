@@ -1,7 +1,22 @@
 #!/bin/bash
 
-process_time="${6}"
-process_time_dir="${7}"
+
+process_time="";
+if [ -z "$6" ]
+    then
+        process_time=""
+    else
+        process_time="${6}"
+fi
+
+process_time_dir=""
+if [ -z "$7" ]
+    then
+        process_time_dir=""
+    else
+        process_time_dir="${7}"
+fi
+
 echo "{\"process_time\":\"${process_time}\",\"process_time_dir\":\"${process_time_dir}\"}" >> $JOB_OUTPUT_PROP_FILE
 
 
@@ -23,11 +38,11 @@ export PIG_OPTS
 input_files=${3}/${process_time_dir}/fraud/part*
 tracking_files=${3}/${process_time_dir}/tracking_event/part*
 
-if [ "${process_time_dir}" != "" ]; then
+if [ "${process_time_dir}" != "stop" ]; then
 
     echo "##########################################################################################################"
-    echo "exec ${2}/bin/pig -x local -f src/main/pig/agg_fraud_hourly_roll_up.pig --param rolluptype=${5} --param OUTPUT=${4}/${process_time_dir}  --param PROCESS_TIME="${7}" --param INPUT_FILES=${input_files} --param TRACKING_EVENT_INPUT_FILES=${tracking_files}"
+    echo "exec ${2}/bin/pig -x local -f src/main/pig/agg_fraud_hourly_roll_up.pig --param rolluptype=${5} --param OUTPUT=${4}/${process_time_dir}  --param PROCESS_TIME="${process_time_dir}" --param INPUT_FILES=${input_files} --param TRACKING_EVENT_INPUT_FILES=${tracking_files}"
 
-    exec ${2}/bin/pig -x local -f src/main/pig/agg_fraud_hourly_roll_up.pig --param rolluptype=${5} --param OUTPUT=${4}/${process_time_dir}  --param PROCESS_TIME="${7}" --param INPUT_FILES=${input_files} --param TRACKING_EVENT_INPUT_FILES=${tracking_files}
+    exec ${2}/bin/pig -x local -f src/main/pig/agg_fraud_hourly_roll_up.pig --param rolluptype=${5} --param OUTPUT=${4}/${process_time_dir}  --param PROCESS_TIME="${process_time_dir}" --param INPUT_FILES=${input_files} --param TRACKING_EVENT_INPUT_FILES=${tracking_files}
 
 fi

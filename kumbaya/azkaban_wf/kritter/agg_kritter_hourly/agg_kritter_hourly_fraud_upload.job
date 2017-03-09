@@ -1,4 +1,4 @@
 #agg_kritter_hourly_fraud_upload.job
 type=command
 dependencies=agg_kritter_hourly_fraud
-command=sh agg_kritter_hourly_fraud.sh ${loader_code_path} ${fraud_OUTPUT}/'${process_time_dir}' ${logeventstablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${trackingeventtablename} '${fraud_input_path}'/'${process_time_dir}'
+command=sh agg_kritter_hourly_fraud_upload.sh ${loader_code_path} ${fraud_OUTPUT}/'${process_time_dir}' ${logeventstablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${trackingeventtablename} '${fraud_input_path}'/'${process_time_dir}'
