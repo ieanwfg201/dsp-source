@@ -1007,7 +1007,7 @@ GROUP BY id;]]></prop>
         <constructor-arg>
             <props>
                 <prop key="namespace"><![CDATA[user]]></prop>
-                <prop key="table_name"><![CDATA[deviceTag]]></prop>
+                <prop key="table_name"><![CDATA[device_tag]]></prop>
                 <prop key="primary_key_name"><![CDATA[user_id]]></prop>
                 <prop key="attribute_name_click_history"><![CDATA[tag_code]]></prop>
             </props>
@@ -1020,7 +1020,7 @@ GROUP BY id;]]></prop>
                 <prop key="namespace"><![CDATA[user]]></prop>
                 <prop key="table_name"><![CDATA[audience_package]]></prop>
                 <prop key="primary_key_name"><![CDATA[user_id]]></prop>
-                <prop key="attribute_name_click_history"><![CDATA[tag_code]]></prop>
+                <prop key="attribute_name_click_history"><![CDATA[audience_id]]></prop>
             </props>
         </constructor-arg>
     </bean>

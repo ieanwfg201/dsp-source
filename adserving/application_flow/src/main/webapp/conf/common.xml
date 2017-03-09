@@ -176,7 +176,7 @@
         <constructor-arg index="3"><ref bean="audience_cache"/></constructor-arg>
         <constructor-arg index="4"><ref bean="user_aerospike_db"/></constructor-arg>
         <constructor-arg index="5"><ref bean="audience_cache_props"/></constructor-arg>
-        <constructor-arg index="5"><ref bean="audience_package_cache_props"/></constructor-arg>
+        <constructor-arg index="6"><ref bean="audience_package_cache_props"/></constructor-arg>
     </bean>
 
     <bean id="supply_inc_exc_targeting" class="com.kritter.adserving.shortlisting.targetingmatcher.SupplyInclusionExclusionTargetingMatcher">

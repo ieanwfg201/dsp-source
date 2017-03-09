@@ -29,54 +29,31 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
     public static final String NAMESPACE_NAME_KEY = "namespace";
     public static final String TABLE_NAME_KEY = "table_name";
-    public static final String PRIMARY_KEY_NAME_KEY = "primary_key_name";
     public static final String ATTRIBUTE_NAME_KEY = "attribute_name_lifetime_history";
-    private final String attributeNameHistory;
-    private Set<String> attributeNameSet;
-    @Getter
-    private final String namespaceName;
-    @Getter
-    private final String tableName;
-    @Getter
-    private final String primaryKeyName;
+
+    private static final int AUDIENCE_TYPE_CODE = 1;
+    private static final int AUDIENCE_TYPE_PACKAGE = 2;
 
 
-    private final String packageAttributeNameHistory;
-    private Set<String> packageAttributeNameSet;
-    @Getter
-    private final String packageNamespaceName;
-    @Getter
-    private final String packageTableName;
-    @Getter
-    private final String packagePrimaryKeyName;
-
+    private Properties audienceCodeProperties;
+    private Properties audiencePackageProperties;
 
     public AudienceTargetingMatcher(String name,
                                     String loggerName,
                                     AdEntityCache adEntityCache,
                                     AudienceCache audienceCache,
                                     NoSqlNamespaceOperations noSqlNamespaceOperationsInstance,
-                                    Properties properties,
-                                    Properties packageProperties) {
+                                    Properties audienceCodeProperties,
+                                    Properties audiencePackageProperties) {
         this.name = name;
         this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
         this.audienceCache = audienceCache;
         this.noSqlNamespaceOperationsInstance = noSqlNamespaceOperationsInstance;
 
-        this.namespaceName = properties.getProperty(NAMESPACE_NAME_KEY);
-        this.tableName = properties.getProperty(TABLE_NAME_KEY);
-        this.primaryKeyName = properties.getProperty(PRIMARY_KEY_NAME_KEY);
-        this.attributeNameHistory = properties.getProperty(ATTRIBUTE_NAME_KEY);
-        this.attributeNameSet = new HashSet<String>();
-        this.attributeNameSet.add(attributeNameHistory);
+        this.audienceCodeProperties = audienceCodeProperties;
+        this.audiencePackageProperties = audiencePackageProperties;
 
-        this.packageNamespaceName = packageProperties.getProperty(NAMESPACE_NAME_KEY);
-        this.packageTableName = packageProperties.getProperty(TABLE_NAME_KEY);
-        this.packagePrimaryKeyName = packageProperties.getProperty(PRIMARY_KEY_NAME_KEY);
-        this.packageAttributeNameHistory = packageProperties.getProperty(ATTRIBUTE_NAME_KEY);
-        this.packageAttributeNameSet = new HashSet<String>();
-        this.packageAttributeNameSet.add(attributeNameHistory);
     }
 
     @Override
@@ -86,21 +63,13 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             return adIdSet;
         }
 
-        boolean isSslRequest = request.getSecure();
-        if (!isSslRequest) {
-            ReqLog.debugWithDebugNew(this.logger, request, "Request is not ssl enabled. passing all the ads.");
-            return adIdSet;
-        }
-
         Set<Integer> shortlistedAdIds = new HashSet<Integer>();
-        ReqLog.debugWithDebugNew(this.logger, request, "Request is ssl enabled. Selecting ads with secure landing " +
-                "url.");
         for (int adId : adIdSet) {
-            ReqLog.debugWithDebugNew(this.logger, request, "Processing ad id : {}", adId);
+            ReqLog.debugWithDebugNew(this.logger, request, "audience matcher Processing ad id : {}", adId);
+
             AdEntity adEntity = adEntityCache.query(adId);
             if (adEntity == null) {
-                ReqLog.debugWithDebugNew(this.logger, request, "Ad entity for id : {} is null in ad entity cache",
-                        adId);
+                ReqLog.debugWithDebugNew(this.logger, request, "Ad entity for id : {} is null in ad entity cache", adId);
                 continue;
             }
 
@@ -111,12 +80,28 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             }
 
 
+            //struct : {inc: [audience_id], excl: [audience_id]}
             String audienceIds = targetingProfile.getAudienceIds();
+            Integer audienceType = targetingProfile.getAudienceType();
 
             //no audience targeting
-            if (audienceIds == null || audienceIds.trim().length() == 0) {
+            if (audienceIds == null || audienceIds.trim().length() == 0 || audienceType == null) {
                 continue;
             }
+
+            Map<String, List<Integer>> ids = JSON.parseObject(audienceIds, Map.class);
+
+            List<Integer> incList = ids.get("inc");
+            if (incList == null || incList.size() == 0) {
+                continue;
+            }
+
+            //优先判断exclude
+            List<Integer> excList = ids.get("exc");
+            if (excList == null || excList.size() == 0) {
+                continue;
+            }
+
 
             AudienceCacheEntity audienceCacheEntity = audienceCache.query(adId);
 
@@ -125,46 +110,20 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 continue;
             }
 
-            Integer type = targetingProfile.getAudienceType();
-
             //audience code
-            if (type == 0) {
+            if (audienceType == AUDIENCE_TYPE_CODE) {
 
-
-                //request deviceId  ->  tags
-                NoSqlData primaryKeyValue = new NoSqlData(NoSqlData.NoSqlDataType.STRING, request.getUserId());
-                Map<String, NoSqlData> dataMap = noSqlNamespaceOperationsInstance.fetchSingleRecordAttributes(namespaceName, tableName, primaryKeyValue, this.attributeNameSet);
-
-                if (dataMap == null || dataMap.get(this.attributeNameHistory) == null) {
-                    ReqLog.debugWithDebugNew(this.logger, request, "user id not in aerospiker: {}", request.getUserId());
+                String jsonStr = getAudience(request, audienceCodeProperties);
+                if (jsonStr == null) {
+                    ReqLog.debugWithDebugNew(this.logger, request, "device id not exist : {}", request.getUserId());
                     continue;
                 }
 
-                if (dataMap != null && dataMap.size() != 0) {
-                    NoSqlData noSqlData = dataMap.get(this.attributeNameHistory);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user id not in aerospiker: {}", request.getUserId());
-                    if (null == noSqlData) {
-                        continue;
-                    }
-                }
-
-                NoSqlData noSqlData = dataMap.get(this.attributeNameHistory);
-                byte[] serializedObject = (byte[]) noSqlData.getValue();
-
-                if (serializedObject == null || serializedObject.length == 0) {
-                    ReqLog.debugWithDebugNew(this.logger, request, "user id not in aerospiker: {}", request.getUserId());
-                    continue;
-                }
-
-                //获取deviceid对应的tag,deviceId -> map<String,String>
-
+                Map<String, List<String>> allTags = JSON.parseObject(jsonStr, Map.class);
                 Map<String, Boolean> deviceTags = new HashMap<String, Boolean>();
 
-                Map<String, List<String>> map = JSON.parseObject(new String((byte[]) noSqlData.getValue()), Map.class);
-
                 //对应五个source:td,am,up,qx mh
-                Map<String, List<String>> allList = map;
-                for (Map.Entry<String, List<String>> entry : allList.entrySet()) {
+                for (Map.Entry<String, List<String>> entry : allTags.entrySet()) {
                     String key = entry.getKey();
                     List<String> values = entry.getValue();
                     if (values != null && values.size() != 0) {
@@ -174,21 +133,6 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 }
 
 
-                Map<String, List<Integer>> ids = JSON.parseObject(audienceIds, Map.class);
-
-                List<Integer> incList = ids.get("inc");
-                if (incList == null || incList.size() == 0) {
-                    continue;
-                }
-
-
-                //优先判断exclude
-                //exclude
-                List<Integer> excList = ids.get("exc");
-                if (excList == null || excList.size() == 0) {
-                    continue;
-                }
-
                 boolean isExeclude = false;
                 for (Integer id : excList) {
                     AudienceCacheEntity entity = audienceCache.query(id);
@@ -197,7 +141,6 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                         continue;
                     }
 
-                    Integer sourceId = entity.getSource_id();
                     String tags = entity.getTags();
                     if (tags == null) {
                         continue;
@@ -207,7 +150,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                         continue;
                     }
 
-
+                    Integer sourceId = entity.getSource_id();
                     String source = convertSource(sourceId);
 
                     //同级是或的关系,不同级是并的关系
@@ -274,47 +217,13 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 }
 
 
-            } else {
+            } else if (audienceType == AUDIENCE_TYPE_PACKAGE) {
                 //audience package
-                NoSqlData primaryKeyValue = new NoSqlData(NoSqlData.NoSqlDataType.STRING, request.getUserId());
-                Map<String, NoSqlData> dataMap = noSqlNamespaceOperationsInstance.fetchSingleRecordAttributes(packageNamespaceName, packageTableName, primaryKeyValue, this.packageAttributeNameSet);
 
-                if (dataMap == null || dataMap.get(this.packageAttributeNameHistory) == null) {
-                    ReqLog.debugWithDebugNew(this.logger, request, "user id not in aerospiker: {}", request.getUserId());
-                    continue;
-                }
+                String audienceId = getAudience(request, audienceCodeProperties);
 
-                if (dataMap != null && dataMap.size() != 0) {
-                    NoSqlData noSqlData = dataMap.get(this.packageAttributeNameHistory);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user id not in aerospiker: {}", request.getUserId());
-                    if (null == noSqlData) {
-                        continue;
-                    }
-                }
-
-                NoSqlData noSqlData = dataMap.get(this.packageAttributeNameHistory);
-                byte[] serializedObject = (byte[]) noSqlData.getValue();
-
-                if (serializedObject == null || serializedObject.length == 0) {
-                    ReqLog.debugWithDebugNew(this.logger, request, "user id not in aerospiker: {}", request.getUserId());
-                    continue;
-                }
-
-
-                String audienceId = new String(serializedObject);
-
-                Map<String, List<Integer>> ids = JSON.parseObject(audienceIds, Map.class);
-
-                List<Integer> incList = ids.get("inc");
-                if (incList == null || incList.size() == 0) {
-                    continue;
-                }
-
-
-                //优先判断exclude
-                //exclude
-                List<Integer> excList = ids.get("exc");
-                if (excList == null || excList.size() == 0) {
+                if (audienceId == null) {
+                    ReqLog.debugWithDebugNew(this.logger, request, "device id not exist : {}", request.getUserId());
                     continue;
                 }
 
@@ -384,5 +293,43 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             return true;
         }
     }
+
+
+    public String getAudience(Request request, Properties properties) {
+
+        //批量查询会多查询几次
+//        List<String> values = new ArrayList<String>();
+//        Set<NoSqlData> primaryKeyValues = new HashSet<NoSqlData>();
+//        primaryKeyValues.add(new NoSqlData(NoSqlData.NoSqlDataType.STRING, request.getUserId()));
+        NoSqlData primaryKeyValue = new NoSqlData(NoSqlData.NoSqlDataType.STRING, request.getUserId());
+
+        String namespaceName = properties.getProperty(NAMESPACE_NAME_KEY);
+        String tableName = properties.getProperty(TABLE_NAME_KEY);
+        String attributeName = properties.getProperty(ATTRIBUTE_NAME_KEY);
+        Set<String> attributeNameSet = new HashSet<String>();
+        attributeNameSet.add(attributeName);
+
+        Map<String, NoSqlData> dataMap = noSqlNamespaceOperationsInstance.fetchSingleRecordAttributes(namespaceName, tableName, primaryKeyValue, attributeNameSet);
+
+
+        if (dataMap == null || dataMap.get(attributeName) == null || dataMap.size() == 0) {
+            return null;
+        }
+
+        NoSqlData noSqlData = dataMap.get(attributeName);
+        if (noSqlData == null) {
+            return null;
+        }
+
+        byte[] serializedObject = (byte[]) noSqlData.getValue();
+
+        if (serializedObject == null || serializedObject.length == 0) {
+            return null;
+        }
+
+        return new String(serializedObject);
+
+    }
+
 
 }
