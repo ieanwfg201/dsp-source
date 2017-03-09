@@ -35,7 +35,7 @@ runtime=${tsnow}
 if [ ! -f /var/data/kritter/fastpathagglastrun ]; then
     echo "NotFound"
 else
-    runtime=`cat /var/data/kritter/agglastrun`
+    runtime=`cat /var/data/kritter/fastpathagglastrun`
 fi
 
 echo "${runtime}"
