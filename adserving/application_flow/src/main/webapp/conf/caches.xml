@@ -463,6 +463,16 @@
         <constructor-arg index="4"><ref bean="user_lifetime_campaign_click_cache_props"/></constructor-arg>
     </bean>
 
+    <bean id="audience_cache" class="com.kritter.common.caches.audience_cache.AudienceCache">
+        <constructor-arg index="0">
+            <list>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1"><ref bean="audience_cache_properties"/></constructor-arg>
+        <constructor-arg index="2"><ref bean="db-manager"/></constructor-arg>
+        <constructor-arg index="3" value="req_logging_cache"/>
+    </bean>
+
     <!--Cache beans end here -->
 
     <bean id="cachePool" class="com.kritter.abstraction.cache.entities.CachePool">
@@ -514,6 +524,7 @@
                 <ref bean="user_lifetime_campaign_imp_cache"/>
                 <ref bean="user_lifetime_campaign_click_cache"/>
                 <ref bean="user_recent_click_history_cache"/>
+                <ref bean="audience_cache"/>
             </list>
         </constructor-arg>
     </bean>
@@ -805,6 +816,15 @@ GROUP BY id;]]></prop>
        </constructor-arg>
    </bean>
 
+    <bean id="audience_cache_properties" class="java.util.Properties">
+        <constructor-arg>
+            <props>
+                <prop key="refresh_interval">30000</prop>
+                <prop key="query"><![CDATA[select c.exchangeid as id, a.supplycode as supplycode, b.ui_id as ui_id, a.last_modified as last_modified from supply_mma_mapping as a, mma_code_mma_ui_mapping as b,mma_exchangename_id_mapping as c  where a.mma_category_code = b.code and a.exchangename=c.exchangename and (a.last_modified >= '$last_modified' or b.last_modified >= '$last_modified' or c.last_modified >= '$last_modified') ]]></prop>
+            </props>
+        </constructor-arg>
+    </bean>
+
     <bean id="adxbasedexchanges_metadata_cache_properties" class="java.util.Properties">
       <constructor-arg>
          <props>
@@ -982,5 +1002,27 @@ GROUP BY id;]]></prop>
          </props>
       </constructor-arg>
    </bean>
+
+    <bean id="audience_cache_props" class="java.util.Properties">
+        <constructor-arg>
+            <props>
+                <prop key="namespace"><![CDATA[user]]></prop>
+                <prop key="table_name"><![CDATA[device_tag]]></prop>
+                <prop key="primary_key_name"><![CDATA[user_id]]></prop>
+                <prop key="attribute_name_click_history"><![CDATA[tag_code]]></prop>
+            </props>
+        </constructor-arg>
+    </bean>
+
+    <bean id="audience_package_cache_props" class="java.util.Properties">
+        <constructor-arg>
+            <props>
+                <prop key="namespace"><![CDATA[user]]></prop>
+                <prop key="table_name"><![CDATA[audience_package]]></prop>
+                <prop key="primary_key_name"><![CDATA[user_id]]></prop>
+                <prop key="attribute_name_click_history"><![CDATA[audience_id]]></prop>
+            </props>
+        </constructor-arg>
+    </bean>
 
 </beans>

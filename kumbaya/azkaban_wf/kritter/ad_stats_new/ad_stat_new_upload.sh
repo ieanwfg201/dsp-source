@@ -20,7 +20,7 @@ done
 
 MAINCLASS=com.kritter.kumbaya.libraries.data_loader.LoadData
 
-filepath=${2}/ad_stat/part*
+filepath=${2}/ad_stat/part-*
 tablename=${3}
 delimiter=${4}
 dbhost=${5}
