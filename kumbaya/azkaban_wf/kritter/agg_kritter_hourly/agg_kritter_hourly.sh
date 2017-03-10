@@ -50,8 +50,8 @@ if echo "${findout}" | grep 'first_level_'; then
     unset -f
     actual_process_time="${array[0]}-${array[1]}-${array[2]} ${array[3]}:00:00"
     echo "{\"process_time\":\"${actual_process_time}\",\"process_time_dir\":\"${process_time}\"}" >> "$JOB_OUTPUT_PROP_FILE"
-    echo "${2}/bin/pig -x local -f src/main/pig/agg_kritter_hourly.pig  --param INPUT_FILES='${input_file}' --param OUTPUT='${4}' --param rolluptype='${5}' --param  PROCESS_TIME='${actual_process_time}' --param LIMITED_INPUT_FILES='${limited_input_file}' --param EXT_SITE_INPUT_FILES='${ext_site_input_file}'   --param ADPOSITION_FILES='${adposition_input_file}' --param CHANNEL_FILES='${channel_input_file}'  "
-    eval "${2}/bin/pig -x local -f src/main/pig/agg_kritter_hourly.pig  --param INPUT_FILES='${input_file}' --param OUTPUT='${4}' --param rolluptype='${5}' --param  PROCESS_TIME='${actual_process_time}' --param LIMITED_INPUT_FILES='${limited_input_file}' --param EXT_SITE_INPUT_FILES='${ext_site_input_file}'   --param ADPOSITION_FILES='${adposition_input_file}' --param CHANNEL_FILES='${channel_input_file}' "
+    echo "${2}/bin/pig -x local -f src/main/pig/agg_kritter_hourly.pig  --param INPUT_FILES='${input_file}' --param OUTPUT='${4}'/'${process_time}' --param rolluptype='${5}' --param  PROCESS_TIME='${actual_process_time}' --param LIMITED_INPUT_FILES='${limited_input_file}' --param EXT_SITE_INPUT_FILES='${ext_site_input_file}'   --param ADPOSITION_FILES='${adposition_input_file}' --param CHANNEL_FILES='${channel_input_file}'  "
+    eval "${2}/bin/pig -x local -f src/main/pig/agg_kritter_hourly.pig  --param INPUT_FILES='${input_file}' --param OUTPUT='${4}'/'${process_time}' --param rolluptype='${5}' --param  PROCESS_TIME='${actual_process_time}' --param LIMITED_INPUT_FILES='${limited_input_file}' --param EXT_SITE_INPUT_FILES='${ext_site_input_file}'   --param ADPOSITION_FILES='${adposition_input_file}' --param CHANNEL_FILES='${channel_input_file}' "
 else
     echo "{\"process_time\":\"stop\",\"process_time_dir\":\"stop\"}"
     echo "{\"process_time\":\"stop\",\"process_time_dir\":\"stop\"}" >> "$JOB_OUTPUT_PROP_FILE"        
