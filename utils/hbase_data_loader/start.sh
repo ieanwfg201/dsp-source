@@ -9,13 +9,13 @@ AS_HOST=""
 AS_PORT=""
 
 if [ -z $1 ]; then
-LOG_FILE="/home/hamlin/workspace/gitlab/optimad/dsp/utils/hbase_data_loader/src/main/resources/log4j2.xml"
+LOG_FILE="/var/data/kritter/hbase-loader-log4j2.xml"
 else
 LOG_FILE=$1
 fi
 
 if [ -z $2 ]; then
-PROPERTIES_FILE="/home/hamlin/workspace/gitlab/optimad/dsp/utils/hbase_data_loader/src/main/resources/data_load.properties"
+PROPERTIES_FILE="/var/data/kritter/data_load.properties"
 else
 PROPERTIES_FILE=$2
 fi
