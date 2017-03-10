@@ -191,6 +191,8 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             	targetingExt =  TPExt.getObject(targetingExtStr.trim());
             }
             int lat_lon_radius_unit = resultSet.getInt("lat_lon_radius_unit");
+            String audienceIds = resultSet.getString("audienceIds");
+            int audienceType = resultSet.getInt("audienceType");
             
             TargetingProfile.TargetingBuilder targetingBuilder = new
                 TargetingProfile.TargetingBuilder(targetingId, targetingGuid, accountId, false, profileLastModified);
@@ -215,15 +217,17 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             targetingBuilder.setLatitudeLongitudeRadius(latLongSerializedArray);
             targetingBuilder.setIsSiteListExcluded(isSiteListExcluded);
             targetingBuilder.setExchangePublisherWithSiteSetForInclusionExclusionMap
-                                                        (supplyAttributesInclusionExclusion,targetingGuid);
+                    (supplyAttributesInclusionExclusion, targetingGuid);
             targetingBuilder.setTargetedConnectionTypes(targetedConnectionTypes);
             targetingBuilder.setTabletTargeting(tabletTargeting);
-            targetingBuilder.setExchangeSpecificPMPDealIdInfo(pmpDealIdJson,targetingGuid);
+            targetingBuilder.setExchangeSpecificPMPDealIdInfo(pmpDealIdJson, targetingGuid);
             targetingBuilder.setDeviceTypeTargetingArray(deviceTypeArray);
             targetingBuilder.setTPExt(targetingExt);
             targetingBuilder.setLatLonFileIdArray(latLonFileIdArray);
             targetingBuilder.setUserIdInclusionExclusionType(InclusionExclusionType.getEnum(userIdInclusionExclusion));
             targetingBuilder.setLatLonRadiusUnit(lat_lon_radius_unit);
+            targetingBuilder.setAudienceIds(audienceIds);
+            targetingBuilder.setAudienceType(audienceType);
 
             if(retargeting != null){
                 String tmp_retargeting = retargeting.trim();

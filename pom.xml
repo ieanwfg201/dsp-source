@@ -166,6 +166,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>common_caches/banner_upload_cache</module>
     <module>common_caches/advinfo_upload_cache</module>
     <module>common_caches/adxbasedexchanges_metadata_cache</module>
+      <module>common_caches/audience_cache</module>
     <module>adserving/mopub_req_enricher_2.3</module>
     <module>adserving/enricher_req_cloudcross_4_4_4</module>
     <module>adserving/youku_req_res_enricher</module>
