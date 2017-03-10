@@ -1,0 +1,4 @@
+# agg_uu_daily.job
+
+type=command
+command=bash agg_uu_daily.sh '${kritter_first_level_code_path}' '${pig_home}' "${input_path}" '${OUTPUT}' '${rolluptype}' 

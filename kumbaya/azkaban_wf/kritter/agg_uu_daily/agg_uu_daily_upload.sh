@@ -1,5 +1,8 @@
 #!/bin/sh
 
+
+
+
 process_time="${11}"
 process_time_dir="${12}"
 echo "{\"process_time\":\"${process_time}\",\"process_time_dir\":\"${process_time_dir}\"}" >> $JOB_OUTPUT_PROP_FILE
@@ -20,7 +23,7 @@ done
 
 MAINCLASS=com.kritter.kumbaya.libraries.data_loader.LoadData
 
-filepath=${2}/ad_stat/part*
+filepath=${2}/usercount.txt
 tablename=${3}
 delimiter=${4}
 dbhost=${5}
@@ -30,11 +33,14 @@ dbname=${8}
 dbport=${9}
 dbtype=${10}
 processing_time=${11}
+limitedtablename=${13}
 
-if [ "$13" = "true" ]; then
-    mkdir -p ${14}
-    echo 'java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
-    java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
-    exit $?
-    touch ${14}/ad_stat__${process_time_dir}
+
+if [ "${process_time_dir}" != "" ]; then
+
+    echo 'java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
+    java  -cp "$CLASSPATH" $MAINCLASS ${filepath} ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
+
+exit $?
+
 fi

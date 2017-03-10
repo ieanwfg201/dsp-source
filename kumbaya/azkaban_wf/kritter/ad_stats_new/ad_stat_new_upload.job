@@ -1,5 +1,5 @@
 #ad_stat_new__upload.job
 type=command
 dependencies=ad_stat_new_pig
-command=sh ad_stat_new_upload.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${central_dc}
+command=sh ad_stat_new_upload.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${central_dc} ${file_journal_path}
 

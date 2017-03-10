@@ -37,6 +37,7 @@ fraudevent=${2}/fraud/part*
 
 if [ "$13" = "true" ]; then
 
+mkdir -p ${14}
 echo 'java  -cp "$CLASSPATH" $MAINCLASS "${fraudevent}" ${fraudtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
 java  -cp "$CLASSPATH" $MAINCLASS "${fraudevent}" ${fraudtablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
 
@@ -47,7 +48,7 @@ echo 'java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} 
 
 java  -cp "$CLASSPATH" $MAINCLASS "${filepath}" ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
 
-
+touch ${14}/first_level__${process_time_dir}
 exit $?
 
 fi

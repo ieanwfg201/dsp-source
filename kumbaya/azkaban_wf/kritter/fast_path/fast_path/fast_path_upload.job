@@ -1,6 +1,6 @@
 #fast_path_upload.job
 type=command
 dependencies=fast_path_pig
-command=sh fast_path_upload.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${central_dc}
+command=sh fast_path_upload.sh ${loader_code_path} ${OUTPUT}/'${process_time_dir}' ${tablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname} ${dbport} ${dbtype} '${process_time}' '${process_time_dir}' ${central_dc} ${file_journal_path}
 
 

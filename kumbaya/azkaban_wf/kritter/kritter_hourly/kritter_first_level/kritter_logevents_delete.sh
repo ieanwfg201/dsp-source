@@ -1,5 +1,10 @@
 #!/bin/sh
 
+process_time="${12}"
+process_time_dir="${13}"
+echo "{\"process_time\":\"${process_time}\",\"process_time_dir\":\"${process_time_dir}\"}" >> $JOB_OUTPUT_PROP_FILE
+
+
 
 cd ${1}
 
