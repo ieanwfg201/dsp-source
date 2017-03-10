@@ -3,7 +3,6 @@
 process_time="${6}"
 process_time_dir="${7}"
 
-'${kritter_first_level_code_path}' '${pig_home}' "${postimp_readytoprocess_path}"/"${process_time_dir}" '${OUTPUT}'/'${process_time_dir}' '${thrift_jar_path}' '${process_time}' '${process_time_dir}' '${tz}'
 
 echo "{\"process_time\":\"${process_time}\",\"process_time_dir\":\"${process_time_dir}\"}" >> $JOB_OUTPUT_PROP_FILE
 
