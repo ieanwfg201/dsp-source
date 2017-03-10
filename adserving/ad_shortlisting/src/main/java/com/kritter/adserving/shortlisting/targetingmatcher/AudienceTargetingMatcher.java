@@ -81,15 +81,15 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
 
             //struct : {inc: [audience_id], excl: [audience_id]}
-            String audienceIds = targetingProfile.getAudienceIds();
+            String audienceIncExcIds = targetingProfile.getAudienceIds();
             Integer audienceType = targetingProfile.getAudienceType();
 
             //no audience targeting
-            if (audienceIds == null || audienceIds.trim().length() == 0 || audienceType == null) {
+            if (audienceIncExcIds == null || audienceIncExcIds.trim().length() == 0 || audienceType == null) {
                 continue;
             }
 
-            Map<String, List<Integer>> ids = JSON.parseObject(audienceIds, Map.class);
+            Map<String, List<Integer>> ids = JSON.parseObject(audienceIncExcIds, Map.class);
 
             List<Integer> incList = ids.get("inc");
             if (incList == null || incList.size() == 0) {
@@ -220,7 +220,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             } else if (audienceType == AUDIENCE_TYPE_PACKAGE) {
                 //audience package
 
-                String audienceId = getAudience(request, audienceCodeProperties);
+                String audienceId = getAudience(request, audiencePackageProperties);
 
                 if (audienceId == null) {
                     ReqLog.debugWithDebugNew(this.logger, request, "device id not exist : {}", request.getUserId());
