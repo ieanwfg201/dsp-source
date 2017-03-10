@@ -25,7 +25,6 @@ public class ExportHbaseDataToFile {
 
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(ExportHbaseDataToFile.class);
     private static final org.apache.logging.log4j.Logger LOG_HBASE_DATA_WRITE_TO_FILE = LogManager.getLogger("hbaseToFileLogger");
-    private static final org.apache.logging.log4j.Logger LOG_LASTMODIFY = LogManager.getLogger("lastModifyLogger");
 
     // 声明静态配置
     private static Configuration conf = null;
@@ -125,7 +124,6 @@ public class ExportHbaseDataToFile {
             writeToLocalFile();
             asSet.clear();
             LOG.debug("write local file done.");
-            writeLastModifyToFile();
             closeHbaseConnetion();
         } catch (Exception e) {
             LOG.debug("main ERROR:", e);
@@ -269,12 +267,6 @@ public class ExportHbaseDataToFile {
             LOG.error("read last modify file ERROR:", e);
         }
         LOG.debug("end read last modify file.");
-    }
-
-    private static void writeLastModifyToFile() {
-        LOG.debug("begin write last modify file.");
-        LOG_LASTMODIFY.info(newLastModify);
-        LOG.debug("end write last modify file.");
     }
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
-        <Property name="LOG_HOME">/var/log/kritter/hbase//logs</Property>
+        <Property name="LOG_HOME">/var/log/kritter/hbase/logs</Property>
         <Property name="HBASE_TO_FILE_HOME">/var/log/kritter/hbase//logs/data</Property>
     </Properties>
 
@@ -41,7 +41,7 @@
     </Appenders>
 
     <Loggers>
-        <Root level="DEBUG" includeLocation="false">
+        <Root level="INFO" includeLocation="false">
             <AppenderRef ref="hbase_loadser"/>
         </Root>
         <Logger name="hbaseToFileLogger" level="info" additivity="false">
