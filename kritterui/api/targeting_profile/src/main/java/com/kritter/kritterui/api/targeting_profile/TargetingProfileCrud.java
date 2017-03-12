@@ -15,7 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.core.config.json.JsonConfiguration;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -40,39 +43,36 @@ import com.kritter.kritterui.api.db_query_def.Targeting_Profile;
 import com.kritter.utils.uuid.mac.SingletonUUIDGenerator;
 
 public class TargetingProfileCrud {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(TargetingProfileCrud.class);
-    
+
     private static String new_format_direct_supply_source = "{}";
     private static String new_format_exchange_supply_source = "{}";
-    
 
-    public static Targeting_profile getTargetingProfileUseRawCountryJson(String guid,Connection connection)
-    {
+
+    public static Targeting_profile getTargetingProfileUseRawCountryJson(String guid, Connection connection) {
         PreparedStatement pstmt = null;
         Targeting_profile targeting_profile = null;
 
         try {
             pstmt = connection.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.get_targeting_profile);
-            pstmt.setString(1,guid);
+            pstmt.setString(1, guid);
             ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next())
-            {
+            while (rs.next()) {
                 targeting_profile = new Targeting_profile();
-                populateWithRawCountryJson(targeting_profile,rs,true);
+                populateWithRawCountryJson(targeting_profile, rs, true);
                 return targeting_profile;
             }
-        }
-        catch(Exception e){
-            LOG.error(e.getMessage(),e);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             return null;
-        }finally{
-            if(pstmt != null){
+        } finally {
+            if (pstmt != null) {
                 try {
                     pstmt.close();
                 } catch (SQLException e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
         }
@@ -80,20 +80,20 @@ public class TargetingProfileCrud {
         return null;
     }
 
-    public static String create_country_entity_list_from_country_ids(String country_code_list, Connection con){
-        if(country_code_list != null && con != null && !country_code_list.equals("[]") && !country_code_list.equals("{}")){
+    public static String create_country_entity_list_from_country_ids(String country_code_list, Connection con) {
+        if (country_code_list != null && con != null && !country_code_list.equals("[]") && !country_code_list.equals("{}")) {
             String tmp_country_code_list = country_code_list.replaceAll("\\[", "").replaceAll("]", "");
             PreparedStatement pstmt = null;
-            try{
+            try {
                 pstmt = con.prepareStatement(Targeting_Profile.convert_country_id_to_entity.replaceAll("<id>", tmp_country_code_list));
                 ResultSet rset = pstmt.executeQuery();
                 StringBuffer sBuff = new StringBuffer("");
                 boolean isFirst = true;
                 sBuff.append("{");
-                while(rset.next()){
-                    if(isFirst){
+                while (rset.next()) {
+                    if (isFirst) {
                         isFirst = false;
-                    }else{
+                    } else {
                         sBuff.append(",");
                     }
                     sBuff.append("\"");
@@ -103,34 +103,35 @@ public class TargetingProfileCrud {
                 }
                 sBuff.append("}");
                 return sBuff.toString();
-            }catch(Exception e){
-                LOG.error(e.getMessage(),e);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
                 return "{}";
-            }finally{
-                if(pstmt != null){
+            } finally {
+                if (pstmt != null) {
                     try {
                         pstmt.close();
                     } catch (SQLException e) {
-                        LOG.error(e.getMessage(),e);
+                        LOG.error(e.getMessage(), e);
                     }
                 }
             }
         }
         return "{}";
     }
-    public static String create_isp_entity_list_from_ids(String is_ui_name_list, Connection con){
-        if(is_ui_name_list != null && con != null && !is_ui_name_list.equals("[]") && !is_ui_name_list.equals("{}")){
+
+    public static String create_isp_entity_list_from_ids(String is_ui_name_list, Connection con) {
+        if (is_ui_name_list != null && con != null && !is_ui_name_list.equals("[]") && !is_ui_name_list.equals("{}")) {
             String tmp_is_ui_name_list = is_ui_name_list.replaceAll("\\[", "").replaceAll("]", "");
             PreparedStatement pstmt = null;
-            try{
+            try {
                 pstmt = con.prepareStatement(Targeting_Profile.convert_isp_ids_to_entity.replaceAll("<id>", tmp_is_ui_name_list));
                 ResultSet rset = pstmt.executeQuery();
                 StringBuffer sBuff = new StringBuffer("{");
                 boolean isFirst = true;
-                while(rset.next()){
-                    if(isFirst){
+                while (rset.next()) {
+                    if (isFirst) {
                         isFirst = false;
-                    }else{
+                    } else {
                         sBuff.append(",");
                     }
                     sBuff.append("\"");
@@ -140,48 +141,49 @@ public class TargetingProfileCrud {
                 }
                 sBuff.append("}");
                 return sBuff.toString();
-            }catch(Exception e){
-                LOG.error(e.getMessage(),e);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
                 return "{}";
-            }finally{
-                if(pstmt != null){
+            } finally {
+                if (pstmt != null) {
                     try {
                         pstmt.close();
                     } catch (SQLException e) {
-                        LOG.error(e.getMessage(),e);
+                        LOG.error(e.getMessage(), e);
                     }
                 }
             }
         }
         return "{}";
     }
-    private static String generateLocationJson_from_id_list(String strIn){
-        if(strIn != null ){
+
+    private static String generateLocationJson_from_id_list(String strIn) {
+        if (strIn != null) {
             String str = strIn.trim().replaceAll("\\[", "").replaceAll("]", "");
-            if("".equals(str) || "[]".equals(str) || "[all]".equalsIgnoreCase(str)
-            		|| "[none]".equalsIgnoreCase(str)){
-            	return "{}";
+            if ("".equals(str) || "[]".equals(str) || "[all]".equalsIgnoreCase(str)
+                    || "[none]".equalsIgnoreCase(str)) {
+                return "{}";
             }
             StringBuffer sBuff = new StringBuffer("{");
-            boolean isFirst=true;
+            boolean isFirst = true;
             String split[] = str.split(",");
-            for(String s:split){
-            	String sTrim=s.trim();
-            	if(!"".equals(sTrim)){
-            		try{
-            			Integer i = Integer.parseInt(sTrim);
-            			if(isFirst){
-            				isFirst=false;
-            			}else{
-            				sBuff.append(",");
-            			}
-            			sBuff.append("\"");
-            			sBuff.append(i);
-            			sBuff.append("\":[]");
-            		}catch(Exception e){
-            			LOG.error(e.getMessage(),e);
-            		}
-            	}
+            for (String s : split) {
+                String sTrim = s.trim();
+                if (!"".equals(sTrim)) {
+                    try {
+                        Integer i = Integer.parseInt(sTrim);
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            sBuff.append(",");
+                        }
+                        sBuff.append("\"");
+                        sBuff.append(i);
+                        sBuff.append("\":[]");
+                    } catch (Exception e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
             }
             sBuff.append("}");
             return sBuff.toString();
@@ -189,48 +191,49 @@ public class TargetingProfileCrud {
         return "{}";
     }
 
-    public static String create_id_list(String inputStr){
-        if(inputStr != null && !inputStr.trim().equals("")){
+    public static String create_id_list(String inputStr) {
+        if (inputStr != null && !inputStr.trim().equals("")) {
             StringBuffer sbuff = new StringBuffer("[");
             ObjectMapper mapper = new ObjectMapper();
             try {
-                JsonNode node = mapper.readValue(inputStr,JsonNode.class);
+                JsonNode node = mapper.readValue(inputStr, JsonNode.class);
                 Iterator<String> itr = node.getFieldNames();
                 boolean isFirst = true;
-                while(itr.hasNext()){
+                while (itr.hasNext()) {
                     String childnode = itr.next();
-                    if(isFirst){
+                    if (isFirst) {
                         isFirst = false;
-                    }else{
+                    } else {
                         sbuff.append(",");
                     }
                     sbuff.append(childnode);
                 }
-                
+
             } catch (Exception e) {
-                LOG.error(e.getMessage(),e);
+                LOG.error(e.getMessage(), e);
             }
             sbuff.append("]");
             return sbuff.toString();
         }
         return "[]";
     }
-    private static String ui_to_db_file_set(String incoming){
-        if(incoming == null){ 
+
+    private static String ui_to_db_file_set(String incoming) {
+        if (incoming == null) {
             return "[]";
         }
         String incomingTrim = incoming.trim();
-        if(incomingTrim.equals("") || incomingTrim.equals("[]")){
+        if (incomingTrim.equals("") || incomingTrim.equals("[]")) {
             return "[]";
         }
-        
+
         String incomingSplit[] = incomingTrim.split(",");
         StringBuffer sbuff = new StringBuffer("[");
         boolean isFirst = true;
-        for(String str:incomingSplit){
-            if(isFirst){
-                isFirst=false;
-            }else{
+        for (String str : incomingSplit) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
                 sbuff.append(",");
             }
             sbuff.append("\"");
@@ -240,219 +243,229 @@ public class TargetingProfileCrud {
         sbuff.append("]");
         return sbuff.toString();
     }
-    private static boolean checkRename(String incoming){
-    	if(incoming == null){ 
+
+    private static boolean checkRename(String incoming) {
+        if (incoming == null) {
             return false;
         }
         String incomingTrim = incoming.trim().replaceAll("]", "").replaceAll("\\[", "");
-        if(incomingTrim.equals("")){
+        if (incomingTrim.equals("")) {
             return false;
         }
         String incomingSplit[] = incomingTrim.split(",");
-        if(incomingSplit.length>0){
-            for(String str:incomingSplit){
-            	String sTrim = str.trim();
-            	if(!"".equals(sTrim)){
-            		String filePathSplit[] = sTrim.split("/");
-            		if(filePathSplit.length>1){
-            			String fName=filePathSplit[filePathSplit.length-1].trim();
-            			if(!"".equals(fName) && !fName.startsWith("tpuidincexc")){
-            				return true;
-            			}
-            		}	
-            	}
-            }        	
+        if (incomingSplit.length > 0) {
+            for (String str : incomingSplit) {
+                String sTrim = str.trim();
+                if (!"".equals(sTrim)) {
+                    String filePathSplit[] = sTrim.split("/");
+                    if (filePathSplit.length > 1) {
+                        String fName = filePathSplit[filePathSplit.length - 1].trim();
+                        if (!"".equals(fName) && !fName.startsWith("tpuidincexc")) {
+                            return true;
+                        }
+                    }
+                }
+            }
         }
-    	return false;
-    	
+        return false;
+
     }
-    private static String renameDeviceidfile(String incoming,String accountGuid,String pathPrefix,int tpId){
-        if(incoming == null || pathPrefix==null || accountGuid==null ){ 
+
+    private static String renameDeviceidfile(String incoming, String accountGuid, String pathPrefix, int tpId) {
+        if (incoming == null || pathPrefix == null || accountGuid == null) {
             return incoming;
         }
         String incomingTrim = incoming.trim().replaceAll("]", "").replaceAll("\\[", "");
-        if(incomingTrim.equals("")){
+        if (incomingTrim.equals("")) {
             return incomingTrim;
         }
         String incomingSplit[] = incomingTrim.split(",");
-        StringBuffer  outGoingBuff = new StringBuffer("[");
-        boolean isFirst=true;
-        for(String str:incomingSplit){
-        	String sTrim = str.trim();
-        	if(!"".equals(sTrim)){
-        		String filePathSplit[] = sTrim.split("/");
-        		if(filePathSplit.length>1){
-        			String fName=filePathSplit[filePathSplit.length-1].trim();
-        			if(isFirst){
-        				isFirst=false;
-        			}else{
-        				outGoingBuff.append(",");
-        			}
-        			if(!"".equals(fName) && !fName.startsWith("tpuidincexc")){
-        				try{
-        					File f = new File(pathPrefix+"/targeting/geo/deviceid_file/"+accountGuid+"/"+fName);
-        					if(f.exists()){
-        						String pathSuffix = "/targeting/geo/deviceid_file/"+accountGuid+"/"+"tpuidincexc_"+fName.substring(0, fName.indexOf("csv")-1)+"_"+tpId+"_"+(new Date()).getTime()+".csv";
-        						String fNewPath = pathPrefix+pathSuffix;
-        						File fNew = new File(fNewPath);
-        						f.renameTo(fNew);
-                				outGoingBuff.append("\"");
-                				outGoingBuff.append(pathSuffix);
-                				outGoingBuff.append("\"");
-        					}
-        				}catch(Exception e){
-        					LOG.error(e.getMessage(),e);
-        				}
-        			}else{
-        				outGoingBuff.append("\"");
-        				outGoingBuff.append(sTrim);
-        				outGoingBuff.append("\"");
-        			}
-        		}
-        	}
+        StringBuffer outGoingBuff = new StringBuffer("[");
+        boolean isFirst = true;
+        for (String str : incomingSplit) {
+            String sTrim = str.trim();
+            if (!"".equals(sTrim)) {
+                String filePathSplit[] = sTrim.split("/");
+                if (filePathSplit.length > 1) {
+                    String fName = filePathSplit[filePathSplit.length - 1].trim();
+                    if (isFirst) {
+                        isFirst = false;
+                    } else {
+                        outGoingBuff.append(",");
+                    }
+                    if (!"".equals(fName) && !fName.startsWith("tpuidincexc")) {
+                        try {
+                            File f = new File(pathPrefix + "/targeting/geo/deviceid_file/" + accountGuid + "/" + fName);
+                            if (f.exists()) {
+                                String pathSuffix = "/targeting/geo/deviceid_file/" + accountGuid + "/" + "tpuidincexc_" + fName.substring(0, fName.indexOf("csv") - 1) + "_" + tpId + "_" + (new Date()).getTime() + ".csv";
+                                String fNewPath = pathPrefix + pathSuffix;
+                                File fNew = new File(fNewPath);
+                                f.renameTo(fNew);
+                                outGoingBuff.append("\"");
+                                outGoingBuff.append(pathSuffix);
+                                outGoingBuff.append("\"");
+                            }
+                        } catch (Exception e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    } else {
+                        outGoingBuff.append("\"");
+                        outGoingBuff.append(sTrim);
+                        outGoingBuff.append("\"");
+                    }
+                }
+            }
         }
         outGoingBuff.append("]");
         return outGoingBuff.toString();
     }
-    private static String db_to_ui_file_set(String outgoing){
-        if(outgoing == null){
+
+    private static String db_to_ui_file_set(String outgoing) {
+        if (outgoing == null) {
             return "";
         }
         String outgoingTrim = outgoing.trim();
-        if("".equals(outgoingTrim)){
-        	return "";
+        if ("".equals(outgoingTrim)) {
+            return "";
         }
         return outgoingTrim.replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
     }
-    private static void lat_lon_r(Targeting_profile tp, String str){
-        if(tp == null || str == null ){
+
+    private static void lat_lon_r(Targeting_profile tp, String str) {
+        if (tp == null || str == null) {
             return;
         }
         String str_trim = str.trim();
-        if("".equals(str_trim) || "[]".equals(str_trim)){
+        if ("".equals(str_trim) || "[]".equals(str_trim)) {
             return;
         }
         ObjectMapper mapper = new ObjectMapper();
         try {
-            ArrayNode node = mapper.readValue(str,ArrayNode.class);
+            ArrayNode node = mapper.readValue(str, ArrayNode.class);
             StringBuffer sBuff = new StringBuffer("");
-            for(int i =0 ;i<node.size();i++){
+            for (int i = 0; i < node.size(); i++) {
                 JsonNode jsonNode = node.get(i);
                 double lat = 0.0;
                 double lon = 0.0;
                 double r = 0.0;
-                if(i!=0){
+                if (i != 0) {
                     sBuff.append("\n");
                 }
                 lat = jsonNode.path("lat").getDoubleValue();
                 lon = jsonNode.path("lon").getDoubleValue();
                 r = jsonNode.path("r").getDoubleValue();
-                sBuff.append(lat);sBuff.append(",");sBuff.append(lon);sBuff.append(",");sBuff.append(r);
+                sBuff.append(lat);
+                sBuff.append(",");
+                sBuff.append(lon);
+                sBuff.append(",");
+                sBuff.append(r);
             }
             tp.setLat_long(sBuff.toString());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-        } 
+        }
     }
-    private static String generateDirectSites(Targeting_profile tp){
+
+    private static String generateDirectSites(Targeting_profile tp) {
         StringBuffer new_format_sbuff = new StringBuffer("");
-        if(tp == null){
-            new_format_direct_supply_source ="{}";
+        if (tp == null) {
+            new_format_direct_supply_source = "{}";
             return "{}";
         }
 /*        || tp.getSite_list() ==null || "".equals(tp.getSite_list())
                 || "[]".equals(tp.getSite_list()) || "[\"all\"]".equalsIgnoreCase(tp.getSite_list())){
             
         }*/
-        if(tp.getSupply_source() == SupplySourceEnum.EXCHANGE){
-            new_format_direct_supply_source ="{}";
+        if (tp.getSupply_source() == SupplySourceEnum.EXCHANGE) {
+            new_format_direct_supply_source = "{}";
             return "{}";
         }
         StringBuffer sbuff = new StringBuffer("");
         boolean isFirst = true;
         HashMap<String, LinkedList<String>> keyval = new HashMap<String, LinkedList<String>>();
-        if(tp.getSite_list() != null && !"".equals(tp.getSite_list())
-                && !"[]".equals(tp.getSite_list()) && !"[\"all\"]".equalsIgnoreCase(tp.getSite_list())){
-            String incoming = tp.getSite_list().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", ""); 
+        if (tp.getSite_list() != null && !"".equals(tp.getSite_list())
+                && !"[]".equals(tp.getSite_list()) && !"[\"all\"]".equalsIgnoreCase(tp.getSite_list())) {
+            String incoming = tp.getSite_list().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
             String[] firstLevelSplit = incoming.split(",");
-            for(String firstLevel:firstLevelSplit){
+            for (String firstLevel : firstLevelSplit) {
                 String[] secondLevelSplit = firstLevel.split("\\|");
-                if(secondLevelSplit.length>1){
-                    if(keyval.get(secondLevelSplit[0]) == null){
+                if (secondLevelSplit.length > 1) {
+                    if (keyval.get(secondLevelSplit[0]) == null) {
                         LinkedList<String> ll = new LinkedList<String>();
                         ll.add(secondLevelSplit[1]);
                         keyval.put(secondLevelSplit[0], ll);
-                    }else{
+                    } else {
                         keyval.get(secondLevelSplit[0]).add(secondLevelSplit[1]);
                     }
                 }
             }
         }
-        if(tp.getPub_list() != null && !"".equals(tp.getPub_list())
-                && !"[]".equals(tp.getPub_list()) && !"[\"all\"]".equalsIgnoreCase(tp.getPub_list())){
-            String incomingPub = tp.getPub_list().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", ""); 
+        if (tp.getPub_list() != null && !"".equals(tp.getPub_list())
+                && !"[]".equals(tp.getPub_list()) && !"[\"all\"]".equalsIgnoreCase(tp.getPub_list())) {
+            String incomingPub = tp.getPub_list().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
             String[] pubFirstLevelSplit = incomingPub.split(",");
-            for(String firstLevel:pubFirstLevelSplit){
-                if(!"".equals(firstLevel) && keyval.get(firstLevel) == null){
+            for (String firstLevel : pubFirstLevelSplit) {
+                if (!"".equals(firstLevel) && keyval.get(firstLevel) == null) {
                     keyval.put(firstLevel, new LinkedList<String>());
                 }
             }
         }
-        
-        for(String key:keyval.keySet()){
-            if(isFirst){
-                isFirst=false;
+
+        for (String key : keyval.keySet()) {
+            if (isFirst) {
+                isFirst = false;
                 sbuff.append("{");
                 new_format_sbuff.append("{");
-            }else{
+            } else {
                 sbuff.append(",");
                 new_format_sbuff.append(",");
             }
-            sbuff.append("\""+key+"\":[");
-            new_format_sbuff.append("\""+key+"\":{");
+            sbuff.append("\"" + key + "\":[");
+            new_format_sbuff.append("\"" + key + "\":{");
             LinkedList<String> ll = keyval.get(key);
-            boolean llisFirst=true;
-            for(String val:ll){
-                if(llisFirst){
-                    llisFirst=false;
-                }else{
+            boolean llisFirst = true;
+            for (String val : ll) {
+                if (llisFirst) {
+                    llisFirst = false;
+                } else {
                     new_format_sbuff.append(",");
                     sbuff.append(",");
                 }
-                new_format_sbuff.append("\""+val+"\":[]");
+                new_format_sbuff.append("\"" + val + "\":[]");
                 sbuff.append(val);
             }
             new_format_sbuff.append("}");
             sbuff.append("]");
         }
-        if(!isFirst){
+        if (!isFirst) {
             new_format_sbuff.append("}");
             sbuff.append("}");
         }
-        new_format_direct_supply_source= new_format_sbuff.toString();
+        new_format_direct_supply_source = new_format_sbuff.toString();
         return sbuff.toString();
     }
-    private static String generateExtSupplyAttr(Targeting_profile tp){
-        if(tp == null){
+
+    private static String generateExtSupplyAttr(Targeting_profile tp) {
+        if (tp == null) {
             return "";
         }
         /*if(tp == null || tp.getExt_supply_attributes() ==null || "".equals(tp.getExt_supply_attributes())
                 || "[]".equals(tp.getExt_supply_attributes()) || "[\"all\"]".equalsIgnoreCase(tp.getExt_supply_attributes())){
             return "";
         }*/
-        if(tp.getSupply_source() == SupplySourceEnum.NETWORK){
+        if (tp.getSupply_source() == SupplySourceEnum.NETWORK) {
             return "{}";
         }
-        HashMap<String, HashMap<String, LinkedList<HashMap<String, Integer>>>> keyval = new HashMap<String, HashMap<String,LinkedList<HashMap<String, Integer>>>>();
-        if(tp.getExt_supply_attributes() !=null &&  !"".equals(tp.getExt_supply_attributes())
-                && !"[]".equals(tp.getExt_supply_attributes()) && !"[\"all\"]".equalsIgnoreCase(tp.getExt_supply_attributes())){
-           
-            String incoming = tp.getExt_supply_attributes().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", ""); 
+        HashMap<String, HashMap<String, LinkedList<HashMap<String, Integer>>>> keyval = new HashMap<String, HashMap<String, LinkedList<HashMap<String, Integer>>>>();
+        if (tp.getExt_supply_attributes() != null && !"".equals(tp.getExt_supply_attributes())
+                && !"[]".equals(tp.getExt_supply_attributes()) && !"[\"all\"]".equalsIgnoreCase(tp.getExt_supply_attributes())) {
+
+            String incoming = tp.getExt_supply_attributes().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
             String[] firstLevelSplit = incoming.split(",");
-            for(String firstLevel:firstLevelSplit){
+            for (String firstLevel : firstLevelSplit) {
                 String[] secondLevelSplit = firstLevel.split("\\|");
-                if(secondLevelSplit.length>2){
-                    if(keyval.get(secondLevelSplit[0]) == null){
+                if (secondLevelSplit.length > 2) {
+                    if (keyval.get(secondLevelSplit[0]) == null) {
                         HashMap<String, Integer> lowest = new HashMap<String, Integer>();
                         lowest.put("intid", Integer.parseInt(secondLevelSplit[2]));
                         LinkedList<HashMap<String, Integer>> ll = new LinkedList<HashMap<String, Integer>>();
@@ -460,15 +473,15 @@ public class TargetingProfileCrud {
                         HashMap<String, LinkedList<HashMap<String, Integer>>> hm = new HashMap<String, LinkedList<HashMap<String, Integer>>>();
                         hm.put(secondLevelSplit[1], ll);
                         keyval.put(secondLevelSplit[0], hm);
-                    }else {
-                        if(keyval.get(secondLevelSplit[0]).get(secondLevelSplit[1]) == null){
+                    } else {
+                        if (keyval.get(secondLevelSplit[0]).get(secondLevelSplit[1]) == null) {
                             HashMap<String, LinkedList<HashMap<String, Integer>>> hm = keyval.get(secondLevelSplit[0]);
                             HashMap<String, Integer> lowest = new HashMap<String, Integer>();
                             lowest.put("intid", Integer.parseInt(secondLevelSplit[2]));
                             LinkedList<HashMap<String, Integer>> ll = new LinkedList<HashMap<String, Integer>>();
                             ll.add(lowest);
                             hm.put(secondLevelSplit[1], ll);
-                        }else{
+                        } else {
                             HashMap<String, Integer> lowest = new HashMap<String, Integer>();
                             lowest.put("intid", Integer.parseInt(secondLevelSplit[2]));
                             keyval.get(secondLevelSplit[0]).get(secondLevelSplit[1]).add(lowest);
@@ -477,12 +490,12 @@ public class TargetingProfileCrud {
                 }
             }
         }
-        if(tp.getExchange_list() !=null &&  !"".equals(tp.getExchange_list())
-                && !"[]".equals(tp.getExchange_list()) && !"[\"all\"]".equalsIgnoreCase(tp.getExchange_list())){
-            String incoming = tp.getExchange_list().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", ""); 
+        if (tp.getExchange_list() != null && !"".equals(tp.getExchange_list())
+                && !"[]".equals(tp.getExchange_list()) && !"[\"all\"]".equalsIgnoreCase(tp.getExchange_list())) {
+            String incoming = tp.getExchange_list().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
             String[] firstLevelSplit = incoming.split(",");
-            for(String firstLevel:firstLevelSplit){
-                if(!"".equals(firstLevel) && keyval.get(firstLevel)==null){
+            for (String firstLevel : firstLevelSplit) {
+                if (!"".equals(firstLevel) && keyval.get(firstLevel) == null) {
                     HashMap<String, LinkedList<HashMap<String, Integer>>> hm = new HashMap<String, LinkedList<HashMap<String, Integer>>>();
                     keyval.put(firstLevel, hm);
                 }
@@ -493,78 +506,81 @@ public class TargetingProfileCrud {
         new_format_exchange_supply_source = jsonNode.toString();
         return new_format_exchange_supply_source;
     }
-    private static String generateSupply_inc_exc(Targeting_profile tp){
-        if(tp == null){
+
+    private static String generateSupply_inc_exc(Targeting_profile tp) {
+        if (tp == null) {
             return "{}";
         }
         return generateSupply_inc_exc(tp.getDirect_supply_inc_exc(), tp.getExchange_supply_inc_exc());
     }
-    private static String generateSupply_inc_exc(String directSupply, String exchangeSupply){
+
+    private static String generateSupply_inc_exc(String directSupply, String exchangeSupply) {
         String directSupplyTmp = null;
-        if(directSupply != null){
+        if (directSupply != null) {
             directSupplyTmp = directSupply.trim();
         }
         String exchangeSupplyTmp = null;
-        if(exchangeSupply != null){
+        if (exchangeSupply != null) {
             exchangeSupplyTmp = exchangeSupply.trim();
         }
-        if((directSupplyTmp == null || "".equals(directSupplyTmp) || "[]".equals(directSupplyTmp)) 
-                && 
-                (exchangeSupplyTmp == null || "".equals(exchangeSupplyTmp) || "[]".equals(exchangeSupplyTmp))){
+        if ((directSupplyTmp == null || "".equals(directSupplyTmp) || "[]".equals(directSupplyTmp))
+                &&
+                (exchangeSupplyTmp == null || "".equals(exchangeSupplyTmp) || "[]".equals(exchangeSupplyTmp))) {
             return "{}";
         }
-        if(directSupplyTmp == null || "".equals(directSupplyTmp) || "[]".equals(directSupplyTmp)){
-            return "{\"2\":"+exchangeSupply+"}";
+        if (directSupplyTmp == null || "".equals(directSupplyTmp) || "[]".equals(directSupplyTmp)) {
+            return "{\"2\":" + exchangeSupply + "}";
         }
-        if(exchangeSupplyTmp == null || "".equals(exchangeSupplyTmp) || "[]".equals(exchangeSupplyTmp)){
-            return "{\"1\":"+directSupplyTmp+"}";
+        if (exchangeSupplyTmp == null || "".equals(exchangeSupplyTmp) || "[]".equals(exchangeSupplyTmp)) {
+            return "{\"1\":" + directSupplyTmp + "}";
         }
-        return "{\"2\":"+exchangeSupplyTmp+",\"1\":"+directSupplyTmp+"}";
+        return "{\"2\":" + exchangeSupplyTmp + ",\"1\":" + directSupplyTmp + "}";
     }
-    private static void populateExtSupplyAttr(Targeting_profile tp, String str){
-        if(tp == null || str == null || "".equals(str) || "[]".equals(str)){
+
+    private static void populateExtSupplyAttr(Targeting_profile tp, String str) {
+        if (tp == null || str == null || "".equals(str) || "[]".equals(str)) {
             tp.setExt_supply_attributes("[]");
             tp.setExchange_list("[]");
             return;
         }
-        if(str != null && !str.trim().equals("")){
+        if (str != null && !str.trim().equals("")) {
             StringBuffer sbuff = new StringBuffer("[");
             StringBuffer exchangeSbuff = new StringBuffer("[");
             ObjectMapper mapper = new ObjectMapper();
             try {
-                JsonNode node = mapper.readValue(str,JsonNode.class);
-                Iterator<java.util.Map.Entry<String,JsonNode>> itr = node.getFields();
+                JsonNode node = mapper.readValue(str, JsonNode.class);
+                Iterator<java.util.Map.Entry<String, JsonNode>> itr = node.getFields();
                 boolean isFirst = true;
                 boolean exchangeIsFirst = true;
-                while(itr.hasNext()){
-                    java.util.Map.Entry<String,JsonNode> firstLeveldnode = itr.next();
+                while (itr.hasNext()) {
+                    java.util.Map.Entry<String, JsonNode> firstLeveldnode = itr.next();
                     String key = firstLeveldnode.getKey();
-                    if(exchangeIsFirst){
-                        exchangeIsFirst=false;
-                    }else{
+                    if (exchangeIsFirst) {
+                        exchangeIsFirst = false;
+                    } else {
                         exchangeSbuff.append(",");
                     }
                     exchangeSbuff.append(key);
                     JsonNode secondlevelnode = firstLeveldnode.getValue();
-                    Iterator<java.util.Map.Entry<String,JsonNode>> thirdlevelnode = secondlevelnode.getFields();
-                    while(thirdlevelnode.hasNext()){
-                        java.util.Map.Entry<String,JsonNode> fourthLevel = thirdlevelnode.next();
-                        String siteKey=fourthLevel.getKey();
+                    Iterator<java.util.Map.Entry<String, JsonNode>> thirdlevelnode = secondlevelnode.getFields();
+                    while (thirdlevelnode.hasNext()) {
+                        java.util.Map.Entry<String, JsonNode> fourthLevel = thirdlevelnode.next();
+                        String siteKey = fourthLevel.getKey();
                         JsonNode fifthlevelnode = fourthLevel.getValue();
-                        Iterator<JsonNode> sixthlevel =  fifthlevelnode.getElements();
-                        while(sixthlevel.hasNext()){
+                        Iterator<JsonNode> sixthlevel = fifthlevelnode.getElements();
+                        while (sixthlevel.hasNext()) {
                             JsonNode seventhlevel = sixthlevel.next();
-                            if(isFirst){
-                                isFirst=false;
-                            }else{
+                            if (isFirst) {
+                                isFirst = false;
+                            } else {
                                 sbuff.append(",");
                             }
-                            sbuff.append("\""+key+"|"+siteKey+"|"+seventhlevel.get("intid").getValueAsText()+"\"");
+                            sbuff.append("\"" + key + "|" + siteKey + "|" + seventhlevel.get("intid").getValueAsText() + "\"");
                         }
                     }
                 }
             } catch (Exception e) {
-                LOG.error(e.getMessage(),e);
+                LOG.error(e.getMessage(), e);
             }
             sbuff.append("]");
             exchangeSbuff.append("]");
@@ -575,45 +591,46 @@ public class TargetingProfileCrud {
         tp.setExt_supply_attributes("[]");
         tp.setExchange_list("[]");
     }
-    private static void populateDirectSites(Targeting_profile tp, String str){
+
+    private static void populateDirectSites(Targeting_profile tp, String str) {
         tp.setDirect_supply_inc_exc(str);
-        if(tp == null || str == null || "".equals(str) || "[]".equals(str)){
+        if (tp == null || str == null || "".equals(str) || "[]".equals(str)) {
             tp.setSite_list("[]");
             tp.setPub_list("[]");
             return;
         }
-        if(str != null && !str.trim().equals("")){
+        if (str != null && !str.trim().equals("")) {
             StringBuffer sbuff = new StringBuffer("[");
             StringBuffer pubSbuff = new StringBuffer("[");
             ObjectMapper mapper = new ObjectMapper();
             try {
-                JsonNode node = mapper.readValue(str,JsonNode.class);
-                Iterator<java.util.Map.Entry<String,JsonNode>> itr = node.getFields();
+                JsonNode node = mapper.readValue(str, JsonNode.class);
+                Iterator<java.util.Map.Entry<String, JsonNode>> itr = node.getFields();
                 boolean isFirst = true;
                 boolean pubIsFirst = true;
-                while(itr.hasNext()){
-                    java.util.Map.Entry<String,JsonNode> firstLeveldnode = itr.next();
+                while (itr.hasNext()) {
+                    java.util.Map.Entry<String, JsonNode> firstLeveldnode = itr.next();
                     String key = firstLeveldnode.getKey();
                     JsonNode secondlevelnode = firstLeveldnode.getValue();
                     Iterator<JsonNode> thirdlevelnode = secondlevelnode.getElements();
-                    if(pubIsFirst){
-                        pubIsFirst=false;
-                    }else{
+                    if (pubIsFirst) {
+                        pubIsFirst = false;
+                    } else {
                         pubSbuff.append(",");
                     }
-                    while(thirdlevelnode.hasNext()){
+                    while (thirdlevelnode.hasNext()) {
                         JsonNode fourthLevel = thirdlevelnode.next();
-                        if(isFirst){
-                            isFirst=false;
-                        }else{
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
                             sbuff.append(",");
                         }
-                        sbuff.append("\""+key+"|"+fourthLevel.getValueAsText()+"\"");
+                        sbuff.append("\"" + key + "|" + fourthLevel.getValueAsText() + "\"");
                     }
                     pubSbuff.append(key);
                 }
             } catch (Exception e) {
-                LOG.error(e.getMessage(),e);
+                LOG.error(e.getMessage(), e);
             }
             sbuff.append("]");
             pubSbuff.append("]");
@@ -625,82 +642,87 @@ public class TargetingProfileCrud {
         tp.setPub_list("[]");
     }
 
-    private static String lat_lon_r_to_db(Targeting_profile tp){
+    private static String lat_lon_r_to_db(Targeting_profile tp) {
         StringBuffer sbuff = new StringBuffer("[");
-        try{
-            if(!(tp.getLat_long() == null)){
+        try {
+            if (!(tp.getLat_long() == null)) {
                 String lat_longStr = tp.getLat_long().trim();
                 String[] lineSplit = lat_longStr.split("\n");
                 boolean isFirst = true;
-                for(String line:lineSplit){
-                    String[] cellSplit=line.split(",");
-                    if(cellSplit.length==3 && !("".equals(cellSplit[0]) || "".equals(cellSplit[1]) || "".equals(cellSplit[2]))){
+                for (String line : lineSplit) {
+                    String[] cellSplit = line.split(",");
+                    if (cellSplit.length == 3 && !("".equals(cellSplit[0]) || "".equals(cellSplit[1]) || "".equals(cellSplit[2]))) {
                         double lat = Double.parseDouble(cellSplit[0]);
                         double lon = Double.parseDouble(cellSplit[1]);
                         double r = Double.parseDouble(cellSplit[2]);
-                        if(isFirst){
-                            isFirst=false;
-                        }else{
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
                             sbuff.append(",");
                         }
                         sbuff.append("{");
-                        sbuff.append("\"lat\":");sbuff.append(lat);sbuff.append(",");
-                        sbuff.append("\"lon\":");sbuff.append(lon);sbuff.append(",");
-                        sbuff.append("\"r\":");sbuff.append(r);
+                        sbuff.append("\"lat\":");
+                        sbuff.append(lat);
+                        sbuff.append(",");
+                        sbuff.append("\"lon\":");
+                        sbuff.append(lon);
+                        sbuff.append(",");
+                        sbuff.append("\"r\":");
+                        sbuff.append(r);
                         sbuff.append("}");
                     }
                 }
             }
             sbuff.append("]");
             return sbuff.toString();
-        }catch(Exception e){
+        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             sbuff.append("]");
             return sbuff.toString();
         }
     }
 
-    public static void populate(Targeting_profile tp, ResultSet rset) throws SQLException{
-        populateWithRawCountryJson(tp,rset,false);
+    public static void populate(Targeting_profile tp, ResultSet rset) throws SQLException {
+        populateWithRawCountryJson(tp, rset, false);
     }
 
-    public static void populateWithRawCountryJson(Targeting_profile tp, ResultSet rset,boolean useRawCountryJson) throws SQLException{
-        if(tp != null && rset != null){
+    public static void populateWithRawCountryJson(Targeting_profile tp, ResultSet rset, boolean useRawCountryJson) throws SQLException {
+        if (tp != null && rset != null) {
             tp.setAccount_guid(rset.getString("account_guid"));
             tp.setBrand_list(rset.getString("brand_list"));
             tp.setBrowser_json(rset.getString("browser_json"));
             String categories_list = rset.getString("category_list");
-            if(categories_list != null){
+            if (categories_list != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 try {
-                    JsonNode node = mapper.readValue(categories_list,JsonNode.class);
+                    JsonNode node = mapper.readValue(categories_list, JsonNode.class);
                     JsonNode tier1node = node.get(CategoryTier.TIER1.getName());
-                    if(tier1node != null){
+                    if (tier1node != null) {
                         tp.setCategories_tier_1_list(tier1node.toString());
                     }
                     JsonNode tier2node = node.get(CategoryTier.TIER2.getName());
-                    if(tier2node != null){
+                    if (tier2node != null) {
                         tp.setCategories_tier_2_list(tier2node.toString());
                     }
                 } catch (Exception e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
-            String city_json= rset.getString("city_json");
-            if(city_json==null){
-            	tp.setCity_json("[]");
-            }else{
-            	String cityTrim = city_json.trim();
-            	if("".equals(cityTrim) || "[]".equals(cityTrim) ||"{}".equals(cityTrim)){
-            		tp.setCity_json("[]");
-            	}else{
-            		tp.setCity_json(create_id_list(cityTrim));
-            	}
-        	}
-            if(useRawCountryJson)
+            String city_json = rset.getString("city_json");
+            if (city_json == null) {
+                tp.setCity_json("[]");
+            } else {
+                String cityTrim = city_json.trim();
+                if ("".equals(cityTrim) || "[]".equals(cityTrim) || "{}".equals(cityTrim)) {
+                    tp.setCity_json("[]");
+                } else {
+                    tp.setCity_json(create_id_list(cityTrim));
+                }
+            }
+            if (useRawCountryJson)
                 tp.setCountry_json(rset.getString("country_json"));
             else
-                tp.setCountry_json(create_id_list(rset.getString("country_json")) );
+                tp.setCountry_json(create_id_list(rset.getString("country_json")));
 
             tp.setCarrier_json(create_id_list(rset.getString("carrier_json")));
             tp.setCustom_ip_file_id_set(db_to_ui_file_set(rset.getString("custom_ip_file_id_set")));
@@ -711,44 +733,44 @@ public class TargetingProfileCrud {
             tp.setModified_by(rset.getInt("modified_by"));
             tp.setName(rset.getString("name"));
             tp.setOs_json(rset.getString("os_json"));
-            String state_json= rset.getString("state_json");
-            if(state_json==null){
-            	tp.setState_json("[]");
-            }else{
-            	String stateTrim = state_json.trim();
-            	if("".equals(stateTrim) || "[]".equals(stateTrim) || "{}".equals(stateTrim)){
-            		tp.setState_json("[]");
-            	}else{
-            		tp.setState_json(create_id_list(stateTrim));
-            	}
-        	}
+            String state_json = rset.getString("state_json");
+            if (state_json == null) {
+                tp.setState_json("[]");
+            } else {
+                String stateTrim = state_json.trim();
+                if ("".equals(stateTrim) || "[]".equals(stateTrim) || "{}".equals(stateTrim)) {
+                    tp.setState_json("[]");
+                } else {
+                    tp.setState_json(create_id_list(stateTrim));
+                }
+            }
             tp.setStatus_id(StatusIdEnum.getEnum(rset.getInt("status_id")));
-            tp.setSupply_source(SupplySourceEnum.getEnum((short)rset.getInt("supply_source")));
-            tp.setSupply_source_type(SupplySourceTypeEnum.getEnum((short)rset.getInt("supply_source_type")));
+            tp.setSupply_source(SupplySourceEnum.getEnum((short) rset.getInt("supply_source")));
+            tp.setSupply_source_type(SupplySourceTypeEnum.getEnum((short) rset.getInt("supply_source_type")));
             tp.setGeo_targeting_type(Geo_Targeting_type.getEnum(rset.getInt("geo_targeting_type")));
             tp.setZipcode_file_id_set(db_to_ui_file_set(rset.getString("zipcode_file_id_set")));
             tp.setTablet_targeting(rset.getBoolean("tablet_targeting"));
             String str = rset.getString("hours_list");
-            if(str == null){
+            if (str == null) {
                 tp.setHours_list("[]");
-            }else{
+            } else {
                 tp.setHours_list(str);
             }
             int midp = rset.getInt("midp");
-            if(midp > 0){
-                tp.setMidp(MidpValue.fetchMipValue((short)midp));
-            }else{
+            if (midp > 0) {
+                tp.setMidp(MidpValue.fetchMipValue((short) midp));
+            } else {
                 tp.setMidp(MidpValue.ALL);
             }
         }
         tp.setCreated_on(rset.getTimestamp("created_on").getTime());
-        lat_lon_r(tp,rset.getString("lat_long"));
+        lat_lon_r(tp, rset.getString("lat_long"));
         populateExtSupplyAttr(tp, rset.getString("exchange_supply_inc_exc"));
         populateDirectSites(tp, rset.getString("direct_supply_inc_exc"));
         tp.setSupplyInclusionExclusion(rset.getString("supply_inc_exc"));
         generateSupply_inc_exc(tp);
         String connection_type_str = rset.getString("connection_type_targeting_json");
-        if(connection_type_str != null && !"".equals(connection_type_str)){ 
+        if (connection_type_str != null && !"".equals(connection_type_str)) {
             tp.setConnection_type_targeting_json(connection_type_str);
         }
         String retargeting = rset.getString("retargeting");
@@ -761,382 +783,395 @@ public class TargetingProfileCrud {
         tp.setDeviceid_file(db_to_ui_file_set(rset.getString("deviceid_file")));
         tp.setId(rset.getInt("id"));
         tp.setLat_lon_radius_unit(rset.getInt("lat_lon_radius_unit"));
-        if(rset.getObject("user_id_inc_exc")!= null){
-        	tp.setUser_id_inc_exc(rset.getInt("user_id_inc_exc"));
+        if (rset.getObject("user_id_inc_exc") != null) {
+            tp.setUser_id_inc_exc(rset.getInt("user_id_inc_exc"));
         }
         boolean audience_targeting = rset.getBoolean("audience_targeting");
         tp.setAudience_targeting(audience_targeting);
-        if(audience_targeting && rset.getObject("audience_targeting_def") != null){
-        	String audience_targeting_def = rset.getString("audience_targeting_def");
-        	if(!audience_targeting_def.isEmpty()){
-        		try{
-        			AudienceTargetingDef audienceTargetingDef= AudienceTargetingDef.getObject(audience_targeting_def);
-        			if(audienceTargetingDef != null){
-        				populateAudience(tp, audienceTargetingDef);
-        			}
-        		}catch(Exception  e1){
-        			LOG.error(e1.getMessage(), e1);
-        		}
-        	}
+        if (!StringUtils.isEmpty(rset.getString("audience_tags"))) {
+            Map<String, List<Integer>> audience_tags = JSON.parseObject(rset.getString("audience_tags"), new TypeReference<Map<String, List<Integer>>>() {
+            });
+            if (audience_tags != null) {
+                tp.setAudience_inc(JSON.toJSONString(audience_tags.get("inc")));
+                tp.setAudience_exc(JSON.toJSONString(audience_tags.get("exc")));
+                tp.setAudience_package(JSON.toJSONString(audience_tags.get("package")));
+            }
         }
-        
-    }
-    private static void populateAudience(Targeting_profile tp,AudienceTargetingDef audienceTargetingDef){
-    	String str = setToStringArray(audienceTargetingDef.getAgerange());
-    	tp.setAudience_agerange(str);
-    	if(audienceTargetingDef.getAgerangeinc() != null){
-    		tp.setAudience_agerangeinc(audienceTargetingDef.getAgerangeinc());
-    	}
-    	str = setToStringArray(audienceTargetingDef.getGender());
-    	tp.setAudience_gender(str);
-    	if(audienceTargetingDef.getGenderincl() != null){
-    		tp.setAudience_genderincl(audienceTargetingDef.getGenderincl());
-    	}
-    	if(audienceTargetingDef.getCatinc() !=null){
-    		tp.setAudience_catinc(audienceTargetingDef.getCatinc());
-    	}
-    	if(audienceTargetingDef.getTierCatSet() != null){
-    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(1));
-    		tp.setAudience_tier1_cat(str);
-    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(2));
-    		tp.setAudience_tier2_cat(str);
-    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(3));
-    		tp.setAudience_tier3_cat(str);
-    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(4));
-    		tp.setAudience_tier4_cat(str);
-    		str = setToStringArray(audienceTargetingDef.getTierCatSet().get(5));
-    		tp.setAudience_tier5_cat(str);
-    	}
-    }
-    private static String setToStringArray(Set<Integer> set){
-    	if(set == null || set.size()<1){
-    		return "[]";
-    	}
-    	StringBuffer sbuff = new StringBuffer("[");
-    	boolean isFirst = true;		
-    	for(Integer i:set){
-    		if(isFirst){
-    			isFirst=false;
-    		}else{
-    			sbuff.append(",");
-    		}
-    		sbuff.append(i);
-    	}
-    	sbuff.append("]");
-    	return sbuff.toString();
-    }
-    private static Set<Integer> generateSet(String str){
-    	if(str == null || str.isEmpty()){
-    		return null;
-    	}
-    	String s=StringUtils.replace(str, "[", "").replace("]", "");
-    	if(s.isEmpty()){
-    		return null;
-    	}
-    	String sSplit[] = s.split(",");
-    	if(sSplit.length<1){
-    		return null;
-    	}
-    	Set<Integer> set = new HashSet<Integer>();
-    	for(String sElement:sSplit){
-    		try{
-    			int i = Integer.parseInt(sElement);
-    			set.add(i);
-    		}catch(Exception e){
-    			
-    		}
-    	}
-    	if(set.size()<1){
-    		return null;
-    	}
-    	return set;
-    }
-    private static String generateAudience(Targeting_profile tp){
-    	if(tp == null){
-    		return "";
-    	}
-    	if(!tp.isAudience_targeting()){
-    		return "";
-    	}
-    	AudienceTargetingDef aDef= new AudienceTargetingDef();
-    	boolean audienceTargetingFound = false;
-    	if(tp.getAudience_agerange() != null && tp.getAudience_agerange().length()>0){
-    		Set<Integer> set = generateSet(tp.getAudience_agerange());
-    		if(set!= null){
-    			audienceTargetingFound=true;
-    			aDef.setAgerange(set);
-    			aDef.setAgerangeinc(tp.isAudience_agerangeinc());
-    		}
-    	}
-    	if(tp.getAudience_gender() != null && tp.getAudience_gender().length()>0){
-    		Set<Integer> set = generateSet(tp.getAudience_gender());
-    		if(set!= null){
-    			audienceTargetingFound=true;
-    			aDef.setGender(set);
-    			aDef.setGenderincl(tp.isAudience_genderincl());
-    		}
-    	}
-    	Map<Integer, Set<Integer>> map = new HashMap<Integer, Set<Integer>>();
-    	if(tp.getAudience_tier1_cat() != null && tp.getAudience_tier1_cat().length()>0){
-    		Set<Integer> set = generateSet(tp.getAudience_tier1_cat());
-    		if(set!= null){
-    			audienceTargetingFound=true;
-    			map.put(1,set);
-    			aDef.setCatinc(tp.isAudience_catinc());
-    		}
-    	}
-    	if(tp.getAudience_tier2_cat() != null && tp.getAudience_tier2_cat().length()>0){
-    		Set<Integer> set = generateSet(tp.getAudience_tier2_cat());
-    		if(set!= null){
-    			audienceTargetingFound=true;
-    			map.put(2,set);
-    			aDef.setCatinc(tp.isAudience_catinc());
-    		}
-    	}
-    	if(tp.getAudience_tier3_cat() != null && tp.getAudience_tier3_cat().length()>0){
-    		Set<Integer> set = generateSet(tp.getAudience_tier3_cat());
-    		if(set!= null){
-    			audienceTargetingFound=true;
-    			map.put(3,set);
-    			aDef.setCatinc(tp.isAudience_catinc());
-    		}
-    	}
-    	if(tp.getAudience_tier4_cat() != null && tp.getAudience_tier4_cat().length()>0){
-    		Set<Integer> set = generateSet(tp.getAudience_tier4_cat());
-    		if(set!= null){
-    			audienceTargetingFound=true;
-    			map.put(4,set);
-    			aDef.setCatinc(tp.isAudience_catinc());
-    		}
-    	}
-    	if(tp.getAudience_tier5_cat() != null && tp.getAudience_tier5_cat().length()>0){
-    		Set<Integer> set = generateSet(tp.getAudience_tier5_cat());
-    		if(set!= null){
-    			audienceTargetingFound=true;
-    			map.put(5,set);
-    			aDef.setCatinc(tp.isAudience_catinc());
-    		}
-    	}
-    	if(map.size()>0){
-    		aDef.setTierCatSet(map);
-    	}
-    	if(audienceTargetingFound){
-    		return aDef.toJson().toString();
-    	}
-    	return "";
-    }
-    
-    private static void populateExt(Targeting_profile tp,String ext){
-    	if(ext == null){
-    		return;
-    	}
-    	String extTrim = ext.trim();
-    	try{
-    		TPExt tpExt = TPExt.getObject(extTrim);
-    		if(tpExt != null){
-    			tp.setMma_inc_exc(tpExt.isInc());
-    			if(tpExt.getMma_tier1() != null){
-    				StringBuffer sBuff = new StringBuffer("[");
-    				boolean isFirst = true;
-    				for(Integer i:tpExt.getMma_tier1() ){
-    					if(isFirst){
-    						isFirst = false;
-    					}else{
-    						sBuff.append(",");
-    					}
-    					sBuff.append(i);
-    				}
-    				sBuff.append("]");
-    				tp.setMma_tier_1_list(sBuff.toString());
-    			}
-    			if(tpExt.getMma_tier2() != null){
-    				StringBuffer sBuff = new StringBuffer("[");
-    				boolean isFirst = true;
-    				for(Integer i:tpExt.getMma_tier2() ){
-    					if(isFirst){
-    						isFirst = false;
-    					}else{
-    						sBuff.append(",");
-    					}
-    					sBuff.append(i);
-    				}
-    				sBuff.append("]");
-    				tp.setMma_tier_2_list(sBuff.toString());
-    			}
-    			if(tpExt.getAdposids() != null){
-    				StringBuffer sBuff = new StringBuffer("[");
-    				boolean isFirst = true;
-    				for(Integer i:tpExt.getAdposids() ){
-    					if(isFirst){
-    						isFirst = false;
-    					}else{
-    						sBuff.append(",");
-    					}
-    					sBuff.append(i);
-    				}
-    				sBuff.append("]");
-    				tp.setAdposition_list(sBuff.toString());
-    			}
-    			tp.setAdposition_inc_exc(tpExt.isAdposids_inc());
-    			tp.setChannel_inc_exc(tpExt.isChannel_inc());
-    			if(tpExt.getChannel_tier1()!= null){
-    				StringBuffer sBuff = new StringBuffer("[");
-    				boolean isFirst = true;
-    				for(Integer i:tpExt.getChannel_tier1() ){
-    					if(isFirst){
-    						isFirst = false;
-    					}else{
-    						sBuff.append(",");
-    					}
-    					sBuff.append(i);
-    				}
-    				sBuff.append("]");
-    				tp.setChannel_tier_1_list(sBuff.toString());
-    			}
-    			if(tpExt.getChannel_tier2() != null){
-    				StringBuffer sBuff = new StringBuffer("[");
-    				boolean isFirst = true;
-    				for(Integer i:tpExt.getChannel_tier2() ){
-    					if(isFirst){
-    						isFirst = false;
-    					}else{
-    						sBuff.append(",");
-    					}
-    					sBuff.append(i);
-    				}
-    				sBuff.append("]");
-    				tp.setChannel_tier_2_list(sBuff.toString());
-    			}
-    		}
-    	}catch(Exception e){
-    		LOG.error(e.getMessage(),e);
-    	}
-    	
-    }
-    
-    private static String generateExt(Targeting_profile tp){
-		TPExt tpExt = new TPExt();
-    	if(tp.getMma_tier_1_list() != null){
-    		tpExt.setInc(tp.isMma_inc_exc());
-    		HashSet<Integer> t1Set = new HashSet<Integer>();
-    		String t1 = tp.getMma_tier_1_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
-    		String t1Split[] = t1.split(",");
-    		for(String str:t1Split){
-    			String strTrim=str.trim();
-    			if(!"".equals(strTrim)){
-    				try{
-    					int i = Integer.parseInt(strTrim);
-    					t1Set.add(i);
-    				}catch(Exception e){
-    					LOG.error(e.getMessage(),e);
-    				}
-    			}
-    		}
-    		tpExt.setMma_tier1(t1Set);
-        	if(tp.getMma_tier_2_list() != null){
-        		HashSet<Integer> t2Set = new HashSet<Integer>();
-        		String t2 = tp.getMma_tier_2_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
-        		String t2Split[] = t2.split(",");
-        		for(String str:t2Split){
-        			String strTrim=str.trim();
-        			if(!"".equals(strTrim)){
-        				try{
-        					int i = Integer.parseInt(strTrim);
-        					t2Set.add(i);
-        				}catch(Exception e){
-        					LOG.error(e.getMessage(),e);
-        				}
-        			}
-        		}
-        		tpExt.setMma_tier2(t2Set);
-        	}
-        	if(tp.getAdposition_list() != null){
-        		HashSet<Integer> adSet = new HashSet<Integer>();
-        		String t2 = tp.getAdposition_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
-        		String t2Split[] = t2.split(",");
-        		for(String str:t2Split){
-        			String strTrim=str.trim();
-        			if(!"".equals(strTrim)){
-        				try{
-        					int i = Integer.parseInt(strTrim);
-        					adSet.add(i);
-        				}catch(Exception e){
-        					LOG.error(e.getMessage(),e);
-        				}
-        			}
-        		}
-        		tpExt.setAdposids(adSet);
-        	}
-    	}
-    	tpExt.setInc(tp.isMma_inc_exc());
-    	tpExt.setAdposids_inc(tp.isAdposition_inc_exc());
-    	if(tp.getAdposition_list() != null){
-    		HashSet<Integer> adSet = new HashSet<Integer>();
-    		String t2 = tp.getAdposition_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
-    		String t2Split[] = t2.split(",");
-    		for(String str:t2Split){
-    			String strTrim=str.trim();
-    			if(!"".equals(strTrim)){
-    				try{
-    					int i = Integer.parseInt(strTrim);
-    					adSet.add(i);
-    				}catch(Exception e){
-    					LOG.error(e.getMessage(),e);
-    				}
-    			}
-    		}
-    		tpExt.setAdposids(adSet);
-    	}
-    	if(tp.getChannel_tier_1_list() != null){
-    		tpExt.setChannel_inc(tp.isChannel_inc_exc());
-    		HashSet<Integer> t1Set = new HashSet<Integer>();
-    		String t1 = tp.getChannel_tier_1_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
-    		String t1Split[] = t1.split(",");
-    		for(String str:t1Split){
-    			String strTrim=str.trim();
-    			if(!"".equals(strTrim)){
-    				try{
-    					int i = Integer.parseInt(strTrim);
-    					t1Set.add(i);
-    				}catch(Exception e){
-    					LOG.error(e.getMessage(),e);
-    				}
-    			}
-    		}
-    		tpExt.setChannel_tier1(t1Set);
-        	if(tp.getChannel_tier_2_list() != null){
-        		HashSet<Integer> t2Set = new HashSet<Integer>();
-        		String t2 = tp.getChannel_tier_2_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
-        		String t2Split[] = t2.split(",");
-        		for(String str:t2Split){
-        			String strTrim=str.trim();
-        			if(!"".equals(strTrim)){
-        				try{
-        					int i = Integer.parseInt(strTrim);
-        					t2Set.add(i);
-        				}catch(Exception e){
-        					LOG.error(e.getMessage(),e);
-        				}
-        			}
-        		}
-        		tpExt.setChannel_tier2(t2Set);
-        	}
-    	}
-    	return tpExt.toJson().toString();
+        if (audience_targeting && rset.getObject("audience_targeting_def") != null) {
+            String audience_targeting_def = rset.getString("audience_targeting_def");
+            if (!audience_targeting_def.isEmpty()) {
+                try {
+                    AudienceTargetingDef audienceTargetingDef = AudienceTargetingDef.getObject(audience_targeting_def);
+                    if (audienceTargetingDef != null) {
+                        populateAudience(tp, audienceTargetingDef);
+                    }
+                } catch (Exception e1) {
+                    LOG.error(e1.getMessage(), e1);
+                }
+            }
+        }
+
     }
 
-    
-    private static void populateRetargeting(String retargeting, Targeting_profile tp){
-        if(retargeting != null && !retargeting.trim().equals("")){
+    private static void populateAudience(Targeting_profile tp, AudienceTargetingDef audienceTargetingDef) {
+        String str = setToStringArray(audienceTargetingDef.getAgerange());
+        tp.setAudience_agerange(str);
+        if (audienceTargetingDef.getAgerangeinc() != null) {
+            tp.setAudience_agerangeinc(audienceTargetingDef.getAgerangeinc());
+        }
+        str = setToStringArray(audienceTargetingDef.getGender());
+        tp.setAudience_gender(str);
+        if (audienceTargetingDef.getGenderincl() != null) {
+            tp.setAudience_genderincl(audienceTargetingDef.getGenderincl());
+        }
+        if (audienceTargetingDef.getCatinc() != null) {
+            tp.setAudience_catinc(audienceTargetingDef.getCatinc());
+        }
+        if (audienceTargetingDef.getTierCatSet() != null) {
+            str = setToStringArray(audienceTargetingDef.getTierCatSet().get(1));
+            tp.setAudience_tier1_cat(str);
+            str = setToStringArray(audienceTargetingDef.getTierCatSet().get(2));
+            tp.setAudience_tier2_cat(str);
+            str = setToStringArray(audienceTargetingDef.getTierCatSet().get(3));
+            tp.setAudience_tier3_cat(str);
+            str = setToStringArray(audienceTargetingDef.getTierCatSet().get(4));
+            tp.setAudience_tier4_cat(str);
+            str = setToStringArray(audienceTargetingDef.getTierCatSet().get(5));
+            tp.setAudience_tier5_cat(str);
+        }
+    }
+
+    private static String setToStringArray(Set<Integer> set) {
+        if (set == null || set.size() < 1) {
+            return "[]";
+        }
+        StringBuffer sbuff = new StringBuffer("[");
+        boolean isFirst = true;
+        for (Integer i : set) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                sbuff.append(",");
+            }
+            sbuff.append(i);
+        }
+        sbuff.append("]");
+        return sbuff.toString();
+    }
+
+    private static Set<Integer> generateSet(String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+        String s = StringUtils.replace(str, "[", "").replace("]", "");
+        if (s.isEmpty()) {
+            return null;
+        }
+        String sSplit[] = s.split(",");
+        if (sSplit.length < 1) {
+            return null;
+        }
+        Set<Integer> set = new HashSet<Integer>();
+        for (String sElement : sSplit) {
             try {
-                Retargeting  retargetingColumn = Retargeting.getObject(retargeting);
-                if(retargetingColumn != null && retargetingColumn.getSegment() != null){
+                int i = Integer.parseInt(sElement);
+                set.add(i);
+            } catch (Exception e) {
+
+            }
+        }
+        if (set.size() < 1) {
+            return null;
+        }
+        return set;
+    }
+
+    private static String generateAudience(Targeting_profile tp) {
+        if (tp == null) {
+            return "";
+        }
+        if (!tp.isAudience_targeting()) {
+            return "";
+        }
+        AudienceTargetingDef aDef = new AudienceTargetingDef();
+        boolean audienceTargetingFound = false;
+        if (tp.getAudience_agerange() != null && tp.getAudience_agerange().length() > 0) {
+            Set<Integer> set = generateSet(tp.getAudience_agerange());
+            if (set != null) {
+                audienceTargetingFound = true;
+                aDef.setAgerange(set);
+                aDef.setAgerangeinc(tp.isAudience_agerangeinc());
+            }
+        }
+        if (tp.getAudience_gender() != null && tp.getAudience_gender().length() > 0) {
+            Set<Integer> set = generateSet(tp.getAudience_gender());
+            if (set != null) {
+                audienceTargetingFound = true;
+                aDef.setGender(set);
+                aDef.setGenderincl(tp.isAudience_genderincl());
+            }
+        }
+        Map<Integer, Set<Integer>> map = new HashMap<Integer, Set<Integer>>();
+        if (tp.getAudience_tier1_cat() != null && tp.getAudience_tier1_cat().length() > 0) {
+            Set<Integer> set = generateSet(tp.getAudience_tier1_cat());
+            if (set != null) {
+                audienceTargetingFound = true;
+                map.put(1, set);
+                aDef.setCatinc(tp.isAudience_catinc());
+            }
+        }
+        if (tp.getAudience_tier2_cat() != null && tp.getAudience_tier2_cat().length() > 0) {
+            Set<Integer> set = generateSet(tp.getAudience_tier2_cat());
+            if (set != null) {
+                audienceTargetingFound = true;
+                map.put(2, set);
+                aDef.setCatinc(tp.isAudience_catinc());
+            }
+        }
+        if (tp.getAudience_tier3_cat() != null && tp.getAudience_tier3_cat().length() > 0) {
+            Set<Integer> set = generateSet(tp.getAudience_tier3_cat());
+            if (set != null) {
+                audienceTargetingFound = true;
+                map.put(3, set);
+                aDef.setCatinc(tp.isAudience_catinc());
+            }
+        }
+        if (tp.getAudience_tier4_cat() != null && tp.getAudience_tier4_cat().length() > 0) {
+            Set<Integer> set = generateSet(tp.getAudience_tier4_cat());
+            if (set != null) {
+                audienceTargetingFound = true;
+                map.put(4, set);
+                aDef.setCatinc(tp.isAudience_catinc());
+            }
+        }
+        if (tp.getAudience_tier5_cat() != null && tp.getAudience_tier5_cat().length() > 0) {
+            Set<Integer> set = generateSet(tp.getAudience_tier5_cat());
+            if (set != null) {
+                audienceTargetingFound = true;
+                map.put(5, set);
+                aDef.setCatinc(tp.isAudience_catinc());
+            }
+        }
+        if (map.size() > 0) {
+            aDef.setTierCatSet(map);
+        }
+        if (audienceTargetingFound) {
+            return aDef.toJson().toString();
+        }
+        return "";
+    }
+
+    private static void populateExt(Targeting_profile tp, String ext) {
+        if (ext == null) {
+            return;
+        }
+        String extTrim = ext.trim();
+        try {
+            TPExt tpExt = TPExt.getObject(extTrim);
+            if (tpExt != null) {
+                tp.setMma_inc_exc(tpExt.isInc());
+                if (tpExt.getMma_tier1() != null) {
+                    StringBuffer sBuff = new StringBuffer("[");
+                    boolean isFirst = true;
+                    for (Integer i : tpExt.getMma_tier1()) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            sBuff.append(",");
+                        }
+                        sBuff.append(i);
+                    }
+                    sBuff.append("]");
+                    tp.setMma_tier_1_list(sBuff.toString());
+                }
+                if (tpExt.getMma_tier2() != null) {
+                    StringBuffer sBuff = new StringBuffer("[");
+                    boolean isFirst = true;
+                    for (Integer i : tpExt.getMma_tier2()) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            sBuff.append(",");
+                        }
+                        sBuff.append(i);
+                    }
+                    sBuff.append("]");
+                    tp.setMma_tier_2_list(sBuff.toString());
+                }
+                if (tpExt.getAdposids() != null) {
+                    StringBuffer sBuff = new StringBuffer("[");
+                    boolean isFirst = true;
+                    for (Integer i : tpExt.getAdposids()) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            sBuff.append(",");
+                        }
+                        sBuff.append(i);
+                    }
+                    sBuff.append("]");
+                    tp.setAdposition_list(sBuff.toString());
+                }
+                tp.setAdposition_inc_exc(tpExt.isAdposids_inc());
+                tp.setChannel_inc_exc(tpExt.isChannel_inc());
+                if (tpExt.getChannel_tier1() != null) {
+                    StringBuffer sBuff = new StringBuffer("[");
+                    boolean isFirst = true;
+                    for (Integer i : tpExt.getChannel_tier1()) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            sBuff.append(",");
+                        }
+                        sBuff.append(i);
+                    }
+                    sBuff.append("]");
+                    tp.setChannel_tier_1_list(sBuff.toString());
+                }
+                if (tpExt.getChannel_tier2() != null) {
+                    StringBuffer sBuff = new StringBuffer("[");
+                    boolean isFirst = true;
+                    for (Integer i : tpExt.getChannel_tier2()) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            sBuff.append(",");
+                        }
+                        sBuff.append(i);
+                    }
+                    sBuff.append("]");
+                    tp.setChannel_tier_2_list(sBuff.toString());
+                }
+            }
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+    }
+
+    private static String generateExt(Targeting_profile tp) {
+        TPExt tpExt = new TPExt();
+        if (tp.getMma_tier_1_list() != null) {
+            tpExt.setInc(tp.isMma_inc_exc());
+            HashSet<Integer> t1Set = new HashSet<Integer>();
+            String t1 = tp.getMma_tier_1_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+            String t1Split[] = t1.split(",");
+            for (String str : t1Split) {
+                String strTrim = str.trim();
+                if (!"".equals(strTrim)) {
+                    try {
+                        int i = Integer.parseInt(strTrim);
+                        t1Set.add(i);
+                    } catch (Exception e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+            }
+            tpExt.setMma_tier1(t1Set);
+            if (tp.getMma_tier_2_list() != null) {
+                HashSet<Integer> t2Set = new HashSet<Integer>();
+                String t2 = tp.getMma_tier_2_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+                String t2Split[] = t2.split(",");
+                for (String str : t2Split) {
+                    String strTrim = str.trim();
+                    if (!"".equals(strTrim)) {
+                        try {
+                            int i = Integer.parseInt(strTrim);
+                            t2Set.add(i);
+                        } catch (Exception e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    }
+                }
+                tpExt.setMma_tier2(t2Set);
+            }
+            if (tp.getAdposition_list() != null) {
+                HashSet<Integer> adSet = new HashSet<Integer>();
+                String t2 = tp.getAdposition_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+                String t2Split[] = t2.split(",");
+                for (String str : t2Split) {
+                    String strTrim = str.trim();
+                    if (!"".equals(strTrim)) {
+                        try {
+                            int i = Integer.parseInt(strTrim);
+                            adSet.add(i);
+                        } catch (Exception e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    }
+                }
+                tpExt.setAdposids(adSet);
+            }
+        }
+        tpExt.setInc(tp.isMma_inc_exc());
+        tpExt.setAdposids_inc(tp.isAdposition_inc_exc());
+        if (tp.getAdposition_list() != null) {
+            HashSet<Integer> adSet = new HashSet<Integer>();
+            String t2 = tp.getAdposition_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+            String t2Split[] = t2.split(",");
+            for (String str : t2Split) {
+                String strTrim = str.trim();
+                if (!"".equals(strTrim)) {
+                    try {
+                        int i = Integer.parseInt(strTrim);
+                        adSet.add(i);
+                    } catch (Exception e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+            }
+            tpExt.setAdposids(adSet);
+        }
+        if (tp.getChannel_tier_1_list() != null) {
+            tpExt.setChannel_inc(tp.isChannel_inc_exc());
+            HashSet<Integer> t1Set = new HashSet<Integer>();
+            String t1 = tp.getChannel_tier_1_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+            String t1Split[] = t1.split(",");
+            for (String str : t1Split) {
+                String strTrim = str.trim();
+                if (!"".equals(strTrim)) {
+                    try {
+                        int i = Integer.parseInt(strTrim);
+                        t1Set.add(i);
+                    } catch (Exception e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+            }
+            tpExt.setChannel_tier1(t1Set);
+            if (tp.getChannel_tier_2_list() != null) {
+                HashSet<Integer> t2Set = new HashSet<Integer>();
+                String t2 = tp.getChannel_tier_2_list().trim().replaceAll("\\[", "").replaceAll("]", "").replaceAll("\"", "");
+                String t2Split[] = t2.split(",");
+                for (String str : t2Split) {
+                    String strTrim = str.trim();
+                    if (!"".equals(strTrim)) {
+                        try {
+                            int i = Integer.parseInt(strTrim);
+                            t2Set.add(i);
+                        } catch (Exception e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    }
+                }
+                tpExt.setChannel_tier2(t2Set);
+            }
+        }
+        return tpExt.toJson().toString();
+    }
+
+
+    private static void populateRetargeting(String retargeting, Targeting_profile tp) {
+        if (retargeting != null && !retargeting.trim().equals("")) {
+            try {
+                Retargeting retargetingColumn = Retargeting.getObject(retargeting);
+                if (retargetingColumn != null && retargetingColumn.getSegment() != null) {
                     StringBuffer sbuff = new StringBuffer("[");
-                    boolean isFirst=true;
-                    for(Integer i: retargetingColumn.getSegment()){
-                        if(isFirst){
-                            isFirst=false;
-                        }else{
+                    boolean isFirst = true;
+                    for (Integer i : retargetingColumn.getSegment()) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
                             sbuff.append(",");
                         }
                         sbuff.append(i);
@@ -1144,20 +1179,20 @@ public class TargetingProfileCrud {
                     sbuff.append("]");
                     tp.setRetargeting(sbuff.toString());
                 }
-                
+
             } catch (Exception e) {
-                LOG.error(e.getMessage(),e);
-            } 
+                LOG.error(e.getMessage(), e);
+            }
         }
     }
-    
-    private static String generateRetargeting(String retargeting){
-        if(retargeting != null){
+
+    private static String generateRetargeting(String retargeting) {
+        if (retargeting != null) {
             String tmp_retargeting = retargeting.replaceAll("\\[", "").replaceAll("]", "").trim();
-            if(!tmp_retargeting.equals("") &&  !tmp_retargeting.equals("[]")){
+            if (!tmp_retargeting.equals("") && !tmp_retargeting.equals("[]")) {
                 String[] retargetingSplit = tmp_retargeting.split(",");
                 List<Integer> list = new LinkedList<Integer>();
-                for(String idStr:retargetingSplit){
+                for (String idStr : retargetingSplit) {
                     list.add(Integer.parseInt(idStr));
                 }
                 Retargeting retargetingCol = new Retargeting();
@@ -1167,26 +1202,27 @@ public class TargetingProfileCrud {
         }
         return "";
     }
-    private static void generatePMPDealJson(Targeting_profile tp){
-        String exchangeList= tp.getPmp_exchange();
-        String dealIdList= tp.getPmp_dealid();
-        if(exchangeList != null && dealIdList != null){
+
+    private static void generatePMPDealJson(Targeting_profile tp) {
+        String exchangeList = tp.getPmp_exchange();
+        String dealIdList = tp.getPmp_dealid();
+        if (exchangeList != null && dealIdList != null) {
             exchangeList = exchangeList.trim().replaceAll("\\[", "").replaceAll("]", "");
-            dealIdList= dealIdList.trim().replaceAll("\\[", "").replaceAll("]", "");
-            if(!"".equals(exchangeList) && !"".equals(dealIdList)){
+            dealIdList = dealIdList.trim().replaceAll("\\[", "").replaceAll("]", "");
+            if (!"".equals(exchangeList) && !"".equals(dealIdList)) {
                 StringBuffer sbuff = new StringBuffer("{");
                 boolean isFirst = true;
                 String[] dealArray = dealIdList.split(",");
-                if(dealArray.length > 0){
-                    for(String deal:dealArray){
-                        String dealTrim=deal.trim();
-                        if(!"".equals(dealTrim)){
-                            if(isFirst){
+                if (dealArray.length > 0) {
+                    for (String deal : dealArray) {
+                        String dealTrim = deal.trim();
+                        if (!"".equals(dealTrim)) {
+                            if (isFirst) {
                                 sbuff.append("\"");
                                 sbuff.append(exchangeList);
                                 sbuff.append("\":[");
-                                isFirst=false;
-                            }else{
+                                isFirst = false;
+                            } else {
                                 sbuff.append(",");
                             }
                             sbuff.append("\"");
@@ -1194,7 +1230,7 @@ public class TargetingProfileCrud {
                             sbuff.append("\"");
                         }
                     }
-                    if(!isFirst){
+                    if (!isFirst) {
                         sbuff.append("]");
                     }
                 }
@@ -1203,74 +1239,76 @@ public class TargetingProfileCrud {
             }
         }
     }
-    private static String generateJsonArray(String inputStr){
-    	if(inputStr == null){
-    		return "[]";
-    	}
-    	String inputStrTrim = inputStr.trim().replaceAll("\\[", "").replaceAll("]","");
-    	if("".equals(inputStrTrim)){
-    		return "[]";
-    	}
-    	String strSplit[] = inputStrTrim.split(",");
-    	boolean isFirst=true;
-    	StringBuffer sBuff = new StringBuffer("[");
-    	for(String str:strSplit){
-    		String strTrim = str.trim();
-    		if(!"".equals(strTrim)){
-    			try{
-    				int i = Integer.parseInt(strTrim);
-    				if(isFirst){
-    					isFirst=false;
-    				}else{
-    					sBuff.append(",");
-    				}
-    				sBuff.append(i);
-    			}catch(Exception e ){
-    				LOG.error(e.getMessage(),e);
-    			}
-    		}
-    	}
-    	sBuff.append("]");
-    	return sBuff.toString();
+
+    private static String generateJsonArray(String inputStr) {
+        if (inputStr == null) {
+            return "[]";
+        }
+        String inputStrTrim = inputStr.trim().replaceAll("\\[", "").replaceAll("]", "");
+        if ("".equals(inputStrTrim)) {
+            return "[]";
+        }
+        String strSplit[] = inputStrTrim.split(",");
+        boolean isFirst = true;
+        StringBuffer sBuff = new StringBuffer("[");
+        for (String str : strSplit) {
+            String strTrim = str.trim();
+            if (!"".equals(strTrim)) {
+                try {
+                    int i = Integer.parseInt(strTrim);
+                    if (isFirst) {
+                        isFirst = false;
+                    } else {
+                        sBuff.append(",");
+                    }
+                    sBuff.append(i);
+                } catch (Exception e) {
+                    LOG.error(e.getMessage(), e);
+                }
+            }
+        }
+        sBuff.append("]");
+        return sBuff.toString();
     }
-    private static void populatePMPDealJson(Targeting_profile tp){
+
+    private static void populatePMPDealJson(Targeting_profile tp) {
         String pmp = tp.getPmp_deal_json();
-        if(pmp == null){
+        if (pmp == null) {
             return;
         }
-        pmp=pmp.trim();
-        if("".equals(pmp) || "{}".equals(pmp) || "[]".equals(pmp)){
+        pmp = pmp.trim();
+        if ("".equals(pmp) || "{}".equals(pmp) || "[]".equals(pmp)) {
             return;
         }
         try {
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readValue(pmp,JsonNode.class);
-            Iterator<java.util.Map.Entry<String,JsonNode>> itr = node.getFields();
+            JsonNode node = mapper.readValue(pmp, JsonNode.class);
+            Iterator<java.util.Map.Entry<String, JsonNode>> itr = node.getFields();
             StringBuffer exchangeList = new StringBuffer("");
             StringBuffer dealList = new StringBuffer("");
             boolean isFirstExch = true;
-            while(itr.hasNext()){
-                boolean isFirst=true;
-                java.util.Map.Entry<String,JsonNode> firstElement = itr.next();
+            while (itr.hasNext()) {
+                boolean isFirst = true;
+                java.util.Map.Entry<String, JsonNode> firstElement = itr.next();
                 String key = firstElement.getKey().trim();
-                if(!"".equals(key)){
+                if (!"".equals(key)) {
                     JsonNode value = firstElement.getValue();
                     Iterator<JsonNode> valueItr = value.iterator();
-                    while(valueItr.hasNext()){
+                    while (valueItr.hasNext()) {
                         String elementNode = valueItr.next().getTextValue().trim();
-                        if(!"".equals(elementNode)){
-                            if(isFirst){
+                        if (!"".equals(elementNode)) {
+                            if (isFirst) {
                                 isFirst = false;
-                            }else{
+                            } else {
                                 dealList.append(",");
                             }
                             dealList.append(elementNode);
                         }
                     }
-                    if(!isFirst){
-                        if(isFirstExch){
+                    if (!isFirst) {
+                        if (isFirstExch) {
                             isFirstExch = false;
-                        }else{
+                        } else {
                             exchangeList.append(",");
                         }
                         exchangeList.append(key);
@@ -1279,37 +1317,39 @@ public class TargetingProfileCrud {
             }
             tp.setPmp_exchange(exchangeList.toString());
             tp.setPmp_dealid(dealList.toString());
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
         }
     }
-    public static JsonNode insert_targeting_profile(Connection con, JsonNode jsonNode){
-        if(jsonNode == null){
+
+    public static JsonNode insert_targeting_profile(Connection con, JsonNode jsonNode) {
+        if (jsonNode == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_NULL.getId());
             msg.setMsg(ErrorEnum.TARGETING_PROFILE_NULL.getName());
             return msg.toJson();
         }
-        try{
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
             Targeting_profile tp = objectMapper.treeToValue(jsonNode, Targeting_profile.class);
             return insert_targeting_profile(con, tp, true).toJson();
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             Message msg = new Message();
             msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
             msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
             return msg.toJson();
         }
     }
-    public static Message insert_targeting_profile(Connection con, Targeting_profile tp, boolean createTransaction){
-        if(con == null){
+
+    public static Message insert_targeting_profile(Connection con, Targeting_profile tp, boolean createTransaction) {
+        if (con == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
             msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
             return msg;
         }
-        if(tp == null){
+        if (tp == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_NULL.getId());
             msg.setMsg(ErrorEnum.TARGETING_PROFILE_NULL.getName());
@@ -1317,14 +1357,14 @@ public class TargetingProfileCrud {
         }
         PreparedStatement pstmt = null;
         boolean autoCommitFlag = false;
-        try{
-            if(createTransaction){
+        try {
+            if (createTransaction) {
                 autoCommitFlag = con.getAutoCommit();
                 con.setAutoCommit(false);
             }
             String tmp_country_json = create_country_entity_list_from_country_ids(tp.getCountry_json(), con);
             String tmp_isp_list = create_isp_entity_list_from_ids(tp.getCarrier_json(), con);
-            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.insert_targeting_profile,PreparedStatement.RETURN_GENERATED_KEYS);
+            pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.insert_targeting_profile, PreparedStatement.RETURN_GENERATED_KEYS);
             String guid = SingletonUUIDGenerator.getSingletonUUIDGenerator().generateUniversallyUniqueIdentifier().toString();
             tp.setGuid(guid);
             pstmt.setString(1, tp.getGuid());
@@ -1343,28 +1383,28 @@ public class TargetingProfileCrud {
             String directsiteexcinc = generateDirectSites(tp);
             pstmt.setString(14, directsiteexcinc);
             pstmt.setBoolean(15, tp.isIs_site_list_excluded());
-            pstmt.setString(16, "{\"TIER1\":"+tp.getCategories_tier_1_list()+",\"TIER2\":"+tp.getCategories_tier_2_list()+"}");
+            pstmt.setString(16, "{\"TIER1\":" + tp.getCategories_tier_1_list() + ",\"TIER2\":" + tp.getCategories_tier_2_list() + "}");
             pstmt.setBoolean(17, tp.isIs_category_list_excluded());
             pstmt.setString(18, ui_to_db_file_set(tp.getCustom_ip_file_id_set()));
             pstmt.setInt(19, tp.getModified_by());
-            pstmt.setTimestamp(20,new Timestamp((new Date()).getTime()));
+            pstmt.setTimestamp(20, new Timestamp((new Date()).getTime()));
             pstmt.setInt(21, tp.getSupply_source_type().getCode());
             pstmt.setInt(22, tp.getSupply_source().getCode());
             pstmt.setInt(23, tp.getGeo_targeting_type().getCode());
             pstmt.setString(24, tp.getHours_list());
-            pstmt.setInt(25,tp.getMidp().getCode());
-            pstmt.setString(26,lat_lon_r_to_db(tp));
+            pstmt.setInt(25, tp.getMidp().getCode());
+            pstmt.setString(26, lat_lon_r_to_db(tp));
             String exchangeexcinc = generateExtSupplyAttr(tp);
-            pstmt.setString(27,exchangeexcinc);
+            pstmt.setString(27, exchangeexcinc);
             pstmt.setString(28, tp.getConnection_type_targeting_json());
             pstmt.setBoolean(29, tp.isTablet_targeting());
-            pstmt.setString(30,generateSupply_inc_exc(new_format_direct_supply_source,new_format_exchange_supply_source));
+            pstmt.setString(30, generateSupply_inc_exc(new_format_direct_supply_source, new_format_exchange_supply_source));
             pstmt.setString(31, generateRetargeting(tp.getRetargeting()));
             generatePMPDealJson(tp);
             pstmt.setString(32, tp.getPmp_deal_json());
 
             String deviceType = tp.getDevice_type();
-            if(deviceType == null)
+            if (deviceType == null)
                 deviceType = "[]";
             pstmt.setString(33, deviceType);
             pstmt.setString(34, generateExt(tp));
@@ -1374,11 +1414,12 @@ public class TargetingProfileCrud {
             pstmt.setInt(38, tp.getUser_id_inc_exc());
             pstmt.setBoolean(39, tp.isAudience_targeting());
             pstmt.setString(40, generateAudience(tp));
+            pstmt.setString(41, tp.getAudience_tags());
             int returnCode = pstmt.executeUpdate();
-            if(createTransaction){
+            if (createTransaction) {
                 con.commit();
             }
-            if(returnCode == 0){
+            if (returnCode == 0) {
                 Message msg = new Message();
                 msg.setError_code(ErrorEnum.TARGETING_PROFILE_NOT_INSERTED.getId());
                 msg.setMsg(ErrorEnum.TARGETING_PROFILE_NOT_INSERTED.getName());
@@ -1393,50 +1434,51 @@ public class TargetingProfileCrud {
             msg.setError_code(ErrorEnum.NO_ERROR.getId());
             msg.setMsg(ErrorEnum.NO_ERROR.getName());
             msg.setId(guid);
-            msg.setId(db_id+"");
-            if(checkRename(tp.getDeviceid_file())){
-            	tp.setId(db_id);
-            	update_targeting_profile_using_provided_country_json(con, tp, true, false);
+            msg.setId(db_id + "");
+            if (checkRename(tp.getDeviceid_file())) {
+                tp.setId(db_id);
+                update_targeting_profile_using_provided_country_json(con, tp, true, false);
             }
             return msg;
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
-            if(createTransaction){
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            if (createTransaction) {
                 try {
                     con.rollback();
                 } catch (SQLException e1) {
-                    LOG.error(e1.getMessage(),e1);
+                    LOG.error(e1.getMessage(), e1);
                 }
             }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
             msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
             return msg;
-        }finally{
-            if(pstmt != null){
+        } finally {
+            if (pstmt != null) {
                 try {
                     pstmt.close();
                 } catch (SQLException e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
-            if(createTransaction){
+            if (createTransaction) {
                 try {
                     con.setAutoCommit(autoCommitFlag);
                 } catch (SQLException e1) {
-                    LOG.error(e1.getMessage(),e1);
+                    LOG.error(e1.getMessage(), e1);
                 }
             }
-        } 
+        }
     }
-    public static Message insert_targeting_profile_limited_parameters(Connection con, Targeting_profile tp, boolean createTransaction){
-        if(con == null){
+
+    public static Message insert_targeting_profile_limited_parameters(Connection con, Targeting_profile tp, boolean createTransaction) {
+        if (con == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
             msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
             return msg;
         }
-        if(tp == null){
+        if (tp == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_NULL.getId());
             msg.setMsg(ErrorEnum.TARGETING_PROFILE_NULL.getName());
@@ -1444,8 +1486,8 @@ public class TargetingProfileCrud {
         }
         PreparedStatement pstmt = null;
         boolean autoCommitFlag = false;
-        try{
-            if(createTransaction){
+        try {
+            if (createTransaction) {
                 autoCommitFlag = con.getAutoCommit();
                 con.setAutoCommit(false);
             }
@@ -1468,31 +1510,31 @@ public class TargetingProfileCrud {
             String directsiteexcinc = generateDirectSites(tp);
             pstmt.setString(14, directsiteexcinc);
             pstmt.setBoolean(15, tp.isIs_site_list_excluded());
-            pstmt.setString(16, "{\"TIER1\":"+tp.getCategories_tier_1_list()+",\"TIER2\":"+tp.getCategories_tier_2_list()+"}");
+            pstmt.setString(16, "{\"TIER1\":" + tp.getCategories_tier_1_list() + ",\"TIER2\":" + tp.getCategories_tier_2_list() + "}");
             pstmt.setBoolean(17, tp.isIs_category_list_excluded());
             pstmt.setString(18, ui_to_db_file_set(tp.getCustom_ip_file_id_set()));
             pstmt.setInt(19, tp.getModified_by());
-            pstmt.setTimestamp(20,new Timestamp((new Date()).getTime()));
+            pstmt.setTimestamp(20, new Timestamp((new Date()).getTime()));
             pstmt.setInt(21, tp.getSupply_source_type().getCode());
             pstmt.setInt(22, tp.getSupply_source().getCode());
             pstmt.setInt(23, tp.getGeo_targeting_type().getCode());
             pstmt.setString(24, tp.getHours_list());
-            pstmt.setInt(25,tp.getMidp().getCode());
-            pstmt.setString(26,lat_lon_r_to_db(tp));
+            pstmt.setInt(25, tp.getMidp().getCode());
+            pstmt.setString(26, lat_lon_r_to_db(tp));
             String exchangeexcinc = generateExtSupplyAttr(tp);
-            pstmt.setString(27,exchangeexcinc);
+            pstmt.setString(27, exchangeexcinc);
             pstmt.setString(28, tp.getConnection_type_targeting_json());
             pstmt.setBoolean(29, tp.isTablet_targeting());
-            pstmt.setString(30,tp.getSupplyInclusionExclusion());
+            pstmt.setString(30, tp.getSupplyInclusionExclusion());
             pstmt.setString(31, generateRetargeting(tp.getRetargeting()));
             generatePMPDealJson(tp);
             pstmt.setString(32, tp.getPmp_deal_json());
             pstmt.setInt(33, tp.getLat_lon_radius_unit());
             int returnCode = pstmt.executeUpdate();
-            if(createTransaction){
+            if (createTransaction) {
                 con.commit();
             }
-            if(returnCode == 0){
+            if (returnCode == 0) {
                 Message msg = new Message();
                 msg.setError_code(ErrorEnum.TARGETING_PROFILE_NOT_INSERTED.getId());
                 msg.setMsg(ErrorEnum.TARGETING_PROFILE_NOT_INSERTED.getName());
@@ -1502,50 +1544,50 @@ public class TargetingProfileCrud {
             msg.setError_code(ErrorEnum.NO_ERROR.getId());
             msg.setMsg(ErrorEnum.NO_ERROR.getName());
             return msg;
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
-            if(createTransaction){
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            if (createTransaction) {
                 try {
                     con.rollback();
                 } catch (SQLException e1) {
-                    LOG.error(e1.getMessage(),e1);
+                    LOG.error(e1.getMessage(), e1);
                 }
             }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
             msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
             return msg;
-        }finally{
-            if(pstmt != null){
+        } finally {
+            if (pstmt != null) {
                 try {
                     pstmt.close();
                 } catch (SQLException e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
-            if(createTransaction){
+            if (createTransaction) {
                 try {
                     con.setAutoCommit(autoCommitFlag);
                 } catch (SQLException e1) {
-                    LOG.error(e1.getMessage(),e1);
+                    LOG.error(e1.getMessage(), e1);
                 }
             }
         }
     }
 
-    public static JsonNode update_targeting_profile(Connection con, JsonNode jsonNode){
-        if(jsonNode == null){
+    public static JsonNode update_targeting_profile(Connection con, JsonNode jsonNode) {
+        if (jsonNode == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_NULL.getId());
             msg.setMsg(ErrorEnum.TARGETING_PROFILE_NULL.getName());
             return msg.toJson();
         }
-        try{
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
             Targeting_profile tp = objectMapper.treeToValue(jsonNode, Targeting_profile.class);
             return update_targeting_profile(con, tp, true).toJson();
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             Message msg = new Message();
             msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
             msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
@@ -1553,22 +1595,21 @@ public class TargetingProfileCrud {
         }
     }
 
-    public static Message update_targeting_profile(Connection con, Targeting_profile tp, boolean createTransaction)
-    {
-        return update_targeting_profile_using_provided_country_json(con,tp,createTransaction,false);
+    public static Message update_targeting_profile(Connection con, Targeting_profile tp, boolean createTransaction) {
+        return update_targeting_profile_using_provided_country_json(con, tp, createTransaction, false);
     }
 
     public static Message update_targeting_profile_using_provided_country_json(Connection con, Targeting_profile tp,
                                                                                boolean createTransaction,
                                                                                boolean
-                                                                                   useprovidedCountrySupplyIncExcJson){
-        if(con == null){
+                                                                                       useprovidedCountrySupplyIncExcJson) {
+        if (con == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
             msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
             return msg;
         }
-        if(tp == null){
+        if (tp == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_NULL.getId());
             msg.setMsg(ErrorEnum.TARGETING_PROFILE_NULL.getName());
@@ -1576,17 +1617,17 @@ public class TargetingProfileCrud {
         }
         PreparedStatement pstmt = null;
         boolean autoCommitFlag = false;
-        try{
-            if(createTransaction){
+        try {
+            if (createTransaction) {
                 autoCommitFlag = con.getAutoCommit();
                 con.setAutoCommit(false);
             }
             String tmp_country_json = null;
 
-            if(useprovidedCountrySupplyIncExcJson)
+            if (useprovidedCountrySupplyIncExcJson)
                 tmp_country_json = tp.getCountry_json();
             else
-                tmp_country_json =  create_country_entity_list_from_country_ids(tp.getCountry_json(), con);
+                tmp_country_json = create_country_entity_list_from_country_ids(tp.getCountry_json(), con);
 
             String tmp_isp_json = create_isp_entity_list_from_ids(tp.getCarrier_json(), con);
             pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.update_targeting_profile);
@@ -1604,11 +1645,11 @@ public class TargetingProfileCrud {
             String directsiteexcinc = generateDirectSites(tp);
             pstmt.setString(12, directsiteexcinc);
             pstmt.setBoolean(13, tp.isIs_site_list_excluded());
-            pstmt.setString(14, "{\"TIER1\":"+tp.getCategories_tier_1_list()+",\"TIER2\":"+tp.getCategories_tier_2_list()+"}");
+            pstmt.setString(14, "{\"TIER1\":" + tp.getCategories_tier_1_list() + ",\"TIER2\":" + tp.getCategories_tier_2_list() + "}");
             pstmt.setBoolean(15, tp.isIs_category_list_excluded());
             pstmt.setString(16, ui_to_db_file_set(tp.getCustom_ip_file_id_set()));
             pstmt.setInt(17, tp.getModified_by());
-            pstmt.setTimestamp(18,new Timestamp((new Date()).getTime()));
+            pstmt.setTimestamp(18, new Timestamp((new Date()).getTime()));
             pstmt.setInt(19, tp.getSupply_source_type().getCode());
             pstmt.setInt(20, tp.getSupply_source().getCode());
             pstmt.setInt(21, tp.getGeo_targeting_type().getCode());
@@ -1620,32 +1661,33 @@ public class TargetingProfileCrud {
             pstmt.setString(26, tp.getConnection_type_targeting_json());
             pstmt.setBoolean(27, tp.isTablet_targeting());
 
-            if(useprovidedCountrySupplyIncExcJson)
-                pstmt.setString(28,tp.getSupplyInclusionExclusion());
+            if (useprovidedCountrySupplyIncExcJson)
+                pstmt.setString(28, tp.getSupplyInclusionExclusion());
             else
-                pstmt.setString(28,generateSupply_inc_exc(new_format_direct_supply_source,new_format_exchange_supply_source));
+                pstmt.setString(28, generateSupply_inc_exc(new_format_direct_supply_source, new_format_exchange_supply_source));
 
             pstmt.setString(29, generateRetargeting(tp.getRetargeting()));
             generatePMPDealJson(tp);
             pstmt.setString(30, tp.getPmp_deal_json());
 
             String deviceType = tp.getDevice_type();
-            if(deviceType == null)
+            if (deviceType == null)
                 deviceType = "[]";
             pstmt.setString(31, deviceType);
             pstmt.setString(32, generateExt(tp));
             pstmt.setString(33, ui_to_db_file_set(tp.getLat_lon_radius_file()));
-            pstmt.setString(34, renameDeviceidfile(tp.getDeviceid_file(), tp.getAccount_guid(), tp.getFile_prefix_path(),tp.getId() ));
+            pstmt.setString(34, renameDeviceidfile(tp.getDeviceid_file(), tp.getAccount_guid(), tp.getFile_prefix_path(), tp.getId()));
             pstmt.setInt(35, tp.getLat_lon_radius_unit());
             pstmt.setInt(36, tp.getUser_id_inc_exc());
             pstmt.setBoolean(37, tp.isAudience_targeting());
             pstmt.setString(38, generateAudience(tp));
-            pstmt.setString(39, tp.getGuid());
+            pstmt.setString(39, tp.getAudience_tags());
+            pstmt.setString(40, tp.getGuid());
             int returnCode = pstmt.executeUpdate();
-            if(createTransaction){
+            if (createTransaction) {
                 con.commit();
             }
-            if(returnCode == 0){
+            if (returnCode == 0) {
                 Message msg = new Message();
                 msg.setError_code(ErrorEnum.TARGETING_PROFILE_NOT_UPDATED.getId());
                 msg.setMsg(ErrorEnum.TARGETING_PROFILE_NOT_UPDATED.getName());
@@ -1655,38 +1697,39 @@ public class TargetingProfileCrud {
             msg.setError_code(ErrorEnum.NO_ERROR.getId());
             msg.setMsg(ErrorEnum.NO_ERROR.getName());
             return msg;
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
-            if(createTransaction){
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            if (createTransaction) {
                 try {
                     con.rollback();
                 } catch (SQLException e1) {
-                    LOG.error(e1.getMessage(),e1);
+                    LOG.error(e1.getMessage(), e1);
                 }
             }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
             msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
             return msg;
-        }finally{
-            if(pstmt != null){
+        } finally {
+            if (pstmt != null) {
                 try {
                     pstmt.close();
                 } catch (SQLException e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
-            if(createTransaction){
+            if (createTransaction) {
                 try {
                     con.setAutoCommit(autoCommitFlag);
                 } catch (SQLException e1) {
-                    LOG.error(e1.getMessage(),e1);
+                    LOG.error(e1.getMessage(), e1);
                 }
             }
-        } 
+        }
     }
-    public static JsonNode various_get_targeting_profile(Connection con, JsonNode jsonNode){
-        if(jsonNode == null){
+
+    public static JsonNode various_get_targeting_profile(Connection con, JsonNode jsonNode) {
+        if (jsonNode == null) {
             TargetingProfileList tplist = new TargetingProfileList();
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_LIST_ENTITY_NULL.getId());
@@ -1694,12 +1737,12 @@ public class TargetingProfileCrud {
             tplist.setMsg(msg);
             return tplist.toJson();
         }
-        try{
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
             TargetingProfileListEntity tplistEntity = objectMapper.treeToValue(jsonNode, TargetingProfileListEntity.class);
-            return  various_get_targeting_profile(con, tplistEntity).toJson();
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
+            return various_get_targeting_profile(con, tplistEntity).toJson();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             TargetingProfileList tplist = new TargetingProfileList();
             Message msg = new Message();
             msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
@@ -1708,11 +1751,13 @@ public class TargetingProfileCrud {
             return tplist.toJson();
         }
     }
-    public static TargetingProfileList various_get_targeting_profile(Connection con, TargetingProfileListEntity tplistEntity){
-        return various_get_targeting_profile(con, tplistEntity,1);
+
+    public static TargetingProfileList various_get_targeting_profile(Connection con, TargetingProfileListEntity tplistEntity) {
+        return various_get_targeting_profile(con, tplistEntity, 1);
     }
-    public static TargetingProfileList various_get_targeting_profile(Connection con, TargetingProfileListEntity tplistEntity, int version){
-        if(con == null){
+
+    public static TargetingProfileList various_get_targeting_profile(Connection con, TargetingProfileListEntity tplistEntity, int version) {
+        if (con == null) {
             TargetingProfileList tplist = new TargetingProfileList();
             Message msg = new Message();
             msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
@@ -1720,7 +1765,7 @@ public class TargetingProfileCrud {
             tplist.setMsg(msg);
             return tplist;
         }
-        if(tplistEntity == null){
+        if (tplistEntity == null) {
             TargetingProfileList tplist = new TargetingProfileList();
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_LIST_ENTITY_NULL.getId());
@@ -1729,11 +1774,12 @@ public class TargetingProfileCrud {
             return tplist;
         }
         PreparedStatement pstmt = null;
-        try{
-            switch (tplistEntity.getTpEnum()){
+        try {
+            switch (tplistEntity.getTpEnum()) {
                 case get_targeting_profile:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.get_targeting_profile);
                     pstmt.setString(1, tplistEntity.getGuid());
+//                    pstmt.setInt(2, tplistEntity.getId());
                     break;
                 case get_targeting_profile_by_id:
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.get_targeting_profile_by_id);
@@ -1743,74 +1789,75 @@ public class TargetingProfileCrud {
                     pstmt = con.prepareStatement(com.kritter.kritterui.api.db_query_def.Targeting_Profile.list_active_targeting_profile_by_account);
                     pstmt.setString(1, tplistEntity.getAccount_guid());
                     break;
-               default:
+                default:
                     break;
             }
             ResultSet rset = pstmt.executeQuery();
             TargetingProfileList tplist = new TargetingProfileList();
             List<Targeting_profile> tps = new LinkedList<Targeting_profile>();
-            while(rset.next()){
+            while (rset.next()) {
                 Targeting_profile tp = new Targeting_profile();
                 populate(tp, rset);
                 tps.add(tp);
             }
             tplist.setTplist(tps);
             Message msg = new Message();
-            if(tps.size()>0){
+            if (tps.size() > 0) {
                 msg.setError_code(ErrorEnum.NO_ERROR.getId());
                 msg.setMsg(ErrorEnum.NO_ERROR.getName());
-            }else{
+            } else {
                 msg.setError_code(ErrorEnum.TARGETING_PROFILE_NOT_FOUND.getId());
                 msg.setMsg(ErrorEnum.TARGETING_PROFILE_NOT_FOUND.getName());
             }
             tplist.setMsg(msg);
             return tplist;
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             TargetingProfileList tplist = new TargetingProfileList();
             Message msg = new Message();
             msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
             msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
             tplist.setMsg(msg);
             return tplist;
-        }finally{
-            if(pstmt != null){
+        } finally {
+            if (pstmt != null) {
                 try {
                     pstmt.close();
                 } catch (SQLException e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
-        } 
+        }
     }
-    public static JsonNode deactivate_targeting_profile(Connection con, JsonNode jsonNode){
-        if(jsonNode == null){
+
+    public static JsonNode deactivate_targeting_profile(Connection con, JsonNode jsonNode) {
+        if (jsonNode == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_NULL.getId());
             msg.setMsg(ErrorEnum.TARGETING_PROFILE_NULL.getName());
             return msg.toJson();
         }
-        try{
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
             Targeting_profile tp = objectMapper.treeToValue(jsonNode, Targeting_profile.class);
             return deactivate_targeting_profile(con, tp, true).toJson();
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             Message msg = new Message();
             msg.setError_code(ErrorEnum.JSON_EXCEPTION.getId());
             msg.setMsg(ErrorEnum.JSON_EXCEPTION.getName());
             return msg.toJson();
         }
     }
-    
-    public static Message deactivate_targeting_profile(Connection con, Targeting_profile tp, boolean createTransaction){
-        if(con == null){
+
+    public static Message deactivate_targeting_profile(Connection con, Targeting_profile tp, boolean createTransaction) {
+        if (con == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.Internal_ERROR_1.getId());
             msg.setMsg(ErrorEnum.Internal_ERROR_1.getName());
             return msg;
         }
-        if(tp == null){
+        if (tp == null) {
             Message msg = new Message();
             msg.setError_code(ErrorEnum.TARGETING_PROFILE_NULL.getId());
             msg.setMsg(ErrorEnum.TARGETING_PROFILE_NULL.getName());
@@ -1818,8 +1865,8 @@ public class TargetingProfileCrud {
         }
         PreparedStatement pstmt = null;
         boolean autoCommitFlag = false;
-        try{
-            if(createTransaction){
+        try {
+            if (createTransaction) {
                 autoCommitFlag = con.getAutoCommit();
                 con.setAutoCommit(false);
             }
@@ -1827,10 +1874,10 @@ public class TargetingProfileCrud {
             pstmt.setTimestamp(1, new Timestamp((new Date()).getTime()));
             pstmt.setString(2, tp.getGuid());
             int returnCode = pstmt.executeUpdate();
-            if(createTransaction){
+            if (createTransaction) {
                 con.commit();
             }
-            if(returnCode == 0){
+            if (returnCode == 0) {
                 Message msg = new Message();
                 msg.setError_code(ErrorEnum.TARGETING_PROFILE_NOT_UPDATED.getId());
                 msg.setMsg(ErrorEnum.TARGETING_PROFILE_NOT_UPDATED.getName());
@@ -1840,37 +1887,38 @@ public class TargetingProfileCrud {
             msg.setError_code(ErrorEnum.NO_ERROR.getId());
             msg.setMsg(ErrorEnum.NO_ERROR.getName());
             return msg;
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
-            if(createTransaction){
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            if (createTransaction) {
                 try {
                     con.rollback();
                 } catch (SQLException e1) {
-                    LOG.error(e1.getMessage(),e1);
+                    LOG.error(e1.getMessage(), e1);
                 }
             }
             Message msg = new Message();
             msg.setError_code(ErrorEnum.SQL_EXCEPTION.getId());
             msg.setMsg(ErrorEnum.SQL_EXCEPTION.getName());
             return msg;
-        }finally{
-            if(pstmt != null){
+        } finally {
+            if (pstmt != null) {
                 try {
                     pstmt.close();
                 } catch (SQLException e) {
-                    LOG.error(e.getMessage(),e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
-            if(createTransaction){
+            if (createTransaction) {
                 try {
                     con.setAutoCommit(autoCommitFlag);
                 } catch (SQLException e1) {
-                    LOG.error(e1.getMessage(),e1);
+                    LOG.error(e1.getMessage(), e1);
                 }
             }
-        } 
+        }
     }
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
         Targeting_profile tp = new Targeting_profile();
         String str = "{\"34\":[\"kwjdbq\",\"akjkqs\"]}";
         tp.setPmp_deal_json(str);

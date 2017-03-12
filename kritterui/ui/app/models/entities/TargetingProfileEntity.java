@@ -1,5 +1,7 @@
 package models.entities;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.springframework.beans.BeanUtils;
 
 import play.data.validation.Constraints.Required;
@@ -10,6 +12,9 @@ import com.kritter.constants.StatusIdEnum;
 import com.kritter.constants.MidpValue;
 import com.kritter.constants.SupplySourceEnum;
 import com.kritter.constants.SupplySourceTypeEnum;
+import scala.util.parsing.combinator.testing.Str;
+
+import java.util.*;
 
 public class TargetingProfileEntity extends Entity{
 
@@ -80,8 +85,44 @@ public class TargetingProfileEntity extends Entity{
     private String audience_tier3_cat = "[]";
     private String audience_tier4_cat = "[]";
     private String audience_tier5_cat = "[]";
+    private String audience_inc;
+    private String audience_exc;
+    private String audience_package;
+    private String audience_tags;
 
-	public boolean isAudience_targeting() {
+    public String getAudience_tags() {
+        return audience_tags;
+    }
+
+    public void setAudience_tags(String audience_tags) {
+        this.audience_tags = audience_tags;
+    }
+
+    public String getAudience_inc() {
+        return audience_inc;
+    }
+
+    public void setAudience_inc(String audience_inc) {
+        this.audience_inc = audience_inc;
+    }
+
+    public String getAudience_exc() {
+        return audience_exc;
+    }
+
+    public void setAudience_exc(String audience_exc) {
+        this.audience_exc = audience_exc;
+    }
+
+    public String getAudience_package() {
+        return audience_package;
+    }
+
+    public void setAudience_package(String audience_package) {
+        this.audience_package = audience_package;
+    }
+
+    public boolean isAudience_targeting() {
 		return audience_targeting;
 	}
 	public void setAudience_targeting(boolean audience_targeting) {
@@ -457,9 +498,23 @@ public class TargetingProfileEntity extends Entity{
 	public void setLat_lon_radius_unit(int lat_lon_radius_unit) {
 		this.lat_lon_radius_unit = lat_lon_radius_unit;
 	}
-	public Targeting_profile getEntity(){
+
+
+
+    public Targeting_profile getEntity(){
     	Targeting_profile tp = new Targeting_profile();
+        List<Integer> incList = JSON.parseArray(this.getAudience_inc(), Integer.class);
+        List<Integer> excList = JSON.parseArray(this.getAudience_exc(), Integer.class);
+        List<Integer> packageList = JSON.parseArray(this.getAudience_package(), Integer.class);
+        Map<String,List<Integer>> audience_tags = new HashMap<String,List<Integer>>();
+        audience_tags.put("inc",incList);
+        audience_tags.put("exc",excList);
+        audience_tags.put("package",packageList);
+        String audienceTags = JSON.toJSONString(audience_tags);
+        this.setAudience_tags(audienceTags);
     	BeanUtils.copyProperties(this, tp);
-    	return tp;
+        tp.setAudience_tags(audienceTags);
+
+        return tp;
     }
 }

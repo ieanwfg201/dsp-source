@@ -128,290 +128,210 @@ public class Targeting_profile {
     private String audience_tier3_cat = "[]";
     private String audience_tier4_cat = "[]";
     private String audience_tier5_cat = "[]";
+	private String audience_tags;
+	private String audience_inc;
+	private String audience_exc;
+	private String audience_package;
+
+    public String getAudience_inc() {
+        return audience_inc;
+    }
+
+    public void setAudience_inc(String audience_inc) {
+        this.audience_inc = audience_inc;
+    }
+
+    public String getAudience_exc() {
+        return audience_exc;
+    }
+
+    public void setAudience_exc(String audience_exc) {
+        this.audience_exc = audience_exc;
+    }
+
+    public String getAudience_package() {
+        return audience_package;
+    }
+
+    public void setAudience_package(String audience_package) {
+        this.audience_package = audience_package;
+    }
+
+    @Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Targeting_profile that = (Targeting_profile) o;
+
+		if (is_site_list_excluded != that.is_site_list_excluded) return false;
+		if (is_category_list_excluded != that.is_category_list_excluded) return false;
+		if (modified_by != that.modified_by) return false;
+		if (created_on != that.created_on) return false;
+		if (last_modified != that.last_modified) return false;
+		if (tablet_targeting != that.tablet_targeting) return false;
+		if (mma_inc_exc != that.mma_inc_exc) return false;
+		if (adposition_inc_exc != that.adposition_inc_exc) return false;
+		if (channel_inc_exc != that.channel_inc_exc) return false;
+		if (user_id_inc_exc != that.user_id_inc_exc) return false;
+		if (id != that.id) return false;
+		if (lat_lon_radius_unit != that.lat_lon_radius_unit) return false;
+		if (audience_targeting != that.audience_targeting) return false;
+		if (audience_genderincl != that.audience_genderincl) return false;
+		if (audience_agerangeinc != that.audience_agerangeinc) return false;
+		if (audience_catinc != that.audience_catinc) return false;
+		if (guid != null ? !guid.equals(that.guid) : that.guid != null) return false;
+		if (name != null ? !name.equals(that.name) : that.name != null) return false;
+		if (account_guid != null ? !account_guid.equals(that.account_guid) : that.account_guid != null) return false;
+		if (status_id != that.status_id) return false;
+		if (brand_list != null ? !brand_list.equals(that.brand_list) : that.brand_list != null) return false;
+		if (model_list != null ? !model_list.equals(that.model_list) : that.model_list != null) return false;
+		if (os_json != null ? !os_json.equals(that.os_json) : that.os_json != null) return false;
+		if (browser_json != null ? !browser_json.equals(that.browser_json) : that.browser_json != null) return false;
+		if (country_json != null ? !country_json.equals(that.country_json) : that.country_json != null) return false;
+		if (carrier_json != null ? !carrier_json.equals(that.carrier_json) : that.carrier_json != null) return false;
+		if (state_json != null ? !state_json.equals(that.state_json) : that.state_json != null) return false;
+		if (city_json != null ? !city_json.equals(that.city_json) : that.city_json != null) return false;
+		if (zipcode_file_id_set != null ? !zipcode_file_id_set.equals(that.zipcode_file_id_set) : that.zipcode_file_id_set != null)
+			return false;
+		if (categories_tier_1_list != null ? !categories_tier_1_list.equals(that.categories_tier_1_list) : that.categories_tier_1_list != null)
+			return false;
+		if (categories_tier_2_list != null ? !categories_tier_2_list.equals(that.categories_tier_2_list) : that.categories_tier_2_list != null)
+			return false;
+		if (custom_ip_file_id_set != null ? !custom_ip_file_id_set.equals(that.custom_ip_file_id_set) : that.custom_ip_file_id_set != null)
+			return false;
+		if (supply_source_type != that.supply_source_type) return false;
+		if (supply_source != that.supply_source) return false;
+		if (geo_targeting_type != that.geo_targeting_type) return false;
+		if (hours_list != null ? !hours_list.equals(that.hours_list) : that.hours_list != null) return false;
+		if (midp != that.midp) return false;
+		if (lat_long != null ? !lat_long.equals(that.lat_long) : that.lat_long != null) return false;
+		if (pub_list != null ? !pub_list.equals(that.pub_list) : that.pub_list != null) return false;
+		if (exchange_list != null ? !exchange_list.equals(that.exchange_list) : that.exchange_list != null)
+			return false;
+		if (site_list != null ? !site_list.equals(that.site_list) : that.site_list != null) return false;
+		if (ext_supply_attributes != null ? !ext_supply_attributes.equals(that.ext_supply_attributes) : that.ext_supply_attributes != null)
+			return false;
+		if (direct_supply_inc_exc != null ? !direct_supply_inc_exc.equals(that.direct_supply_inc_exc) : that.direct_supply_inc_exc != null)
+			return false;
+		if (exchange_supply_inc_exc != null ? !exchange_supply_inc_exc.equals(that.exchange_supply_inc_exc) : that.exchange_supply_inc_exc != null)
+			return false;
+		if (connection_type_targeting_json != null ? !connection_type_targeting_json.equals(that.connection_type_targeting_json) : that.connection_type_targeting_json != null)
+			return false;
+		if (retargeting != null ? !retargeting.equals(that.retargeting) : that.retargeting != null) return false;
+		if (supplyInclusionExclusion != null ? !supplyInclusionExclusion.equals(that.supplyInclusionExclusion) : that.supplyInclusionExclusion != null)
+			return false;
+		if (pmp_exchange != null ? !pmp_exchange.equals(that.pmp_exchange) : that.pmp_exchange != null) return false;
+		if (pmp_dealid != null ? !pmp_dealid.equals(that.pmp_dealid) : that.pmp_dealid != null) return false;
+		if (pmp_deal_json != null ? !pmp_deal_json.equals(that.pmp_deal_json) : that.pmp_deal_json != null)
+			return false;
+		if (device_type != null ? !device_type.equals(that.device_type) : that.device_type != null) return false;
+		if (mma_tier_1_list != null ? !mma_tier_1_list.equals(that.mma_tier_1_list) : that.mma_tier_1_list != null)
+			return false;
+		if (mma_tier_2_list != null ? !mma_tier_2_list.equals(that.mma_tier_2_list) : that.mma_tier_2_list != null)
+			return false;
+		if (adposition_list != null ? !adposition_list.equals(that.adposition_list) : that.adposition_list != null)
+			return false;
+		if (channel_tier_1_list != null ? !channel_tier_1_list.equals(that.channel_tier_1_list) : that.channel_tier_1_list != null)
+			return false;
+		if (channel_tier_2_list != null ? !channel_tier_2_list.equals(that.channel_tier_2_list) : that.channel_tier_2_list != null)
+			return false;
+		if (lat_lon_radius_file != null ? !lat_lon_radius_file.equals(that.lat_lon_radius_file) : that.lat_lon_radius_file != null)
+			return false;
+		if (deviceid_file != null ? !deviceid_file.equals(that.deviceid_file) : that.deviceid_file != null)
+			return false;
+		if (file_prefix_path != null ? !file_prefix_path.equals(that.file_prefix_path) : that.file_prefix_path != null)
+			return false;
+		if (audience_gender != null ? !audience_gender.equals(that.audience_gender) : that.audience_gender != null)
+			return false;
+		if (audience_agerange != null ? !audience_agerange.equals(that.audience_agerange) : that.audience_agerange != null)
+			return false;
+		if (audience_tier1_cat != null ? !audience_tier1_cat.equals(that.audience_tier1_cat) : that.audience_tier1_cat != null)
+			return false;
+		if (audience_tier2_cat != null ? !audience_tier2_cat.equals(that.audience_tier2_cat) : that.audience_tier2_cat != null)
+			return false;
+		if (audience_tier3_cat != null ? !audience_tier3_cat.equals(that.audience_tier3_cat) : that.audience_tier3_cat != null)
+			return false;
+		if (audience_tier4_cat != null ? !audience_tier4_cat.equals(that.audience_tier4_cat) : that.audience_tier4_cat != null)
+			return false;
+		if (audience_tier5_cat != null ? !audience_tier5_cat.equals(that.audience_tier5_cat) : that.audience_tier5_cat != null)
+			return false;
+		return audience_tags != null ? audience_tags.equals(that.audience_tags) : that.audience_tags == null;
+	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((account_guid == null) ? 0 : account_guid.hashCode());
-		result = prime * result + (adposition_inc_exc ? 1231 : 1237);
-		result = prime * result + ((adposition_list == null) ? 0 : adposition_list.hashCode());
-		result = prime * result + ((brand_list == null) ? 0 : brand_list.hashCode());
-		result = prime * result + ((browser_json == null) ? 0 : browser_json.hashCode());
-		result = prime * result + ((carrier_json == null) ? 0 : carrier_json.hashCode());
-		result = prime * result + ((categories_tier_1_list == null) ? 0 : categories_tier_1_list.hashCode());
-		result = prime * result + ((categories_tier_2_list == null) ? 0 : categories_tier_2_list.hashCode());
-		result = prime * result + (channel_inc_exc ? 1231 : 1237);
-		result = prime * result + ((channel_tier_1_list == null) ? 0 : channel_tier_1_list.hashCode());
-		result = prime * result + ((channel_tier_2_list == null) ? 0 : channel_tier_2_list.hashCode());
-		result = prime * result + ((city_json == null) ? 0 : city_json.hashCode());
-		result = prime * result
-				+ ((connection_type_targeting_json == null) ? 0 : connection_type_targeting_json.hashCode());
-		result = prime * result + ((country_json == null) ? 0 : country_json.hashCode());
-		result = prime * result + (int) (created_on ^ (created_on >>> 32));
-		result = prime * result + ((custom_ip_file_id_set == null) ? 0 : custom_ip_file_id_set.hashCode());
-		result = prime * result + ((device_type == null) ? 0 : device_type.hashCode());
-		result = prime * result + ((deviceid_file == null) ? 0 : deviceid_file.hashCode());
-		result = prime * result + ((direct_supply_inc_exc == null) ? 0 : direct_supply_inc_exc.hashCode());
-		result = prime * result + ((exchange_list == null) ? 0 : exchange_list.hashCode());
-		result = prime * result + ((exchange_supply_inc_exc == null) ? 0 : exchange_supply_inc_exc.hashCode());
-		result = prime * result + ((ext_supply_attributes == null) ? 0 : ext_supply_attributes.hashCode());
-		result = prime * result + ((geo_targeting_type == null) ? 0 : geo_targeting_type.hashCode());
-		result = prime * result + ((guid == null) ? 0 : guid.hashCode());
-		result = prime * result + ((hours_list == null) ? 0 : hours_list.hashCode());
-		result = prime * result + (is_category_list_excluded ? 1231 : 1237);
-		result = prime * result + (is_site_list_excluded ? 1231 : 1237);
-		result = prime * result + (int) (last_modified ^ (last_modified >>> 32));
-		result = prime * result + ((lat_lon_radius_file == null) ? 0 : lat_lon_radius_file.hashCode());
-		result = prime * result + ((lat_long == null) ? 0 : lat_long.hashCode());
-		result = prime * result + ((midp == null) ? 0 : midp.hashCode());
-		result = prime * result + (mma_inc_exc ? 1231 : 1237);
-		result = prime * result + ((mma_tier_1_list == null) ? 0 : mma_tier_1_list.hashCode());
-		result = prime * result + ((mma_tier_2_list == null) ? 0 : mma_tier_2_list.hashCode());
-		result = prime * result + ((model_list == null) ? 0 : model_list.hashCode());
-		result = prime * result + modified_by;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((os_json == null) ? 0 : os_json.hashCode());
-		result = prime * result + ((pmp_deal_json == null) ? 0 : pmp_deal_json.hashCode());
-		result = prime * result + ((pmp_dealid == null) ? 0 : pmp_dealid.hashCode());
-		result = prime * result + ((pmp_exchange == null) ? 0 : pmp_exchange.hashCode());
-		result = prime * result + ((pub_list == null) ? 0 : pub_list.hashCode());
-		result = prime * result + ((retargeting == null) ? 0 : retargeting.hashCode());
-		result = prime * result + ((site_list == null) ? 0 : site_list.hashCode());
-		result = prime * result + ((state_json == null) ? 0 : state_json.hashCode());
-		result = prime * result + ((status_id == null) ? 0 : status_id.hashCode());
-		result = prime * result + ((supplyInclusionExclusion == null) ? 0 : supplyInclusionExclusion.hashCode());
-		result = prime * result + ((supply_source == null) ? 0 : supply_source.hashCode());
-		result = prime * result + ((supply_source_type == null) ? 0 : supply_source_type.hashCode());
-		result = prime * result + (tablet_targeting ? 1231 : 1237);
-		result = prime * result + ((zipcode_file_id_set == null) ? 0 : zipcode_file_id_set.hashCode());
+		int result = guid != null ? guid.hashCode() : 0;
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		result = 31 * result + (account_guid != null ? account_guid.hashCode() : 0);
+		result = 31 * result + (status_id != null ? status_id.hashCode() : 0);
+		result = 31 * result + (brand_list != null ? brand_list.hashCode() : 0);
+		result = 31 * result + (model_list != null ? model_list.hashCode() : 0);
+		result = 31 * result + (os_json != null ? os_json.hashCode() : 0);
+		result = 31 * result + (browser_json != null ? browser_json.hashCode() : 0);
+		result = 31 * result + (country_json != null ? country_json.hashCode() : 0);
+		result = 31 * result + (carrier_json != null ? carrier_json.hashCode() : 0);
+		result = 31 * result + (state_json != null ? state_json.hashCode() : 0);
+		result = 31 * result + (city_json != null ? city_json.hashCode() : 0);
+		result = 31 * result + (zipcode_file_id_set != null ? zipcode_file_id_set.hashCode() : 0);
+		result = 31 * result + (is_site_list_excluded ? 1 : 0);
+		result = 31 * result + (categories_tier_1_list != null ? categories_tier_1_list.hashCode() : 0);
+		result = 31 * result + (categories_tier_2_list != null ? categories_tier_2_list.hashCode() : 0);
+		result = 31 * result + (is_category_list_excluded ? 1 : 0);
+		result = 31 * result + (custom_ip_file_id_set != null ? custom_ip_file_id_set.hashCode() : 0);
+		result = 31 * result + modified_by;
+		result = 31 * result + (int) (created_on ^ (created_on >>> 32));
+		result = 31 * result + (int) (last_modified ^ (last_modified >>> 32));
+		result = 31 * result + (supply_source_type != null ? supply_source_type.hashCode() : 0);
+		result = 31 * result + (supply_source != null ? supply_source.hashCode() : 0);
+		result = 31 * result + (geo_targeting_type != null ? geo_targeting_type.hashCode() : 0);
+		result = 31 * result + (hours_list != null ? hours_list.hashCode() : 0);
+		result = 31 * result + (midp != null ? midp.hashCode() : 0);
+		result = 31 * result + (lat_long != null ? lat_long.hashCode() : 0);
+		result = 31 * result + (pub_list != null ? pub_list.hashCode() : 0);
+		result = 31 * result + (exchange_list != null ? exchange_list.hashCode() : 0);
+		result = 31 * result + (site_list != null ? site_list.hashCode() : 0);
+		result = 31 * result + (ext_supply_attributes != null ? ext_supply_attributes.hashCode() : 0);
+		result = 31 * result + (direct_supply_inc_exc != null ? direct_supply_inc_exc.hashCode() : 0);
+		result = 31 * result + (exchange_supply_inc_exc != null ? exchange_supply_inc_exc.hashCode() : 0);
+		result = 31 * result + (connection_type_targeting_json != null ? connection_type_targeting_json.hashCode() : 0);
+		result = 31 * result + (tablet_targeting ? 1 : 0);
+		result = 31 * result + (retargeting != null ? retargeting.hashCode() : 0);
+		result = 31 * result + (supplyInclusionExclusion != null ? supplyInclusionExclusion.hashCode() : 0);
+		result = 31 * result + (pmp_exchange != null ? pmp_exchange.hashCode() : 0);
+		result = 31 * result + (pmp_dealid != null ? pmp_dealid.hashCode() : 0);
+		result = 31 * result + (pmp_deal_json != null ? pmp_deal_json.hashCode() : 0);
+		result = 31 * result + (device_type != null ? device_type.hashCode() : 0);
+		result = 31 * result + (mma_inc_exc ? 1 : 0);
+		result = 31 * result + (mma_tier_1_list != null ? mma_tier_1_list.hashCode() : 0);
+		result = 31 * result + (mma_tier_2_list != null ? mma_tier_2_list.hashCode() : 0);
+		result = 31 * result + (adposition_inc_exc ? 1 : 0);
+		result = 31 * result + (adposition_list != null ? adposition_list.hashCode() : 0);
+		result = 31 * result + (channel_inc_exc ? 1 : 0);
+		result = 31 * result + (channel_tier_1_list != null ? channel_tier_1_list.hashCode() : 0);
+		result = 31 * result + (channel_tier_2_list != null ? channel_tier_2_list.hashCode() : 0);
+		result = 31 * result + (lat_lon_radius_file != null ? lat_lon_radius_file.hashCode() : 0);
+		result = 31 * result + user_id_inc_exc;
+		result = 31 * result + (deviceid_file != null ? deviceid_file.hashCode() : 0);
+		result = 31 * result + (file_prefix_path != null ? file_prefix_path.hashCode() : 0);
+		result = 31 * result + id;
+		result = 31 * result + lat_lon_radius_unit;
+		result = 31 * result + (audience_targeting ? 1 : 0);
+		result = 31 * result + (audience_genderincl ? 1 : 0);
+		result = 31 * result + (audience_gender != null ? audience_gender.hashCode() : 0);
+		result = 31 * result + (audience_agerangeinc ? 1 : 0);
+		result = 31 * result + (audience_agerange != null ? audience_agerange.hashCode() : 0);
+		result = 31 * result + (audience_catinc ? 1 : 0);
+		result = 31 * result + (audience_tier1_cat != null ? audience_tier1_cat.hashCode() : 0);
+		result = 31 * result + (audience_tier2_cat != null ? audience_tier2_cat.hashCode() : 0);
+		result = 31 * result + (audience_tier3_cat != null ? audience_tier3_cat.hashCode() : 0);
+		result = 31 * result + (audience_tier4_cat != null ? audience_tier4_cat.hashCode() : 0);
+		result = 31 * result + (audience_tier5_cat != null ? audience_tier5_cat.hashCode() : 0);
+		result = 31 * result + (audience_tags != null ? audience_tags.hashCode() : 0);
 		return result;
 	}
-    @Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Targeting_profile other = (Targeting_profile) obj;
-		if (account_guid == null) {
-			if (other.account_guid != null)
-				return false;
-		} else if (!account_guid.equals(other.account_guid))
-			return false;
-		if (adposition_inc_exc != other.adposition_inc_exc)
-			return false;
-		if (adposition_list == null) {
-			if (other.adposition_list != null)
-				return false;
-		} else if (!adposition_list.equals(other.adposition_list))
-			return false;
-		if (brand_list == null) {
-			if (other.brand_list != null)
-				return false;
-		} else if (!brand_list.equals(other.brand_list))
-			return false;
-		if (browser_json == null) {
-			if (other.browser_json != null)
-				return false;
-		} else if (!browser_json.equals(other.browser_json))
-			return false;
-		if (carrier_json == null) {
-			if (other.carrier_json != null)
-				return false;
-		} else if (!carrier_json.equals(other.carrier_json))
-			return false;
-		if (categories_tier_1_list == null) {
-			if (other.categories_tier_1_list != null)
-				return false;
-		} else if (!categories_tier_1_list.equals(other.categories_tier_1_list))
-			return false;
-		if (categories_tier_2_list == null) {
-			if (other.categories_tier_2_list != null)
-				return false;
-		} else if (!categories_tier_2_list.equals(other.categories_tier_2_list))
-			return false;
-		if (channel_inc_exc != other.channel_inc_exc)
-			return false;
-		if (channel_tier_1_list == null) {
-			if (other.channel_tier_1_list != null)
-				return false;
-		} else if (!channel_tier_1_list.equals(other.channel_tier_1_list))
-			return false;
-		if (channel_tier_2_list == null) {
-			if (other.channel_tier_2_list != null)
-				return false;
-		} else if (!channel_tier_2_list.equals(other.channel_tier_2_list))
-			return false;
-		if (city_json == null) {
-			if (other.city_json != null)
-				return false;
-		} else if (!city_json.equals(other.city_json))
-			return false;
-		if (connection_type_targeting_json == null) {
-			if (other.connection_type_targeting_json != null)
-				return false;
-		} else if (!connection_type_targeting_json.equals(other.connection_type_targeting_json))
-			return false;
-		if (country_json == null) {
-			if (other.country_json != null)
-				return false;
-		} else if (!country_json.equals(other.country_json))
-			return false;
-		if (created_on != other.created_on)
-			return false;
-		if (custom_ip_file_id_set == null) {
-			if (other.custom_ip_file_id_set != null)
-				return false;
-		} else if (!custom_ip_file_id_set.equals(other.custom_ip_file_id_set))
-			return false;
-		if (device_type == null) {
-			if (other.device_type != null)
-				return false;
-		} else if (!device_type.equals(other.device_type))
-			return false;
-		if (deviceid_file == null) {
-			if (other.deviceid_file != null)
-				return false;
-		} else if (!deviceid_file.equals(other.deviceid_file))
-			return false;
-		if (direct_supply_inc_exc == null) {
-			if (other.direct_supply_inc_exc != null)
-				return false;
-		} else if (!direct_supply_inc_exc.equals(other.direct_supply_inc_exc))
-			return false;
-		if (exchange_list == null) {
-			if (other.exchange_list != null)
-				return false;
-		} else if (!exchange_list.equals(other.exchange_list))
-			return false;
-		if (exchange_supply_inc_exc == null) {
-			if (other.exchange_supply_inc_exc != null)
-				return false;
-		} else if (!exchange_supply_inc_exc.equals(other.exchange_supply_inc_exc))
-			return false;
-		if (ext_supply_attributes == null) {
-			if (other.ext_supply_attributes != null)
-				return false;
-		} else if (!ext_supply_attributes.equals(other.ext_supply_attributes))
-			return false;
-		if (geo_targeting_type != other.geo_targeting_type)
-			return false;
-		if (guid == null) {
-			if (other.guid != null)
-				return false;
-		} else if (!guid.equals(other.guid))
-			return false;
-		if (hours_list == null) {
-			if (other.hours_list != null)
-				return false;
-		} else if (!hours_list.equals(other.hours_list))
-			return false;
-		if (is_category_list_excluded != other.is_category_list_excluded)
-			return false;
-		if (is_site_list_excluded != other.is_site_list_excluded)
-			return false;
-		if (last_modified != other.last_modified)
-			return false;
-		if (lat_lon_radius_file == null) {
-			if (other.lat_lon_radius_file != null)
-				return false;
-		} else if (!lat_lon_radius_file.equals(other.lat_lon_radius_file))
-			return false;
-		if (lat_long == null) {
-			if (other.lat_long != null)
-				return false;
-		} else if (!lat_long.equals(other.lat_long))
-			return false;
-		if (midp != other.midp)
-			return false;
-		if (mma_inc_exc != other.mma_inc_exc)
-			return false;
-		if (mma_tier_1_list == null) {
-			if (other.mma_tier_1_list != null)
-				return false;
-		} else if (!mma_tier_1_list.equals(other.mma_tier_1_list))
-			return false;
-		if (mma_tier_2_list == null) {
-			if (other.mma_tier_2_list != null)
-				return false;
-		} else if (!mma_tier_2_list.equals(other.mma_tier_2_list))
-			return false;
-		if (model_list == null) {
-			if (other.model_list != null)
-				return false;
-		} else if (!model_list.equals(other.model_list))
-			return false;
-		if (modified_by != other.modified_by)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (os_json == null) {
-			if (other.os_json != null)
-				return false;
-		} else if (!os_json.equals(other.os_json))
-			return false;
-		if (pmp_deal_json == null) {
-			if (other.pmp_deal_json != null)
-				return false;
-		} else if (!pmp_deal_json.equals(other.pmp_deal_json))
-			return false;
-		if (pmp_dealid == null) {
-			if (other.pmp_dealid != null)
-				return false;
-		} else if (!pmp_dealid.equals(other.pmp_dealid))
-			return false;
-		if (pmp_exchange == null) {
-			if (other.pmp_exchange != null)
-				return false;
-		} else if (!pmp_exchange.equals(other.pmp_exchange))
-			return false;
-		if (pub_list == null) {
-			if (other.pub_list != null)
-				return false;
-		} else if (!pub_list.equals(other.pub_list))
-			return false;
-		if (retargeting == null) {
-			if (other.retargeting != null)
-				return false;
-		} else if (!retargeting.equals(other.retargeting))
-			return false;
-		if (site_list == null) {
-			if (other.site_list != null)
-				return false;
-		} else if (!site_list.equals(other.site_list))
-			return false;
-		if (state_json == null) {
-			if (other.state_json != null)
-				return false;
-		} else if (!state_json.equals(other.state_json))
-			return false;
-		if (status_id != other.status_id)
-			return false;
-		if (supplyInclusionExclusion == null) {
-			if (other.supplyInclusionExclusion != null)
-				return false;
-		} else if (!supplyInclusionExclusion.equals(other.supplyInclusionExclusion))
-			return false;
-		if (supply_source != other.supply_source)
-			return false;
-		if (supply_source_type != other.supply_source_type)
-			return false;
-		if (tablet_targeting != other.tablet_targeting)
-			return false;
-		if (zipcode_file_id_set == null) {
-			if (other.zipcode_file_id_set != null)
-				return false;
-		} else if (!zipcode_file_id_set.equals(other.zipcode_file_id_set))
-			return false;
-		return true;
-	}
-    public int getId() {
+
+	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
@@ -814,6 +734,9 @@ public class Targeting_profile {
 	public void setAudience_tier5_cat(String audience_tier5_cat) {
 		this.audience_tier5_cat = audience_tier5_cat;
 	}
+	public String getAudience_tags() {return this.audience_tags;}
+	public void setAudience_tags(String audience_tags) {this.audience_tags = audience_tags;}
+
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);

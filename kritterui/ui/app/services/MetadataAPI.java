@@ -3054,4 +3054,93 @@ public class MetadataAPI {
 		}
 	}
 
+    public static ArrayNode audience_tags_list(){
+        List<MetaField> mfields  = null;
+        Connection con = null;
+        try{
+            con = DB.getConnection(true);
+            MetaList mlist = ApiDef.get_metalist(con, MetadataType.AUDIENCE_TAGS, null);
+            mfields = mlist.getMetaFieldList();
+        }catch(Exception e){
+            Logger.error("Failed closing connection", e);
+        }
+        finally{
+            try {
+                if(con !=null)
+                    con.close();
+            } catch (Exception e2) {
+                Logger.error("Failed closing connection", e2);
+            }
+        }
+        return metalistToArrayNodeWithDescription(mfields);
+    }
+
+    public static ArrayNode audienceInc(String account_guid){
+        List<MetaField> mfields  = null;
+        MetaInput metaInput = new MetaInput();
+        metaInput.setAccount_guid(account_guid);
+        Connection con = null;
+        try{
+            con = DB.getConnection(true);
+            MetaList mlist = ApiDef.get_metalist(con, MetadataType.AUDIENCE, metaInput);
+            mfields = mlist.getMetaFieldList();
+        }catch(Exception e){
+            Logger.error("Failed closing connection", e);
+        }
+        finally{
+            try {
+                if(con !=null)
+                    con.close();
+            } catch (Exception e2) {
+                Logger.error("Failed closing connection", e2);
+            }
+        }
+        return metalistToArrayNodeWithDescription(mfields);
+    }
+
+    public static ArrayNode audienceExc(String account_guid){
+        List<MetaField> mfields  = null;
+        MetaInput metaInput = new MetaInput();
+        metaInput.setAccount_guid(account_guid);
+        Connection con = null;
+        try{
+            con = DB.getConnection(true);
+            MetaList mlist = ApiDef.get_metalist(con, MetadataType.AUDIENCE, metaInput);
+            mfields = mlist.getMetaFieldList();
+        }catch(Exception e){
+            Logger.error("Failed closing connection", e);
+        }
+        finally{
+            try {
+                if(con !=null)
+                    con.close();
+            } catch (Exception e2) {
+                Logger.error("Failed closing connection", e2);
+            }
+        }
+        return metalistToArrayNodeWithDescription(mfields);
+    }
+
+    public static ArrayNode aaudiencePackage(String account_guid){
+        List<MetaField> mfields  = null;
+        MetaInput metaInput = new MetaInput();
+        metaInput.setAccount_guid(account_guid);
+        Connection con = null;
+        try{
+            con = DB.getConnection(true);
+            MetaList mlist = ApiDef.get_metalist(con, MetadataType.AUDIENCE_PACKAGE, metaInput);
+            mfields = mlist.getMetaFieldList();
+        }catch(Exception e){
+            Logger.error("Failed closing connection", e);
+        }
+        finally{
+            try {
+                if(con !=null)
+                    con.close();
+            } catch (Exception e2) {
+                Logger.error("Failed closing connection", e2);
+            }
+        }
+        return metalistToArrayNodeWithDescription(mfields);
+    }
 }
