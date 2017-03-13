@@ -130,10 +130,15 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <version>1.0.0</version>
     </dependency>
     <dependency>
-        <groupId>com.kritter.kritterui.api.targeting_profile</groupId>
-        <artifactId>kritter_kritterui_api_targeting_profile</artifactId>
+        <groupId>com.kritter.kritterui.api.audience</groupId>
+        <artifactId>kritter_kritterui_api_audience</artifactId>
         <version>1.0.0</version>
     </dependency>
+      <dependency>
+          <groupId>com.kritter.kritterui.api.targeting_profile</groupId>
+          <artifactId>kritter_kritterui_api_targeting_profile</artifactId>
+          <version>1.0.0</version>
+      </dependency>
     <dependency>
         <groupId>com.kritter.kritterui.api.campaign_budget</groupId>
         <artifactId>kritter_kritterui_api_campaign_budget</artifactId>
@@ -250,6 +255,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <scope>test</scope>
       <version>6.8.5</version>
     </dependency>
+      <dependency>
+          <groupId>com.kritter.kritterui.api.audience</groupId>
+          <artifactId>kritter_kritterui_api_audience</artifactId>
+          <version>1.0.0</version>
+      </dependency>
   </dependencies>
   <organization>
     <name>Kritter</name>

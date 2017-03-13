@@ -1,0 +1,10 @@
+@(au:models.audience.AudienceDisplayFull)
+
+@main2("Targeting Home") {@navs.navadvt(au.getAccountGuid())}{@navs.breadcrumbs(au.getBreadCrumbPaths())}{
+
+    @components.containers.panel("Audoence--"+ au.getName()){
+        <div>
+            @views.html.audience.audienceHomeContent(au)
+       </div>
+    }
+}
