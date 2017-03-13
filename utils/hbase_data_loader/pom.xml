@@ -3,12 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>hbase_data_loader</artifactId>
-        <groupId>com.kritter.utils</groupId>
+        <artifactId>dsp</artifactId>
+        <groupId>com.kritter.mad</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>hbase_data_loader</artifactId>
+    <artifactId>com.kritter.utils</artifactId>
     <name>hbase_data_loader</name>
     <packaging>jar</packaging>
     <build>
