@@ -81,27 +81,27 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
 
             //struct : {inc: [audience_id], excl: [audience_id]}
-            String audienceIncExcIds = targetingProfile.getAudienceIds();
-            Integer audienceType = targetingProfile.getAudienceType();
+            String audienceIncExcTags = targetingProfile.getAudienceTags();
+
+
+//            Integer audienceType = targetingProfile.getAudienceType();
 
             //no audience targeting
-            if (audienceIncExcIds == null || audienceIncExcIds.trim().length() == 0 || audienceType == null) {
+            if (audienceIncExcTags == null || audienceIncExcTags.trim().length() == 0) {
                 continue;
             }
 
-            Map<String, List<Integer>> ids = JSON.parseObject(audienceIncExcIds, Map.class);
-
-            List<Integer> incList = ids.get("inc");
-            if (incList == null || incList.size() == 0) {
-                continue;
-            }
+            Map<String, List<Integer>> audienceTagMap = JSON.parseObject(audienceIncExcTags, Map.class);
 
             //优先判断exclude
-            List<Integer> excList = ids.get("exc");
-            if (excList == null || excList.size() == 0) {
-                continue;
-            }
+            List<Integer> excList = audienceTagMap.get("exc");
+            List<Integer> incList = audienceTagMap.get("inc");
+            List<Integer> packageList = audienceTagMap.get("package");
 
+            int audienceType = 1;
+            if (packageList != null && packageList.size() != 0) {
+                audienceType = 2;
+            }
 
             AudienceCacheEntity audienceCacheEntity = audienceCache.query(adId);
 
@@ -134,6 +134,9 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
 
                 boolean isExeclude = false;
+                if (excList == null || excList.size() == 0) {
+                    continue;
+                }
                 for (Integer id : excList) {
                     AudienceCacheEntity entity = audienceCache.query(id);
 
@@ -175,6 +178,9 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
                 boolean isInclude = false;
                 //include,判断是否include
+                if (incList == null || incList.size() == 0) {
+                    continue;
+                }
                 for (Integer id : incList) {
 
                     AudienceCacheEntity entity = audienceCache.query(id);
