@@ -1,0 +1,12 @@
+#关于audiencepackage处理脚本aerospikeOpe.sh的说明文档
+#每次新增一个audience package按照以下步骤执行
+1.执行audienceSql,填写相关数据，记录主键作为audienceid
+2.执行audienceOpe
+3.按照提示输入要处理的文件的绝对路径和audienceid
+4.确认文件名称
+5.脚本会自动处理文件生成aql语句文件,根据文件大小有一段时间的延迟
+6.脚本自动执行aql语句,等待时间稍长.
+7.脚本出现成功提示
+
+
+
