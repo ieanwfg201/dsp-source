@@ -7,6 +7,7 @@ import com.kritter.abstraction.cache.utils.exceptions.InitializationException;
 import com.kritter.abstraction.cache.utils.exceptions.ProcessingException;
 import com.kritter.abstraction.cache.utils.exceptions.RefreshException;
 import com.kritter.common.caches.advinfo_upload_cache.entity.AdvInfoUploadCacheEntity;
+import com.kritter.constants.AdxBasedExchangesStates;
 import com.kritter.entity.adxbasedexchanges_metadata.MaterialUploadAdvInfo;
 import com.kritter.utils.databasemanager.DatabaseManager;
 import org.apache.logging.log4j.Logger;
@@ -23,13 +24,16 @@ public class AdvInfoUploadCache extends AbstractDBStatsReloadableQueryableCache<
 {
     private static Logger logger = LogManager.getLogger("cache.logger");
     private String name;
-
+    private String[] approvedStateException;
+    
     public AdvInfoUploadCache(List<Class> secIndexKeyClassList, Properties props,
-                               DatabaseManager dbMgr, String cacheName)
+                               DatabaseManager dbMgr, String cacheName,
+                               String[] approvedStateException)
             throws InitializationException
     {
         super(secIndexKeyClassList, logger, props, dbMgr);
         this.name = cacheName;
+        this.approvedStateException = approvedStateException;
     }
 
     @Override
@@ -44,6 +48,16 @@ public class AdvInfoUploadCache extends AbstractDBStatsReloadableQueryableCache<
             mua.setAdvIncId(resultSet.getInt("advIncId"));
             mua.setPubIncId(resultSet.getInt("pubIncId"));
             mua.setAdxbasedexhangesstatus(resultSet.getInt("adxbasedexhangesstatus"));
+            if(this.approvedStateException != null && this.approvedStateException.length>0){
+            	String str=mua.getPubIncId()+"";
+            	for(String s : this.approvedStateException){
+            		if(s.equals(str)){
+            			mua.setAdxbasedexhangesstatus(AdxBasedExchangesStates.APPROVED.getCode());
+            			break;
+            		}
+            	}
+            	
+            }
             isMarkedForDeletion=resultSet.getBoolean("advertiser_upload");
             AdvInfoUploadCacheEntity vice = new AdvInfoUploadCacheEntity(mua, lastModified, !isMarkedForDeletion);
             return vice;
