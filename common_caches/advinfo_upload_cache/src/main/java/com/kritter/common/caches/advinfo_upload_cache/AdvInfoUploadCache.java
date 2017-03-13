@@ -52,8 +52,10 @@ public class AdvInfoUploadCache extends AbstractDBStatsReloadableQueryableCache<
             	String str=mua.getPubIncId()+"";
             	for(String s : this.approvedStateException){
             		if(s.equals(str)){
-            			mua.setAdxbasedexhangesstatus(AdxBasedExchangesStates.APPROVED.getCode());
-            			break;
+            			if(mua.getAdxbasedexhangesstatus() == AdxBasedExchangesStates.UPLOADFAIL.getCode()){
+            				mua.setAdxbasedexhangesstatus(AdxBasedExchangesStates.APPROVED.getCode());
+                			break;
+            			}
             		}
             	}
             	
