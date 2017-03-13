@@ -120,7 +120,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             Short[] categoriesInclusionList = null;
             Short[] categoriesExclusionList = null;
             Short[] categoriesList = ResultSetHelper.
-                    getTier1Tier2CategoriesUnion(resultSet,"targeting_profile_category_list",logger);
+                    getTier1Tier2CategoriesUnion(resultSet, "targeting_profile_category_list", logger);
 
             Boolean isCategoryListExcluded = resultSet.getBoolean("is_category_list_excluded");
 
@@ -130,12 +130,12 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
                 categoriesExclusionList = categoriesList;
 
             String[] customIpFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet,"custom_ip_file_id_set");
-            String[] zipCodeFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet,"zipcode_file_id_set");
-            String[] latLonFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet,"lat_lon_radius_file");
+            String[] zipCodeFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet, "zipcode_file_id_set");
+            String[] latLonFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet, "lat_lon_radius_file");
 
             Short supplySourceType = resultSet.getShort("supply_source_type");
             Short supplySource = resultSet.getShort("supply_source");
-            Short[] hoursOfDayTargetedArray = ResultSetHelper.getResultSetShortArray(resultSet,"hours_list");
+            Short[] hoursOfDayTargetedArray = ResultSetHelper.getResultSetShortArray(resultSet, "hours_list");
 
             Set<Short> hoursOfDayTargeted = null;
             if(null != hoursOfDayTargetedArray)
@@ -147,7 +147,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             String latLongSerializedArray = resultSet.getString("lat_long");
             Long profileLastModified = resultSet.getTimestamp("profile_last_modified").getTime();
             Double cpaGoal = resultSet.getDouble("cpa_goal");
-            String[] advertiserDomains = ResultSetHelper.getResultSetStringArray(resultSet,"adv_domain");
+            String[] advertiserDomains = ResultSetHelper.getResultSetStringArray(resultSet, "adv_domain");
 
             boolean isSiteListExcluded = resultSet.getBoolean("is_site_list_excluded");
             /*set supply attributes inc/exc for direct and exchange supply*/
@@ -162,7 +162,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             boolean isRetargeted = false;
             String retargeting = resultSet.getString("retargeting");
             String pmpDealIdJson = resultSet.getString("pmp_deal_json");
-            Short[] deviceTypeArray = ResultSetHelper.getResultSetShortArray(resultSet,"device_type");
+            Short[] deviceTypeArray = ResultSetHelper.getResultSetShortArray(resultSet, "device_type");
             int userIdInclusionExclusion = resultSet.getInt("user_id_inc_exc");
             int impressionCap = resultSet.getInt("impression_cap");
             int impressionsAccrued = resultSet.getInt("impressions_accrued");
@@ -191,9 +191,8 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             	targetingExt =  TPExt.getObject(targetingExtStr.trim());
             }
             int lat_lon_radius_unit = resultSet.getInt("lat_lon_radius_unit");
-            String audienceIds = resultSet.getString("audienceIds");
-            int audienceType = resultSet.getInt("audienceType");
-            
+            String audienceTags = resultSet.getString("audience_tags");
+
             TargetingProfile.TargetingBuilder targetingBuilder = new
                 TargetingProfile.TargetingBuilder(targetingId, targetingGuid, accountId, false, profileLastModified);
             targetingBuilder.setTargetedBrands(targetedHandsetManufacturers);
@@ -226,8 +225,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             targetingBuilder.setLatLonFileIdArray(latLonFileIdArray);
             targetingBuilder.setUserIdInclusionExclusionType(InclusionExclusionType.getEnum(userIdInclusionExclusion));
             targetingBuilder.setLatLonRadiusUnit(lat_lon_radius_unit);
-            targetingBuilder.setAudienceIds(audienceIds);
-            targetingBuilder.setAudienceType(audienceType);
+            targetingBuilder.setAudienceTags(audienceTags);
 
             if(retargeting != null){
                 String tmp_retargeting = retargeting.trim();
