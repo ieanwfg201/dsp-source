@@ -1,258 +1,267 @@
-@(tpForm:Form[models.entities.TargetingProfileEntity], tpDisplay:models.advertiser.TargetingDisplay,rhs:String,
-	show_midp_ui:String, account_guid:String,allow_wifi:String,retargeting_flow_enabled:String, state_city:String, 
-	mma_required:String,adposition_required:String,channel_required:String,lat_lon_file:String,deviceid_targeting:String,
-	audience_targeting:String,audience_gender_targeting:String,audience_age_range_targeting:String,
-	audience_cat_targeting:String,audience_cattier1_targeting:String,audience_cattier2_targeting:String,
-	audience_cattier3_targeting:String,audience_cattier4_targeting:String,audience_cattier5_targeting:String)
+@(tpForm: Form[models.entities.TargetingProfileEntity], tpDisplay: models.advertiser.TargetingDisplay, rhs: String,
+        show_midp_ui: String, account_guid: String, allow_wifi: String, retargeting_flow_enabled: String, state_city: String,
+        mma_required: String, adposition_required: String, channel_required: String, lat_lon_file: String, deviceid_targeting: String,
+        audience_targeting: String, audience_gender_targeting: String, audience_age_range_targeting: String,
+        audience_cat_targeting: String, audience_cattier1_targeting: String, audience_cattier2_targeting: String,
+        audience_cattier3_targeting: String, audience_cattier4_targeting: String, audience_cattier5_targeting: String)
 
-@main2("Create Targeting Profile") {@navs.navadvt(tpDisplay.getAccountGuid())}{@navs.breadcrumbs(tpDisplay.getBreadCrumbPaths())}{
+@main2("Create Targeting Profile") {
+    @navs.navadvt(tpDisplay.getAccountGuid())
+} {
+    @navs.breadcrumbs(tpDisplay.getBreadCrumbPaths())
+} {
 
-<div class="row" ng-controller="tpController">
-@if("true" == rhs) {
-<div class="col-md-8">
-} else {
-<div class="panel-body">
-}
-	@components.containers.panel("Targeting Profile Form"){
-		<form id="tpForm" action="/advertiser/targeting-profiles/save" method="POST" ng-init='setAccount("@account_guid")'>
-				 @components.formElements.hiddenfield(tpForm("id"))	
-    			 @components.formElements.hiddenfield(tpForm("guid"))
-    			 @components.formElements.hiddenfield(tpForm("status_id"))
-    			 @components.formElements.hiddenfield(tpForm("account_guid"))
-    			 @components.formElements.hiddenfield(tpForm("destination"))
-    			 
-				 @components.formElements.textinput(tpForm("name"), '_label ->"Name *" , 'required ->"" )
+    <div class="row" ng-controller="tpController">
+        @if("true" == rhs) {
+            <div class="col-md-8">
+            } else {
+            <div class="panel-body">
+            }
+        @components.containers.panel("Targeting Profile Form") {
+            <form id="tpForm" action="/advertiser/targeting-profiles/save" method="POST" ng-init='setAccount("@account_guid")'>
+                <input type="text" id="account_guid" name="account_guid" style="display: none" value=@account_guid>
+                @components.formElements.hiddenfield(tpForm("id"))
+                @components.formElements.hiddenfield(tpForm("guid"))
+                @components.formElements.hiddenfield(tpForm("status_id"))
+                @components.formElements.hiddenfield(tpForm("account_guid"))
+                @components.formElements.hiddenfield(tpForm("destination"))
 
-              <fieldset>
-                     <legend>Select Hour of Day</legend>
-                     @components.formElements.multiselectlist3(tpForm("hours_list"), '_label ->"Hours of Day", '_row->true)
-             </fieldset>
-    				 
-				  <fieldset>
-				  	
-					 <legend>Select Geography/Region</legend>
-					 
-                     @if("true" == allow_wifi) {
-                       @components.formElements.multiselectlist3(tpForm("connection_type_targeting_json"), '_label ->"Connection Type" , '_row->true)
-                     }
+                @components.formElements.textinput(tpForm("name"), '_label -> "Name *", 'required -> "")
 
-					 @components.formElements.selectlist2(tpForm("geo_targeting_type"), 
-					 				"Geographic Targeting Mode", services.MetadataAPI.geographicTargetingOptions(), 
-					 				'_ngSync->true, '_ngChange -> "handleGeoTargetingChange()")						 
-					 <div  ng-show="showCountrycarrierSelector" class="animate-if"> 
-						 @components.formElements.multiselectlist3(tpForm("country_json"), '_label ->"Countries" , '_row->true)					   
-						 @components.formElements.multiselectlist3(tpForm("carrier_json"), '_label ->"Carriers" , '_row->true)						
-	                     @if("true" == state_city) {
-    	                   @components.formElements.multiselectlist3(tpForm("state_json"), '_label ->"State" , '_row->true)
-    	                   @components.formElements.multiselectlist3(tpForm("city_json"), '_label ->"City" , '_row->true)
-	                     }
-					 </div>
-					 
-					 <div  ng-show="showzipcodeListSelector" class="animate-if">
-						  @components.formElements.fileinput(tpForm("zipcode_file_id_set"), '_label ->"Upload Zipcode List", 
-																			'_uploadHandler -> "handleGeotargetingFileUpload($files, 'zipcode_file_id_set')",
-																			'_fileFilter -> ".csv" ) 
-					 </div>
-					 
-					 
-					  <div  ng-show="showIplistSelector" class="animate-if">
-						  @components.formElements.fileinput(tpForm("custom_ip_file_id_set"), '_label ->"Upload IP List", 
-																			'_uploadHandler -> "handleGeotargetingFileUpload($files, 'custom_ip_file_id_set')",
-																			'_fileFilter -> ".csv"  ) 
-					 </div>
-					 @if("true" == lat_lon_file) {
-						  @components.formElements.fileinput(tpForm("lat_lon_radius_file"), '_label ->"Upload LatLonRadius CSV File (Each line representing lat,long,radius)", 
-																			'_uploadHandler -> "handleGeotargetingFileUpload($files, 'lat_lon_radius_file')",
-																			'_fileFilter -> ".csv"  ) 
-					 }
-					 @if("false" == lat_lon_file) {
-						 @components.formElements.textarea(tpForm("lat_long"), "Lat-Long and Radius in miles (CSV with each line representing lat,long,radius)")
-					 }
-					 @components.formElements.selectlist2(tpForm("lat_lon_radius_unit"), "RadiusUnit ",services.MetadataAPI.latlonradiusunit() )
-				 </fieldset>
-				 
-				 <fieldset>
-					 <legend>Browser</legend>  
-					 @components.formElements.multiselectlist3(tpForm("browser_json"), '_label ->"Browsers", '_row->true)
-					 		 
-					 <button class="btn btn-default pull-right" type="button" ng-click="isCollapsed1 = !isCollapsed1">
-				 			<span ng-if="!isCollapsed1">Hide</span><span ng-if="isCollapsed1">Show</span></button> 
-				  
-				     <div collapse="isCollapsed1">
-						<div class="well well-lg"> 
-						  <ul >
-							 <li ng-repeat="browser in browser_json_msmodel.selections"> 
-							 	<div ng-if="browser_json_msmodel.checkvalid(browser)">
-							 		<versionselector vsdata="browser"></versionselector>
-							 	</div>					  
-							 </li>
-						  </ul>
-						</div>
-					</div> 
-				 </fieldset>
-				 
-				 <fieldset>
-				  @components.formElements.selectlist2(tpForm("tablet_targeting"), "Tablet Only", services.MetadataAPI.noYesOptions())
-				  @components.formElements.multiselectlist3(tpForm("device_type"), '_label ->"Device Type", '_row->true )
-				  <legend>Operating System</legend> 
-				  @components.formElements.multiselectlist3(tpForm("os_json"), '_label ->"Operating Systems", '_row->true )
-				 <button class="btn btn-default pull-right" type="button" ng-click="isCollapsed2 = !isCollapsed2">
-				 			<span ng-if="!isCollapsed2">Hide</span><span ng-if="isCollapsed2">Show</span></button> 
-				  
-			     <div collapse="isCollapsed2">
-					<div class="well well-lg"> 
-					  <ul >
-						 <li ng-repeat="os in os_json_msmodel.selections"> 
-						 	<div ng-if="os_json_msmodel.checkvalid(os)">
-						 		<versionselector vsdata="os"></versionselector>
-						 	</div>					  
-						 </li>
-					  </ul>
-					</div>
-				</div>
-				   @if("true" == show_midp_ui){
-				    @components.formElements.selectlist2(tpForm("midp"), "OR MIDP", services.TPMetadataAPI.midpOptions())
-				   }
-				 </fieldset>
-				
-				 
-				
-				 <fieldset>
-				 	<legend>Select Devices/Models</legend>				 
-					 @components.formElements.multiselectlist3(tpForm("brand_list"), '_label ->"Brands", '_row->true)					  
-					 @components.formElements.multiselectlist3(tpForm("model_list"), '_label ->"Models", '_row->true)
-				  </fieldset>
-				
-    			 <fieldset>
-					 <legend>Sites</legend>
-	    			 @components.formElements.selectlist2(tpForm("is_site_list_excluded"), "Inventory List Type", services.MetadataAPI.listTypeOptions())
-                     @components.formElements.selectlist2(tpForm("supply_source"), 
-                                    "Supply Source", services.TPMetadataAPI.supplySourceOptions(), 
-                                    '_ngSync->true, '_ngChange -> "handleSupplySourceChange()") 
-                     <div  ng-show="showDirPubSelector" class="animate-if">
-    	    			 @components.formElements.multiselectlist3(tpForm("pub_list"), '_label ->"Direct Publishers", '_row->true)
-                         @components.formElements.multiselectlist3(tpForm("site_list"), '_label ->"Direct Sites", '_row->true)
-	    			 </div> 
-                     <div  ng-show="showExchangeSelector" class="animate-if">
-					   @components.formElements.multiselectlist3(tpForm("exchange_list"), '_label ->"Exchanges", '_row->true)
-					   @components.formElements.multiselectlist3(tpForm("ext_supply_attributes"),'_label->"External Site", '_row->true, 'isNumeric->false)
-					 </div>     
-				 </fieldset>
-                 <fieldset>
-                     <legend>PMP</legend>
-                     @components.formElements.selectlist2(tpForm("pmp_exchange"), "Select Exchange", services.MetadataAPI.pmpExchangeListWithId())
-                     @components.formElements.textarea(tpForm("pmp_dealid"), "Deal Ids (Comma separated deal ids without Spaces)")
-                 </fieldset>
-				 
-				 <fieldset>
-					 <legend>Categories</legend>
-					 @components.formElements.selectlist2(tpForm("is_category_list_excluded"), "Category List Type", services.MetadataAPI.listTypeOptions()) 
-					 @components.formElements.multiselectlist3(tpForm("categories_tier_1_list"), '_label ->"Target Tier 1 Inventory Categories", '_row->true)
-					 @components.formElements.multiselectlist3(tpForm("categories_tier_2_list"), '_label ->"Target Tier 2 Inventory Categories", '_row->true)
-				 </fieldset>
-	
-				  <fieldset>
-					 <legend>Supply Source</legend>
-					 @components.formElements.selectlist2(tpForm("supply_source_type"), "Supply Source Type", services.TPMetadataAPI.supplySourceTypeOptions()) 
-				 </fieldset>
-                @if("true" == retargeting_flow_enabled){
-                  <fieldset>
-                     <legend>Retargeting</legend>
-                     @components.formElements.multiselectlist3(tpForm("retargeting"), '_label ->"Retargeting (Select Exact Segment and not ALL)", '_row->true) 
-                 </fieldset>
+                <fieldset>
+                    <legend>Select Hour of Day</legend>
+                    @components.formElements.multiselectlist3(tpForm("hours_list"), '_label -> "Hours of Day", '_row -> true)
+                </fieldset>
+
+                <fieldset>
+
+                    <legend>Select Geography/Region</legend>
+
+                    @if("true" == allow_wifi) {
+                        @components.formElements.multiselectlist3(tpForm("connection_type_targeting_json"), '_label -> "Connection Type", '_row -> true)
+                    }
+
+                    @components.formElements.selectlist2(tpForm("geo_targeting_type"),
+                        "Geographic Targeting Mode", services.MetadataAPI.geographicTargetingOptions(),
+                        '_ngSync -> true, '_ngChange -> "handleGeoTargetingChange()")
+                    <div ng-show="showCountrycarrierSelector" class="animate-if">
+                        @components.formElements.multiselectlist3(tpForm("country_json"), '_label -> "Countries", '_row -> true)
+                        @components.formElements.multiselectlist3(tpForm("carrier_json"), '_label -> "Carriers", '_row -> true)
+                        @if("true" == state_city) {
+                            @components.formElements.multiselectlist3(tpForm("state_json"), '_label -> "State", '_row -> true)
+                            @components.formElements.multiselectlist3(tpForm("city_json"), '_label -> "City", '_row -> true)
+                        }
+                    </div>
+
+                    <div ng-show="showzipcodeListSelector" class="animate-if">
+                    @components.formElements.fileinput(tpForm("zipcode_file_id_set"), '_label -> "Upload Zipcode List",
+                        '_uploadHandler -> "handleGeotargetingFileUpload($files, 'zipcode_file_id_set')",
+                        '_fileFilter -> ".csv")
+                    </div>
+
+
+                    <div ng-show="showIplistSelector" class="animate-if">
+                    @components.formElements.fileinput(tpForm("custom_ip_file_id_set"), '_label -> "Upload IP List",
+                        '_uploadHandler -> "handleGeotargetingFileUpload($files, 'custom_ip_file_id_set')",
+                        '_fileFilter -> ".csv")
+                    </div>
+                    @if("true" == lat_lon_file) {
+                        @components.formElements.fileinput(tpForm("lat_lon_radius_file"), '_label -> "Upload LatLonRadius CSV File (Each line representing lat,long,radius)",
+                            '_uploadHandler -> "handleGeotargetingFileUpload($files, 'lat_lon_radius_file')",
+                            '_fileFilter -> ".csv")
+                    }
+                    @if("false" == lat_lon_file) {
+                        @components.formElements.textarea(tpForm("lat_long"), "Lat-Long and Radius in miles (CSV with each line representing lat,long,radius)")
+                    }
+                    @components.formElements.selectlist2(tpForm("lat_lon_radius_unit"), "RadiusUnit ", services.MetadataAPI.latlonradiusunit())
+                </fieldset>
+
+                <fieldset>
+                    <legend>Browser</legend>
+                    @components.formElements.multiselectlist3(tpForm("browser_json"), '_label -> "Browsers", '_row -> true)
+
+                    <button class="btn btn-default pull-right" type="button" ng-click="isCollapsed1 = !isCollapsed1">
+                        <span ng-if="!isCollapsed1">Hide</span><span ng-if="isCollapsed1">Show</span></button>
+
+                    <div collapse="isCollapsed1">
+                        <div class="well well-lg">
+                            <ul >
+                                <li ng-repeat="browser in browser_json_msmodel.selections">
+                                    <div ng-if="browser_json_msmodel.checkvalid(browser)">
+                                        <versionselector vsdata="browser"></versionselector>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    @components.formElements.selectlist2(tpForm("tablet_targeting"), "Tablet Only", services.MetadataAPI.noYesOptions())
+                    @components.formElements.multiselectlist3(tpForm("device_type"), '_label -> "Device Type", '_row -> true)
+                    <legend>Operating System</legend>
+                    @components.formElements.multiselectlist3(tpForm("os_json"), '_label -> "Operating Systems", '_row -> true)
+                    <button class="btn btn-default pull-right" type="button" ng-click="isCollapsed2 = !isCollapsed2">
+                        <span ng-if="!isCollapsed2">Hide</span><span ng-if="isCollapsed2">Show</span></button>
+
+                    <div collapse="isCollapsed2">
+                        <div class="well well-lg">
+                            <ul >
+                                <li ng-repeat="os in os_json_msmodel.selections">
+                                    <div ng-if="os_json_msmodel.checkvalid(os)">
+                                        <versionselector vsdata="os"></versionselector>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    @if("true" == show_midp_ui) {
+                        @components.formElements.selectlist2(tpForm("midp"), "OR MIDP", services.TPMetadataAPI.midpOptions())
+                    }
+                </fieldset>
+
+
+                <fieldset>
+                    <legend>Select Devices/Models</legend>
+                    @components.formElements.multiselectlist3(tpForm("brand_list"), '_label -> "Brands", '_row -> true)
+                    @components.formElements.multiselectlist3(tpForm("model_list"), '_label -> "Models", '_row -> true)
+                </fieldset>
+
+                <fieldset>
+                    <legend>Sites</legend>
+                    @components.formElements.selectlist2(tpForm("is_site_list_excluded"), "Inventory List Type", services.MetadataAPI.listTypeOptions())
+                    @components.formElements.selectlist2(tpForm("supply_source"),
+                        "Supply Source", services.TPMetadataAPI.supplySourceOptions(),
+                        '_ngSync -> true, '_ngChange -> "handleSupplySourceChange()")
+                    <div ng-show="showDirPubSelector" class="animate-if">
+                        @components.formElements.multiselectlist3(tpForm("pub_list"), '_label -> "Direct Publishers", '_row -> true)
+                        @components.formElements.multiselectlist3(tpForm("site_list"), '_label -> "Direct Sites", '_row -> true)
+                    </div>
+                    <div ng-show="showExchangeSelector" class="animate-if">
+                        @components.formElements.multiselectlist3(tpForm("exchange_list"), '_label -> "Exchanges", '_row -> true)
+                        @components.formElements.multiselectlist3(tpForm("ext_supply_attributes"), '_label -> "External Site", '_row -> true, 'isNumeric -> false)
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>PMP</legend>
+                    @components.formElements.selectlist2(tpForm("pmp_exchange"), "Select Exchange", services.MetadataAPI.pmpExchangeListWithId())
+                    @components.formElements.textarea(tpForm("pmp_dealid"), "Deal Ids (Comma separated deal ids without Spaces)")
+                </fieldset>
+
+                <fieldset>
+                    <legend>Categories</legend>
+                    @components.formElements.selectlist2(tpForm("is_category_list_excluded"), "Category List Type", services.MetadataAPI.listTypeOptions())
+                    @components.formElements.multiselectlist3(tpForm("categories_tier_1_list"), '_label -> "Target Tier 1 Inventory Categories", '_row -> true)
+                    @components.formElements.multiselectlist3(tpForm("categories_tier_2_list"), '_label -> "Target Tier 2 Inventory Categories", '_row -> true)
+                </fieldset>
+
+                <fieldset>
+                    <legend>Supply Source</legend>
+                    @components.formElements.selectlist2(tpForm("supply_source_type"), "Supply Source Type", services.TPMetadataAPI.supplySourceTypeOptions())
+                </fieldset>
+                @if("true" == retargeting_flow_enabled) {
+                    <fieldset>
+                        <legend>Retargeting</legend>
+                        @components.formElements.multiselectlist3(tpForm("retargeting"), '_label -> "Retargeting (Select Exact Segment and not ALL)", '_row -> true)
+                    </fieldset>
                 }
-                @if("true" == deviceid_targeting){
-                  <fieldset>
-                     <legend>Deviceid Targeting</legend>
-					 @components.formElements.selectlist2(tpForm("user_id_inc_exc"), "DeviceId Inc/Exc", services.MetadataAPI.listIncExcTriState()) 
-                     @components.formElements.fileinput(tpForm("deviceid_file"), '_label ->"Upload Deviceid File", 
-																			'_uploadHandler -> "handleGeotargetingFileUpload($files, 'deviceid_file')",
-																			'_fileFilter -> ".csv"  ) 
-                  </fieldset>
+                @if("true" == deviceid_targeting) {
+                    <fieldset>
+                        <legend>Deviceid Targeting</legend>
+                        @components.formElements.selectlist2(tpForm("user_id_inc_exc"), "DeviceId Inc/Exc", services.MetadataAPI.listIncExcTriState())
+                        @components.formElements.fileinput(tpForm("deviceid_file"), '_label -> "Upload Deviceid File",
+                            '_uploadHandler -> "handleGeotargetingFileUpload($files, 'deviceid_file')",
+                            '_fileFilter -> ".csv")
+                    </fieldset>
                 }
                 @if("true" == audience_targeting) {
-                	<fieldset>
-					 <legend>Audience</legend>
-					 @components.formElements.selectlist2(tpForm("audience_targeting"), "Audience Targeting Enabled", 
-                        services.MetadataAPI.yesNoOptions(), '_ngSync->true)
-					 <div id="audience_targeting" ng-show="audience_targeting=='true'" ng-if="audience_targeting=='true'">
-					 	@if("true" == audience_gender_targeting) {
-					 	@components.formElements.selectlist2(tpForm("audience_genderincl"), "Include(true)/Exclude(false) Gender", services.MetadataAPI.listIncTrue())
-					 	@components.formElements.multiselectlist3(tpForm("audience_gender"), '_label ->"Target Gender", '_row->true)
-					 	}
-					 	@if("true" == audience_age_range_targeting) {
-					 	@components.formElements.selectlist2(tpForm("audience_agerangeinc"), "Include(true)/Exclude(false) AgeRange", services.MetadataAPI.listIncTrue())
-					 	@components.formElements.multiselectlist3(tpForm("audience_agerange"), '_label ->"Target AgeRange", '_row->true)
-					 	}
-					 	@if("true" == audience_cat_targeting) {
-					 	@components.formElements.selectlist2(tpForm("audience_catinc"), "Include(true)/Exclude(false) Category", services.MetadataAPI.listIncTrue())
-					 		@if("true" == audience_cattier1_targeting) {
-					 		@components.formElements.multiselectlist3(tpForm("audience_tier1_cat"), '_label ->"Target Tier1 Category", '_row->true)
-					 		}
-					 		@if("true" == audience_cattier2_targeting) {
-					 		@components.formElements.multiselectlist3(tpForm("audience_tier2_cat"), '_label ->"Target Tier2 Category", '_row->true)
-					 		}
-					 		@if("true" == audience_cattier3_targeting) {
-					 		@components.formElements.multiselectlist3(tpForm("audience_tier3_cat"), '_label ->"Target Tier3 Category", '_row->true)
-					 		}
-					 		@if("true" == audience_cattier4_targeting) {
-					 		@components.formElements.multiselectlist3(tpForm("audience_tier4_cat"), '_label ->"Target Tier4 Category", '_row->true)
-					 		}
-					 		@if("true" == audience_cattier5_targeting) {
-					 		@components.formElements.multiselectlist3(tpForm("audience_tier5_cat"), '_label ->"Target Tier5 Category", '_row->true)
-					 		}
-					 	}
-					 </div>
-					</fieldset>
-                }	
-                @if("true" == mma_required){
-				 <fieldset>
-					 <legend>MMA</legend>
-					 @components.formElements.selectlist2(tpForm("mma_inc_exc"), "MMA Inc/Exc", services.MetadataAPI.listIncTrue()) 
-					 @components.formElements.multiselectlist3(tpForm("mma_tier_1_list"), '_label ->"Target Tier 1 MMA Category", '_row->true)
-					 @components.formElements.multiselectlist3(tpForm("mma_tier_2_list"), '_label ->"Target Tier 2 MMA Category", '_row->true)
-				 </fieldset>
-				 }
-                @if("true" == adposition_required){
-				 <fieldset>
-					 <legend>ADPOSITION</legend>
-					 @components.formElements.selectlist2(tpForm("adposition_inc_exc"), "ADPosition Inc/Exc", services.MetadataAPI.listIncTrue()) 
-					 @components.formElements.multiselectlist3(tpForm("adposition_list"), '_label ->"Target AdPosition", '_row->true)
-				 </fieldset>
-				 }
-                @if("true" == channel_required){
-				 <fieldset>
-					 <legend>CHANNEL</legend>
-					 @components.formElements.selectlist2(tpForm("channel_inc_exc"), "Channel Inc/Exc", services.MetadataAPI.listIncTrue()) 
-					 @components.formElements.multiselectlist3(tpForm("channel_tier_1_list"), '_label ->"Target Tier 1 Channel", '_row->true)
-					 @components.formElements.multiselectlist3(tpForm("channel_tier_2_list"), '_label ->"Target Tier 2 Channel", '_row->true)
-				 </fieldset>
-				 }
-				 
-				 
-				 <button class="btn btn-default btn-primary pull-right" type="button" ng-click="saveTP()">Save</button>
-				  
-			</form>
-	}	
-	</div>
-	@if("true" == rhs) {
-	   <div class="col-md-4">
-	   @components.containers.panel("Targeting Profile Summary"){ 
-            @components.formElements.listsummary("Selected Hours", "hours_list_msmodel.selections")
-            @components.formElements.listsummary("Selected Countries", "country_json_msmodel.selections")
-            @components.formElements.listsummary("Selected Carriers", "carrier_json_msmodel.selections") 
-            @components.formElements.listsummary("Selected Browsers", "browser_json_msmodel.selections", "label", true)
-            @components.formElements.listsummary("Selected OS", "os_json_msmodel.selections", "label", true)
-            @components.formElements.listsummary("Selected Brands", "brand_list_msmodel.selections")
-            @components.formElements.listsummary("Selected Models", "model_list_msmodel.selections")
-            @components.formElements.listsummary("Selected Sites", "site_list_msmodel.selections")
-            @components.formElements.listsummary("Selected Tier 1 Categories", "categories_tier_1_list_msmodel.selections")
-            @components.formElements.listsummary("Selected Tier 2 Categories", "categories_tier_2_list_msmodel.selections")
-	   }
-	   </div>
-	}
-	
-	</div> 
-	<script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("javascripts/apps/targetingController.js")" type="text/javascript"></script>
+                    <fieldset>
+                        <legend>Audience</legend>
+                        @components.formElements.selectlist2(tpForm("audience_targeting"), "Audience Targeting Enabled",
+                            services.MetadataAPI.yesNoOptions(), '_ngSync -> true)
+                        <div id="audience_targeting" ng-show="audience_targeting=='true'" ng-if="audience_targeting=='true'">
+                            @if("true" == audience_gender_targeting) {
+                                @components.formElements.selectlist2(tpForm("audience_genderincl"), "Include(true)/Exclude(false) Gender", services.MetadataAPI.listIncTrue())
+                                @components.formElements.multiselectlist3(tpForm("audience_gender"), '_label -> "Target Gender", '_row -> true)
+                            }
+                            @if("true" == audience_age_range_targeting) {
+                                @components.formElements.selectlist2(tpForm("audience_agerangeinc"), "Include(true)/Exclude(false) AgeRange", services.MetadataAPI.listIncTrue())
+                                @components.formElements.multiselectlist3(tpForm("audience_agerange"), '_label -> "Target AgeRange", '_row -> true)
+                            }
+                            @if("true" == audience_cat_targeting) {
+                                @components.formElements.selectlist2(tpForm("audience_catinc"), "Include(true)/Exclude(false) Category", services.MetadataAPI.listIncTrue())
+                                @if("true" == audience_cattier1_targeting) {
+                                    @components.formElements.multiselectlist3(tpForm("audience_tier1_cat"), '_label -> "Target Tier1 Category", '_row -> true)
+                                }
+                                @if("true" == audience_cattier2_targeting) {
+                                    @components.formElements.multiselectlist3(tpForm("audience_tier2_cat"), '_label -> "Target Tier2 Category", '_row -> true)
+                                }
+                                @if("true" == audience_cattier3_targeting) {
+                                    @components.formElements.multiselectlist3(tpForm("audience_tier3_cat"), '_label -> "Target Tier3 Category", '_row -> true)
+                                }
+                                @if("true" == audience_cattier4_targeting) {
+                                    @components.formElements.multiselectlist3(tpForm("audience_tier4_cat"), '_label -> "Target Tier4 Category", '_row -> true)
+                                }
+                                @if("true" == audience_cattier5_targeting) {
+                                    @components.formElements.multiselectlist3(tpForm("audience_tier5_cat"), '_label -> "Target Tier5 Category", '_row -> true)
+                                }
+                            }
+                        </div>
+                    </fieldset>
+                }
+                @if("true" == mma_required) {
+                    <fieldset>
+                        <legend>MMA</legend>
+                        @components.formElements.selectlist2(tpForm("mma_inc_exc"), "MMA Inc/Exc", services.MetadataAPI.listIncTrue())
+                        @components.formElements.multiselectlist3(tpForm("mma_tier_1_list"), '_label -> "Target Tier 1 MMA Category", '_row -> true)
+                        @components.formElements.multiselectlist3(tpForm("mma_tier_2_list"), '_label -> "Target Tier 2 MMA Category", '_row -> true)
+                    </fieldset>
+                }
+                @if("true" == adposition_required) {
+                    <fieldset>
+                        <legend>ADPOSITION</legend>
+                        @components.formElements.selectlist2(tpForm("adposition_inc_exc"), "ADPosition Inc/Exc", services.MetadataAPI.listIncTrue())
+                        @components.formElements.multiselectlist3(tpForm("adposition_list"), '_label -> "Target AdPosition", '_row -> true)
+                    </fieldset>
+                }
+                @if("true" == channel_required) {
+                    <fieldset>
+                        <legend>CHANNEL</legend>
+                        @components.formElements.selectlist2(tpForm("channel_inc_exc"), "Channel Inc/Exc", services.MetadataAPI.listIncTrue())
+                        @components.formElements.multiselectlist3(tpForm("channel_tier_1_list"), '_label -> "Target Tier 1 Channel", '_row -> true)
+                        @components.formElements.multiselectlist3(tpForm("channel_tier_2_list"), '_label -> "Target Tier 2 Channel", '_row -> true)
+                    </fieldset>
+                }
+                <fieldset>
+                    <legend>Audience</legend>
+                    @components.formElements.multiselectlist3(tpForm("audience_inc"), '_label -> "Audience Inclusion", '_row -> true)
+                    @components.formElements.multiselectlist3(tpForm("audience_exc"), '_label -> "Audience Exclusion", '_row -> true)
+                    @components.formElements.multiselectlist3(tpForm("audience_package"), '_label -> "Audience Package", '_row -> true)
+                </fieldset>
+
+                <button class="btn btn-default btn-primary pull-right" type="button" ng-click="saveTP()">Save</button>
+
+            </form>
+        }
+    </div>
+        @if("true" == rhs) {
+            <div class="col-md-4">
+            @components.containers.panel("Targeting Profile Summary") {
+                @components.formElements.listsummary("Selected Hours", "hours_list_msmodel.selections")
+                @components.formElements.listsummary("Selected Countries", "country_json_msmodel.selections")
+                @components.formElements.listsummary("Selected Carriers", "carrier_json_msmodel.selections")
+                @components.formElements.listsummary("Selected Browsers", "browser_json_msmodel.selections", "label", true)
+                @components.formElements.listsummary("Selected OS", "os_json_msmodel.selections", "label", true)
+                @components.formElements.listsummary("Selected Brands", "brand_list_msmodel.selections")
+                @components.formElements.listsummary("Selected Models", "model_list_msmodel.selections")
+                @components.formElements.listsummary("Selected Sites", "site_list_msmodel.selections")
+                @components.formElements.listsummary("Selected Tier 1 Categories", "categories_tier_1_list_msmodel.selections")
+                @components.formElements.listsummary("Selected Tier 2 Categories", "categories_tier_2_list_msmodel.selections")
+            }
+            </div>
+        }
+
+    </div>
+        <script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/apps/targetingController.js")" type="text/javascript"></script>
 }

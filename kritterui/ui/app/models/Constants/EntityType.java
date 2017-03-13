@@ -5,6 +5,7 @@ public enum EntityType {
 	account,
 	campaign,
 	targeting_profile,
+	audienceList,
 	site,
 	ad,
 	creative,

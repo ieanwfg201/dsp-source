@@ -58,6 +58,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   	<module>campaign</module>
   	<module>campaign_budget</module>
   	<module>targeting_profile</module>
+    <module>audience</module>
   	<module>creative_banner</module>
   	<module>creative_container</module>
   	<module>ad</module>

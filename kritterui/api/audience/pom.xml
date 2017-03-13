@@ -3,21 +3,16 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.kritter.kritterui.api.targeting_profile</groupId>
-  <artifactId>kritter_kritterui_api_targeting_profile</artifactId>
+  <groupId>com.kritter.kritterui.api.audience</groupId>
+  <artifactId>kritter_kritterui_api_audience</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
-  <name>kritterui_api_targeting_profile</name>
+  <name>kritterui_api_audience</name>
   <dependencies>
     <dependency>
         <groupId>com.kritter.utils</groupId>
         <artifactId>uuid</artifactId>
         <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>fastjson</artifactId>
-      <version>1.2.16</version>
     </dependency>
     <dependency>
         <groupId>com.kritter.kritterui.api.db_query_def</groupId>
@@ -85,6 +80,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <scope>test</scope>
       <version>6.8.5</version>
     </dependency>
+      <dependency>
+          <groupId>com.kritter.kritterui.api.utils</groupId>
+          <artifactId>kritter_kritterui_api_utils</artifactId>
+          <version>1.0.0</version>
+      </dependency>
   </dependencies>
   <organization>
     <name>Kritter</name>

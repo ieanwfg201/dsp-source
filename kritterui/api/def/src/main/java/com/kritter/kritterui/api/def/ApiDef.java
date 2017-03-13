@@ -5,12 +5,14 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Set;
 
+import com.kritter.api.entity.audience.*;
 import com.kritter.api.entity.deal.*;
 import com.kritter.api.entity.parent_account.ParentAccount;
 import com.kritter.api.entity.payoutthreshold.PayoutThresholdList;
 import com.kritter.api.entity.payoutthreshold.PayoutThresholdListEntity;
 import com.kritter.api.entity.qualification.QualificationList;
 import com.kritter.api.entity.qualification.QualificationListEntity;
+import com.kritter.kritterui.api.audience.AudienceCrud;
 import com.kritter.kritterui.api.deal.PrivateMarketPlaceDealCrud;
 import com.kritter.kritterui.api.parent_account.ParentAccountCrud;
 import com.kritter.kritterui.api.payout_threshold.PayoutThresholdCrud;
@@ -32,8 +34,6 @@ import com.kritter.api.entity.adpositionget.AdpositionGetList;
 import com.kritter.api.entity.adpositionget.AdpositionGetListEntity;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadatList;
 import com.kritter.api.entity.adxbasedexchangesmetadata.AdxBasedExchangesMetadataListEntity;
-import com.kritter.api.entity.audience.AudienceDefinitionList;
-import com.kritter.api.entity.audience.AudienceMetadataList;
 import com.kritter.api.entity.campaign.Campaign;
 import com.kritter.api.entity.campaign.CampaignList;
 import com.kritter.api.entity.campaign.CampaignListEntity;
@@ -1289,5 +1289,25 @@ public class ApiDef {
     public static AudienceDefinitionList various_get_audience_definition(Connection con, AudienceDefinitionInput entity){
         return AudienceDefinitionCrud.various_get_audience_definition(con, entity);
     }
-
+    public static AudienceList various_get_audience(Connection con, AudienceListEntity entity){
+        return AudienceCrud.getAudience(con,entity);
+    }
+//    public static JsonNode insert_audience_tags(Connection con, JsonNode jsonNode){
+//        return AudienceCrud.insertAudienceTags(con, jsonNode);
+//    }
+    public static Message insert_audience_tags(Connection con,  Audience audience){
+        return AudienceCrud.insertAudienceTags(con, audience);
+    }
+    public static Message updata_audience_tags(Connection con,  Audience audience){
+        return AudienceCrud.updata_audience_tags(con, audience);
+    }
+    public static AudienceList list_audience(Connection con, AudienceListEntity audiencelistEntity){
+        return AudienceCrud.list_audience(con, audiencelistEntity);
+    }
+//    public static JsonNode update_audience_tags(Connection con, JsonNode jsonNode){
+//        return AudienceCrud.updateAudienceTags(con, jsonNode);
+//    }
+//    public static Message update_audience_tags(Connection con, RetargetingSegment retargeting_segment){
+//        return AudienceCrud.updateAudienceTags(con, retargeting_segment , true);
+//    }
 }

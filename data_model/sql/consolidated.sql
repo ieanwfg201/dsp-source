@@ -223,6 +223,8 @@ alter table targeting_profile add column hours_list TEXT default NULL after supp
 -- midp targeting , 1= midp1,2 =midp2, 3= both  
 alter table targeting_profile add column midp SMALLINT default 3 after hours_list;
 
+
+
 -- campaign table.
 CREATE TABLE IF NOT EXISTS campaign
 (
@@ -1541,5 +1543,31 @@ CREATE TABLE `audience_definition` (
     CONSTRAINT `fk_audience_definition_audience_type` FOREIGN KEY (`audience_type`) REFERENCES `audience_metadata` (`internalid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-alter table targeting_profile add column audience_targeting boolean default false  after lat_lon_radius_unit;
-alter table targeting_profile add column audience_targeting_def text  after audience_targeting;
+# alter table targeting_profile add column audience_targeting boolean default false  after lat_lon_radius_unit;
+# alter table targeting_profile add column audience_targeting_def text  after audience_targeting;
+
+CREATE TABLE IF NOT EXISTS audience_source
+(
+    id SMALLINT PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    created_on TIMESTAMP NOT NULL DEFAULT now(),
+    last_modified TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS audience
+(
+    id int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(128) UNIQUE NOT NULL,
+    source_id SMALLINT NOT NULL,
+    tags TEXT DEFAULT NULL,
+    type int(10) unsigned NOT NULL,
+    file_path TEXT DEFAULT NULL,
+    deleted int(10) unsigned NOT NULL,
+    created_on TIMESTAMP NOT NULL DEFAULT now(),
+    last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_audience_source FOREIGN KEY(source_id) REFERENCES audience_source(id)
+
+);
+
+alter table targeting_profile add column audience_inc_exc TEXT DEFAULT NULL after lat_lon_radius_unit;
+alter table targeting_profile add column audience_type int(10) after audience_inc_exc;

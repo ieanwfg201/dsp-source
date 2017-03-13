@@ -8,8 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import models.advertiser.TargetingDisplay;
 import models.advertiser.TargetingDisplayFull;
 import models.advertiser.TargetingListDisplay;
@@ -219,7 +221,7 @@ public class TargetingProfileController extends Controller{
 
 	@SecuredAction
 	public static Result view(String tpGuid, String accountGuid){ 
-		Targeting_profile tp =   getTargetingProfile(tpGuid, accountGuid); 
+		Targeting_profile tp =   getTargetingProfile(tpGuid, accountGuid);
 		TargetingProfileEntity tpe = new TargetingProfileEntity();
 		BeanUtils.copyProperties(tp, tpe);
 		if(tp!= null){
@@ -238,12 +240,12 @@ public class TargetingProfileController extends Controller{
 		Form<TargetingProfileEntity> tpForm  = tpFormTemplate.bindFromRequest();
 		Targeting_profile tp = null;
 		if(!tpForm.hasErrors()){
-			
+
 			Connection con = null;
 			try {
-				
+
 				con = DB.getConnection();
-				TargetingProfileEntity tpe = tpForm.get(); 
+				TargetingProfileEntity tpe = tpForm.get();
 				tp = tpe.getEntity();
 				tp.setModified_by(1);
 				Geo_Targeting_type geo_targeting_type = tp.getGeo_targeting_type();
@@ -269,7 +271,7 @@ public class TargetingProfileController extends Controller{
 				default:
 				    break;
 				}
-				
+
 				Message msg = null;
 				if(tpe.getGuid() != ""){
 					tp.setFile_prefix_path(file_prefix_path);
@@ -285,7 +287,7 @@ public class TargetingProfileController extends Controller{
 					tp.setFile_prefix_path(file_prefix_path);
 					msg = ApiDef.insert_targeting_profile(con, tp);
 				}
-				 
+
 				if(msg.getError_code()==0){
 					String destination = tpForm.field("destination").value();
 					if(!"".equals(destination)){
@@ -294,10 +296,10 @@ public class TargetingProfileController extends Controller{
 					}else
 						return redirect(routes.TargetingProfileController.list(tp.getAccount_guid()));
 				}
-					
+
 				else{
 					populateAudienceFlags();
-					return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs, show_midp_ui, 
+					return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs, show_midp_ui,
 							tp.getAccount_guid(), allow_wifi,retargeting_flow_enabled, state_city,mma_required,
 							adposition_required,channel_required,lat_lon_file,deviceid_targeting,
 							audience_targeting,audience_gender_targeting,audience_age_range_targeting,
@@ -315,18 +317,18 @@ public class TargetingProfileController extends Controller{
 				} catch (SQLException e) {
 					Logger.error("Error closing DB connection while saving Targeting profile TargetingProfileController",e);
 				}
-			} 
-			
+			}
+
 		}
 		String guid = tpForm.field("guid").value();
 		String accountGuid = tpForm.field("account_guid").value();
-		tp =   getTargetingProfile(guid, accountGuid); 
+		tp =   getTargetingProfile(guid, accountGuid);
 		if(tp ==null){
 		    tp = new Targeting_profile();
 		    tp.setAccount_guid(accountGuid);
 		}
 		populateAudienceFlags();
-		return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs,show_midp_ui, tp.getAccount_guid(), 
+		return badRequest(targetingform.render(tpForm, new TargetingDisplay(tp),rhs,show_midp_ui, tp.getAccount_guid(),
 				allow_wifi,retargeting_flow_enabled, state_city,mma_required,adposition_required,channel_required,
 				lat_lon_file,deviceid_targeting,
 				audience_targeting,audience_gender_targeting,audience_age_range_targeting,
@@ -355,7 +357,7 @@ public class TargetingProfileController extends Controller{
 	public static Result list(String accountGuid){  
 		Account account = DataAPI.getAccountByGuid(accountGuid);
 		TargetingListDisplay targetingListDisplay = new TargetingListDisplay(account);
-		return ok(views.html.advt.targeting.tpListTemplate.render(targetingListDisplay)); 			 
+		return ok(views.html.advt.targeting.tpListTemplate.render(targetingListDisplay));
 	}
 
 	@SecuredAction
