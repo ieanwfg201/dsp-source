@@ -1,0 +1,6 @@
+@(au:models.audience.AudienceDisplayFull)
+	@components.fielddisplays.textdisplay("Name", au.getName())
+	@components.fielddisplays.textdisplay("AccountGuid", au.getAccountGuid)
+	@components.fielddisplays.textdisplay("Tags", au.getTags)
+	@components.fielddisplays.textdisplay("Source", au.getSource)
+	@components.fielddisplays.textdisplay("Type", au.getTypeName)
