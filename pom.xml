@@ -84,6 +84,7 @@
     <module>utils/mma_loader</module>
     <module>utils/channel_loader</module>
     <module>utils/user</module>
+    <module>utils/hbase_data_loader</module>
     <module>core/metrics</module>
     <module>core/cache-abstraction</module>
     <module>core/expression-tree</module>
