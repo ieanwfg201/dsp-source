@@ -363,7 +363,7 @@
         <constructor-arg index="3" value="advinfo_upload_cache"/>
 	<constructor-arg index="4">
                 <list>
-                    <!--value>youkuincid</value-->
+                    <value>youku_pubincid</value>
                 </list>
         </constructor-arg>
     </bean>
