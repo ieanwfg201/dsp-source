@@ -64,6 +64,7 @@ if [ "$18" = "true" ]; then
         echo 'java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
         java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
     fi
+	echo "touch ${19}/first_level__${process_time_dir}"
 	touch ${19}/first_level__${process_time_dir}
 
 exit $?
