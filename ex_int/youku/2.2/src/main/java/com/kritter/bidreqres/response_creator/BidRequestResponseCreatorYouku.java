@@ -5,6 +5,7 @@ import com.kritter.bidrequest.entity.IBidResponse;
 import com.kritter.bidrequest.exception.BidResponseException;
 import com.kritter.bidrequest.response_creator.IBidResponseCreator;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
+import com.kritter.ex_int.utils.picker.AdPicker;
 import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.formatterutil.CreativeFormatterUtils;
@@ -51,6 +52,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
     private AdEntityCache adEntityCache;
     private String macroPostImpressionBaseClickUrl;
     private String macroPostImpressionBaseClickUrlSecure;
+    private AdPicker adPicker;
 
     //template for formatting.
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -64,7 +66,8 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
                                             int urlVersion,
                                             String notificationUrlSuffix,
                                             String notificationUrlBidderBidPriceMacro,
-                                            AdEntityCache adEntityCache
+                                            AdEntityCache adEntityCache,
+                                            AdPicker adPicker
                                            )
     {
         this.logger = LogManager.getLogger(loggerName);
@@ -121,8 +124,6 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
             return null;
         }
 
-        Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
-
         BidResponseYoukuDTO bidResponseYoukuDTO = new BidResponseYoukuDTO();
         bidResponseYoukuDTO.setBidderGeneratedUniqueId(bidRequestYouku.getUniqueInternalRequestId());
         bidResponseYoukuDTO.setBidRequestId(bidRequestYouku.getUniqueBidRequestIdentifierForAuctioneer());
@@ -141,14 +142,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         {
             Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
 
-            //sort and pick the one with highest ecpm value.
-            List<ResponseAdInfo> list = new ArrayList<ResponseAdInfo>();
-            list.addAll(responseAdInfos);
-            Collections.sort(list,comparator);
-
-            ResponseAdInfo responseAdInfoToUse = list.get(0);
-            responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
-                    (responseAdInfoToUse,list, randomPicker);
+            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos);
 
             BidResponseBidYoukuEntity bidResponseBidYoukuDTO =
                     prepareBidResponseSeatBidYouku(
