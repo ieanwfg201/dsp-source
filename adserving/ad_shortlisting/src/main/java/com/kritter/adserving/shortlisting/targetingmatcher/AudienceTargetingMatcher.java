@@ -2,6 +2,7 @@ package com.kritter.adserving.shortlisting.targetingmatcher;
 
 import com.alibaba.fastjson.JSON;
 import com.kritter.adserving.shortlisting.TargetingMatcher;
+import com.kritter.adserving.thrift.struct.NoFillReason;
 import com.kritter.common.caches.audience_cache.AudienceCache;
 import com.kritter.common.caches.audience_cache.entity.AudienceCacheEntity;
 import com.kritter.core.workflow.Context;
@@ -10,6 +11,7 @@ import com.kritter.entity.reqres.log.ReqLog;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
+import com.kritter.utils.common.AdNoFillStatsUtils;
 import com.kritter.utils.nosql.common.NoSqlData;
 import com.kritter.utils.nosql.common.NoSqlNamespaceOperations;
 import lombok.Getter;
@@ -19,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 
 public class AudienceTargetingMatcher implements TargetingMatcher {
+    private static NoFillReason noFillReason = NoFillReason.AUDIENCE_MISMATCHE;
     @Getter
     private String name;
     private Logger logger;
@@ -26,6 +29,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
     private AdEntityCache adEntityCache;
     private AudienceCache audienceCache;
     private NoSqlNamespaceOperations noSqlNamespaceOperationsInstance;
+    private String adNoFillReasonMapKey;
 
     public static final String NAMESPACE_NAME_KEY = "namespace";
     public static final String TABLE_NAME_KEY = "table_name";
@@ -44,7 +48,8 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                                     AudienceCache audienceCache,
                                     NoSqlNamespaceOperations noSqlNamespaceOperationsInstance,
                                     Properties audienceCodeProperties,
-                                    Properties audiencePackageProperties) {
+                                    Properties audiencePackageProperties,
+                                    String adNoFillReasonMapKey) {
         this.name = name;
         this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
@@ -53,6 +58,8 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
         this.audienceCodeProperties = audienceCodeProperties;
         this.audiencePackageProperties = audiencePackageProperties;
+
+        this.adNoFillReasonMapKey = adNoFillReasonMapKey;
 
     }
 
@@ -64,6 +71,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
         }
 
         Set<Integer> shortlistedAdIds = new HashSet<Integer>();
+
         for (int adId : adIdSet) {
             ReqLog.debugWithDebugNew(this.logger, request, "audience matcher Processing ad id : {}", adId);
 
@@ -88,6 +96,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
             //no audience targeting
             if (audienceIncExcTags == null || audienceIncExcTags.trim().length() == 0) {
+                shortlistedAdIds.add(adId);
                 continue;
             }
 
@@ -99,14 +108,12 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             List<Integer> packageList = audienceTagMap.get("package");
 
             int audienceType = 1;
-            if (packageList != null && packageList.size() != 0) {
+            if ((excList != null && excList.size() != 0) || (incList != null && incList.size() != 0)) {
+                audienceType = 1;
+            } else if (packageList != null && packageList.size() != 0) {
                 audienceType = 2;
-            }
-
-            AudienceCacheEntity audienceCacheEntity = audienceCache.query(adId);
-
-            if (audienceCacheEntity == null) {
-                ReqLog.debugWithDebugNew(this.logger, request, "audience entity for id : {} is null in audience cache", audienceCacheEntity.getId());
+            } else {
+                shortlistedAdIds.add(adId);
                 continue;
             }
 
@@ -141,6 +148,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                     AudienceCacheEntity entity = audienceCache.query(id);
 
                     if (entity == null) {
+                        ReqLog.debugWithDebugNew(this.logger, request, "audience entity for id : {} is null in audience cache", entity.getId());
                         continue;
                     }
 
@@ -171,6 +179,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 }
 
                 if (isExeclude) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
                     ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", request.getUserId());
                     continue;
                 }
@@ -186,6 +195,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                     AudienceCacheEntity entity = audienceCache.query(id);
 
                     if (entity == null) {
+                        ReqLog.debugWithDebugNew(this.logger, request, "audience entity for id : {} is null in audience cache", entity.getId());
                         continue;
                     }
 
@@ -218,10 +228,13 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 }
 
                 if (!isInclude) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
                     ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", request.getUserId());
                     continue;
                 }
 
+                shortlistedAdIds.add(adId);
+                continue;
 
             } else if (audienceType == AUDIENCE_TYPE_PACKAGE) {
                 //audience package
@@ -242,6 +255,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 }
 
                 if (isExeclude) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
                     ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", request.getUserId());
                     continue;
                 }
@@ -256,10 +270,14 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 }
 
                 if (!isInclude) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
                     ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", request.getUserId());
                     continue;
                 }
 
+
+                shortlistedAdIds.add(adId);
+                continue;
 
             }
 

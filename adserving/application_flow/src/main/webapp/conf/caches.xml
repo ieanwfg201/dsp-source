@@ -825,7 +825,7 @@ GROUP BY id;]]></prop>
         <constructor-arg>
             <props>
                 <prop key="refresh_interval">30000</prop>
-                <prop key="query"><![CDATA[ SELECT * FROM audience WHERE deleted = 0 ]]></prop>
+                <prop key="query"><![CDATA[ SELECT id,name,source_id,tags,type,last_modified FROM audience WHERE deleted = 0 ]]></prop>
             </props>
         </constructor-arg>
     </bean>
