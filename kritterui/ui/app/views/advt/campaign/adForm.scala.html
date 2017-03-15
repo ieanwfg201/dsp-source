@@ -46,6 +46,7 @@
                         @components.formElements.modelcurrencyinput(adForm("advertiser_bid"),"Advertiser Bid *")
 						@components.formElements.modelcurrencyinput(adForm("internal_max_bid"),"Internal Max Bid *") 
 						@components.formElements.currencyinput(adForm("cpa_goal"),"CPA Goal")
+					    @components.formElements.currencyinput(adForm("expected_ctr"),"Expected Ctr")
 						<div class="row">
 							<div class="col-md-8">
 							 	@components.formElements.selectlist2(adForm("targeting_guid"),"Targeting Profile *", services.DataAPI.getTargetingOptions(adDisplay.getAccountGuid()) )

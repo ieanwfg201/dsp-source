@@ -55,6 +55,7 @@ public class AdEntity extends Entity{
     private int modified_by = -1;
     private String comment = null;
     private double cpa_goal = 0.0;
+    private double expected_ctr = 0.0;
     private String adv_domain = "";
     private boolean is_frequency_capped = false;
     private int frequency_cap = UserConstant.frequency_cap_default;
@@ -398,6 +399,8 @@ public class AdEntity extends Entity{
 	public void setProtocol(int protocol) {
 		this.protocol = protocol;
 	}
+    public double getExpected_ctr() {return expected_ctr;}
+    public void setExpected_ctr(double expected_ctr) {this.expected_ctr = expected_ctr;}
 
     public Ad getEntity(){
     	Ad ad = new Ad();
