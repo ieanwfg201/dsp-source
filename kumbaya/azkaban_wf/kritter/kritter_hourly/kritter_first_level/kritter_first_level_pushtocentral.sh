@@ -16,6 +16,7 @@ rsync -drtv ${outputdirprefix}/${outputdirfolder} --delay-updates --rsh="ssh -o 
 
 rsync -drtv ${outputlogdirprefix}/${outputdirfolder} --delay-updates --rsh="ssh -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking no' -p${destination_central_ssh_port}" -drtv  ${destination_central_user}@${destination_central_host}:${outputlogdirprefix}/ --stats 
 
+echo "ssh ${destination_central_user}@${destination_central_host} "touch ${10}/first_level__${9}""
 ssh ${destination_central_user}@${destination_central_host} "touch ${10}/first_level__${9}"
 
 

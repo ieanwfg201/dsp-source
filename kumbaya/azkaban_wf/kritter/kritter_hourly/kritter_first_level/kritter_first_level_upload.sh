@@ -41,6 +41,8 @@ channelpath=${2}/channel_hourly/part*
 channeltablename="channel_hourly"
 
 if [ "$18" = "true" ]; then
+	
+	mkdir -p ${19}
 
     if [ "$13" = "true" ]; then
         echo 'java  -cp "$CLASSPATH" $MAINCLASS "${extfilepath}" ${exttablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
@@ -62,6 +64,7 @@ if [ "$18" = "true" ]; then
         echo 'java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}'
         java  -cp "$CLASSPATH" $MAINCLASS "${channelpath}" ${channeltablename} ${delimiter} ${dbhost} ${dbuser} ${dbpwd} ${dbname}  ${dbport} ${dbtype} ${processing_time}
     fi
+	touch ${19}/first_level__${process_time_dir}
 
 exit $?
 
