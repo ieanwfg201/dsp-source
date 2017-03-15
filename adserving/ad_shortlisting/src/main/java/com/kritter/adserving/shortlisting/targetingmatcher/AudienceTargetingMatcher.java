@@ -8,6 +8,8 @@ import com.kritter.common.caches.audience_cache.entity.AudienceCacheEntity;
 import com.kritter.core.workflow.Context;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.log.ReqLog;
+import com.kritter.entity.user.userid.ExternalUserId;
+import com.kritter.nosql.user.matchid.UserIdCache;
 import com.kritter.serving.demand.cache.AdEntityCache;
 import com.kritter.serving.demand.entity.AdEntity;
 import com.kritter.serving.demand.entity.TargetingProfile;
@@ -31,6 +33,8 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
     private NoSqlNamespaceOperations noSqlNamespaceOperationsInstance;
     private String adNoFillReasonMapKey;
 
+    private UserIdCache userIdCache;
+
     public static final String NAMESPACE_NAME_KEY = "namespace";
     public static final String TABLE_NAME_KEY = "table_name";
     public static final String ATTRIBUTE_NAME_KEY = "attribute_name_lifetime_history";
@@ -49,7 +53,8 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                                     NoSqlNamespaceOperations noSqlNamespaceOperationsInstance,
                                     Properties audienceCodeProperties,
                                     Properties audiencePackageProperties,
-                                    String adNoFillReasonMapKey) {
+                                    String adNoFillReasonMapKey,
+                                    UserIdCache userIdCache) {
         this.name = name;
         this.logger = LogManager.getLogger(loggerName);
         this.adEntityCache = adEntityCache;
@@ -61,6 +66,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
         this.adNoFillReasonMapKey = adNoFillReasonMapKey;
 
+        this.userIdCache = userIdCache;
     }
 
     @Override
@@ -71,6 +77,8 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
         }
 
         Set<Integer> shortlistedAdIds = new HashSet<Integer>();
+
+        String deviceId = getDeviceIdFromRequest(request);
 
         for (int adId : adIdSet) {
             ReqLog.debugWithDebugNew(this.logger, request, "audience matcher Processing ad id : {}", adId);
@@ -110,7 +118,17 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             int audienceType = 1;
             if ((excList != null && excList.size() != 0) || (incList != null && incList.size() != 0)) {
                 audienceType = 1;
+                if (deviceId == null) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
+                    ReqLog.debugWithDebugNew(this.logger, request, "audience matcher Processing ad id : {},deviceId is null", adId);
+                    continue;
+                }
             } else if (packageList != null && packageList.size() != 0) {
+                if (deviceId == null) {
+                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
+                    ReqLog.debugWithDebugNew(this.logger, request, "audience matcher Processing ad id : {},deviceId is null", adId);
+                    continue;
+                }
                 audienceType = 2;
             } else {
                 shortlistedAdIds.add(adId);
@@ -355,5 +373,21 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
     }
 
+
+    private String getDeviceIdFromRequest(Request request) {
+        Set<ExternalUserId> externalUserIds = request.getExternalUserIds();
+        if (externalUserIds == null || externalUserIds.size() == 0) {
+            return null;
+        }
+
+        ExternalUserId externalUserId = userIdCache.getHighestPriorityId(externalUserIds);
+
+        if (externalUserId != null && externalUserId.getUserId() != null && externalUserId.getUserId().length() != 0) {
+            return externalUserId.getUserId();
+        }
+
+        return null;
+
+    }
 
 }
