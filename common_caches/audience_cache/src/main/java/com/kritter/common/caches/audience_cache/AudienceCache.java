@@ -34,14 +34,14 @@ public class AudienceCache extends AbstractDBStatsReloadableQueryableCache<Integ
     protected AudienceCacheEntity buildEntity(ResultSet resultSet) throws RefreshException {
         Integer id = null;
         String name;
-        Integer source_id;
+        String source_id;
         String tags;
         Integer type;
 
         try {
             id = resultSet.getInt("id");
             name = resultSet.getString("name");
-            source_id = resultSet.getInt("source_id");
+            source_id = resultSet.getString("source_id");
             tags = resultSet.getString("tags");
             type = resultSet.getInt("type");
 

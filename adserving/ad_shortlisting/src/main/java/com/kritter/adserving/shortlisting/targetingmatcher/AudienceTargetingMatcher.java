@@ -37,7 +37,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
     public static final String NAMESPACE_NAME_KEY = "namespace";
     public static final String TABLE_NAME_KEY = "table_name";
-    public static final String ATTRIBUTE_NAME_KEY = "attribute_name_lifetime_history";
+    public static final String ATTRIBUTE_NAME_KEY = "audience_attribute_name";
 
     private static final int AUDIENCE_TYPE_CODE = 1;
     private static final int AUDIENCE_TYPE_PACKAGE = 2;
@@ -159,96 +159,102 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
 
                 boolean isExeclude = false;
-                if (excList == null || excList.size() == 0) {
-                    continue;
-                }
-                for (Integer id : excList) {
-                    AudienceCacheEntity entity = audienceCache.query(id);
+                if (excList != null && excList.size() != 0) {
+                    for (Integer id : excList) {
+                        AudienceCacheEntity entity = audienceCache.query(id);
 
-                    if (entity == null) {
-                        ReqLog.debugWithDebugNew(this.logger, request, "audience entity for id : {} is null in audience cache", entity.getId());
-                        continue;
-                    }
-
-                    String tags = entity.getTags();
-                    if (tags == null) {
-                        continue;
-                    }
-                    List<List<String>> tagList = JSON.parseObject(tags, List.class);
-                    if (tagList == null || tagList.size() == 0) {
-                        continue;
-                    }
-
-                    Integer sourceId = entity.getSource_id();
-                    String source = convertSource(sourceId);
-
-                    //同级是或的关系,不同级是并的关系
-                    boolean flag = false;
-                    for (List<String> level1_tag : tagList) {
-                        for (String level2_tag : level1_tag) {
-                            flag = flag || isExist(deviceTags, source + "_" + level2_tag);
+                        if (entity == null) {
+                            ReqLog.debugWithDebugNew(this.logger, request, "audience entity for id : {} is null in audience cache", entity.getId());
+                            continue;
                         }
-                        flag = flag && isExist(deviceTags, source + "_" + level1_tag);
-                    }
-                    if (flag) { //设备满足该标签定向,但是是execlude,需要排除
-                        isExeclude = flag;
-                        break;
-                    }
-                }
 
-                if (isExeclude) {
-                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
-                    continue;
+                        String tags = entity.getTags();
+                        if (tags == null) {
+                            continue;
+                        }
+                        List<List<String>> tagList = JSON.parseObject(tags, List.class);
+                        if (tagList == null || tagList.size() == 0) {
+                            continue;
+                        }
+
+                        String sourceId = entity.getSource_id();
+                        String source = convertSource(sourceId);
+
+                        //同级是或的关系,不同级是并的关系
+                        boolean flag = true;
+                        for (List<String> level1_tag : tagList) {
+                            boolean tempFlag = false;
+                            for (String level2_tag : level1_tag) {
+                                tempFlag = tempFlag || isExist(deviceTags, source + "_" + level2_tag);
+                                if (tempFlag) {
+                                    break;
+                                }
+                            }
+                            flag = flag && tempFlag;
+                        }
+                        if (flag) { //设备满足该标签定向,但是是execlude,需要排除
+                            isExeclude = flag;
+                            break;
+                        }
+                    }
+
+                    if (isExeclude) {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
+                        ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
+                        continue;
+                    }
+
                 }
 
 
                 boolean isInclude = false;
                 //include,判断是否include
-                if (incList == null || incList.size() == 0) {
-                    continue;
-                }
-                for (Integer id : incList) {
+                if (incList != null && incList.size() != 0) {
+                    for (Integer id : incList) {
 
-                    AudienceCacheEntity entity = audienceCache.query(id);
+                        AudienceCacheEntity entity = audienceCache.query(id);
 
-                    if (entity == null) {
-                        ReqLog.debugWithDebugNew(this.logger, request, "audience entity for id : {} is null in audience cache", entity.getId());
-                        continue;
-                    }
-
-                    Integer sourceId = entity.getSource_id();
-                    String tags = entity.getTags();
-                    if (tags == null) {
-                        continue;
-                    }
-                    List<List<String>> tagList = JSON.parseObject(tags, List.class);
-                    if (tagList == null || tagList.size() == 0) {
-                        continue;
-                    }
-
-
-                    String source = convertSource(sourceId);
-
-                    //同级是或的关系,不同级是并的关系
-                    boolean flag = false;
-                    for (List<String> level1_tag : tagList) {
-                        for (String level2_tag : level1_tag) {
-                            flag = flag || isExist(deviceTags, source + "_" + level2_tag);
+                        if (entity == null) {
+                            ReqLog.debugWithDebugNew(this.logger, request, "audience entity for id : {} is null in audience cache", entity.getId());
+                            continue;
                         }
-                        flag = flag && isExist(deviceTags, source + "_" + level1_tag);
-                    }
-                    if (!flag) { //设备不满足该标签定向,需要排除
-                        isInclude = flag;
-                        break;
+
+                        String sourceId = entity.getSource_id();
+                        String tags = entity.getTags();
+                        if (tags == null) {
+                            continue;
+                        }
+                        List<List<String>> tagList = JSON.parseObject(tags, List.class);
+                        if (tagList == null || tagList.size() == 0) {
+                            continue;
+                        }
+
+                        String source = convertSource(sourceId);
+
+                        //同级是或的关系,不同级是并的关系
+                        boolean flag = true;
+                        for (List<String> level1_tag : tagList) {
+                            boolean tempFlag = false;
+                            for (String level2_tag : level1_tag) {
+                                tempFlag = tempFlag || isExist(deviceTags, source + "_" + level2_tag);
+                                if (tempFlag) {
+                                    break;
+                                }
+                            }
+                            flag = flag && tempFlag;
+                        }
+                        if (flag) { //包之间是或,只要有一个满足就行
+                            isInclude = flag;
+                            break;
+                        }
                     }
 
-                }
+                    if (!isInclude) {
+                        AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
+                        ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
+                        continue;
+                    }
 
-                if (!isInclude) {
-                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
-                    continue;
                 }
 
                 shortlistedAdIds.add(adId);
@@ -305,24 +311,23 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
     }
 
 
-    public String convertSource(Integer sourceType) {
+    public String convertSource(String sourceType) {
         if (sourceType == null) {
             return "";
         }
 
-        switch (sourceType) {
-            case 1:
-                return "td";
-            case 2:
-                return "am";
-            case 3:
-                return "up";
-            case 4:
-                return "qx";
-            case 5:
-                return "mh";
-            default:
-                return "";
+        if (sourceType.equals("010")) {
+            return "mh";
+        } else if (sourceType.equals("011")) {
+            return "td";
+        } else if (sourceType.equals("012")) {
+            return "up";
+        } else if (sourceType.equals("018")) {
+            return "am";
+        } else if (sourceType.equals("019")) {
+            return "qx";
+        } else {
+            return "";
         }
     }
 
@@ -363,13 +368,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             return null;
         }
 
-        byte[] serializedObject = (byte[]) noSqlData.getValue();
-
-        if (serializedObject == null || serializedObject.length == 0) {
-            return null;
-        }
-
-        return new String(serializedObject);
+        return (String) noSqlData.getValue();
 
     }
 
