@@ -87,6 +87,8 @@ public class ResponseAdInfo
     private VideoProps videoProps;
     @Getter @Setter
     private VideoInfo videoInfo;
+    @Getter @Setter
+    private Double expectedCtr;
 
 
     public ResponseAdInfo(Integer adId,Double hardBid,Double advertiserBid,Double dailyRemainingBudget)

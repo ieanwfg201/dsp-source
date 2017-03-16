@@ -891,5 +891,6 @@
     </bean>
     <bean id="ecpm_ctr_picker" class="com.kritter.ex_int.utils.picker.EcpmAndCTRPicker">
         <constructor-arg index="0" value="0.5"/>
+        <constructor-arg index="1" value="0.01"/>
     </bean>
 </beans>

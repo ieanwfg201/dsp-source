@@ -13,9 +13,11 @@ public class EcpmAndCTRPicker implements AdPicker {
     private Random randomPicker = new Random();
 
     private double ecpmWeight;
+    private double defaultCtr;
 
-    public EcpmAndCTRPicker(double ecpmWeight) {
+    public EcpmAndCTRPicker(double ecpmWeight,double defaultCtr) {
         this.ecpmWeight = ecpmWeight;
+        this.defaultCtr = defaultCtr;
     }
 
     @Override
@@ -26,7 +28,8 @@ public class EcpmAndCTRPicker implements AdPicker {
         }
 
         double baseECPM = responseAdInfoSet.iterator().next().getEcpmValue();
-        Comparator<ResponseAdInfo> comparator = new EcpmCTRComparator(this.ecpmWeight, baseECPM);
+
+        Comparator<ResponseAdInfo> comparator = new EcpmCTRComparator(this.ecpmWeight, baseECPM, this.defaultCtr);
         List<ResponseAdInfo> list = new ArrayList<ResponseAdInfo>();
         list.addAll(responseAdInfoSet);
         Collections.sort(list, comparator);
