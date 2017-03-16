@@ -83,6 +83,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         this.seatId = seatId;
+        this.adPicker = adPicker;
     }
 
 

@@ -56,7 +56,6 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
 
     //template for formatting.
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final Random randomPicker = new Random();
     private static final String HTTP_PROTOCOL = "http://";
     private static final String HTTPS_PROTOCOL = "https://";  
     public BidRequestResponseCreatorYouku(
@@ -84,6 +83,7 @@ public class BidRequestResponseCreatorYouku implements IBidResponseCreator
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
         this.adEntityCache = adEntityCache;
+        this.adPicker = adPicker;
         this.macroPostImpressionBaseClickUrl= serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
         this.macroPostImpressionBaseClickUrlSecure = StringUtils.replaceOnce(this.macroPostImpressionBaseClickUrl, HTTP_PROTOCOL, HTTPS_PROTOCOL);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);

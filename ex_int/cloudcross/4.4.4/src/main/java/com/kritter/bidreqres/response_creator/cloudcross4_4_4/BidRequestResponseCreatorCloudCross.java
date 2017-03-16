@@ -12,6 +12,7 @@ import com.kritter.entity.external_tracker.ExtTracker;
 import com.kritter.entity.reqres.entity.Request;
 import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
+import com.kritter.ex_int.utils.picker.AdPicker;
 import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.formatterutil.CreativeFormatterUtils;
 import com.kritter.serving.demand.cache.AdEntityCache;
@@ -44,10 +45,10 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
     private AdEntityCache adEntityCache;
     private IABCategoriesCache iabCategoriesCache;
     private String macroPostImpressionBaseClickUrl;
+    private AdPicker adPicker;
 
     //template for formatting.
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final Random randomPicker = new Random();
 
     public BidRequestResponseCreatorCloudCross(
             String loggerName,
@@ -57,7 +58,8 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
             String notificationUrlSuffix,
             String notificationUrlBidderBidPriceMacro,
             AdEntityCache adEntityCache,
-            IABCategoriesCache iabCategoriesCache
+            IABCategoriesCache iabCategoriesCache,
+            AdPicker adPicker
     ) {
         this.logger = LogManager.getLogger(loggerName);
         this.postImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.CLICK_URL_PREFIX);
@@ -71,6 +73,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         this.adEntityCache = adEntityCache;
         this.iabCategoriesCache = iabCategoriesCache;
         this.macroPostImpressionBaseClickUrl = serverConfig.getValueForKey(ServerConfig.MACRO_CLICK_URL_PREFIX);
+        this.adPicker = adPicker;
     }
 
 
@@ -122,14 +125,7 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         for (String impressionId : impressionIdsToRespondFor) {
             Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
 
-            //sort and pick the one with highest ecpm value.
-            List<ResponseAdInfo> list = new ArrayList<ResponseAdInfo>();
-            list.addAll(responseAdInfos);
-            Collections.sort(list, comparator);
-
-            ResponseAdInfo responseAdInfoToUse = list.get(0);
-            responseAdInfoToUse = pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
-                    (responseAdInfoToUse, list);
+            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos);
 
             BidResponseBidCloudCrossDTO bidResponseBidCloudCross =
                     prepareBidResponseSeatBidCloudCross(
@@ -351,25 +347,4 @@ public class BidRequestResponseCreatorCloudCross implements IBidResponseCreator 
         return uri.getHost();
     }
 
-
-    private ResponseAdInfo pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
-            (
-                    ResponseAdInfo responseAdInfoHighestEcpm,
-                    List<ResponseAdInfo> responseAdInfoList
-            ) {
-        int sameHighestEcpmCount = 1;
-
-        for (int i = 1; i < responseAdInfoList.size(); i++) {
-            if (responseAdInfoHighestEcpm.getEcpmValue().compareTo(responseAdInfoList.get(i).getEcpmValue()) == 0) {
-                sameHighestEcpmCount += 1;
-            }
-        }
-
-        int index = randomPicker.nextInt(sameHighestEcpmCount);
-
-        if (index >= 0)
-            return responseAdInfoList.get(index);
-
-        return responseAdInfoList.get(0);
-    }
 }
