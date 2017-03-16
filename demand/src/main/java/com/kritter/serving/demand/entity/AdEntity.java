@@ -44,6 +44,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
     private final boolean markedForDeletion;
     private final Long modificationTime;
     private final Double cpaGoal;
+    private final Double expectedCtr;
     private final String[] advertiserDomains;
     private final Template lpVelocityTemplate;
     private boolean isFrequencyCapped;
@@ -79,6 +80,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         this.advertiserBid = adEntityBuilder.advertiserBid;
         this.trackingPartnerId = adEntityBuilder.trackingPartnerId;
         this.cpaGoal = adEntityBuilder.cpaGoal;
+        this.expectedCtr = adEntityBuilder.expectedCtr;
         this.advertiserDomains = adEntityBuilder.advertiserDomains;
         this.markedForDeletion = adEntityBuilder.isMarkedForDeletion;
         this.modificationTime = adEntityBuilder.modificationTime;
@@ -95,6 +97,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         this.adExt = adEntityBuilder.adExt;
         this.frequencyCap = adEntityBuilder.frequencyCap;
         this.protocol = adEntityBuilder.protocol;
+
     }
 
     @Override
@@ -123,6 +126,7 @@ public class AdEntity implements IUpdatableEntity<Integer>
         private String landingUrl;
         private  Integer trackingPartnerId;
         private Double cpaGoal;
+        private Double expectedCtr;
         private String[] advertiserDomains;
         private Template lpVelocityTemplate;
         private final boolean isFrequencyCapped;
@@ -214,7 +218,11 @@ public class AdEntity implements IUpdatableEntity<Integer>
             this.cpaGoal = cpaGoal;
             return this;
         }
-
+        public AdEntityBuilder setExpectedCtr(Double expectedCtr)
+        {
+            this.expectedCtr = expectedCtr;
+            return this;
+        }
         public AdEntityBuilder setAdvertiserDomain(String[] advertiserDomains)
         {
             this.advertiserDomains = advertiserDomains;
