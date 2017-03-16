@@ -138,9 +138,9 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             //audience code
             if (audienceType == AUDIENCE_TYPE_CODE) {
 
-                String jsonStr = getAudience(request, audienceCodeProperties);
+                String jsonStr = getAudience(deviceId, audienceCodeProperties);
                 if (jsonStr == null) {
-                    ReqLog.debugWithDebugNew(this.logger, request, "device id not exist : {}", request.getUserId());
+                    ReqLog.debugWithDebugNew(this.logger, request, "device id not exist : {}", deviceId);
                     continue;
                 }
 
@@ -198,7 +198,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
                 if (isExeclude) {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", request.getUserId());
+                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
                     continue;
                 }
 
@@ -247,7 +247,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
                 if (!isInclude) {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", request.getUserId());
+                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
                     continue;
                 }
 
@@ -257,10 +257,10 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
             } else if (audienceType == AUDIENCE_TYPE_PACKAGE) {
                 //audience package
 
-                String audienceId = getAudience(request, audiencePackageProperties);
+                String audienceId = getAudience(deviceId, audiencePackageProperties);
 
                 if (audienceId == null) {
-                    ReqLog.debugWithDebugNew(this.logger, request, "device id not exist : {}", request.getUserId());
+                    ReqLog.debugWithDebugNew(this.logger, request, "device id not exist : {}", deviceId);
                     continue;
                 }
 
@@ -274,7 +274,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
                 if (isExeclude) {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", request.getUserId());
+                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
                     continue;
                 }
 
@@ -289,7 +289,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
                 if (!isInclude) {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", request.getUserId());
+                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
                     continue;
                 }
 
@@ -337,13 +337,13 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
     }
 
 
-    public String getAudience(Request request, Properties properties) {
+    public String getAudience(String deviceId, Properties properties) {
 
         //批量查询会多查询几次
 //        List<String> values = new ArrayList<String>();
 //        Set<NoSqlData> primaryKeyValues = new HashSet<NoSqlData>();
-//        primaryKeyValues.add(new NoSqlData(NoSqlData.NoSqlDataType.STRING, request.getUserId()));
-        NoSqlData primaryKeyValue = new NoSqlData(NoSqlData.NoSqlDataType.STRING, request.getUserId());
+//        primaryKeyValues.add(new NoSqlData(NoSqlData.NoSqlDataType.STRING, deviceId));
+        NoSqlData primaryKeyValue = new NoSqlData(NoSqlData.NoSqlDataType.STRING, deviceId);
 
         String namespaceName = properties.getProperty(NAMESPACE_NAME_KEY);
         String tableName = properties.getProperty(TABLE_NAME_KEY);
