@@ -73,7 +73,8 @@ public class AdDisplayFull extends AdDisplay{
 
 	public double getCpaGoal() {
         return ad.getCpa_goal();
-    } 
+    }
+	public double getExpectedCtr() {return ad.getExpected_ctr();}
 	public String Bidtype() {
         return BidType.getEnum(ad.getBidtype()).getName();
     }

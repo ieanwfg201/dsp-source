@@ -224,6 +224,7 @@
                         @components.formElements.multiselectlist3(tpForm("adposition_list"), '_label -> "Target AdPosition", '_row -> true)
                     </fieldset>
                 }
+
                 @if("true" == channel_required) {
                     <fieldset>
                         <legend>CHANNEL</legend>
@@ -232,11 +233,20 @@
                         @components.formElements.multiselectlist3(tpForm("channel_tier_2_list"), '_label -> "Target Tier 2 Channel", '_row -> true)
                     </fieldset>
                 }
+
                 <fieldset>
                     <legend>Audience</legend>
-                    @components.formElements.multiselectlist3(tpForm("audience_inc"), '_label -> "Audience Inclusion", '_row -> true)
-                    @components.formElements.multiselectlist3(tpForm("audience_exc"), '_label -> "Audience Exclusion", '_row -> true)
+                    <label>Target Audience&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <label  onclick="show('MMA')"> <input type="radio" name="radio" > <span>MMA  Tag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></label>
+                    <label  onclick="show('AP')"> <input type="radio" name="radio"> <span>Audience Package</span></label>
+                    <div id="MMA" class="rowtp" style="display: none">
+                        @components.formElements.multiselectlist3(tpForm("audience_inc"), '_label -> "Audience Inclusion", '_row -> true)
+                        @components.formElements.multiselectlist3(tpForm("audience_exc"), '_label -> "Audience Exclusion", '_row -> true)
+                    </div>
+                    <div id="AP" class="rowtp" style="display: none">
                     @components.formElements.multiselectlist3(tpForm("audience_package"), '_label -> "Audience Package", '_row -> true)
+                    </div>
                 </fieldset>
 
                 <button class="btn btn-default btn-primary pull-right" type="button" ng-click="saveTP()">Save</button>
@@ -264,4 +274,16 @@
     </div>
         <script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/apps/targetingController.js")" type="text/javascript"></script>
+
+
+        <script>
+                function show(id) {
+                    $("div.rowtp").each(function (i, j) {
+                        $(j).css("display", "none");
+                    })
+
+                    $("#" + id).css('display', 'block');
+                }
+        </script>
+
 }

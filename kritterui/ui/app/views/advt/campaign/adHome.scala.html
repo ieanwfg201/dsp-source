@@ -1,68 +1,76 @@
-@(ad:models.advertiser.AdDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String,
-channel_required:String,lat_lon_file:String,deviceid_targeting:String,
-audience_targeting:String,audience_gender_targeting:String,audience_age_range_targeting:String,
-	audience_cat_targeting:String,audience_cattier1_targeting:String,audience_cattier2_targeting:String,
-	audience_cattier3_targeting:String,audience_cattier4_targeting:String,audience_cattier5_targeting:String)
-	
-@main2("Ad Home- @ad.getName()"){@navs.navadvt(ad.getAccountGuid())}{@navs.breadcrumbs(ad.getBreadCrumbPaths())}{
+@(ad: models.advertiser.AdDisplayFull, retargeting_flow_enabled: String, mma_required: String, adposition_required: String,
+        channel_required: String, lat_lon_file: String, deviceid_targeting: String,
+        audience_targeting: String, audience_gender_targeting: String, audience_age_range_targeting: String,
+        audience_cat_targeting: String, audience_cattier1_targeting: String, audience_cattier2_targeting: String,
+        audience_cattier3_targeting: String, audience_cattier4_targeting: String, audience_cattier5_targeting: String)
 
-	@components.containers.panel("Ad Summary-"+ ad.getName()){
-		<div> 
-		@components.fielddisplays.textdisplay("AD-AdId", ad.getGuid())
-		
-		@components.fielddisplays.htmldisplay("AD-Landing Url") { <a href="@ad.getLanding_url()">@ad.getLanding_url()</a> }
-        @components.fielddisplays.textdisplay("AD-LandingPageProtocol", ad.getProtocol()) 
-		
-		@components.fielddisplays.textdisplay("AD-Adv Domain", ad.getAdvDomain()) 
-		
-		@components.fielddisplays.textdisplay("AD-Market Place", ad.getMarketplace())
-		
-		@components.fielddisplays.textdisplay("AD-Tracking Partner", ad.getTracking_partner())
-		
-		@components.fielddisplays.textdisplay("AD-BidType", ad.Bidtype())
-		
-		@components.fielddisplays.textdisplay("AD-Internal Max Bid", ad.getInternalMaxBid()+"")
-		
-		@components.fielddisplays.textdisplay("AD-Advertiser Bid", ad.getAdvertiserBid()+"") 
-		
-        @components.fielddisplays.textdisplay("AD-CPA Goal", ad.getCpaGoal()+"") 
+@main2("Ad Home- @ad.getName()") {
+    @navs.navadvt(ad.getAccountGuid())
+} {
+    @navs.breadcrumbs(ad.getBreadCrumbPaths())
+} {
 
-		@components.fielddisplays.listdisplay("AD-Tier 1 Category", ad.getTier1Categories())
-		
-		@components.fielddisplays.listdisplay("AD-Tier 2 Category", ad.getTier2Categories()) 
-		
-		@components.fielddisplays.listdisplay("AD-Hygiene", ad.getHygieneList())
-		
-		@if("True" == ad.isFreqCap()){
-            @components.fielddisplays.textdisplay("AD-Freq Cap", ad.getFreqCapDisplay())
-        }
-        
-		<code ng-non-bindable>  
-	        @components.fielddisplays.textdisplay("AD-ExternalImpTracker", ad.getExternalimptracker())
-    		@components.fielddisplays.listdisplay("Ad Imp Macro", ad.getImpMacro())
-    	</code>
-        @components.fielddisplays.textdisplay("Ad Imp Macro Quote", ad.getImpMacroquote())
-        <code ng-non-bindable>  
-    	    @components.fielddisplays.textdisplay("AD-ExternalClickTracker", ad.getExternalclicktracker())
-    		@components.fielddisplays.listdisplay("Ad Click Macro", ad.getClickMacro())
-    	</code>
-        @components.fielddisplays.textdisplay("Ad Click Macro Quote", ad.getClickMacroquote())
-        @components.fielddisplays.textdisplay("Ad ExtClickType", ad.getExtclickType())
-        @if("true" == mma_required){
-			@components.fielddisplays.listdisplay("AD-MMAIndustry Tier 1", ad.getMMATier1())
-		
-			@components.fielddisplays.listdisplay("AD-MMAIndustry-Tier 2", ad.getMMATier2()) 
-        
-		} 
-		@advt.creative.creativeDisplay(ad.getCreativeDisplay())
-		
-		@advt.targeting.targetingHomeContent(ad.getTargetingFull(),retargeting_flow_enabled,mma_required,adposition_required,
-		channel_required,lat_lon_file,deviceid_targeting,
-		audience_targeting,audience_gender_targeting,audience_age_range_targeting,
-	audience_cat_targeting,audience_cattier1_targeting,audience_cattier2_targeting,
-	audience_cattier3_targeting,audience_cattier4_targeting,audience_cattier5_targeting)
-		 
-		</div>
-	}
+    @components.containers.panel("Ad Summary-" + ad.getName()) {
+        <div>
+            @components.fielddisplays.textdisplay("AD-AdId", ad.getGuid())
+
+            @components.fielddisplays.htmldisplay("AD-Landing Url") {
+                <a href="@ad.getLanding_url()">@ad.getLanding_url()</a>
+            }
+            @components.fielddisplays.textdisplay("AD-LandingPageProtocol", ad.getProtocol())
+
+            @components.fielddisplays.textdisplay("AD-Adv Domain", ad.getAdvDomain())
+
+            @components.fielddisplays.textdisplay("AD-Market Place", ad.getMarketplace())
+
+            @components.fielddisplays.textdisplay("AD-Tracking Partner", ad.getTracking_partner())
+
+            @components.fielddisplays.textdisplay("AD-BidType", ad.Bidtype())
+
+            @components.fielddisplays.textdisplay("AD-Internal Max Bid", ad.getInternalMaxBid() + "")
+
+            @components.fielddisplays.textdisplay("AD-Advertiser Bid", ad.getAdvertiserBid() + "")
+
+            @components.fielddisplays.textdisplay("AD-CPA Goal", ad.getCpaGoal() + "")
+
+            @components.fielddisplays.textdisplay("Expected Ctr", ad.getExpectedCtr() + "")
+
+            @components.fielddisplays.listdisplay("AD-Tier 1 Category", ad.getTier1Categories())
+
+            @components.fielddisplays.listdisplay("AD-Tier 2 Category", ad.getTier2Categories())
+
+            @components.fielddisplays.listdisplay("AD-Hygiene", ad.getHygieneList())
+
+            @if("True" == ad.isFreqCap()) {
+                @components.fielddisplays.textdisplay("AD-Freq Cap", ad.getFreqCapDisplay())
+            }
+
+            <code ng-non-bindable>
+                @components.fielddisplays.textdisplay("AD-ExternalImpTracker", ad.getExternalimptracker())
+                @components.fielddisplays.listdisplay("Ad Imp Macro", ad.getImpMacro())
+            </code>
+            @components.fielddisplays.textdisplay("Ad Imp Macro Quote", ad.getImpMacroquote())
+            <code ng-non-bindable>
+                @components.fielddisplays.textdisplay("AD-ExternalClickTracker", ad.getExternalclicktracker())
+                @components.fielddisplays.listdisplay("Ad Click Macro", ad.getClickMacro())
+            </code>
+            @components.fielddisplays.textdisplay("Ad Click Macro Quote", ad.getClickMacroquote())
+            @components.fielddisplays.textdisplay("Ad ExtClickType", ad.getExtclickType())
+            @if("true" == mma_required) {
+                @components.fielddisplays.listdisplay("AD-MMAIndustry Tier 1", ad.getMMATier1())
+
+                @components.fielddisplays.listdisplay("AD-MMAIndustry-Tier 2", ad.getMMATier2())
+
+            }
+            @advt.creative.creativeDisplay(ad.getCreativeDisplay())
+
+            @advt.targeting.targetingHomeContent(ad.getTargetingFull(), retargeting_flow_enabled, mma_required, adposition_required,
+                channel_required, lat_lon_file, deviceid_targeting,
+                audience_targeting, audience_gender_targeting, audience_age_range_targeting,
+                audience_cat_targeting, audience_cattier1_targeting, audience_cattier2_targeting,
+                audience_cattier3_targeting, audience_cattier4_targeting, audience_cattier5_targeting)
+
+        </div>
+    }
 
 }

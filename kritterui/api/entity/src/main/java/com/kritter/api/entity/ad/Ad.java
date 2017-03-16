@@ -66,6 +66,8 @@ public class Ad {
     private String targeting_profile_name = "";
     /** optional */
     private double cpa_goal = 0.0 ;
+	/** optional */
+	private double expected_ctr = 0.0;
     /** optional */
     private String adv_domain = "" ;
     /** user */
@@ -119,6 +121,7 @@ public class Ad {
 		result = prime * result + click_freq_time_window;
 		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		temp = Double.doubleToLongBits(cpa_goal);
+		temp = Double.doubleToLongBits(expected_ctr);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + (int) (created_on ^ (created_on >>> 32));
 		result = prime * result + ((creative_guid == null) ? 0 : creative_guid.hashCode());
@@ -215,6 +218,8 @@ public class Ad {
 		} else if (!comment.equals(other.comment))
 			return false;
 		if (Double.doubleToLongBits(cpa_goal) != Double.doubleToLongBits(other.cpa_goal))
+			return false;
+		if (Double.doubleToLongBits(expected_ctr) != Double.doubleToLongBits(other.expected_ctr))
 			return false;
 		if (created_on != other.created_on)
 			return false;
@@ -602,6 +607,15 @@ public class Ad {
 	public void setExtclickType(int extclickType) {
 		this.extclickType = extclickType;
 	}
+
+	public double getExpected_ctr() {
+		return expected_ctr;
+	}
+
+	public void setExpected_ctr(double expected_ctr) {
+		this.expected_ctr = expected_ctr;
+	}
+
 	public JsonNode toJson(){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Inclusion.NON_NULL);
