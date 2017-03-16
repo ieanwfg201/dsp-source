@@ -20,7 +20,7 @@ public class AudienceCacheEntity implements IUpdatableEntity<Integer> {
     private String name;
     @Getter
     @Setter
-    private Integer source_id;
+    private String source_id;
     @Getter
     @Setter
     private String tags;
@@ -32,7 +32,7 @@ public class AudienceCacheEntity implements IUpdatableEntity<Integer> {
     private long lastModified;
 
 
-    public AudienceCacheEntity(int id, String name, Integer source_id, String tags, Integer type, long lastModified, boolean isMarkedForDeletion) {
+    public AudienceCacheEntity(int id, String name, String source_id, String tags, Integer type, long lastModified, boolean isMarkedForDeletion) {
         this.markedForDeletion = isMarkedForDeletion;
         this.id = id;
         this.name = name;
