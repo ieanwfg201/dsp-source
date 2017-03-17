@@ -29,31 +29,27 @@ import java.util.*;
  * This cache is responsible for loading/unloading Ad entities periodically along with targeting
  * profile it is attached to.
  */
-public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integer, AdEntity>
-{
+public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integer, AdEntity> {
     private static Logger logger = LogManager.getLogger("cache.logger");
-    @Getter private final String name;
+    @Getter
+    private final String name;
 
-    public AdEntityCache(List<Class> secIndexKeyClassList,Properties props,
+    public AdEntityCache(List<Class> secIndexKeyClassList, Properties props,
                          DatabaseManager dbMgr, String cacheName)
-            throws InitializationException
-    {
+            throws InitializationException {
         super(secIndexKeyClassList, logger, props, dbMgr);
         this.name = cacheName;
     }
 
     @Override
-    public ISecondaryIndexWrapper getSecondaryIndexKey(Class className, AdEntity entity)
-    {
-        return AdEntitySecondaryIndexBuilder.getIndex(className,entity);
+    public ISecondaryIndexWrapper getSecondaryIndexKey(Class className, AdEntity entity) {
+        return AdEntitySecondaryIndexBuilder.getIndex(className, entity);
     }
 
     @Override
-    protected AdEntity buildEntity(ResultSet resultSet) throws RefreshException
-    {
+    protected AdEntity buildEntity(ResultSet resultSet) throws RefreshException {
         Integer id = null;
-        try
-        {
+        try {
             id = resultSet.getInt("id");
             String guid = resultSet.getString("guid");
             Integer creativeId = resultSet.getInt("creative_id");
@@ -63,8 +59,8 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             String campaignGuid = resultSet.getString("campaign_guid");
 
             Short[] categoriesArray = ResultSetHelper.getTier1Tier2CategoriesUnion(resultSet,
-                                                                                   "ad_categories_list",
-                                                                                   logger);
+                    "ad_categories_list",
+                    logger);
             Short[] hygieneArray = ResultSetHelper.getResultSetShortArray(resultSet, "hygiene_list");
             Integer status = resultSet.getInt("status_id");
             Integer marketplaceId = resultSet.getInt("marketplace_id");
@@ -79,8 +75,8 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             String accountId = resultSet.getString("account_guid");
             Integer accountIncId = resultSet.getInt("account_id");
             String accountGuid = resultSet.getString("account_guid");
-            Integer[] targetedHandsetManufacturers = ResultSetHelper.getResultSetIntegerArray(resultSet,"brand_list");
-            Integer[] targetedHandsetModels = ResultSetHelper.getResultSetIntegerArray(resultSet,"model_list");
+            Integer[] targetedHandsetManufacturers = ResultSetHelper.getResultSetIntegerArray(resultSet, "brand_list");
+            Integer[] targetedHandsetModels = ResultSetHelper.getResultSetIntegerArray(resultSet, "model_list");
             String targetedOsJson = resultSet.getString("os_json");
             String browserJson = resultSet.getString("browser_json");
 
@@ -93,29 +89,23 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             TargetingProfileLocationEntity targetedStates = new TargetingProfileLocationEntity();
             targetedStates.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("state_json"));
 
-            try
-            {
+            try {
                 targetedStates.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("state_json"));
-            }
-            catch (Exception e)
-            {
-                logger.error("Exception in reading state json for adid: {} ", id,e);
+            } catch (Exception e) {
+                logger.error("Exception in reading state json for adid: {} ", id, e);
             }
 
             TargetingProfileLocationEntity targetedCities = new TargetingProfileLocationEntity();
-            
-            try
-            {
+
+            try {
                 targetedCities.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("city_json"));
-            }
-            catch (Exception e)
-            {
-                logger.error("Exception in reading city json for adid: {} ", id,e);
+            } catch (Exception e) {
+                logger.error("Exception in reading city json for adid: {} ", id, e);
             }
             targetedCities.readTargetingProfileLocationJsonIntoDataMap(resultSet.getString("city_json"));
 
             //TODO change zipcode as file list ids and then check for matching.
-            Integer[] targetedZipCodes= null;//ResultSetHelper.getResultSetIntegerArray(resultSet,"zipcode_list");
+            Integer[] targetedZipCodes = null;//ResultSetHelper.getResultSetIntegerArray(resultSet,"zipcode_list");
 
             Short[] categoriesInclusionList = null;
             Short[] categoriesExclusionList = null;
@@ -124,12 +114,12 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
 
             Boolean isCategoryListExcluded = resultSet.getBoolean("is_category_list_excluded");
 
-            if(!isCategoryListExcluded)
+            if (!isCategoryListExcluded)
                 categoriesInclusionList = categoriesList;
             else
                 categoriesExclusionList = categoriesList;
 
-            String[] customIpFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet,"custom_ip_file_id_set");
+            String[] customIpFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet, "custom_ip_file_id_set");
             String[] zipCodeFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet, "zipcode_file_id_set");
             String[] latLonFileIdArray = ResultSetHelper.getResultSetStringArray(resultSet, "lat_lon_radius_file");
 
@@ -138,8 +128,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             Short[] hoursOfDayTargetedArray = ResultSetHelper.getResultSetShortArray(resultSet, "hours_list");
 
             Set<Short> hoursOfDayTargeted = null;
-            if(null != hoursOfDayTargetedArray)
-            {
+            if (null != hoursOfDayTargetedArray) {
                 hoursOfDayTargeted = new HashSet<Short>(Arrays.asList(hoursOfDayTargetedArray));
             }
 
@@ -147,6 +136,7 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             String latLongSerializedArray = resultSet.getString("lat_long");
             Long profileLastModified = resultSet.getTimestamp("profile_last_modified").getTime();
             Double cpaGoal = resultSet.getDouble("cpa_goal");
+            Double expectedCtr = resultSet.getDouble("expected_ctr");
             String[] advertiserDomains = ResultSetHelper.getResultSetStringArray(resultSet, "adv_domain");
 
             boolean isSiteListExcluded = resultSet.getBoolean("is_site_list_excluded");
@@ -171,30 +161,30 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             String frequencyCapStr = resultSet.getString("freqcap_json");
             int protocol = resultSet.getInt("protocol");
             ExtTracker extTracker = null;
-            if(external_tracker != null && !"".equals(external_tracker.trim())){
-                extTracker= ExtTracker.getObject(external_tracker.trim());
-                if(extTracker != null){
-                    if((extTracker.getImpTracker() == null || extTracker.getImpTracker().size()< 1) &&
-                    		(extTracker.getClickTracker() == null || extTracker.getClickTracker().size()< 1)){
-                        extTracker=null;
+            if (external_tracker != null && !"".equals(external_tracker.trim())) {
+                extTracker = ExtTracker.getObject(external_tracker.trim());
+                if (extTracker != null) {
+                    if ((extTracker.getImpTracker() == null || extTracker.getImpTracker().size() < 1) &&
+                            (extTracker.getClickTracker() == null || extTracker.getClickTracker().size() < 1)) {
+                        extTracker = null;
                     }
                 }
             }
             String extStr = resultSet.getString("ext");
             AdExt adExt = null;
-            if(extStr != null && !"".equals(extStr.trim())){
-            	adExt =  AdExt.getObject(extStr.trim());
+            if (extStr != null && !"".equals(extStr.trim())) {
+                adExt = AdExt.getObject(extStr.trim());
             }
             String targetingExtStr = resultSet.getString("targetingExt");
             TPExt targetingExt = null;
-            if(targetingExtStr != null && !"".equals(targetingExtStr.trim())){
-            	targetingExt =  TPExt.getObject(targetingExtStr.trim());
+            if (targetingExtStr != null && !"".equals(targetingExtStr.trim())) {
+                targetingExt = TPExt.getObject(targetingExtStr.trim());
             }
             int lat_lon_radius_unit = resultSet.getInt("lat_lon_radius_unit");
             String audienceTags = resultSet.getString("audience_tags");
 
             TargetingProfile.TargetingBuilder targetingBuilder = new
-                TargetingProfile.TargetingBuilder(targetingId, targetingGuid, accountId, false, profileLastModified);
+                    TargetingProfile.TargetingBuilder(targetingId, targetingGuid, accountId, false, profileLastModified);
             targetingBuilder.setTargetedBrands(targetedHandsetManufacturers);
             targetingBuilder.setTargetedModels(targetedHandsetModels);
             targetingBuilder.setTargetedOSJson(targetedOsJson);
@@ -227,55 +217,53 @@ public class AdEntityCache extends AbstractDBStatsReloadableQueryableCache<Integ
             targetingBuilder.setLatLonRadiusUnit(lat_lon_radius_unit);
             targetingBuilder.setAudienceTags(audienceTags);
 
-            if(retargeting != null){
+            if (retargeting != null) {
                 String tmp_retargeting = retargeting.trim();
-                if(!"".equals(tmp_retargeting)){
-					Retargeting ret = Retargeting.getObject(tmp_retargeting);
+                if (!"".equals(tmp_retargeting)) {
+                    Retargeting ret = Retargeting.getObject(tmp_retargeting);
                     targetingBuilder.setRetargeting(ret);
-                    if(ret != null && ret.getSegment() != null && ret.getSegment().size()>0){
+                    if (ret != null && ret.getSegment() != null && ret.getSegment().size() > 0) {
                         isRetargeted = true;
                     }
                 }
             }
 
             boolean isMarkedForDeletion = false;
-            if(!(status == StatusIdEnum.Active.getCode()))
+            if (!(status == StatusIdEnum.Active.getCode()))
                 isMarkedForDeletion = true;
 
             // If the impression cap has already been hit, mark the ad for deletion
-            if(impressionCap != 0 && impressionsAccrued >= impressionCap)
+            if (impressionCap != 0 && impressionsAccrued >= impressionCap)
                 isMarkedForDeletion = true;
 
             return new AdEntity.AdEntityBuilder(
-                                                id, guid, creativeId,creativeGuid, campaignId,
-                                                campaignGuid,categoriesArray,hygieneArray,
-                                                targetingBuilder.build(),
-                                                MarketPlace.getMarketPlace(marketplaceId),
-                                                bid,advertiserBid,isMarkedForDeletion,lastModified,
-                                                isFrequencyCapped, maxCap, timeWindowInHours,
-                                                demandtype, qps, accountGuid, bidtype, extTracker, isRetargeted,
-                                                protocol
-                                               )
-                                               .setLandingUrl(landingUrl)
-                                               .setAccountId(accountIncId)
-                                               .setTrackingPartnerId(trackingPartnerId)
-                                               .setCpaGoal(cpaGoal)
-                                               .setAdvertiserDomain(advertiserDomains)
-                                               .setAdExt(adExt)
-                                               .setFrequencyCap(frequencyCapStr)
-                                               .build();
-        }
-        catch(Exception e)
-        {
+                    id, guid, creativeId, creativeGuid, campaignId,
+                    campaignGuid, categoriesArray, hygieneArray,
+                    targetingBuilder.build(),
+                    MarketPlace.getMarketPlace(marketplaceId),
+                    bid, advertiserBid, isMarkedForDeletion, lastModified,
+                    isFrequencyCapped, maxCap, timeWindowInHours,
+                    demandtype, qps, accountGuid, bidtype, extTracker, isRetargeted,
+                    protocol
+            )
+                    .setLandingUrl(landingUrl)
+                    .setAccountId(accountIncId)
+                    .setTrackingPartnerId(trackingPartnerId)
+                    .setCpaGoal(cpaGoal)
+                    .setExpectedCtr(expectedCtr)
+                    .setAdvertiserDomain(advertiserDomains)
+                    .setAdExt(adExt)
+                    .setFrequencyCap(frequencyCapStr)
+                    .build();
+        } catch (Exception e) {
             addToErrorMap(id, "Exception while processing AdEntityCache entry: " + id);
-            logger.error("Exception thrown while processing AdEntityCache Entry",e);
-            throw new RefreshException("Exception thrown while processing AdEntityCache Entry "+id, e);
+            logger.error("Exception thrown while processing AdEntityCache Entry", e);
+            throw new RefreshException("Exception thrown while processing AdEntityCache Entry " + id, e);
         }
     }
 
     @Override
-    protected void release() throws ProcessingException
-    {
+    protected void release() throws ProcessingException {
 
     }
 }

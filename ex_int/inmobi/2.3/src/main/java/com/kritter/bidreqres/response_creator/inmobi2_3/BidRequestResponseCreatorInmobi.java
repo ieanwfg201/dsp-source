@@ -13,10 +13,9 @@
     import com.kritter.entity.reqres.entity.ResponseAdInfo;
     import com.kritter.ex_int.banner_admarkup.common.BannerAdMarkUp;
     import com.kritter.ex_int.native_admarkup.NativeAdMarkUp;
-    import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
     import com.kritter.ex_int.utils.comparator.advdomain.FetchAdvertiserDomain;
     import com.kritter.ex_int.utils.comparator.common.ShortArrayToIntegerArray;
-    import com.kritter.ex_int.utils.picker.RandomPicker;
+    import com.kritter.ex_int.utils.picker.AdPicker;
     import com.kritter.ex_int.utils.richmedia.RichMediaAdMarkUp;
     import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
     import com.kritter.ex_int.video_admarkup.VideoAdMarkUp;
@@ -51,10 +50,10 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
     private String trackingEventUrl;
     private ObjectMapper objectMapper;
     private String seatId;
+    private AdPicker adPicker;
 
     //template for formatting.
     private static final String CURRENCY = DefaultCurrency.defaultCurrency.getName();
-    private static final Random randomPicker = new Random();
 
     public BidRequestResponseCreatorInmobi(
                                               String loggerName,
@@ -64,7 +63,8 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
                                               String notificationUrlSuffix,
                                               String notificationUrlBidderBidPriceMacro,
                                               AdEntityCache adEntityCache,
-                                              String seatId
+                                              String seatId,
+                                              AdPicker adPicker
                                              )
     {
         this.logger = LogManager.getLogger(loggerName);
@@ -83,6 +83,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         objectMapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
         this.seatId = seatId;
+        this.adPicker = adPicker;
     }
 
 
@@ -120,8 +121,6 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
             return null;
         }
 
-        Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
-
         BidResponseInmobiDTO bidResponseInmobiDTO = new BidResponseInmobiDTO();
         bidResponseInmobiDTO.setBidderGeneratedUniqueId(bidRequestInmboi.getUniqueInternalRequestId());
         bidResponseInmobiDTO.setBidRequestId(bidRequestInmboi.getUniqueBidRequestIdentifierForAuctioneer());
@@ -140,14 +139,7 @@ public class BidRequestResponseCreatorInmobi implements IBidResponseCreator
         {
             Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
 
-            //sort and pick the one with highest ecpm value.
-            List<ResponseAdInfo> list = new ArrayList<ResponseAdInfo>();
-            list.addAll(responseAdInfos);
-            Collections.sort(list,comparator);
-
-            ResponseAdInfo responseAdInfoToUse = list.get(0);
-            responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues
-                    (responseAdInfoToUse,list, randomPicker);
+            ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos);
 
             BidResponseBidInmobiDTO bidResponseBidInmobiDTO =
                     prepareBidResponseSeatBidInmobi(
