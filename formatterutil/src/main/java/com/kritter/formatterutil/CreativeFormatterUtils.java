@@ -119,7 +119,7 @@ public class CreativeFormatterUtils
             manufacturerId = handsetMasterData.getManufacturerId();
 
         int modelId = -1;
-        if(null != handsetMasterData)
+        if(null != handsetMasterData && handsetMasterData.getModelId() != null)
             modelId = handsetMasterData.getModelId();
 
         int osId = -1;
