@@ -163,9 +163,12 @@ public class ValidateVideo {
         if(isNFR)
         {
             /*In case priority nfr reason which is from ValidateVideoHelper.*/
-            if(null != nfrReasonPriority)
+            if(null != nfrReasonPriority && nfrReasonPriority != NoFillReason.FILL){
                 nfrReason = nfrReasonPriority;
-
+            }
+            if(nfrReason==NoFillReason.FILL){
+            	nfrReason=NoFillReason.VIDEO_MISMATCH;
+            }
             request.setNoFillReason(nfrReason);
             ReqLog.debugWithDebugNew(logger, request, "Validate Video NFR: {}", nfrReason);
         }
@@ -291,10 +294,15 @@ public class ValidateVideo {
                 }
             }
         }
-        if(isNFR){
+        if(isNFR)
+        {
+            if(nfrReason==NoFillReason.FILL){
+            	nfrReason=NoFillReason.VIDEO_MISMATCH;
+            }
             request.setNoFillReason(nfrReason);
             ReqLog.debugWithDebugNew(logger, request, "Validate Video NFR: {}", nfrReason);
         }
+
     }
     
     public static void checkVideo(com.kritter.bidrequest.entity.common.openrtbversion2_4.BidRequestImpressionDTO[] bidRequestImpressionDTOs,Site site,
@@ -431,9 +439,12 @@ public class ValidateVideo {
         if(isNFR)
         {
             /*In case priority nfr reason which is from ValidateVideoHelper.*/
-            if(null != nfrReasonPriority)
+            if(null != nfrReasonPriority && nfrReasonPriority != NoFillReason.FILL){
                 nfrReason = nfrReasonPriority;
-
+            }
+            if(nfrReason==NoFillReason.FILL){
+            	nfrReason=NoFillReason.VIDEO_MISMATCH;
+            }
             request.setNoFillReason(nfrReason);
             ReqLog.debugWithDebugNew(logger, request, "Validate Video NFR: {}", nfrReason);
         }
