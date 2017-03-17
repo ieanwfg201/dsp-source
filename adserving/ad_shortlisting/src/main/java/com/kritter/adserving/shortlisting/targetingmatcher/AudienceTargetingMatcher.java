@@ -271,10 +271,12 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 }
 
                 boolean isExeclude = false;
-                for (Integer id : excList) {
-                    if (id.equals(audienceId)) {
-                        isExeclude = true;
-                        break;
+                if (excList != null && excList.size() != 0) {
+                    for (Integer id : excList) {
+                        if (id.equals(audienceId)) {
+                            isExeclude = true;
+                            break;
+                        }
                     }
                 }
 
@@ -286,10 +288,12 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
                 boolean isInclude = false;
                 //include,判断是否include
-                for (Integer id : incList) {
-                    if (id.equals(audienceId)) {
-                        isInclude = true;
-                        break;
+                if (incList != null && incList.size() != 0) {
+                    for (Integer id : incList) {
+                        if (id.equals(audienceId)) {
+                            isInclude = true;
+                            break;
+                        }
                     }
                 }
 
