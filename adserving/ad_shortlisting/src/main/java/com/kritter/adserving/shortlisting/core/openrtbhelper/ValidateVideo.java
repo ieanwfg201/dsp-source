@@ -64,19 +64,23 @@ public class ValidateVideo {
                 if(adxBased != null && adxBased.isAdvertiser_upload()){
                 	int advId = adEntity.getAccountId();
             		if(advInfoUploadCache == null){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
             			ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as advInfoUploadCache null", advId);
             			continue;
             		}
             		AdvInfoUploadCacheEntity bue = advInfoUploadCache.query(site.getPublisherIncId()+CTRL_A+advId);
                 	if(bue ==null){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
                 		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as AdvInfoUploadCacheEntity  null", advId);
             			continue;
                 	}
                 	if(bue.getMua() == null){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
                 		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  null", advId);
             			continue;
                 	}
                 	if(AdxBasedExchangesStates.APPROVED.getCode() != bue.getMua().getAdxbasedexhangesstatus()){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
                 		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  not Approved", advId);
             			continue;                        		
                 	}
@@ -198,19 +202,23 @@ public class ValidateVideo {
                 if(adxBased != null && adxBased.isAdvertiser_upload()){
                 	int advId = adEntity.getAccountId();
             		if(advInfoUploadCache == null){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
             			ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as advInfoUploadCache null", advId);
             			continue;
             		}
             		AdvInfoUploadCacheEntity bue = advInfoUploadCache.query(site.getPublisherIncId()+CTRL_A+advId);
                 	if(bue ==null){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
                 		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as AdvInfoUploadCacheEntity  null", advId);
             			continue;
                 	}
                 	if(bue.getMua() == null){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
                 		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  null", advId);
             			continue;
                 	}
                 	if(AdxBasedExchangesStates.APPROVED.getCode() != bue.getMua().getAdxbasedexhangesstatus()){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
                 		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  not Approved", advId);
             			continue;                        		
                 	}
@@ -324,20 +332,24 @@ public class ValidateVideo {
                 if(adxBased != null && adxBased.isAdvertiser_upload()){
                 	int advId = adEntity.getAccountId();
             		if(advInfoUploadCache == null){
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
             			ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as advInfoUploadCache null", advId);
             			continue;
             		}
             		AdvInfoUploadCacheEntity bue = advInfoUploadCache.query(site.getPublisherIncId()+CTRL_A+advId);
                 	if(bue ==null){
-                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as AdvInfoUploadCacheEntity  null", advId);
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
+            			ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as AdvInfoUploadCacheEntity  null", advId);
             			continue;
                 	}
                 	if(bue.getMua() == null){
-                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  null", advId);
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
+            			ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  null", advId);
             			continue;
                 	}
                 	if(AdxBasedExchangesStates.APPROVED.getCode() != bue.getMua().getAdxbasedexhangesstatus()){
-                		ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  not Approved", advId);
+            			nfrReason = NoFillReason.ADVINFOMISMATCH;
+            			ReqLog.debugWithDebugNew(logger, request, "AdvId {} does not qualify as MaterailAdvInoUploadEntity  not Approved", advId);
             			continue;                        		
                 	}
                 }
