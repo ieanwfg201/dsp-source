@@ -88,28 +88,28 @@ public class ValidateVideo {
 
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
                 if(null == creative) {
-                    logger.debug("Creative null in cache,!!! for creative id:{} ", adEntity.getCreativeId());
+                    ReqLog.debugWithDebugNew(logger, request, "Creative null in cache,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.VIDEO){
                     nfrReason = NoFillReason.CREATIVE_NOT_VIDEO;
-                    logger.debug("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
+                    ReqLog.debugWithDebugNew(logger, request, "Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
                     nfrReason = NoFillReason.DEAL_ID_MISMATCH;
-                    logger.debug("DealID check not satisfied");
+                    ReqLog.debugWithDebugNew(logger, request, "DealID check not satisfied creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidFloorPrice() != null &&  bidRequestImpressionDTO.getBidFloorPrice()>responseAdInfo.getEcpmValue()){
                     nfrReason = NoFillReason.BIDDER_FLOOR_UNMET;
-                    logger.debug("Floor price unmet");
+                    ReqLog.debugWithDebugNew(logger, request, "Floor price unmet creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 VideoProps videoProps  = creative.getVideoProps();
                 if(videoProps == null){
                     nfrReason = NoFillReason.VIDEO_PROPS_NULL;
-                    logger.debug("Video Props Null,!!! for creative id:{} ",  adEntity.getCreativeId());
+                    ReqLog.debugWithDebugNew(logger, request, "Video Props Null,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 VideoInfo videoInfo=null;
@@ -229,24 +229,24 @@ public class ValidateVideo {
 
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
                 if(null == creative) {
-                    logger.debug("Creative null in cache,!!! for creative id:{} "  , adEntity.getCreativeId());
+                    ReqLog.debugWithDebugNew(logger, request, "Creative null in cache,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.VIDEO){
-                    logger.debug("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
+                    ReqLog.debugWithDebugNew(logger, request, "Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getBidRequestImpressionId(), site, adEntity, request, responseAdInfo, logger)){
-                    logger.debug("DealID check not satisfied");
+                    ReqLog.debugWithDebugNew(logger, request, "DealID check not satisfied creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidFloorPrice() != null &&  bidRequestImpressionDTO.getBidFloorPrice()>responseAdInfo.getEcpmValue()){
-                    logger.debug("Floor price unmet");
+                    ReqLog.debugWithDebugNew(logger, request, "Floor price unmet creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 VideoProps videoProps  = creative.getVideoProps();
                 if(videoProps == null){
-                    logger.debug("Video Props Null,!!! for creative id:{} ", adEntity.getCreativeId());
+                    ReqLog.debugWithDebugNew(logger, request, "Video Props Null,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 VideoInfo videoInfo=null;
@@ -364,28 +364,28 @@ public class ValidateVideo {
 
                 Creative creative = creativeCache.query(adEntity.getCreativeId());
                 if(null == creative) {
-                    logger.debug("Creative null in cache,!!! for creative id:{} ", adEntity.getCreativeId());
+                    ReqLog.debugWithDebugNew(logger, request, "Creative null in cache,!!! for creative id:{}", adEntity.getCreativeId());
                     continue;
                 }
                 if(creative.getCreativeFormat() != CreativeFormat.VIDEO){
                     nfrReason = NoFillReason.CREATIVE_NOT_VIDEO;
-                    logger.debug("Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
+                    ReqLog.debugWithDebugNew(logger, request, "Creative Not Video,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 if(!ValidatePmp.doesImpressionHasPMPDealIdForAdUnit(bidRequestImpressionDTO.getId(), site, adEntity, request, responseAdInfo, logger)){
                     nfrReason = NoFillReason.DEAL_ID_MISMATCH;
-                    logger.debug("DealID check not satisfied");
+                    ReqLog.debugWithDebugNew(logger, request, "DealID check not satisfied creativeId {}", adEntity.getCreativeId());
                     continue;
                 }
                 if(bidRequestImpressionDTO.getBidfloor() != null &&  bidRequestImpressionDTO.getBidfloor()>responseAdInfo.getEcpmValue()){
                     nfrReason = NoFillReason.BIDDER_FLOOR_UNMET;
-                    logger.debug("Floor price unmet");
+                    ReqLog.debugWithDebugNew(logger, request, "Floor price unmet {}", adEntity.getCreativeId());
                     continue;
                 }
                 VideoProps videoProps  = creative.getVideoProps();
                 if(videoProps == null){
                     nfrReason = NoFillReason.VIDEO_PROPS_NULL;
-                    logger.debug("Video Props Null,!!! for creative id:{} ",  adEntity.getCreativeId());
+        			ReqLog.debugWithDebugNew(logger, request, "Video Props Null,!!! for creative id:{} ", adEntity.getCreativeId());
                     continue;
                 }
                 VideoInfo videoInfo=null;
@@ -421,7 +421,7 @@ public class ValidateVideo {
             	}
 
                 nfrReasonPriority = ValidateVideoHelper.validate(logger, videoProps, videoObj);
-                logger.debug("NFR reason is :{} under ValidateVideo", nfrReason);
+                ReqLog.debugWithDebugNew(logger, request, "NFR reason is :{} under ValidateVideo", nfrReason);
                 if(nfrReason ==  NoFillReason.FILL && nfrReasonPriority == NoFillReason.FILL){
                     try {
                         responseAdInfo.setVideoProps(videoProps);
