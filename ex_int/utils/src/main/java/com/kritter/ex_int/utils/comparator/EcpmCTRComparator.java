@@ -10,16 +10,17 @@ import java.util.Comparator;
 public class EcpmCTRComparator implements Comparator<ResponseAdInfo> {
 
     // TODO this value will be from campaign later
-    private static double EXPECTED_CTR = 0.01;
 
     private double ecpmWeight = 0.5;
     private double baseECPM;
+    private double defaultCtr;
 
-    public EcpmCTRComparator(double ecpmWeight, double baseECPM) {
+    public EcpmCTRComparator(double ecpmWeight, double baseECPM, double defaultCtr) {
         this.ecpmWeight = ecpmWeight;
         this.baseECPM = baseECPM;
+        this.defaultCtr = defaultCtr;
     }
-    
+
     /**
      * calculate the score for each ad.
      *
@@ -36,11 +37,20 @@ public class EcpmCTRComparator implements Comparator<ResponseAdInfo> {
     @Override
     public int compare(ResponseAdInfo responseAdInfoFirst, ResponseAdInfo responseAdInfoSecond) {
 
+        Double firstAdExpectedCtr = responseAdInfoFirst.getExpectedCtr();
+        if (firstAdExpectedCtr == null || firstAdExpectedCtr == 0){
+            firstAdExpectedCtr=defaultCtr;
+        }
+        Double secondAdExpectedCtr = responseAdInfoSecond.getExpectedCtr();
+        if (secondAdExpectedCtr == null || secondAdExpectedCtr == 0){
+            secondAdExpectedCtr=defaultCtr;
+        }
+
         double scoreFirst = (responseAdInfoFirst.getEcpmValue() / this.baseECPM) * this.ecpmWeight
-                + (responseAdInfoFirst.getCtrValue() / EXPECTED_CTR) * ( 1 - this.ecpmWeight);
+                + (responseAdInfoFirst.getCtrValue() / firstAdExpectedCtr) * ( 1 - this.ecpmWeight);
 
         double scoreSecond = (responseAdInfoSecond.getEcpmValue() / this.baseECPM) * this.ecpmWeight
-                + (responseAdInfoSecond.getCtrValue() / EXPECTED_CTR) * ( 1 - this.ecpmWeight);
+                + (responseAdInfoSecond.getCtrValue() / secondAdExpectedCtr) * ( 1 - this.ecpmWeight);
 
         if(scoreFirst > scoreSecond)
             return -1;

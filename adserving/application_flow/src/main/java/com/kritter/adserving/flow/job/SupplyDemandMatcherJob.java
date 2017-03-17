@@ -159,6 +159,7 @@ public class SupplyDemandMatcherJob implements Job
                     responseAdInfo.setGuid(adEntity.getAdGuid());
                     responseAdInfo.setAdvertiserGuid(adEntity.getAccountGuid());
                     responseAdInfo.setCreative(creative);
+                    responseAdInfo.setExpectedCtr(adEntity.getExpectedCtr());
                     responseAdInfos.add(responseAdInfo);
                     responseAdInfoMap.put(adEntity.getAdGuid(),responseAdInfo);
                 }
