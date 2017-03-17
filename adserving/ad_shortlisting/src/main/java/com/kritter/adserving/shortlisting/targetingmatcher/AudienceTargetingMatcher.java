@@ -270,26 +270,9 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                     continue;
                 }
 
-                boolean isExeclude = false;
-                if (excList != null && excList.size() != 0) {
-                    for (Integer id : excList) {
-                        if (id.equals(audienceId)) {
-                            isExeclude = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (isExeclude) {
-                    AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
-                    continue;
-                }
-
                 boolean isInclude = false;
-                //include,判断是否include
-                if (incList != null && incList.size() != 0) {
-                    for (Integer id : incList) {
+                if (packageList != null && packageList.size() != 0) {
+                    for (Integer id : packageList) {
                         if (id.equals(audienceId)) {
                             isInclude = true;
                             break;
@@ -299,10 +282,9 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
 
                 if (!isInclude) {
                     AdNoFillStatsUtils.updateContextForNoFillOfAd(adId, noFillReason.getValue(), this.adNoFillReasonMapKey, context);
-                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience targeting : {}", deviceId);
+                    ReqLog.debugWithDebugNew(this.logger, request, "user Id is execluded in audience package targeting : {}", deviceId);
                     continue;
                 }
-
 
                 shortlistedAdIds.add(adId);
                 continue;
