@@ -273,7 +273,7 @@ public class AudienceTargetingMatcher implements TargetingMatcher {
                 boolean isInclude = false;
                 if (packageList != null && packageList.size() != 0) {
                     for (Integer id : packageList) {
-                        if (id.equals(audienceId)) {
+                        if (String.valueOf(id).equals(audienceId)) {
                             isInclude = true;
                             break;
                         }
