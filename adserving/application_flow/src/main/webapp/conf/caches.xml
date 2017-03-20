@@ -798,7 +798,7 @@ GROUP BY id;]]></prop>
       <constructor-arg>
          <props>
            <prop key="refresh_interval">30000</prop>
-           <prop key="query"><![CDATA[select id as id, guid as guid, last_modified as last_modified, demandtype as demandtype, demandpreference as demandpreference, qps as qps, timeout as timeout,currency as currency,demand_props as demand_props,supply_props as supply_props,third_party_demand_channel_type as third_party_demand_channel_type,open_rtb_ver_required as open_rtb_ver_required from account where last_modified >= '$last_modified']]></prop>
+           <prop key="query"><![CDATA[select id as id, guid as guid, last_modified as last_modified, demandtype as demandtype, demandpreference as demandpreference, qps as qps, timeout as timeout,currency as currency,demand_props as demand_props,supply_props as supply_props,third_party_demand_channel_type as third_party_demand_channel_type,open_rtb_ver_required as open_rtb_ver_required, name as name from account where last_modified >= '$last_modified']]></prop>
          </props>
        </constructor-arg>
    </bean>
