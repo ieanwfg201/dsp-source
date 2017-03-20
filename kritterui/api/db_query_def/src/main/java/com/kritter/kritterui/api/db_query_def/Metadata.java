@@ -85,7 +85,7 @@ public class Metadata {
     public static final String advertiserupload_adxbasedexchanges = "select a.pubIncId as id, b.name as name from adxbasedexchanges_metadata as a, account as b where a.pubIncId=b.id and advertiser_upload=true";
     public static final String bannerupload_adxbasedexchanges = "select a.pubIncId as id, b.name as name from adxbasedexchanges_metadata as a, account as b where a.pubIncId=b.id and banner_upload=true";
     public static final String videoupload_adxbasedexchanges = "select a.pubIncId as id, b.name as name from adxbasedexchanges_metadata as a, account as b where a.pubIncId=b.id and video_upload=true";
-    public static final String aduience_by_deleted = "SELECT m1. CODE AS pCode , m2. CODE AS cCode , m1.`name` AS pName , m2.`name` AS cName , m3.`code` AS sCode , m3.`name` AS sName FROM audience_lov AS m1 , audience_lov AS m2 , audience_source AS m3 WHERE m1.`code` = m2.parentCode AND LOCATE(m3.`code` , m1.source_type) > 0";
+    public static final String aduience_by_deleted = "SELECT m1. CODE AS pCode , m2. CODE AS cCode , m1.`name` AS pName , m2.`name` AS cName , m3.`code` AS sCode , m3.`name` AS sName FROM audience_lov AS m1 , audience_lov AS m2 , audience_source AS m3 WHERE m1.`code` = m2.parentCode AND LOCATE(m3.`code` , m2.source_type) > 0";
     public static final String get_aduiences = "SELECT * FROM audience WHERE account_guid =? AND deleted = 0 AND type = 1";
     public static final String get_aduience_package = "SELECT * FROM audience WHERE account_guid =? AND type = 2 AND deleted = 0";
 }
