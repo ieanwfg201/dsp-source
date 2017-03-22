@@ -16,6 +16,7 @@ import com.kritter.entity.reqres.entity.Response;
 import com.kritter.entity.reqres.entity.ResponseAdInfo;
 import com.kritter.entity.user.userid.ExternalUserId;
 import com.kritter.ex_int.utils.comparator.EcpmValueComparator;
+import com.kritter.ex_int.utils.picker.AdPicker;
 import com.kritter.ex_int.utils.picker.RandomPicker;
 import com.kritter.ex_int.utils.richmedia.markuphelper.MarkUpHelper;
 import com.kritter.formatterutil.CreativeFormatterUtils;
@@ -42,7 +43,6 @@ import java.util.*;
 public class VamBidResponseCreator implements IBidResponseCreator {
     private Logger logger;
     private ObjectMapper objectMapper;
-    private static final Random randomPicker = new Random();
     private String secretKey;
     private int urlVersion;
     private AdEntityCache adEntityCache;
@@ -62,6 +62,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
     private String notificationUrlSuffix;
     private String notificationUrlBidderBidPriceMacro;
     private IABCategoriesCache iabCategoriesCache;
+    private AdPicker adPicker;
     private ServerConfig serverConfig;
     private static final String HTTP_PROTOCOL = "http://";
     private static final String HTTPS_PROTOCOL = "https://";
@@ -74,7 +75,8 @@ public class VamBidResponseCreator implements IBidResponseCreator {
             String notificationUrlSuffix,
             String notificationUrlBidderBidPriceMacro,
             AdEntityCache adEntityCache,
-            IABCategoriesCache iabCategoriesCache
+            IABCategoriesCache iabCategoriesCache,
+            AdPicker adPicker
     ) {
         this.logger = LogManager.getLogger(loggerName);
         this.objectMapper = new ObjectMapper();
@@ -98,6 +100,7 @@ public class VamBidResponseCreator implements IBidResponseCreator {
         this.notificationUrlSuffix = notificationUrlSuffix;
         this.notificationUrlBidderBidPriceMacro = notificationUrlBidderBidPriceMacro;
         this.iabCategoriesCache = iabCategoriesCache;
+        this.adPicker = adPicker;
         this.serverConfig = serverConfig;
     }
 
@@ -123,8 +126,6 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                 logger.debug("There is no impression ids to respond for inside VamBidResponseCreator");
             }
 
-            Comparator<ResponseAdInfo> comparator = new EcpmValueComparator();
-
             //只取一个
             for (String impressionId : impressionIdsToRespondFor) {
                 Set<ResponseAdInfo> responseAdInfos = response.getResponseAdInfoSetForBidRequestImpressionId(impressionId);
@@ -147,10 +148,8 @@ public class VamBidResponseCreator implements IBidResponseCreator {
                     continue;
                 }
 
-                Collections.sort(list, comparator);
+                ResponseAdInfo responseAdInfoToUse = adPicker.pick(responseAdInfos);
 
-                ResponseAdInfo responseAdInfoToUse = list.get(0);
-                responseAdInfoToUse = RandomPicker.pickRandomlyOneOfTheResponseAdInfoWithHighestSameEcpmValues(responseAdInfoToUse, list, randomPicker);
                 Creative creative = responseAdInfoToUse.getCreative();
 
                 Double p = responseAdInfoToUse.getEcpmValue() * 100;

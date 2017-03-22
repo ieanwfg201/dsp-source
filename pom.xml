@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.kritter.mad</groupId>
@@ -84,6 +84,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>utils/mma_loader</module>
     <module>utils/channel_loader</module>
     <module>utils/user</module>
+    <module>utils/hbase_data_loader</module>
     <module>core/metrics</module>
     <module>core/cache-abstraction</module>
     <module>core/expression-tree</module>
@@ -166,6 +167,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <module>common_caches/banner_upload_cache</module>
     <module>common_caches/advinfo_upload_cache</module>
     <module>common_caches/adxbasedexchanges_metadata_cache</module>
+      <module>common_caches/audience_cache</module>
     <module>adserving/mopub_req_enricher_2.3</module>
     <module>adserving/enricher_req_cloudcross_4_4_4</module>
     <module>adserving/youku_req_res_enricher</module>

@@ -1,0 +1,98 @@
+@(audienceForm:Form[models.entities.audience.AudienceEntity],auDisplay:models.audience.AudienceDisplay,account_guid:String)
+
+@main2("Add Audience"){@navs.navadvt(auDisplay.getAccountGuid())}{@navs.breadcrumbs(auDisplay.getBreadCrumbPaths())}{
+    <div class="panel-body">
+    <div class="row" ng-controller="afController">
+
+        @components.containers.panel("Add New Audience"){
+            <form id="audienceForm" action="/audience/save" method="POST" ng-controller="audienceFormController" ng-init='setAccount("@account_guid")'>
+                @components.formElements.hiddenfield(audienceForm("account_guid"))
+                @components.formElements.hiddenfield(audienceForm("deleted"))
+                @components.formElements.hiddenfield(audienceForm("source_id"))
+                @components.formElements.hiddenfield(audienceForm("type"))
+                @components.formElements.hiddenfield(audienceForm("file_path"))
+                @components.formElements.hiddenfield(audienceForm("tags"))
+                @components.formElements.hiddenfield(audienceForm("created_on"))
+                @components.formElements.hiddenfield(audienceForm("id"))
+                @components.formElements.textinput(audienceForm("name"), '_label -> "Create an audience *", '_help -> "*")
+                <link rel="stylesheet" href="@routes.Assets.at("javascripts/apps/audience/tree_files/font-awesome.min.css")">
+                    @*<!-- page specific plugin styles -->*@
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300">
+                    @*<!-- ace styles -->*@
+                <link rel="stylesheet" href="@routes.Assets.at("javascripts/apps/audience/tree_files/ace.min.css")">
+
+                <label>Source :</label>
+                <input id="selected_source" type="text" style="display:none" value=@auDisplay.audience.getSource_id >
+                <input id="selected_children" name="selected_children" type="text" style="display:none" value=@auDisplay.audience.getTags >
+
+                <label class="ui-radio" onclick="show('Madhouse')"> <input id="Fruit1" name="Fruit" type="radio" value="010"> <span>
+                    Madhouse</span></label>
+
+                <label class="ui-radio" onclick="show('TalkingData')"> <input id="Fruit2" name="Fruit" type="radio" value="011"> <span>
+                    TalkingData</span></label>
+
+                <label class="ui-radio" onclick="show('UnionPay')"> <input id="Fruit3" name="Fruit" type="radio" value="012"> <span>
+                    UnionPay</span></label>
+
+                <label class="ui-radio" onclick="show('Admaster')"> <input id="Fruit4" name="Fruit" type="radio" value="018"> <span>
+                    Admaster</span></label>
+
+                <label class="ui-radio" onclick="show('QianXun')"> <input id="Fruit5" name="Fruit" type="radio" value="019"> <span>
+                    QianXun</span></label>
+
+                <div style="overflow: auto;">
+                    <div id="Madhouse" class="row1111 tree tree-selectable" style="display: none" >
+                    </div>
+                    <div id="TalkingData" class="row1111 tree tree-selectable" style="display: none">
+                    </div>
+                    <div id="UnionPay" class="row1111 tree tree-selectable" style="display: none">
+                    </div>
+                    <div id="Admaster" class="row1111 tree tree-selectable" style="display: none">
+                    </div>
+                    <div id="QianXun" class="row1111 tree tree-selectable" style="display: none">
+                    </div>
+                </div>
+                <input name="selected_tag_codes" id="selected_tag_codes" value="" type="text" style="display: none">
+
+                <button class="btn btn-default btn-primary pull-right" type="submit" onclick="javascript:return tree_selected()">Save</button>
+            </form>
+        }
+
+        <script>
+                function show(id) {
+                    $("div.row1111").each(function (i, j) {
+                        $(j).css("display", "none");
+                    })
+
+                    $("#" + id).css('display', 'block');
+                }
+        </script>
+
+                    <!-- <![endif]-->
+
+        <script src="@routes.Assets.at("javascripts/apps/audience/tree_files/bootstrap.min.js")"></script>
+
+            <!-- page specific plugin scripts -->
+
+        <script src="@routes.Assets.at("javascripts/apps/multi_select_model.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/apps/audience/audienceFromController.js")" type="text/javascript"></script>
+
+        <script src="@routes.Assets.at("javascripts/apps/audience/tree_files/fuelux.tree.min.js")"></script>
+
+            <!-- ace scripts -->
+
+        <script src="@routes.Assets.at("javascripts/apps/audience/tree_files/ace-elements.min.js")"></script>
+
+        <script src="@routes.Assets.at("javascripts/apps/audience/tree_files/ace.min.js")"></script>
+        <script src="http://cdn.bootcss.com/lodash.js/4.17.4/lodash.js"></script>
+
+            <!-- inline scripts related to this page -->
+
+
+
+
+
+
+
+
+}

@@ -215,8 +215,8 @@ public class CampaignController extends Controller{
 	
 	
 	@SecuredAction
-	public static Result view(int campaignId){ 
-		Campaign campaign   = getCampaign(campaignId); 
+	public static Result view(int campaignId){
+		Campaign campaign   = getCampaign(campaignId);
 		return ok(views.html.advt.campaign.campaignHome.render(new CampaignDisplay(campaign)));
 	}
 

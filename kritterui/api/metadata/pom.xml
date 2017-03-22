@@ -75,6 +75,21 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <scope>test</scope>
       <version>6.8.5</version>
     </dependency>
+      <dependency>
+          <groupId>com.alibaba</groupId>
+          <artifactId>fastjson</artifactId>
+          <version>1.2.16</version>
+      </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>1.2.16</version>
+    </dependency>
+      <dependency>
+          <groupId>com.alibaba</groupId>
+          <artifactId>fastjson</artifactId>
+          <version>1.2.4</version>
+      </dependency>
   </dependencies>
   <organization>
     <name>Kritter</name>

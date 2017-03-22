@@ -1,104 +1,114 @@
-@(tp:models.advertiser.TargetingDisplayFull,retargeting_flow_enabled:String,mma_required:String,adposition_required:String, 
-channel_required:String,lat_lon_file:String,deviceid_targeting:String,
-audience_targeting:String,audience_gender_targeting:String,audience_age_range_targeting:String,
-	audience_cat_targeting:String,audience_cattier1_targeting:String,audience_cattier2_targeting:String,
-	audience_cattier3_targeting:String,audience_cattier4_targeting:String,audience_cattier5_targeting:String)
-	
-@components.fielddisplays.textdisplay("TP-Name", tp.getName()) 
-@components.fielddisplays.textdisplay("TP-Guid", tp.getGuid())
-@components.fielddisplays.textdisplay("TP-Status", tp.getStatusIdName())
-@components.fielddisplays.textdisplay("TP-Hour of Day", tp.getHourList())
-@components.fielddisplays.textdisplay("TP-Geo Targeting Type", tp.getGeo_targeting_type_name())
-@components.fielddisplays.listdisplay("TP-Connection Type", tp.getConnectionType())
-@components.fielddisplays.listdisplay("TP-Country", tp.getCountryValues())
-@components.fielddisplays.listdisplay("TP-Carrier", tp.getCarrierValues())
-@components.fielddisplays.listdisplay("TP-State", tp.getStateValues())
-@components.fielddisplays.listdisplay("TP-City", tp.getCityValues())
-@if("" != tp.getCustomIpSetString()){
-    @components.fielddisplays.htmldisplay("TP-IP") { <a href="@tp.getCustomIpSetString">download</a> }
-}
-@if("" != tp.getCustomZipCodeSetString()){
-    @components.fielddisplays.htmldisplay("TP-ZIPCODE") { <a href="@tp.getCustomZipCodeSetString()">download</a> }
-}
-@if("false" == lat_lon_file){
-	@components.fielddisplays.listdisplay("TP-LatLongRadius", tp.getLatLong())
-	@components.fielddisplays.textdisplay("TP-RadiusUnit", tp.getLatLonRadiusUnit())
-}
-@if("true" == lat_lon_file){
-@if("" != tp.getLatLonRadiusFile()){
-    @components.fielddisplays.htmldisplay("TP-LatLonRadiusFile") { <a href="@tp.getLatLonRadiusFile()">download</a> }
-	@components.fielddisplays.textdisplay("TP-RadiusUnit", tp.getLatLonRadiusUnit())
-}
-}
-@components.fielddisplays.listdisplay("TP-Browser", tp.getBrowserValues())
-@components.fielddisplays.textdisplay("TP-TabletOnly", tp.getTablet_targeting())
-@components.fielddisplays.listdisplay("TP-DeviceType", tp.getDeviceType())
-@components.fielddisplays.listdisplay("TP-Os", tp.getOsValues())
-@components.fielddisplays.listdisplay("TP-Brand", tp.getBrandValues())
-@components.fielddisplays.listdisplay("TP-Model", tp.getModelValues())
-@components.fielddisplays.textdisplay("TP-Sites List Type", tp.getSite_list_excluded())
-@components.fielddisplays.listdisplay("TP-DirectPub", tp.getPubValues())
-@components.fielddisplays.listdisplay("TP-DirectSites", tp.getSiteValues())
-@components.fielddisplays.listdisplay("TP-Exchanges", tp.getExchangeValues())
-@components.fielddisplays.listdisplay("TP-Ext-Sites", tp.getExtSiteValues())
-@components.fielddisplays.textdisplay("TP-Category List Type", tp.getCategory_list_excluded())
-@components.fielddisplays.listdisplay("TP-Tier 1 Category", tp.getCategories_tier_1_list())
-@components.fielddisplays.listdisplay("TP-Tier 2 Category", tp.getCategories_tier_2_list())
-@components.fielddisplays.textdisplay("TP-Supply Source Type", tp.getSupply_source_type_name())
-@components.fielddisplays.textdisplay("TP-Supply Source", tp.getSupply_source_name())
-@if("true" == retargeting_flow_enabled){
-    @components.fielddisplays.listdisplay("TP-RetargetingSegment", tp.getRetargetingSegment())
-}
+@(tp: models.advertiser.TargetingDisplayFull, retargeting_flow_enabled: String, mma_required: String, adposition_required: String,
+        channel_required: String, lat_lon_file: String, deviceid_targeting: String,
+        audience_targeting: String, audience_gender_targeting: String, audience_age_range_targeting: String,
+        audience_cat_targeting: String, audience_cattier1_targeting: String, audience_cattier2_targeting: String,
+        audience_cattier3_targeting: String, audience_cattier4_targeting: String, audience_cattier5_targeting: String)
 
-@if("true" == deviceid_targeting){
-@if("" != tp.getDeviceidfile()){
-	@components.fielddisplays.textdisplay("TP-DeviceIdfile Inc/Exc", tp.deviceIdIncExc())
-    @components.fielddisplays.htmldisplay("TP-Deviceidfile") { <a href="@tp.getDeviceidfile()">download</a> }
-}
-}
-@if("true" == audience_targeting){
-	@if("true" == audience_gender_targeting){
-			@components.fielddisplays.textdisplay("TP-Aud-Gender", tp.getAudGenderInc())
-			@components.fielddisplays.listdisplay("TP-Aud-Gender", tp.getAudGenderList())
-	}
-	@if("true" == audience_age_range_targeting){
-			@components.fielddisplays.textdisplay("TP-Aud-AgeRange", tp.getAudAgeRangeInc())
-			@components.fielddisplays.listdisplay("TP-Aud-AgeRange", tp.getAgeRangeList())
-	}
-	@if("true" == audience_cat_targeting){
-			@components.fielddisplays.textdisplay("TP-Aud-Cat", tp.getAudCatInc())
-		@if("true" == audience_cattier1_targeting){
-			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier1", tp.getAgeCatTierList(1))
-		}
-		@if("true" == audience_cattier2_targeting){
-			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier2", tp.getAgeCatTierList(2))
-		}
-		@if("true" == audience_cattier3_targeting){
-			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier3", tp.getAgeCatTierList(3))
-		}
-		@if("true" == audience_cattier4_targeting){
-			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier4", tp.getAgeCatTierList(4))
-		}
-		@if("true" == audience_cattier5_targeting){
-			@components.fielddisplays.listdisplay("TP-Aud-Cat-Tier5", tp.getAgeCatTierList(5))
-		}
-	}
-}
-@components.fielddisplays.listdisplay("TP-PMP-Exchange", tp.getPmpExchangeValues())
-@components.fielddisplays.textdisplay("TP-PMP-DealIds", tp.getPmpDeal())
-@if("true" == mma_required){
-@components.fielddisplays.textdisplay("TP-MMA-IncExc", tp.mmaIncExc())
-@components.fielddisplays.listdisplay("TP-MMA-Category-Tier 1", tp.getMMATier1())		
-@components.fielddisplays.listdisplay("TP-MMA-Category-Tier 2", tp.getMMATier2())         
-}
-@if("true" == adposition_required){
-@components.fielddisplays.textdisplay("TP-ADPOS-IncExc", tp.adposIncExc())
-@components.fielddisplays.listdisplay("TP-ADPOS LIST", tp.getAdpos())		
-} 
-@if("true" == channel_required){
-@components.fielddisplays.textdisplay("TP-CHANNEL-IncExc", tp.channelIncExc())
-@components.fielddisplays.listdisplay("TP-CHANNEL-Tier 1", tp.getChannelTier1())		
-@components.fielddisplays.listdisplay("TP-CHANNEL-Tier 2", tp.getChannelTier2())         
-}
- 
+    @components.fielddisplays.textdisplay("TP-Name", tp.getName())
+    @components.fielddisplays.textdisplay("TP-Guid", tp.getGuid())
+    @components.fielddisplays.textdisplay("TP-Status", tp.getStatusIdName())
+    @components.fielddisplays.textdisplay("TP-Hour of Day", tp.getHourList())
+    @components.fielddisplays.textdisplay("TP-Geo Targeting Type", tp.getGeo_targeting_type_name())
+    @components.fielddisplays.listdisplay("TP-Connection Type", tp.getConnectionType())
+    @components.fielddisplays.listdisplay("TP-Country", tp.getCountryValues())
+    @components.fielddisplays.listdisplay("TP-Carrier", tp.getCarrierValues())
+    @components.fielddisplays.listdisplay("TP-State", tp.getStateValues())
+    @components.fielddisplays.listdisplay("TP-City", tp.getCityValues())
+    @if("" != tp.getCustomIpSetString()) {
+        @components.fielddisplays.htmldisplay("TP-IP") {
+            <a href="@tp.getCustomIpSetString">download</a>
+        }
+    }
+    @if("" != tp.getCustomZipCodeSetString()) {
+        @components.fielddisplays.htmldisplay("TP-ZIPCODE") {
+            <a href="@tp.getCustomZipCodeSetString()">download</a>
+        }
+    }
+    @if("false" == lat_lon_file) {
+        @components.fielddisplays.listdisplay("TP-LatLongRadius", tp.getLatLong())
+        @components.fielddisplays.textdisplay("TP-RadiusUnit", tp.getLatLonRadiusUnit())
+    }
+    @if("true" == lat_lon_file) {
+        @if("" != tp.getLatLonRadiusFile()) {
+            @components.fielddisplays.htmldisplay("TP-LatLonRadiusFile") {
+                <a href="@tp.getLatLonRadiusFile()">download</a>
+            }
+            @components.fielddisplays.textdisplay("TP-RadiusUnit", tp.getLatLonRadiusUnit())
+        }
+    }
+    @components.fielddisplays.listdisplay("TP-Browser", tp.getBrowserValues())
+    @components.fielddisplays.textdisplay("TP-TabletOnly", tp.getTablet_targeting())
+    @components.fielddisplays.listdisplay("TP-DeviceType", tp.getDeviceType())
+    @components.fielddisplays.listdisplay("TP-Os", tp.getOsValues())
+    @components.fielddisplays.listdisplay("TP-Brand", tp.getBrandValues())
+    @components.fielddisplays.listdisplay("TP-Model", tp.getModelValues())
+    @components.fielddisplays.textdisplay("TP-Sites List Type", tp.getSite_list_excluded())
+    @components.fielddisplays.listdisplay("TP-DirectPub", tp.getPubValues())
+    @components.fielddisplays.listdisplay("TP-DirectSites", tp.getSiteValues())
+    @components.fielddisplays.listdisplay("TP-Exchanges", tp.getExchangeValues())
+    @components.fielddisplays.listdisplay("TP-Ext-Sites", tp.getExtSiteValues())
+    @components.fielddisplays.textdisplay("TP-Category List Type", tp.getCategory_list_excluded())
+    @components.fielddisplays.listdisplay("TP-Tier 1 Category", tp.getCategories_tier_1_list())
+    @components.fielddisplays.listdisplay("TP-Tier 2 Category", tp.getCategories_tier_2_list())
+    @components.fielddisplays.textdisplay("TP-Supply Source Type", tp.getSupply_source_type_name())
+    @components.fielddisplays.textdisplay("TP-Supply Source", tp.getSupply_source_name())
+    @if("true" == retargeting_flow_enabled) {
+        @components.fielddisplays.listdisplay("TP-RetargetingSegment", tp.getRetargetingSegment())
+    }
 
+    @if("true" == deviceid_targeting) {
+        @if("" != tp.getDeviceidfile()) {
+            @components.fielddisplays.textdisplay("TP-DeviceIdfile Inc/Exc", tp.deviceIdIncExc())
+            @components.fielddisplays.htmldisplay("TP-Deviceidfile") {
+                <a href="@tp.getDeviceidfile()">download</a>
+            }
+        }
+    }
+    @if("true" == audience_targeting) {
+        @if("true" == audience_gender_targeting) {
+            @components.fielddisplays.textdisplay("TP-Aud-Gender", tp.getAudGenderInc())
+            @components.fielddisplays.listdisplay("TP-Aud-Gender", tp.getAudGenderList())
+        }
+        @if("true" == audience_age_range_targeting) {
+            @components.fielddisplays.textdisplay("TP-Aud-AgeRange", tp.getAudAgeRangeInc())
+            @components.fielddisplays.listdisplay("TP-Aud-AgeRange", tp.getAgeRangeList())
+        }
+        @if("true" == audience_cat_targeting) {
+            @components.fielddisplays.textdisplay("TP-Aud-Cat", tp.getAudCatInc())
+            @if("true" == audience_cattier1_targeting) {
+                @components.fielddisplays.listdisplay("TP-Aud-Cat-Tier1", tp.getAgeCatTierList(1))
+            }
+            @if("true" == audience_cattier2_targeting) {
+                @components.fielddisplays.listdisplay("TP-Aud-Cat-Tier2", tp.getAgeCatTierList(2))
+            }
+            @if("true" == audience_cattier3_targeting) {
+                @components.fielddisplays.listdisplay("TP-Aud-Cat-Tier3", tp.getAgeCatTierList(3))
+            }
+            @if("true" == audience_cattier4_targeting) {
+                @components.fielddisplays.listdisplay("TP-Aud-Cat-Tier4", tp.getAgeCatTierList(4))
+            }
+            @if("true" == audience_cattier5_targeting) {
+                @components.fielddisplays.listdisplay("TP-Aud-Cat-Tier5", tp.getAgeCatTierList(5))
+            }
+        }
+    }
+    @components.fielddisplays.listdisplay("TP-PMP-Exchange", tp.getPmpExchangeValues())
+    @components.fielddisplays.textdisplay("TP-PMP-DealIds", tp.getPmpDeal())
+    @if("true" == mma_required) {
+        @components.fielddisplays.textdisplay("TP-MMA-IncExc", tp.mmaIncExc())
+        @components.fielddisplays.listdisplay("TP-MMA-Category-Tier 1", tp.getMMATier1())
+        @components.fielddisplays.listdisplay("TP-MMA-Category-Tier 2", tp.getMMATier2())
+    }
+    @if("true" == adposition_required) {
+        @components.fielddisplays.textdisplay("TP-ADPOS-IncExc", tp.adposIncExc())
+        @components.fielddisplays.listdisplay("TP-ADPOS LIST", tp.getAdpos())
+    }
+    @if("true" == channel_required) {
+        @components.fielddisplays.textdisplay("TP-CHANNEL-IncExc", tp.channelIncExc())
+        @components.fielddisplays.listdisplay("TP-CHANNEL-Tier 1", tp.getChannelTier1())
+        @components.fielddisplays.listdisplay("TP-CHANNEL-Tier 2", tp.getChannelTier2())
+
+    }
+    @components.fielddisplays.textdisplay("audience_inc", tp.getAudienceInc())
+    @components.fielddisplays.textdisplay("audience_exc", tp.getAudienceEnc())
+    @components.fielddisplays.textdisplay("audience_package", tp.getAudiencePackage())

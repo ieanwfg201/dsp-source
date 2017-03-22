@@ -66,6 +66,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
     private final InclusionExclusionType userIdInclusionExclusionType;
     private final Integer lat_lon_radius_unit;
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final String audienceTags;
 
     public TargetingProfile(TargetingBuilder targetingBuilder)
     {
@@ -105,6 +106,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         this.latLonFileIdArray = targetingBuilder.latLonFileIdArray;
         this.userIdInclusionExclusionType = targetingBuilder.userIdInclusionExclusionType;
         this.lat_lon_radius_unit = targetingBuilder.lat_lon_radius_unit;
+        this.audienceTags = targetingBuilder.audienceTags;
     }
 
     @Override
@@ -153,6 +155,7 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         private String[] latLonFileIdArray;
         private InclusionExclusionType userIdInclusionExclusionType;
         private Integer lat_lon_radius_unit = LatLonRadiusUnit.MILES.getCode();
+        private String audienceTags;
         private static final TypeReference<Map<String,String>>
                      typeReferenceForOSBrowserJSon = new TypeReference<Map<String, String>>() {};
 
@@ -398,6 +401,11 @@ public class TargetingProfile implements IUpdatableEntity<String>{
         public TargetingBuilder setLatLonRadiusUnit(int lat_lon_radius_unit)
         {
             this.lat_lon_radius_unit = lat_lon_radius_unit;
+            return this;
+        }
+        public TargetingBuilder setAudienceTags(String audienceTags)
+        {
+            this.audienceTags = audienceTags;
             return this;
         }
 

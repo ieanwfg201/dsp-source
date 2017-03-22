@@ -12,6 +12,7 @@ public class MetaField {
     private String isp_name = null;
     private String data_source_name = null;
     private String isp_ui_name = null;
+    private String parentName = null;
 
     @Override
     public int hashCode() {
@@ -35,6 +36,7 @@ public class MetaField {
                 + ((isp_ui_name == null) ? 0 : isp_ui_name.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
+        result = prime * result + ((parentName == null) ? 0 : parentName.hashCode());
         return result;
     }
     @Override
@@ -92,6 +94,11 @@ public class MetaField {
             if (other.version != null)
                 return false;
         } else if (!version.equals(other.version))
+            return false;
+        if (parentName == null) {
+            if (other.parentName != null)
+                return false;
+        } else if (!parentName.equals(other.parentName))
             return false;
         return true;
     }
@@ -163,5 +170,12 @@ public class MetaField {
 
     public void setIsp_ui_name(String isp_ui_name) {
         this.isp_ui_name = isp_ui_name;
+    }
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 }

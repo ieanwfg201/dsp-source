@@ -22,82 +22,55 @@ public class MetaInput {
    private String country_name = null;
    private String isp_name = null;
    private String isp_ui_name = null;
+   private String account_guid = null;
 
-    
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((country_id_list == null) ? 0 : country_id_list.hashCode());
-        result = prime * result
-                + ((country_name == null) ? 0 : country_name.hashCode());
-        result = prime * result + device_browser_id;
-        result = prime * result + device_os_id;
-        result = prime
-                * result
-                + ((handset_manufacturer_list == null) ? 0
-                        : handset_manufacturer_list.hashCode());
-        result = prime * result
-                + ((isp_name == null) ? 0 : isp_name.hashCode());
-        result = prime * result
-                + ((isp_ui_name == null) ? 0 : isp_ui_name.hashCode());
-        result = prime * result + pageno;
-        result = prime * result + pagesize;
-        result = prime * result
-                + ((query_id_list == null) ? 0 : query_id_list.hashCode());
-        return result;
+    public String getAccount_guid() {
+        return account_guid;
+    }
+
+    public void setAccount_guid(String account_guid) {
+        this.account_guid = account_guid;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MetaInput metaInput = (MetaInput) o;
+
+        if (device_os_id != metaInput.device_os_id) return false;
+        if (device_browser_id != metaInput.device_browser_id) return false;
+        if (pageno != metaInput.pageno) return false;
+        if (pagesize != metaInput.pagesize) return false;
+        if (country_id_list != null ? !country_id_list.equals(metaInput.country_id_list) : metaInput.country_id_list != null)
             return false;
-        if (getClass() != obj.getClass())
+        if (handset_manufacturer_list != null ? !handset_manufacturer_list.equals(metaInput.handset_manufacturer_list) : metaInput.handset_manufacturer_list != null)
             return false;
-        MetaInput other = (MetaInput) obj;
-        if (country_id_list == null) {
-            if (other.country_id_list != null)
-                return false;
-        } else if (!country_id_list.equals(other.country_id_list))
+        if (query_id_list != null ? !query_id_list.equals(metaInput.query_id_list) : metaInput.query_id_list != null)
             return false;
-        if (country_name == null) {
-            if (other.country_name != null)
-                return false;
-        } else if (!country_name.equals(other.country_name))
+        if (country_name != null ? !country_name.equals(metaInput.country_name) : metaInput.country_name != null)
             return false;
-        if (device_browser_id != other.device_browser_id)
+        if (isp_name != null ? !isp_name.equals(metaInput.isp_name) : metaInput.isp_name != null) return false;
+        if (isp_ui_name != null ? !isp_ui_name.equals(metaInput.isp_ui_name) : metaInput.isp_ui_name != null)
             return false;
-        if (device_os_id != other.device_os_id)
-            return false;
-        if (handset_manufacturer_list == null) {
-            if (other.handset_manufacturer_list != null)
-                return false;
-        } else if (!handset_manufacturer_list
-                .equals(other.handset_manufacturer_list))
-            return false;
-        if (isp_name == null) {
-            if (other.isp_name != null)
-                return false;
-        } else if (!isp_name.equals(other.isp_name))
-            return false;
-        if (isp_ui_name == null) {
-            if (other.isp_ui_name != null)
-                return false;
-        } else if (!isp_ui_name.equals(other.isp_ui_name))
-            return false;
-        if (pageno != other.pageno)
-            return false;
-        if (pagesize != other.pagesize)
-            return false;
-        if (query_id_list == null) {
-            if (other.query_id_list != null)
-                return false;
-        } else if (!query_id_list.equals(other.query_id_list))
-            return false;
-        return true;
+        return account_guid != null ? account_guid.equals(metaInput.account_guid) : metaInput.account_guid == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = country_id_list != null ? country_id_list.hashCode() : 0;
+        result = 31 * result + (handset_manufacturer_list != null ? handset_manufacturer_list.hashCode() : 0);
+        result = 31 * result + device_os_id;
+        result = 31 * result + device_browser_id;
+        result = 31 * result + (query_id_list != null ? query_id_list.hashCode() : 0);
+        result = 31 * result + pageno;
+        result = 31 * result + pagesize;
+        result = 31 * result + (country_name != null ? country_name.hashCode() : 0);
+        result = 31 * result + (isp_name != null ? isp_name.hashCode() : 0);
+        result = 31 * result + (isp_ui_name != null ? isp_ui_name.hashCode() : 0);
+        result = 31 * result + (account_guid != null ? account_guid.hashCode() : 0);
+        return result;
     }
 
     public String getCountry_id_list() {

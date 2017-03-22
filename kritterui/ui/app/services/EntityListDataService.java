@@ -5,9 +5,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kritter.api.entity.audience.Audience;
+import com.kritter.api.entity.audience.AudienceList;
+import com.kritter.api.entity.audience.AudienceListEntity;
 import com.kritter.api.entity.deal.PMPList;
 import com.kritter.api.entity.deal.PMPListEntity;
 import com.kritter.api.entity.deal.PrivateMarketPlaceApiEntity;
+import com.kritter.constants.*;
 import models.EntityList;
 import models.EntityListFilter;
 import models.Constants.PageType;
@@ -56,26 +60,6 @@ import com.kritter.api.entity.site.SiteListEntity;
 import com.kritter.api.entity.targeting_profile.TargetingProfileList;
 import com.kritter.api.entity.targeting_profile.TargetingProfileListEntity;
 import com.kritter.api.entity.targeting_profile.Targeting_profile;
-import com.kritter.constants.Account_Type;
-import com.kritter.constants.AdAPIEnum;
-import com.kritter.constants.AdpositionGetQueryEnum;
-import com.kritter.constants.AdxBasedExchangesMetadataQueryEnum;
-import com.kritter.constants.AdxBasedExchangesStates;
-import com.kritter.constants.AudienceMetadataQueryType;
-import com.kritter.constants.CampaignQueryEnum;
-import com.kritter.constants.CreativeContainerAPIEnum;
-import com.kritter.constants.Ext_siteEnum;
-import com.kritter.constants.IddefinitionEnum;
-import com.kritter.constants.IddefinitionType;
-import com.kritter.constants.Isp_mappingEnum;
-import com.kritter.constants.MaterialAdvInfoUploadQueryEnum;
-import com.kritter.constants.MaterialBannerUploadQueryEnum;
-import com.kritter.constants.MaterialVideoUploadQueryEnum;
-import com.kritter.constants.PageConstants;
-import com.kritter.constants.QualificationDefEnum;
-import com.kritter.constants.RetargetingSegmentEnum;
-import com.kritter.constants.StatusIdEnum;
-import com.kritter.constants.TargetingProfileAPIEnum;
 import com.kritter.entity.account.Qualification;
 import com.kritter.entity.adxbasedexchanges_metadata.AdPositionGet;
 import com.kritter.entity.adxbasedexchanges_metadata.AdxBasedExchangesMetadata;
@@ -113,8 +97,8 @@ public class EntityListDataService {
 					TargetingProfileListEntity tple = new TargetingProfileListEntity();
 					tple.setTpEnum(TargetingProfileAPIEnum.list_active_targeting_profile_by_account); 
 					tple.setAccount_guid(listDataFilter.getAccountGuid());
-//					tple.setPage_no(listDataFilter.getPageNumber());
-//					tple.setPage_size(listDataFilter.getPageSize());
+//					aule.setPage_no(listDataFilter.getPageNumber());
+//					aule.setPage_size(listDataFilter.getPageSize());
 					TargetingProfileList targetingProfileList = ApiDef.various_get_targeting_profile(con,tple);
 
 					if(targetingProfileList.getMsg().getError_code()==0){
@@ -453,6 +437,22 @@ public class EntityListDataService {
                         entityList = new EntityList<AudienceMetadata>(new ArrayList<AudienceMetadata>(), 0);
                     }
                     break;
+				case audienceList:
+					AudienceListEntity aule = new AudienceListEntity();
+					aule.setAudienceAPIEnum(AudienceAPIEnum.get_audience_list_of_account);
+					aule.setAccount_guid(listDataFilter.getAccountGuid());
+//					aule.setPage_no(listDataFilter.getPageNumber());
+//					aule.setPage_size(listDataFilter.getPageSize());
+					AudienceList audienceList = ApiDef.various_get_audience(con,aule);
+
+					if(audienceList.getMsg().getError_code()==0){
+						if( audienceList.getAudience_list().size()>0){
+							entityList = new EntityList<Audience>(audienceList.getAudience_list(), audienceList.getAudience_list().size());
+						}
+					}else{
+						entityList = new EntityList<Audience>(new ArrayList<Audience>(), 0);
+					}
+					break;
 				default:
 					break;
 			}

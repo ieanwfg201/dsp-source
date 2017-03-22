@@ -30,13 +30,18 @@
 		<li><a href="@{controllers.advertiser.routes.TargetingProfileController.add(account_guid, None)}"><i
 				class="fa fa-caret-right"></i><span data-i18n="Create Targeting Profile"></span></a></li>
 		<li><a href="@{controllers.advertiser.routes.TargetingProfileController.list(account_guid)}"><i
-				class="fa fa-caret-right"></i><span data-i18n="Targeting Profiles"></span></a></li>		 
+				class="fa fa-caret-right"></i><span data-i18n="Targeting Profiles"></span></a></li>
+        <li><a href="@{controllers.audience.routes.AudienceController.add(account_guid)}"><i
+        class="fa fa-caret-right"></i><span data-i18n="Create Audience"></span></a></li>
+        <li><a href="@{controllers.audience.routes.AudienceController.list(account_guid)}"><i
+        class="fa fa-caret-right"></i><span data-i18n="List Audience"></span></a></li>
          @if("true" == Play.application().configuration().getString("retargeting_flow_enabled") )  {
             <li><a href="@{controllers.retargeting_segment.routes.RetargetingSegmentController.create(account_guid)}"><i
                 class="fa fa-caret-right"></i><span data-i18n="Create Retargeting Segment"></span></a></li>
             <li><a href="@{controllers.retargeting_segment.routes.RetargetingSegmentController.list(account_guid)}"><i
                 class="fa fa-caret-right"></i><span data-i18n="List Retargeting Segment"></span></a></li>
          }
+
 	</ul>
 </li>
     </ul>

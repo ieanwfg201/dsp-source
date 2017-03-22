@@ -127,9 +127,10 @@ VIDEO_SUPPLY_PROPS_NF= 98,       /*VideoSupplyProps Absent*/
 USER_ID_INC_EXC_FILTER = 99,     /*User Id Inclusion/Exclusion filter applied*/
 SSL_TRAFFIC_FILTER = 100,        /* Ad landing page is not https and the traffic is ssl enabled */
 USER_ID_ABSENT = 101,            /* Ad is user targeted but user id is not present in the request */
+AUDIENCE_MISMATCHE = 105,      /* AUDIENCE_MISMATCHE  */
 BLKBYCOSTPERDAILY = 102,            /* Blocked by cost per daily */
 AUDIENCE_TARGETING_FAILED = 103,    /* Ad is targeting audience but the targeting didn't match */
-ADVINFOMISMATCH = 104,    /* Adv Info MisMatch */
+ADVINFOMISMATCH = 104  /* Adv Info MisMatch */
 }
 
 /**
